@@ -3571,8 +3571,15 @@ void RenderLayer::updateScrollInfoAfterLayout()
     if (originalScrollOffset != scrollOffset())
         scrollToOffsetWithoutAnimation(IntPoint(scrollOffset()));
 
-    if (isComposited())
+    if (isComposited()) {
         setNeedsCompositingGeometryUpdate();
+        setNeedsCompositingConfigurationUpdate();
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    if (canUseAcceleratedTouchScrolling())
+        setNeedsPostLayoutCompositingUpdate();
+#endif
 
     updateScrollSnapState();
 }

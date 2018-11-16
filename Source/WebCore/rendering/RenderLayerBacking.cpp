@@ -718,7 +718,6 @@ bool RenderLayerBacking::updateConfiguration()
     if (updateAncestorClippingLayer(compositor().clippedByAncestor(m_owningLayer)))
         layerConfigChanged = true;
 
-    // Requires layout.
     if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
         layerConfigChanged = true;
 

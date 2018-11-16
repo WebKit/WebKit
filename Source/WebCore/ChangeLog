@@ -1,3 +1,31 @@
+2018-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller
+        https://bugs.webkit.org/show_bug.cgi?id=158342
+        rdar://problem/26652811
+
+        Reviewed by Zalan Bujtas.
+        
+        Patch partly by Frédéric Wang.
+
+        This commit fixes an issue when resizing the content of a -webkit-overflow-scrolling: touch
+        overflow node on iOS. Indeed, the RenderLayerBacking's scrolling layer may not be properly
+        created and hence the UIProcess receives a null UIScrollView pointer. This triggers an
+        assertion in debug mode and prevents the user from scrolling the overflow node in release
+        mode. This was partially fixed by the refactoring of bug 90342 but this commit addresses
+        the remaining issues by forcing a configuration update after layout in order to ensure that
+        RenderLayerBacking's scrolling layer is available. For an overflow element that is not yet
+        composited, trigger a post-layout update that is necessary to check if we need to make it
+        composited when it gains scrollable overflow.
+
+        Tests: fast/scrolling/ios/change-scrollability-on-content-resize-nested.html
+               fast/scrolling/ios/change-scrollability-on-content-resize.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Force a configuration update so that
+        RenderLayerCompositor::updateBackingAndHierarchy will later instantiate
+        RenderLayerBacking::m_scrollingLayer.
+
 2018-11-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] warning: delete called on non-final 'WebCore::CurlDownload' that has virtual functions but non-virtual destructor [-Wdelete-non-virtual-dtor]

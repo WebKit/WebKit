@@ -1,3 +1,22 @@
+2018-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller
+        https://bugs.webkit.org/show_bug.cgi?id=158342
+        rdar://problem/26652811
+
+        Reviewed by Zalan Bujtas.
+
+        Patch partly by Frédéric Wang.
+
+        Add a test to check that scrollability of composited/non-composited overflow divs is properly
+        updated. This test used to fail and assert before #238090. A second test with nested divs
+        stills exhibit the issue and is fixed by the present commit.
+
+        * fast/scrolling/ios/change-scrollability-on-content-resize-expected.txt: Added.
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested-expected.txt: Added.
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested.html: Added.
+        * fast/scrolling/ios/change-scrollability-on-content-resize.html: Added.
+
 2018-11-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238244.

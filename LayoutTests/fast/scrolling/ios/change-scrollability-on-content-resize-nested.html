@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Change scrollability on content resize (nested)</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        #root {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+        }
+        #scroller {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+        #content {
+            background-color: yellow;
+        }
+        #compositedDiv {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 50px;
+            background: lightblue;
+            transform: translate3d(50px, 100px, 0px);
+        }
+    </style>
+    <script>
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
+
+      function doTest() {
+          requestAnimationFrame(() => {
+              document.getElementById('content').style.height = "400px";
+              if (window.testRunner && window.internals) {
+                  requestAnimationFrame(() => {
+                      document.getElementById('layerTree').innerText = internals.layerTreeAsText(document,
+                              internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES) + "\n\n" +
+                          internals.scrollingStateTreeAsText() + "\n";
+                      testRunner.notifyDone();
+                  });
+              }
+          });
+      }
+      window.addEventListener('load', doTest, false);
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="scroller">
+        <div id="content">
+          <div id="compositedDiv"></div>
+        </div>
+      </div>
+    </div>
+    <pre id="layerTree"></pre>
+</body>
+</html>

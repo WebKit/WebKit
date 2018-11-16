@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Change scrollability on content resize</title>
+    <meta name="viewport" content="width=device-width">
+    <style>
+        .scrollable {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 200px;
+            height: 200px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 5px solid orange;
+            margin: 5px;
+        }
+        .scrollable-content {
+            width: 100px;
+            height: 100px;
+            background: lightgreen;
+        }
+        .overflowing {
+            height: 400px;
+        }
+        .composited {
+            z-index: -1;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 50px;
+            height: 50px;
+            transform: translate3d(175px, 0px, -5px) rotate(30deg);
+            background: blue;
+        }
+        #compositedBecomeNonScrollable {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        #compositedBecomeScrollable {
+            position: absolute;
+            left: 250px;
+            top: 0px;
+        }
+        #nonCompositedBecomeNonScrollable {
+            position: absolute;
+            left: 0px;
+            top: 250px;
+        }
+        #nonCompositedBecomeScrollable {
+            position: absolute;
+            left: 250px;
+            top: 250px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest() {
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.scrollable-content').forEach((div) => {
+                    div.classList.toggle('overflowing');
+                });
+                if (window.testRunner && window.internals) {
+                    requestAnimationFrame(() => {
+                        document.getElementById('layerTree').innerText = internals.layerTreeAsText(document,
+                                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES) + "\n\n" +
+                            internals.scrollingStateTreeAsText() + "\n";
+                        testRunner.notifyDone();
+                    });
+                }
+            });
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+  </head>
+  <body>
+    <div id="compositedBecomeNonScrollable">
+        <div class="scrollable">
+            <div class="scrollable-content overflowing">
+                0
+            </div>
+        </div>
+        <div class="composited"></div>
+    </div>
+    <div id="compositedBecomeScrollable">
+        <div class="scrollable">
+            <div class="scrollable-content">
+                1
+            </div>
+        </div>
+        <div class="composited"></div>
+    </div>
+    <div id="nonCompositedBecomeNonScrollable">
+        <div class="scrollable">
+            <div class="scrollable-content overflowing">
+                2
+            </div>
+        </div>
+    </div>
+    <div id="nonCompositedBecomeScrollable">
+        <div class="scrollable">
+            <div class="scrollable-content">
+                3
+            </div>
+        </div>
+    </div>
+    <pre id="layerTree"></pre>
+  </body>
+</html>
