@@ -1,3 +1,16 @@
+2018-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to disable safe browsing checks
+        https://bugs.webkit.org/show_bug.cgi?id=191610
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (resourceURL):
+        (TEST):
+        (safeBrowsingView):
+        (simpleURL): Deleted.
+
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for out-of-flow positioned boxes

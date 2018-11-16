@@ -1,3 +1,18 @@
+2018-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Add API to disable safe browsing checks
+        https://bugs.webkit.org/show_bug.cgi?id=191610
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences setSafeBrowsingEnabled:]):
+        (-[WKPreferences isSafeBrowsingEnabled]):
+        (-[WKPreferences _setSafeBrowsingEnabled:]): Deleted.
+        (-[WKPreferences _safeBrowsingEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         WebKit.UnavailablePlugIn API test is crashing in debug

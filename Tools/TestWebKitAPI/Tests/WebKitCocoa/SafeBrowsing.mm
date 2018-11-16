@@ -29,6 +29,7 @@
 
 #import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -137,9 +138,32 @@ static bool committedNavigation;
 
 @end
 
-static NSURL *simpleURL()
+static NSURL *resourceURL(NSString *resource)
 {
-    return [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    return [[NSBundle mainBundle] URLForResource:resource withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+}
+
+TEST(SafeBrowsing, Preference)
+{
+    TestWebKitAPI::ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [TestLookupContext methodForSelector:@selector(sharedLookupContext)]);
+
+    __block bool done = false;
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *) {
+        done = true;
+    };
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+    EXPECT_TRUE([webView configuration].preferences.safeBrowsingEnabled);
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
+    while (![webView _safeBrowsingWarningForTesting])
+        TestWebKitAPI::Util::spinRunLoop();
+    [webView configuration].preferences.safeBrowsingEnabled = NO;
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([webView configuration].preferences.safeBrowsingEnabled);
+    EXPECT_FALSE([webView _safeBrowsingWarningForTesting]);
 }
 
 static RetainPtr<WKWebView> safeBrowsingView()
@@ -149,7 +173,7 @@ static RetainPtr<WKWebView> safeBrowsingView()
     static auto delegate = adoptNS([SafeBrowsingNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:simpleURL()]];
+    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
     while (![webView _safeBrowsingWarningForTesting])
         TestWebKitAPI::Util::spinRunLoop();
 #if !PLATFORM(MAC)

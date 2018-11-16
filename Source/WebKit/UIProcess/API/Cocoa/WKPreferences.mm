@@ -697,12 +697,12 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setICECandidateFilteringEnabled(enabled);
 }
 
-- (void)_setSafeBrowsingEnabled:(BOOL)enabled
+- (void)setSafeBrowsingEnabled:(BOOL)enabled
 {
     _preferences->setSafeBrowsingEnabled(enabled);
 }
 
-- (BOOL)_safeBrowsingEnabled
+- (BOOL)isSafeBrowsingEnabled
 {
     return _preferences->safeBrowsingEnabled();
 }
