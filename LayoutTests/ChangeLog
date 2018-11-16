@@ -1,3 +1,13 @@
+2018-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Do not get stuck in indeterminate content observation state.
+        https://bugs.webkit.org/show_bug.cgi?id=191719
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/stuck-with-hover-state-expected.txt: Added.
+        * fast/events/touch/ios/stuck-with-hover-state.html: Added.
+
 2018-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         Add layout test for iframe contents disappearing on view unparent/reparent

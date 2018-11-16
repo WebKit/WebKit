@@ -106,6 +106,12 @@ void WebThreadAddObservedContentModifier(void * aContentModifier)
 void WebThreadRemoveObservedContentModifier(void * aContentModifier)
 {
     WebThreadGetObservedContentModifiers()->remove(aContentModifier);
+    // Force reset the content change flag when the last observed content modifier is removed. We should not be in indeterminate state anymore.
+    if (WebThreadCountOfObservedContentModifiers())
+        return;
+    if (WKObservedContentChange() != WKContentIndeterminateChange)
+        return;
+    _WKContentChange = WKContentNoChange;
 }
 
 #endif // PLATFORM(IOS_FAMILY)

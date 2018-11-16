@@ -1,3 +1,19 @@
+2018-11-15  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Do not get stuck in indeterminate content observation state.
+        https://bugs.webkit.org/show_bug.cgi?id=191719
+
+        Reviewed by Simon Fraser.
+
+        Reset the _WKContentChange flag to WKContentNoChange when the last observing timer is removed and we are in
+        the "can't decide yet if it's a hover or click" state.
+        This bug prevents us from firing click event when JS installs and removes the same set of timer(s) during mouse-move dispatch.
+
+        Test: fast/events/touch/ios/stuck-with-hover-state.html
+
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WebThreadRemoveObservedContentModifier):
+
 2018-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090) Composited iframes that resize from zero don't show
