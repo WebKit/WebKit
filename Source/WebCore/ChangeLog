@@ -1,3 +1,29 @@
+2018-11-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        ScalableImageDecoder: don't forcefully decode image data when querying frame completeness, duration
+        https://bugs.webkit.org/show_bug.cgi?id=191354
+
+        Reviewed by Michael Catanzaro.
+
+        ScalableImageDecoder::frameIsCompleteAtIndex() should only check the
+        index validity and, if the index is valid, check for completeness of the
+        corresponding frame. ScalableImageDecoder::frameDurationAtIndex() should
+        also only retrieve duration for already-complete frames.
+
+        Both methods avoid calling ScalableImageDecoder::frameBufferAtIndex()
+        as that method goes on and decodes image data to determine specific
+        information. The ImageSource class that's querying this information
+        doesn't anticipate this, and doesn't handle the increased memory
+        consumption of the decoded data, leaving MemoryCache in the blind about
+        the image resource's actual amount of consumed memory. ImageSource can
+        instead gracefully handle any incomplete frame by marking the decoding
+        status for this frame as only partial.
+
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameIsCompleteAtIndex const):
+        (WebCore::ScalableImageDecoder::frameHasAlphaAtIndex const):
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+
 2018-11-16  Antoine Quint  <graouts@apple.com>
 
         PointerEvents should not require touch event listeners to be registered
