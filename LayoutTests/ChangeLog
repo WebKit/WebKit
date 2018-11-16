@@ -1,3 +1,38 @@
+2018-11-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r238222. rdar://problem/45997333
+
+    Remove fonts from CSSFontFaceSet safely
+    https://bugs.webkit.org/show_bug.cgi?id=191676
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: fast/text/font-face-set-remove-safely.html
+    
+    * css/CSSFontFaceSet.cpp:
+    (WebCore::CSSFontFaceSet::remove):
+    
+    LayoutTests:
+    
+    * fast/text/font-face-set-remove-safely-expected.txt: Added.
+    * fast/text/font-face-set-remove-safely.html: Added.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@238222 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-11-15  Antti Koivisto  <antti@apple.com>
+
+            Remove fonts from CSSFontFaceSet safely
+            https://bugs.webkit.org/show_bug.cgi?id=191676
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/text/font-face-set-remove-safely-expected.txt: Added.
+            * fast/text/font-face-set-remove-safely.html: Added.
+
 2018-11-16  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r238119. rdar://problem/45997459
