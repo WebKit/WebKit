@@ -1,3 +1,13 @@
+2018-11-15  Mark Lam  <mark.lam@apple.com>
+
+        RegExp operations should not take fast patch if lastIndex is not numeric.
+        https://bugs.webkit.org/show_bug.cgi?id=191731
+        <rdar://problem/46017305>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-191731.js: Added.
+
 2018-11-13  Saam Barati  <sbarati@apple.com>
 
         TypeProfileLog::processLogEntries should stash away any pending exceptions and re-apply them to the VM

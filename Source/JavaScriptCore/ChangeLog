@@ -1,3 +1,23 @@
+2018-11-15  Mark Lam  <mark.lam@apple.com>
+
+        RegExp operations should not take fast patch if lastIndex is not numeric.
+        https://bugs.webkit.org/show_bug.cgi?id=191731
+        <rdar://problem/46017305>
+
+        Reviewed by Saam Barati.
+
+        This is because if lastIndex is an object with a valueOf() method, it can execute
+        arbitrary code which may have side effects, and side effects are not permitted by
+        the RegExp fast paths.
+
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.hasObservableSideEffectsForRegExpMatch):
+        (overriddenName.string_appeared_here.search):
+        (globalPrivate.hasObservableSideEffectsForRegExpSplit):
+        (intrinsic.RegExpTestIntrinsic.test):
+        * builtins/StringPrototype.js:
+        (globalPrivate.hasObservableSideEffectsForStringReplace):
+
 2018-11-15  Keith Rollin  <krollin@apple.com>
 
         Delete old .xcfilelist files
