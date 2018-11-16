@@ -43,7 +43,7 @@ public:
     GstCaps* caps();
     void addSink(GstElement *newSink);
     GstElement* makeElement(const char* factoryName);
-    GstElement* createSource();
+    virtual GstElement* createSource();
     GstElement* source() { return m_src.get();  }
     virtual const char* name() = 0;
 

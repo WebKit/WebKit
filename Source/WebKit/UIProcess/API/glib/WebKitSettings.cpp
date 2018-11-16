@@ -152,6 +152,7 @@ enum {
     PROP_ENABLE_ACCELERATED_2D_CANVAS,
     PROP_ENABLE_WRITE_CONSOLE_MESSAGES_TO_STDOUT,
     PROP_ENABLE_MEDIA_STREAM,
+    PROP_ENABLE_MOCK_CAPTURE_DEVICES,
     PROP_ENABLE_SPATIAL_NAVIGATION,
     PROP_ENABLE_MEDIASOURCE,
     PROP_ENABLE_ENCRYPTED_MEDIA,
@@ -352,6 +353,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_MEDIA_STREAM:
         webkit_settings_set_enable_media_stream(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_MOCK_CAPTURE_DEVICES:
+        webkit_settings_set_enable_mock_capture_devices(settings, g_value_get_boolean(value));
+        break;
     case PROP_ENABLE_SPATIAL_NAVIGATION:
         webkit_settings_set_enable_spatial_navigation(settings, g_value_get_boolean(value));
         break;
@@ -527,6 +531,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_MEDIA_STREAM:
         g_value_set_boolean(value, webkit_settings_get_enable_media_stream(settings));
+        break;
+    case PROP_ENABLE_MOCK_CAPTURE_DEVICES:
+        g_value_set_boolean(value, webkit_settings_get_enable_mock_capture_devices(settings));
         break;
     case PROP_ENABLE_SPATIAL_NAVIGATION:
         g_value_set_boolean(value, webkit_settings_get_enable_spatial_navigation(settings));
@@ -1266,6 +1273,23 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
         g_param_spec_boolean("enable-media-stream",
             _("Enable MediaStream"),
             _("Whether MediaStream content should be handled"),
+            FALSE,
+            readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-mock-capture-devices:
+     *
+     * Enable or disable the Mock Capture Devices. Those are fake
+     * Microphone and Camera devices to be used as MediaStream
+     * sources.
+     *
+     * Since: 2.24
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_MOCK_CAPTURE_DEVICES,
+        g_param_spec_boolean("enable-mock-capture-devices",
+            _("Enable mock capture devices"),
+            _("Whether we expose mock capture devices or not"),
             FALSE,
             readWriteConstructParamFlags));
 
@@ -3125,6 +3149,45 @@ void webkit_settings_set_enable_media_stream(WebKitSettings* settings, gboolean 
     priv->preferences->setMediaStreamEnabled(enabled);
     priv->preferences->setPeerConnectionEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-media-stream");
+}
+
+/**
+ * webkit_settings_get_enable_mock_capture_devices:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-mock-capture-devices property.
+ *
+ * Returns: %TRUE If mock capture devices is enabled or %FALSE otherwise.
+ *
+ * Since: 2.24
+ */
+gboolean webkit_settings_get_enable_mock_capture_devices(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->mockCaptureDevicesEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_mock_capture_devices:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-mock-capture-devices property.
+ *
+ * Since: 2.4
+ */
+void webkit_settings_set_enable_mock_capture_devices(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->mockCaptureDevicesEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setMockCaptureDevicesEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-mock-capture-devices");
 }
 
 /**

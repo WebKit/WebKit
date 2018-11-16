@@ -1,5 +1,32 @@
 2018-11-16  Thibault Saunier  <tsaunier@igalia.com>
 
+        [GStreamer][WebRTC] Add API to enable/disable device mocks
+        https://bugs.webkit.org/show_bug.cgi?id=191699
+
+        This basically us to test MediaStream/WebRTC support without
+        requiring cameras or microphones and is quite useful.
+
+        Also fix the GStreamerAudioMock by:
+          - Stop setting `leaky-upstream` on the GStreamerCapturer queue,
+            this was usefull when we were trying to bring the MediaStream
+            sources inside the main pipeline, it is not the case anymore
+            (and not doable with latest version of LibWebRTC).
+          - Use a 'ticks' wave on the gstreamer audiotestsrc so the test
+            stream is similar to what Apple port does.
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The mocks are already tested and the API is really simple.
+
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp:
+        (WebCore::GStreamerAudioCapturer::createSource):
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.h:
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        (WebCore::GStreamerCapturer::addSink):
+        * platform/mediastream/gstreamer/GStreamerCapturer.h:
+
+2018-11-16  Thibault Saunier  <tsaunier@igalia.com>
+
         [GStreamer][MediaStream] Handle track addition and removal
         https://bugs.webkit.org/show_bug.cgi?id=191599
 

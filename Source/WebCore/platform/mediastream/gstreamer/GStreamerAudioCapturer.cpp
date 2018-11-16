@@ -40,6 +40,16 @@ GStreamerAudioCapturer::GStreamerAudioCapturer()
 {
 }
 
+GstElement* GStreamerAudioCapturer::createSource()
+{
+    GstElement* source = GStreamerCapturer::createSource();
+
+    if (!m_device)
+        gst_util_set_object_arg(G_OBJECT(m_src.get()), "wave", "ticks");
+
+    return source;
+}
+
 GstElement* GStreamerAudioCapturer::createConverter()
 {
     auto converter = gst_parse_bin_from_description("audioconvert ! audioresample", TRUE, nullptr);
