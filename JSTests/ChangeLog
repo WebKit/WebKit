@@ -1,3 +1,11 @@
+2018-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, make some tests not crash my computer by only running on instance of it. These tests do not need to run for each JSC
+        config since they're regression tests for runtime bugs.
+
+        * stress/large-unshift-splice.js:
+        * stress/regress-185888.js:
+
 2018-11-16  Saam Barati  <sbarati@apple.com>
 
         KnownCellUse should also have SpecCellCheck as its type filter
