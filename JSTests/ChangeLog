@@ -1,5 +1,23 @@
 2018-11-15  Mark Lam  <mark.lam@apple.com>
 
+        Cherry-pick r238270. rdar://problem/46085279
+
+    2018-11-15  Mark Lam  <mark.lam@apple.com>
+
+            RegExpObject's collectMatches should not be using JSArray::push to fill in its match results.
+            https://bugs.webkit.org/show_bug.cgi?id=191730
+            <rdar://problem/46048517>
+
+            Reviewed by Saam Barati.
+
+            * stress/regress-187006.js: Removed.
+              - this test is invalid because its sole purpose is to test for the non-spec
+                compliant behavior that we just fixed.
+
+            * stress/regress-191730.js: Added.
+
+2018-11-15  Mark Lam  <mark.lam@apple.com>
+
         Cherry-pick r238267. rdar://problem/46032438
 
     2018-11-15  Mark Lam  <mark.lam@apple.com>
