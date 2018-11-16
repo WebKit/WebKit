@@ -376,24 +376,8 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 # We fail this reftest
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 
-# These tests are so slow that on debug builds they time out even if marked Slow, so skip them
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-csksc56011987.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-iso-ir-149.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-korean.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc5601.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ksc_5601.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1987.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-ks_c_5601-1989.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-windows-949.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-big5-hkscs.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-cn-big5.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-csbig5.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-decode-x-x-big5.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBa.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-tchinese/big5/big5-encode-form-errors-extBb.html [ Skip ]
+# Tests in this directory take > 30 minutes to run on debug bots.
+[ Debug ] imported/w3c/web-platform-tests/encoding
 
 # redirect-chain.php is generating some random number that appear in console error logging.
 http/tests/cache/disk-cache/redirect-chain-limits.html [ DumpJSConsoleLogInStdErr ]
