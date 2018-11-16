@@ -1,3 +1,10 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed typo fix in comment added in r238250.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-11-16  Sihui Liu  <sihui_liu@apple.com>
 
         Storing blobs in IDB on iOS: "Error preparing blob/file"
