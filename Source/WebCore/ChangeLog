@@ -1,3 +1,24 @@
+2018-11-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Include AirPlay destination name in AirPlay placard.
+        https://bugs.webkit.org/show_bug.cgi?id=191574
+        rdar://problem/45536144
+
+        Reviewed by Eric Carlson.
+
+        Updated existing tests.
+
+        Include the name of the AirPlay destination in the video element's AirPlay placard.
+
+        * Modules/modern-media-controls/controls/airplay-placard.js:
+        (AirplayPlacard):
+        * Modules/modern-media-controls/controls/placard.js:
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype._updatePlacard):
+        (PlacardSupport.prototype._updateAirPlayPlacard):
+        (PlacardSupport):
+        * en.lproj/modern-media-controls-localized-strings.js:
+
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
         Add DidFirstMeaningfulPaint milestone.

@@ -1,5 +1,6 @@
 const UIStrings = {
     "AirPlay": "AirPlay",
+    "Apple TV": "Apple TV",
     "Audio": "Audio",
     "Audio Controls": "Audio Controls",
     "Enter Full Screen": "Enter Full Screen",
@@ -21,7 +22,8 @@ const UIStrings = {
     "Skip Forward %s Seconds": "Skip Forward %s Seconds",
     "Subtitles": "Subtitles",
     "This video is playing in picture in picture.": "This video is playing in picture in picture.",
-    "This video is playing on your Apple TV": "This video is playing on your Apple TV",
+    "This video is playing on the TV.": "This video is playing on the TV.",
+    "This video is playing on “%s”.": "This video is playing on “%s”.",
     "Unmute": "Unmute",
     "Video Controls": "Video Controls",
     "Volume Down": "Volume Down",

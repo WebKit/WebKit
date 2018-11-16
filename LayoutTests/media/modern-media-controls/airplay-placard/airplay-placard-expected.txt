@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Placard with all parameters
 PASS placard.children[0].children[0].iconName is Icons.AirplayPlacard
 PASS placard.children[0].children[1].element.innerText is "AirPlay"
-PASS placard.children[0].children[2].element.innerText is "This video is playing on your Apple TV"
+PASS placard.children[0].children[2].element.innerText is "This video is playing on the TV."
 PASS successfullyParsed is true
 
 TEST COMPLETE

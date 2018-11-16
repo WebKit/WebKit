@@ -75,5 +75,11 @@ class Placard extends LayoutItem
 
         this._container.children = children;
     }
+    
+    set description(description)
+    {
+        this._descriptionNode = !!description ? new LayoutNode(`<div class="description">${description}</div>`) : null;
+        this.needsLayout = true;
+    }
 
 }

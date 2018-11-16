@@ -1,3 +1,16 @@
+2018-11-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Include AirPlay destination name in AirPlay placard.
+        https://bugs.webkit.org/show_bug.cgi?id=191574
+        rdar://problem/45536144
+
+        Reviewed by Eric Carlson.
+
+        Updated tests for string changes.
+
+        * media/modern-media-controls/airplay-placard/airplay-placard-expected.txt:
+        * media/modern-media-controls/airplay-placard/airplay-placard.html:
+
 2018-11-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r232376): Layout Test inspector/console/webcore-logging.html is a flaky failure
