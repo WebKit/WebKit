@@ -1,5 +1,19 @@
 2018-11-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Add layout test for iframe contents disappearing on view unparent/reparent
+        https://bugs.webkit.org/show_bug.cgi?id=191725
+
+        Reviewed by Alex Christensen.
+        
+        This test tests the changes made in r238229.
+
+        * compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt: Added.
+        * compositing/iframes/remove-reinsert-webview-with-iframe.html: Added.
+        * platform/ios/compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt: Added.
+        * platform/mac-wk1/compositing/iframes/remove-reinsert-webview-with-iframe-expected.txt: Added.
+
+2018-11-15  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (r238090) Composited iframes that resize from zero don't show
         https://bugs.webkit.org/show_bug.cgi?id=191733
         rdar://problem/46107764
