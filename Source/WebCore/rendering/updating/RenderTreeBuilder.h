@@ -44,7 +44,8 @@ public:
     void attach(RenderTreePosition&, RenderPtr<RenderObject>);
     void attach(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
-    RenderPtr<RenderObject> detach(RenderElement&, RenderObject&) WARN_UNUSED_RETURN;
+    enum class CanCollapseAnonymousBlock { No, Yes };
+    RenderPtr<RenderObject> detach(RenderElement&, RenderObject&, CanCollapseAnonymousBlock = CanCollapseAnonymousBlock::Yes) WARN_UNUSED_RETURN;
 
     void destroy(RenderObject& renderer);
 
