@@ -29,7 +29,6 @@
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
-#include "CommonSlowPathsExceptions.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "EvalCodeBlock.h"
@@ -526,13 +525,10 @@ LLINT_SLOW_PATH_DECL(stack_check)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    EntryFrame* topEntryFrame = vm.topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(topEntryFrame);
-    if (!callerFrame) {
-        callerFrame = exec;
-        topEntryFrame = vm.topEntryFrame;
-    }
-    NativeCallFrameTracerWithRestore tracer(&vm, topEntryFrame, callerFrame);
+    // It's ok to create the NativeCallFrameTracer here before we
+    // convertToStackOverflowFrame() because this function is always called
+    // after the frame has been propulated with a proper CodeBlock and callee.
+    NativeCallFrameTracer tracer(&vm, exec);
 
     LLINT_SET_PC_FOR_STUBS();
 
@@ -564,9 +560,10 @@ LLINT_SLOW_PATH_DECL(stack_check)
     }
 #endif
 
+    exec->convertToStackOverflowFrame(vm);
     ErrorHandlingScope errorScope(vm);
-    throwStackOverflowError(callerFrame, throwScope);
-    pc = returnToThrow(callerFrame);
+    throwStackOverflowError(exec, throwScope);
+    pc = returnToThrow(exec);
     LLINT_RETURN_TWO(pc, exec);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,30 +93,4 @@ public:
     }
 };
 
-class NativeCallFrameTracerWithRestore {
-public:
-    ALWAYS_INLINE NativeCallFrameTracerWithRestore(VM* vm, EntryFrame* EntryFrame, CallFrame* callFrame)
-        : m_vm(vm)
-    {
-        ASSERT(vm);
-        ASSERT(callFrame);
-        assertStackPointerIsAligned();
-        m_savedTopEntryFrame = vm->topEntryFrame;
-        m_savedTopCallFrame = vm->topCallFrame;
-        vm->topEntryFrame = EntryFrame;
-        vm->topCallFrame = callFrame;
-    }
-
-    ALWAYS_INLINE ~NativeCallFrameTracerWithRestore()
-    {
-        m_vm->topEntryFrame = m_savedTopEntryFrame;
-        m_vm->topCallFrame = m_savedTopCallFrame;
-    }
-
-private:
-    VM* m_vm;
-    EntryFrame* m_savedTopEntryFrame;
-    CallFrame* m_savedTopCallFrame;
-};
-
-}
+} // namespace JSC

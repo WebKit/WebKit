@@ -83,6 +83,7 @@ class InputCursor;
 class JSArrayBuffer;
 class JSArrayBufferConstructor;
 class JSArrayBufferPrototype;
+class JSCallee;
 class JSGlobalObjectDebuggable;
 class JSInternalPromise;
 class JSModuleLoader;
@@ -256,7 +257,8 @@ public:
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
     WriteBarrier<JSScope> m_globalScopeExtension;
-    WriteBarrier<JSObject> m_globalCallee;
+    WriteBarrier<JSCallee> m_globalCallee;
+    WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
     WriteBarrier<RegExpConstructor> m_regExpConstructor;
     WriteBarrier<ErrorConstructor> m_errorConstructor;
     WriteBarrier<Structure> m_nativeErrorPrototypeStructure;
@@ -441,6 +443,8 @@ public:
     std::unique_ptr<JSGlobalObjectRareData> m_rareData;
 
     WeakRandom m_weakRandom;
+
+    JSCallee* stackOverflowFrameCallee() const { return m_stackOverflowFrameCallee.get(); }
 
     InlineWatchpointSet& arrayIteratorProtocolWatchpoint() { return m_arrayIteratorProtocolWatchpoint; }
     InlineWatchpointSet& mapIteratorProtocolWatchpoint() { return m_mapIteratorProtocolWatchpoint; }

@@ -102,16 +102,9 @@ void JIT_OPERATION operationThrowStackOverflowError(ExecState* exec, CodeBlock* 
     // We pass in our own code block, because the callframe hasn't been populated.
     VM* vm = codeBlock->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
-
-    EntryFrame* entryFrame = vm->topEntryFrame;
-    CallFrame* callerFrame = exec->callerFrame(entryFrame);
-    if (!callerFrame) {
-        callerFrame = exec;
-        entryFrame = vm->topEntryFrame;
-    }
-
-    NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
-    throwStackOverflowError(callerFrame, scope);
+    exec->convertToStackOverflowFrame(*vm);
+    NativeCallFrameTracer tracer(vm, exec);
+    throwStackOverflowError(exec, scope);
 }
 
 int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
@@ -121,10 +114,9 @@ int32_t JIT_OPERATION operationCallArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForCall);
     if (missingArgCount < 0) {
-        EntryFrame* entryFrame = vm->topEntryFrame;
-        CallFrame* callerFrame = exec->callerFrame(entryFrame);
-        NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
-        throwStackOverflowError(callerFrame, scope);
+        exec->convertToStackOverflowFrame(*vm);
+        NativeCallFrameTracer tracer(vm, exec);
+        throwStackOverflowError(vm->topCallFrame, scope);
     }
 
     return missingArgCount;
@@ -137,10 +129,9 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForConstruct);
     if (missingArgCount < 0) {
-        EntryFrame* entryFrame = vm->topEntryFrame;
-        CallFrame* callerFrame = exec->callerFrame(entryFrame);
-        NativeCallFrameTracerWithRestore tracer(vm, entryFrame, callerFrame);
-        throwStackOverflowError(callerFrame, scope);
+        exec->convertToStackOverflowFrame(*vm);
+        NativeCallFrameTracer tracer(vm, exec);
+        throwStackOverflowError(vm->topCallFrame, scope);
     }
 
     return missingArgCount;
@@ -2449,9 +2440,8 @@ void JIT_OPERATION lookupExceptionHandler(VM* vm, ExecState* exec)
 
 void JIT_OPERATION lookupExceptionHandlerFromCallerFrame(VM* vm, ExecState* exec)
 {
-    vm->topCallFrame = exec->callerFrame();
-    genericUnwind(vm, exec, UnwindFromCallerFrame);
-    ASSERT(vm->targetMachinePCForThrow);
+    exec->convertToStackOverflowFrame(*vm);
+    lookupExceptionHandler(vm, exec);
 }
 
 void JIT_OPERATION operationVMHandleException(ExecState* exec)

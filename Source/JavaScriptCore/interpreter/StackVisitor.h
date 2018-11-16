@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CalleeBits.h"
-#include "VMEntryRecord.h"
 #include "WasmIndexOrName.h"
 #include <wtf/Function.h>
 #include <wtf/Indenter.h>
@@ -35,6 +34,7 @@
 namespace JSC {
 
 struct CodeOrigin;
+struct EntryFrame;
 struct InlineCallFrame;
 
 class CodeBlock;
@@ -136,10 +136,17 @@ public:
     // StackVisitor::visit() expects a Functor that implements the following method:
     //     Status operator()(StackVisitor&) const;
 
-    template <typename Functor>
+    enum EmptyEntryFrameAction {
+        ContinueIfTopEntryFrameIsEmpty,
+        TerminateIfTopEntryFrameIsEmpty,
+    };
+
+    template <EmptyEntryFrameAction action = ContinueIfTopEntryFrameIsEmpty, typename Functor>
     static void visit(CallFrame* startFrame, VM* vm, const Functor& functor)
     {
         StackVisitor visitor(startFrame, vm);
+        if (action == TerminateIfTopEntryFrameIsEmpty && visitor.topEntryFrameIsEmpty())
+            return;
         while (visitor->callFrame()) {
             Status status = functor(visitor);
             if (status != Continue)
@@ -151,6 +158,8 @@ public:
     Frame& operator*() { return m_frame; }
     ALWAYS_INLINE Frame* operator->() { return &m_frame; }
     void unwindToMachineCodeBlockFrame();
+
+    bool topEntryFrameIsEmpty() const { return m_topEntryFrameIsEmpty; }
 
 private:
     JS_EXPORT_PRIVATE StackVisitor(CallFrame* startFrame, VM*);
@@ -164,6 +173,7 @@ private:
 #endif
 
     Frame m_frame;
+    bool m_topEntryFrameIsEmpty { false };
 };
 
 class CallerFunctor {

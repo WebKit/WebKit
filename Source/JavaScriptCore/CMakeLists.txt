@@ -611,7 +611,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     interpreter/AbstractPC.h
     interpreter/CallFrame.h
+    interpreter/CallFrameInlines.h
     interpreter/CalleeBits.h
+    interpreter/EntryFrame.h
     interpreter/FrameTracers.h
     interpreter/Register.h
     interpreter/ShadowChicken.h

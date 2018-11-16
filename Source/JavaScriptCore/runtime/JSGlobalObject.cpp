@@ -416,6 +416,9 @@ void JSGlobalObject::init(VM& vm)
     ExecState::initGlobalExec(JSGlobalObject::globalExec(), globalCallee);
     ExecState* exec = JSGlobalObject::globalExec();
 
+    JSCallee* stackOverflowFrameCallee = JSCallee::create(vm, this, globalScope());
+    m_stackOverflowFrameCallee.set(vm, this, stackOverflowFrameCallee);
+
     m_hostFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
 
     auto initFunctionStructures = [&] (FunctionStructures& structures) {
@@ -1537,6 +1540,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_globalLexicalEnvironment);
     visitor.append(thisObject->m_globalScopeExtension);
     visitor.append(thisObject->m_globalCallee);
+    visitor.append(thisObject->m_stackOverflowFrameCallee);
     visitor.append(thisObject->m_regExpConstructor);
     visitor.append(thisObject->m_errorConstructor);
     visitor.append(thisObject->m_nativeErrorPrototypeStructure);
