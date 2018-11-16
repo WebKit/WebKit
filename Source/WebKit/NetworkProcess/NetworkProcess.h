@@ -190,14 +190,12 @@ public:
 #if ENABLE(INDEXED_DATABASE)
     WebCore::IDBServer::IDBServer& idbServer(PAL::SessionID);
     // WebCore::IDBServer::IDBBackingStoreFileHandler.
-    void prepareForAccessToTemporaryFile(const String& path) final;
     void accessToTemporaryFileComplete(const String& path) final;
     void setIDBPerOriginQuota(uint64_t);
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);
-    void updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray&);
 #endif
 
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
@@ -401,8 +399,6 @@ private:
     uint64_t m_idbPerOriginQuota;
 #endif
 
-    HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    
     Deque<CrossThreadTask> m_storageTasks;
     Lock m_storageTaskMutex;
     

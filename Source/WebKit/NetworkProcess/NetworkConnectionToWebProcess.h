@@ -164,7 +164,6 @@ private:
     void registerFileBlobURL(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, const String& contentType);
     void registerBlobURL(const WebCore::URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
     void registerBlobURLFromURL(const WebCore::URL&, const WebCore::URL& srcURL, bool shouldBypassConnectionCheck);
-    void preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& fileBackedPath, SandboxExtension::HandleArray&&);
     void registerBlobURLOptionallyFileBacked(const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void blobSize(const WebCore::URL&, uint64_t& resultSize);

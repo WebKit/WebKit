@@ -1,3 +1,23 @@
+2018-11-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Storing blobs in IDB on iOS: "Error preparing blob/file"
+        https://bugs.webkit.org/show_bug.cgi?id=188438
+        <rdar://problem/43097279>
+
+        Reviewed by Alex Christensen.
+
+        Grant sandbox extension of temp folder to network process, because we suggested network process had access to 
+        the folder on iOS device but it didn't. 
+
+        This makes some existing tests about IDB blob pass on iOS device.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::moveBlobFilesIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBTransaction::deleteBlobFilesIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBTransaction::abort):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2018-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         Add USE(LIBWPE) to WebCore

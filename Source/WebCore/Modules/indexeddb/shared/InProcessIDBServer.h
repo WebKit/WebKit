@@ -112,7 +112,6 @@ public:
     void ref() override { RefCounted<InProcessIDBServer>::ref(); }
     void deref() override { RefCounted<InProcessIDBServer>::deref(); }
 
-    void prepareForAccessToTemporaryFile(const String&) override { }
     void accessToTemporaryFileComplete(const String& path) override;
 
 private:

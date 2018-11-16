@@ -157,13 +157,7 @@ template<class MessageType> void WebIDBConnectionToClient::handleGetResult(const
         return;
     }
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-    NetworkProcess::singleton().getSandboxExtensionsForBlobFiles(blobFilePaths, [protectedThis = makeRef(*this), this, resultData](SandboxExtension::HandleArray&& handles) {
-        send(MessageType({ resultData, WTFMove(handles) }));
-    });
-#else
     send(MessageType(resultData));
-#endif
 }
 
 void WebIDBConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)

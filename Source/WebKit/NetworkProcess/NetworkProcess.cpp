@@ -1147,21 +1147,12 @@ void NetworkProcess::performNextStorageTask()
     task.performTask();
 }
 
-void NetworkProcess::prepareForAccessToTemporaryFile(const String& path)
-{
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.get(path))
-        extension->consume();
-}
-
 void NetworkProcess::accessToTemporaryFileComplete(const String& path)
 {
     // We've either hard linked the temporary blob file to the database directory, copied it there,
     // or the transaction is being aborted.
     // In any of those cases, we can delete the temporary blob file now.
     FileSystem::deleteFile(path);
-    
-    if (auto extension = m_blobTemporaryFileSandboxExtensions.take(path))
-        extension->revoke();
 }
 
 HashSet<WebCore::SecurityOriginData> NetworkProcess::indexedDatabaseOrigins(const String& path)
@@ -1211,14 +1202,6 @@ void NetworkProcess::setIDBPerOriginQuota(uint64_t quota)
 void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&& completionHandler)
 {
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetSandboxExtensionsForBlobFiles(filenames), WTFMove(completionHandler));
-}
-
-void NetworkProcess::updateTemporaryFileSandboxExtensions(const Vector<String>& paths, SandboxExtension::HandleArray& handles)
-{
-    for (size_t i = 0; i < handles.size(); ++i) {
-        auto result = m_blobTemporaryFileSandboxExtensions.add(paths[i], SandboxExtension::create(WTFMove(handles[i])));
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
 }
 #endif // ENABLE(SANDBOX_EXTENSIONS)
 

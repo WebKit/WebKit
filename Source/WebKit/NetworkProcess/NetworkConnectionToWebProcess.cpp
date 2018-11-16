@@ -507,25 +507,6 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
     NetworkBlobRegistry::singleton().registerBlobURL(this, url, srcURL, shouldBypassConnectionCheck);
 }
 
-void NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& filePaths, SandboxExtension::HandleArray&& handles)
-{
-#if ENABLE(SANDBOX_EXTENSIONS)
-    ASSERT(filePaths.size() == handles.size());
-
-    for (size_t i = 0; i < filePaths.size(); ++i)
-        m_blobDataFileReferences.add(filePaths[i], BlobDataFileReferenceWithSandboxExtension::create(filePaths[i], SandboxExtension::create(WTFMove(handles[i]))));
-#else
-    for (size_t i = 0; i < filePaths.size(); ++i)
-        m_blobDataFileReferences.add(filePaths[i], BlobDataFileReferenceWithSandboxExtension::create(filePaths[i], nullptr));
-#endif
-}
-
-RefPtr<WebCore::BlobDataFileReference> NetworkConnectionToWebProcess::getBlobDataFileReferenceForPath(const String& path)
-{
-    ASSERT(m_blobDataFileReferences.contains(path));
-    return m_blobDataFileReferences.get(path);
-}
-
 void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
     NetworkBlobRegistry::singleton().registerBlobURLOptionallyFileBacked(this, url, srcURL, fileBackedPath, contentType);
@@ -558,13 +539,6 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
     NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protectedThis = makeRef(*this), requestIdentifier, fileReferences = WTFMove(fileReferences)](auto& fileNames) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-        NetworkProcess::singleton().getSandboxExtensionsForBlobFiles(fileNames, [protectedThis = WTFMove(protectedThis), fileNames](SandboxExtension::HandleArray&& handles) {
-            ASSERT(fileNames.size() == handles.size());
-            NetworkProcess::singleton().updateTemporaryFileSandboxExtensions(fileNames, handles);
-        });
-#endif
 
         m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
     });

@@ -59,6 +59,9 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
     encoder << parentBundleDirectoryExtensionHandle;
+#if ENABLE(INDEXED_DATABASE)
+    encoder << indexedDatabaseTempBlobDirectoryExtensionHandle;
+#endif
 #endif
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << shouldUseTestingNetworkSession;
@@ -168,6 +171,14 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!parentBundleDirectoryExtensionHandle)
         return false;
     result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
+
+#if ENABLE(INDEXED_DATABASE)
+    std::optional<SandboxExtension::Handle> indexedDatabaseTempBlobDirectoryExtensionHandle;
+    decoder >> indexedDatabaseTempBlobDirectoryExtensionHandle;
+    if (!indexedDatabaseTempBlobDirectoryExtensionHandle)
+        return false;
+    result.indexedDatabaseTempBlobDirectoryExtensionHandle = WTFMove(*indexedDatabaseTempBlobDirectoryExtensionHandle);
+#endif
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;

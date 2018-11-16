@@ -70,6 +70,9 @@ struct NetworkProcessCreationParameters {
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
+#if ENABLE(INDEXED_DATABASE)
+    SandboxExtension::Handle indexedDatabaseTempBlobDirectoryExtensionHandle;
+#endif
 #endif
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseTestingNetworkSession { false };

@@ -279,34 +279,13 @@ void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData& result)
     m_connectionToServer->didPutOrAdd(result);
 }
 
-static void preregisterSandboxExtensionsIfNecessary(const WebIDBResult& result)
-{
-    auto resultType = result.resultData().type();
-    if (resultType != IDBResultType::GetRecordSuccess && resultType != IDBResultType::OpenCursorSuccess && resultType != IDBResultType::IterateCursorSuccess && resultType != IDBResultType::GetAllRecordsSuccess) {
-        ASSERT(resultType == IDBResultType::Error);
-        return;
-    }
-
-    const auto filePaths = resultType == IDBResultType::GetAllRecordsSuccess ? result.resultData().getAllResult().allBlobFilePaths() : result.resultData().getResult().value().blobFilePaths();
-
-#if ENABLE(SANDBOX_EXTENSIONS)
-    ASSERT(filePaths.size() == result.handles().size());
-#endif
-
-    if (!filePaths.isEmpty())
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PreregisterSandboxExtensionsForOptionallyFileBackedBlob(filePaths, result.handles()), 0);
-}
-
 void WebIDBConnectionToServer::didGetRecord(const WebIDBResult& result)
 {
-    preregisterSandboxExtensionsIfNecessary(result);
     m_connectionToServer->didGetRecord(result.resultData());
 }
 
 void WebIDBConnectionToServer::didGetAllRecords(const WebIDBResult& result)
 {
-    if (result.resultData().getAllResult().type() == IndexedDB::GetAllType::Values)
-        preregisterSandboxExtensionsIfNecessary(result);
     m_connectionToServer->didGetAllRecords(result.resultData());
 }
 
@@ -322,13 +301,11 @@ void WebIDBConnectionToServer::didDeleteRecord(const IDBResultData& result)
 
 void WebIDBConnectionToServer::didOpenCursor(const WebIDBResult& result)
 {
-    preregisterSandboxExtensionsIfNecessary(result);
     m_connectionToServer->didOpenCursor(result.resultData());
 }
 
 void WebIDBConnectionToServer::didIterateCursor(const WebIDBResult& result)
 {
-    preregisterSandboxExtensionsIfNecessary(result);
     m_connectionToServer->didIterateCursor(result.resultData());
 }
 

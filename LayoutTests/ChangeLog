@@ -1,3 +1,15 @@
+2018-11-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Storing blobs in IDB on iOS: "Error preparing blob/file"
+        https://bugs.webkit.org/show_bug.cgi?id=188438
+        <rdar://problem/43097279>
+
+        Reviewed by Alex Christensen.
+
+        Three IDB blob tests are passing on iOS device now.
+
+        * platform/ios-device/TestExpectations:
+
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] 2 subsequent taps are required to trigger certain tasks on the desktop version of YouTube.com

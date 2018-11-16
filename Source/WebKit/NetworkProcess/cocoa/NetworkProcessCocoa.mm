@@ -78,6 +78,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
+#if ENABLE(INDEXED_DATABASE)
+    SandboxExtension::consumePermanently(parameters.indexedDatabaseTempBlobDirectoryExtensionHandle);
+#endif
 #endif
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 

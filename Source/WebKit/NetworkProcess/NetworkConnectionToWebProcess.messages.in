@@ -44,7 +44,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterFileBlobURL(WebCore::URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
     RegisterBlobURL(WebCore::URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
     RegisterBlobURLFromURL(WebCore::URL url, WebCore::URL srcURL, bool shouldBypassConnectionCheck)
-    PreregisterSandboxExtensionsForOptionallyFileBackedBlob(Vector<String> filePaths, WebKit::SandboxExtension::HandleArray extensionHandles)
     RegisterBlobURLOptionallyFileBacked(WebCore::URL url, WebCore::URL srcURL, String fileBackedPath, String contentType)
     RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(WebCore::URL url)

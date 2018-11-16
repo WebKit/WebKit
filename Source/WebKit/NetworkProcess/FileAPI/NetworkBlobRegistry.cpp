@@ -88,10 +88,7 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
 
 void NetworkBlobRegistry::registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess* connection, const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
-    auto fileReference = connection->getBlobDataFileReferenceForPath(fileBackedPath);
-    ASSERT(fileReference);
-
-    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, WTFMove(fileReference), contentType);
+    blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath, nullptr), contentType);
 
     ASSERT(!m_blobsForConnection.get(connection).contains(url));
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);

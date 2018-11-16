@@ -511,6 +511,10 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
+
+#if ENABLE(INDEXED_DATABASE)
+    SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite, parameters.indexedDatabaseTempBlobDirectoryExtensionHandle);
+#endif
 #endif
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;

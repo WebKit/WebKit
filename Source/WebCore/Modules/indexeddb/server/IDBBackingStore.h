@@ -59,7 +59,6 @@ namespace IDBServer {
 class IDBBackingStoreTemporaryFileHandler {
 public:
     virtual ~IDBBackingStoreTemporaryFileHandler() = default;
-    virtual void prepareForAccessToTemporaryFile(const String& path) = 0;
     virtual void accessToTemporaryFileComplete(const String& path) = 0;
 };
 
