@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,6 +67,9 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
 {
     "use strict";
 
+    if (!@isRegExpObject(regexp))
+        return true;
+
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)
@@ -79,7 +82,7 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
 
-    return !@isRegExpObject(regexp);
+    return typeof regexp.lastIndex !== "number";
 }
 
 @globalPrivate
@@ -315,7 +318,9 @@ function search(strArg)
     let regexp = this;
 
     // Check for observable side effects and call the fast path if there aren't any.
-    if (@isRegExpObject(regexp) && @tryGetById(regexp, "exec") === @regExpBuiltinExec)
+    if (@isRegExpObject(regexp)
+        && @tryGetById(regexp, "exec") === @regExpBuiltinExec
+        && typeof regexp.lastIndex === "number")
         return @regExpSearchFast.@call(regexp, strArg);
 
     // 1. Let rx be the this value.
@@ -358,6 +363,9 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
 {
     "use strict";
 
+    if (!@isRegExpObject(regexp))
+        return true;
+
     // This is accessed by the RegExpExec internal function.
     let regexpExec = @tryGetById(regexp, "exec");
     if (regexpExec !== @regExpBuiltinExec)
@@ -389,8 +397,8 @@ function hasObservableSideEffectsForRegExpSplit(regexp)
     let regexpSource = @tryGetById(regexp, "source");
     if (regexpSource !== @regExpProtoSourceGetter)
         return true;
-    
-    return !@isRegExpObject(regexp);
+
+    return typeof regexp.lastIndex !== "number";
 }
 
 // ES 21.2.5.11 RegExp.prototype[@@split](string, limit)
@@ -536,7 +544,9 @@ function test(strArg)
     let regexp = this;
 
     // Check for observable side effects and call the fast path if there aren't any.
-    if (@isRegExpObject(regexp) && @tryGetById(regexp, "exec") === @regExpBuiltinExec)
+    if (@isRegExpObject(regexp)
+        && @tryGetById(regexp, "exec") === @regExpBuiltinExec
+        && typeof regexp.lastIndex === "number")
         return @regExpTestFast.@call(regexp, strArg);
 
     // 1. Let R be the this value.
