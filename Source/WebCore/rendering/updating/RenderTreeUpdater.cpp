@@ -679,10 +679,20 @@ CheckForVisibilityChange::~CheckForVisibilityChange()
 {
     if (!WKObservingContentChanges())
         return;
-    if (m_element.isInUserAgentShadowTree())
-        return;
+
     auto* style = m_element.renderStyle();
-    if (!style)
+
+    auto qualifiesForVisibilityCheck = [&] {
+        if (!style)
+            return false;
+        if (m_element.isInUserAgentShadowTree())
+            return false;
+        if (!const_cast<Element&>(m_element).willRespondToMouseClickEvents())
+            return false;
+        return true;
+    };
+
+    if (!qualifiesForVisibilityCheck())
         return;
     if ((m_previousDisplay == DisplayType::None && style->display() != DisplayType::None) || (m_previousVisibility == Visibility::Hidden && style->visibility() != Visibility::Hidden)
         || (m_previousImplicitVisibility == Visibility::Hidden && elementImplicitVisibility(m_element) == Visibility::Visible))

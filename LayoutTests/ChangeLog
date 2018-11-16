@@ -1,5 +1,16 @@
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
+        [iOS] 2 subsequent taps are required to trigger certain tasks on the desktop version of YouTube.com
+        https://bugs.webkit.org/show_bug.cgi?id=191712
+        <rdar://problem/45612900>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/click-instead-of-hover-simple-expected.txt: Added.
+        * fast/events/touch/ios/click-instead-of-hover-simple.html: Added.
+
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for out-of-flow positioned boxes
         https://bugs.webkit.org/show_bug.cgi?id=191726
 

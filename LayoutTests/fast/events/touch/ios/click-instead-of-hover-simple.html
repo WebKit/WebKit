@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>This test that we trigger click when hover would not display non-clickable content.</title>
+<script src="../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+	await tapAtPoint(x, y);
+
+    testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if clicked.</div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mouseover", function( event ) {   
+	let newContent = document.createElement("div");
+	newContent.innerHTML = "tooltip";
+	document.body.appendChild(newContent);		
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+	result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

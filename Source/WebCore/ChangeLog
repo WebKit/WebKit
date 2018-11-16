@@ -1,5 +1,24 @@
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
+        [iOS] 2 subsequent taps are required to trigger certain tasks on the desktop version of YouTube.com (hover vs click).
+        https://bugs.webkit.org/show_bug.cgi?id=191712
+        <rdar://problem/45612900>
+
+        Reviewed by Simon Fraser.
+
+        In handleSyntheticClick() we use WKContentObservation to figure out whether the tap should be treated as a hover or a click.
+        In general, if the mouse-move event triggers a visible content change, we assume we hit a hover-like drop down menu (or something similar)
+        and no need to dispatch a click event.
+        The idea here is that if the new content (result of the mouse-move event) does not respond to mouse click, it is most likely
+        only for tooltip-like reasons and it's ok to proceed with the click event.
+
+        Test: fast/events/touch/ios/click-instead-of-hover-simple.html
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::CheckForVisibilityChange::~CheckForVisibilityChange):
+
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Add support for out-of-flow positioned boxes
         https://bugs.webkit.org/show_bug.cgi?id=191726
 
