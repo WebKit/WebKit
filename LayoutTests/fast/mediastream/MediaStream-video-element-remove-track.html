@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            var video;
+            var mediaStream;
+
+            function logEvent(element, eventName, func)
+            {
+                function _eventCallback(evt)
+                {
+                    if (window.wasFinishJSTestCalled)
+                        return;
+
+                    debug(`Event <em>'${evt.type}'</em>`);
+                    if (func)
+                        func(evt);
+                }
+                element.addEventListener(eventName, _eventCallback, true);
+            }
+
+            function checkVideoElement()
+            {
+                evalAndLog("video.pause()");
+
+                debug("<br>**** check video element ****");
+                debug("<br>**** check video tracks ****");
+                shouldBe('video.videoTracks.length', '1');
+                shouldBe('video.videoTracks[0].id', 'mediaStream.getVideoTracks()[0].id');
+
+                debug("<br>**** check audio tracks ****");
+                shouldBe('video.audioTracks.length', '1');
+                shouldBe('video.audioTracks[0].id', 'mediaStream.getAudioTracks()[0].id');
+
+                setTimeout(removeAudioTrack, 100);
+            }
+
+            function checkVideoElement2()
+            {
+                debug("<br>**** check video element ****");
+                shouldBe('video.videoWidth', 'mediaStream.getVideoTracks()[0].getSettings().width');
+                shouldBe('video.videoHeight', 'mediaStream.getVideoTracks()[0].getSettings().height');
+
+                debug("<br>**** check video tracks ****");
+                shouldBe('video.videoTracks.length', '1');
+                shouldBe('video.videoTracks[0].id', 'mediaStream.getVideoTracks()[0].id');
+                shouldBeEqualToString('video.videoTracks[0].language', '');
+                shouldBeEqualToString('video.videoTracks[0].kind', 'main');
+
+                debug("<br>**** check no audio track ****");
+                shouldBe('video.audioTracks.length', '0');
+                shouldBe('mediaStream.getAudioTracks().length', '0');
+
+                finishJSTest();
+            }
+
+            function canplay()
+            {
+                debug("<br>*** start playback ****");
+                evalAndLog("video.play()");
+                setTimeout(checkVideoElement, 100);
+            }
+
+            function removeAudioTrack() {
+                track = mediaStream.getAudioTracks()[0];
+                debug("<br>**** removing audio track ****");
+                try {
+                    mediaStream.removeTrack(track);
+                } catch (exception) {
+                    testFailed("removeTrack threw an exception.");
+                    finishJSTest();
+                }
+                setTimeout(checkVideoElement2, 100);
+            }
+
+            function setupStream(stream)
+            {
+                mediaStream = stream;
+                testPassed('mediaDevices.getUserMedia succeeded.');
+
+                debug("<br>**** setup video element ****");
+                evalAndLog("video.srcObject = mediaStream");
+            }
+
+            function start()
+            {
+                description("Tests checking removing MediaStream track applies to the video element.");
+                video = document.querySelector('video');
+                logEvent(video, 'canplay', canplay)
+
+                debug("<br>**** calling mediaDevices.getUserMedia() ****");
+                if (window.testRunner)
+                    testRunner.setUserMediaPermission(true);
+                navigator.mediaDevices.getUserMedia( {video: true, audio: true} )
+                    .then(setupStream)
+                    .catch(function(reason) {
+                        debug(`Stream generation failed with error: ${reason}`);
+                    });
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <video controls  width="680" height="360"></video>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>
