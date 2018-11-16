@@ -125,9 +125,8 @@ void TreeBuilder::createSubTree(const RenderElement& rootRenderer, Container& ro
 
         if (box->isOutOfFlowPositioned()) {
             // Not efficient, but this is temporary anyway.
-            // Collect the out-of-flow descendants at the formatting root lever (as opposed to at the containing block level, though they might be the same).
-            auto& containingBlockFormattingContextRoot = box->containingBlock()->formattingContextRoot();
-            const_cast<Container&>(containingBlockFormattingContextRoot).addOutOfFlowDescendant(*box);
+            // Collect the out-of-flow descendants at the formatting root level (as opposed to at the containing block level, though they might be the same).
+            const_cast<Container&>(box->formattingContextRoot()).addOutOfFlowDescendant(*box);
         }
         if (is<Container>(*box))
             createSubTree(downcast<RenderElement>(child), downcast<Container>(*box));

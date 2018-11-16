@@ -1,3 +1,14 @@
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for out-of-flow positioned boxes
+        https://bugs.webkit.org/show_bug.cgi?id=191726
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-inline-with-out-of-flow-descendant-expected.txt: Added.
+        * fast/inline/simple-inline-with-out-of-flow-descendant.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-11-16  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][MediaStream] Handle track addition and removal

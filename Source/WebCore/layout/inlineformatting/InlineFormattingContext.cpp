@@ -383,18 +383,19 @@ void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     displayBox.setVerticalMargin(heightAndMargin.collapsedMargin.value_or(heightAndMargin.margin));
 }
 
-void InlineFormattingContext::layoutFormattingContextRoot(const Box& layoutBox) const
+void InlineFormattingContext::layoutFormattingContextRoot(const Box& root) const
 {
-    ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInlineBlockBox());
+    ASSERT(root.isFloatingPositioned() || root.isInlineBlockBox());
 
-    auto& layoutState = this->layoutState();
-    auto& formattingState = layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox);
-    computeBorderAndPadding(layoutBox);
-    computeWidthAndMargin(layoutBox);
+    computeBorderAndPadding(root);
+    computeWidthAndMargin(root);
     // Swich over to the new formatting context (the one that the root creates).
-    formattingState.formattingContext(layoutBox)->layout();
+    auto formattingContext = layoutState().createFormattingStateForFormattingRootIfNeeded(root).formattingContext(root);
+    formattingContext->layout();
     // Come back and finalize the root's height and margin.
-    computeHeightAndMargin(layoutBox);
+    computeHeightAndMargin(root);
+    // Now that we computed the root's height, we can go back and layout the out-of-flow descedants (if any).
+    formattingContext->layoutOutOfFlowDescendants(root);
 }
 
 void InlineFormattingContext::computeWidthAndHeightForReplacedInlineBox(const Box& layoutBox) const
