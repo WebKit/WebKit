@@ -79,6 +79,7 @@ enum LSSessionID {
 
 typedef const struct CF_BRIDGED_TYPE(id) __LSASN* LSASNRef;
 typedef enum LSSessionID LSSessionID;
+typedef struct ProcessSerialNumber ProcessSerialNumber;
 
 WTF_EXTERN_C_BEGIN
 
@@ -86,6 +87,9 @@ extern const CFStringRef _kLSDisplayNameKey;
 
 LSASNRef _LSGetCurrentApplicationASN();
 OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef keyToSetRef, CFTypeRef valueToSetRef, CFDictionaryRef* newInformationDictRef);
+CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
+
+OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
 
 WTF_EXTERN_C_END
 

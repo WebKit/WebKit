@@ -1,3 +1,18 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Regression: WebContent process's display name is no longer set
+        https://bugs.webkit.org/show_bug.cgi?id=191722
+        <rdar://problem/45960550>
+
+        Reviewed by Per Arne Vollan.
+
+        Make sure The WebContent process calls _RegisterApplication() during initialization and
+        *before* trying to set its display name. Setting the display name fails otherwise.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-11-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Enable process swap on cross-site navigation by default on iOS

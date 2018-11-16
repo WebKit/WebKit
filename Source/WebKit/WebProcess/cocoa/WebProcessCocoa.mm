@@ -223,7 +223,21 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
 #endif
     else
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+        // Note that it is important for _RegisterApplication() to have been called before setting the display name.
+        auto error = _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
+        ASSERT(!error);
+        if (error) {
+            RELEASE_LOG_ERROR(Process, "Failed to set the display name of the WebContent process, error code: %ld", static_cast<long>(error));
+            return;
+        }
+#if !ASSERT_DISABLED
+        // It is possible for _LSSetApplicationInformationItem() to return 0 and yet fail to set the display name so we make sure the display name has actually been set.
+        String actualApplicationName = adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
+        ASSERT(!actualApplicationName.isEmpty());
+#endif
+    });
 #endif
 }
 
@@ -336,7 +350,12 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     CGSShutdownServerConnections();
 
     SwitchingGPUClient::setSingleton(WebSwitchingGPUClient::singleton());
+
+    // This is necessary so that we are able to set the process' display name.
+    _RegisterApplication(nullptr, nullptr);
+
 #else
+
     if (![NSApp isRunning]) {
         // This call is needed when the WebProcess is not running the NSApplication event loop.
         // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
