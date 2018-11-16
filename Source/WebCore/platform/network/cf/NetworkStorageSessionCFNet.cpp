@@ -34,8 +34,6 @@
 #if PLATFORM(COCOA)
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
-#else
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 #if USE(CFURLCONNECTION)
 #include "Cookie.h"
@@ -133,6 +131,42 @@ static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
     return session;
 }
 
+#if !PLATFORM(COCOA)
+static CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession)
+{
+    const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
+    const void* sessionPropertyValues[] = { kCFBooleanTrue };
+    CFDictionaryRef sessionProperties = CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys, sessionPropertyValues, sizeof(sessionPropertyKeys) / sizeof(*sessionPropertyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFURLStorageSessionRef storageSession = _CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, sessionProperties);
+
+    // The private storage session should have the same properties as the default storage session,
+    // with the exception that it should be in-memory only storage.
+    CFURLCacheRef cache = _CFURLStorageSessionCopyCache(kCFAllocatorDefault, storageSession);
+    CFURLCacheSetDiskCapacity(cache, 0);
+    CFURLCacheRef defaultCache;
+    if (defaultStorageSession)
+        defaultCache = _CFURLStorageSessionCopyCache(kCFAllocatorDefault, defaultStorageSession);
+    else 
+        defaultCache = CFURLCacheCopySharedURLCache();
+    CFURLCacheSetMemoryCapacity(cache, CFURLCacheMemoryCapacity(defaultCache));
+    CFRelease(defaultCache);
+    CFRelease(cache);
+
+    CFHTTPCookieStorageRef cookieStorage = _CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession);
+    CFHTTPCookieStorageRef defaultCookieStorage;
+    if (defaultStorageSession)
+        defaultCookieStorage = _CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, defaultStorageSession);
+    else
+        defaultCookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage));
+    if (defaultStorageSession)
+        CFRelease(defaultCookieStorage);
+    CFRelease(cookieStorage);
+
+    return storageSession;
+}
+#endif
+
 void NetworkStorageSession::switchToNewTestingSession()
 {
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
@@ -142,7 +176,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 #if PLATFORM(COCOA)
     session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get()));
 #else
-    session = adoptCF(wkCreatePrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()));
+    session = adoptCF(createPrivateStorageSession(sessionName.createCFString().get(), defaultStorageSession().platformSession()));
 #endif
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
@@ -175,7 +209,7 @@ void NetworkStorageSession::ensureSession(PAL::SessionID sessionID, const String
 #if PLATFORM(COCOA)
         storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get()));
 #else
-        storageSession = adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()));
+        storageSession = adoptCF(createPrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()));
 #endif
     } else
         storageSession = createCFStorageSessionForIdentifier(cfIdentifier.get());

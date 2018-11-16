@@ -50,6 +50,20 @@
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <CFNetwork/CFURLStorageSession.h>
 
+#if PLATFORM(WIN)
+
+WTF_EXTERN_C_BEGIN
+
+CFN_EXPORT CFStringRef _CFNetworkErrorGetLocalizedDescription(CFIndex);
+
+extern const CFStringRef _kCFWindowsSSLLocalCert;
+extern const CFStringRef _kCFStreamPropertyWindowsSSLCertInfo;
+extern const CFStringRef _kCFWindowsSSLPeerCert;
+
+WTF_EXTERN_C_END
+
+#endif
+
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 #import <CFNetwork/CFNSURLConnection.h>

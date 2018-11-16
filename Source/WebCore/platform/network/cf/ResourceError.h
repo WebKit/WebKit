@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,8 @@ public:
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
+    static const void* getSSLPeerCertificateDataBytePtr(CFDictionaryRef);
+
 #endif
 
 #if PLATFORM(COCOA)

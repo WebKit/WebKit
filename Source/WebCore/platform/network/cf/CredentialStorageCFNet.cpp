@@ -31,7 +31,6 @@
 #include "AuthenticationCF.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 

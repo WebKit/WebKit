@@ -34,7 +34,7 @@
 #endif
 
 #if USE(CFURLCONNECTION)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 using namespace WebCore;
@@ -138,7 +138,7 @@ HRESULT WebError::localizedDescription(__deref_opt_out BSTR* result)
 #if USE(CFURLCONNECTION)
     if (!*result) {
         if (int code = m_error.errorCode())
-            *result = BString(wkCFNetworkErrorGetLocalizedDescription(code)).release();
+            *result = BString(_CFNetworkErrorGetLocalizedDescription(code)).release();
     }
 #endif
 
@@ -229,10 +229,10 @@ HRESULT WebError::sslPeerCertificate(_Out_ ULONG_PTR* result)
     if (!m_cfErrorUserInfoDict)
         return E_FAIL;
 
-    void* data = wkGetSSLPeerCertificateDataBytePtr(m_cfErrorUserInfoDict.get());
+    const void* data = ResourceError::getSSLPeerCertificateDataBytePtr(m_cfErrorUserInfoDict.get());
     if (!data)
         return E_FAIL;
-    *result = reinterpret_cast<ULONG_PTR>(data);
+    *result = reinterpret_cast<ULONG_PTR>(const_cast<void*>(data));
 #endif
     return *result ? S_OK : E_FAIL;
 }

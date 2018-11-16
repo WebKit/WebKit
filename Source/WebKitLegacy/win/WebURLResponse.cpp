@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,12 +36,13 @@
 #endif
 
 #if USE(CFURLCONNECTION)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 #include <WebCore/BString.h>
 #include <WebCore/URL.h>
 #include <WebCore/LocalizedStrings.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -410,10 +411,10 @@ HRESULT WebURLResponse::sslPeerCertificate(_Out_ ULONG_PTR* result)
     CFDictionaryRef dict = certificateDictionary();
     if (!dict)
         return E_FAIL;
-    void* data = wkGetSSLPeerCertificateDataBytePtr(dict);
+    const void* data = ResourceError::getSSLPeerCertificateDataBytePtr(dict);
     if (!data)
         return E_FAIL;
-    *result = reinterpret_cast<ULONG_PTR>(data);
+    *result = reinterpret_cast<ULONG_PTR>(const_cast<void*>(data));
 #endif
 
     return *result ? S_OK : E_FAIL;
@@ -484,7 +485,7 @@ CFDictionaryRef WebURLResponse::certificateDictionary() const
     CFURLResponseRef cfResponse = m_response.cfURLResponse();
     if (!cfResponse)
         return nullptr;
-    m_SSLCertificateInfo = wkGetSSLCertificateInfo(cfResponse);
+    m_SSLCertificateInfo = _CFURLResponseGetSSLCertificateContext(cfResponse);
     return m_SSLCertificateInfo.get();
 }
 #endif

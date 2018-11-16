@@ -43,7 +43,6 @@
 #include <wtf/win/GDIObject.h>
 
 #if USE(CG)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #endif
 

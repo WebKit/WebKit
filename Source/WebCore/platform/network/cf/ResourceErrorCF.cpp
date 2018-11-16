@@ -31,7 +31,7 @@
 #include "URL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -67,6 +67,30 @@ void ResourceError::setCertificate(CFDataRef certificate)
 
 const CFStringRef failingURLStringKey = CFSTR("NSErrorFailingURLStringKey");
 const CFStringRef failingURLKey = CFSTR("NSErrorFailingURLKey");
+
+static CFDataRef getSSLPeerCertificateData(CFDictionaryRef dict)
+{
+    if (!dict)
+        return nullptr;
+    return reinterpret_cast<CFDataRef>(CFDictionaryGetValue(dict, _kCFWindowsSSLPeerCert));
+}
+
+static void setSSLPeerCertificateData(CFMutableDictionaryRef dict, CFDataRef data)
+{
+    if (!dict)
+        return;
+    
+    if (!data)
+        CFDictionaryRemoveValue(dict, _kCFWindowsSSLPeerCert);
+    else
+        CFDictionarySetValue(dict, _kCFWindowsSSLPeerCert, data);
+}
+
+const void* ResourceError::getSSLPeerCertificateDataBytePtr(CFDictionaryRef dict)
+{
+    CFDataRef data = getSSLPeerCertificateData(dict);
+    return data ? reinterpret_cast<const void*>(CFDataGetBytePtr(data)) : nullptr;
+}
 
 void ResourceError::platformLazyInit()
 {
@@ -106,7 +130,7 @@ void ResourceError::platformLazyInit()
         }
         m_localizedDescription = (CFStringRef) CFDictionaryGetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey);
         
-        m_certificate = wkGetSSLPeerCertificateData(userInfo.get());
+        m_certificate = getSSLPeerCertificateData(userInfo.get());
     }
 
     m_dataIsUpToDate = true;
@@ -144,7 +168,7 @@ CFErrorRef ResourceError::cfError() const
         }
 
         if (m_certificate)
-            wkSetSSLPeerCertificateData(userInfo.get(), m_certificate.get());
+            setSSLPeerCertificateData(userInfo.get(), m_certificate.get());
         
         m_platformError = adoptCF(CFErrorCreate(0, m_domain.createCFString().get(), m_errorCode, userInfo.get()));
     }

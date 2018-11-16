@@ -29,7 +29,7 @@
 #include "LoaderRunLoopCF.h"
 #include "NetworkStorageSession.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>

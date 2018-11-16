@@ -50,7 +50,7 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

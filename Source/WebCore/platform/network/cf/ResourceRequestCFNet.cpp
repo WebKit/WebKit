@@ -46,10 +46,6 @@
 #include <dlfcn.h>
 #endif
 
-#if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
 WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
 
 namespace WebCore {

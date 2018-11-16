@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,7 +57,6 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <process.h>
 
 // FIXME: Remove this declaration once it's in WebKitSupportLibrary.
@@ -117,6 +116,20 @@ static inline CFStringRef shouldSniffConnectionProperty()
     return _kCFURLConnectionPropertyShouldSniff;
 #endif
 }
+
+#if PLATFORM(WIN)
+static void setClientCertificateInSSLProperties(CFMutableDictionaryRef sslProps, CFDataRef certData)
+{
+    if (!sslProps || !certData)
+        return;
+    CFMutableDictionaryRef certDict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    if (!certDict)
+        return;
+    CFDictionarySetValue(certDict, _kCFWindowsSSLLocalCert, certData);
+    CFDictionarySetValue(sslProps, _kCFStreamPropertyWindowsSSLCertInfo, certDict);
+    CFRelease(certDict);
+}
+#endif
 
 void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff, bool shouldContentEncodingSniff, MessageQueue<Function<void()>>* messageQueue, CFDictionaryRef clientProperties)
 {
@@ -186,7 +199,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         if (!sslProps)
             sslProps = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 #if PLATFORM(WIN)
-        wkSetClientCertificateInSSLProperties(sslProps.get(), (clientCert->value).get());
+        setClientCertificateInSSLProperties(sslProps.get(), (clientCert->value).get());
 #endif
     }
 #endif // PLATFORM(IOS_FAMILY)

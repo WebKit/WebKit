@@ -36,7 +36,7 @@
 
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 using namespace WebCore;

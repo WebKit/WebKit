@@ -1,3 +1,17 @@
+2018-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reduce the use of WKSI library calls: CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=191718
+        <rdar://problem/46108732>
+
+        Reviewed by Alex Christensen.
+
+        Add necessary declarations for CFNetwork SPI needed by the Apple Windows build.
+
+        * pal/PlatformAppleWin.cmake:
+        * pal/spi/cf/CFNetworkSPI.h:
+        * pal/spi/cf/CFNetworkSPIWin.cpp: Added.
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Regression: WebContent process's display name is no longer set

@@ -37,7 +37,7 @@
 #include <WebCore/CurlCacheManager.h>
 #elif USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 using namespace WebCore;
@@ -249,7 +249,8 @@ HRESULT WebCache::cacheFolder(__deref_out_opt BSTR* location)
     *location = WebCore::BString(cacheFolder).release();
     return S_OK;
 #elif USE(CFURLCONNECTION)
-    RetainPtr<CFStringRef> cfurlCacheDirectory = adoptCF(wkCopyFoundationCacheDirectory(0));
+    RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
+    RetainPtr<CFStringRef> cfurlCacheDirectory = adoptCF(_CFURLCacheCopyCacheDirectory(cache.get()));
     *location = BString(cfurlCacheDirectory.get()).release();
     return S_OK;
 #else

@@ -27,7 +27,7 @@
 #if USE(CG)
 
 #include "SharedGDIObject.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

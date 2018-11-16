@@ -31,7 +31,6 @@
 #include "FormDataStreamCFNet.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 
 namespace WebCore {

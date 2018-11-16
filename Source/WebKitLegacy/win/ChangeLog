@@ -1,3 +1,27 @@
+2018-11-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reduce the use of WKSI library calls: CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=191718
+        <rdar://problem/46108732>
+
+        Reviewed by Alex Christensen.
+
+        Remove custom WKSI CFNetwork calls, since the SPI is already documented in PAL. Just
+        make the same calls on Windows, like we did for iOS and macOS back in 2017.
+
+        * WebCache.cpp:
+        (WebCache::cacheFolder):
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebError.cpp:
+        (WebError::localizedDescription):
+        (WebError::sslPeerCertificate):
+        * WebURLResponse.cpp:
+        (WebURLResponse::sslPeerCertificate):
+        (WebURLResponse::certificateDictionary const):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2018-11-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: Font Handling
