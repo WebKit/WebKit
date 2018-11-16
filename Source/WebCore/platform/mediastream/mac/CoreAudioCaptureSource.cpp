@@ -941,6 +941,7 @@ void CoreAudioCaptureSource::beginInterruption()
     scheduleDeferredTask([this, &unit] {
         m_suspendType = unit.isProducingData() ? SuspensionType::WhilePlaying : SuspensionType::WhilePaused;
         unit.suspend();
+        notifyMutedChange(true);
         m_suspendPending = false;
     });
 }
@@ -961,8 +962,10 @@ void CoreAudioCaptureSource::endInterruption()
     scheduleDeferredTask([this, type, &unit] {
         if (m_reconfigurationState == ReconfigurationState::Required)
             unit.reconfigureAudioUnit();
-        if (type == SuspensionType::WhilePlaying)
+        if (type == SuspensionType::WhilePlaying) {
             unit.resume();
+            notifyMutedChange(false);
+        }
         m_reconfigurationState = ReconfigurationState::None;
         m_resumePending = false;
     });
