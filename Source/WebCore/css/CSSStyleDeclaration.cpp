@@ -241,12 +241,9 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomicString& proper
 
     auto* hashTableEntry = findProperty(name, outputLength);
     if (auto propertyID = hashTableEntry ? hashTableEntry->id : 0) {
-        auto id = static_cast<CSSPropertyID>(propertyID);
-        if (isEnabledCSSProperty(id)) {
-            propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
-            propertyInfo.propertyID = id;
-            propertyInfoCache.get().add(propertyNameString, propertyInfo);
-        }
+        propertyInfo.hadPixelOrPosPrefix = hadPixelOrPosPrefix;
+        propertyInfo.propertyID = static_cast<CSSPropertyID>(propertyID);
+        propertyInfoCache.get().add(propertyNameString, propertyInfo);
     }
     return propertyInfo;
 }
@@ -311,25 +308,21 @@ ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomicString& property
 
 Vector<AtomicString> CSSStyleDeclaration::supportedPropertyNames() const
 {
-    static unsigned numNames = 0;
     static const AtomicString* const cssPropertyNames = [] {
         String names[numCSSProperties];
-        for (int i = 0; i < numCSSProperties; ++i) {
-            CSSPropertyID id = static_cast<CSSPropertyID>(firstCSSProperty + i);
-            if (isEnabledCSSProperty(id))
-                names[numNames++] = getJSPropertyName(id);
-        }
-        std::sort(&names[0], &names[numNames], WTF::codePointCompareLessThan);
-        auto* identifiers = new AtomicString[numNames];
-        for (unsigned i = 0; i < numNames; ++i)
+        for (int i = 0; i < numCSSProperties; ++i)
+            names[i] = getJSPropertyName(static_cast<CSSPropertyID>(firstCSSProperty + i));
+        std::sort(&names[0], &names[numCSSProperties], WTF::codePointCompareLessThan);
+        auto* identifiers = new AtomicString[numCSSProperties];
+        for (int i = 0; i < numCSSProperties; ++i)
             identifiers[i] = names[i];
         return identifiers;
     }();
 
     Vector<AtomicString> result;
-    result.reserveInitialCapacity(numNames);
+    result.reserveInitialCapacity(numCSSProperties);
 
-    for (unsigned i = 0; i < numNames; ++i)
+    for (unsigned i = 0; i < numCSSProperties; ++i)
         result.uncheckedAppend(cssPropertyNames[i]);
 
     return result;

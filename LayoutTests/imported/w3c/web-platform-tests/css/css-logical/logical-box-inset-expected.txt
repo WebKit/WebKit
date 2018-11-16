@@ -1,8 +1,5 @@
 
 FAIL Test that logical inset-* properties are supported. assert_equals: logical properties in inline style, inset-inline-start expected "1px" but got ""
-FAIL Test that inset-inline shorthand sets longhands and serializes correctly. assert_equals: shorthand in inline style, inset-inline expected "1px 2px" but got ""
-FAIL Test that inset-block shorthand sets longhands and serializes correctly. assert_equals: shorthand in inline style, inset-block expected "1px 2px" but got ""
-FAIL Test that inset shorthand sets longhands and serializes correctly. assert_equals: shorthand in inline style, inset expected "1px 2px 3px 4px" but got ""
 FAIL Test that logical inset-* properties share computed values with their physical associates, with 'writing-mode: horizontal-tb; direction: ltr; '. assert_equals: logical properties on one declaration, writing mode properties on another, 'writing-mode: horizontal-tb; direction: ltr; ', inset-inline-start expected "1px" but got ""
 FAIL Test that inset-* shorthands set the computed value of both logical and physical longhands, with 'writing-mode: horizontal-tb; direction: ltr; '. assert_equals: shorthand properties on one declaration, writing mode properties on another, 'writing-mode: horizontal-tb; direction: ltr; ', inset-inline-start expected "1px" but got ""
 FAIL Test that inset-* properties honor order of appearance when both logical and physical associates are declared, with 'writing-mode: horizontal-tb; direction: ltr; '. assert_equals: 'inset-inline-start' last on single declaration, 'writing-mode: horizontal-tb; direction: ltr; ', left expected "5px" but got "1px"

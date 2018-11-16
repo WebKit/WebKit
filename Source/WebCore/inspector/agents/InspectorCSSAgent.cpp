@@ -719,7 +719,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
     auto properties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
     for (int i = firstCSSProperty; i <= lastCSSProperty; ++i) {
         CSSPropertyID propertyID = convertToCSSPropertyID(i);
-        if (isInternalCSSProperty(propertyID) || !isEnabledCSSProperty(propertyID))
+        if (isInternalCSSProperty(propertyID))
             continue;
 
         auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
@@ -739,8 +739,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
             auto longhands = JSON::ArrayOf<String>::create();
             for (unsigned j = 0; j < shorthand.length(); ++j) {
                 CSSPropertyID longhandID = shorthand.properties()[j];
-                if (isEnabledCSSProperty(longhandID))
-                    longhands->addItem(getPropertyNameString(longhandID));
+                longhands->addItem(getPropertyNameString(longhandID));
             }
             property->setLonghands(WTFMove(longhands));
         }

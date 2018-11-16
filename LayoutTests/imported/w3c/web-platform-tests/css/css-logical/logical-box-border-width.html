@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ internal:CSSLogicalEnabled=true ] -->
+<!DOCTYPE html>
 <meta charset="utf-8" />
 <title>CSS Logical Properties: Flow-Relative Border Widths</title>
 <link rel="author" title="Oriol Brufau" href="mailto:obrufau@igalia.com" />
@@ -9,8 +9,8 @@
 
 <div id="log"></div>
 
-<script type="module">
-import {runTests, createBoxPropertyGroup} from "./resources/test-box-properties.js";
+<script src="./resources/test-box-properties.js"></script>
+<script>
 runTests(createBoxPropertyGroup("border-*-width", {
   type: "length",
   prerequisites: {"border-*-style": "solid"},

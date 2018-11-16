@@ -69,12 +69,11 @@ private:
     void addProperty(CSSPropertyID, CSSPropertyID, Ref<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&&, bool);
 
-    bool consumeBorder(RefPtr<CSSValue>& width, RefPtr<CSSValue>& style, RefPtr<CSSValue>& color);
+    bool consumeBorder(bool important);
 
     bool parseShorthand(CSSPropertyID, bool important);
     bool consumeShorthandGreedily(const StylePropertyShorthand&, bool important);
-    bool consume2ValueShorthand(const StylePropertyShorthand&, bool important);
-    bool consume4ValueShorthand(const StylePropertyShorthand&, bool important);
+    bool consume4Values(const StylePropertyShorthand&, bool important);
 
     // Legacy parsing allows <string>s for animation-name
     bool consumeAnimationShorthand(const StylePropertyShorthand&, bool important);

@@ -322,9 +322,6 @@ public:
     bool systemPreviewEnabled() const { return m_systemPreviewEnabled; }
 #endif
 
-    void setCSSLogicalEnabled(bool isEnabled) { m_CSSLogicalEnabled = isEnabled; }
-    bool cssLogicalEnabled() const { return m_CSSLogicalEnabled; }
-
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -486,8 +483,6 @@ private:
 #if USE(SYSTEM_PREVIEW)
     bool m_systemPreviewEnabled { false };
 #endif
-
-    bool m_CSSLogicalEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

@@ -124,10 +124,6 @@
         "specified macro define is enabled. Prefix the macro define with '!' to",
         "generate code when the macro define is not enabled.",
         "",
-        "* runtime-flag:",
-        "The name of the flag on RuntimeEnabledFeatures (e.g. \"cssLogical\")",
-        "that conditionally enables the property.",
-        "",
         "2. Lesser known capabilities of this file format",
         "",
         "Conditional CSS keyword value:",
@@ -1196,36 +1192,6 @@
                 "url": "https://www.w3.org/TR/css3-background/#the-border-shorthands"
             }
         },
-        "border-block": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-block-start-color",
-                    "border-block-start-style",
-                    "border-block-start-width",
-                    "border-block-end-color",
-                    "border-block-end-style",
-                    "border-block-end-width"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-shorthands"
-            }
-        },
-        "border-block-color": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-block-start-color",
-                    "border-block-end-color"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-color"
-            }
-        },
         "border-block-end": {
             "codegen-properties": {
                 "aliases": [
@@ -1348,32 +1314,6 @@
                     "-webkit-border-before-width"
                 ],
                 "skip-builder": true
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-width"
-            }
-        },
-        "border-block-style": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-block-start-style",
-                    "border-block-end-style"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-style"
-            }
-        },
-        "border-block-width": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-block-start-width",
-                    "border-block-end-width"
-                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1549,36 +1489,6 @@
                 "url": "https://www.w3.org/TR/css3-background/#the-border-image-width"
             }
         },
-        "border-inline": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-inline-start-color",
-                    "border-inline-start-style",
-                    "border-inline-start-width",
-                    "border-inline-end-color",
-                    "border-inline-end-style",
-                    "border-inline-end-width"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-shorthands"
-            }
-        },
-        "border-inline-color": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-inline-start-color",
-                    "border-inline-end-color"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-color"
-            }
-        },
         "border-inline-end": {
             "codegen-properties": {
                 "aliases": [
@@ -1701,32 +1611,6 @@
                     "-webkit-border-start-width"
                 ],
                 "skip-builder": true
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-width"
-            }
-        },
-        "border-inline-style": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-inline-start-style",
-                    "border-inline-end-style"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#border-style"
-            }
-        },
-        "border-inline-width": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "border-inline-start-width",
-                    "border-inline-end-width"
-                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -2763,19 +2647,6 @@
                 "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin"
             }
         },
-        "margin-block": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "margin-block-start",
-                    "margin-block-end"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#margin-properties"
-            }
-        },
         "margin-block-end": {
             "codegen-properties": {
                 "aliases": [
@@ -2808,19 +2679,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-bottom"
-            }
-        },
-        "margin-inline": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "margin-inline-start",
-                    "margin-inline-end"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#margin-properties"
             }
         },
         "margin-inline-end": {
@@ -3209,19 +3067,6 @@
                 "url": "https://www.w3.org/TR/CSS22/box.html#propdef-padding"
             }
         },
-        "padding-block": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "padding-block-start",
-                    "padding-block-end"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#padding-properties"
-            }
-        },
         "padding-block-end": {
             "codegen-properties": {
                 "aliases": [
@@ -3254,19 +3099,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/box.html#propdef-padding-bottom"
-            }
-        },
-        "padding-inline": {
-            "codegen-properties": {
-                "runtime-flag": "cssLogical",
-                "longhands": [
-                    "padding-inline-start",
-                    "padding-inline-end"
-                ]
-            },
-            "specification": {
-                "category": "css-logical-props",
-                "url": "https://www.w3.org/TR/css-logical/#padding-properties"
             }
         },
         "padding-inline-end": {
