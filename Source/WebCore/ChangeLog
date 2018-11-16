@@ -1,3 +1,17 @@
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
+        Add DidFirstMeaningfulPaint milestone.
+        https://bugs.webkit.org/show_bug.cgi?id=191754
+
+        Reviewed by Simon Fraser.
+
+        This milestone fires sone after the paint triggered by the first visually non-empty layout.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        (WebCore::FrameView::firePaintRelatedMilestonesIfNeeded):
+        * page/LayoutMilestone.h:
+
 2018-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         Provide default implementations of Image and Icon

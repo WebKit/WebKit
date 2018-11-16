@@ -45,6 +45,7 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/EvaluateJavaScript.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/FailedLoad.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/Find.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/FirstMeaningfulPaintMilestone.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ForceRepaint.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/FrameMIMETypeHTML.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/FrameMIMETypePNG.cpp
@@ -230,6 +231,7 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayout_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/FirstMeaningfulPaintMilestone_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ParentFrame_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
         ${TESTWEBKITAPI_DIR}/Tests/WebKit/ResponsivenessTimerDoesntFireEarly_Bundle.cpp

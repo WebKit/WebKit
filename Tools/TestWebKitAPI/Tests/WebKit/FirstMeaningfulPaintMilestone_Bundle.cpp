@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#include "config.h"
 
-#if WK_API_ENABLED
+#if WK_HAVE_C_SPI
 
-typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
-    _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 1,
-    _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
-    _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 3,
-    _WKRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 4,
-    _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 5,
-    _WKRenderingProgressEventFirstPaint WK_API_AVAILABLE(macosx(10.11), ios(9.0)) = 1 << 6,
-    _WKRenderingProgressEventDidRenderSignificantAmountOfText WK_API_AVAILABLE(macosx(10.14), ios(12.0)) = 1 << 7,
-    _WKRenderingProgressEventFirstMeaningfulPaint WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 8,
-} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+#include "InjectedBundleTest.h"
+
+#include "PlatformUtilities.h"
+#include <WebKit/WKBundlePage.h>
+#include <WebKit/WKBundlePagePrivate.h>
+
+namespace TestWebKitAPI {
+
+class FirstMeaningfulPaintMilestoneTest : public InjectedBundleTest {
+public:
+    FirstMeaningfulPaintMilestoneTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
+
+    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+    {
+        WKBundlePageListenForLayoutMilestones(page, kWKDidFirstMeaningfulPaint);
+    }
+    
+};
+
+static InjectedBundleTest::Register<FirstMeaningfulPaintMilestoneTest> registrar("FirstMeaningfulPaintMilestoneTest");
+
+} // namespace TestWebKitAPI
 
 #endif

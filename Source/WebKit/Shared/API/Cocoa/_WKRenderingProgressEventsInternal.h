@@ -54,6 +54,9 @@ static inline _WKRenderingProgressEvents renderingProgressEvents(OptionSet<WebCo
     if (milestones & WebCore::DidRenderSignificantAmountOfText)
         events |= _WKRenderingProgressEventDidRenderSignificantAmountOfText;
 
+    if (milestones & WebCore::DidFirstMeaningfulPaint)
+        events |= _WKRenderingProgressEventFirstMeaningfulPaint;
+
     return events;
 }
 

@@ -1,3 +1,18 @@
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
+        Add DidFirstMeaningfulPaint milestone.
+        https://bugs.webkit.org/show_bug.cgi?id=191754
+
+        Reviewed by Simon Fraser.
+
+        * Shared/API/c/WKPageLoadTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKLayoutMilestones):
+        (WebKit::toLayoutMilestones):
+        * UIProcess/API/C/WKPageRenderingProgressEvents.h:
+        * UIProcess/API/C/WKPageRenderingProgressEventsInternal.h:
+        (pageRenderingProgressEvents):
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         Automatic process prewarming should be turned on if PSON is enabled via experimental features

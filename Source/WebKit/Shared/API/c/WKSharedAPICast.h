@@ -877,7 +877,9 @@ inline WKLayoutMilestones toWKLayoutMilestones(OptionSet<WebCore::LayoutMileston
         wkMilestones |= kWKDidFirstPaintAfterSuppressedIncrementalRendering;
     if (milestones & WebCore::DidRenderSignificantAmountOfText)
         wkMilestones |= kWKDidRenderSignificantAmountOfText;
-    
+    if (milestones & WebCore::DidFirstMeaningfulPaint)
+        wkMilestones |= kWKDidFirstMeaningfulPaint;
+
     return wkMilestones;
 }
 
@@ -899,6 +901,8 @@ inline OptionSet<WebCore::LayoutMilestone> toLayoutMilestones(WKLayoutMilestones
         milestones.add(WebCore::DidFirstPaintAfterSuppressedIncrementalRendering);
     if (wkMilestones & kWKDidRenderSignificantAmountOfText)
         milestones.add(WebCore::DidRenderSignificantAmountOfText);
+    if (wkMilestones & kWKDidFirstMeaningfulPaint)
+        milestones.add(WebCore::DidFirstMeaningfulPaint);
     
     return milestones;
 }

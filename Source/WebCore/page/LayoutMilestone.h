@@ -41,6 +41,7 @@ enum LayoutMilestone {
     DidFirstPaintAfterSuppressedIncrementalRendering    = 1 << 5,
     ReachedSessionRestorationRenderTreeSizeThreshold    = 1 << 6, // FIXME: only implemented by WK2 currently.
     DidRenderSignificantAmountOfText                    = 1 << 7,
+    DidFirstMeaningfulPaint                             = 1 << 8,
 };
 
 } // namespace WebCore

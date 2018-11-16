@@ -1,3 +1,20 @@
+2018-11-16  Zalan Bujtas  <zalan@apple.com>
+
+        Add DidFirstMeaningfulPaint milestone.
+        https://bugs.webkit.org/show_bug.cgi?id=191754
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/FirstMeaningfulPaintMilestone.cpp: Added.
+        (TestWebKitAPI::didReachMilestone):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FirstMeaningfulPaintMilestone_Bundle.cpp: Copied from Source/WebKit/UIProcess/API/C/WKPageRenderingProgressEvents.h.
+        (TestWebKitAPI::FirstMeaningfulPaintMilestoneTest::FirstMeaningfulPaintMilestoneTest):
+        (TestWebKitAPI::FirstMeaningfulPaintMilestoneTest::didCreatePage):
+
 2018-11-16  Takashi Komori  <Takashi.Komori@sony.com>
 
         [WinCairo][WebKitTestRunner] Test contents window is displayed while testing.

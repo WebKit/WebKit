@@ -39,6 +39,7 @@ enum {
     WKPageRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold = 1 << 3,
     WKPageRenderingProgressEventFirstLayoutAfterSuppressedIncrementalRendering = 1 << 4,
     WKPageRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering = 1 << 5,
+    WKPageRenderingProgressEventFirstMeaningfulPaint = 1 << 8
 };
 typedef uint32_t WKPageRenderingProgressEvents;
 

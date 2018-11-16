@@ -5173,6 +5173,8 @@ void FrameView::fireLayoutRelatedMilestonesIfNeeded()
     // If the layout was done with pending sheets, we are not in fact visually non-empty yet.
     if (m_isVisuallyNonEmpty && m_firstVisuallyNonEmptyLayoutCallbackPending) {
         m_firstVisuallyNonEmptyLayoutCallbackPending = false;
+        addPaintPendingMilestones(DidFirstMeaningfulPaint);
+
         if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
             milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
     }
@@ -5204,6 +5206,11 @@ void FrameView::firePaintRelatedMilestonesIfNeeded()
     if (m_milestonesPendingPaint & DidFirstPaintAfterSuppressedIncrementalRendering) {
         if (page->requestedLayoutMilestones() & DidFirstPaintAfterSuppressedIncrementalRendering)
             milestonesAchieved.add(DidFirstPaintAfterSuppressedIncrementalRendering);
+    }
+
+    if (m_milestonesPendingPaint & DidFirstMeaningfulPaint) {
+        if (page->requestedLayoutMilestones() & DidFirstMeaningfulPaint)
+            milestonesAchieved.add(DidFirstMeaningfulPaint);
     }
 
     m_milestonesPendingPaint = { };

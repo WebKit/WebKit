@@ -4842,6 +4842,9 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     if (events & _WKRenderingProgressEventDidRenderSignificantAmountOfText)
         milestones.add(WebCore::DidRenderSignificantAmountOfText);
 
+    if (events & _WKRenderingProgressEventFirstMeaningfulPaint)
+        milestones.add(WebCore::DidFirstMeaningfulPaint);
+
     return milestones;
 }
 

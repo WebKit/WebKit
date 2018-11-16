@@ -49,5 +49,8 @@ static inline WKPageRenderingProgressEvents pageRenderingProgressEvents(OptionSe
     if (milestones & WebCore::DidFirstPaintAfterSuppressedIncrementalRendering)
         events |= WKPageRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
+    if (milestones & WebCore::DidFirstMeaningfulPaint)
+        events |= WKPageRenderingProgressEventFirstMeaningfulPaint;
+
     return events;
 }
