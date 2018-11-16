@@ -2079,7 +2079,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         }
 
         unsigned numTouchEventListeners = 0;
-        for (auto& name : eventNames().touchEventNames())
+        for (auto& name : eventNames().touchAndPointerEventNames())
             numTouchEventListeners += eventListeners(name).size();
 
         for (unsigned i = 0; i < numTouchEventListeners; ++i) {

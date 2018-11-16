@@ -1,0 +1,3 @@
+
+PASS Scrolling of content can be disabled by calling preventDefault() on a pointer event. 
+

@@ -1,3 +1,21 @@
+2018-11-16  Antoine Quint  <graouts@apple.com>
+
+        PointerEvents should not require touch event listeners to be registered
+        https://bugs.webkit.org/show_bug.cgi?id=191333
+        <rdar://problem/45857523>
+
+        Reviewed by Dean Jackson.
+
+        Tests: pointerevents/ios/pointer-events-dispatch-on-touch.html
+               pointerevents/ios/pointer-events-prevent-default.html
+
+        * dom/EventNames.h:
+        (WebCore::EventNames::isTouchEventType const):
+        (WebCore::EventNames::touchAndPointerEventNames const):
+        (WebCore::EventNames::touchEventNames const): Deleted.
+        * dom/Node.cpp:
+        (WebCore::Node::moveNodeToNewDocument):
+
 2018-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Do not get stuck in indeterminate content observation state.

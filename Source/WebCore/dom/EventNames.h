@@ -359,7 +359,7 @@ public:
     bool isGamepadEventType(const AtomicString& eventType) const;
 #endif
 
-    std::array<std::reference_wrapper<const AtomicString>, 5> touchEventNames() const;
+    std::array<std::reference_wrapper<const AtomicString>, 9> touchAndPointerEventNames() const;
     std::array<std::reference_wrapper<const AtomicString>, 3> gestureEventNames() const;
 
 private:
@@ -393,7 +393,11 @@ inline bool EventNames::isTouchEventType(const AtomicString& eventType) const
         || eventType == touchmoveEvent
         || eventType == touchendEvent
         || eventType == touchcancelEvent
-        || eventType == touchforcechangeEvent;
+        || eventType == touchforcechangeEvent
+        || eventType == pointerdownEvent
+        || eventType == pointermoveEvent
+        || eventType == pointerupEvent
+        || eventType == pointercancelEvent;
 }
 
 inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
@@ -402,9 +406,9 @@ inline bool EventNames::isWheelEventType(const AtomicString& eventType) const
         || eventType == mousewheelEvent;
 }
 
-inline std::array<std::reference_wrapper<const AtomicString>, 5> EventNames::touchEventNames() const
+inline std::array<std::reference_wrapper<const AtomicString>, 9> EventNames::touchAndPointerEventNames() const
 {
-    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent } };
+    return { { touchstartEvent, touchmoveEvent, touchendEvent, touchcancelEvent, touchforcechangeEvent, pointerdownEvent, pointermoveEvent, pointerupEvent, pointercancelEvent } };
 }
 
 inline std::array<std::reference_wrapper<const AtomicString>, 3> EventNames::gestureEventNames() const

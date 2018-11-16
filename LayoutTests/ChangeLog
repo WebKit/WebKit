@@ -1,3 +1,23 @@
+2018-11-16  Antoine Quint  <graouts@apple.com>
+
+        PointerEvents should not require touch event listeners to be registered
+        https://bugs.webkit.org/show_bug.cgi?id=191333
+        <rdar://problem/45857523>
+
+        Reviewed by Dean Jackson.
+
+        Add two iOS tests that check that we dispatch pointer events when only those events are registered
+        and that we correctly account for calls to preventDefault(). To support pointer events test, we add
+        a new utility where we will be adding user interaction functions that should allow these tests to be
+        submitted to the WPT repository provided browsers implement their own versions of the UIController.
+
+        * TestExpectations:
+        * pointerevents/ios/pointer-events-dispatch-on-touch-expected.txt: Added.
+        * pointerevents/ios/pointer-events-dispatch-on-touch.html: Added.
+        * pointerevents/ios/pointer-events-prevent-default-expected.txt: Added.
+        * pointerevents/ios/pointer-events-prevent-default.html: Added.
+        * pointerevents/utils.js: Added.
+
 2018-11-15  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Do not get stuck in indeterminate content observation state.

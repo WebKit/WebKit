@@ -2380,17 +2380,20 @@ void WebPageProxy::updateTouchEventTracking(const WebTouchEvent& touchStartEvent
 
             trackingType = mergeTrackingTypes(trackingType, trackingTypeForLocation);
         };
-        updateTrackingType(m_touchEventTracking.touchForceChangedTracking, names.touchforcechangeEvent);
-        updateTrackingType(m_touchEventTracking.touchStartTracking, names.touchstartEvent);
-        updateTrackingType(m_touchEventTracking.touchMoveTracking, names.touchmoveEvent);
-        updateTrackingType(m_touchEventTracking.touchEndTracking, names.touchendEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchForceChangedTracking, names.touchforcechangeEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, names.touchstartEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, names.touchmoveEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, names.touchendEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchStartTracking, names.pointerdownEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchMoveTracking, names.pointermoveEvent);
+        updateTrackingType(m_touchAndPointerEventTracking.touchEndTracking, names.pointerupEvent);
     }
 #else
     UNUSED_PARAM(touchStartEvent);
-    m_touchEventTracking.touchForceChangedTracking = TrackingType::Synchronous;
-    m_touchEventTracking.touchStartTracking = TrackingType::Synchronous;
-    m_touchEventTracking.touchMoveTracking = TrackingType::Synchronous;
-    m_touchEventTracking.touchEndTracking = TrackingType::Synchronous;
+    m_touchAndPointerEventTracking.touchForceChangedTracking = TrackingType::Synchronous;
+    m_touchAndPointerEventTracking.touchStartTracking = TrackingType::Synchronous;
+    m_touchAndPointerEventTracking.touchMoveTracking = TrackingType::Synchronous;
+    m_touchAndPointerEventTracking.touchEndTracking = TrackingType::Synchronous;
 #endif // ENABLE(ASYNC_SCROLLING)
 }
 
@@ -2405,20 +2408,20 @@ TrackingType WebPageProxy::touchEventTrackingType(const WebTouchEvent& touchStar
     // WebCore should not have to set up its state correctly after some events were dismissed.
     // For example, we don't want to send a TouchMoved without a TouchPressed.
     // We send everything, WebCore updates its internal state and dispatch what is needed to the page.
-    TrackingType globalTrackingType = m_touchEventTracking.isTrackingAnything() ? TrackingType::Asynchronous : TrackingType::NotTracking;
+    TrackingType globalTrackingType = m_touchAndPointerEventTracking.isTrackingAnything() ? TrackingType::Asynchronous : TrackingType::NotTracking;
 
-    globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchEventTracking.touchForceChangedTracking);
+    globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchAndPointerEventTracking.touchForceChangedTracking);
     for (auto& touchPoint : touchStartEvent.touchPoints()) {
         switch (touchPoint.state()) {
         case WebPlatformTouchPoint::TouchReleased:
-            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchEventTracking.touchEndTracking);
+            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchAndPointerEventTracking.touchEndTracking);
             break;
         case WebPlatformTouchPoint::TouchPressed:
-            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchEventTracking.touchStartTracking);
+            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchAndPointerEventTracking.touchStartTracking);
             break;
         case WebPlatformTouchPoint::TouchMoved:
         case WebPlatformTouchPoint::TouchStationary:
-            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchEventTracking.touchMoveTracking);
+            globalTrackingType = mergeTrackingTypes(globalTrackingType, m_touchAndPointerEventTracking.touchMoveTracking);
             break;
         case WebPlatformTouchPoint::TouchCancelled:
             globalTrackingType = mergeTrackingTypes(globalTrackingType, TrackingType::Asynchronous);
@@ -2483,7 +2486,7 @@ void WebPageProxy::handleTouchEventSynchronously(NativeWebTouchEvent& event)
     m_process->responsivenessTimer().stop();
 
     if (event.allTouchPointsAreReleased())
-        m_touchEventTracking.reset();
+        m_touchAndPointerEventTracking.reset();
 }
 
 void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& event)
@@ -2498,7 +2501,7 @@ void WebPageProxy::handleTouchEventAsynchronously(const NativeWebTouchEvent& eve
     m_process->send(Messages::EventDispatcher::TouchEvent(m_pageID, event), 0);
 
     if (event.allTouchPointsAreReleased())
-        m_touchEventTracking.reset();
+        m_touchAndPointerEventTracking.reset();
 }
 
 #elif ENABLE(TOUCH_EVENTS)
@@ -2532,7 +2535,7 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     }
 
     if (event.allTouchPointsAreReleased())
-        m_touchEventTracking.reset();
+        m_touchAndPointerEventTracking.reset();
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
@@ -6265,7 +6268,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    m_touchEventTracking.reset();
+    m_touchAndPointerEventTracking.reset();
 #endif
 
 #if ENABLE(GEOLOCATION)

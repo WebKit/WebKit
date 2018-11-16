@@ -1,0 +1,3 @@
+
+PASS Pointer events get dispatched in response to a touch. 
+

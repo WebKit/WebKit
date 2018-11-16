@@ -2093,7 +2093,7 @@ private:
             touchEndTracking = WebCore::TrackingType::NotTracking;
         }
     };
-    TouchEventTracking m_touchEventTracking;
+    TouchEventTracking m_touchAndPointerEventTracking;
 #endif
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;

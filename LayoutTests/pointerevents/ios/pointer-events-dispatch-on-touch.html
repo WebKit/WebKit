@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    target.addEventListener("pointerdown", event => {
+        assert_true(event instanceof PointerEvent);
+        assert_equals(event.type, "pointerdown");
+        assert_equals(event.clientX, 50);
+        assert_equals(event.clientY, 50);
+        test.done();
+    });
+    ui.beginTouches({ x: 50, y: 50 });
+}, "Pointer events get dispatched in response to a touch.");
+
+</script>
+</body>
+</html>
