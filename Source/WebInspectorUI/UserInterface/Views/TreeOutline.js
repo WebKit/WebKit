@@ -563,12 +563,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 handled = true;
             } else if (this.selectedTreeElement.hasChildren) {
                 handled = true;
-                if (this.selectedTreeElement.expanded) {
-                    nextSelectedElement = this.selectedTreeElement.children[0];
-                    while (nextSelectedElement && !nextSelectedElement.selectable)
-                        nextSelectedElement = nextSelectedElement.nextSibling;
-                    handled = nextSelectedElement ? true : false;
-                } else {
+                if (!this.selectedTreeElement.expanded) {
                     if (event.altKey)
                         this.selectedTreeElement.expandRecursively();
                     else
