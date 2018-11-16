@@ -80,7 +80,12 @@ StyleSheetContents* CSSDefaultStyleSheets::colorInputStyleSheet;
 #endif
 
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
+#if PLATFORM(MAC)
+// The only difference in the simple style sheet for macOS is the addition of html{color:text}.
+static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}html{color:text}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
+#else
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}head{display:none}body{margin:8px}div:focus,span:focus,a:focus{outline:auto 5px -webkit-focus-ring-color}a:any-link{color:-webkit-link;text-decoration:underline}a:any-link:active{color:-webkit-activelink}";
+#endif
 
 static inline bool elementCanUseSimpleDefaultStyle(const Element& element)
 {

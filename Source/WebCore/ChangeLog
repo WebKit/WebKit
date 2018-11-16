@@ -1,3 +1,13 @@
+2018-11-16  Timothy Hatcher  <timothy@apple.com>
+
+        Add html{color:text} to the simpleUserAgentStyleSheet on macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=191760
+
+        Reviewed by Antti Koivisto.
+
+        * css/CSSDefaultStyleSheets.cpp: Added html{color:text} to simpleUserAgentStyleSheet inside
+        a PLATFORM(MAC) copy of the string.
+
 2018-11-16  Jer Noble  <jer.noble@apple.com>
 
         An early return from updateSchedulingInfo can leave some variables uninitialized.
