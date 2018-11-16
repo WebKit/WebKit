@@ -1,3 +1,20 @@
+2018-11-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r237467) [PSON] iOS: Going back to a page sometimes doesn't restore the full page
+        https://bugs.webkit.org/show_bug.cgi?id=191737
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setLayerTreeStateIsFrozen):
+
+        Layer tree should stay frozen in m_shouldResetDrawingArea state. Otherwise spurious commit transactions may
+        mess up state on UI process side.
+
+        Specifically WKWebView._needsResetViewStateAfterCommitLoadForMainFrame would get stuck to TRUE and prevent
+        all viewport updates because WKWebView._firstPaintAfterCommitLoadTransactionID has value greater
+        than any current transaction IDs.
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed typo fix in comment added in r238250.

@@ -2333,7 +2333,7 @@ void WebPage::setLayerTreeStateIsFrozen(bool frozen)
     if (!drawingArea)
         return;
 
-    drawingArea->setLayerTreeStateIsFrozen(frozen || m_isSuspended);
+    drawingArea->setLayerTreeStateIsFrozen(frozen || m_isSuspended || m_shouldResetDrawingArea);
 }
 
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
