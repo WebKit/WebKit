@@ -1,3 +1,12 @@
+2018-11-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r232376): Layout Test inspector/console/webcore-logging.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=186425
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Remove flaky expectation.
+
 2018-11-16  Sihui Liu  <sihui_liu@apple.com>
 
         Storing blobs in IDB on iOS: "Error preparing blob/file"
