@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Icon.h"
 
+#if !PLATFORM(GTK) && !PLATFORM(IOS_FAMILY) && !PLATFORM(MAC) && !PLATFORM(WIN)
+
 namespace WebCore {
 
 Icon::~Icon() = default;
@@ -40,3 +42,5 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>&)
 }
 
 } // namespace WebCore
+
+#endif // !PLATFORM(GTK) && !PLATFORM(IOS_FAMILY) && !PLATFORM(MAC) && !PLATFORM(WIN)

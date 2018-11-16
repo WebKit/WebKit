@@ -62,9 +62,6 @@ platform/graphics/opengl/TemporaryOpenGLSetting.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 
-platform/graphics/wpe/IconWPE.cpp
-platform/graphics/wpe/ImageWPE.cpp
-
 platform/libwpe/PasteboardLibWPE.cpp
 platform/libwpe/PlatformKeyboardEventLibWPE.cpp
 platform/libwpe/PlatformPasteboardLibWPE.cpp

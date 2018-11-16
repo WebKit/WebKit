@@ -1668,6 +1668,7 @@ platform/graphics/GraphicsLayerTransform.cpp
 platform/graphics/GraphicsLayerUpdater.cpp
 platform/graphics/GraphicsTypes.cpp
 platform/graphics/HEVCUtilities.cpp
+platform/graphics/Icon.cpp
 platform/graphics/Image.cpp
 platform/graphics/ImageBuffer.cpp
 platform/graphics/ImageDecoder.cpp
