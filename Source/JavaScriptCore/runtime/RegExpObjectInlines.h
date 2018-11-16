@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2012, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -160,10 +160,11 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
     RETURN_IF_EXCEPTION(scope, { });
 
     bool hasException = false;
+    unsigned arrayIndex = 0;
     auto iterate = [&] () {
         size_t end = result.end;
         size_t length = end - result.start;
-        array->push(exec, JSRopeString::createSubstringOfResolved(vm, string, result.start, length));
+        array->putDirectIndex(exec, arrayIndex++, JSRopeString::createSubstringOfResolved(vm, string, result.start, length));
         if (UNLIKELY(scope.exception())) {
             hasException = true;
             return;
