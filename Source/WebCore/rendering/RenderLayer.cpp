@@ -1515,7 +1515,15 @@ bool RenderLayer::updateLayerPosition()
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
         // FIXME: Is snapping the size really needed here for the RenderBox case?
-        setSize(snappedIntRect(box->frameRect()).size());
+        auto newSize = snappedIntRect(box->frameRect()).size();
+        if (newSize != size()) {
+            if (is<RenderWidget>(*box) && downcast<RenderWidget>(*box).requiresAcceleratedCompositing()) {
+                // Trigger RenderLayerCompositor::requiresCompositingForFrame() which depends on the contentBoxRect size.
+                setNeedsPostLayoutCompositingUpdate();
+            }
+            setSize(newSize);
+        }
+        
         box->applyTopLeftLocationOffset(localPoint);
     }
 

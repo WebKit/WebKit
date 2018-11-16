@@ -1,5 +1,26 @@
 2018-11-15  Simon Fraser  <simon.fraser@apple.com>
 
+        REGRESSION (r238090) Composited iframes that resize from zero don't show
+        https://bugs.webkit.org/show_bug.cgi?id=191733
+        rdar://problem/46107764
+
+        Reviewed by Zalan Bujtas.
+        
+        A zero-sized iframe whose contents are composited should not trigger compositing in the
+        parent document (see code in requiresCompositingForFrame()), but when the <iframe> element
+        was resized without a style change (e.g. because it's width: 100%, height: 100% and the
+        parent resizes), there was no code that triggered a compositing update.
+
+        Fix by having RenderLayer::updateLayerPosition() trigger an update when the size changes,
+        for a RenderWidget whose contents are composited.
+
+        Test: compositing/iframes/resize-from-zero-size.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+
+2018-11-15  Simon Fraser  <simon.fraser@apple.com>
+
         Overlay with -webkit-overflow-scrolling:touch doesn't become scrollable after added text makes it taller
         https://bugs.webkit.org/show_bug.cgi?id=158342
         rdar://problem/26652811
