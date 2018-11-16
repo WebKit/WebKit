@@ -1,3 +1,17 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Automatic process prewarming should be turned on if PSON is enabled via experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=191761
+
+        Reviewed by Ryosuke Niwa.
+
+        m_isAutomaticProcessWarmingEnabledByClient is a std::optional and should not be initialized to
+        true / false until the client calls API to toggle the feature. When m_isAutomaticProcessWarmingEnabledByClient
+        is std::nullopt then m_processSwapsOnNavigationFromExperimentalFeatures controls automatic
+        process prewarming.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+
 2018-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Add API to disable safe browsing checks

@@ -218,7 +218,7 @@ private:
     bool m_processSwapsOnNavigationFromExperimentalFeatures { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
-    std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient { false };
+    std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
     WTF::String m_customWebContentServiceBundleIdentifier;
 
 #if PLATFORM(IOS_FAMILY)
