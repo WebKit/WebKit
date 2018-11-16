@@ -111,8 +111,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         return;
     }
 
-    size_t quantumFrameOffset;
-    size_t bufferFramesToProcess;
+    size_t quantumFrameOffset = 0;
+    size_t bufferFramesToProcess = 0;
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, bufferFramesToProcess);
 
     if (!bufferFramesToProcess) {
