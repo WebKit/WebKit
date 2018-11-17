@@ -82,6 +82,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             startTimestamp: null,
             endTimestamp: null,
         };
+        let resolvedDOMNodes = null;
 
         function setLevel(newLevel) {
             let newLevelIndex = levelStrings.indexOf(newLevel);
@@ -205,7 +206,11 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
                     if (!data.domNodes)
                         data.domNodes = [];
-                    data.domNodes.push(domNode);
+                    data.domNodes.push(WI.cssPath(domNode, {full: true}));
+
+                    if (!resolvedDOMNodes)
+                        resolvedDOMNodes = [];
+                    resolvedDOMNodes.push(domNode);
                 });
 
                 await resultArrayForEach("domAttributes", (item) => {
@@ -243,6 +248,8 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
         };
         if (!isEmptyObject(data))
             options.data = data;
+        if (resolvedDOMNodes)
+            options.resolvedDOMNodes = resolvedDOMNodes;
         this._result = new WI.AuditTestCaseResult(this.name, level, options);
     }
 };

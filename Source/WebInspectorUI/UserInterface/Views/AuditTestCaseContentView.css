@@ -37,6 +37,10 @@
     margin-top: var(--audit-test-vertical-space);
 }
 
+.content-view.audit-test-case > header {
+    -webkit-padding-end: calc(var(--audit-test-horizontal-space) / 2);
+}
+
 .content-view.audit-test-case > header h1 {
     display: flex;
     align-items: center;
@@ -47,13 +51,17 @@
     height: 1em;
     min-width: 16px;
     min-height: 16px;
-    -webkit-margin-end: 4px;
+    -webkit-margin-end: 0.25em;
 }
 
 .content-view.audit-test-case > header > .metadata {
     display: flex;
     align-items: center;
     text-align: end;
+}
+
+.content-view.audit-test-case > header > .metadata > .source {
+    -webkit-margin-end: 3px;
 }
 
 .content-view.audit-test-case > header > .metadata > .source > time {
@@ -68,9 +76,10 @@
 
 .content-view.audit-test-case > header > .metadata > .duration {
     display: inline-block;
-    width: var(--metadata-width);
+    min-width: var(--metadata-width);
     -webkit-margin-start: var(--audit-test-horizontal-space);
     font-size: 12px;
+    text-align: center;
     font-weight: bold;
 }
 
@@ -104,7 +113,6 @@
 }
 
 .content-view.audit-test-case > section table > tr > td:first-child {
-    -webkit-padding-start: calc(8px - 0.375em);
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;
     font-variant-numeric: tabular-nums;

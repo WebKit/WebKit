@@ -110,7 +110,7 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                 }
             }
 
-            if (metadata.url && metadata.url !== WI.networkManager.mainFrame.url) {
+            if (metadata.url && (metadata.url !== WI.networkManager.mainFrame.url || this.representedObject instanceof WI.AuditTestResultBase)) {
                 let url = new URL(metadata.url);
                 let origin = url.origin;
                 if (url.pathname.startsWith("/"))
@@ -133,6 +133,8 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
             let tableContainer = domNodesContainer.appendChild(document.createElement("table"));
 
             resultData.domNodes.forEach((domNode, index) => {
+                domNode = result.resolvedDOMNodes[index] || domNode;
+
                 let rowElement = tableContainer.appendChild(document.createElement("tr"));
 
                 let indexElement = rowElement.appendChild(document.createElement("td"));

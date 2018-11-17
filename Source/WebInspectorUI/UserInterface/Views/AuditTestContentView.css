@@ -39,6 +39,7 @@
 
 .content-view-container > .content-view.audit-test > header p {
     font-size: 1.25em;
+    opacity: 0.85;
 }
 
 .content-view.audit-test {
@@ -54,7 +55,9 @@
 .content-view.audit-test > header {
     display: flex;
     align-items: center;
-    padding: var(--audit-test-vertical-space) var(--audit-test-horizontal-space);
+    padding-top: var(--audit-test-vertical-space);
+    padding-bottom: var(--audit-test-vertical-space);
+    -webkit-padding-start: var(--audit-test-horizontal-space);
 
     --metadata-width: 60px;
 }

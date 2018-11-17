@@ -13,7 +13,7 @@ TestPage.registerInitializer(() => {
         if (!array.length)
             return;
 
-        InspectorTest.assert(array.every((item) => typeof item === "string"), name + "should only contain strings.");
+        InspectorTest.assert(array.every((item) => typeof item === "string"), name + " should only contain strings.");
         InspectorTest.log("  " + name + ":");
         for (let item of array)
             InspectorTest.log("   - " + item);
@@ -45,8 +45,14 @@ TestPage.registerInitializer(() => {
 
                     let data = result.data;
                     if (data.domNodes) {
-                        InspectorTest.assert(data.domNodes.every((domNode) => domNode instanceof WI.DOMNode), "domNodes should only contain WI.DOMNode.");
-                        logArray("domNodes", data.domNodes.map((domNode) => domNode.displayName));
+                        if (result.resolvedDOMNodes) {
+                            InspectorTest.assert(result.resolvedDOMNodes.every((domNode) => domNode instanceof WI.DOMNode), "domNodes should only contain WI.DOMNode.");
+                            logArray("domNodes", result.resolvedDOMNodes.map((domNode) => domNode.displayName));
+
+                            for (let i = 0; i < result.resolvedDOMNodes.length; ++i)
+                                InspectorTest.assert(WI.cssPath(result.resolvedDOMNodes[i], {full: true}) === data.domNodes[i], "The resolved DOM node should match the saved CSS path.");
+                        } else
+                            logArray("domNodes", data.domNodes);
                     }
                     if (data.domAttributes)
                         logArray("domAttributes", data.domAttributes);

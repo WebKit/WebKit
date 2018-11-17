@@ -25,7 +25,7 @@
 
 WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBase
 {
-    constructor(name, level, {description, data, metadata} = {})
+    constructor(name, level, {description, data, metadata, resolvedDOMNodes} = {})
     {
         console.assert(Object.values(WI.AuditTestCaseResult.Level).includes(level));
         console.assert(!data || typeof data === "object");
@@ -36,6 +36,9 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
         this._level = level;
         this._data = data || {};
         this._metadata = metadata || {};
+
+        // This array is a mirror of `this._data.domNodes` where each item is a `WI.DOMNode`.
+        this._resolvedDOMNodes = resolvedDOMNodes || [];
     }
 
     // Static
@@ -87,14 +90,14 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
         if (!isEmptyObject(data)) {
             options.data = {};
             if (data.domNodes && data.domNodes.length) {
-                if (window.DOMAgent) {
+                if (window.DOMAgent && (!metadata.url || metadata.url === WI.networkManager.mainFrame.url)) {
                     let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
-                    data.domNodes = await Promise.all(data.domNodes.map(async (domNodeString) => {
+                    options.resolvedDOMNodes = await Promise.all(data.domNodes.map(async (domNodeString) => {
                         let nodeId = 0;
                         try {
                             nodeId = await WI.domManager.querySelector(documentNode, domNodeString);
                         } catch { }
-                        return WI.domManager.nodeForId(nodeId) || domNodeString;
+                        return WI.domManager.nodeForId(nodeId) || null;
                     }));
                 }
 
@@ -123,6 +126,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
     get level() { return this._level; }
     get data() { return this._data; }
     get metadata() { return this._metadata; }
+    get resolvedDOMNodes() { return this._resolvedDOMNodes; }
 
     get result()
     {
@@ -161,7 +165,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
         let data = {};
         if (this._data.domNodes && this._data.domNodes.length) {
-            data.domNodes = this._data.domNodes.map((domNode) => domNode instanceof WI.DOMNode ? WI.cssPath(domNode, {full: true}) : domNode);
+            data.domNodes = this._data.domNodes;
             if (this._data.domAttributes && this._data.domAttributes.length)
                 data.domAttributes = this._data.domAttributes;
         }

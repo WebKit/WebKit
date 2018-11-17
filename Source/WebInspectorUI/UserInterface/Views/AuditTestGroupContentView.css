@@ -29,6 +29,7 @@
 
 .content-view.audit-test-group > header {
     margin-top: -1px;
+    -webkit-padding-end: var(--audit-test-horizontal-space);
     border-top: 1px solid var(--border-color);
 }
 

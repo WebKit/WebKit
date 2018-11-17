@@ -34,6 +34,8 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         this._runningState = WI.AuditManager.RunningState.Inactive;
         this._runningTests = [];
+
+        WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
     }
 
     static synthesizeError(message)
@@ -180,6 +182,15 @@ WI.AuditManager = class AuditManager extends WI.Object
             result,
             index: this._results.length - 1,
         });
+    }
+
+    _handleFrameMainResourceDidChange(event)
+    {
+        if (!event.target.isMainFrame())
+            return;
+
+        for (let test of this._tests)
+            test.clearResult();
     }
 };
 

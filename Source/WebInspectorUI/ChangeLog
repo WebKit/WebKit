@@ -1,3 +1,42 @@
+2018-11-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: minor style improvements
+        https://bugs.webkit.org/show_bug.cgi?id=191727
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager):
+        (WI.AuditManager.prototype._handleFrameMainResourceDidChange): Added.
+        Clear test results when the main frame navigates, but don't clear the saved results.
+
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.prototype.async run):
+        * UserInterface/Models/AuditTestCaseResult.js:
+        (WI.AuditTestCaseResult):
+        (WI.AuditTestCaseResult.async fromPayload):
+        (WI.AuditTestCaseResult.prototype.get resolvedDOMNodes): Added.
+        (WI.AuditTestCaseResult.prototype.toJSON):
+        Capture the full CSS path for any returned DOM nodes when the test finishes running, so that
+        if the node moves around the path isn't modified as well.
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.layout):
+        Always show the URL for the test when viewing a saved result.
+
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view-container > .content-view.audit-test > header p):
+        (.content-view.audit-test > header):
+        * UserInterface/Views/AuditTestCaseContentView.css:
+        (.content-view.audit-test-case > header): Added.
+        (.content-view.audit-test-case > header h1 > img):
+        (.content-view.audit-test-case > header > .metadata > .source): Added.
+        (.content-view.audit-test-case > header > .metadata > .duration):
+        (.content-view.audit-test-case > section table > tr > td:first-child):
+        * UserInterface/Views/AuditTestGroupContentView.css:
+        (.content-view.audit-test-group > header):
+        Horizontally align items in the header for visual consistency.
+
 2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include default filtering of InspectorBackend.dumpInspectorProtocolMessages with multi target backend
