@@ -1,5 +1,14 @@
 2018-11-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix an error in 238354 - !=, not ==.
+        
+        Fixes test failures.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+
+2018-11-17  Simon Fraser  <simon.fraser@apple.com>
+
         Clarify RenderLayerCompositor::hasAnyAdditionalCompositedLayers() and related code.
         https://bugs.webkit.org/show_bug.cgi?id=191810
 

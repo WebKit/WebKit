@@ -1251,7 +1251,7 @@ void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
     // FIXME: "destroyed" is a misnomer.
     InspectorInstrumentation::renderLayerDestroyed(&page(), layer);
 
-    if (&layer == m_renderView.layer()) {
+    if (&layer != m_renderView.layer()) {
         ASSERT(m_contentLayersCount > 0);
         --m_contentLayersCount;
     }
