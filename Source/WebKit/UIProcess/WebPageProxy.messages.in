@@ -418,7 +418,6 @@ messages -> WebPageProxy {
     DisableInspectorNodeSearch()
 #endif
 
-    SetHasLocalInspectorFrontend(bool hasLocalFrontend)
     DidChangeInspectorFrontendCount(uint64_t count)
 
     CreateInspectorTarget(String targetId, enum:uint8_t Inspector::InspectorTargetType type)

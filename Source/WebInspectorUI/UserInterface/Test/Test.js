@@ -75,8 +75,11 @@ WI.loaded = function()
     WI.backendTarget = null;
     WI.pageTarget = null;
 
-    // Tests directly connect to a page target.
-    WI.targetManager.createDirectBackendTarget();
+    // FIXME: Eliminate `TargetAgent.exists`.
+    TargetAgent.exists((error) => {
+        if (error)
+            WI.targetManager.createDirectBackendTarget();
+    });
 };
 
 WI.initializeBackendTarget = function(target)
@@ -107,9 +110,11 @@ WI.terminatePageTarget = function(target)
 
 WI.resetMainExecutionContext = function()
 {
-    console.assert(WI.mainTarget.executionContext);
+    if (WI.mainTarget instanceof WI.MultiplexingBackendTarget)
+        return;
 
-    WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
+    if (WI.mainTarget.executionContext)
+        WI.runtimeManager.activeExecutionContext = WI.mainTarget.executionContext;
 };
 
 WI.redirectGlobalAgentsToConnection = function(connection)
@@ -138,6 +143,7 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
         WI.consoleManager.initializeLogChannels(target);
     }
 
+    // FIXME: This slows down test debug logging considerably.
     if (!WI.__didPerformCSSInitialization && target.CSSAgent) {
         WI.__didPerformCSSInitialization = true;
         WI.CSSCompletions.initializeCSSCompletions(target);

@@ -61,7 +61,7 @@ void WebPageInspectorTargetController::removeTarget(Inspector::InspectorTarget& 
     m_targetFrontendChannels.remove(target.identifier());
 }
 
-void WebPageInspectorTargetController::connectInspector(const String& targetId)
+void WebPageInspectorTargetController::connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
 {
     InspectorTarget* target = m_targets.get(targetId);
     if (!target)
@@ -69,7 +69,7 @@ void WebPageInspectorTargetController::connectInspector(const String& targetId)
 
     RefPtr<WebPageInspectorTargetFrontendChannel> channel = m_targetFrontendChannels.get(targetId);
     if (!channel) {
-        channel = WebPageInspectorTargetFrontendChannel::create(*this, targetId);
+        channel = WebPageInspectorTargetFrontendChannel::create(*this, targetId, connectionType);
         m_targetFrontendChannels.set(target->identifier(), channel);
     }
 

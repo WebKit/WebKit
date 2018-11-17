@@ -30,7 +30,7 @@ function test()
             InspectorTest.expectEqual(WI.targets.length, 1, "Targets list should always start out with the main target.");
             InspectorTest.expectEqual([...WI.targets][0], WI.mainTarget, "Target list should always contain the main target.");
             InspectorTest.expectNotNull(WI.mainTarget.executionContext, "Main target should have an ExecutionContext.");
-            InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, RuntimeAgent, "Main target should have the global RuntimeAgent.");
+            InspectorTest.expectEqual(WI.mainTarget.RuntimeAgent, WI.pageTarget.RuntimeAgent, "Main target should have the page target's RuntimeAgent.");
             dumpTargets();
         }
     });

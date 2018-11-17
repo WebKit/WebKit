@@ -1,3 +1,128 @@
+2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191740
+        <rdar://problem/45470897>
+
+        Reviewed by Timothy Hatcher.
+
+        When a web page asks to open a local Web Inspector, that inspector
+        will now connect in the UIProcess (WebPageProxy / WebPageInspectorController)
+        instead of the WebContentProcess (WebKit::WebInspector / InspectorController).
+
+        Previously a WebInspectorProxy was re-created every time the WebPageProxy's
+        WebPage / WebProcess was changed, effectively closing the Web Inspector
+        frontend when the WebPage was swapped or crashed.
+
+        This change keeps the WebInspectorProxy alive as long as the WebPageProxy
+        is alive. During process swaps, or process crashes, the WebInspectorProxy
+        is reset when the page is reset and updated when the page's WebProcess
+        changes. Since WebInspectorProxy owns the Web Inspector view / window
+        the Web Inspector window can be kept alive across (and attached state)
+        across WebPage / WebProcess changes.
+
+        Previously the WebContentProcess's WebKit::WebInspector was the Local
+        FrontendChannel for the WebCore::InspectorController. This can't
+        outlive the single WebContentProcess.
+
+        This change makes the UIProcesses' WebInspectorProxy the Local FrontendChannel
+        for the WebKit::WebPageInspectorController. Given the WebInspectorProxy
+        now stays alive alongside the WebPageProxy this will live across process changes.
+        This means that the WebInspectorUI process must send its backend messages to
+        the WebInspectorProxy -> WebPageInspectorController now instead of the
+        old path WebInspector -> WebCore::InspectorController.
+
+        A direct IPC connection is still maintained between the WebContentProcess's
+        WebKit::WebInspector and the InspectorProcess's WebInspectorUI. Previously
+        this connection was established by WebKit::WebInspector vending an
+        IPC::Attachment to the WebInspectorUI process. This patch inverts that
+        relationship, because the WebInspectorUI process now lives across multiple
+        WebContentProcess changes. The WebInspectorUI now vends the IPC::Attachment
+        to the WebContentProcess each time the process changes. This way they can both
+        still communicate through normal Messages::WebInspector/WebInspectorUI
+        messages and everything behaves as previously expected.
+
+        * Scripts/webkit/messages.py:
+        Header for Inspector::FrontendChannel::ConnectionType.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::openLocalFrontend):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openLocalInspectorFrontend):
+        (WebKit::WebInspector::setFrontendConnection):
+        (WebKit::WebInspector::closeFrontendConnection):
+        (WebKit::WebInspector::close):
+        (WebKit::WebInspector::openFrontendConnection): Deleted.
+        (WebKit::WebInspector::sendMessageToBackend): Deleted.
+        (WebKit::WebInspector::sendMessageToFrontend): Deleted.
+        On the WebProcess side we ask the UIProcess to open a local frontend and now
+        receive instead of vend an IPC connection to the WebInspectorUI process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::resetState):
+        Keep the WebInspectorProxy alive alongside the WebPageProxy.
+        Update it as processes / states change.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::openLocalInspectorFrontend):
+        (WebKit::WebInspectorProxy::createInspectorPage): Deleted.
+        (WebKit::WebInspectorProxy::sendMessageToFrontend):
+        (WebKit::WebInspectorProxy::closeFrontendPageAndWindow):
+        Open and close a local frontend by being the FrontendChannel on the UIProcess side.
+
+        (WebKit::WebInspectorProxy::sendMessageToBackend):
+        Dispatch WebInspectorUI backend messages to the UIProcess's InspectorController
+        now that the InspectorController is here instead of in the WebProcess.
+
+        (WebKit::WebInspectorProxy::setFrontendConnection):
+        Transfer the WebProcess <-> InspectorProcess IPC connection through us
+        because we are the one link between them when processes change.
+
+        (WebKit::WebInspectorProxy::invalidate):
+        (WebKit::WebInspectorProxy::frontendLoaded):
+        Be safer and handle inspectedPage being potentially null.
+
+        * WebProcess/WebPage/WebPageInspectorTargetController.cpp:
+        (WebKit::WebPageInspectorTargetController::connectInspector):
+        * WebProcess/WebPage/WebPageInspectorTargetController.h:
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.cpp:
+        (WebKit::WebPageInspectorTargetFrontendChannel::create):
+        (WebKit::WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel):
+        * WebProcess/WebPage/WebPageInspectorTargetFrontendChannel.h:
+        * UIProcess/InspectorTargetProxy.cpp:
+        (WebKit::InspectorTargetProxy::connect):
+        Proxy the ConnectionType received on the UIProcess side to the WebProcess side
+        when connecting to sub-targets.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::connectInspector):
+        (WebKit::WebPage::setHasLocalInspectorFrontend): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::hasLocalInspectorFrontend const): Deleted.
+        (WebKit::WebPageProxy::setHasLocalInspectorFrontend): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        Eliminate the hasLocalInspectorFrontend state that was only used
+        to disable PSON. PSON no longer needs to be disabled for this reason.
+
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        (WebKit::WebInspectorUI::updateConnection):
+        (WebKit::WebInspectorUI::closeWindow):
+        (WebKit::WebInspectorUI::sendMessageToBackend):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        Vend an IPC connection on demand to the WebProcess side.
+
 2018-11-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][WPE] Add "WebKitDeviceInfoPermissionRequest.h" into webkit2.h

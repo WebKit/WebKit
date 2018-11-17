@@ -21,7 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebInspectorUI {
-    EstablishConnection(IPC::Attachment connectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+    EstablishConnection(uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)
+    UpdateConnection()
 
     AttachedBottom()
     AttachedRight()

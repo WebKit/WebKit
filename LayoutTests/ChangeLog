@@ -1,3 +1,15 @@
+2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191740
+        <rdar://problem/45470897>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/unit-tests/target-manager-expected.txt:
+        * inspector/unit-tests/target-manager.html:
+        Update test to pass in both a MultiplexingBackendTarget and DirectBackendTarget world.
+
 2018-11-16  Jeremy Jones  <jeremyj@apple.com>
 
         Include AirPlay destination name in AirPlay placard.

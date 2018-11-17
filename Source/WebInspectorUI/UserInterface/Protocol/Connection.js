@@ -96,7 +96,8 @@ InspectorBackend.Connection = class InspectorBackendConnection
         console.assert(this._pendingResponses.size >= 0);
 
         if (messageObject["error"]) {
-            if (messageObject["error"].code !== -32000)
+            // FIXME: Eliminate Target.exists
+            if (messageObject["error"].code !== -32000 && messageObject["error"].message !== "'Target' domain was not found")
                 console.error("Request with id = " + messageObject["id"] + " failed. " + JSON.stringify(messageObject["error"]));
         }
 

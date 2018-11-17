@@ -1,3 +1,30 @@
+2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)
+        https://bugs.webkit.org/show_bug.cgi?id=191740
+        <rdar://problem/45470897>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.Connection.prototype._dispatchResponse):
+        Hide the TargetAgent does not exist message. This is necessary so that WebKitLegacy
+        tests don't include this line in output each test.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        (WI.resetMainExecutionContext):
+        (WI.performOneTimeFrontendInitializationsUsingTarget):
+        Behave more like Main.js and initialize a MultiplexingBackendTarget when the
+        TargetAgent is available.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        Use the main target, a.k.a. the page connection. The backend target's
+        messages don't have any responses, so this was effectively not waiting
+        at all.
+
 2018-11-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TreeOutline shouldn't select first child of an expanded element on right arrow key

@@ -21,7 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebInspectorProxy {
-    CreateInspectorPage(IPC::Attachment connectionIdentifier, bool canAttach, bool underTest)
+    OpenLocalInspectorFrontend(bool canAttach, bool underTest)
+    SetFrontendConnection(IPC::Attachment connectionIdentifier)
+
+    SendMessageToBackend(String message)
 
     FrontendLoaded()
     DidClose()

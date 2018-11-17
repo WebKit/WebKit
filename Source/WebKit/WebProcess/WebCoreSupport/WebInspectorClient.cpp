@@ -90,9 +90,9 @@ void WebInspectorClient::frontendCountChanged(unsigned count)
 
 Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* controller)
 {
-    m_page->inspector()->openFrontendConnection(controller->isUnderTest());
+    m_page->inspector()->openLocalInspectorFrontend(controller->isUnderTest());
 
-    return m_page->inspector();
+    return nullptr;
 }
 
 void WebInspectorClient::bringFrontendToFront()

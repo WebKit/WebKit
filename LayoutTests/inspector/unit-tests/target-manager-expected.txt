@@ -6,7 +6,7 @@ Test for TargetManager and other global WI.Target objects.
 PASS: Targets list should always start out with the main target.
 PASS: Target list should always contain the main target.
 PASS: Main target should have an ExecutionContext.
-PASS: Main target should have the global RuntimeAgent.
+PASS: Main target should have the page target's RuntimeAgent.
 Target - Symbol(page) - Page
 
 -- Running test case: TargetManager.WorkerTarget.Create

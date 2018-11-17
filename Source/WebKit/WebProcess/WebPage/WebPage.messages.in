@@ -111,7 +111,7 @@ messages -> WebPage LegacyReceiver {
 
     SetControlledByAutomation(bool controlled)
 
-    ConnectInspector(String targetId)
+    ConnectInspector(String targetId, Inspector::FrontendChannel::ConnectionType connectionType)
     DisconnectInspector(String targetId)
     SendMessageToTargetBackend(String targetId, String message)
 

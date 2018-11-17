@@ -36,18 +36,19 @@ class WebPageInspectorTargetController;
 class WebPageInspectorTargetFrontendChannel final : public RefCounted<WebPageInspectorTargetFrontendChannel>, public Inspector::FrontendChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<WebPageInspectorTargetFrontendChannel> create(WebPageInspectorTargetController&, const String& targetId);
+    static Ref<WebPageInspectorTargetFrontendChannel> create(WebPageInspectorTargetController&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
     virtual ~WebPageInspectorTargetFrontendChannel() = default;
 
 private:
-    WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController&, const String& targetId);
+    WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController&, const String& targetId, Inspector::FrontendChannel::ConnectionType);
 
-    ConnectionType connectionType() const override { return ConnectionType::Remote; }
+    ConnectionType connectionType() const override { return m_connectionType; }
     void sendMessageToFrontend(const String& message) override;
 
 private:
     WebPageInspectorTargetController& m_targetController;
     String m_targetId;
+    Inspector::FrontendChannel::ConnectionType m_connectionType { Inspector::FrontendChannel::ConnectionType::Remote };
 };
 
 } // namespace WebKit

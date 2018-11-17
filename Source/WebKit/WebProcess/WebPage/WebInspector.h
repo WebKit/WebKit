@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,16 +35,13 @@ namespace WebKit {
 
 class WebPage;
 
-class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, private IPC::Connection::Client, public Inspector::FrontendChannel {
+class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, private IPC::Connection::Client {
 public:
     static Ref<WebInspector> create(WebPage*);
 
     WebPage* page() const { return m_page; }
 
     void updateDockingAvailability();
-
-    void sendMessageToFrontend(const String& message) override;
-    ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -78,7 +74,7 @@ public:
     void stopElementSelection();
     void elementSelectionChanged(bool);
 
-    void sendMessageToBackend(const String&);
+    void setFrontendConnection(IPC::Attachment);
 
     void disconnectFromPage() { close(); }
 
@@ -91,7 +87,7 @@ private:
     bool canAttachWindow();
 
     // Called from WebInspectorClient
-    void openFrontendConnection(bool underTest);
+    void openLocalInspectorFrontend(bool underTest);
     void closeFrontendConnection();
 
     void bringToFront();

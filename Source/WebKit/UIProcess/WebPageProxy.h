@@ -380,9 +380,6 @@ public:
 
     WebInspectorProxy* inspector() const;
 
-    bool hasLocalInspectorFrontend() const { return m_inspectorHasLocalFrontend; }
-    void setHasLocalInspectorFrontend(bool hasLocalFrontend) { m_inspectorHasLocalFrontend = hasLocalFrontend; }
-
     void didChangeInspectorFrontendCount(unsigned count) { m_inspectorFrontendCount = count; }
     unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }
 
@@ -2117,7 +2114,6 @@ private:
     bool m_controlledByAutomation { false };
 
     unsigned m_inspectorFrontendCount { 0 };
-    bool m_inspectorHasLocalFrontend { false };
 
 #if PLATFORM(COCOA)
     bool m_isSmartInsertDeleteEnabled { false };

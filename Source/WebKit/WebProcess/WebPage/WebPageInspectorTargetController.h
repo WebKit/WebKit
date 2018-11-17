@@ -47,7 +47,7 @@ public:
     void addTarget(Inspector::InspectorTarget&);
     void removeTarget(Inspector::InspectorTarget&);
 
-    void connectInspector(const String& targetId);
+    void connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType);
     void disconnectInspector(const String& targetId);
     void sendMessageToTargetBackend(const String& targetId, const String& message);
     void sendMessageToTargetFrontend(const String& targetId, const String& message);

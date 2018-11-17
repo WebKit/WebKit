@@ -163,7 +163,7 @@ InspectorBackendClass = class InspectorBackendClass
     runAfterPendingDispatches(script)
     {
         // FIXME: Should this respect pending dispatches in all connections?
-        InspectorBackend.backendConnection.runAfterPendingDispatches(script);
+        WI.mainTarget.connection.runAfterPendingDispatches(script);
     }
 
     activateDomain(domainName, activationDebuggableTypes)

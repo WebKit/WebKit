@@ -800,7 +800,6 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
     updateActivityState();
     updateThrottleState();
 
-    m_inspector = WebInspectorProxy::create(this);
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = std::make_unique<WebFullScreenManagerProxy>(*this, pageClient().fullScreenManagerProxyClient());
 #endif
@@ -822,6 +821,8 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
 #endif
 
     initializeWebPage(shouldDelayAttachingDrawingArea);
+
+    m_inspector->updateForNewPageProcess(this);
 
 #if ENABLE(REMOTE_INSPECTOR)
     remoteInspectorInformationDidChange();
@@ -938,6 +939,9 @@ void WebPageProxy::close()
 #if ENABLE(CONTEXT_MENUS)
     m_activeContextMenu = nullptr;
 #endif
+
+    m_inspector->invalidate();
+    m_inspector = nullptr;
 
     m_backForwardList->pageClosed();
     m_inspectorController->pageClosed();
@@ -6250,10 +6254,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
     closeOverlayedViews();
 
-    if (m_inspector) {
-        m_inspector->invalidate();
-        m_inspector = nullptr;
-    }
+    m_inspector->reset();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenManager) {
@@ -6282,8 +6283,6 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
-
-    m_inspectorHasLocalFrontend = false;
 
     m_mainFrameHasHorizontalScrollbar = false;
     m_mainFrameHasVerticalScrollbar = false;

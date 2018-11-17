@@ -30,6 +30,7 @@
 #include "Attachment.h"
 #include "MessageReceiver.h"
 #include "WebInspectorUtilities.h"
+#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -70,6 +71,7 @@ enum class AttachmentSide {
 class WebInspectorProxy
     : public API::ObjectImpl<API::Object::Type::Inspector>
     , public IPC::MessageReceiver
+    , public Inspector::FrontendChannel
 #if PLATFORM(WIN)
     , public WebCore::WindowMessageListener
 #endif
@@ -97,6 +99,9 @@ public:
     void hide();
     void close();
     void closeForCrash();
+
+    void reset();
+    void updateForNewPageProcess(WebPageProxy*);
 
 #if PLATFORM(MAC) && WK_API_ENABLED
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame);
@@ -167,6 +172,10 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    // Inspector::FrontendChannel
+    void sendMessageToFrontend(const String& message) override;
+    ConnectionType connectionType() const override { return ConnectionType::Local; }
+
     WebPageProxy* platformCreateFrontendPage();
     void platformCreateFrontendWindow();
     void platformCloseFrontendPageAndWindow();
@@ -196,7 +205,10 @@ private:
 #endif
 
     // Called by WebInspectorProxy messages
-    void createInspectorPage(IPC::Attachment, bool canAttach, bool underTest);
+    void openLocalInspectorFrontend(bool canAttach, bool underTest);
+    void setFrontendConnection(IPC::Attachment);
+
+    void sendMessageToBackend(const String&);
     void frontendLoaded();
     void didClose();
     void bringToFront();

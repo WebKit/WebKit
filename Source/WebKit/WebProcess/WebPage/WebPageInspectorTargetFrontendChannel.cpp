@@ -30,14 +30,15 @@
 
 namespace WebKit {
 
-Ref<WebPageInspectorTargetFrontendChannel> WebPageInspectorTargetFrontendChannel::create(WebPageInspectorTargetController& targetController, const String& targetId)
+Ref<WebPageInspectorTargetFrontendChannel> WebPageInspectorTargetFrontendChannel::create(WebPageInspectorTargetController& targetController, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    return adoptRef(*new WebPageInspectorTargetFrontendChannel(targetController, targetId));
+    return adoptRef(*new WebPageInspectorTargetFrontendChannel(targetController, targetId, connectionType));
 }
 
-WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController& targetController, const String& targetId)
+WebPageInspectorTargetFrontendChannel::WebPageInspectorTargetFrontendChannel(WebPageInspectorTargetController& targetController, const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
     : m_targetController(targetController)
     , m_targetId(targetId)
+    , m_connectionType(connectionType)
 {
 }
 

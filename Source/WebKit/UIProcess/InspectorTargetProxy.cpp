@@ -46,10 +46,10 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 {
 }
 
-void InspectorTargetProxy::connect(Inspector::FrontendChannel&)
+void InspectorTargetProxy::connect(Inspector::FrontendChannel& channel)
 {
     if (m_page.isValid())
-        m_page.process().send(Messages::WebPage::ConnectInspector(identifier()), m_page.pageID());
+        m_page.process().send(Messages::WebPage::ConnectInspector(identifier(), channel.connectionType()), m_page.pageID());
 }
 
 void InspectorTargetProxy::disconnect(Inspector::FrontendChannel&)

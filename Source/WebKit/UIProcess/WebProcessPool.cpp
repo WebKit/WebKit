@@ -2136,12 +2136,6 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         return page.process();
     }
 
-    // FIXME: We should support process swap with a local web inspector.
-    if (page.hasLocalInspectorFrontend()) {
-        reason = "A Local Web Inspector frontend is connected"_s;
-        return page.process();
-    }
-
     if (m_automationSession) {
         reason = "An automation session is active"_s;
         return page.process();

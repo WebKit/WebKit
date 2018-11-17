@@ -2777,9 +2777,9 @@ void WebPage::setControlledByAutomation(bool controlled)
     m_page->setControlledByAutomation(controlled);
 }
 
-void WebPage::connectInspector(const String& targetId)
+void WebPage::connectInspector(const String& targetId, Inspector::FrontendChannel::ConnectionType connectionType)
 {
-    m_inspectorTargetController->connectInspector(targetId);
+    m_inspectorTargetController->connectInspector(targetId, connectionType);
 }
 
 void WebPage::disconnectInspector(const String& targetId)
@@ -3484,11 +3484,6 @@ RemoteWebInspectorUI* WebPage::remoteInspectorUI()
     if (!m_remoteInspectorUI)
         m_remoteInspectorUI = RemoteWebInspectorUI::create(*this);
     return m_remoteInspectorUI.get();
-}
-
-void WebPage::setHasLocalInspectorFrontend(bool hasLocalFrontend)
-{
-    send(Messages::WebPageProxy::SetHasLocalInspectorFrontend(hasLocalFrontend));
 }
 
 void WebPage::inspectorFrontendCountChanged(unsigned count)
