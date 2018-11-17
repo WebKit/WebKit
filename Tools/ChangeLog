@@ -1,3 +1,14 @@
+2018-11-16  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Retry app installation on watchOS simulators
+        https://bugs.webkit.org/show_bug.cgi?id=191769
+        <rdar://problem/46139850>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.install_app): Retry app installations.
+
 2018-11-16  Zalan Bujtas  <zalan@apple.com>
 
         Add DidFirstMeaningfulPaint milestone.
