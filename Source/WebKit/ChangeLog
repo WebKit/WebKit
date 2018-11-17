@@ -1,3 +1,26 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        WKWebViewMacEditingTests.DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView API test is crashing in debug
+        https://bugs.webkit.org/show_bug.cgi?id=191797
+
+        Reviewed by Ryosuke Niwa.
+
+        We were hitting the assertion because the error handler was first getting called. It would
+        deallocate the send right, cancel/null out the XPC connection and call
+        didFinishLaunchingProcess(0, IPC::Connection::Identifier()).
+
+        Then the xpc_connection_send_message_with_reply() block would get called later and
+        would try to deallocate the send right again, and call
+        didFinishLaunchingProcess(0, IPC::Connection::Identifier()) again because the xpc
+        connection is null.
+
+        Handle this case by having the xpc_connection_send_message_with_reply() block check
+        that we're still launching (i.e. didFinishLaunchingProcess() has not been called
+        yet).
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up to r238330.

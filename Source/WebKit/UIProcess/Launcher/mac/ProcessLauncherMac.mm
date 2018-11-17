@@ -241,7 +241,9 @@ void ProcessLauncher::launchProcess()
     ref();
     xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
         // Errors are handled in the event handler.
-        if (xpc_get_type(reply) != XPC_TYPE_ERROR) {
+        // It is possible for this block to be called after the error event handler, in which case we're no longer
+        // launching and we already took care of cleaning things up.
+        if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
 
