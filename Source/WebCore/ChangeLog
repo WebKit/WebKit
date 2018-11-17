@@ -1,3 +1,15 @@
+2018-11-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Provide default implementation of Cursor
+        https://bugs.webkit.org/show_bug.cgi?id=191772
+
+        Reviewed by Michael Catanzaro.
+
+        * SourcesWPE.txt:
+        * platform/Cursor.cpp:
+        (WebCore::Cursor::ensurePlatformCursor const):
+        * platform/wpe/CursorWPE.cpp: Removed.
+
 2018-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         EditorWPE should be EditorLibWPE
