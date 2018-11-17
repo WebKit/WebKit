@@ -31,6 +31,10 @@
 #include <WebCore/InspectorFrontendHost.h>
 #include <wtf/Deque.h>
 
+namespace WebCore {
+class CertificateInfo;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -67,6 +71,7 @@ public:
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const String& url, const String& content) override;
     void inspectedURLChanged(const String&) override;
+    void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
 
     bool canSave() override { return true; }

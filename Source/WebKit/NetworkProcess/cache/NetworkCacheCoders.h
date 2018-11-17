@@ -26,14 +26,7 @@
 
 #pragma once
 
-#include <WebCore/CertificateInfo.h>
 #include <WebCore/HTTPHeaderMap.h>
-#include <utility>
-#include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/SHA1.h>
-#include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
@@ -41,22 +34,10 @@
 namespace WTF {
 namespace Persistence {
 
-template<> struct Coder<WebCore::CertificateInfo> {
-    static void encode(Encoder&, const WebCore::CertificateInfo&);
-    static bool decode(Decoder&, WebCore::CertificateInfo&);
-};
-
 template<> struct Coder<WebCore::HTTPHeaderMap> {
     static void encode(Encoder&, const WebCore::HTTPHeaderMap&);
     static bool decode(Decoder&, WebCore::HTTPHeaderMap&);
 };
-
-#if USE(GLIB)
-template<> struct Coder<GRefPtr<GByteArray>> {
-    static void encode(Encoder&, const GRefPtr<GByteArray>&);
-    static bool decode(Decoder&, GRefPtr<GByteArray>&);
-};
-#endif
 
 }
 }

@@ -45,6 +45,7 @@
 #include "CacheStorageProvider.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CertificateInfo.h"
 #include "Chrome.h"
 #include "ClientOrigin.h"
 #include "ComposedTreeIterator.h"
@@ -309,6 +310,7 @@ private:
     void bringToFront() final { }
     String localizedStringsURL() final { return String(); }
     void inspectedURLChanged(const String&) final { }
+    void showCertificate(const CertificateInfo&) final { }
     void setAttachedWindowHeight(unsigned) final { }
     void setAttachedWindowWidth(unsigned) final { }
 

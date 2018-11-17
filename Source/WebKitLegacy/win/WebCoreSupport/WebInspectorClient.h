@@ -41,6 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class CertificateInfo;
 class Page;
 }
 
@@ -107,6 +108,7 @@ public:
     void setAttachedWindowWidth(unsigned) override;
 
     void inspectedURLChanged(const WTF::String& newURL) override;
+    void showCertificate(const WebCore::CertificateInfo&) override;
 
     // InspectorFrontendClientLocal API.
     void attachWindow(DockSide) override;

@@ -1060,6 +1060,26 @@ WI.Resource = class Resource extends WI.SourceCode
         InspectorFrontendHost.copyText(curlCommand);
         return curlCommand;
     }
+
+    async showCertificate()
+    {
+        let errorString = WI.UIString("Unable to show certificate for \u201C%s\u201C").format(this.url);
+
+        try {
+            let {serializedCertificate} = await NetworkAgent.getSerializedCertificate(this._requestIdentifier);
+            if (InspectorFrontendHost.showCertificate(serializedCertificate))
+                return;
+        } catch (e) {
+            console.error(e);
+            throw errorString;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(this._target, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, errorString);
+        consoleMessage.shouldRevealConsole = true;
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+
+        throw errorString;
+    }
 };
 
 WI.Resource.TypeIdentifier = "resource";

@@ -1,3 +1,51 @@
+2018-11-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Network: add button to show system certificate dialog
+        https://bugs.webkit.org/show_bug.cgi?id=191458
+        <rdar://problem/45977019>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: http/tests/inspector/network/getSerializedCertificate.html
+
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::getSerializedCertificate): Added.
+
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::supportsShowCertificate): Added.
+        (WebCore::InspectorFrontendHost::showCertificate): Added.
+        * inspector/InspectorFrontendClient.h:
+        (InspectorFrontendClient::showCertificate): Added.
+        * testing/Internals.cpp:
+        (InspectorStubFrontend::showCertificate): Added.
+
+        * platform/network/cf/CertificateInfo.h:
+        (WTF::Persistence::encodeCFData): Added.
+        (WTF::Persistence::decodeCFData): Added.
+        (WTF::Persistence::encodeSecTrustRef): Added.
+        (WTF::Persistence::decodeSecTrustRef): Added.
+        (WTF::Persistence::encodeCertificateChain): Added.
+        (WTF::Persistence::decodeCertificateChain): Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode): Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode): Added.
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        * platform/network/cocoa/CertificateInfoCocoa.mm:
+
+        * platform/network/curl/CertificateInfo.h:
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode): Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode): Added.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WTF::Persistence::Coder<GRefPtr<GByteArray>>::encode): Added.
+        (WTF::Persistence::Coder<GRefPtr<GByteArray>>::decode): Added.
+        (WTF::Persistence::certificatesDataListFromCertificateInfo): Added.
+        (WTF::Persistence::certificateFromCertificatesDataList): Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode): Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode): Added.
+
 2018-11-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingState::addDetachingRule should accumulate rules.

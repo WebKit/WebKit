@@ -31,6 +31,7 @@ messages -> WebInspectorProxy {
     BringToFront()
 
     InspectedURLChanged(String urlString)
+    ShowCertificate(WebCore::CertificateInfo certificateInfo)
     ElementSelectionChanged(bool active)
 
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)

@@ -26,12 +26,6 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
-#include <Security/SecCertificate.h>
-#include <wtf/cf/TypeCastsCF.h>
-#include <wtf/spi/cocoa/SecuritySPI.h>
-
-WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
-
 namespace WebCore {
 
 #ifndef NDEBUG

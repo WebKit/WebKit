@@ -26,10 +26,12 @@
 #include "config.h"
 #include "WebInspectorUI.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/InspectorController.h>
@@ -259,6 +261,11 @@ void WebInspectorUI::append(const WTF::String& filename, const WTF::String& cont
 void WebInspectorUI::inspectedURLChanged(const String& urlString)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_inspectedPageIdentifier);
+}
+
+void WebInspectorUI::showCertificate(const CertificateInfo& certificateInfo)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::ShowCertificate(certificateInfo), m_inspectedPageIdentifier);
 }
 
 void WebInspectorUI::showConsole()

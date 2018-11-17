@@ -26,16 +26,6 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
-#include "NotImplemented.h"
-#include <wtf/cf/TypeCastsCF.h>
-
-#if PLATFORM(COCOA)
-#include <Security/SecCertificate.h>
-#include <wtf/spi/cocoa/SecuritySPI.h>
-
-WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(COCOA)

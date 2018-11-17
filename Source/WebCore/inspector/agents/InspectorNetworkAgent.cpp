@@ -83,6 +83,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -904,6 +905,25 @@ void InspectorNetworkAgent::loadResource(const String& frameId, const String& ur
         return;
 
     inspectorThreadableLoaderClient->setLoader(WTFMove(loader));
+}
+
+void InspectorNetworkAgent::getSerializedCertificate(ErrorString& errorString, const String& requestId, String* serializedCertificate)
+{
+    auto* resourceData = m_resourcesData->data(requestId);
+    if (!resourceData) {
+        errorString = "No resource with given identifier found"_s;
+        return;
+    }
+
+    auto& certificate = resourceData->certificateInfo();
+    if (!certificate || certificate.value().isEmpty()) {
+        errorString = "No certificate for resource"_s;
+        return;
+    }
+
+    WTF::Persistence::Encoder encoder;
+    encoder << certificate.value();
+    *serializedCertificate = base64Encode(encoder.buffer(), encoder.bufferSize());
 }
 
 WebSocket* InspectorNetworkAgent::webSocketForRequestId(const String& requestId)

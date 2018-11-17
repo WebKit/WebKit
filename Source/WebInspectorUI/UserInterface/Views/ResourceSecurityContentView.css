@@ -31,6 +31,17 @@ body[dir] .resource-security > section.certificate > .details {
     color: var(--network-dns-color);
 }
 
+.resource-security .details > .show-certificate > .key {
+    display: inline-flex;
+    align-items: center;
+}
+
+.resource-security .details > .show-certificate > .key > .error {
+    width: 14px;
+    height: 14px;
+    -webkit-margin-start: 2px;
+}
+
 .resource-security .dns-name + .dns-name > .key,
 .resource-security .ip-address + .ip-address > .key {
     color: transparent;

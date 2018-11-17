@@ -28,8 +28,10 @@
 
 #include "RemoteWebInspectorProxyMessages.h"
 #include "RemoteWebInspectorUIMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/InspectorController.h>
@@ -144,6 +146,11 @@ void RemoteWebInspectorUI::append(const String& filename, const String& content)
 void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
 {
     // Do nothing. The remote side can know if the main resource changed.
+}
+
+void RemoteWebInspectorUI::showCertificate(const CertificateInfo& certificateInfo)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::ShowCertificate(certificateInfo), m_page.pageID());
 }
 
 } // namespace WebKit

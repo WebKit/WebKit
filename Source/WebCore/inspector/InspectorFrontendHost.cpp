@@ -30,6 +30,7 @@
 #include "config.h"
 #include "InspectorFrontendHost.h"
 
+#include "CertificateInfo.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
@@ -56,7 +57,7 @@
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>
 #include <wtf/StdLibExtras.h>
-
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
@@ -436,6 +437,36 @@ void InspectorFrontendHost::inspectInspector()
 {
     if (m_frontendPage)
         m_frontendPage->inspectorController().show();
+}
+
+bool InspectorFrontendHost::supportsShowCertificate() const
+{
+#if PLATFORM(COCOA)
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
+{
+    if (!m_client)
+        return false;
+
+    Vector<uint8_t> data;
+    if (!base64Decode(serializedCertificate, data))
+        return false;
+
+    CertificateInfo certificateInfo;
+    WTF::Persistence::Decoder decoder(data.data(), data.size());
+    if (!decoder.decode(certificateInfo))
+        return false;
+
+    if (certificateInfo.isEmpty())
+        return false;
+
+    m_client->showCertificate(certificateInfo);
+    return true;
 }
 
 } // namespace WebCore

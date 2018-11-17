@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class InspectorController;
+class CertificateInfo;
 }
 
 namespace WebKit {
@@ -105,6 +106,7 @@ public:
     void append(const WTF::String& url, const WTF::String& content) override;
 
     void inspectedURLChanged(const String&) override;
+    void showCertificate(const WebCore::CertificateInfo&) override;
 
     void sendMessageToBackend(const String&) override;
 

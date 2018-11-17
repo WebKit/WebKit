@@ -60,6 +60,9 @@ public:
     void bringToFront();
     void inspectedURLChanged(const String&);
 
+    bool supportsShowCertificate() const;
+    bool showCertificate(const String& serializedCertificate);
+
     void setZoomFactor(float);
     float zoomFactor();
 

@@ -32,8 +32,10 @@
 #include "WebKitInspectorWindow.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
+#include <WebCore/CertificateInfo.h>
 
 namespace WebKit {
+using namespace WebCore;
 
 void RemoteWebInspectorProxy::updateWindowTitle(const CString& targetName)
 {
@@ -106,6 +108,10 @@ void RemoteWebInspectorProxy::platformStartWindowDrag()
 }
 
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&)
+{
+}
+
+void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo&)
 {
 }
 

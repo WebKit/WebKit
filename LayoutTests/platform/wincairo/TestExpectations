@@ -1000,6 +1000,7 @@ http/tests/xmlhttprequest/upload-progress-events.html [ Failure ]
 http/tests/xmlviewer [ Skip ]
 
 webkit.org/b/191498 http/tests/inspector/network/resource-response-security.html [ Skip ]
+webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
 
 #///////////////////////////////////////////////////////////////////////////////
 # Issue categories below are shared with other platforms (primarily AppleWin)

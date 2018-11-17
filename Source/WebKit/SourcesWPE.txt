@@ -27,7 +27,6 @@ NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
 NetworkProcess/CustomProtocols/soup/LegacyCustomProtocolManagerSoup.cpp
 
-NetworkProcess/cache/NetworkCacheCodersSoup.cpp
 NetworkProcess/cache/NetworkCacheDataSoup.cpp
 NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
 

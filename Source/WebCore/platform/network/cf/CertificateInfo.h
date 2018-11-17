@@ -23,14 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CertificateInfo_h
-#define CertificateInfo_h
+#pragma once
 
 #include "CertificateInfoBase.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/cf/TypeCastsCF.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 #if PLATFORM(COCOA)
+#include <Security/SecCertificate.h>
 #include <Security/SecTrust.h>
+#include <wtf/spi/cocoa/SecuritySPI.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 #endif
 
 namespace WebCore {
@@ -87,5 +95,166 @@ private:
     mutable RetainPtr<CFArrayRef> m_certificateChain;
 };
 
+} // namespace WebCore
+
+namespace WTF {
+namespace Persistence {
+
+static void encodeCFData(Encoder& encoder, CFDataRef data)
+{
+    uint64_t length = CFDataGetLength(data);
+    const uint8_t* bytePtr = CFDataGetBytePtr(data);
+
+    encoder << length;
+    encoder.encodeFixedLengthData(bytePtr, static_cast<size_t>(length));
+}
+
+static bool decodeCFData(Decoder& decoder, RetainPtr<CFDataRef>& data)
+{
+    uint64_t size = 0;
+    if (!decoder.decode(size))
+        return false;
+
+    Vector<uint8_t> vector(static_cast<size_t>(size));
+    if (!decoder.decodeFixedLengthData(vector.data(), vector.size()))
+        return false;
+
+    data = adoptCF(CFDataCreate(nullptr, vector.data(), vector.size()));
+    return true;
+}
+
+#if HAVE(SEC_TRUST_SERIALIZATION)
+static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
+{
+    auto data = adoptCF(SecTrustSerialize(trust, nullptr));
+    if (!data) {
+        encoder << false;
+        return;
+    }
+
+    encoder << true;
+    encodeCFData(encoder, data.get());
+}
+
+static bool decodeSecTrustRef(Decoder& decoder, RetainPtr<SecTrustRef>& result)
+{
+    bool hasTrust;
+    if (!decoder.decode(hasTrust))
+        return false;
+
+    if (!hasTrust)
+        return true;
+
+    RetainPtr<CFDataRef> trustData;
+    if (!decodeCFData(decoder, trustData))
+        return false;
+
+    auto trust = adoptCF(SecTrustDeserialize(trustData.get(), nullptr));
+    if (!trust)
+        return false;
+
+    result = WTFMove(trust);
+    return true;
 }
 #endif
+
+#if PLATFORM(COCOA)
+static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain)
+{
+    CFIndex size = CFArrayGetCount(certificateChain);
+    Vector<CFTypeRef, 32> values(size);
+
+    CFArrayGetValues(certificateChain, CFRangeMake(0, size), values.data());
+
+    encoder << static_cast<uint64_t>(size);
+
+    for (CFIndex i = 0; i < size; ++i) {
+        ASSERT(values[i]);
+        auto data = adoptCF(SecCertificateCopyData(checked_cf_cast<SecCertificateRef>(values[i])));
+        encodeCFData(encoder, data.get());
+    }
+}
+
+static bool decodeCertificateChain(Decoder& decoder, RetainPtr<CFArrayRef>& certificateChain)
+{
+    uint64_t size;
+    if (!decoder.decode(size))
+        return false;
+
+    auto array = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+
+    for (size_t i = 0; i < size; ++i) {
+        RetainPtr<CFDataRef> data;
+        if (!decodeCFData(decoder, data))
+            return false;
+
+        auto certificate = adoptCF(SecCertificateCreateWithData(0, data.get()));
+        CFArrayAppendValue(array.get(), certificate.get());
+    }
+
+    certificateChain = WTFMove(array);
+    return true;
+}
+#endif
+
+template<> struct Coder<WebCore::CertificateInfo> {
+    static void encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+    {
+        encoder.encodeEnum(certificateInfo.type());
+
+        switch (certificateInfo.type()) {
+#if HAVE(SEC_TRUST_SERIALIZATION)
+        case WebCore::CertificateInfo::Type::Trust:
+            encodeSecTrustRef(encoder, certificateInfo.trust());
+            break;
+#endif
+#if PLATFORM(COCOA)
+        case WebCore::CertificateInfo::Type::CertificateChain: {
+            encodeCertificateChain(encoder, certificateInfo.certificateChain());
+            break;
+        }
+#endif
+        case WebCore::CertificateInfo::Type::None:
+            // Do nothing.
+            break;
+        }
+    }
+
+    static bool decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
+    {
+        WebCore::CertificateInfo::Type certificateInfoType;
+        if (!decoder.decodeEnum(certificateInfoType))
+            return false;
+
+        switch (certificateInfoType) {
+#if HAVE(SEC_TRUST_SERIALIZATION)
+        case WebCore::CertificateInfo::Type::Trust: {
+            RetainPtr<SecTrustRef> trust;
+            if (!decodeSecTrustRef(decoder, trust))
+                return false;
+
+            certificateInfo = WebCore::CertificateInfo(WTFMove(trust));
+            return true;
+        }
+#endif
+#if PLATFORM(COCOA)
+        case WebCore::CertificateInfo::Type::CertificateChain: {
+            RetainPtr<CFArrayRef> certificateChain;
+            if (!decodeCertificateChain(decoder, certificateChain))
+                return false;
+
+            certificateInfo = WebCore::CertificateInfo(WTFMove(certificateChain));
+            return true;
+        }
+#endif
+        case WebCore::CertificateInfo::Type::None:
+            // Do nothing.
+            break;
+        }
+
+        return true;
+    }
+};
+
+} // namespace WTF::Persistence
+} // namespace WTF

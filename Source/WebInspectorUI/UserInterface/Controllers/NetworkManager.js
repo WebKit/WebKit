@@ -47,6 +47,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
     }
 
+    // Static
+
+    static supportsShowCertificate()
+    {
+        return InspectorFrontendHost.supportsShowCertificate && window.NetworkAgent && NetworkAgent.getSerializedCertificate;
+    }
+
     // Target
 
     initializeTarget(target)

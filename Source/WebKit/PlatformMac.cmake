@@ -29,7 +29,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 
-    NetworkProcess/cache/NetworkCacheCodersCocoa.cpp
     NetworkProcess/cache/NetworkCacheDataCocoa.mm
     NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
 

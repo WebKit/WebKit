@@ -43,6 +43,9 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InspectorAgentBase.h>
+#import <SecurityInterface/SFCertificatePanel.h>
+#import <SecurityInterface/SFCertificateView.h>
+#import <WebCore/CertificateInfo.h>
 #import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
@@ -274,6 +277,30 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
+}
+
+void WebInspectorFrontendClient::showCertificate(const CertificateInfo& certificateInfo)
+{
+    ASSERT(!certificateInfo.isEmpty());
+
+    RetainPtr<SFCertificatePanel> certificatePanel = adoptNS([[SFCertificatePanel alloc] init]);
+
+    NSWindow *window = [[m_frontendWindowController frontendWebView] window];
+    if (!window)
+        window = [NSApp keyWindow];
+
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust() showGroup:YES];
+#else
+    [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr certificates:(NSArray *)certificateInfo.certificateChain() showGroup:YES];
+#endif
+
+    // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
+    SFCertificateView *certificateView = [certificatePanel certificateView];
+    [certificateView setDisplayTrust:YES];
+    [certificateView setEditableTrust:NO];
+    [certificateView setDisplayDetails:YES];
+    [certificateView setDetailsDisclosed:YES];
 }
 
 void WebInspectorFrontendClient::updateWindowTitle() const

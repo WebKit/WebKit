@@ -32,6 +32,7 @@
 #include "WebInspectorProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -115,6 +116,11 @@ void RemoteWebInspectorProxy::openInNewTab(const String& url)
     platformOpenInNewTab(url);
 }
 
+void RemoteWebInspectorProxy::showCertificate(const CertificateInfo& certificateInfo)
+{
+    platformShowCertificate(certificateInfo);
+}
+
 void RemoteWebInspectorProxy::sendMessageToBackend(const String& message)
 {
     if (m_client)
@@ -160,6 +166,7 @@ void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, b
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
 void RemoteWebInspectorProxy::platformStartWindowDrag() { }
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&) { }
+void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo&) { }
 void RemoteWebInspectorProxy::platformCloseFrontendPageAndWindow() { }
 #endif
 

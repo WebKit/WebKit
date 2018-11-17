@@ -33,8 +33,6 @@
 #include <WebCore/CertificateInfo.h>
 #include <wtf/cf/TypeCastsCF.h>
 
-WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
-
 namespace WebKit {
 using namespace WebCore;
 

@@ -150,7 +150,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WebKit_SOURCES
         NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
-        NetworkProcess/cache/NetworkCacheCodersCurl.cpp
         NetworkProcess/cache/NetworkCacheDataCurl.cpp
         NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
 

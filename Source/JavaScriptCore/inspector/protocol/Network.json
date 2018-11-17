@@ -199,6 +199,16 @@
             ]
         },
         {
+            "name": "getSerializedCertificate",
+            "description": "Fetches a serialized secure certificate for the given requestId to be displayed via InspectorFrontendHost.showCertificate.",
+            "parameters": [
+                { "name": "requestId", "$ref": "RequestId" }
+            ],
+            "returns": [
+                { "name": "serializedCertificate", "type": "string", "description": "Represents a base64 encoded WebCore::CertificateInfo object." }
+            ]
+        },
+        {
             "name": "resolveWebSocket",
             "description": "Resolves JavaScript WebSocket object for given request id.",
             "parameters": [

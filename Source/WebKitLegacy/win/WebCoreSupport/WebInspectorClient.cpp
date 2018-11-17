@@ -35,6 +35,7 @@
 #include "WebView.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <WebCore/BString.h>
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/Element.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
@@ -335,6 +336,11 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
     updateWindowTitle();
+}
+
+void WebInspectorFrontendClient::showCertificate(const CertificateInfo&)
+{
+    notImplemented();
 }
 
 void WebInspectorFrontendClient::closeWindowWithoutNotifications()

@@ -38,6 +38,9 @@
 #import "WebInspectorProxy.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import <SecurityInterface/SFCertificatePanel.h>
+#import <SecurityInterface/SFCertificateView.h>
+#import <WebCore/CertificateInfo.h>
 #import <wtf/text/Base64.h>
 
 @interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <WKInspectorViewControllerDelegate> {
@@ -71,6 +74,7 @@
 @end
 
 namespace WebKit {
+using namespace WebCore;
 
 WKWebView *RemoteWebInspectorProxy::webView() const
 {
@@ -210,6 +214,27 @@ void RemoteWebInspectorProxy::platformStartWindowDrag()
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String& url)
 {
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
+}
+
+void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
+{
+    ASSERT(!certificateInfo.isEmpty());
+
+    RetainPtr<SFCertificatePanel> certificatePanel = adoptNS([[SFCertificatePanel alloc] init]);
+
+    ASSERT(m_window);
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    [certificatePanel beginSheetForWindow:m_window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust() showGroup:YES];
+#else
+    [certificatePanel beginSheetForWindow:m_window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr certificates:(NSArray *)certificateInfo.certificateChain() showGroup:YES];
+#endif
+
+    // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
+    SFCertificateView *certificateView = [certificatePanel certificateView];
+    [certificateView setDisplayTrust:YES];
+    [certificateView setEditableTrust:NO];
+    [certificateView setDisplayDetails:YES];
+    [certificateView setDetailsDisclosed:YES];
 }
 
 } // namespace WebKit

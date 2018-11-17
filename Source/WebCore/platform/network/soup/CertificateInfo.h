@@ -24,13 +24,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CertificateInfo_h
-#define CertificateInfo_h
+#pragma once
 
 #include "CertificateInfoBase.h"
 #include "NotImplemented.h"
 #include <libsoup/soup.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 
@@ -63,4 +66,94 @@ private:
 
 } // namespace WebCore
 
-#endif // CertificateInfo_h
+namespace WTF {
+namespace Persistence {
+
+template<> struct Coder<GRefPtr<GByteArray>> {
+    static void encode(Encoder &encoder, const GRefPtr<GByteArray>& byteArray)
+    {
+        encoder << static_cast<uint32_t>(byteArray->len);
+        encoder.encodeFixedLengthData(byteArray->data, byteArray->len);
+    }
+
+    static bool decode(Decoder &decoder, GRefPtr<GByteArray>& byteArray)
+    {
+        uint32_t size;
+        if (!decoder.decode(size))
+            return false;
+
+        byteArray = adoptGRef(g_byte_array_sized_new(size));
+        return decoder.decodeFixedLengthData(byteArray->data, byteArray->len);
+    }
+};
+
+static Vector<GRefPtr<GByteArray>> certificatesDataListFromCertificateInfo(const WebCore::CertificateInfo &certificateInfo)
+{
+    auto* certificate = certificateInfo.certificate();
+    if (!certificate)
+        return { };
+
+    Vector<GRefPtr<GByteArray>> certificatesDataList;
+    for (; certificate; certificate = g_tls_certificate_get_issuer(certificate)) {
+        GByteArray* certificateData = nullptr;
+        g_object_get(G_OBJECT(certificate), "certificate", &certificateData, nullptr);
+
+        if (!certificateData) {
+            certificatesDataList.clear();
+            break;
+        }
+        certificatesDataList.append(adoptGRef(certificateData));
+    }
+
+    // Reverse so that the list starts from the rootmost certificate.
+    certificatesDataList.reverse();
+
+    return certificatesDataList;
+}
+
+static GRefPtr<GTlsCertificate> certificateFromCertificatesDataList(const Vector<GRefPtr<GByteArray>> &certificatesDataList)
+{
+    GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
+    GRefPtr<GTlsCertificate> certificate;
+    for (auto& certificateData : certificatesDataList) {
+        certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
+            certificateType, nullptr, nullptr, "certificate", certificateData.get(), "issuer", certificate.get(), nullptr)));
+    }
+
+    return certificate;
+}
+
+template<> struct Coder<WebCore::CertificateInfo> {
+    static void encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+    {
+        auto certificatesDataList = certificatesDataListFromCertificateInfo(certificateInfo);
+
+        encoder << certificatesDataList;
+
+        if (certificatesDataList.isEmpty())
+            return;
+
+        encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
+    }
+
+    static bool decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
+    {
+        Vector<GRefPtr<GByteArray>> certificatesDataList;
+        if (!decoder.decode(certificatesDataList))
+            return false;
+
+        if (certificatesDataList.isEmpty())
+            return true;
+        certificateInfo.setCertificate(certificateFromCertificatesDataList(certificatesDataList).get());
+
+        uint32_t tlsErrors;
+        if (!decoder.decode(tlsErrors))
+            return false;
+        certificateInfo.setTLSErrors(static_cast<GTlsCertificateFlags>(tlsErrors));
+
+        return true;
+    }
+};
+
+} // namespace WTF::Persistence
+} // namespace WTF

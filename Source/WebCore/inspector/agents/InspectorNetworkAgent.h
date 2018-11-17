@@ -116,6 +116,7 @@ public:
     void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) final;
     void setResourceCachingDisabled(ErrorString&, bool disabled) final;
     void loadResource(const String& frameId, const String& url, Ref<LoadResourceCallback>&&) final;
+    void getSerializedCertificate(ErrorString&, const String& requestId, String* serializedCertificate) final;
     void resolveWebSocket(ErrorString&, const String& requestId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) final;
 
     virtual String loaderIdentifier(DocumentLoader*) = 0;

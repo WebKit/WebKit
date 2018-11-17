@@ -52,6 +52,7 @@ OBJC_CLASS WKInspectorViewController;
 #endif
 
 namespace WebCore {
+class CertificateInfo;
 class URL;
 }
 
@@ -188,6 +189,7 @@ private:
     bool platformIsFront();
     void platformAttachAvailabilityChanged(bool);
     void platformInspectedURLChanged(const String&);
+    void platformShowCertificate(const WebCore::CertificateInfo&);
     unsigned platformInspectedWindowHeight();
     unsigned platformInspectedWindowWidth();
     void platformAttach();
@@ -214,6 +216,7 @@ private:
     void bringToFront();
     void attachAvailabilityChanged(bool);
     void inspectedURLChanged(const String&);
+    void showCertificate(const WebCore::CertificateInfo&);
     void elementSelectionChanged(bool);
 
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);

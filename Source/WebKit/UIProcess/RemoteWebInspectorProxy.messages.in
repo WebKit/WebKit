@@ -30,6 +30,7 @@ messages -> RemoteWebInspectorProxy {
     StartWindowDrag()
 
     OpenInNewTab(String url)
+    ShowCertificate(WebCore::CertificateInfo certificateInfo)
 
     SendMessageToBackend(String message)
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/text/WTFString.h>
 
@@ -77,6 +78,11 @@ bool WebInspectorProxy::platformIsFront()
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String&)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformShowCertificate(const CertificateInfo&)
 {
     notImplemented();
 }

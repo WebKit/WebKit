@@ -41,6 +41,7 @@
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
 #include <wtf/SetForScope.h>
@@ -537,6 +538,11 @@ void WebInspectorProxy::inspectedURLChanged(const String& urlString)
     platformInspectedURLChanged(urlString);
 }
 
+void WebInspectorProxy::showCertificate(const CertificateInfo& certificateInfo)
+{
+    platformShowCertificate(certificateInfo);
+}
+
 void WebInspectorProxy::elementSelectionChanged(bool active)
 {
     m_elementSelectionActive = active;
@@ -621,6 +627,11 @@ bool WebInspectorProxy::platformIsFront()
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String&)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformShowCertificate(const CertificateInfo&)
 {
     notImplemented();
 }

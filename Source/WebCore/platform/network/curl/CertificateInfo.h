@@ -28,6 +28,9 @@
 #include "CertificateInfoBase.h"
 #include "NotImplemented.h"
 #include <wtf/Vector.h>
+#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 
@@ -62,3 +65,20 @@ inline bool operator==(const CertificateInfo& a, const CertificateInfo& b)
 }
 
 } // namespace WebCore
+
+namespace WTF {
+namespace Persistence {
+
+void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+{
+    notImplemented();
+}
+
+bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
+{
+    notImplemented();
+    return false;
+}
+
+} // namespace WTF::Persistence
+} // namespace WTF

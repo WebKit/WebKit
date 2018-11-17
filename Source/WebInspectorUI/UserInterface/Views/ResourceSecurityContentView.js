@@ -183,6 +183,30 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
             return;
         }
 
+        if (WI.NetworkManager.supportsShowCertificate()) {
+            let button = document.createElement("button");
+            button.textContent = WI.UIString("Show full certificate");
+
+            let errorElement = null;
+            button.addEventListener("click", (event) => {
+                this._resource.showCertificate()
+                .then(() => {
+                    if (errorElement) {
+                        errorElement.remove();
+                        errorElement = null;
+                    }
+                })
+                .catch((error) => {
+                    if (!errorElement)
+                        errorElement = WI.ImageUtilities.useSVGSymbol("Images/Error.svg", "error", error);
+                    button.insertAdjacentElement("afterend", errorElement);
+                });
+            });
+
+            let pairElement = this._certificateSection.appendKeyValuePair(button);
+            pairElement.classList.add("show-certificate");
+        }
+
         this._certificateSection.appendKeyValuePair(WI.UIString("Subject"), certificate.subject);
 
         let appendFormattedDate = (key, timestamp) => {

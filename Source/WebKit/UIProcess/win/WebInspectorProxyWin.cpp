@@ -38,6 +38,7 @@
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include "WebView.h"
+#include <WebCore/CertificateInfo.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/WebCoreBundleWin.h>
@@ -383,6 +384,11 @@ void WebInspectorProxy::platformBringInspectedPageToFront()
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& /* url */)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&)
 {
     notImplemented();
 }

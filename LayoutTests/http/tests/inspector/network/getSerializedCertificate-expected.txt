@@ -1,0 +1,15 @@
+Tests that the NetworkAgent is able to get a serialized certificate for a given request.
+
+
+== Running test suite: Network.getSerializedCertificate
+-- Running test case: Network.getSerializedCertificate.HTTP
+PASS: Should produce an exception.
+Error: No certificate for resource
+
+-- Running test case: Network.getSerializedCertificate.HTTPS
+PASS: Request should have serializable certificate.
+
+-- Running test case: Network.getSerializedCertificate.Invalid
+PASS: Should produce an exception.
+Error: No resource with given identifier found
+

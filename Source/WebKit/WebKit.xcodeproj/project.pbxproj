@@ -3603,7 +3603,6 @@
 		7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
 		7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextPolicyDelegate.h; sourceTree = "<group>"; };
 		7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStorePrivate.h; sourceTree = "<group>"; };
-		7CAB93791D459E4B0070F540 /* NetworkCacheCodersCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheCodersCocoa.cpp; sourceTree = "<group>"; };
 		7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesKeys.cpp; path = DerivedSources/WebKit2/WebPreferencesKeys.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CB100EF1FA2D74B001729EE /* WebPreferencesKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebPreferencesKeys.h; path = DerivedSources/WebKit2/WebPreferencesKeys.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CB100F01FA2D784001729EE /* WebPreferencesStoreDefaultsMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreferencesStoreDefaultsMap.cpp; path = DerivedSources/WebKit2/WebPreferencesStoreDefaultsMap.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8705,7 +8704,6 @@
 				E49D40D61AD3FB170066B7B9 /* NetworkCacheBlobStorage.h */,
 				E489D2841A0A2DB80078C06A /* NetworkCacheCoders.cpp */,
 				E489D2851A0A2DB80078C06A /* NetworkCacheCoders.h */,
-				7CAB93791D459E4B0070F540 /* NetworkCacheCodersCocoa.cpp */,
 				E47D1E961B062B66002676A8 /* NetworkCacheData.cpp */,
 				E42E06111AA75ABD00B11699 /* NetworkCacheData.h */,
 				E42E06131AA75B7000B11699 /* NetworkCacheDataCocoa.mm */,

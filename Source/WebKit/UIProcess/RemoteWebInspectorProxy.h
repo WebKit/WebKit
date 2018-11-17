@@ -40,6 +40,10 @@ OBJC_CLASS WKRemoteWebInspectorProxyObjCAdapter;
 OBJC_CLASS WKWebView;
 #endif
 
+namespace WebCore {
+class CertificateInfo;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -96,6 +100,7 @@ private:
     void append(const String& filename, const String& content);
     void startWindowDrag();
     void openInNewTab(const String& url);
+    void showCertificate(const WebCore::CertificateInfo&);
     void sendMessageToBackend(const String& message);
 
     void createFrontendPageAndWindow();
@@ -109,6 +114,7 @@ private:
     void platformAppend(const String& filename, const String& content);
     void platformStartWindowDrag();
     void platformOpenInNewTab(const String& url);
+    void platformShowCertificate(const WebCore::CertificateInfo&);
 
     RemoteWebInspectorProxyClient* m_client { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
