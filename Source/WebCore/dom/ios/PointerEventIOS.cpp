@@ -57,19 +57,19 @@ static PointerEvent::IsCancelable phaseIsCancelable(PlatformTouchPoint::TouchPha
     return PointerEvent::IsCancelable::Yes;
 }
 
-Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, Ref<WindowProxy>&& view)
+Ref<PointerEvent> PointerEvent::create(const PlatformTouchEvent& event, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
 {
     auto phase = event.touchPhaseAtIndex(index);
-    return adoptRef(*new PointerEvent(eventType(phase), event, phaseIsCancelable(phase), index, WTFMove(view)));
+    return adoptRef(*new PointerEvent(eventType(phase), event, phaseIsCancelable(phase), index, isPrimary, WTFMove(view)));
 }
 
-PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, Ref<WindowProxy>&& view)
+PointerEvent::PointerEvent(const AtomicString& type, const PlatformTouchEvent& event, IsCancelable isCancelable, unsigned index, bool isPrimary, Ref<WindowProxy>&& view)
     : MouseEvent(type, CanBubble::Yes, isCancelable, IsComposed::Yes, event.timestamp().approximateMonotonicTime(), WTFMove(view), 0, event.touchLocationAtIndex(index), event.touchLocationAtIndex(index), { }, event.modifiers(), 0, 0, nullptr, 0, 0, nullptr, IsSimulated::No, IsTrusted::Yes)
     , m_pointerId(event.touchIdentifierAtIndex(index))
     , m_width(2 * event.radiusXAtIndex(index))
     , m_height(2 * event.radiusYAtIndex(index))
     , m_pointerType(event.touchTypeAtIndex(index) == PlatformTouchPoint::TouchType::Stylus ? "pen"_s : "touch"_s)
-    , m_isPrimary(!index)
+    , m_isPrimary(isPrimary)
 {
 }
 

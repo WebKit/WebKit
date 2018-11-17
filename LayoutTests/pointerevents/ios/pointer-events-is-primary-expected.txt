@@ -1,0 +1,3 @@
+
+PASS Oldest active touch has isPrimary = true. 
+

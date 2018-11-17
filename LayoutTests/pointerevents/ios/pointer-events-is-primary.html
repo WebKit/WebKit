@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+target_test((target, test) => {
+    const eventTracker = new EventTracker(target, ["pointerdown", "pointermove"]);
+
+    const one = ui.finger();
+    const two = ui.finger();
+    ui.sequence([
+        one.begin({ x: 10, y: 10 }),
+        two.begin({ x: 50, y: 50 }),
+        two.move({ x: 70, y: 70 }),
+        one.move({ x: 30, y: 30 }),
+        one.end(),
+        two.move({ x: 50, y: 50 })
+    ]).then(() => {
+        eventTracker.assertMatchesEvents([
+            { id: 1, type: "pointerdown", x: 10, y: 10, isPrimary: true },
+            { id: 2, type: "pointerdown", x: 50, y: 50, isPrimary: false },
+            { id: 2, type: "pointermove", x: 70, y: 70, isPrimary: false },
+            { id: 1, type: "pointermove", x: 30, y: 30, isPrimary: true },
+            { id: 2, type: "pointermove", x: 50, y: 50, isPrimary: true }
+        ]);
+        test.done();
+    });
+}, "Oldest active touch has isPrimary = true.");
+
+</script>
+</body>
+</html>

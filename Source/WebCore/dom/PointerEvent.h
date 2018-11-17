@@ -60,7 +60,7 @@ public:
     }
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&);
+    static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
     virtual ~PointerEvent();
@@ -84,7 +84,7 @@ private:
     PointerEvent();
     PointerEvent(const AtomicString&, Init&&);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, Ref<WindowProxy>&&);
+    PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
     long m_pointerId { 0 };

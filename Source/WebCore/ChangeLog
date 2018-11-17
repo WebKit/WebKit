@@ -1,3 +1,21 @@
+2018-11-16  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events] event.isPrimary doesn't always represent the oldest active touch
+        https://bugs.webkit.org/show_bug.cgi?id=191752
+        <rdar://problem/46129270>
+
+        Reviewed by Dean Jackson.
+
+        Provide isPrimary to the constructor so its value can be determined at the call site.
+
+        Test: pointerevents/ios/pointer-events-is-primary.html
+
+        * dom/PointerEvent.h:
+        * dom/ios/PointerEventIOS.cpp:
+        (WebCore::PointerEvent::create):
+        (WebCore::PointerEvent::PointerEvent):
+        (WebCore::m_isPrimary):
+
 2018-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Tweak _showSafeBrowsingWarningWithTitle SPI
