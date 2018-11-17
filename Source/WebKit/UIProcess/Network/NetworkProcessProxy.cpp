@@ -89,6 +89,9 @@ NetworkProcessProxy::~NetworkProcessProxy()
     for (auto* proxy : m_webUserContentControllerProxies)
         proxy->removeNetworkProcess(*this);
 #endif
+
+    for (auto& reply : m_pendingConnectionReplies)
+        reply.second({ });
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

@@ -1,3 +1,21 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(ProcessPrewarming) Assertion hit in NetworkProcessProxy destructor
+        https://bugs.webkit.org/show_bug.cgi?id=191800
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure the NetworkProcessProxy destructor calls its remaining m_pendingConnectionReplies
+        completion handlers to avoid hitting an assertion in the CompletionHandler destructor.
+
+        Prewarmed WebProcess do not keep the ProcessPool alive and thus not the NetworkProcessProxy
+        either. As a result, it is possible for NetworkProcessProxy to have pending connection
+        requests from those prewarmed processes when it is destroyed. Similar story for the
+        suspended page processes when they are destroyed.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+
 2018-11-16  Alex Christensen  <achristensen@webkit.org>
 
         Tweak _showSafeBrowsingWarningWithTitle SPI
