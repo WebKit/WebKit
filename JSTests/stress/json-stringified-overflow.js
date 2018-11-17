@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited
+//@ if $memoryLimited then skip else runDefault end
 
 try {
     const s = "123".padStart(1073741823);
