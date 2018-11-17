@@ -1,5 +1,31 @@
 2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include default filtering of InspectorBackend.dumpInspectorProtocolMessages with multi target backend
+        https://bugs.webkit.org/show_bug.cgi?id=191785
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Debug/Bootstrap.js:
+        (dumpMessagesCurrentState):
+        (applyDumpMessagesState):
+        (WI.runBootstrapOperations):
+        Include tri-state for the logs button.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass.prototype.set filterMultiplexingBackendInspectorProtocolMessages):
+        (InspectorBackendClass.prototype.get filterMultiplexingBackendInspectorProtocolMessages):
+        (InspectorBackendClass.prototype._startOrStopAutomaticTracing):
+        Add new filtering state (the Setting already got added in the past).
+
+        * UserInterface/Protocol/LoggingProtocolTracer.js:
+        (WI.LoggingProtocolTracer):
+        (WI.LoggingProtocolTracer.prototype.set filterMultiplexingBackend):
+        (WI.LoggingProtocolTracer.prototype.get filterMultiplexingBackend):
+        (WI.LoggingProtocolTracer.prototype._processEntry):
+        Perform new filtering.
+
+2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)
         https://bugs.webkit.org/show_bug.cgi?id=191740
         <rdar://problem/45470897>

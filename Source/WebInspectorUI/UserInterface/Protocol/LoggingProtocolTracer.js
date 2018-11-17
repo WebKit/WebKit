@@ -31,6 +31,7 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
 
         this._dumpMessagesToConsole = false;
         this._dumpTimingDataToConsole = false;
+        this._filterMultiplexingBackend = true;
         this._logToConsole = window.InspectorTest ? InspectorFrontendHost.unbufferedLog.bind(InspectorFrontendHost) : console.log;
     }
 
@@ -54,6 +55,16 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
     get dumpTimingDataToConsole()
     {
         return this._dumpTimingDataToConsole;
+    }
+
+    set filterMultiplexingBackend(value)
+    {
+        this._filterMultiplexingBackend = !!value;
+    }
+
+    get filterMultiplexingBackend()
+    {
+        return this._filterMultiplexingBackend;
     }
 
     logFrontendException(connection, message, exception)
@@ -106,6 +117,8 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
         } else if (this._dumpMessagesToConsole && !entry.timings) {
             let connection = entry.connection;
             let targetId = connection && connection.target ? connection.target.identifier : "unknown";
+            if (this._filterMultiplexingBackend && targetId === "multi")
+                return;
             this._logToConsole(`${entry.type} (${targetId}): ${JSON.stringify(entry.message)}`);
             if (entry.exception) {
                 this._logToConsole(entry.exception);

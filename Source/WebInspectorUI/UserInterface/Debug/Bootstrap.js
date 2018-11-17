@@ -39,30 +39,80 @@ WI.runBootstrapOperations = function() {
         window.location.reload();
     });
 
-    const dumpMessagesToolTip = WI.unlocalizedString("Enable dump inspector messages to console");
+    // Toggle Inspector Messages Filtering.
+    let ignoreChangesToState = false;
+    const DumpMessagesState = {Off: "off", Filtering: "filtering", Everything: "everything"};
+    const dumpMessagesToolTip = WI.unlocalizedString("Enable dump inspector messages to console.\nShift-click to dump all inspector messages with no filtering.");
     const dumpMessagesActivatedToolTip = WI.unlocalizedString("Disable dump inspector messages to console");
     let dumpMessagesToolbarItem = new WI.ActivateButtonToolbarItem("dump-messages", dumpMessagesToolTip, dumpMessagesActivatedToolTip, "Images/Console.svg");
-    dumpMessagesToolbarItem.activated = InspectorBackend.dumpInspectorProtocolMessages;
+
+    function dumpMessagesCurrentState() {
+        if (!InspectorBackend.dumpInspectorProtocolMessages)
+            return DumpMessagesState.Off;
+        if (InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages)
+            return DumpMessagesState.Filtering;
+        return DumpMessagesState.Everything;
+    }
+
+    function applyDumpMessagesState(state) {
+        ignoreChangesToState = true;
+        switch (state) {
+        case DumpMessagesState.Off:
+            InspectorBackend.dumpInspectorProtocolMessages = false;
+            InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = false;
+            dumpMessagesToolbarItem.activated = false;
+            dumpMessagesToolbarItem.element.style.removeProperty("color");
+            break;
+        case DumpMessagesState.Filtering:
+            InspectorBackend.dumpInspectorProtocolMessages = true;
+            InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = true;
+            dumpMessagesToolbarItem.activated = true;
+            dumpMessagesToolbarItem.element.style.removeProperty("color");
+            break;
+        case DumpMessagesState.Everything:
+            InspectorBackend.dumpInspectorProtocolMessages = true;
+            InspectorBackend.filterMultiplexingBackendInspectorProtocolMessages = false;
+            dumpMessagesToolbarItem.activated = true;
+            dumpMessagesToolbarItem.element.style.color = "rgb(164, 41, 154)";
+            break;
+        }
+        ignoreChangesToState = false;
+    }
+
+    WI.toolbar.addToolbarItem(dumpMessagesToolbarItem, WI.Toolbar.Section.CenterRight);
     dumpMessagesToolbarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
-        InspectorBackend.dumpInspectorProtocolMessages = !InspectorBackend.dumpInspectorProtocolMessages;
-        dumpMessagesToolbarItem.activated = InspectorBackend.dumpInspectorProtocolMessages;
+        let nextState;
+        switch (dumpMessagesCurrentState()) {
+        case DumpMessagesState.Off:
+            nextState = WI.modifierKeys.shiftKey ? DumpMessagesState.Everything : DumpMessagesState.Filtering;
+            break;
+        case DumpMessagesState.Filtering:
+            nextState = WI.modifierKeys.shiftKey ? DumpMessagesState.Everything : DumpMessagesState.Off;
+            break;
+        case DumpMessagesState.Everything:
+            nextState = DumpMessagesState.Off;
+            break;
+        }
+        applyDumpMessagesState(nextState);
     });
     WI.settings.autoLogProtocolMessages.addEventListener(WI.Setting.Event.Changed, () => {
-        dumpMessagesToolbarItem.activated = InspectorBackend.dumpInspectorProtocolMessages;
+        if (ignoreChangesToState)
+            return;
+        applyDumpMessagesState(dumpMessagesCurrentState());
     });
-    WI.toolbar.addToolbarItem(dumpMessagesToolbarItem, WI.Toolbar.Section.CenterRight);
+    applyDumpMessagesState(dumpMessagesCurrentState());
 
+    // Next Level Inspector.
     let inspectionLevel = InspectorFrontendHost ? InspectorFrontendHost.inspectionLevel() : 1;
     const inspectInspectorToolTip = WI.unlocalizedString("Open Web Inspector [%d]").format(inspectionLevel + 1);
     let inspectInspectorToolbarItem = new WI.ButtonToolbarItem("inspect-inspector", inspectInspectorToolTip);
+    WI.toolbar.addToolbarItem(inspectInspectorToolbarItem, WI.Toolbar.Section.CenterRight);
     inspectInspectorToolbarItem.element.textContent = inspectionLevel + 1;
     inspectInspectorToolbarItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
         InspectorFrontendHost.inspectInspector();
     });
-    WI.toolbar.addToolbarItem(inspectInspectorToolbarItem, WI.Toolbar.Section.CenterRight);
 
-    function updateDebugUI()
-    {
+    function updateDebugUI() {
         dumpMessagesToolbarItem.hidden = !WI.showDebugUISetting.value;
         inspectInspectorToolbarItem.hidden = !WI.showDebugUISetting.value;
     }

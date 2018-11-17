@@ -96,6 +96,18 @@ InspectorBackendClass = class InspectorBackendClass
         return WI.settings.autoLogTimeStats.value;
     }
 
+    set filterMultiplexingBackendInspectorProtocolMessages(value)
+    {
+        WI.settings.filterMultiplexingBackendInspectorProtocolMessages.value = value;
+
+        this._defaultTracer.filterMultiplexingBackend = value;
+    }
+
+    get filterMultiplexingBackendInspectorProtocolMessages()
+    {
+        return WI.settings.filterMultiplexingBackendInspectorProtocolMessages.value;
+    }
+
     set customTracer(tracer)
     {
         console.assert(!tracer || tracer instanceof WI.ProtocolTracer, tracer);
@@ -198,6 +210,7 @@ InspectorBackendClass = class InspectorBackendClass
     {
         this._defaultTracer.dumpMessagesToConsole = this.dumpInspectorProtocolMessages;
         this._defaultTracer.dumpTimingDataToConsole = this.dumpTimingDataToConsole;
+        this._defaultTracer.filterMultiplexingBackend = this.filterMultiplexingBackendInspectorProtocolMessages;
     }
 
     _agentForDomain(domainName)
