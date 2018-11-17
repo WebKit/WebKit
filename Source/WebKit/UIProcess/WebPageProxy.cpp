@@ -941,7 +941,6 @@ void WebPageProxy::close()
 #endif
 
     m_inspector->invalidate();
-    m_inspector = nullptr;
 
     m_backForwardList->pageClosed();
     m_inspectorController->pageClosed();

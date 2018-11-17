@@ -1,3 +1,14 @@
+2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed follow-up to r238330.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        Don't clear the pointer after invalidating since the pointer is
+        used later one. We don't mind it being used after invalidation
+        it will do the right thing, we'd rather have the WebInspectorProxy
+        lifetime match the WebPageProxy.
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         ProcessSwap.NavigationWithLockedHistoryWithoutPSON API test is a flaky crash in debug
