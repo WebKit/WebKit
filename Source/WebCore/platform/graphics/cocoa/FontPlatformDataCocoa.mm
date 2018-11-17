@@ -196,7 +196,7 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     return nullptr;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String FontPlatformData::description() const
 {
     auto fontDescription = adoptCF(CFCopyDescription(font()));

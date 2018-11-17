@@ -454,7 +454,7 @@ const Font& Font::brokenIdeographFont() const
     return *derivedFontData.brokenIdeographFont;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String Font::description() const
 {
     if (origin() == Origin::Remote)

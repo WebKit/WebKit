@@ -265,7 +265,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_scaledFont == other.m_scaledFont;
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String FontPlatformData::description() const
 {
     return String();
