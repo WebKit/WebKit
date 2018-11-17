@@ -1,3 +1,24 @@
+2018-11-17  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Fix build with disabled DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=191256
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix compilation errors and warnings with both DFG and FTL
+        disabled at compile-time.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::getICStatusMap):
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::hasExitSite): Deleted.
+        * bytecode/PutByIdStatus.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+
 2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)

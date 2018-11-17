@@ -651,7 +651,6 @@ void JIT::emit_op_to_object(const Instruction* currentInstruction)
 void JIT::emit_op_catch(const Instruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCatch>();
-    auto& metadata = bytecode.metadata(m_codeBlock);
 
     restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(vm()->topEntryFrame);
 
@@ -679,6 +678,7 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
     // argument type proofs, storing locals to the buffer, etc
     // https://bugs.webkit.org/show_bug.cgi?id=175598
 
+    auto& metadata = bytecode.metadata(m_codeBlock);
     ValueProfileAndOperandBuffer* buffer = metadata.buffer;
     if (buffer || !shouldEmitProfiling())
         callOperation(operationTryOSREnterAtCatch, m_bytecodeOffset);

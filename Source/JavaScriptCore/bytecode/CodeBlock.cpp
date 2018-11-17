@@ -1387,6 +1387,7 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
             result.add(callLinkInfo->codeOrigin(), ICStatus()).iterator->value.callLinkInfo = callLinkInfo;
         for (ByValInfo* byValInfo : m_byValInfos)
             result.add(CodeOrigin(byValInfo->bytecodeIndex), ICStatus()).iterator->value.byValInfo = byValInfo;
+#if ENABLE(DFG_JIT)
         if (JITCode::isOptimizingJIT(jitType())) {
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
             for (auto& pair : dfgCommon->recordedStatuses.calls)
@@ -1398,6 +1399,7 @@ void CodeBlock::getICStatusMap(const ConcurrentJSLocker&, ICStatusMap& result)
             for (auto& pair : dfgCommon->recordedStatuses.ins)
                 result.add(pair.first, ICStatus()).iterator->value.inStatus = pair.second.get();
         }
+#endif
     }
 #else
     UNUSED_PARAM(result);

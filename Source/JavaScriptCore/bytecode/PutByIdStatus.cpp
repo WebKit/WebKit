@@ -47,13 +47,6 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
-#if ENABLE(DFG_JIT)
-ExitFlag PutByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
-{
-    return hasBadCacheExitSite(profiledBlock, bytecodeIndex);
-}
-#endif
-
 PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned bytecodeIndex, UniquedStringImpl* uid)
 {
     VM& vm = *profiledBlock->vm();
@@ -118,6 +111,8 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& m
     return result;
 #else // ENABLE(JIT)
     UNUSED_PARAM(map);
+    UNUSED_PARAM(didExit);
+    UNUSED_PARAM(callExitSiteData);
     return PutByIdStatus(NoInformation);
 #endif // ENABLE(JIT)
 }
@@ -244,7 +239,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& b
 {
     CallLinkStatus::ExitSiteData callExitSiteData =
         CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex);
-    ExitFlag didExit = hasExitSite(baselineBlock, codeOrigin.bytecodeIndex);
+    ExitFlag didExit = hasBadCacheExitSite(baselineBlock, codeOrigin.bytecodeIndex);
 
     for (ICStatusContext* context : contextStack) {
         ICStatus status = context->get(codeOrigin);

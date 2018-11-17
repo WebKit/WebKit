@@ -89,6 +89,7 @@ InByIdStatus InByIdStatus::computeFor(
             return result;
         };
         
+#if ENABLE(DFG_JIT)
         if (status.stubInfo) {
             InByIdStatus result;
             {
@@ -98,6 +99,7 @@ InByIdStatus InByIdStatus::computeFor(
             if (result.isSet())
                 return bless(result);
         }
+#endif
         
         if (status.inStatus)
             return bless(*status.inStatus);
