@@ -6211,31 +6211,81 @@ bool Document::fullScreenIsAllowedForElement(Element* element) const
 
 void Document::requestFullScreenForElement(Element* element, FullScreenCheckType checkType)
 {
-    do {
-        if (!element)
-            element = documentElement();
- 
-        // 1. If any of the following conditions are true, terminate these steps and queue a task to fire
-        // an event named fullscreenerror with its bubbles attribute set to true on the context object's 
-        // node document:
+    if (!element)
+        element = documentElement();
 
+    auto failedPreflights = [this](auto element) mutable {
+        m_fullScreenErrorEventTargetQueue.append(WTFMove(element));
+        m_fullScreenTaskQueue.enqueueTask([this] {
+            dispatchFullScreenChangeEvents();
+        });
+    };
+
+    // 1. If any of the following conditions are true, terminate these steps and queue a task to fire
+    // an event named fullscreenerror with its bubbles attribute set to true on the context object's
+    // node document:
+
+    // This algorithm is not allowed to show a pop-up:
+    //   An algorithm is allowed to show a pop-up if, in the task in which the algorithm is running, either:
+    //   - an activation behavior is currently being processed whose click event was trusted, or
+    //   - the event listener for a trusted click event is being handled.
+    if (!UserGestureIndicator::processingUserGesture()) {
+        failedPreflights(WTFMove(element));
+        return;
+    }
+
+    // We do not allow pressing the Escape key as a user gesture to enter fullscreen since this is the key
+    // to exit fullscreen.
+    if (UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
+        addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Escape key may not be used as a user gesture to enter fullscreen"_s);
+        failedPreflights(WTFMove(element));
+        return;
+    }
+
+    // There is a previously-established user preference, security risk, or platform limitation.
+    if (!page() || !page()->settings().fullScreenEnabled()) {
+        failedPreflights(WTFMove(element));
+        return;
+    }
+
+    bool hasKeyboardAccess = true;
+    if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess)) {
+        // The new full screen API does not accept a "flags" parameter, so fall back to disallowing
+        // keyboard input if the chrome client refuses to allow keyboard input.
+        hasKeyboardAccess = false;
+
+        if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess)) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
+    }
+
+    m_fullScreenTaskQueue.enqueueTask([this, element = makeRefPtr(element), checkType, hasKeyboardAccess, failedPreflights] () mutable {
         // Don't allow fullscreen if document is hidden.
-        if (!page() || !page()->chrome().client().isViewVisible())
-            break;
+        if (hidden()) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
 
         // The context object is not in a document.
-        if (!element->isConnected())
-            break;
+        if (!element->isConnected()) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
 
         // The context object's node document, or an ancestor browsing context's document does not have
         // the fullscreen enabled flag set.
-        if (checkType == EnforceIFrameAllowFullScreenRequirement && !fullScreenIsAllowedForElement(element))
-            break;
+        if (checkType == EnforceIFrameAllowFullScreenRequirement && !fullScreenIsAllowedForElement(element.get())) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
 
         // The context object's node document fullscreen element stack is not empty and its top element
         // is not an ancestor of the context object.
-        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.last()->contains(element))
-            break;
+        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.last()->contains(element.get())) {
+            failedPreflights(WTFMove(element));
+            return;
+        }
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
         bool descendentHasNonEmptyStack = false;
@@ -6245,35 +6295,9 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
                 break;
             }
         }
-        if (descendentHasNonEmptyStack)
-            break;
-
-        // This algorithm is not allowed to show a pop-up:
-        //   An algorithm is allowed to show a pop-up if, in the task in which the algorithm is running, either:
-        //   - an activation behavior is currently being processed whose click event was trusted, or
-        //   - the event listener for a trusted click event is being handled.
-        if (!UserGestureIndicator::processingUserGesture())
-            break;
-
-        // We do not allow pressing the Escape key as a user gesture to enter fullscreen since this is the key
-        // to exit fullscreen.
-        if (UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey) {
-            addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Escape key may not be used as a user gesture to enter fullscreen"_s);
-            break;
-        }
-
-        // There is a previously-established user preference, security risk, or platform limitation.
-        if (!page() || !page()->settings().fullScreenEnabled())
-            break;
-
-        bool hasKeyboardAccess = true;
-        if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess)) {
-            // The new full screen API does not accept a "flags" parameter, so fall back to disallowing
-            // keyboard input if the chrome client refuses to allow keyboard input.
-            hasKeyboardAccess = false;
-
-            if (!page()->chrome().client().supportsFullScreenForElement(*element, hasKeyboardAccess))
-                break;
+        if (descendentHasNonEmptyStack) {
+            failedPreflights(WTFMove(element));
+            return;
         }
 
         // 2. Let doc be element's node document. (i.e. "this")
@@ -6302,7 +6326,7 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
             // stack, and queue a task to fire an event named fullscreenchange with its bubbles attribute
             // set to true on the document.
             if (!followingDoc) {
-                currentDoc->pushFullscreenElementStack(element);
+                currentDoc->pushFullscreenElementStack(element.get());
                 addDocumentToFullScreenChangeEventQueue(currentDoc);
                 continue;
             }
@@ -6325,18 +6349,12 @@ void Document::requestFullScreenForElement(Element* element, FullScreenCheckType
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullScreen = hasKeyboardAccess;
-        m_fullScreenTaskQueue.enqueueTask([this, element = makeRefPtr(element)] {
+        m_fullScreenTaskQueue.enqueueTask([this, element = WTFMove(element)] {
             if (auto page = this->page())
-                page->chrome().client().enterFullScreenForElement(*element);
+                page->chrome().client().enterFullScreenForElement(*element.get());
         });
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.
-        return;
-    } while (0);
-
-    m_fullScreenErrorEventTargetQueue.append(element ? element : documentElement());
-    m_fullScreenTaskQueue.enqueueTask([this] {
-        dispatchFullScreenChangeEvents();
     });
 }
 

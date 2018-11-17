@@ -955,6 +955,7 @@ private:
     GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
     GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
     GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
+    GenericTaskQueue<Timer> m_fullscreenTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 

@@ -41,9 +41,11 @@ typedef struct objc_object *id;
 
 OBJC_CLASS CAContext;
 
+#if HAVE(IOSURFACE)
 namespace WebCore {
 class IOSurface;
 }
+#endif
 
 namespace WebKit {
 

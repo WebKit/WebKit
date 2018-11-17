@@ -1,3 +1,23 @@
+2018-11-16  Jer Noble  <jer.noble@apple.com>
+
+        Regression(r233865): Causes synchronous IPC in the middle of layout
+        https://bugs.webkit.org/show_bug.cgi?id=188307
+        <rdar://problem/42807306>
+
+        Reviewed by Eric Carlson.
+
+        Revert the changes added in r233865. Rather than make a syncronous call to the UIProcess to
+        query whether the view has been backgrounded while (e.g.) JS has been spinning, perform the
+        steps of the requestFullscreen() method on the next run loop, allowing messages from the
+        UIProcess about page visibilty to be delivered first.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestFullScreenForElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        * html/HTMLMediaElement.h:
+        * page/ChromeClient.h:
+
 2018-11-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Provide default implementation of Cursor
