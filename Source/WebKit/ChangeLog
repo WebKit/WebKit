@@ -1,3 +1,10 @@
+2018-11-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed follow-up to r238343 to address debug assertions in 2 API tests.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+
 2018-11-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: add button to show system certificate dialog

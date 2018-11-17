@@ -214,6 +214,7 @@ void NetworkProcessProxy::networkProcessCrashed()
         else
             reply.second({ });
     }
+    m_pendingConnectionReplies.clear();
 
     // Tell the network process manager to forget about this network process proxy. This will cause us to be deleted.
     m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
