@@ -1,5 +1,25 @@
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
+        ProcessSwap.NavigationWithLockedHistoryWithoutPSON API test is a flaky crash in debug
+        https://bugs.webkit.org/show_bug.cgi?id=191795
+
+        Reviewed by Alex Christensen.
+
+        If the WebProcessPool is getting destroyed while there is a prewarmed WebContent process
+        that is awaiting its connnection to the network process, then we'll hit the
+        process->hasOneRef() assertion in the WebProcessPool destructor. This is because
+        NetworkProcessProxy::m_pendingConnectionReplies keeps a RefPtr to the WebProcessProxy
+        that is awaiting the connection. The NetworkProcessProxy does not really need to keep
+        the WebProcessProxy alive in this case so this patch switches to using a WeakPtr instead.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::networkProcessCrashed):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessProxy.h:
+
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
         [macOS] Label "prewarmed" WebContent processes in Activity Monitor
         https://bugs.webkit.org/show_bug.cgi?id=191765
         <rdar://problem/45953463>

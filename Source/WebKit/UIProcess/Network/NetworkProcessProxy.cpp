@@ -118,7 +118,7 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply&& reply)
 {
-    m_pendingConnectionReplies.append(std::make_pair(&webProcessProxy, WTFMove(reply)));
+    m_pendingConnectionReplies.append(std::make_pair(makeWeakPtr(webProcessProxy), WTFMove(reply)));
 
     if (state() == State::Launching) {
         m_numPendingConnectionRequests++;
@@ -205,8 +205,12 @@ void NetworkProcessProxy::networkProcessCrashed()
 
     Vector<std::pair<RefPtr<WebProcessProxy>, Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingReplies;
     pendingReplies.reserveInitialCapacity(m_pendingConnectionReplies.size());
-    for (auto& reply : m_pendingConnectionReplies)
-        pendingReplies.append(WTFMove(reply));
+    for (auto& reply : m_pendingConnectionReplies) {
+        if (reply.first)
+            pendingReplies.append(std::make_pair(makeRefPtr(reply.first.get()), WTFMove(reply.second)));
+        else
+            reply.second({ });
+    }
 
     // Tell the network process manager to forget about this network process proxy. This will cause us to be deleted.
     m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
