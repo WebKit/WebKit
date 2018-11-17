@@ -1,3 +1,16 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) WebKit.GeolocationTransitionToHighAccuracy API test is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=191789
+
+        Reviewed by Alex Christensen.
+
+        Relate the 2 test pages so they use the same process since WKContextSetMaximumNumberOfProcesses()
+        SPI no longer works with PSON / Process prewarming.
+
+        * TestWebKitAPI/Tests/WebKit/Geolocation.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-11-16  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Retry app installation on watchOS simulators

@@ -257,7 +257,6 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 TEST(WebKit, GeolocationTransitionToHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKContextSetMaximumNumberOfProcesses(context.get(), 1);
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -268,7 +267,7 @@ TEST(WebKit, GeolocationTransitionToHighAccuracy)
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());
     Util::run(&stateTracker.finishedFirstStep);
 
-    PlatformWebView highAccuracyWebView(context.get());
+    PlatformWebView highAccuracyWebView(lowAccuracyWebView.page());
     setupView(highAccuracyWebView);
     WKRetainPtr<WKURLRef> highAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
     WKPageLoadURL(highAccuracyWebView.page(), highAccuracyURL.get());
