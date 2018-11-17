@@ -1,3 +1,22 @@
+2018-11-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update buildbot dashboard after Windows 7/10 updates
+        https://bugs.webkit.org/show_bug.cgi?id=191219
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform td.logo::before):
+        (table.queue-grid tr.platform.windows-10 td.logo::before):
+        (table.queue-grid tr.platform.wincairo-windows-10 td.logo::before):
+        (table.queue-grid tr.platform.windows-7 td.logo::before):
+        (table.queue-grid tr.platform.wincairo-windows-10 img.logo):
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) WebKit.GeolocationTransitionToHighAccuracy API test is timing out

@@ -151,6 +151,19 @@ table.queue-grid td.logo::before {
     height: 0;
 }
 
+table.queue-grid tr.platform td.logo::before {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-shadow: 4px 4px 6px rgba(150, 150, 150, 1);
+    color: rgb(145, 135, 95);
+    position: absolute;
+    bottom: 24px;
+    left: 0px;
+    z-index: 2;
+}
+
 table.queue-grid td.logo img.ring {
     content: -webkit-image-set(url(../Images/PlatformRing@2x.png) 2x, url(../Images/PlatformRing.png) 1x);
     width: 160px;
@@ -168,6 +181,18 @@ table.queue-grid td.logo img.logo {
     left: 26px;
     -webkit-clip-path: circle(72px at center);
     clip-path: circle(72px at center);
+}
+
+table.queue-grid tr.platform.windows-10 td.logo::before {
+    content: "Windows 10";
+}
+
+table.queue-grid tr.platform.wincairo-windows-10 td.logo::before {
+    content: "WinCairo";
+}
+
+table.queue-grid tr.platform.windows-7 td.logo::before {
+    content: "Windows 7";
 }
 
 table.queue-grid tr.platform.ios-simulator-12 img.logo {
@@ -190,6 +215,10 @@ table.queue-grid tr.platform.macos-highsierra img.logo {
 
 table.queue-grid tr.platform.macos-mojave img.logo {
     content: -webkit-image-set(url(../Images/Mojave@2x.png) 2x, url(../Images/Mojave.png) 1x);
+}
+
+table.queue-grid tr.platform.wincairo-windows-10 img.logo {
+    content: -webkit-image-set(url(../Images/Windows10@2x.png) 2x, url(../Images/Windows10.png) 1x);
 }
 
 table.queue-grid tr.platform.windows-10 img.logo {
