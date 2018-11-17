@@ -1,3 +1,25 @@
+2018-11-17  Jonathan Hammer  <jonathan@e3software.com>
+
+        Caret stops blinking after context menu shown
+        https://bugs.webkit.org/show_bug.cgi?id=191715
+
+        Reviewed by Ryosuke Niwa.
+
+        Changed EventHandler::sendContextMenuEvent to un-suspend caret blinking so that
+        the caret continues to blink even after the context menu is dismissed. The normal
+        way of un-suspendeding caret blinking (in EventHandler::handleMouseReleaseEvent) does
+        not apply in the case of context menus because handleMouseReleaseEvent is not
+        called once the context menu is up.
+
+        Test: fast/events/contextmenu-dismiss-blink-caret.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isCaretBlinkingSuspended):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-11-16  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events] event.isPrimary doesn't always represent the oldest active touch

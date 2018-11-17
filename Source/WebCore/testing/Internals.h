@@ -220,6 +220,7 @@ public:
     ExceptionOr<void> setFormControlStateOfPreviousHistoryItem(const Vector<String>&);
 
     ExceptionOr<Ref<DOMRect>> absoluteCaretBounds();
+    ExceptionOr<bool> isCaretBlinkingSuspended();
 
     Ref<DOMRect> boundingBox(Element&);
 

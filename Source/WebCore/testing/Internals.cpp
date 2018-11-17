@@ -1479,6 +1479,15 @@ ExceptionOr<Ref<DOMRect>> Internals::absoluteCaretBounds()
 
     return DOMRect::create(document->frame()->selection().absoluteCaretBounds());
 }
+    
+ExceptionOr<bool> Internals::isCaretBlinkingSuspended()
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { InvalidAccessError };
+    
+    return document->frame()->selection().isCaretBlinkingSuspended();
+}
 
 Ref<DOMRect> Internals::boundingBox(Element& element)
 {
