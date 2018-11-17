@@ -4735,14 +4735,20 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return true;
 }
 
-- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(NSURL *))completionHandler
+- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
 {
     auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(title, warning, details);
     auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&& variant) {
-        switchOn(variant, [&] (WebKit::ContinueUnsafeLoad) {
-            completionHandler(nil);
-        }, [&] (WebCore::URL url) {
-            completionHandler(url);
+        switchOn(variant, [&] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) {
+            switch (continueUnsafeLoad) {
+            case WebKit::ContinueUnsafeLoad::Yes:
+                return completionHandler(YES);
+            case WebKit::ContinueUnsafeLoad::No:
+                return completionHandler(NO);
+            }
+        }, [&] (WebCore::URL) {
+            ASSERT_NOT_REACHED();
+            completionHandler(NO);
         });
     };
 #if PLATFORM(MAC)
@@ -4755,6 +4761,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 + (NSURL *)_confirmMalwareSentinel
 {
     return WebKit::SafeBrowsingWarning::confirmMalwareSentinel();
+}
+
++ (NSURL *)_visitUnsafeWebsiteSentinel
+{
+    return WebKit::SafeBrowsingWarning::visitUnsafeWebsiteSentinel();
 }
 
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler

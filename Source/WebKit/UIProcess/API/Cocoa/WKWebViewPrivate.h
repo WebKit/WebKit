@@ -189,7 +189,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 + (BOOL)_handlesSafeBrowsing WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (NSURL *)_confirmMalwareSentinel WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(NSURL *))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSURL *)_visitUnsafeWebsiteSentinel WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (IBAction)_alignCenter:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_alignJustified:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

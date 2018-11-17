@@ -231,12 +231,12 @@ TEST(SafeBrowsing, NavigationClearsWarning)
 TEST(SafeBrowsing, ShowWarningSPI)
 {
     __block bool completionHandlerCalled = false;
-    __block RetainPtr<NSURL> urlClicked;
+    __block BOOL shouldContinueValue = NO;
     auto webView = adoptNS([WKWebView new]);
     auto showWarning = ^{
         completionHandlerCalled = false;
-        [webView _showSafeBrowsingWarningWithTitle:@"test title" warning:@"test warning" details:[[[NSAttributedString alloc] initWithString:@"test details"] autorelease] completionHandler:^(NSURL *url) {
-            urlClicked = url;
+        [webView _showSafeBrowsingWarningWithTitle:@"test title" warning:@"test warning" details:[[[NSAttributedString alloc] initWithString:@"test details"] autorelease] completionHandler:^(BOOL shouldContinue) {
+            shouldContinueValue = shouldContinue;
             completionHandlerCalled = true;
         }];
 #if !PLATFORM(MAC)
@@ -247,12 +247,12 @@ TEST(SafeBrowsing, ShowWarningSPI)
     showWarning();
     checkTitleAndClick([webView _safeBrowsingWarningForTesting].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&completionHandlerCalled);
-    EXPECT_TRUE(!urlClicked);
+    EXPECT_FALSE(shouldContinueValue);
 
     showWarning();
-    [[webView _safeBrowsingWarningForTesting] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[NSURL URLWithString:@"http://webkit.org/testlink"]];
+    [[webView _safeBrowsingWarningForTesting] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[WKWebView _visitUnsafeWebsiteSentinel]];
     TestWebKitAPI::Util::run(&completionHandlerCalled);
-    EXPECT_STREQ([urlClicked absoluteString].UTF8String, "http://webkit.org/testlink");
+    EXPECT_TRUE(shouldContinueValue);
 }
 
 @interface NullLookupContext : NSObject

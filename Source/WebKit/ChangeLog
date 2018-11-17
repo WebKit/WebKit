@@ -1,3 +1,18 @@
+2018-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Tweak _showSafeBrowsingWarningWithTitle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=191799
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        (+[WKWebView _visitUnsafeWebsiteSentinel]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning clickedOnLink:]):
+        I need to localize "Continue" and "Cancel" so they aren't always in English.
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         WKWebViewMacEditingTests.DoNotCrashWhenInterpretingKeyEventWhileDeallocatingView API test is crashing in debug

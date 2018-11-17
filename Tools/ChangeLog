@@ -1,3 +1,13 @@
+2018-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Tweak _showSafeBrowsingWarningWithTitle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=191799
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+
 2018-11-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r238294): TestWebKitAPI.WKNavigation.ProcessCrashDuringCallback failing on iOS

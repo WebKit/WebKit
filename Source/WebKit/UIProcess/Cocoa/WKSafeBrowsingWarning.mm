@@ -419,8 +419,8 @@ static void setBackground(ViewType *view, ColorType *color)
         auto alert = adoptNS([NSAlert new]);
         [alert setMessageText:WEB_UI_NSSTRING(@"Are you sure you wish to go to this site?", "Malware confirmation dialog title")];
         [alert setInformativeText:WEB_UI_NSSTRING(@"Merely visiting a site is sufficient for malware to install itself and harm your computer.", "Malware confirmation dialog")];
-        [alert addButtonWithTitle:@"Cancel"];
-        [alert addButtonWithTitle:@"Continue"];
+        [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Cancel", "Cancel")];
+        [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Continue", "Continue")];
         [alert beginSheetModalForWindow:self.window completionHandler:BlockPtr<void(NSModalResponse)>::fromCallable([weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), alert](NSModalResponse returnCode) {
             if (auto strongSelf = weakSelf.get()) {
                 if (returnCode == NSAlertSecondButtonReturn && strongSelf->_completionHandler)

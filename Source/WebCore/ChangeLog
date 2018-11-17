@@ -1,3 +1,21 @@
+2018-11-16  Alex Christensen  <achristensen@webkit.org>
+
+        Tweak _showSafeBrowsingWarningWithTitle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=191799
+
+        Reviewed by Wenson Hsieh.
+
+        It turns out I needed to expose both sentinel values used in safe browsing for my application of this SPI in Mac Safari.
+        Allowing the caller to make its own sentinel values is insufficient because the malware confirmation needs to be over the warning.
+        The completion handler parameter should just be a bool indicating whether the user has chosen to continue after all warnings.
+
+        Covered by updated API tests.
+
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formControlCancelButtonTitle):
+        Make "Cancel"'s description a little more generic.
+
 2018-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize composited iframe layer hookup

@@ -127,7 +127,7 @@
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
 
-/* Title of the Cancel button for zoomed form controls. */
+/* Cancel */
 "Cancel" = "Cancel";
 
 /* Title for Cancel button label in button bar */
@@ -180,6 +180,9 @@
 
 /* WebKitErrorCannotShowMIMEType description */
 "Content with specified MIME type can’t be shown" = "Content with specified MIME type can’t be shown";
+
+/* Continue */
+"Continue" = "Continue";
 
 /* Media Controls context menu item */
 "Controls" = "Controls";

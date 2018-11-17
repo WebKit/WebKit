@@ -1043,7 +1043,7 @@ String formControlDoneButtonTitle()
 
 String formControlCancelButtonTitle()
 {
-    return WEB_UI_STRING("Cancel", "Title of the Cancel button for zoomed form controls.");
+    return WEB_UI_STRING("Cancel", "Cancel");
 }
 
 String formControlHideButtonTitle()
