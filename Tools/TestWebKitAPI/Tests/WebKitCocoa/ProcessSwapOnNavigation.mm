@@ -27,7 +27,6 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WKInspector.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -41,6 +40,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInspector.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
@@ -2026,7 +2026,7 @@ TEST(ProcessSwap, LoadUnload)
     EXPECT_WK_STREQ(@"pson://www.apple.com/main.html - load", receivedMessages.get()[6]);
 }
 
-TEST(ProcessSwap, DisableForInspector)
+TEST(ProcessSwap, WebInspector)
 {
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
@@ -2051,8 +2051,7 @@ TEST(ProcessSwap, DisableForInspector)
 
     auto pid1 = [webView _webProcessIdentifier];
 
-    // FIXME: use ObjC equivalent for WKInspectorRef when available.
-    WKInspectorShow(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
+    [[webView _inspector] show];
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main2.html"]];
     [webView loadRequest:request];
@@ -2062,7 +2061,7 @@ TEST(ProcessSwap, DisableForInspector)
 
     auto pid2 = [webView _webProcessIdentifier];
 
-    WKInspectorClose(WKPageGetInspector([webView _pageRefForTransitionToWKWebView]));
+    [[webView _inspector] close];
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
     [webView loadRequest:request];
@@ -2072,8 +2071,8 @@ TEST(ProcessSwap, DisableForInspector)
 
     auto pid3 = [webView _webProcessIdentifier];
 
-    EXPECT_EQ(pid1, pid2);
-    EXPECT_FALSE(pid2 == pid3);
+    EXPECT_NE(pid1, pid2); // We should have swapped.
+    EXPECT_NE(pid2, pid3); // We should have swapped again.
     EXPECT_EQ(numberOfDecidePolicyCalls, 3);
 }
 
