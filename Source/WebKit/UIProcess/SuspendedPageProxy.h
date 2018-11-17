@@ -46,7 +46,7 @@ public:
     uint64_t mainFrameID() const { return m_mainFrameID; }
     const String& registrableDomain() const { return m_registrableDomain; }
 
-    void unsuspend();
+    void unsuspend(CompletionHandler<void()>&&);
 
 #if !LOG_DISABLED
     const char* loggingString() const;
@@ -66,9 +66,8 @@ private:
 
     bool m_isSuspended { true };
 
-#if !LOG_DISABLED
     bool m_finishedSuspending { false };
-#endif
+    CompletionHandler<void()> m_finishedSuspendingHandler;
 };
 
 } // namespace WebKit

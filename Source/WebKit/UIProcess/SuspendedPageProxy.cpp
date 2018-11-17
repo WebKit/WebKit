@@ -103,24 +103,34 @@ SuspendedPageProxy::~SuspendedPageProxy()
     });
 }
 
-void SuspendedPageProxy::unsuspend()
+void SuspendedPageProxy::unsuspend(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(m_isSuspended);
 
-    m_isSuspended = false;
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
-    m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
+    auto doUnsuspend = [this, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_isSuspended = false;
+        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
+        m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
+        completionHandler();
+    };
+
+    if (!m_finishedSuspending) {
+        ASSERT(!m_finishedSuspendingHandler);
+        m_finishedSuspendingHandler = WTFMove(doUnsuspend);
+    } else
+        doUnsuspend();
 }
 
 void SuspendedPageProxy::didFinishLoad()
 {
     LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processIdentifier());
 
-#if !LOG_DISABLED
     m_finishedSuspending = true;
-#endif
 
     m_process->send(Messages::WebProcess::UpdateActivePages(), 0);
+
+    if (auto finishedSuspendingHandler = WTFMove(m_finishedSuspendingHandler))
+        finishedSuspendingHandler();
 }
 
 void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)

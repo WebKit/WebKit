@@ -1,5 +1,32 @@
 2018-11-17  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] ASSERTION FAILED: m_uncommittedState.state == State::Committed
+        https://bugs.webkit.org/show_bug.cgi?id=191781
+
+        Reviewed by Ryosuke Niwa.
+
+        The crash was happening when switching to a suspended page that is not yet done
+        suspending (e.g. in case of very fast back/forward navigation). The WebPageProxy
+        would reattach to the suspended process and get load notifications that it did
+        not expect since it did not schedule any load yet. Those notifications are for
+        the about:blank load we do for page suspension.
+
+        To address the issue, make swapToWebProcess() asynchronous and take a completion
+        handler. When we try to unsuspend a SuspendedPageProxy, we first make sure it
+        is actually done suspending. If it is not done suspending, we wait until it is
+        before telling in to unsuspend and proceeding with the new load.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::unsuspend):
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+
+2018-11-17  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed follow-up to r238343 to address debug assertions in 2 API tests.
 
         * UIProcess/Network/NetworkProcessProxy.cpp:
