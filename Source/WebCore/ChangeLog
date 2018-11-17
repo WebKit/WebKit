@@ -1,3 +1,30 @@
+2018-11-16  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Provide default implementation of Widget
+        https://bugs.webkit.org/show_bug.cgi?id=191784
+
+        Reviewed by Michael Catanzaro.
+
+        * SourcesWPE.txt:
+        * platform/Widget.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::frameRect const):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::setFrameRect):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setIsSelected):
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::Widget): Deleted.
+        (WebCore::Widget::frameRect const): Deleted.
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget): Deleted.
+        (WebCore::Widget::frameRect const): Deleted.
+        * platform/wpe/WidgetWPE.cpp: Removed.
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         [macOS] Label "prewarmed" WebContent processes in Activity Monitor

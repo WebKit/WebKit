@@ -28,6 +28,7 @@
 
 #include "FrameView.h"
 #include "IntRect.h"
+#include "NotImplemented.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -149,6 +150,17 @@ IntPoint Widget::convertToContainingWindow(const IntPoint& localPoint) const
 }
 
 #if !PLATFORM(COCOA)
+
+Widget::Widget(PlatformWidget widget)
+{
+    init(widget);
+}
+
+IntRect Widget::frameRect() const
+{
+    return m_frame;
+}
+
 IntRect Widget::convertFromRootToContainingWindow(const Widget*, const IntRect& rect)
 {
     return rect;
@@ -168,7 +180,8 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget*, const IntPoint
 {
     return point;
 }
-#endif
+
+#endif // !PLATFORM(COCOA)
 
 IntRect Widget::convertToContainingView(const IntRect& localRect) const
 {
@@ -211,5 +224,51 @@ IntPoint Widget::convertFromContainingView(const IntPoint& parentPoint) const
 
     return parentPoint;
 }
+
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
+
+Widget::~Widget()
+{
+    ASSERT(!parent());
+    notImplemented();
+}
+
+void Widget::setFrameRect(const IntRect& rect)
+{
+    m_frame = rect;
+    notImplemented();
+}
+
+void Widget::paint(GraphicsContext&, const IntRect&, SecurityOriginPaintPolicy)
+{
+    notImplemented();
+}
+
+void Widget::setFocus(bool)
+{
+    notImplemented();
+}
+
+void Widget::setCursor(const Cursor&)
+{
+    notImplemented();
+}
+
+void Widget::show()
+{
+    notImplemented();
+}
+
+void Widget::hide()
+{
+    notImplemented();
+}
+
+void Widget::setIsSelected(bool)
+{
+    notImplemented();
+}
+
+#endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
 
 } // namespace WebCore

@@ -40,11 +40,6 @@
 
 namespace WebCore {
 
-Widget::Widget(PlatformWidget widget)
-{
-    init(widget);
-}
-
 Widget::~Widget() 
 {
     ASSERT(!parent());
@@ -85,11 +80,6 @@ void Widget::setFocus(bool focused)
 
 void Widget::setIsSelected(bool)
 {
-}
-
-IntRect Widget::frameRect() const
-{
-    return m_frame;
 }
 
 void Widget::setFrameRect(const IntRect& rect)

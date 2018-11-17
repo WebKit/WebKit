@@ -76,6 +76,5 @@ platform/wpe/PlatformScreenWPE.cpp
 platform/wpe/RenderThemeWPE.cpp
 platform/wpe/ScrollbarThemeWPE.cpp
 platform/wpe/ThemeWPE.cpp
-platform/wpe/WidgetWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
