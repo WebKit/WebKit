@@ -70,16 +70,17 @@ public:
         BreakAtStart = 1 << 0,
         BreakAtEnd = 1 << 1
     };
-    using DetachingRules = OptionSet<DetachingRule>;
-    std::optional<DetachingRules> detachingRules(const Box& layoutBox) const;
-    void addDetachingRule(const Box& layoutBox, DetachingRules detachingRules) { m_detachingRules.set(&layoutBox, detachingRules); }
+    void addDetachingRule(const Box& layoutBox, DetachingRule);
+
+    OptionSet<DetachingRule> detachingRules(const Box& layoutBox) const;
+    void setDetachingRules(const Box& layoutBox, OptionSet<DetachingRule> detachingRules) { m_detachingRules.set(&layoutBox, detachingRules); }
 
     // Temp
     InlineRuns& inlineRuns() { return m_inlineRuns; }
     void appendInlineRun(InlineRun inlineRun) { m_inlineRuns.append(inlineRun); }
 
 private:
-    using DetachingRulesForInlineItems = HashMap<const Box*, DetachingRules>;
+    using DetachingRulesForInlineItems = HashMap<const Box*, OptionSet<DetachingRule>>;
 
     InlineContent m_inlineContent;
     InlineRuns m_inlineRuns;

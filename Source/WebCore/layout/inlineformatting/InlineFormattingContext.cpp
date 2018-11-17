@@ -175,7 +175,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         auto detachingRules = inlineFormattingState().detachingRules(inlineItem.layoutBox());
 
         // #1
-        if (!detachingRules) {
+        if (detachingRules.isEmpty()) {
             uncommittedLength += currentLength();
             firstUncommittedInlineItem = !firstUncommittedInlineItem ? &inlineItem : firstUncommittedInlineItem;
             continue;
@@ -194,7 +194,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         };
 
         // #2
-        if (*detachingRules == InlineFormattingState::DetachingRule::BreakAtStart) {
+        if (detachingRules == InlineFormattingState::DetachingRule::BreakAtStart) {
             commit();
             firstUncommittedInlineItem = &inlineItem;
             uncommittedLength = currentLength();
@@ -202,7 +202,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         }
 
         // #3
-        if (*detachingRules == InlineFormattingState::DetachingRule::BreakAtEnd) {
+        if (detachingRules == InlineFormattingState::DetachingRule::BreakAtEnd) {
             ASSERT(firstUncommittedInlineItem);
             uncommittedLength += currentLength();
             commit();
@@ -455,7 +455,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     if (root.establishesFormattingContext() && &root != &(this->root())) {
         // Skip formatting root subtree. They are not part of this inline formatting context.
         inlineRunProvider.append(root);
-        inlineFormattingState.addDetachingRule(root, { InlineFormattingState::DetachingRule::BreakAtStart, InlineFormattingState::DetachingRule::BreakAtEnd });
+        inlineFormattingState.setDetachingRules(root, { InlineFormattingState::DetachingRule::BreakAtStart, InlineFormattingState::DetachingRule::BreakAtEnd });
         return;
     }
 

@@ -1,3 +1,24 @@
+2018-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingState::addDetachingRule should accumulate rules.
+        https://bugs.webkit.org/show_bug.cgi?id=191801
+
+        Reviewed by Antti Koivisto.
+
+        before<span style="position: relative">positioned</span>after
+        In the example above the <positioned> inline box has both the BreakAtStart and the BreakAtEnd rules.
+        While walking through the inline tree, we add BreakAtStart first and when we figure it's the last child too,
+        we add BreakAtEnd as well. BreakAtEnd should not clear the BreakAtStart rule.
+
+        Test: fast/inline/simple-inline-with-out-of-flow-descendant2.html
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::addDetachingRule):
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::addDetachingRule): Deleted.
+
 2018-11-17  Jonathan Hammer  <jonathan@e3software.com>
 
         Caret stops blinking after context menu shown

@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 202x202 clip at (9,9) size 200x200
+  RenderBlock {DIV} at (0,0) size 202x202 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 31x14
+      text run at (1,1) width 31: "before"
+    RenderText {#text} at (62,1) size 23x14
+      text run at (62,1) width 23: "after"
+layer at (108,108) size 32x14
+  RenderInline (relative positioned) {SPAN} at (0,0) size 32x14
+    RenderText {#text} at (31,1) size 32x14
+      text run at (31,1) width 32: "nested"

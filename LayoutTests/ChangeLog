@@ -1,3 +1,13 @@
+2018-11-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingState::addDetachingRule should accumulate rules.
+        https://bugs.webkit.org/show_bug.cgi?id=191801
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/simple-inline-with-out-of-flow-descendant2-expected.txt: Added.
+        * fast/inline/simple-inline-with-out-of-flow-descendant2.html: Added.
+
 2018-11-17  Jonathan Hammer  <jonathan@e3software.com>
 
         Caret stops blinking after context menu shown

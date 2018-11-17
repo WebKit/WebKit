@@ -71,6 +71,7 @@ fast/inline/simple-inline-block.html
 fast/inline/simple-shrink-to-fit-inline-block.html
 fast/inline/simple-inline-inflow-positioned.html
 fast/inline/simple-inline-with-out-of-flow-descendant.html
+fast/inline/simple-inline-with-out-of-flow-descendant2.html
 fast/block/basic/height-percentage-simple.html
 fast/block/basic/child-block-level-box-with-height-percent.html
 fast/block/basic/quirk-mode-percent-height.html
