@@ -1,3 +1,16 @@
+2018-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r238294): TestWebKitAPI.WKNavigation.ProcessCrashDuringCallback failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=191783
+
+        Reviewed by Chris Dumez.
+
+        Allow either WKErrorWebContentProcessTerminated or WKErrorWebViewInvalidated since the test
+        is closing WebView, thereby invalidating the view, which is racing with the process termination.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+        (TEST):
+
 2018-11-16  Chris Dumez  <cdumez@apple.com>
 
         ProcessSwap.DisableForInspector API test is failing
