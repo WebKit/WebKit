@@ -199,6 +199,9 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
     launchOptions.nonValidInjectedCodeAllowed = shouldAllowNonValidInjectedCode();
 
+    if (isPrewarmed())
+        launchOptions.extraInitializationData.add("is-prewarmed"_s, "1"_s);
+
     if (processPool().shouldMakeNextWebProcessLaunchFailForTesting()) {
         processPool().setShouldMakeNextWebProcessLaunchFailForTesting(false);
         launchOptions.shouldMakeProcessLaunchFailForTesting = true;
@@ -450,6 +453,8 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
     m_processPool.setIsWeak(IsWeak::No);
+
+    send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 }
 
 void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID)

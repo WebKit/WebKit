@@ -211,18 +211,31 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #endif
 }
 
-void WebProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
+void WebProcess::initializeProcessName(const ChildProcessInitializationParameters&)
 {
-#if !PLATFORM(IOS_FAMILY)
-    NSString *applicationName;
-    if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
-        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-#if ENABLE(SERVICE_WORKER)
-    else if (parameters.extraInitializationData.get("service-worker-process"_s) == "1")
-        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), (NSString *)parameters.uiProcessName, (NSString *)parameters.extraInitializationData.get("security-origin"_s)];
+#if PLATFORM(MAC)
+    updateProcessName();
 #endif
-    else
-        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+}
+
+#if PLATFORM(MAC)
+void WebProcess::updateProcessName()
+{
+    NSString *applicationName;
+    switch (m_processType) {
+    case ProcessType::Inspector:
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)m_uiProcessName];
+        break;
+    case ProcessType::ServiceWorker:
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Service Worker (%@)", "Visible name of Service Worker process. The argument is the application name."), (NSString *)m_uiProcessName, (NSString *)m_securityOrigin];
+        break;
+    case ProcessType::PrewarmedWebContent:
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content (Prewarmed)", "Visible name of the web process. The argument is the application name."), (NSString *)m_uiProcessName];
+        break;
+    case ProcessType::WebContent:
+        applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)m_uiProcessName];
+        break;
+    }
 
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
         // Note that it is important for _RegisterApplication() to have been called before setting the display name.
@@ -238,8 +251,8 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
         ASSERT(!actualApplicationName.isEmpty());
 #endif
     });
-#endif
 }
+#endif // PLATFORM(MAC)
 
 static void registerWithAccessibility()
 {
@@ -338,7 +351,7 @@ void WebProcess::registerWithStateDumper()
 }
 #endif
 
-void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters&)
+void WebProcess::platformInitializeProcess(const ChildProcessInitializationParameters& parameters)
 {
 #if PLATFORM(MAC)
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
@@ -362,6 +375,23 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
         launchServicesCheckIn();
     }
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
+
+    if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
+        m_processType = ProcessType::Inspector;
+#if ENABLE(SERVICE_WORKER)
+    else if (parameters.extraInitializationData.get("service-worker-process"_s) == "1") {
+        m_processType = ProcessType::ServiceWorker;
+        m_securityOrigin = parameters.extraInitializationData.get("security-origin"_s);
+    }
+#endif
+    else if (parameters.extraInitializationData.get("is-prewarmed"_s) == "1")
+        m_processType = ProcessType::PrewarmedWebContent;
+    else
+        m_processType = ProcessType::WebContent;
+
+    m_uiProcessName = parameters.uiProcessName;
+#else
+    UNUSED_PARAM(parameters);
 #endif // PLATFORM(MAC)
 
     registerWithAccessibility();

@@ -1,3 +1,27 @@
+2018-11-16  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] Label "prewarmed" WebContent processes in Activity Monitor
+        https://bugs.webkit.org/show_bug.cgi?id=191765
+        <rdar://problem/45953463>
+
+        Reviewed by Geoffrey Garen.
+
+        Label "prewarmed" WebContent processes in Activity Monitor to facilitate debugging.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        (WebKit::WebProcessProxy::markIsNoLongerInPrewarmedPool):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::markIsNoLongerPrewarmed):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::initializeProcessName):
+        (WebKit::WebProcess::updateProcessName):
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2018-11-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Keep Web Inspector window alive across process swaps (PSON) (Local Inspector)

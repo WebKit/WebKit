@@ -265,6 +265,8 @@ private:
 
     void platformTerminate();
 
+    void markIsNoLongerPrewarmed();
+
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;
@@ -381,6 +383,7 @@ private:
     void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(MAC)
+    void updateProcessName();
     void setScreenProperties(const WebCore::ScreenProperties&);
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
@@ -456,6 +459,11 @@ private:
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;
+
+    enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, WebContent };
+    ProcessType m_processType { ProcessType::WebContent };
+    String m_uiProcessName;
+    String m_securityOrigin;
 #endif
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;

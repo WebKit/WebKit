@@ -128,6 +128,7 @@ messages -> WebProcess LegacyReceiver {
     CheckProcessLocalPortForActivity(struct WebCore::MessagePortIdentifier port, uint64_t callbackIdentifier)
     MessagesAvailableForPort(struct WebCore::MessagePortIdentifier port)
 
+    MarkIsNoLongerPrewarmed()
     UpdateActivePages()
     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) LegacySync
 

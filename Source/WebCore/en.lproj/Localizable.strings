@@ -46,6 +46,9 @@
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
+/* Visible name of the web process. The argument is the application name. */
+"%@ Web Content (Prewarmed)" = "%@ Web Content (Prewarmed)";
+
 /* Visible name of Web Inspector's web process. The argument is the application name. */
 "%@ Web Inspector" = "%@ Web Inspector";
 
@@ -180,6 +183,12 @@
 
 /* Media Controls context menu item */
 "Controls" = "Controls";
+
+/* Convert to ordered list action name */
+"Convert to Ordered List (Undo action name)" = "Convert to Ordered List";
+
+/* Convert to unordered list action name */
+"Convert to Unordered List (Undo action name)" = "Convert to Unordered List";
 
 /* Copy context menu item */
 "Copy" = "Copy";

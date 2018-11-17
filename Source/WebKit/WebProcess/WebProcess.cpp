@@ -429,6 +429,16 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
 
+void WebProcess::markIsNoLongerPrewarmed()
+{
+#if PLATFORM(MAC)
+    ASSERT(m_processType == ProcessType::PrewarmedWebContent);
+    m_processType = ProcessType::WebContent;
+
+    updateProcessName();
+#endif
+}
+
 void WebProcess::prewarmGlobally()
 {
     WebCore::ProcessWarming::prewarmGlobally();
