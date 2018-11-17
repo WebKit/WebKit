@@ -70,7 +70,10 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         uint32_t size = toNonWrappingUint32(exec, minSizeValue);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        if (!Wasm::PageCount::isValid(size))
+        // FIXME: Creating a wasm memory that is bigger than the ArrayBuffer limit but smaller than the spec limit should throw
+        // OOME not RangeError
+        // https://bugs.webkit.org/show_bug.cgi?id=191776
+        if (!Wasm::PageCount::isValid(size) || Wasm::PageCount(size).bytes() >= MAX_ARRAY_BUFFER_SIZE)
             return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, "WebAssembly.Memory 'initial' page count is too large"_s)));
         initialPageCount = Wasm::PageCount(size);
     }

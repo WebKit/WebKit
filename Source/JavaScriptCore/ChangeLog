@@ -1,3 +1,26 @@
+2018-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        All users of ArrayBuffer should agree on the same max size
+        https://bugs.webkit.org/show_bug.cgi?id=191771
+
+        Reviewed by Mark Lam.
+
+        Array buffers cannot be larger than 0x7fffffff, because otherwise loading typedArray.length in the DFG/FTL would produce
+        a uint32 or would require a signedness check, neither of which sounds reasonable. It's better to just bound their max size
+        instead.
+
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::transferTo):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBufferContents::shareWith):
+        * runtime/ArrayBuffer.h:
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::tryCreate):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmPageCount.h:
+
 2018-11-16  Saam Barati  <sbarati@apple.com>
 
         KnownCellUse should also have SpecCellCheck as its type filter
