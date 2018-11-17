@@ -114,6 +114,12 @@ TEST(ExitFullscreenOnEnterPiP, ElementFullscreen)
     TestWebKitAPI::Util::run(&didEnterFullscreen);
     ASSERT_TRUE(didEnterFullscreen);
 
+    // Make the video the "main content" by playing with a user gesture.
+    __block bool didBeginPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:^{ didBeginPlaying = true; }];
+    [webView evaluateJavaScript:@"document.getElementById('play').click()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&didBeginPlaying);
+
     didEnterPiP = false;
     didExitFullscreen = false;
     [webView evaluateJavaScript:@"document.getElementById('enter-pip').click()" completionHandler: nil];

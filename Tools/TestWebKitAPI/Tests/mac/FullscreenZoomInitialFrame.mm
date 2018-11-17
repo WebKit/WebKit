@@ -156,6 +156,7 @@ void FullscreenZoomInitialFrame::runTest(View view)
 {
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
+    [window makeKeyAndOrderFront:view];
 
     setPageScale(view, 2);
 
