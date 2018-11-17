@@ -105,6 +105,9 @@ public:
 
     bool inForcedCompositingMode() const { return m_forceCompositingMode; }
 
+    // True when some content element other than the root is composited.
+    bool hasContentCompositingLayers() const { return m_contentLayersCount; }
+
     // Returns true if the accelerated compositing is enabled
     bool hasAcceleratedCompositing() const { return m_hasAcceleratedCompositing; }
 
@@ -216,7 +219,7 @@ public:
 
     void clearBackingForAllLayers();
     
-    void layerBecameComposited(const RenderLayer&) { ++m_compositedLayerCount; }
+    void layerBecameComposited(const RenderLayer&);
     void layerBecameNonComposited(const RenderLayer&);
     
 #if ENABLE(VIDEO)
@@ -386,7 +389,8 @@ private:
     bool isRunningTransformAnimation(RenderLayerModelObject&) const;
 
     void appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>&);
-    bool hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const;
+
+    bool needsCompositingForContentOrOverlays() const;
 
     void ensureRootLayer();
     void destroyRootLayer();
@@ -505,7 +509,7 @@ private:
 
     bool m_isTrackingRepaints { false }; // Used for testing.
 
-    int m_compositedLayerCount { 0 };
+    unsigned m_contentLayersCount { 0 };
     unsigned m_layersWithTiledBackingCount { 0 };
     unsigned m_layerFlushCount { 0 };
     unsigned m_compositingUpdateCount { 0 };

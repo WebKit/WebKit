@@ -1,5 +1,29 @@
 2018-11-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Clarify RenderLayerCompositor::hasAnyAdditionalCompositedLayers() and related code.
+        https://bugs.webkit.org/show_bug.cgi?id=191810
+
+        Reviewed by Zalan Bujtas.
+
+        Rename m_compositedLayerCount to m_contentLayersCount and have it track layers other
+        than the RenderView's layer.
+
+        hasAnyAdditionalCompositedLayers() is really about whether we can drop out of compositing
+        because no content layer is composited, and overlays don't require compositing, so
+        rename it.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::needsCompositingForContentOrOverlays const):
+        (WebCore::RenderLayerCompositor::layerBecameComposited):
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::hasAnyAdditionalCompositedLayers const): Deleted.
+        * rendering/RenderLayerCompositor.h:
+
+2018-11-17  Simon Fraser  <simon.fraser@apple.com>
+
         Rename RenderLayerCompositor::inCompositingMode() to usesCompositing()
         https://bugs.webkit.org/show_bug.cgi?id=191808
 

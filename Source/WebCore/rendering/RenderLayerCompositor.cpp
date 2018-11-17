@@ -632,12 +632,6 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired()
     updateCompositingLayers(CompositingUpdateType::AfterLayout);
 }
 
-bool RenderLayerCompositor::hasAnyAdditionalCompositedLayers(const RenderLayer& rootLayer) const
-{
-    int layerCount = m_compositedLayerCount + page().pageOverlayController().overlayCount();
-    return layerCount > (rootLayer.isComposited() ? 1 : 0);
-}
-
 void RenderLayerCompositor::cancelCompositingLayerUpdate()
 {
     m_updateCompositingLayersTimer.stop();
@@ -646,7 +640,7 @@ void RenderLayerCompositor::cancelCompositingLayerUpdate()
 // Returns true on a successful update.
 bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
-    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " root " << updateRoot);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " updateCompositingLayers " << updateType << " contentLayersCount " << m_contentLayersCount);
 
 #if ENABLE(TREE_DEBUGGING)
     if (compositingLogEnabled())
@@ -739,7 +733,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
             appendDocumentOverlayLayers(childList);
             // Even when childList is empty, don't drop out of compositing mode if there are
             // composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
-            if (childList.isEmpty() && !hasAnyAdditionalCompositedLayers(*updateRoot))
+            if (childList.isEmpty() && !needsCompositingForContentOrOverlays())
                 destroyRootLayer();
             else if (m_rootContentLayer)
                 m_rootContentLayer->setChildren(WTFMove(childList));
@@ -766,7 +760,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (compositingLogEnabled()) {
         LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - post");
         showPaintOrderTree(m_renderView.layer());
-        LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - GraphicsLayers post");
+        LOG(Compositing, "RenderLayerCompositor::updateCompositingLayers - GraphicsLayers post, contentLayersCount %d", m_contentLayersCount);
         showGraphicsLayerTree(m_rootContentLayer.get());
     }
 #endif
@@ -967,7 +961,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // to be composited, then we can drop out of compositing mode altogether. However, don't drop out of compositing mode
     // if there are composited layers that we didn't hit in our traversal (e.g. because of visibility:hidden).
     RequiresCompositingData rootLayerQueryData;
-    if (layer.isRenderViewLayer() && !childState.subtreeIsCompositing && !requiresCompositingLayer(layer, rootLayerQueryData) && !m_forceCompositingMode && !hasAnyAdditionalCompositedLayers(layer)) {
+    if (layer.isRenderViewLayer() && !childState.subtreeIsCompositing && !requiresCompositingLayer(layer, rootLayerQueryData) && !m_forceCompositingMode && !needsCompositingForContentOrOverlays()) {
         // Don't drop out of compositing on iOS, because we may flash. See <rdar://problem/8348337>.
 #if !PLATFORM(IOS_FAMILY)
         enableCompositingMode(false);
@@ -1240,13 +1234,27 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer
     childList.append(WTFMove(overlayHost));
 }
 
+bool RenderLayerCompositor::needsCompositingForContentOrOverlays() const
+{
+    return m_contentLayersCount + page().pageOverlayController().overlayCount();
+}
+
+void RenderLayerCompositor::layerBecameComposited(const RenderLayer& layer)
+{
+    if (&layer != m_renderView.layer())
+        ++m_contentLayersCount;
+}
+
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
 {
     // Inform the inspector that the given RenderLayer was destroyed.
+    // FIXME: "destroyed" is a misnomer.
     InspectorInstrumentation::renderLayerDestroyed(&page(), layer);
 
-    ASSERT(m_compositedLayerCount > 0);
-    --m_compositedLayerCount;
+    if (&layer == m_renderView.layer()) {
+        ASSERT(m_contentLayersCount > 0);
+        --m_contentLayersCount;
+    }
 }
 
 #if !LOG_DISABLED
@@ -1907,7 +1915,7 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
 
     // Dump an empty layer tree only if the only composited layer is the main frame's tiled backing,
     // so that tests expecting us to drop out of accelerated compositing when there are no layers succeed.
-    if (!hasAnyAdditionalCompositedLayers(rootRenderLayer()) && documentUsesTiledBacking() && !(layerTreeBehavior & LayerTreeAsTextIncludeTileCaches))
+    if (!hasContentCompositingLayers() && documentUsesTiledBacking() && !(layerTreeBehavior & LayerTreeAsTextIncludeTileCaches))
         layerTreeText = emptyString();
 
     // The true root layer is not included in the dump, so if we want to report
