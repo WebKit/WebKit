@@ -1,3 +1,21 @@
+2018-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize composited iframe layer hookup
+        https://bugs.webkit.org/show_bug.cgi?id=191778
+
+        Reviewed by Zalan Bujtas.
+
+        The change made in r238229 can be more targeted; we only need to hook up iframe content
+        layers when the layer is already composited (otherwise the updateBacking() above would have triggered
+        the work), and when it's a RenderWidget layer.
+        
+        Tested by existing tests.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
 2018-11-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Provide default implementation of Widget
