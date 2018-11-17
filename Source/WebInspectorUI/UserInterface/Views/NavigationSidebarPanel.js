@@ -267,12 +267,14 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         let emptyContentPlaceholderElement = this._createEmptyContentPlaceholderIfNeeded(treeOutline, message);
         if (emptyContentPlaceholderElement.parentNode)
-            return;
+            return emptyContentPlaceholderElement;
 
         let emptyContentPlaceholderParentElement = treeOutline.element.parentNode;
         emptyContentPlaceholderParentElement.appendChild(emptyContentPlaceholderElement);
 
         this._updateContentOverflowShadowVisibility();
+
+        return emptyContentPlaceholderElement;
     }
 
     hideEmptyContentPlaceholder(treeOutline)
@@ -725,7 +727,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         if (emptyContentPlaceholderElement)
             return emptyContentPlaceholderElement;
 
-        emptyContentPlaceholderElement = WI.createMessageTextView(message);
+        emptyContentPlaceholderElement = message instanceof Node ? message : WI.createMessageTextView(message);
         this._emptyContentPlaceholderElements.set(treeOutline, emptyContentPlaceholderElement);
 
         return emptyContentPlaceholderElement;

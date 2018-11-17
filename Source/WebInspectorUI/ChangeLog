@@ -1,5 +1,34 @@
 2018-11-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: add default tests
+        https://bugs.webkit.org/show_bug.cgi?id=191758
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.loadStoredTests):
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded): Added.
+        If there are no previously saved tests in the database, automatically add the default set.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+        (WI.AuditNavigationSidebarPanel.prototype._addResult):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestRemoved):
+        * UserInterface/Views/AuditNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view): Added.
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > .message): Added.
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > button): Added.
+        When the last test is removed, show a placeholder message that allows the user to re-add the
+        default set of tests.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.showEmptyContentPlaceholder):
+        (WI.NavigationSidebarPanel.prototype._createEmptyContentPlaceholderIfNeeded):
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2018-11-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: minor style improvements
         https://bugs.webkit.org/show_bug.cgi?id=191727
 

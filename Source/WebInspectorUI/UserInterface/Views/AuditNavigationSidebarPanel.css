@@ -26,3 +26,16 @@
 .sidebar > .panel.navigation.audit > .content {
     top: var(--navigation-bar-height);
 }
+
+.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view {
+    position: initial;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > .message {
+    display: none;
+}
+
+.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > button {
+    margin: 8px 0 7px;
+}

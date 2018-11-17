@@ -105,15 +105,21 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _addTest(test)
     {
+        this.element.classList.add("has-tests");
+
         this._updateStartStopButtonNavigationItemState();
 
         this.contentTreeOutline.insertChild(new WI.AuditTreeElement(test), this.contentTreeOutline.children.indexOf(this._resultsFolderTreeElement));
 
         this._resultsFolderTreeElement.hidden = !this._resultsFolderTreeElement.children.length;
+
+        this.hideEmptyContentPlaceholder();
     }
 
     _addResult(result, index)
     {
+        this.element.classList.add("has-results");
+
         this._updateStartStopButtonNavigationItemState();
 
         this._resultsFolderTreeElement.hidden = false;
@@ -151,6 +157,28 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         let {test} = event.data;
         let treeElement = this.treeElementForRepresentedObject(test);
         this.contentTreeOutline.removeChild(treeElement);
+
+        this.element.classList.toggle("has-tests", !!WI.auditManager.tests.length);
+
+        if (!WI.auditManager.tests.length) {
+            let contentPlaceholder = WI.createMessageTextView(WI.UIString("No audits"));
+
+            let defaultButtonElement = contentPlaceholder.appendChild(document.createElement("button"));
+            defaultButtonElement.textContent = WI.UIString("Add Default Audits");
+            defaultButtonElement.addEventListener("click", () => {
+                WI.auditManager.addDefaultTestsIfNeeded();
+            });
+
+            contentPlaceholder = this.showEmptyContentPlaceholder(contentPlaceholder);
+
+            if (WI.auditManager.results.length) {
+                console.assert(this.contentTreeOutline.children[0] === this._resultsFolderTreeElement);
+
+                // Move the placeholder to be the first element in the content area, where it will
+                // be styled such that only the button is visible.
+                this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
+            }
+        }
 
         this._updateStartStopButtonNavigationItemState();
     }

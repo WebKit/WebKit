@@ -150,6 +150,8 @@ WI.AuditManager = class AuditManager extends WI.Object
 
                 this._addTest(test);
             }
+
+            this.addDefaultTestsIfNeeded();
         });
     }
 
@@ -191,6 +193,54 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         for (let test of this._tests)
             test.clearResult();
+    }
+
+    addDefaultTestsIfNeeded()
+    {
+        if (this._tests.length)
+            return;
+
+        const defaultTests = [
+            new WI.AuditTestGroup(WI.UIString("Demo Audit"), [
+                new WI.AuditTestGroup(WI.UIString("Result Levels"), [
+                    new WI.AuditTestCase(`level-pass`, `function() { return {level: "pass"}; }`, {description: WI.UIString("This is what the result of a passing test with no data looks like.")}),
+                    new WI.AuditTestCase(`level-warn`, `function() { return {level: "warn"}; }`, {description: WI.UIString("This is what the result of a warning test with no data looks like.")}),
+                    new WI.AuditTestCase(`level-fail`, `function() { return {level: "fail"}; }`, {description: WI.UIString("This is what the result of a failing test with no data looks like.")}),
+                    new WI.AuditTestCase(`level-error`, `function() { return {level: "error"}; }`, {description: WI.UIString("This is what the result of a test that threw an error with no data looks like.")}),
+                    new WI.AuditTestCase(`level-unsupported`, `function() { return {level: "unsupported"}; }`, {description: WI.UIString("This is what the result of a unsupported test with no data looks like.")}),
+                ], {description: WI.UIString("These are all of the different test result levels.")}),
+                new WI.AuditTestGroup(WI.UIString("Result Data"), [
+                    new WI.AuditTestCase(`data-domNodes`, `function() { return {domNodes: [document.body], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with the <body> element.")}),
+                    new WI.AuditTestCase(`data-domAttributes`, `function() { return {domNodes: Array.from(document.querySelectorAll("[id]")), domAttributes: ["id"], level: "pass"}; }`, {description: WI.UIString("This is an example of how result DOM nodes are shown. It will pass with all elements with an id attribute.")}),
+                    new WI.AuditTestCase(`data-errors`, `function() { throw Error("this error was thrown from inside the audit test code."); }`, {description: WI.UIString("This is an example of how errors are shown. The error was thrown manually, but execution errors will appear in the same way.")}),
+                ], {description: WI.UIString("These are all of the different types of data that can be returned with the test result.")}),
+            ], {description: WI.UIString("These tests serve as a demonstration of the functionality and structure of audits.")}),
+            new WI.AuditTestGroup(WI.UIString("Accessibility"), [
+                new WI.AuditTestGroup(WI.UIString("Attributes"), [
+                    new WI.AuditTestCase(`img-alt`, `function() { let domNodes = Array.from(document.getElementsByTagName("img")).filter((img) => !img.alt || !img.alt.length); return { level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["alt"] }; }`, {description: WI.UIString("Ensure <img> elements have alternate text.")}),
+                    new WI.AuditTestCase(`area-alt`, `function() { let domNodes = Array.from(document.getElementsByTagName("area")).filter((area) => !area.alt || !area.alt.length); return { level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["alt"] }; }`, {description: WI.UIString("Ensure <area> elements of image maps have alternate text.")}),
+                    new WI.AuditTestCase(`valid-tabindex`, `function() { let domNodes = Array.from(document.querySelectorAll("*[tabindex]")) .filter((node) => { let tabindex = node.getAttribute("tabindex"); if (!tabindex) return false; tabindex = parseInt(tabindex); return isNaN(tabindex) || (tabindex !== 0 && tabindex !== -1); }); return { level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["tabindex"] }; }`, {description: WI.UIString("Ensure tabindex is a number.")}),
+                    new WI.AuditTestCase(`frame-title`, `function() { let domNodes = Array.from(document.querySelectorAll("iframe, frame")) .filter((node) => { let title = node.getAttribute("title"); return !title || !title.trim().length; }); return { level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["title"] }; }`, {description: WI.UIString("Ensure <area> elements of image maps have alternate text.")}),
+                    new WI.AuditTestCase(`hidden-body`, `function() { let domNodes = Array.from(document.querySelectorAll("body[hidden]")).filter((body) => body.hidden); return { level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["hidden"] }; }`, {description: WI.UIString("Ensure hidden=true is not present on the document body.")}),
+                    new WI.AuditTestCase(`meta-refresh`, `function() { let domNodes = Array.from(document.querySelectorAll("meta[http-equiv=refresh]")); return { level: domNodes.length ? "warn" : "pass", domNodes, domAttributes: ["http-equiv"] }; }`, {description: WI.UIString("Ensure <meta http-equiv=refresh> is not used.")}),
+                ], {description: WI.UIString("Tests for element attribute accessibility issues.")}),
+                new WI.AuditTestGroup(WI.UIString("Elements"), [
+                    new WI.AuditTestCase(`blink`, `function() { let domNodes = Array.from(document.getElementsByTagName("blink")); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure hidden=true is not present on the document body.")}),
+                    new WI.AuditTestCase(`marquee`, `function() { let domNodes = Array.from(document.getElementsByTagName("marquee")); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure hidden=true is not present on the document body.")}),
+                    new WI.AuditTestCase(`dlitem`, `function() { function check(node) { if (!node) { return false; } if (node.nodeName === "DD") { return true; } return check(node.parentNode); } let domNodes = Array.from(document.querySelectorAll("dt, dd")).filter(check); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure <dt> and <dd> elements are contained by a <dl>.")}),
+                ], {description: WI.UIString("Tests for element accessibility issues.")}),
+                new WI.AuditTestGroup(WI.UIString("Forms"), [
+                    new WI.AuditTestCase(`one-legend`, `function() { let formLegendsMap = Array.from(document.querySelectorAll("form legend")).reduce((accumulator, node) => { let existing = accumulator.get(node.form); if (!existing) { existing = []; accumulator.set(node.form, existing); } existing.push(node); return accumulator; }, new Map); let domNodes = Array.from(formLegendsMap.values()).reduce((accumulator, legends) => accumulator.concat(legends), []); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure exactly one <legend> exists per form.")}),
+                    new WI.AuditTestCase(`legend-first-child`, `function() { let domNodes = Array.from(document.querySelectorAll("form > legend:not(:first-child)")); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure legend is first child in form.")}),
+                    new WI.AuditTestCase(`form-input`, `function() { let domNodes = Array.from(document.getElementsByTagName("form")) .filter(node => !node.elements.length); return { level: domNodes.length ? "warn" : "pass", domNodes }; }`, {description: WI.UIString("Ensure forms have at least one input.")}),
+                ], {description: WI.UIString("Tests the accessibility of form elements.")}),
+            ], {description: WI.UIString("Tests for ways to improve accessibility.")}),
+        ];
+
+        for (let test of defaultTests) {
+            this._addTest(test);
+            WI.objectStores.audits.addObject(test);
+        }
     }
 };
 
