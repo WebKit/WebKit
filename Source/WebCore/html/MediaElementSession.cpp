@@ -763,7 +763,7 @@ void MediaElementSession::resetPlaybackSessionState()
 
 bool MediaElementSession::allowsPictureInPicture() const
 {
-    return m_element.document().settings().allowsPictureInPictureMediaPlayback() && !m_element.webkitCurrentPlaybackTargetIsWireless();
+    return m_element.document().settings().allowsPictureInPictureMediaPlayback();
 }
 
 #if PLATFORM(IOS_FAMILY)

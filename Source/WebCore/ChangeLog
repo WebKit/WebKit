@@ -1,3 +1,31 @@
+2018-11-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable external playback for video in element fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=190359
+        rdar://problem/42560085
+
+        Reviewed by Jer Noble.
+
+        No new tests because we don't have a good way to test external playback.
+
+        Any video that might be auto-pipped from element fullscreen should also enable external playback for video out.
+        PiP and external playback are mutually exclusive. Instead of preventing PiP when external playback is active,
+        allow PiP, but disable external playback while PiP is active.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setVideoFullscreenStandby):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVideoFullscreenStandby):
+        (WebCore::MediaPlayer::videoFullscreenStandby const):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerVideoFullscreenStandby const):
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setVideoFullscreenStandby):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenStandby):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback):
+
 2018-11-16  Jer Noble  <jer.noble@apple.com>
 
         Regression(r233865): Causes synchronous IPC in the middle of layout

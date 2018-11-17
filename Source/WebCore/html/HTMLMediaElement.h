@@ -737,6 +737,7 @@ private:
 
     double mediaPlayerRequestedPlaybackRate() const final;
     VideoFullscreenMode mediaPlayerFullscreenMode() const final { return fullscreenMode(); }
+    bool mediaPlayerIsVideoFullscreenStandby() const final { return m_videoFullscreenStandby; }
     bool mediaPlayerShouldDisableSleep() const final { return shouldDisableSleep() == SleepType::Display; }
     bool mediaPlayerShouldCheckHardwareSupport() const final;
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const final;

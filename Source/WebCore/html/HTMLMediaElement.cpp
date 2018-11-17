@@ -6080,6 +6080,11 @@ WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
         return;
 
     m_videoFullscreenStandby = value;
+    
+#if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_player)
+        m_player->videoFullscreenStandbyChanged();
+#endif
 
     if (m_videoFullscreenStandby || m_videoFullscreenMode != VideoFullscreenModeNone)
         document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);

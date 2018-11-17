@@ -1226,6 +1226,13 @@ void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenMode(MediaPlayer::Vid
     UNUSED_PARAM(mode);
 #endif
 }
+    
+void MediaPlayerPrivateAVFoundationObjC::videoFullscreenStandbyChanged()
+{
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
+    updateDisableExternalPlayback();
+#endif
+}
 
 #if PLATFORM(IOS_FAMILY)
 NSArray *MediaPlayerPrivateAVFoundationObjC::timedMetadata() const
@@ -2989,7 +2996,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
         return;
 
     if ([m_avPlayer respondsToSelector:@selector(setUsesExternalPlaybackWhileExternalScreenIsActive:)])
-        [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:player()->fullscreenMode() & MediaPlayer::VideoFullscreenModeStandard];
+        [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:(player()->fullscreenMode() == MediaPlayer::VideoFullscreenModeStandard) || player()->isVideoFullscreenStandby()];
 #endif
 }
 

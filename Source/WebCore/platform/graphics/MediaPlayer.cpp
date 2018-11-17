@@ -720,6 +720,16 @@ MediaPlayer::VideoFullscreenMode MediaPlayer::fullscreenMode() const
     return client().mediaPlayerFullscreenMode();
 }
 
+void MediaPlayer::videoFullscreenStandbyChanged()
+{
+    m_private->videoFullscreenStandbyChanged();
+}
+
+bool MediaPlayer::isVideoFullscreenStandby() const
+{
+    return client().mediaPlayerIsVideoFullscreenStandby();
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)

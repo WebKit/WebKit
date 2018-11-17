@@ -227,6 +227,7 @@ public:
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
     virtual MediaPlayerEnums::VideoFullscreenMode mediaPlayerFullscreenMode() const { return MediaPlayerEnums::VideoFullscreenModeNone; }
+    virtual bool mediaPlayerIsVideoFullscreenStandby() const { return false; }
     virtual Vector<String> mediaPlayerPreferredAudioCharacteristics() const { return Vector<String>(); }
 
 #if USE(GSTREAMER)
@@ -277,6 +278,8 @@ public:
     void setVideoFullscreenGravity(VideoGravity);
     void setVideoFullscreenMode(VideoFullscreenMode);
     VideoFullscreenMode fullscreenMode() const;
+    void videoFullscreenStandbyChanged();
+    bool isVideoFullscreenStandby() const;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

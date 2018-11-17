@@ -56,6 +56,7 @@ public:
     virtual void setVideoFullscreenFrame(FloatRect) { }
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) { }
+    virtual void videoFullscreenStandbyChanged() { }
 #endif
 
 #if PLATFORM(IOS_FAMILY)

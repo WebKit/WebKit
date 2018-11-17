@@ -180,6 +180,7 @@ private:
     void setVideoFullscreenFrame(FloatRect) override;
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
+    void videoFullscreenStandbyChanged() override;
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const override;
