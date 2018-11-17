@@ -405,7 +405,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     if (child.isSelfPaintingLayer() || child.hasSelfPaintingLayerDescendant())
         setAncestorChainHasSelfPaintingLayerDescendant();
 
-    if (compositor().inCompositingMode())
+    if (compositor().usesCompositing())
         setDescendantsNeedCompositingRequirementsTraversal();
 
     if (child.hasDescendantNeedingCompositingRequirementsTraversal() || child.needsCompositingRequirementsTraversal())
@@ -451,7 +451,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
     if (oldChild.isSelfPaintingLayer() || oldChild.hasSelfPaintingLayerDescendant())
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
-    if (compositor().inCompositingMode())
+    if (compositor().usesCompositing())
         setDescendantsNeedCompositingRequirementsTraversal();
 
 #if ENABLE(CSS_COMPOSITING)
@@ -696,7 +696,7 @@ void RenderLayer::rebuildZOrderLists()
 
 void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negZOrderList)
 {
-    bool includeHiddenLayers = compositor().inCompositingMode();
+    bool includeHiddenLayers = compositor().usesCompositing();
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         if (!isReflectionLayer(*child))
             child->collectLayers(includeHiddenLayers, posZOrderList, negZOrderList);
@@ -1577,7 +1577,7 @@ bool RenderLayer::updateLayerPosition()
     positionOrOffsetChanged |= location() != localPoint;
     setLocation(localPoint);
     
-    if (positionOrOffsetChanged && compositor().inCompositingMode()) {
+    if (positionOrOffsetChanged && compositor().usesCompositing()) {
         if (isComposited())
             setNeedsCompositingGeometryUpdate();
         // This layer's position can affect the location of a composited descendant (which may be a sibling in z-order),
@@ -2430,7 +2430,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     frame.eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
 
     bool requiresRepaint = true;
-    if (compositor().inCompositingMode() && usesCompositedScrolling()) {
+    if (compositor().usesCompositing() && usesCompositedScrolling()) {
         setNeedsCompositingGeometryUpdate();
         setDescendantsNeedUpdateBackingAndHierarchyTraversal();
         requiresRepaint = false;
@@ -2580,7 +2580,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
 
 void RenderLayer::updateCompositingLayersAfterScroll()
 {
-    if (compositor().inCompositingMode()) {
+    if (compositor().usesCompositing()) {
         // Our stacking container is guaranteed to contain all of our descendants that may need
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContext()->enclosingCompositingLayer()) {

@@ -144,8 +144,6 @@ public:
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
 
-    void clearBackingStores();
-
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
     void setNeedsOneShotDrawingSynchronization();
@@ -160,7 +158,6 @@ public:
     uint64_t scrollLayerID() const;
     ScrollableArea* scrollableAreaForScrollLayerID(uint64_t) const;
 
-    bool hasCompositedContent() const;
     WEBCORE_EXPORT void enterCompositingMode();
     WEBCORE_EXPORT bool isEnclosedInCompositingLayer() const;
 

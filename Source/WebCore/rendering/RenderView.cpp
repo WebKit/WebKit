@@ -565,7 +565,7 @@ void RenderView::repaintViewAndCompositedLayers()
     repaintRootContents();
 
     RenderLayerCompositor& compositor = this->compositor();
-    if (compositor.inCompositingMode())
+    if (compositor.usesCompositing())
         compositor.repaintCompositedLayers();
 }
 
@@ -773,7 +773,7 @@ void RenderView::setBestTruncatedAt(int y, RenderBoxModelObject* forRenderer, bo
 
 bool RenderView::usesCompositing() const
 {
-    return m_compositor && m_compositor->inCompositingMode();
+    return m_compositor && m_compositor->usesCompositing();
 }
 
 RenderLayerCompositor& RenderView::compositor()

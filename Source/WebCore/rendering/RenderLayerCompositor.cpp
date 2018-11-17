@@ -370,7 +370,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlagsAfterLayout()
 
 bool RenderLayerCompositor::updateCompositingPolicy()
 {
-    if (!inCompositingMode())
+    if (!usesCompositing())
         return false;
 
     auto currentPolicy = m_compositingPolicy;
@@ -897,7 +897,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // If we just entered compositing mode, the root will have become composited (as long as accelerated compositing is enabled).
     if (layer.isRenderViewLayer()) {
-        if (inCompositingMode() && m_hasAcceleratedCompositing)
+        if (usesCompositing() && m_hasAcceleratedCompositing)
             willBeComposited = true;
     }
     
@@ -1362,7 +1362,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     if (queryData.reevaluateAfterLayout)
         layer.setNeedsPostLayoutCompositingUpdate();
 
-    if (diff >= StyleDifference::LayoutPositionedMovementOnly && inCompositingMode()) {
+    if (diff >= StyleDifference::LayoutPositionedMovementOnly && usesCompositing()) {
         layer.setNeedsPostLayoutCompositingUpdate();
         layer.setNeedsCompositingGeometryUpdate();
     }
@@ -1553,7 +1553,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
 
     if (layerChanged && is<RenderWidget>(layer.renderer())) {
         auto* innerCompositor = frameContentsCompositor(&downcast<RenderWidget>(layer.renderer()));
-        if (innerCompositor && innerCompositor->inCompositingMode())
+        if (innerCompositor && innerCompositor->usesCompositing())
             innerCompositor->updateRootLayerAttachment();
     }
     
@@ -1930,7 +1930,7 @@ RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderWidg
 bool RenderLayerCompositor::parentFrameContentLayers(RenderWidget* renderer)
 {
     auto* innerCompositor = frameContentsCompositor(renderer);
-    if (!innerCompositor || !innerCompositor->inCompositingMode() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
+    if (!innerCompositor || !innerCompositor->usesCompositing() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
         return false;
     
     auto* layer = renderer->layer();
@@ -1991,7 +1991,7 @@ void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
     LOG(Compositing, "RenderLayerCompositor %p setIsInWindow %d", this, isInWindow);
 
-    if (!inCompositingMode())
+    if (!usesCompositing())
         return;
 
     if (auto* rootLayer = rootGraphicsLayer()) {
@@ -2073,7 +2073,7 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer& layer, Requir
     if (!canBeComposited(layer))
         return false;
 
-    return requiresCompositingLayer(layer, queryData) || layer.mustCompositeForIndirectReasons() || (inCompositingMode() && layer.isRenderViewLayer());
+    return requiresCompositingLayer(layer, queryData) || layer.mustCompositeForIndirectReasons() || (usesCompositing() && layer.isRenderViewLayer());
 }
 
 // Note: this specifies whether the RL needs a compositing layer for intrinsic reasons.
@@ -2270,7 +2270,7 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         break;
     }
 
-    if (inCompositingMode() && renderer.layer()->isRenderViewLayer())
+    if (usesCompositing() && renderer.layer()->isRenderViewLayer())
         reasons.add(CompositingReason::Root);
 
     return reasons;
@@ -2430,7 +2430,7 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     const AnimationBase::RunningState activeAnimationState = AnimationBase::Running | AnimationBase::Paused;
     auto& animController = renderer.animation();
     return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity, activeAnimationState)
-        && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
+        && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
         || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyFilter, activeAnimationState)
 #if ENABLE(FILTERS_LEVEL_2)
         || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitBackdropFilter, activeAnimationState)
@@ -3213,7 +3213,7 @@ bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor)
 // be on the body which has no RenderLayer.
 void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
 {
-    if (!inCompositingMode())
+    if (!usesCompositing())
         return;
 
     Color oldBackgroundColor;
@@ -3230,7 +3230,7 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
 
 void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
 {
-    if (!inCompositingMode())
+    if (!usesCompositing())
         return;
 
     Color backgroundColor;

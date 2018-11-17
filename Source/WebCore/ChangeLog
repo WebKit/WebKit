@@ -1,3 +1,44 @@
+2018-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename RenderLayerCompositor::inCompositingMode() to usesCompositing()
+        https://bugs.webkit.org/show_bug.cgi?id=191808
+
+        Reviewed by Zalan Bujtas.
+
+        Other code uses "usesCompositing" so standardize on that (future changes will make
+        "compositing mode" more ambiguous). Also remove a FrameView function that only
+        had one caller.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::clearBackingStores):
+        (WebCore::FrameView::handleDeferredScrollbarsUpdateAfterDirectionChange):
+        (WebCore::FrameView::delegatesScrollingDidChange):
+        (WebCore::FrameView::hasCompositedContent const): Deleted.
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingPolicy):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::setIsInWindow):
+        (WebCore::RenderLayerCompositor::needsToBeComposited const):
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForAnimation const):
+        (WebCore::RenderLayerCompositor::rootOrBodyStyleChanged):
+        (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewAndCompositedLayers):
+        (WebCore::RenderView::usesCompositing const):
+
 2018-11-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Network: add button to show system certificate dialog

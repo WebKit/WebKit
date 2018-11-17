@@ -850,18 +850,6 @@ void FrameView::updateCompositingLayersAfterLayout()
     renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
 }
 
-void FrameView::clearBackingStores()
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return;
-
-    RenderLayerCompositor& compositor = renderView->compositor();
-    ASSERT(compositor.inCompositingMode());
-    compositor.enableCompositingMode(false);
-    compositor.clearBackingForAllLayers();
-}
-
 GraphicsLayer* FrameView::layerForScrolling() const
 {
     RenderView* renderView = this->renderView();
@@ -1159,13 +1147,6 @@ void FrameView::handleDeferredScrollbarsUpdateAfterDirectionChange()
 
     updateScrollbars(scrollPosition());
     positionScrollbarLayers();
-}
-    
-bool FrameView::hasCompositedContent() const
-{
-    if (RenderView* renderView = this->renderView())
-        return renderView->compositor().inCompositingMode();
-    return false;
 }
 
 // Sometimes (for plug-ins) we need to eagerly go into compositing mode.
@@ -2414,9 +2395,17 @@ void FrameView::contentsResized()
 
 void FrameView::delegatesScrollingDidChange()
 {
-    // When we switch to delgatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
-    if (hasCompositedContent())
-        clearBackingStores();
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return;
+
+    RenderLayerCompositor& compositor = renderView->compositor();
+    // When we switch to delegatesScrolling mode, we should destroy the scrolling/clipping layers in RenderLayerCompositor.
+    if (compositor.usesCompositing()) {
+        ASSERT(compositor.usesCompositing());
+        compositor.enableCompositingMode(false);
+        compositor.clearBackingForAllLayers();
+    }
 }
 
 #if USE(COORDINATED_GRAPHICS)
