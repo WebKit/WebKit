@@ -26,8 +26,10 @@ class ManifestGenerator {
         foreach ($repositories_with_commit as &$row)
             $row = $row['commit_repository'];
 
-        $tests = (object)$this->tests();
+        // Query test metrics before tests so that every test a test metric references is guaranteed to exist
+        // even if there were new test metrics added by the time we fetched tests.
         $metrics = (object)$this->metrics();
+        $tests = (object)$this->tests();
         $platforms = (object)$this->platforms($platform_table, false);
         $dashboard = (object)$this->platforms($platform_table, true);
         $repositories = (object)$this->repositories($repositories_table, $repositories_with_commit);

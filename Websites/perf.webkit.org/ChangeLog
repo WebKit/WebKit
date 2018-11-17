@@ -1,3 +1,21 @@
+2018-11-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Manifest file can contain a test metric which references a non-existent test
+        https://bugs.webkit.org/show_bug.cgi?id=191796
+
+        Reviewed by Dewei Zhu.
+
+        The bug was caused by a race condition between the manifest file fetching the list of tests and test metrics
+        and new tests and test metrics being added. Because we would fetch tests before test metrics, it was possible
+        for new test metrics which references a test not included in the fetched tests to be present in the test metrics.
+
+        Fixed the bug by changing the order of the queries so that test metrics are fetched before tests. This guarantees
+        that any test referenced by a test metric always exists and thefore included in the manifest file.
+
+        Unfortunately no new tests beucase this involes a race condition.
+
+        * public/include/manifest-generator.php:
+
 2018-11-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add cache for CommitLog objects to avoid refetching same commit.
