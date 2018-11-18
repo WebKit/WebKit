@@ -50,7 +50,7 @@
 namespace WebCore {
 
 struct HarfBuzzFontData {
-    WTF::HashMap<uint32_t, uint16_t>& glyphCacheForFaceCacheEntry;
+    WTF::HashMap<uint32_t, uint32_t>& glyphCacheForFaceCacheEntry;
     RefPtr<cairo_scaled_font_t> cairoScaledFont;
 };
 
