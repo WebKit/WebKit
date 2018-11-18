@@ -221,7 +221,6 @@ public:
 
     // Testing only
     virtual void delaySamples(Seconds) { };
-    void setInterruptedForTesting(bool);
 
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);

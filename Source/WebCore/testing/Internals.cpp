@@ -4446,12 +4446,6 @@ void Internals::setMediaStreamTrackIdentifier(MediaStreamTrack& track, String&& 
 {
     track.setIdForTesting(WTFMove(id));
 }
-
-void Internals::setMediaStreamSourceInterrupted(MediaStreamTrack& track, bool interrupted)
-{
-    track.source().setInterruptedForTesting(interrupted);
-}
-
 #endif
 
 String Internals::audioSessionCategory() const

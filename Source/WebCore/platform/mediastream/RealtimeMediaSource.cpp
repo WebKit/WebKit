@@ -110,11 +110,6 @@ void RealtimeMediaSource::notifyMutedChange(bool muted)
     notifyMutedObservers();
 }
 
-void RealtimeMediaSource::setInterruptedForTesting(bool interrupted)
-{
-    notifyMutedChange(interrupted);
-}
-
 void RealtimeMediaSource::forEachObserver(const WTF::Function<void(Observer&)>& apply) const
 {
     Vector<Observer*> observersCopy;
