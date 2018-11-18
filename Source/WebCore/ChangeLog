@@ -1,3 +1,25 @@
+2018-11-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        HarfBuzzFace::CacheEntry should use 32-bit values in its HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=191825
+
+        Reviewed by Michael Catanzaro.
+
+        The HashMap-based glyph cache contained in HarfBuzzFace::CacheEntry
+        objects is used to map given Unicode codepoints to corresponding
+        glyph indices (which occurs in the harfBuzzGetGlyph() function that's
+        invoked by HarfBuzz).
+
+        The 16-bit unsigned integer as the map's value type is not enough here
+        when the glyph index mapping is done through Freetype -- its API returns
+        32-bit glyph indices, and Cairo assigns this value to the 64-bit
+        unsigned index variable in the cairo_glyph_t struct. The value type is
+        thus bumped to 32 bits to match the unsigned type size of the index's
+        origin.
+
+        * platform/graphics/harfbuzz/HarfBuzzFace.h:
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+
 2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes

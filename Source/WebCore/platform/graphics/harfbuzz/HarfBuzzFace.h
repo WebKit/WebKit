@@ -60,7 +60,7 @@ public:
 private:
     class CacheEntry : public RefCounted<CacheEntry> {
     public:
-        using GlyphCache = HashMap<uint32_t, uint16_t>;
+        using GlyphCache = HashMap<uint32_t, uint32_t>;
 
         static Ref<CacheEntry> create(hb_face_t* face)
         {
