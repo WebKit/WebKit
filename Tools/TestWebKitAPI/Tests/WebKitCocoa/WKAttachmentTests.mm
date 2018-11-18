@@ -532,7 +532,7 @@ void platformCopyPNG()
     [pasteboard setData:testImageData() forType:NSPasteboardTypePNG];
 #elif PLATFORM(IOS_FAMILY)
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    auto item = adoptNS([[UIItemProvider alloc] init]);
+    auto item = adoptNS([[NSItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
     [item registerData:testImageData() type:(__bridge NSString *)kUTTypePNG];
     pasteboard.itemProviders = @[ item.get() ];

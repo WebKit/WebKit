@@ -27,20 +27,6 @@
 
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
-// UIItemProviders are not implemented for iOS apps for Mac, because they were depricated last year.
-// We need to switch over to NSItemProviders everywhere. This should just be a temporary fix.
-#if defined(TARGET_OS_IOSMAC) && TARGET_OS_IOSMAC
-
-#define UIItemProvider NSItemProvider
-#define UIItemProviderReading NSItemProviderReading
-#define UIItemProviderWriting NSItemProviderWriting
-#define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll
-
-#endif
-
-@class UIItemProvider;
-@protocol UIItemProviderWriting;
-
 struct CGSize;
 
 typedef NS_ENUM(NSInteger, WebPreferredPresentationStyle) {
@@ -77,13 +63,13 @@ typedef void(^WebItemProviderFileCallback)(NSURL * _Nullable, NSError * _Nullabl
  */
 WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 
-- (void)addRepresentingObject:(id <UIItemProviderWriting>)object;
+- (void)addRepresentingObject:(id <NSItemProviderWriting>)object;
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier;
 - (void)addPromisedType:(NSString *)typeIdentifier fileCallback:(void(^)(WebItemProviderFileCallback))callback;
 
 @property (nonatomic) CGSize preferredPresentationSize;
 @property (nonatomic, copy) NSString *suggestedName;
-@property (nonatomic, readonly, nullable) UIItemProvider *itemProvider;
+@property (nonatomic, readonly, nullable) __kindof NSItemProvider *itemProvider;
 
 @property (nonatomic) WebPreferredPresentationStyle preferredPresentationStyle;
 @property (nonatomic, copy) NSData *teamData;
@@ -114,7 +100,7 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 - (void)incrementPendingOperationCount;
 - (void)decrementPendingOperationCount;
 
-- (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block;
+- (void)enumerateItemProvidersWithBlock:(void (^)(__kindof NSItemProvider *itemProvider, NSUInteger index, BOOL *stop))block;
 
 // The given completion block is always dispatched on the main thread.
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action;

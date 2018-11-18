@@ -1,3 +1,14 @@
+2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=191819
+
+        Reviewed by Dan Bernstein.
+
+        Replace UIItemProvider (and related classes) with NSItemProvider.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2018-11-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: CFNetwork

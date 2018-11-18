@@ -120,7 +120,7 @@ using namespace TestWebKitAPI;
     return YES;
 }
 
-- (BOOL)canLoadObjectsOfClass:(Class<UIItemProviderReading>)aClass
+- (BOOL)canLoadObjectsOfClass:(Class<NSItemProviderReading>)aClass
 {
     for (UIDragItem *item in self.items) {
         if ([item.itemProvider canLoadObjectOfClass:aClass])
@@ -129,9 +129,9 @@ using namespace TestWebKitAPI;
     return NO;
 }
 
-- (BOOL)canLoadObjectsOfClasses:(NSArray<Class<UIItemProviderReading>> *)classes
+- (BOOL)canLoadObjectsOfClasses:(NSArray<Class<NSItemProviderReading>> *)classes
 {
-    for (Class<UIItemProviderReading> aClass in classes) {
+    for (Class<NSItemProviderReading> aClass in classes) {
         BOOL canLoad = NO;
         for (UIDragItem *item in self.items)
             canLoad |= [item.itemProvider canLoadObjectOfClass:aClass];
@@ -171,10 +171,10 @@ using namespace TestWebKitAPI;
 
 @implementation MockDropSession
 
-- (instancetype)initWithProviders:(NSArray<UIItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window allowMove:(BOOL)allowMove
+- (instancetype)initWithProviders:(NSArray<NSItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window allowMove:(BOOL)allowMove
 {
     auto items = adoptNS([[NSMutableArray alloc] init]);
-    for (UIItemProvider *itemProvider in providers)
+    for (NSItemProvider *itemProvider in providers)
         [items addObject:[[[UIDragItem alloc] initWithItemProvider:itemProvider] autorelease]];
 
     return [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
@@ -215,7 +215,7 @@ using namespace TestWebKitAPI;
     return NO;
 }
 
-- (BOOL)canCreateItemsOfClass:(Class<UIItemProviderReading>)aClass
+- (BOOL)canCreateItemsOfClass:(Class<NSItemProviderReading>)aClass
 {
     ASSERT_NOT_REACHED();
     return NO;
@@ -516,7 +516,7 @@ static NSArray *dragAndDropEventNames()
 
     switch (_phase) {
     case DragAndDropPhaseBeginning: {
-        NSMutableArray<UIItemProvider *> *itemProviders = [NSMutableArray array];
+        NSMutableArray<NSItemProvider *> *itemProviders = [NSMutableArray array];
         NSArray *items = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] itemsForBeginningSession:_dragSession.get()];
         if (!items.count) {
             _phase = DragAndDropPhaseCancelled;
@@ -650,7 +650,7 @@ static NSArray *dragAndDropEventNames()
 
 #pragma mark - WKUIDelegatePrivate
 
-- (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders
+- (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<NSItemProvider *> *)itemProviders
 {
     _suppressedSelectionCommandsDuringDrop = [_webView textInputContentView]._shouldSuppressSelectionCommands;
     _isDoneWithCurrentRun = true;
@@ -664,7 +664,7 @@ static NSArray *dragAndDropEventNames()
     return self.overrideDragUpdateBlock ? self.overrideDragUpdateBlock(operation, session) : operation;
 }
 
-- (NSArray *)_webView:(WKWebView *)webView adjustedDataInteractionItemProvidersForItemProvider:(UIItemProvider *)itemProvider representingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData
+- (NSArray *)_webView:(WKWebView *)webView adjustedDataInteractionItemProvidersForItemProvider:(NSItemProvider *)itemProvider representingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData
 {
     return self.convertItemProvidersBlock ? self.convertItemProvidersBlock(itemProvider, representingObjects, additionalData) : @[ itemProvider ];
 }

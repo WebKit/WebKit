@@ -292,7 +292,7 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
     }];
     [pasteboard setItems:@[ itemDictionary.get() ]];
 #else
-    if (UIItemProvider *itemProvider = representationsToRegister.itemProvider)
+    if (NSItemProvider *itemProvider = representationsToRegister.itemProvider)
         [pasteboard setItemProviders:@[ itemProvider ]];
     else
         [pasteboard setItemProviders:@[ ]];

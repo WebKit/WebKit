@@ -1,3 +1,34 @@
+2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes
+        https://bugs.webkit.org/show_bug.cgi?id=191819
+
+        Reviewed by Dan Bernstein.
+
+        Replace UIItemProvider (and related classes) with NSItemProvider.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (platformCopyPNG):
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (-[NSItemProvider registerDataRepresentationForTypeIdentifier:withData:]):
+
+        Replace usages of this deprecated method with `-registerDataRepresentationForTypeIdentifier:visibility:loadHandler:`.
+
+        (checkEstimatedSize):
+        (checkSuggestedNameAndEstimatedSize):
+        (TestWebKitAPI::TEST):
+        (-[UIItemProvider registerDataRepresentationForTypeIdentifier:withData:]): Deleted.
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[MockDragDropSession canLoadObjectsOfClass:]):
+        (-[MockDragDropSession canLoadObjectsOfClasses:]):
+        (-[MockDropSession initWithProviders:location:window:allowMove:]):
+        (-[MockDropSession canCreateItemsOfClass:]):
+        (-[DragAndDropSimulator _advanceProgress]):
+        (-[DragAndDropSimulator _webView:dataInteractionOperationWasHandled:forSession:itemProviders:]):
+        (-[DragAndDropSimulator _webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-11-17  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: m_messageReceivers.contains(...) under ViewGestureController removeMessageReceiver

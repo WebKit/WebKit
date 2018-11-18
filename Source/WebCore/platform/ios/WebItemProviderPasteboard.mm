@@ -45,7 +45,6 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
-SOFT_LINK_CLASS(UIKit, UIItemProvider)
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef void(^ItemProviderFileLoadCompletionHandler)(NSURL *, BOOL, NSError *);
@@ -97,7 +96,7 @@ using WebCore::PasteboardCustomData;
 
 - (void)registerItemProvider:(NSItemProvider *)itemProvider
 {
-    [itemProvider registerDataRepresentationForTypeIdentifier:self.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData = _data] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
+    [itemProvider registerDataRepresentationForTypeIdentifier:self.typeIdentifier visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[itemData = _data] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
         completionHandler(itemData.get(), nil);
         return nil;
     }];
@@ -111,15 +110,15 @@ using WebCore::PasteboardCustomData;
 @end
 
 @interface WebItemProviderWritableObjectRegistrar : NSObject <WebItemProviderRegistrar>
-- (instancetype)initWithObject:(id <UIItemProviderWriting>)representingObject;
-@property (nonatomic, readonly) id <UIItemProviderWriting> representingObject;
+- (instancetype)initWithObject:(id <NSItemProviderWriting>)representingObject;
+@property (nonatomic, readonly) id <NSItemProviderWriting> representingObject;
 @end
 
 @implementation WebItemProviderWritableObjectRegistrar {
-    RetainPtr<id <UIItemProviderWriting>> _representingObject;
+    RetainPtr<id <NSItemProviderWriting>> _representingObject;
 }
 
-- (instancetype)initWithObject:(id <UIItemProviderWriting>)representingObject
+- (instancetype)initWithObject:(id <NSItemProviderWriting>)representingObject
 {
     if (!(self = [super init]))
         return nil;
@@ -128,7 +127,7 @@ using WebCore::PasteboardCustomData;
     return self;
 }
 
-- (id <UIItemProviderWriting>)representingObject
+- (id <NSItemProviderWriting>)representingObject
 {
     return _representingObject.get();
 }
@@ -140,7 +139,7 @@ using WebCore::PasteboardCustomData;
 
 - (void)registerItemProvider:(NSItemProvider *)itemProvider
 {
-    [itemProvider registerObject:self.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [itemProvider registerObject:self.representingObject visibility:NSItemProviderRepresentationVisibilityAll];
 }
 
 - (NSString *)description
@@ -224,9 +223,9 @@ using WebCore::PasteboardCustomData;
     [_representations addObject:representation.get()];
 }
 
-- (void)addRepresentingObject:(id <UIItemProviderWriting>)object
+- (void)addRepresentingObject:(id <NSItemProviderWriting>)object
 {
-    ASSERT([object conformsToProtocol:@protocol(UIItemProviderWriting)]);
+    ASSERT([object conformsToProtocol:@protocol(NSItemProviderWriting)]);
     auto representation = adoptNS([[WebItemProviderWritableObjectRegistrar alloc] initWithObject:object]);
     [_representations addObject:representation.get()];
 }
@@ -273,17 +272,15 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 }
 #endif
 
-- (UIItemProvider *)itemProvider
+- (NSItemProvider *)itemProvider
 {
     if (!self.numberOfItems)
         return nil;
 
-    auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
+    auto itemProvider = adoptNS([NSItemProvider new]);
     for (id <WebItemProviderRegistrar> representation in _representations.get())
         [representation registerItemProvider:itemProvider.get()];
     [itemProvider setSuggestedName:self.suggestedName];
-    // UIItemProviders are not implemented for iOS apps for Mac, because they were depricated last year.
-    // We need to switch over to NSItemProviders everywhere. This should just be a temporary fix.
 #if !PLATFORM(IOSMAC)
     [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
     [itemProvider setPreferredPresentationStyle:uiPreferredPresentationStyle(self.preferredPresentationStyle)];
@@ -454,7 +451,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 {
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
     NSMutableArray<NSString *> *allTypesInOrder = [NSMutableArray array];
-    for (UIItemProvider *provider in _itemProviders.get()) {
+    for (NSItemProvider *provider in _itemProviders.get()) {
         for (NSString *typeIdentifier in provider.registeredTypeIdentifiers) {
             if ([allTypes containsObject:typeIdentifier])
                 continue;
@@ -501,7 +498,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
         if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))
             continue;
 
-        // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the UIItemProvider for the same data again.
+        // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the NSItemProvider for the same data again.
         if (NSData *result = [NSData dataWithContentsOfURL:[loadResult fileURLForType:loadedType] options:NSDataReadingMappedIfSafe error:nil])
             return result;
     }
@@ -521,7 +518,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     auto values = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
     [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
-        UIItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
+        NSItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
         if (!provider)
             return;
 
@@ -531,7 +528,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     return values.autorelease();
 }
 
-static NSArray<Class<UIItemProviderReading>> *allLoadableClasses()
+static NSArray<Class<NSItemProviderReading>> *allLoadableClasses()
 {
     return @[ [getUIColorClass() class], [getUIImageClass() class], [NSURL class], [NSString class], [NSAttributedString class] ];
 }
@@ -540,8 +537,8 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 {
     outTypeIdentifierToLoad = typeIdentifier;
 
-    // First, try to load a platform UIItemProviderReading-conformant object as-is.
-    for (Class<UIItemProviderReading> loadableClass in allLoadableClasses()) {
+    // First, try to load a platform NSItemProviderReading-conformant object as-is.
+    for (Class<NSItemProviderReading> loadableClass in allLoadableClasses()) {
         if ([[loadableClass readableTypeIdentifiersForItemProvider] containsObject:(NSString *)typeIdentifier])
             return loadableClass;
     }
@@ -565,7 +562,7 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     auto values = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
     [itemSet enumerateIndexesUsingBlock:[retainedSelf, pasteboardType, values] (NSUInteger index, BOOL *) {
-        UIItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
+        NSItemProvider *provider = [retainedSelf itemProviderAtIndex:index];
         if (!provider)
             return;
 
@@ -645,7 +642,7 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 {
     NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
     NSInteger numberOfFiles = 0;
-    for (UIItemProvider *itemProvider in _itemProviders.get()) {
+    for (NSItemProvider *itemProvider in _itemProviders.get()) {
         if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleInline)
             continue;
 
@@ -793,7 +790,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), itemLoadCompletion);
 }
 
-- (UIItemProvider *)itemProviderAtIndex:(NSUInteger)index
+- (NSItemProvider *)itemProviderAtIndex:(NSUInteger)index
 {
     return index < [_itemProviders count] ? [_itemProviders objectAtIndex:index] : nil;
 }
@@ -813,7 +810,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     _pendingOperationCount--;
 }
 
-- (void)enumerateItemProvidersWithBlock:(void (^)(UIItemProvider *itemProvider, NSUInteger index, BOOL *stop))block
+- (void)enumerateItemProvidersWithBlock:(void (^)(__kindof NSItemProvider *itemProvider, NSUInteger index, BOOL *stop))block
 {
     [_itemProviders enumerateObjectsUsingBlock:block];
 }

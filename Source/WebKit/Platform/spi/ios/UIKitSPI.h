@@ -91,7 +91,6 @@
 
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
-#import <UIKit/UIItemProvider_Private.h>
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
@@ -934,9 +933,6 @@ typedef enum {
 @end
 
 #if ENABLE(DRAG_SUPPORT)
-
-@interface UIItemProvider : NSItemProvider
-@end
 
 WTF_EXTERN_C_BEGIN
 

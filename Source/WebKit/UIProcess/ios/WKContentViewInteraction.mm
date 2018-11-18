@@ -5304,18 +5304,17 @@ static UIDropOperation dropOperationForWebCoreDragOperation(DragOperation operat
     _dragDropInteractionState = { };
 }
 
-static NSArray<UIItemProvider *> *extractItemProvidersFromDragItems(NSArray<UIDragItem *> *dragItems)
+static NSArray<NSItemProvider *> *extractItemProvidersFromDragItems(NSArray<UIDragItem *> *dragItems)
 {
-    NSMutableArray<UIItemProvider *> *providers = [NSMutableArray array];
+    NSMutableArray<NSItemProvider *> *providers = [NSMutableArray array];
     for (UIDragItem *item in dragItems) {
-        RetainPtr<UIItemProvider> provider = item.itemProvider;
-        if (provider)
-            [providers addObject:provider.get()];
+        if (NSItemProvider *provider = item.itemProvider)
+            [providers addObject:provider];
     }
     return providers;
 }
 
-static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDropSession> session)
+static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDropSession> session)
 {
     return extractItemProvidersFromDragItems(session.items);
 }
@@ -5491,7 +5490,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (NSArray<UIDragItem *> *)_itemsForBeginningOrAddingToSessionWithRegistrationList:(WebItemProviderRegistrationInfoList *)registrationList stagedDragSource:(const DragSourceState&)stagedDragSource
 {
-    UIItemProvider *defaultItemProvider = registrationList.itemProvider;
+    NSItemProvider *defaultItemProvider = registrationList.itemProvider;
     if (!defaultItemProvider)
         return @[ ];
 
@@ -5511,7 +5510,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         adjustedItemProviders = @[ defaultItemProvider ];
 
     NSMutableArray *dragItems = [NSMutableArray arrayWithCapacity:adjustedItemProviders.count];
-    for (UIItemProvider *itemProvider in adjustedItemProviders) {
+    for (NSItemProvider *itemProvider in adjustedItemProviders) {
         auto item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]);
         [item _setPrivateLocalContext:@(stagedDragSource.itemIdentifier)];
         [dragItems addObject:item.autorelease()];
@@ -5775,7 +5774,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id <UIDropSession>)session
 {
-    NSArray <UIItemProvider *> *itemProviders = extractItemProvidersFromDropSession(session);
+    NSArray <NSItemProvider *> *itemProviders = extractItemProvidersFromDropSession(session);
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:performDataInteractionOperationWithItemProviders:)]) {
         if ([uiDelegate _webView:_webView performDataInteractionOperationWithItemProviders:itemProviders])
