@@ -119,25 +119,14 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     }
 
     JSTextPosition positionBeforeLastNewline;
-    std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin,
-        JSParserStrictMode::NotStrict, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, SuperBinding::NotNeeded,
-        error, &positionBeforeLastNewline);
+    std::unique_ptr<ProgramNode> program = parseFunctionForFunctionConstructor(vm, source, error, &positionBeforeLastNewline, functionConstructorParametersEndPosition);
     if (!program) {
         RELEASE_ASSERT(error.isValid());
         return nullptr;
     }
 
     // This function assumes an input string that would result in a single function declaration.
-    StatementNode* statement = program->singleStatement();
-    if (UNLIKELY(!statement)) {
-        JSToken token;
-        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error", -1);
-        return nullptr;
-    }
-    ASSERT(statement->isBlock());
-
-    StatementNode* funcDecl = static_cast<BlockNode*>(statement)->singleStatement();
+    StatementNode* funcDecl = program->singleStatement();
     if (UNLIKELY(!funcDecl)) {
         JSToken token;
         error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error", -1);

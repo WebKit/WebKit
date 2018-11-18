@@ -1,3 +1,13 @@
+2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, rolling in the rest of r237254
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-attribute-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-body-onerror-expected.txt:
+
 2018-11-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238244.

@@ -1,3 +1,22 @@
+2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, rolling in the rest of r237254
+        https://bugs.webkit.org/show_bug.cgi?id=190340
+
+        * ChakraCore/test/Function/FuncBodyES5.baseline-jsc:
+        * stress/function-cache-with-parameters-end-position.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (i.anonymous):
+        * stress/function-constructor-name.js: Added.
+        (shouldBe):
+        (GeneratorFunction):
+        (AsyncFunction.async):
+        (AsyncGeneratorFunction.async):
+        (anonymous):
+        (async.anonymous):
+        * test262/expectations.yaml:
+
 2018-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         All users of ArrayBuffer should agree on the same max size
