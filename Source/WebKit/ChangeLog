@@ -1,3 +1,10 @@
+2018-11-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed WinCairo build fix for r238353.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+
 2018-11-17  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: m_messageReceivers.contains(...) under ViewGestureController removeMessageReceiver

@@ -2697,7 +2697,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
             loadRequestWithNavigation(navigation, ResourceRequest { navigation->currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes);
 
         ASSERT(!m_mainFrame);
-        m_mainFrameCreationHandler = [this, protectedThis = makeRef(*this), navigation = navigation.copyRef(), request =  navigation->currentRequest(), mainFrameURL, isServerRedirect = navigation->currentRequestIsRedirect()]() mutable {
+        m_mainFrameCreationHandler = [this, protectedThis = WTFMove(protectedThis), navigation = navigation.copyRef(), request =  navigation->currentRequest(), mainFrameURL, isServerRedirect = navigation->currentRequestIsRedirect()]() mutable {
             ASSERT(m_mainFrame);
             // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
             m_mainFrame->frameLoadState().setURL(mainFrameURL);
