@@ -270,8 +270,8 @@ void RenderListItem::positionListMarker()
         return;
 
     LayoutUnit markerOldLogicalLeft = m_marker->logicalLeft();
-    LayoutUnit blockOffset = 0;
-    LayoutUnit lineOffset = 0;
+    LayoutUnit blockOffset;
+    LayoutUnit lineOffset;
     for (auto* ancestor = m_marker->parentBox(); ancestor && ancestor != this; ancestor = ancestor->parentBox()) {
         blockOffset += ancestor->logicalTop();
         lineOffset += ancestor->logicalLeft();

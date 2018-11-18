@@ -1422,7 +1422,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
     willBeModified(alter, direction == DirectionUp ? DirectionBackward : DirectionForward);
 
     VisiblePosition pos;
-    LayoutUnit xPos = 0;
+    LayoutUnit xPos;
     switch (alter) {
     case AlterationMove:
         pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
@@ -1488,7 +1488,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
 
 LayoutUnit FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType type)
 {
-    LayoutUnit x = 0;
+    LayoutUnit x;
 
     if (isNone())
         return x;

@@ -111,8 +111,8 @@ void RenderFragmentedFlow::validateFragments()
         m_fragmentsHaveUniformLogicalHeight = true;
 
         if (hasFragments()) {
-            LayoutUnit previousFragmentLogicalWidth = 0;
-            LayoutUnit previousFragmentLogicalHeight = 0;
+            LayoutUnit previousFragmentLogicalWidth;
+            LayoutUnit previousFragmentLogicalHeight;
             bool firstFragmentVisited = false;
             
             for (auto& fragment : m_fragmentList) {
@@ -292,7 +292,7 @@ LayoutPoint RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent(const R
             }
             
             // Get the logical top coordinate of the current object.
-            LayoutUnit top = 0;
+            LayoutUnit top;
             if (is<RenderBlock>(boxModelObject))
                 top = downcast<RenderBlock>(boxModelObject).offsetFromLogicalTopOfFirstPage();
             else {
@@ -780,7 +780,7 @@ void RenderFragmentedFlow::markFragmentsForOverflowLayoutIfNeeded()
 
 void RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect()
 {
-    LayoutUnit logicalHeight = 0;
+    LayoutUnit logicalHeight;
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
     m_fragmentIntervalTree.clear();
     for (auto& fragment : m_fragmentList) {

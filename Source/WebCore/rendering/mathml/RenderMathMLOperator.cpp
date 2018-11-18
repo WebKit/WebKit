@@ -190,7 +190,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    LayoutUnit preferredWidth = 0;
+    LayoutUnit preferredWidth;
 
     if (!useMathOperator()) {
         RenderMathMLToken::computePreferredLogicalWidths();

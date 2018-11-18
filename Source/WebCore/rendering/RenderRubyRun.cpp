@@ -155,7 +155,7 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
 
     // Place the RenderRubyText such that its bottom is flush with the lineTop of the first line of the RenderRubyBase.
     LayoutUnit lastLineRubyTextBottom = rt->logicalHeight();
-    LayoutUnit firstLineRubyTextTop = 0;
+    LayoutUnit firstLineRubyTextTop;
     RootInlineBox* rootBox = rt->lastRootBox();
     if (rootBox) {
         // In order to align, we have to ignore negative leading.
@@ -170,7 +170,7 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
         float distanceBetweenBase = max(font.letterSpacing(), 2.0f * rt->style().fontCascade().fontMetrics().height());
         setWidth(width() + distanceBetweenBase - font.letterSpacing());
         if (RenderRubyBase* rb = rubyBase()) {
-            LayoutUnit firstLineTop = 0;
+            LayoutUnit firstLineTop;
             LayoutUnit lastLineBottom = logicalHeight();
             RootInlineBox* rootBox = rb->firstRootBox();
             if (rootBox)
@@ -184,7 +184,7 @@ void RenderRubyRun::layoutBlock(bool relayoutChildren, LayoutUnit pageHeight)
             rt->setY(firstLineTop + (extent - rt->height()) / 2);
         }
     } else if (style().isFlippedLinesWritingMode() == (style().rubyPosition() == RubyPosition::After)) {
-        LayoutUnit firstLineTop = 0;
+        LayoutUnit firstLineTop;
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->firstRootBox();
             if (rootBox)

@@ -190,7 +190,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
     LayoutUnit verticalOffset = borderBefore() + paddingBefore();
     LayoutUnit horizontalOffset = borderStart() + paddingStart();
 
-    LayoutUnit preferredHorizontalExtent = 0;
+    LayoutUnit preferredHorizontalExtent;
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         LayoutUnit childHorizontalExtent = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
         LayoutUnit childHorizontalMarginBoxExtent = child->horizontalBorderAndPaddingExtent() + childHorizontalExtent;

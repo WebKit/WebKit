@@ -114,7 +114,7 @@ static LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderGrid* renderGr
     // Fixed margins can be added in as is.
     Length marginLeft = child.style().marginStartUsing(&renderGrid->style());
     Length marginRight = child.style().marginEndUsing(&renderGrid->style());
-    LayoutUnit margin = 0;
+    LayoutUnit margin;
     if (marginLeft.isFixed())
         margin += marginLeft.value();
     if (marginRight.isFixed())
@@ -582,7 +582,7 @@ LayoutUnit GridTrackSizingAlgorithm::gridAreaBreadthForChild(const RenderBox& ch
 
     const Vector<GridTrack>& allTracks = tracks(direction);
     const GridSpan& span = m_grid.gridItemSpan(child, direction);
-    LayoutUnit gridAreaBreadth = 0;
+    LayoutUnit gridAreaBreadth;
     for (auto trackPosition : span)
         gridAreaBreadth += allTracks[trackPosition].baseSize();
 

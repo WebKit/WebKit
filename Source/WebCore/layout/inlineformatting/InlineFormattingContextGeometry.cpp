@@ -125,7 +125,7 @@ void InlineFormattingContext::Geometry::justifyRuns(InlineFormattingState& forma
         return;
 
     float expansion = widthToDistribute.toFloat() / expansionOpportunities;
-    LayoutUnit accumulatedExpansion = 0;
+    LayoutUnit accumulatedExpansion;
     for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex) {
         auto& inlineRun = inlineRuns[runIndex];
         auto expansionForRun = inlineRun.expansionOpportunity().count * expansion;

@@ -161,7 +161,7 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
         return;
     }
 
-    LayoutUnit preferredWidth = 0;
+    LayoutUnit preferredWidth;
     if (rootType() == RootType::SquareRoot) {
         preferredWidth += m_radicalOperator.maxPreferredWidth();
         setPreferredLogicalWidthsDirty(true);
@@ -273,7 +273,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 
     // We draw the radical operator.
     LayoutPoint radicalOperatorTopLeft = paintOffset + location();
-    LayoutUnit horizontalOffset = 0;
+    LayoutUnit horizontalOffset;
     if (rootType() == RootType::RootWithIndex) {
         auto horizontal = horizontalParameters();
         horizontalOffset = horizontal.kernBeforeDegree + getIndex().logicalWidth() + horizontal.kernAfterDegree;

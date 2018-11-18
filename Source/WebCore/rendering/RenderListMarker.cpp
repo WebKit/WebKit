@@ -1554,7 +1554,7 @@ void RenderListMarker::computePreferredLogicalWidths()
 
     const FontCascade& font = style().fontCascade();
 
-    LayoutUnit logicalWidth = 0;
+    LayoutUnit logicalWidth;
     ListStyleType type = style().listStyleType();
     switch (type) {
     case ListStyleType::None:
@@ -1669,8 +1669,8 @@ void RenderListMarker::updateMargins()
 {
     const FontMetrics& fontMetrics = style().fontMetrics();
 
-    LayoutUnit marginStart = 0;
-    LayoutUnit marginEnd = 0;
+    LayoutUnit marginStart;
+    LayoutUnit marginEnd;
 
     if (isInside()) {
         if (isImage())

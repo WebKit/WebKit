@@ -94,7 +94,7 @@ void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
     Vector<RenderBox*, 3> embellishedOperators;
     Vector<RenderMathMLOperator*, 3> stretchyOperators;
     bool isAllStretchyOperators = true;
-    LayoutUnit stretchWidth = 0;
+    LayoutUnit stretchWidth;
 
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (auto* stretchyOperator = horizontalStretchyOperator(*child)) {
@@ -317,7 +317,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     setLogicalWidth(logicalWidth);
 
     VerticalParameters parameters = verticalParameters();
-    LayoutUnit verticalOffset = 0;
+    LayoutUnit verticalOffset;
     if (scriptType() == ScriptType::Over || scriptType() == ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
         over().setLocation(LayoutPoint(horizontalOffset(over()), verticalOffset));

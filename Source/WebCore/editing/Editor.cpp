@@ -3238,7 +3238,7 @@ IntRect Editor::firstRectForRange(Range* range) const
     if (inSameLine(startVisiblePosition, endVisiblePosition))
         return enclosingIntRect(RenderObject::absoluteBoundingBoxRectForRange(range));
 
-    LayoutUnit extraWidthToEndOfLine = 0;
+    LayoutUnit extraWidthToEndOfLine;
     IntRect startCaretRect = RenderedPosition(startVisiblePosition).absoluteRect(&extraWidthToEndOfLine);
     if (startCaretRect == IntRect())
         return IntRect();

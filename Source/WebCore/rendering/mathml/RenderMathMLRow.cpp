@@ -129,7 +129,7 @@ void RenderMathMLRow::computePreferredLogicalWidths()
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = 0;
 
-    LayoutUnit preferredWidth = 0;
+    LayoutUnit preferredWidth;
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         if (child->isOutOfFlowPositioned())
             continue;

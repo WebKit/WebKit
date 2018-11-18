@@ -224,7 +224,7 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     setLogicalWidth(std::max(numerator().logicalWidth(), denominator().logicalWidth()));
 
-    LayoutUnit verticalOffset = 0; // This is the top of the renderer.
+    LayoutUnit verticalOffset; // This is the top of the renderer.
     LayoutPoint numeratorLocation(horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
     numerator().setLocation(numeratorLocation);
 

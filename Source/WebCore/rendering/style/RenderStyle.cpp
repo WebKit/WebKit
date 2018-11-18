@@ -1767,10 +1767,10 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit& top, Lay
 
 LayoutBoxExtent RenderStyle::getShadowInsetExtent(const ShadowData* shadow) const
 {
-    LayoutUnit top = 0;
-    LayoutUnit right = 0;
-    LayoutUnit bottom = 0;
-    LayoutUnit left = 0;
+    LayoutUnit top;
+    LayoutUnit right;
+    LayoutUnit bottom;
+    LayoutUnit left;
 
     for ( ; shadow; shadow = shadow->next()) {
         if (shadow->style() == Normal)

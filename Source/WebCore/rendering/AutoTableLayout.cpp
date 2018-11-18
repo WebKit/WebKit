@@ -773,7 +773,7 @@ void AutoTableLayout::layout()
         }
     }
 
-    LayoutUnit pos = 0;
+    LayoutUnit pos;
     for (size_t i = 0; i < nEffCols; ++i) {
         m_table->setColumnPosition(i, pos);
         pos += LayoutUnit::fromFloatCeil(m_layoutStruct[i].computedLogicalWidth) + m_table->hBorderSpacing();

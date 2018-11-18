@@ -136,7 +136,7 @@ static LayoutUnit marginWidthForChild(RenderBox* child)
     // Fixed margins can be added in as is.
     Length marginLeft = child->style().marginLeft();
     Length marginRight = child->style().marginRight();
-    LayoutUnit margin = 0;
+    LayoutUnit margin;
     if (marginLeft.isFixed())
         margin += marginLeft.value();
     if (marginRight.isFixed())
@@ -386,9 +386,9 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
     LayoutUnit yPos = borderTop() + paddingTop();
     LayoutUnit xPos = borderLeft() + paddingLeft();
     bool heightSpecified = false;
-    LayoutUnit oldHeight = 0;
+    LayoutUnit oldHeight;
 
-    LayoutUnit remainingSpace = 0;
+    LayoutUnit remainingSpace;
 
     FlexBoxIterator iterator(this);
     unsigned int highestFlexGroup = 0;
@@ -622,7 +622,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
     if (remainingSpace > 0 && ((style().isLeftToRightDirection() && style().boxPack() != BoxPack::Start)
         || (!style().isLeftToRightDirection() && style().boxPack() != BoxPack::End))) {
         // Children must be repositioned.
-        LayoutUnit offset = 0;
+        LayoutUnit offset;
         if (style().boxPack() == BoxPack::Justify) {
             // Determine the total number of children.
             int totalChildren = 0;
@@ -678,9 +678,9 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     LayoutUnit yPos = borderTop() + paddingTop();
     LayoutUnit toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     bool heightSpecified = false;
-    LayoutUnit oldHeight = 0;
+    LayoutUnit oldHeight;
 
-    LayoutUnit remainingSpace = 0;
+    LayoutUnit remainingSpace;
 
     FlexBoxIterator iterator(this);
     unsigned int highestFlexGroup = 0;
@@ -878,7 +878,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 
     if (style().boxPack() != BoxPack::Start && remainingSpace > 0) {
         // Children must be repositioned.
-        LayoutUnit offset = 0;
+        LayoutUnit offset;
         if (style().boxPack() == BoxPack::Justify) {
             // Determine the total number of children.
             int totalChildren = 0;

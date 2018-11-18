@@ -231,7 +231,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
     RenderTableCell* cell;
 
     // We ignore the border-spacing on any non-top section as it is already included in the previous section's last row position.
-    LayoutUnit spacing = 0;
+    LayoutUnit spacing;
     if (this == table()->topSection())
         spacing = table()->vBorderSpacing();
 
@@ -244,7 +244,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
 
     for (unsigned r = 0; r < totalRows; r++) {
         m_grid[r].baseline = 0;
-        LayoutUnit baselineDescent = 0;
+        LayoutUnit baselineDescent;
 
         // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
         m_rowPos[r + 1] = std::max(m_rowPos[r] + resolveLogicalHeightForRow(m_grid[r].logicalHeight), LayoutUnit::fromPixel(0));
@@ -304,7 +304,7 @@ LayoutUnit RenderTableSection::calcRowLogicalHeight()
                         // The descent of a cell that spans multiple rows does not affect the height of the first row it spans, so don't let it
                         // become the baseline descent applied to the rest of the row. Also we don't account for the baseline descent of
                         // non-spanning cells when computing a spanning cell's extent.
-                        LayoutUnit cellStartRowBaselineDescent = 0;
+                        LayoutUnit cellStartRowBaselineDescent;
                         if (cell->rowSpan() == 1) {
                             baselineDescent = std::max(baselineDescent, cellLogicalHeight - baselinePosition);
                             cellStartRowBaselineDescent = baselineDescent;
@@ -383,7 +383,7 @@ void RenderTableSection::distributeExtraLogicalHeightToPercentRows(LayoutUnit& e
 
     unsigned totalRows = m_grid.size();
     LayoutUnit totalHeight = m_rowPos[totalRows] + extraLogicalHeight;
-    LayoutUnit totalLogicalHeightAdded = 0;
+    LayoutUnit totalLogicalHeightAdded;
     totalPercent = std::min(totalPercent, 100);
     LayoutUnit rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
@@ -408,7 +408,7 @@ void RenderTableSection::distributeExtraLogicalHeightToAutoRows(LayoutUnit& extr
     if (!autoRowsCount)
         return;
 
-    LayoutUnit totalLogicalHeightAdded = 0;
+    LayoutUnit totalLogicalHeightAdded;
     for (unsigned r = 0; r < m_grid.size(); ++r) {
         if (autoRowsCount > 0 && m_grid[r].logicalHeight.isAuto()) {
             // Recomputing |extraLogicalHeightForRow| guarantees that we properly ditribute round |extraLogicalHeight|.
@@ -430,7 +430,7 @@ void RenderTableSection::distributeRemainingExtraLogicalHeight(LayoutUnit& extra
 
     // FIXME: m_rowPos[totalRows] - m_rowPos[0] is the total rows' size.
     LayoutUnit totalRowSize = m_rowPos[totalRows];
-    LayoutUnit totalLogicalHeightAdded = 0;
+    LayoutUnit totalLogicalHeightAdded;
     LayoutUnit previousRowPosition = m_rowPos[0];
     for (unsigned r = 0; r < totalRows; r++) {
         // weight with the original height
@@ -568,7 +568,7 @@ void RenderTableSection::layoutRows()
             rowRenderer->addVisualEffectOverflow();
         }
 
-        LayoutUnit rowHeightIncreaseForPagination = 0;
+        LayoutUnit rowHeightIncreaseForPagination;
 
         for (unsigned c = 0; c < nEffCols; c++) {
             CellStruct& cs = cellAt(r, c);
@@ -683,7 +683,7 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth = 0;
+    LayoutUnit borderWidth;
 
     const BorderValue& sb = style().borderBefore();
     if (sb.style() == BorderStyle::Hidden)
@@ -733,7 +733,7 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth = 0;
+    LayoutUnit borderWidth;
 
     const BorderValue& sb = style().borderAfter();
     if (sb.style() == BorderStyle::Hidden)
@@ -783,7 +783,7 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth = 0;
+    LayoutUnit borderWidth;
 
     const BorderValue& sb = style().borderStart();
     if (sb.style() == BorderStyle::Hidden)
@@ -826,7 +826,7 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
     if (!m_grid.size() || !totalCols)
         return 0;
 
-    LayoutUnit borderWidth = 0;
+    LayoutUnit borderWidth;
 
     const BorderValue& sb = style().borderEnd();
     if (sb.style() == BorderStyle::Hidden)

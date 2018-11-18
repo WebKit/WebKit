@@ -154,7 +154,7 @@ Length RenderTableCell::logicalWidthFromColumns(RenderTableCol* firstColForThisC
     RenderTableCol* tableCol = firstColForThisCell;
 
     unsigned colSpanCount = colSpan();
-    LayoutUnit colWidthSum = 0;
+    LayoutUnit colWidthSum;
     for (unsigned i = 1; i <= colSpanCount; i++) {
         Length colWidth = tableCol->style().logicalWidth();
 
@@ -208,7 +208,7 @@ void RenderTableCell::computeIntrinsicPadding(LayoutUnit rowHeight)
     LayoutUnit oldIntrinsicPaddingAfter = intrinsicPaddingAfter();
     LayoutUnit logicalHeightWithoutIntrinsicPadding = logicalHeight() - oldIntrinsicPaddingBefore - oldIntrinsicPaddingAfter;
 
-    LayoutUnit intrinsicPaddingBefore = 0;
+    LayoutUnit intrinsicPaddingBefore;
     switch (style().verticalAlign()) {
     case VerticalAlign::Sub:
     case VerticalAlign::Super:

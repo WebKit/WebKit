@@ -152,7 +152,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
 
-        LayoutUnit textY = 0;
+        LayoutUnit textY;
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
         if (RenderButton* buttonRenderer = downcast<RenderButton>(button->renderer()))

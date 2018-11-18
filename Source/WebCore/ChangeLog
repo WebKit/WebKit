@@ -1,3 +1,149 @@
+2018-11-17  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove superfluous LayoutUnit initializations
+        https://bugs.webkit.org/show_bug.cgi?id=191791
+
+        Reviewed by Simon Fraser.
+
+        First step toward making LayoutUnit constructors explicit:
+        eliminate `= 0` when constructing LayoutUnit lvalues.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::firstRectForRange const):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::lineDirectionPointForBlockDirectionNavigation):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::computeLogicalHeight const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::justifyRuns):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollInDirection):
+        (WebCore::distanceDataForNode):
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::marginIntrinsicLogicalWidthForChild):
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild const):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::paintFillLayer):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::marginIntrinsicLogicalWidthForChild const):
+        (WebCore::RenderBlock::layoutPositionedObject):
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::RenderBlock::textIndentOffset const):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChildren):
+        (WebCore::RenderBlockFlow::marginValuesForChild const):
+        (WebCore::RenderBlockFlow::estimateLogicalTopPosition):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::adjustBlockChildForPagination):
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::lowestFloatLogicalBottom const):
+        (WebCore::RenderBlockFlow::lowestInitialLetterLogicalBottom const):
+        (WebCore::RenderBlockFlow::addOverhangingFloats):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::fillAvailableMeasure const):
+        (WebCore::RenderBox::computeIntrinsicLogicalWidthUsing const):
+        (WebCore::RenderBox::computeLogicalWidthInFragmentUsing const):
+        (WebCore::RenderBox::computePercentageLogicalHeight const):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing const):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing const):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing const):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced const):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computedCSSPadding const):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry const):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::marginWidthForChild):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::validateFragments):
+        (WebCore::RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::paint):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::initialBlockOffsetForPainting const):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layoutBlock):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalWidthToComputedWidth):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::offsetWidthForColumn const):
+        (WebCore::RenderTable::offsetHeightForColumn const):
+        (WebCore::RenderTable::outerBorderBefore const):
+        (WebCore::RenderTable::outerBorderAfter const):
+        (WebCore::RenderTable::outerBorderStart const):
+        (WebCore::RenderTable::outerBorderEnd const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::logicalWidthFromColumns const):
+        (WebCore::RenderTableCell::computeIntrinsicPadding):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToPercentRows):
+        (WebCore::RenderTableSection::distributeExtraLogicalHeightToAutoRows):
+        (WebCore::RenderTableSection::distributeRemainingExtraLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderBefore const):
+        (WebCore::RenderTableSection::calcOuterBorderAfter const):
+        (WebCore::RenderTableSection::calcOuterBorderStart const):
+        (WebCore::RenderTableSection::calcOuterBorderEnd const):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::RootInlineBox::beforeAnnotationsAdjustment const):
+        (WebCore::RootInlineBox::lineSnapAdjustment const):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        * rendering/line/BreakingContext.h:
+        (WebCore::inlineLogicalWidth):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::layoutItems):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::layoutBlock):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::computePreferredLogicalWidths):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::computePreferredLogicalWidths):
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::layoutBlock):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren):
+        (WebCore::RenderMathMLUnderOver::layoutBlock):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getShadowInsetExtent const):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2018-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid triggering compositing updates when only the root layer is composited

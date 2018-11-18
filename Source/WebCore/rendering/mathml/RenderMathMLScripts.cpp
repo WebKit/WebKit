@@ -371,7 +371,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit baseAscent = ascentForChild(*reference.base);
     LayoutUnit baseDescent = reference.base->logicalHeight() - baseAscent;
     LayoutUnit baseItalicCorrection = std::min(reference.base->logicalWidth(), italicCorrection(reference));
-    LayoutUnit horizontalOffset = 0;
+    LayoutUnit horizontalOffset;
 
     LayoutUnit ascent = std::max(baseAscent, metrics.ascent + metrics.supShift);
     LayoutUnit descent = std::max(baseDescent, metrics.descent + metrics.subShift);
@@ -404,7 +404,7 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     case ScriptType::UnderOver:
     case ScriptType::Multiscripts: {
         // Calculate the logical width.
-        LayoutUnit logicalWidth = 0;
+        LayoutUnit logicalWidth;
         auto subScript = reference.firstPreScript;
         while (subScript) {
             auto supScript = subScript->nextSiblingBox();

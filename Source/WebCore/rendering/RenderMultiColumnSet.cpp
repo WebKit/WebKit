@@ -703,7 +703,7 @@ LayoutUnit RenderMultiColumnSet::initialBlockOffsetForPainting() const
     bool progressionReversed = multiColumnFlow()->progressionIsReversed();
     bool progressionIsInline = multiColumnFlow()->progressionIsInline();
     
-    LayoutUnit result = 0;
+    LayoutUnit result;
     if (!progressionIsInline && progressionReversed) {
         LayoutRect colRect = columnRectAt(0);
         result = isHorizontalWritingMode() ? colRect.y() : colRect.x();

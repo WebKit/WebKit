@@ -336,8 +336,8 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
     ASSERT(frame);
 
     if (frame && canScrollInDirection(frame->document(), direction)) {
-        LayoutUnit dx = 0;
-        LayoutUnit dy = 0;
+        LayoutUnit dx;
+        LayoutUnit dy;
         switch (direction) {
         case FocusDirectionLeft:
             dx = - Scrollbar::pixelsPerLineStep();
@@ -372,8 +372,8 @@ bool scrollInDirection(Node* container, FocusDirection direction)
         return false;
 
     if (canScrollInDirection(container, direction)) {
-        LayoutUnit dx = 0;
-        LayoutUnit dy = 0;
+        LayoutUnit dx;
+        LayoutUnit dy;
         switch (direction) {
         case FocusDirectionLeft:
             dx = - std::min<LayoutUnit>(Scrollbar::pixelsPerLineStep(), container->renderBox()->scrollLeft());
@@ -660,8 +660,8 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
 
     LayoutPoint exitPoint;
     LayoutPoint entryPoint;
-    LayoutUnit sameAxisDistance = 0;
-    LayoutUnit otherAxisDistance = 0;
+    LayoutUnit sameAxisDistance;
+    LayoutUnit otherAxisDistance;
     entryAndExitPointsForDirection(direction, currentRect, nodeRect, exitPoint, entryPoint);
 
     switch (direction) {
