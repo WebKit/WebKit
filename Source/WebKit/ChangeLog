@@ -1,3 +1,15 @@
+2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use Box<BinarySemaphore> instead of dispatch_semaphore_t
+        https://bugs.webkit.org/show_bug.cgi?id=189691
+
+        Reviewed by Ryosuke Niwa.
+
+        Use Box<BinarySemaphore> instead, which utilizes our WTF::Lock mechanism.
+
+        * NetworkProcess/watchos/NetworkProximityManager.mm:
+        (WebKit::NetworkProximityManager::updateRecommendation):
+
 2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes

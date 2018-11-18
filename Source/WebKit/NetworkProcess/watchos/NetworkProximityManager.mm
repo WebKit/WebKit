@@ -35,8 +35,10 @@
 #import <WirelessCoexManager/WRM_iRATInterface.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/Box.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/threads/BinarySemaphore.h>
 
 WTF_DECLARE_CF_TYPE_TRAIT(SCNetworkInterface);
 
@@ -298,13 +300,12 @@ void NetworkProximityManager::updateRecommendation()
 
     RELEASE_LOG(ProximityNetworking, "Requesting an immediate recommendation from iRATManager.");
 
-    auto semaphore = adoptOSObject(dispatch_semaphore_create(0));
+    auto semaphore = Box<BinarySemaphore>::create();
     [m_iRATInterface getProximityLinkRecommendation:NO recommendation:[this, semaphore](NSArray<WRM_iRATProximityRecommendation *> *recommendations) {
         processRecommendations(recommendations);
-        dispatch_semaphore_signal(semaphore.get());
+        semaphore->signal();
     }];
-
-    dispatch_semaphore_wait(semaphore.get(), dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC));
+    semaphore->waitFor(1_s);
 }
 
 void NetworkProximityManager::initialize(const NetworkProcessCreationParameters& parameters)
