@@ -1477,6 +1477,8 @@ void WebViewImpl::handleProcessSwapOrExit()
 void WebViewImpl::processWillSwap()
 {
     handleProcessSwapOrExit();
+    if (m_gestureController)
+        m_gestureController->disconnectFromProcess();
 }
 
 void WebViewImpl::processDidExit()
@@ -1492,6 +1494,9 @@ void WebViewImpl::pageClosed()
 
 void WebViewImpl::didRelaunchProcess()
 {
+    if (m_gestureController)
+        m_gestureController->connectToProcess();
+
     accessibilityRegisterUIProcessTokens();
 }
 

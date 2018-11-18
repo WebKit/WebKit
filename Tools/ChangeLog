@@ -1,3 +1,15 @@
+2018-11-17  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: m_messageReceivers.contains(...) under ViewGestureController removeMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=191734
+        <rdar://problem/46151497>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-11-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingState::addDetachingRule should accumulate rules.

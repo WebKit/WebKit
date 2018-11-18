@@ -63,7 +63,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_pendingSwipeTracker(webPageProxy, *this)
 #endif
 {
-    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    connectToProcess();
 
     viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
 }
@@ -74,7 +74,25 @@ ViewGestureController::~ViewGestureController()
 
     viewGestureControllersForAllPages().remove(m_webPageProxy.pageID());
 
+    disconnectFromProcess();
+}
+
+void ViewGestureController::disconnectFromProcess()
+{
+    if (!m_isConnectedToProcess)
+        return;
+
     m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
+    m_isConnectedToProcess = false;
+}
+
+void ViewGestureController::connectToProcess()
+{
+    if (m_isConnectedToProcess)
+        return;
+
+    m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
+    m_isConnectedToProcess = true;
 }
 
 ViewGestureController* ViewGestureController::controllerForGesture(uint64_t pageID, ViewGestureController::GestureID gestureID)

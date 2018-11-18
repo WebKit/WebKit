@@ -68,6 +68,9 @@ public:
     ViewGestureController(WebPageProxy&);
     ~ViewGestureController();
     void platformTeardown();
+
+    void disconnectFromProcess();
+    void connectToProcess();
     
     enum class ViewGestureType {
         None,
@@ -306,6 +309,7 @@ private:
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
 #endif
+    bool m_isConnectedToProcess { false };
 
     SnapshotRemovalTracker m_snapshotRemovalTracker;
 };

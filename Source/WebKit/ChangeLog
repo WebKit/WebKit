@@ -1,5 +1,36 @@
 2018-11-17  Chris Dumez  <cdumez@apple.com>
 
+        ASSERTION FAILED: m_messageReceivers.contains(...) under ViewGestureController removeMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=191734
+        <rdar://problem/46151497>
+
+        Reviewed by Ryosuke Niwa.
+
+        When a WebProcess crashes, we destroy the ViewGestureController and reconstruct it later
+        after we've relaunched a new WebProcess. The ViewGestureController controller takes care
+        of adding itself as an IPC message receiver to the WebProcessProxy, and the destructor
+        takes care of removing itself as an IPC message receiver.
+
+        However, when process-swapping on navigation, we do not destroy the ViewGestureController
+        because doing so would take down the swipe gesture snapshot on cross-site swipe navigation.
+        This led to hitting this assertion later on because the ViewGestureController is still
+        registered as an IPC message receiver with the old process after process swapping.
+
+        To address the issue, we now make sure the ViewGestureController unregisters itself from
+        the old process and registers itself with the new process on process-swap.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::~ViewGestureController):
+        (WebKit::ViewGestureController::disconnectFromProcess):
+        (WebKit::ViewGestureController::connectToProcess):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::processWillSwap):
+        (WebKit::WebViewImpl::didRelaunchProcess):
+
+2018-11-17  Chris Dumez  <cdumez@apple.com>
+
         [PSON] ASSERTION FAILED: m_uncommittedState.state == State::Committed
         https://bugs.webkit.org/show_bug.cgi?id=191781
 
