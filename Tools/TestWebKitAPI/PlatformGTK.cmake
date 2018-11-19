@@ -131,6 +131,10 @@ add_test(TestJSC ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore/TestJS
 set_tests_properties(TestJSC PROPERTIES TIMEOUT 60)
 set_target_properties(TestJSC PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/JavaScriptCore)
 
+# Add an intermediate target between TestJSC and JavaScriptCore to ensure derived headers are copied into the forwarding header directory.
+add_custom_target(pre-TestJSC DEPENDS JavaScriptCore)
+add_dependencies(TestJSC pre-TestJSC)
+
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-sign-compare
                                            -Wno-undef

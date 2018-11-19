@@ -1,3 +1,29 @@
+2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r238016)[GTK][TestWebKitAPI][Ninja] TestJSC can't compile "Bytecodes.h: No such file or directory"
+        https://bugs.webkit.org/show_bug.cgi?id=191692
+
+        Reviewed by Michael Catanzaro.
+
+        r238016 added a new #include, and requires JSC's derived headers
+        to be copied into the forwarding header directory.
+
+        WEBKIT_MAKE_FORWARDING_HEADERS is using POST_BUILD event to copy
+        derived headers to the forwarding header directory. This is done
+        after linking JSC library.
+
+        GTK port has TestJSC which has a dependency to JSC static library.
+        And, this dependency is a link time dependency which means
+        compiling source files of TestJSC starts before the POST_BUILD
+        event of JSC. Thus, required header can't be found.
+
+        Add an intermediate target between TestJSC and JavaScriptCore to
+        ensure derived headers are copied into the forwarding header
+        directory.
+
+        * TestWebKitAPI/PlatformGTK.cmake: Added a new custom target pre-TestJSC.
+        * TestWebKitAPI/PlatformWPE.cmake: Ditto.
+
 2018-11-19  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Solve some issues in the enumerateDevices code
