@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UICalloutBar.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UITextInputMultiDocument.h>
@@ -95,6 +96,10 @@ WTF_EXTERN_C_END
 
 @protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
 - (NSDictionary *)_autofillContext;
+@end
+
+@interface UICalloutBar : UIView
++ (UICalloutBar *)sharedCalloutBar;
 @end
 
 #if ENABLE(DRAG_SUPPORT)

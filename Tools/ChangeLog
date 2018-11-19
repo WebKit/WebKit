@@ -1,3 +1,25 @@
+2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS Debug] Assertion failure in NSComparisonResult UIContentSizeCategoryCompareToCategory()
+        https://bugs.webkit.org/show_bug.cgi?id=190401
+        <rdar://problem/45195285>
+
+        Reviewed by Dean Jackson.
+
+        Work around sporadic UIKit assertions when running API tests that may present a UICalloutBar. Currently, UIKit
+        asks for the `UIApp`’s `-preferredContentSizeCategory` when showing or laying out the callout bar. However,
+        TestWebKitAPI lacks a UIApp altogether, and forcing one to be initialized via `UIApplicationInstantiateSingleton`
+        causes numerous other UIKit and WebKit assertions to be hit.
+
+        In lieu of TestWebKitAPI becoming a real UI application (see https://webkit.org/b/175204), simply don't allow
+        the callout bar to be initialized in TestWKWebView-based API tests. This encompasses all API tests which
+        have some chance of causing the callout bar to be shown by making a ranged text selections during the test.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (suppressUICalloutBar):
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r238016)[GTK][TestWebKitAPI][Ninja] TestJSC can't compile "Bytecodes.h: No such file or directory"
