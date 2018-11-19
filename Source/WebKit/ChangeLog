@@ -1,3 +1,18 @@
+2018-11-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Regression(r238330) ProcessSwap.WebInspector API test is a flaky crash in debug
+        https://bugs.webkit.org/show_bug.cgi?id=191812
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::setFrontendConnection):
+        It can be possible to receive a frontend connection multiple times
+        if another WebProcess opened the inspector and this WebProcess got
+        swapped in before the InspectorProcess notified the WebProcess of
+        a connection to use. It is always best to use the latest connection
+        we have received, since any others would have been invalidated.
+
 2018-11-18  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Received an invalid message "WebPageProxy.DidPerformClientRedirect" from the web process

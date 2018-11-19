@@ -77,7 +77,12 @@ void WebInspector::openLocalInspectorFrontend(bool underTest)
 
 void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdentifier)
 {
-    ASSERT(!m_frontendConnection);
+    // We might receive multiple updates if this web process got swapped into a WebPageProxy
+    // shortly after another process established the connection.
+    if (m_frontendConnection) {
+        m_frontendConnection->invalidate();
+        m_frontendConnection = nullptr;
+    }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.releaseFileDescriptor());
