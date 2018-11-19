@@ -1,3 +1,17 @@
+2018-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r238039) WebCore::JSDOMGlobalObject::createStructure is using JSC::Structure::create without including StructureInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=191626
+
+        Reviewed by Yusuke Suzuki.
+
+        JSC::Structure::create is used everywhere. It should be defined in
+        Structure.h, not in StructureInlines.h.
+
+        * runtime/Structure.h:
+        (JSC::Structure::create): Moved.
+        * runtime/StructureInlines.h: Moved JSC::Structure::create.
+
 2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, rolling in the rest of r237254

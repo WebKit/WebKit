@@ -34,15 +34,6 @@
 
 namespace JSC {
 
-inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
-{
-    ASSERT(vm.structureStructure);
-    ASSERT(classInfo);
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
-    structure->finishCreation(vm);
-    return structure;
-}
-
 inline Structure* Structure::createStructure(VM& vm)
 {
     ASSERT(!vm.structureStructure);
