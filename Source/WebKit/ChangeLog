@@ -1,3 +1,13 @@
+2018-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r238318.
+
+        Add new symbols to API documentation files. They should have been added in r237031, but r238318 revealed it.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+
 2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Regression(r238330): A lot of WebInspector tests are crashing on the bots

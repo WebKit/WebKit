@@ -26,6 +26,7 @@
     <xi:include href="xml/WebKitInstallMissingMediaPluginsPermissionRequest.xml"/>
     <xi:include href="xml/WebKitNavigationAction.xml"/>
     <xi:include href="xml/WebKitUserMediaPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitDeviceInfoPermissionRequest.xml"/>
     <xi:include href="xml/WebKitPolicyDecision.xml"/>
     <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
     <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>

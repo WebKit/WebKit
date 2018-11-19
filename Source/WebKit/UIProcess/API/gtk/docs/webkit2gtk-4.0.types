@@ -38,3 +38,4 @@ webkit_print_custom_widget_get_type
 webkit_automation_session_get_type
 webkit_option_menu_get_type
 webkit_option_menu_item_get_type
+webkit_device_info_permission_request_get_type

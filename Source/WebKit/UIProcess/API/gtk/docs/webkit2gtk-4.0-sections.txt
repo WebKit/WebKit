@@ -661,6 +661,24 @@ webkit_install_missing_media_plugins_permission_request_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitDeviceInfoPermissionRequest</FILE>
+WebKitDeviceInfoPermissionRequest
+
+<SUBSECTION Standard>
+WebKitDeviceInfoPermissionRequestClass
+WEBKIT_TYPE_DEVICE_INFO_PERMISSION_REQUEST
+WEBKIT_DEVICE_INFO_PERMISSION_REQUEST
+WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST
+WEBKIT_DEVICE_INFO_PERMISSION_REQUEST_CLASS
+WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST_CLASS
+WEBKIT_DEVICE_INFO_PERMISSION_REQUEST_GET_CLASS
+
+<SUBSECTION Private>
+WebKitDeviceInfoPermissionRequestPrivate
+webkit_device_info_permission_request_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitNavigationAction</FILE>
 WebKitNavigationAction
 webkit_navigation_action_copy
