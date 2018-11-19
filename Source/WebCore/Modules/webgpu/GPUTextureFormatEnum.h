@@ -23,47 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormatEnum.h"
-
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
+enum class GPUTextureFormatEnum {
+    R8G8B8A8Unorm,
+    R8G8B8A8Uint,
+    B8G8R8A8Unorm,
+    D32FloatS8Uint
+};
 
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
-{
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
+using PlatformTextureFormat = unsigned long;
 
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
 }
-
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
-{
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
-}
-
-} // namespace WebCore
 
 #endif // ENABLE(WEBGPU)

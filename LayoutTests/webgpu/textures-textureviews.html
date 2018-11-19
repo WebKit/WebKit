@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<script src="../resources/js-test-pre.js"></script>
+<script src="js/basic-webgpu-functions.js"></script>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function setUpNextTextureView() {
+    let texture = context.getNextTexture();
+    if (texture)
+        testPassed("Acquired next WebGPUTexture from WebGPURenderingContext.");
+    else {
+        testFailed("Could not get next WebGPUTexture from WebGPURenderingContext!");
+        return;
+    }
+
+    let textureView = texture.createDefaultTextureView();
+    if (textureView) 
+        testPassed("Created default WebGPUTextureView from a WebGPUTexture");
+    else {
+        testFailed("Could not create default WebGPUTextureView!");
+        return;
+    }
+}
+
+// FIXME: Add tests for device.createTexture, WebGPUTextureDescriptor, and WebGPUTextureViewDescriptor.
+
+runWebGPUTests([setUpNextTextureView]);
+
+successfullyParsed = true;
+</script>
+<script src="../resources/js-test-post.js"></script>
+</html>

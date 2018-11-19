@@ -29,6 +29,8 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUDevice.h"
+#import "GPUTexture.h"
+#import "GPUTextureFormatEnum.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
@@ -48,8 +50,7 @@ RefPtr<GPUSwapChain> GPUSwapChain::create()
     [platformLayer setOpaque:0];
     [platformLayer setName:@"WebGPU Layer"];
 
-    // FIXME: For now, default to these settings.
-    [platformLayer setPixelFormat:MTLPixelFormatBGRA8Unorm];
+    // FIXME: For now, default to this usage flag.
     [platformLayer setFramebufferOnly:YES];
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -77,10 +78,61 @@ void GPUSwapChain::setDevice(const GPUDevice& device)
     [m_platformSwapLayer setDevice:device.platformDevice()];
 }
 
+static std::optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(GPUTextureFormatEnum format)
+{
+    switch (format) {
+        case GPUTextureFormatEnum::R8G8B8A8Unorm:
+            return MTLPixelFormatRGBA8Unorm;
+        case GPUTextureFormatEnum::R8G8B8A8Uint:
+            return MTLPixelFormatRGBA8Uint;
+        case GPUTextureFormatEnum::B8G8R8A8Unorm:
+            return MTLPixelFormatBGRA8Unorm;
+        case GPUTextureFormatEnum::D32FloatS8Uint:
+            return MTLPixelFormatDepth32Float_Stencil8;
+        default:
+            LOG(WebGPU, "GPUSwapChain::setFormat(): Invalid texture format specified!");
+            return std::nullopt;
+    }
+}
+
+void GPUSwapChain::setFormat(GPUTextureFormatEnum format)
+{
+    auto result = platformTextureFormatForGPUTextureFormat(format);
+    if (!result)
+        return;
+
+    auto mtlResult = static_cast<MTLPixelFormat>(result.value());
+
+    switch (mtlResult) {
+    case MTLPixelFormatBGRA8Unorm:
+    // FIXME: Add the other supported swap layer formats as they are added to GPU spec.
+    //  MTLPixelFormatBGRA8Unorm_sRGB, MTLPixelFormatRGBA16Float, MTLPixelFormatBGRA10_XR, and MTLPixelFormatBGRA10_XR_sRGB.
+        [m_platformSwapLayer setPixelFormat:mtlResult];
+        return;
+    default:
+        LOG(WebGPU, "GPUSwapChain::setFormat(): Unsupported MTLPixelFormat!");
+    }
+}
+
 void GPUSwapChain::reshape(int width, int height)
 {
     [m_platformSwapLayer setBounds:CGRectMake(0, 0, width, height)];
     [m_platformSwapLayer setDrawableSize:CGSizeMake(width, height)];
+}
+
+RefPtr<GPUTexture> GPUSwapChain::getNextTexture()
+{
+    RetainPtr<MTLTexture> mtlTexture;
+
+    if (auto drawable = retainPtr([m_platformSwapLayer nextDrawable]))
+        mtlTexture = retainPtr([drawable texture]);
+
+    if (!mtlTexture) {
+        LOG(WebGPU, "GPUSwapChain::getNextTexture(): Unable to get next MTLTexture!");
+        return nullptr;
+    }
+
+    return GPUTexture::create(WTFMove(mtlTexture));
 }
 
 void GPUSwapChain::present()

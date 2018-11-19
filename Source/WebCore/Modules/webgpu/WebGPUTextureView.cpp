@@ -24,46 +24,24 @@
  */
 
 #include "config.h"
-#include "WebGPUSwapChain.h"
+#include "WebGPUTextureView.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormatEnum.h"
-
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
+Ref<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
 {
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
+    return adoptRef(*new WebGPUTextureView(WTFMove(view)));
 }
 
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
+WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
+    : m_textureView(WTFMove(view))
 {
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
+    UNUSED_PARAM(m_textureView);
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
+

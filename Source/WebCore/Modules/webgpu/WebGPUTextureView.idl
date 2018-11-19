@@ -22,48 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
-
-#if ENABLE(WEBGPU)
-
-#include "GPUTextureFormatEnum.h"
-
-namespace WebCore {
-
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
-{
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
-}
-
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
-{
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUTextureView {
+};

@@ -23,46 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormatEnum.h"
+#include "GPUTexture.h"
+
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
+class WebGPUTextureView : public RefCounted<WebGPUTextureView> {
+public:
+    static Ref<WebGPUTextureView> create(Ref<GPUTexture>&&);
 
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
-{
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
-}
-
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
-{
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
-}
+private:
+    explicit WebGPUTextureView(Ref<GPUTexture>&&);
+    
+    Ref<GPUTexture> m_textureView;
+};
 
 } // namespace WebCore
 

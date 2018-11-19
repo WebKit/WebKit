@@ -1,102 +1,10 @@
 <!DOCTYPE html>
 <html>
 <script src="../resources/js-test-pre.js"></script>
-<script src="js/set-up-webgpu-contexts.js"></script>
-<script id="library" type="x-shader/x-metal">
-    #include <metal_stdlib>
-    
-    using namespace metal;
-    
-    struct Vertex
-    {
-        float4 position [[position]];
-    };
-    
-    vertex Vertex vertex_main(uint vid [[vertex_id]])
-    {
-        Vertex v;
-        switch (vid) {
-        case 0:
-            v.position = float4(-.75, -.75, 0, 1);
-            break;
-        case 1:
-            v.position = float4(.75, -.75, 0, 1);
-            break;
-        case 2:
-            v.position = float4(0, .75, 0, 1);
-            break;
-        default:
-            v.position = float4(0, 0, 0, 1);
-        }
-        return v;
-    }
-    
-    fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
-    {
-        return float4(1.0, 0.0, 0.0, 1.0);
-    }
-</script>
+<script src="js/basic-webgpu-functions.js"></script>
 <script>
-'use strict';
-
 if (window.testRunner)
     window.testRunner.dumpAsText();
-
-let renderPipeline;
-
-function setUpPipeline() {
-    let shaderDescriptor = {
-        code: document.getElementById("library").text
-    };
-    let shaderModule = defaultDevice.createShaderModule(shaderDescriptor);
-    if (!shaderModule) {
-        testFailed("Could not create WebGPUShaderModule!");
-        return;
-    }
-
-    let vertexStageDescriptor = { 
-        module: shaderModule, 
-        stage: WebGPUShaderStage.VERTEX, 
-        entryPoint: "vertex_main" 
-    };
-
-    let fragmentStageDescriptor = {
-        module: shaderModule,
-        stage: WebGPUShaderStage.FRAGMENT,
-        entryPoint: "fragment_main"
-    };
-
-    if (!vertexStageDescriptor || !fragmentStageDescriptor) {
-        testFailed("Could not create WebGPUPipelineStageDescriptor!");
-        return;
-    }
-
-    let pipelineDescriptor = {
-        stages: [vertexStageDescriptor, fragmentStageDescriptor],
-        primitiveTopology: "triangleList"
-    };
-
-    if (!pipelineDescriptor) {
-        testFailed("Could not create WebGPURenderPipelineDescriptor!");
-        return;
-    }
-
-    renderPipeline = defaultDevice.createRenderPipeline(pipelineDescriptor);
-    if (!renderPipeline) {
-        testFailed("Could not create WebGPURenderPipeline!");
-        return;
-    }
-}
-
-function render() {
-    let commandBuffer = defaultDevice.createCommandBuffer();
-    if (!commandBuffer) {
-        testFailed("Could not create WebGPUCommandBuffer!");
-        return;
-    }
-
-    // FIXME: More commands to follow as they are implemented.
-}
 
 runWebGPUTests([setUpPipeline, render]);
 

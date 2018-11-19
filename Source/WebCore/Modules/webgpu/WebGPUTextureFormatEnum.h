@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
@@ -32,37 +31,7 @@
 
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
-{
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
-}
-
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
-{
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
-}
+using WebGPUTextureFormatEnum = GPUTextureFormatEnum;
 
 } // namespace WebCore
 

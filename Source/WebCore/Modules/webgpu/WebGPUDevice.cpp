@@ -116,7 +116,7 @@ RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipe
         return nullptr;
     }
 
-    return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(vertexStage), WTFMove(fragmentStage), static_cast<GPURenderPipelineDescriptor::PrimitiveTopology>(descriptor.primitiveTopology) }));
+    return WebGPURenderPipeline::create(m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(vertexStage), WTFMove(fragmentStage), descriptor.primitiveTopology }));
 }
 
 RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const

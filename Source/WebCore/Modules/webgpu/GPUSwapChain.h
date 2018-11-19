@@ -35,6 +35,9 @@ OBJC_CLASS CAMetalLayer;
 namespace WebCore {
 
 class GPUDevice;
+class GPUTexture;
+
+enum class GPUTextureFormatEnum;
 
 using PlatformSwapLayer = CAMetalLayer;
 using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
@@ -44,7 +47,9 @@ public:
     static RefPtr<GPUSwapChain> create();
 
     void setDevice(const GPUDevice&);
+    void setFormat(GPUTextureFormatEnum);
     void reshape(int width, int height);
+    RefPtr<GPUTexture> getNextTexture();
     void present();
 
     PlatformSwapLayer* platformLayer() const { return m_platformSwapLayer.get(); }

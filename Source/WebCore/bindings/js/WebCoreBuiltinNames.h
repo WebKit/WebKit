@@ -186,6 +186,8 @@ namespace WebCore {
     macro(WebGPUShaderStage) \
     macro(WebGPUShaderModule) \
     macro(WebGPUSwapChain) \
+    macro(WebGPUTexture) \
+    macro(WebGPUTextureView) \
     macro(WebMetalBuffer) \
     macro(WebMetalCommandBuffer) \
     macro(WebMetalCommandQueue) \

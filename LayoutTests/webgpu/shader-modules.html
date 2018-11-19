@@ -1,41 +1,7 @@
 <!DOCTYPE html>
 <html>
 <script src="../resources/js-test-pre.js"></script>
-<script src="js/set-up-webgpu-contexts.js"></script>
-<script id="library_full" type="x-shader/x-metal">
-    #include <metal_stdlib>
-    
-    using namespace metal;
-    
-    struct Vertex
-    {
-        float4 position [[position]];
-    };
-    
-    vertex Vertex vertex_main(uint vid [[vertex_id]])
-    {
-        Vertex v;
-        switch (vid) {
-        case 0:
-            v.position = float4(-.75, -.75, 0, 1);
-            break;
-        case 1:
-            v.position = float4(.75, -.75, 0, 1);
-            break;
-        case 2:
-            v.position = float4(0, .75, 0, 1);
-            break;
-        default:
-            v.position = float4(0, 0, 0, 1);
-        }
-        return v;
-    }
-    
-    fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
-    {
-        return float4(1.0, 0.0, 0.0, 1.0);
-    }
-</script>
+<script src="js/basic-webgpu-functions.js"></script>
 <script id="library_incomplete" type="x-shader/x-metal">
     #include <metal_stdlib>
     
@@ -66,8 +32,6 @@
     }
 </script>
 <script>
-'use strict';
-
 if (window.testRunner)
     window.testRunner.dumpAsText();
 
@@ -92,7 +56,7 @@ function setUpShaders() {
         testFailed("Incomplete shader code created a valid module!");
     
     let shaderDescriptor2 = {
-        code : document.getElementById("library_full").text
+        code : shaderCode
     };
 
     shaderModule = defaultDevice.createShaderModule(shaderDescriptor2);

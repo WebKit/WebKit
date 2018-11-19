@@ -33,6 +33,7 @@ Modules/webgpu/cocoa/GPUQueueMetal.mm
 Modules/webgpu/cocoa/GPURenderPipelineMetal.mm
 Modules/webgpu/cocoa/GPUShaderModuleMetal.mm
 Modules/webgpu/cocoa/GPUSwapChainMetal.mm
+Modules/webgpu/cocoa/GPUTextureMetal.mm
 
 accessibility/ios/AccessibilityObjectIOS.mm
 accessibility/ios/AXObjectCacheIOS.mm

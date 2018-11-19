@@ -23,45 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#import "config.h"
+#import "GPUTexture.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormatEnum.h"
+#import "Logging.h"
+
+#import <Metal/Metal.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
+Ref<GPUTexture> GPUTexture::create(PlatformTextureSmartPtr&& texture)
 {
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
+    return adoptRef(*new GPUTexture(WTFMove(texture)));
 }
 
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
+GPUTexture::GPUTexture(RetainPtr<MTLTexture>&& texture)
+    : m_platformTexture(WTFMove(texture))
 {
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
 }
 
-void WebGPUSwapChain::present()
+RefPtr<GPUTexture> GPUTexture::createDefaultTextureView()
 {
-    markLayerComposited();
-}
+    RetainPtr<MTLTexture> texture;
 
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
+    texture = adoptNS([m_platformTexture newTextureViewWithPixelFormat:m_platformTexture.get().pixelFormat]);
 
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
+    if (!texture) {
+        LOG(WebGPU, "GPUTexture::createDefaultTextureView(): Unable to create MTLTexture view!");
+        return nullptr;
+    }
+
+    return GPUTexture::create(WTFMove(texture));
 }
 
 } // namespace WebCore

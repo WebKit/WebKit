@@ -30,6 +30,10 @@
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUSwapChain.h"
 #include "WebGPUDevice.h"
+#include "WebGPUTexture.h"
+#include "WebGPUTextureFormatEnum.h"
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -38,13 +42,15 @@ public:
     struct Descriptor {
         const WebGPUDevice* device = nullptr;
         // FIXME: More texture properties.
+        WebGPUTextureFormatEnum format;
         unsigned long width;
         unsigned long height;
     };
 
     virtual ~WebGPUSwapChain() = 0;
+
     void configure(Descriptor&&);
-    // FIXME: WebGPUTexture getNextTexture();
+    RefPtr<WebGPUTexture> getNextTexture();
     void present();
 
 protected:

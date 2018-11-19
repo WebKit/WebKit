@@ -27,18 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPipelineDescriptor.h"
 #include "WebGPUPipelineDescriptorBase.h"
 
 namespace WebCore {
 
 struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
-    enum class PrimitiveTopology {
-        PointList,
-        LineList,
-        LineStrip,
-        TriangleList,
-        TriangleStrip
-    };
+    using PrimitiveTopology = GPURenderPipelineDescriptor::PrimitiveTopology;
 
     PrimitiveTopology primitiveTopology;
 };

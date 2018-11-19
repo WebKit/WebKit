@@ -1,3 +1,32 @@
+2018-11-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Begin implementing WebGPUTexture, WebGPUTextureView, and WebGPUTextureFormatEnum, and WebGPUSwapChain::configure upgrades
+        https://bugs.webkit.org/show_bug.cgi?id=191794
+
+        Reviewed by Dean Jackson.
+
+        Did some refactoring to better share code among tests, and added basic functionality test for 
+        WebGPUTextures and WebGPUTextureView, to be fleshed out when their descriptor objects are implemented. 
+
+        * webgpu/command-buffers.html: Refactored to use basic-webgpu-functions.js.
+        * webgpu/js/basic-webgpu-functions.js: Added.
+        (vertex.Vertex.vertex_main): The basic MSL code has been moved into this file.
+        (fragment.float4.fragment_main):
+        (runWebGPUTests): Creates a WebGPURenderingContext on a default canvas and runs its provided functions.
+        (async.runWebGPUTestsOnCanvas): 
+        (async.setUpContexts): Tests proper creation of a basic WebGPURenderingContext.
+        (setUpModule): Creates a basic WebGPUShaderModule.
+        (setUpPipelineDescriptor): Creates a basic WebGPURenderPipelineDescriptor.
+        (setUpPipeline): Creates a basic WebGPURenderPipeline.
+        (render):
+        * webgpu/js/set-up-webgpu-contexts.js: Moved into basic-webgpu-functions.js.
+        * webgpu/render-pipelines-expected.txt:
+        * webgpu/render-pipelines.html: Refactored to use basic-webgpu-functions.js.
+        * webgpu/shader-modules.html: Refactored to use basic-webgpu-functions.js.
+        * webgpu/textures-textureviews-expected.txt: Added.
+        * webgpu/textures-textureviews.html: Added.
+        * webgpu/webgpu-basics.html: Refactored to use basic-webgpu-functions.js.
+
 2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Dragging image with a border-image larger than the image element crashes

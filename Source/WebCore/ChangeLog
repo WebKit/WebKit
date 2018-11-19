@@ -1,3 +1,57 @@
+2018-11-19  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Begin implementing WebGPUTexture, WebGPUTextureView, and WebGPUTextureFormatEnum, and WebGPUSwapChain::configure upgrades
+        https://bugs.webkit.org/show_bug.cgi?id=191794
+
+        Reviewed by Dean Jackson.
+
+        Test: webgpu/textures-textureviews.html
+
+        Implement basic functionality for getting the next WebGPUTexture and TextureView from the WebGPURenderingContext
+        to use as a render destination for the next draw call. Also introduce WebGPUTextureFormatEnum and the ability to 
+        configure the context with a chosen texture format. 
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/GPUSwapChain.h: Texture/Pixel format can now be set.
+        * Modules/webgpu/GPUTexture.h: Added. Interface to a MTLTexture.
+        * Modules/webgpu/GPUTextureFormatEnum.h: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const): Removed now-unnecessary enum class cast.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Rather than duplicate GPURenderPipelineDescriptor::PrimitiveTopology, alias to it.
+        * Modules/webgpu/WebGPUSwapChain.cpp:
+        (WebCore::WebGPUSwapChain::configure): Can now specify a specific texture format for the underlying CAMetalLayer.
+        (WebCore::WebGPUSwapChain::getNextTexture): Added. Request the next drawable texture.
+        * Modules/webgpu/WebGPUSwapChain.h: Expose getNextTexture().
+        * Modules/webgpu/WebGPUSwapChain.idl:
+        * Modules/webgpu/WebGPUTexture.cpp: Added. 
+        (WebCore::WebGPUTexture::create):
+        (WebCore::WebGPUTexture::WebGPUTexture):
+        (WebCore::WebGPUTexture::createDefaultTextureView):
+        * Modules/webgpu/WebGPUTexture.h: Added.
+        * Modules/webgpu/WebGPUTexture.idl: Added.
+        * Modules/webgpu/WebGPUTextureFormatEnum.h: Added. Type alias for GPUTextureFormatEnum.
+        * Modules/webgpu/WebGPUTextureFormatEnum.idl: Added. Used to represent any texture format used by WebGPU.
+        * Modules/webgpu/WebGPUTextureView.cpp: Added.
+        (WebCore::WebGPUTextureView::create):
+        (WebCore::WebGPUTextureView::WebGPUTextureView):
+        * Modules/webgpu/WebGPUTextureView.h: Added.
+        * Modules/webgpu/WebGPUTextureView.idl: Added.
+        * Modules/webgpu/cocoa/GPUSwapChainMetal.mm: 
+        (WebCore::GPUSwapChain::create):
+        (WebCore::GPUSwapChain::setFormat): Called by WebGPUSwapChain::configure().
+        (WebCore::GPUSwapChain::getNextTexture):
+        * Modules/webgpu/cocoa/GPUTextureFormatEnumMetal.mm: Added.
+        (WebCore::convertAndValidate): Convert the WebGPUTextureFormatEnum to a MTLPixelFormat.
+        * Modules/webgpu/cocoa/GPUTextureMetal.mm: Added.
+        (WebCore::GPUTexture::create):
+        (WebCore::GPUTexture::GPUTexture):
+        (WebCore::GPUTexture::createDefaultTextureView): Uses the pixelFormat of the original texture.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Reload Web Inspector" button no longer partially works

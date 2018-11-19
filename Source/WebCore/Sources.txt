@@ -310,6 +310,8 @@ Modules/webgpu/WebGPURenderingContext.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
 Modules/webgpu/WebGPUSwapChain.cpp
+Modules/webgpu/WebGPUTexture.cpp
+Modules/webgpu/WebGPUTextureView.cpp
 
 Modules/webvr/NavigatorWebVR.cpp
 Modules/webvr/VRDisplay.cpp
@@ -3221,6 +3223,9 @@ JSWebGPUShaderModule.cpp
 JSWebGPUShaderModuleDescriptor.cpp
 JSWebGPUShaderStage.cpp
 JSWebGPUSwapChain.cpp
+JSWebGPUTexture.cpp
+JSWebGPUTextureFormatEnum.cpp
+JSWebGPUTextureView.cpp
 JSWebMetalBuffer.cpp
 JSWebMetalCommandBuffer.cpp
 JSWebMetalCommandQueue.cpp

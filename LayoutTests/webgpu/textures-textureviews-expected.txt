@@ -1,0 +1,8 @@
+PASS [object WebGPU] is defined.
+PASS Acquired next WebGPUTexture from WebGPURenderingContext.
+PASS Created default WebGPUTextureView from a WebGPUTexture
+All tests complete.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

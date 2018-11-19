@@ -23,46 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUSwapChain.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTextureFormatEnum.h"
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_PROTOCOL(MTLTexture);
 
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
+using PlatformTexture = MTLTexture;
+using PlatformTextureSmartPtr = RetainPtr<MTLTexture>;
 
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
-{
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
+class GPUTexture : public RefCounted<GPUTexture> {
+public:
+    static Ref<GPUTexture> create(PlatformTextureSmartPtr&&);
 
-    m_swapChain->setFormat(descriptor.format);
+    RefPtr<GPUTexture> createDefaultTextureView();
 
-    reshape(descriptor.width, descriptor.height);
-}
+private:
+    explicit GPUTexture(PlatformTextureSmartPtr&&);
 
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
-{
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
-}
-
-void WebGPUSwapChain::present()
-{
-    markLayerComposited();
-}
-
-void WebGPUSwapChain::reshape(int width, int height)
-{
-    m_swapChain->reshape(width, height);
-}
-
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
-}
+    PlatformTextureSmartPtr m_platformTexture;
+};
 
 } // namespace WebCore
 

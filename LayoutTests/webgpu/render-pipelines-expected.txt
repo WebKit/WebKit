@@ -1,5 +1,4 @@
 PASS [object WebGPU] is defined.
-PASS Successfully created WebGPURenderPipeline.
 PASS WebGPURenderPipeline with invalid WebGPURenderPipelineDescriptor was not created.
 PASS WebGPURenderPipeline with invalid shader module was not created.
 PASS WebGPURenderPipeline with invalid vertex shader stage was not created.

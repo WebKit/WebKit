@@ -30,7 +30,7 @@
     SkipVTableValidation
 ] interface WebGPUSwapChain {
     void configure(WebGPUSwapChainDescriptor descriptor);
-    // WebGPUTexture getNextTexture();
+    WebGPUTexture getNextTexture();
     void present();
 };
 
@@ -42,7 +42,7 @@ typedef unsigned long u32;
 ] dictionary WebGPUSwapChainDescriptor {
     WebGPUDevice device; // FIXME: Propose this addition to IDL.
     // WebGPUTextureUsageFlags usage;
-    // WebGPUTextureFormatEnum format;
+    WebGPUTextureFormatEnum format;
     u32 width;
     u32 height;
 };
