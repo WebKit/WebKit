@@ -1580,33 +1580,23 @@ void Document::updateTitleFromTitleElement()
 
 void Document::setTitle(const String& title)
 {
-    if (!m_titleElement) {
-        if (isHTMLDocument() || isXHTMLDocument()) {
+    auto* element = documentElement();
+    if (is<SVGSVGElement>(element)) {
+        if (!m_titleElement) {
+            m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
+            element->insertBefore(*m_titleElement, element->firstChild());
+        }
+        m_titleElement->setTextContent(title);
+    } else if (is<HTMLElement>(element)) {
+        if (!m_titleElement) {
             auto* headElement = head();
             if (!headElement)
                 return;
             m_titleElement = HTMLTitleElement::create(HTMLNames::titleTag, *this);
             headElement->appendChild(*m_titleElement);
-        } else if (isSVGDocument()) {
-            auto* element = documentElement();
-            if (!is<SVGSVGElement>(element))
-                return;
-            m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
-            element->insertBefore(*m_titleElement, element->firstChild());
         }
-    } else if (!isHTMLDocument() && !isXHTMLDocument() && !isSVGDocument()) {
-        // FIXME: What exactly is the point of this? This seems like a strange moment
-        // in time to demote something from being m_titleElement, when setting the
-        // value of the title attribute. Do we have test coverage for this?
-        m_titleElement = nullptr;
+        m_titleElement->setTextContent(title);
     }
-
-    if (is<HTMLTitleElement>(m_titleElement.get()))
-        downcast<HTMLTitleElement>(*m_titleElement).setTextContent(title);
-    else if (is<SVGTitleElement>(m_titleElement.get()))
-        downcast<SVGTitleElement>(*m_titleElement).setTextContent(title);
-    else
-        updateTitle({ title, TextDirection::LTR });
 }
 
 template<typename> struct TitleTraits;

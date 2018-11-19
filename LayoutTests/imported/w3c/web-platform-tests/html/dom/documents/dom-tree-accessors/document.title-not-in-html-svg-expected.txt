@@ -1,0 +1,4 @@
+
+PASS Should not be able to set document title in XML document 
+PASS Should not be able to set document title in XML document with html:title element 
+
