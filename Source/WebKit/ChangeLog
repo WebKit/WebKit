@@ -1,3 +1,18 @@
+2018-11-19  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        [cairo] BackingStore::incorporateUpdate should use CompositeCopy to support drawsBackground=false in general Cairo ports
+        https://bugs.webkit.org/show_bug.cgi?id=191577
+
+        Reviewed by Carlos Garcia Campos.
+
+        We should use CompositeCopy operator to update bitmap to overwrite existing bitmap even if source contains
+        transparent parts. It enables ports which uses Cairo to set drawsBackground to false.
+        GTK ports has custom background extension, and in such case, we need to use CompositeSourceOver to retain
+        custom background.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate): Use CompositeCopy operator to update bitmap.
+
 2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Reload Web Inspector" button no longer partially works

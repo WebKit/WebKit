@@ -89,16 +89,30 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
     RefPtr<cairo_t> cairoContext = adoptRef(cairo_create(m_backend->surface()));
     GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(cairoContext.get()));
+
+    // When m_webPageProxy.drawsBackground() is false, bitmap contains transparent parts as a background of the webpage.
+    // For such case, bitmap must be drawn using CompositeCopy to overwrite the existing surface.
+    graphicsContext.setCompositeOperation(WebCore::CompositeCopy);
+
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
 #if PLATFORM(GTK)
         if (!m_webPageProxy.drawsBackground()) {
             const WebCore::Color color = m_webPageProxy.backgroundColor();
-            if (!color.isOpaque())
-                graphicsContext.clearRect(srcRect);
-            if (color.isVisible())
+            if (color.isVisible()) {
+                // When the application sets the background color through m_webPageProxy.backgroundColor(), we update the surface in 2 steps.
+                //   1. Fill the surface by m_webPageProxy.backgroundColor().
+                //   2. Composite webpage's bitmap which has a transparent background.
+                // In step 1, we use CompositeCopy as m_webPageProxy.backgroundColor() may not be opaque.
+                // On the other hand, in step 2, bitmap should be composited by CompositeSourceOver
+                // because it should be blended with m_webPageProxy.backgroundColor().
                 graphicsContext.fillRect(srcRect, color);
+                graphicsContext.setCompositeOperation(WebCore::CompositeSourceOver);
+                bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
+                graphicsContext.setCompositeOperation(WebCore::CompositeCopy);
+                continue;
+            }
         }
 #endif
         bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
