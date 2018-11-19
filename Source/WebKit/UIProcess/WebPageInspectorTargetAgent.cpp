@@ -28,21 +28,26 @@
 
 namespace WebKit {
 
-class StubFrontendChannel final : public Inspector::FrontendChannel {
-    ConnectionType connectionType() const final { return Inspector::FrontendChannel::ConnectionType::Remote; }
-    void sendMessageToFrontend(const String&) final { }
-};
-
 WebPageInspectorTargetAgent::WebPageInspectorTargetAgent(Inspector::FrontendRouter& frontendRouter, Inspector::BackendDispatcher& backendDispatcher)
     : Inspector::InspectorTargetAgent(frontendRouter, backendDispatcher)
+    , m_router(frontendRouter)
 {
 }
 
 Inspector::FrontendChannel& WebPageInspectorTargetAgent::frontendChannel()
 {
-    if (!m_frontendChannel)
-        m_frontendChannel = std::make_unique<StubFrontendChannel>();
-    return *m_frontendChannel.get();
+    return *this;
+}
+
+Inspector::FrontendChannel::ConnectionType WebPageInspectorTargetAgent::connectionType() const
+{
+    return m_router.hasLocalFrontend() ? Inspector::FrontendChannel::ConnectionType::Local : Inspector::FrontendChannel::ConnectionType::Remote;
+}
+
+void WebPageInspectorTargetAgent::sendMessageToFrontend(const String&)
+{
+    // Intentionally ignored, this channel is not actually used to send messages.
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

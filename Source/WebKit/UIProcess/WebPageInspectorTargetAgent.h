@@ -29,15 +29,20 @@
 
 namespace WebKit {
 
-class WebPageInspectorTargetAgent final : public Inspector::InspectorTargetAgent {
+class WebPageInspectorTargetAgent final : public Inspector::InspectorTargetAgent, public Inspector::FrontendChannel {
 public:
     WebPageInspectorTargetAgent(Inspector::FrontendRouter&, Inspector::BackendDispatcher&);
     virtual ~WebPageInspectorTargetAgent() = default;
 
 private:
+    // Inspector::InspectorTargetAgent
     Inspector::FrontendChannel& frontendChannel() final;
 
-    std::unique_ptr<Inspector::FrontendChannel> m_frontendChannel;
+    // Inspector::FrontendChannel
+    Inspector::FrontendChannel::ConnectionType connectionType() const final;
+    void sendMessageToFrontend(const String&) final;
+
+    Inspector::FrontendRouter& m_router;
 };
 
 } // namespace WebKit

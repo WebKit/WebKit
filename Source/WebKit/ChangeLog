@@ -1,3 +1,25 @@
+2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Regression(r238330): A lot of WebInspector tests are crashing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=191814
+
+        Reviewed by Ryosuke Niwa.
+
+        Expose the expected connection type from the UIProcess into the WebProcess.
+        When there is a local inspector connection to the UIProcess expose it as
+        a local frontend channel to the inspector controllers in the Page.
+
+        * UIProcess/WebPageInspectorTargetAgent.h:
+        * UIProcess/WebPageInspectorTargetAgent.cpp:
+        (WebKit::WebPageInspectorTargetAgent::frontendChannel):
+        An additional FrontendChannel class is not needed, just use self.
+
+        (WebKit::WebPageInspectorTargetAgent::WebPageInspectorTargetAgent):
+        (WebKit::WebPageInspectorTargetAgent::connectionType const):
+        (WebKit::WebPageInspectorTargetAgent::sendMessageToFrontend):
+        Expose the channel to targets as local if there is a local frontend
+        in the UIProcess.
+
 2018-11-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Regression(r238330) ProcessSwap.WebInspector API test is a flaky crash in debug
