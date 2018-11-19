@@ -170,6 +170,9 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
         if (!destination.isNull())
             SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
+        if (!m_processPool)
+            return;
+
         if (auto* networkProcess = m_processPool->networkProcess())
             networkProcess->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite == AllowOverwrite::Yes), 0);
     });

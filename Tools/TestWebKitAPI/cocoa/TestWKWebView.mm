@@ -304,6 +304,21 @@ static UICalloutBar *suppressUICalloutBar()
     return evalResult.autorelease();
 }
 
+- (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script
+{
+    bool isWaitingForJavaScript = false;
+    RetainPtr<id> evalResult;
+    [self evaluateJavaScript:script completionHandler:[&] (id result, NSError *error) {
+        evalResult = result;
+        isWaitingForJavaScript = true;
+        EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
+    }];
+    TestWebKitAPI::Util::run(&isWaitingForJavaScript);
+    return evalResult.autorelease();
+}
+
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script
 {
     return [NSString stringWithFormat:@"%@", [self objectByEvaluatingJavaScript:script]];

@@ -1,3 +1,39 @@
+2018-11-19  David Quesada  <david_quesada@apple.com>
+
+        EXC_BAD_ACCESS when invoking a DownloadProxy's destination decision handler after the download has been canceled
+        https://bugs.webkit.org/show_bug.cgi?id=191762
+        rdar://problem/46151509
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+            Enable the Download API test on iOS, since the platform supports downloads. All the
+            tests pass already, except for one which was written using AppKit-specific code:
+        TEST(_WKDownload, RedirectedDownload):
+            Use a more platform-agnostic approach to starting the download in this API test.
+            Instead of manually triggering an NSMenu item to download a file from a link, the
+            test will simulate a user-initiated click on the link, and the navigation delegate
+            will direct the web view to start a download based on the link's navigation action.
+            Additionally, remove the manual creation of a new NSWindow. TestWKWebView makes its
+            own UI/NSWindow.
+        TEST(_WKDownload, DownloadCanceledWhileDecidingDestination):
+            Add an API test _WKDownload.DownloadCanceledWhileDecidingDestination to simulate the
+            conditions that would trigger this crash - handling a download's -decideDestination…
+            delegate call by canceling the download, waiting for the UI process to be notified
+            that the download has been canceled, and calling the decision handler. This should
+            not crash.
+        (-[CancelDownloadWhileDecidingDestinationDelegate _downloadDidFinish:]):
+        (-[CancelDownloadWhileDecidingDestinationDelegate _download:didFailWithError:]):
+        (-[CancelDownloadWhileDecidingDestinationDelegate _downloadDidCancel:]):
+        (-[CancelDownloadWhileDecidingDestinationDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[UIDownloadAsFileTestDelegate _webView:contextMenu:forElement:]): Deleted.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView objectByEvaluatingJavaScriptWithUserGesture:]):
+            Add a user-initated version of -objectByEvaluatingJavaScript:. This is needed in
+            order to maintain the behavior of the RedirectedDownload test, which verifies the
+            state of the _WKDownload.wasUserInitiated property.
+
 2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS Debug] Assertion failure in NSComparisonResult UIContentSizeCategoryCompareToCategory()

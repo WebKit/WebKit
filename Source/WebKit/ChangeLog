@@ -1,3 +1,18 @@
+2018-11-19  David Quesada  <david_quesada@apple.com>
+
+        EXC_BAD_ACCESS when invoking a DownloadProxy's destination decision handler after the download has been canceled
+        https://bugs.webkit.org/show_bug.cgi?id=191762
+        rdar://problem/46151509
+
+        Reviewed by Dean Jackson.
+
+        When the DownloadClient calls the decision handler with a destination path, check if
+        m_processPool is null before trying to access its network process. This can happen
+        if a download is canceled before the client decides its destination.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync):
+
 2018-11-19  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         [cairo] BackingStore::incorporateUpdate should use CompositeCopy to support drawsBackground=false in general Cairo ports

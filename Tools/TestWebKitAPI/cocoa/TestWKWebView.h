@@ -65,6 +65,7 @@
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
 - (id)objectByEvaluatingJavaScript:(NSString *)script;
+- (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
