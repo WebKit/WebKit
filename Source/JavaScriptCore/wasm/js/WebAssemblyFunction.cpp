@@ -55,31 +55,12 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, exec->jsCallee());
-    if (!wasmFunction)
-        return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(vm, exec->jsCallee()))));
+    WebAssemblyFunction* wasmFunction = jsCast<WebAssemblyFunction*>(exec->jsCallee());
     Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
 
     // Make sure that the memory we think we are going to run with matches the one we expect.
     ASSERT(wasmFunction->instance()->instance().codeBlock()->isSafeToRun(wasmFunction->instance()->memory()->memory().mode()));
-    {
-        // Check if we have a disallowed I64 use.
-
-        for (unsigned argIndex = 0; argIndex < signature.argumentCount(); ++argIndex) {
-            if (signature.argument(argIndex) == Wasm::I64) {
-                JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
-                    "WebAssembly function with an i64 argument can't be called from JavaScript");
-                return JSValue::encode(throwException(exec, scope, error));
-            }
-        }
-
-        if (signature.returnType() == Wasm::I64) {
-            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
-                "WebAssembly function that returns i64 can't be called from JavaScript");
-            return JSValue::encode(throwException(exec, scope, error));
-        }
-    }
 
     std::optional<TraceScope> traceScope;
     if (Options::useTracePoints())
@@ -99,6 +80,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
+        case Wasm::I64:
+            arg = JSValue();
+            break;
         case Wasm::F32:
             arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(exec)));
             break;
@@ -106,7 +90,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
             arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(exec)));
             break;
         case Wasm::Void:
-        case Wasm::I64:
         case Wasm::Func:
         case Wasm::Anyfunc:
             RELEASE_ASSERT_NOT_REACHED();

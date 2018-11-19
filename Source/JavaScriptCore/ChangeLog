@@ -1,3 +1,23 @@
+2018-11-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [WebAssembly] I64 arguments / return value check should be moved from callWebAssemblyFunction to JSToWasm wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=190512
+
+        Reviewed by Keith Miller.
+
+        This patch moves I64 arguments / return value check from callWebAssemblyFunction to JSToWasm wrapper. Since this
+        check can be done when compiling the function, we should encode the result into the generated wrapper instead of
+        checking every time we call callWebAssemblyFunction. This change is also one of the steps removing callWebAssemblyFunction
+        entirely.
+
+        * wasm/WasmExceptionType.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::callWebAssemblyWrapperFunction):
+
 2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Consider removing double load for accessing the instructions from LLInt
