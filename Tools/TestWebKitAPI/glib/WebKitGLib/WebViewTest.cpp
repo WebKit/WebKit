@@ -49,14 +49,10 @@ void WebViewTest::initializeWebView()
 {
     g_assert(!m_webView);
 
-    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
-    webkit_settings_set_enable_media_stream(settings.get(), TRUE);
-
     m_webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
         "backend", Test::createWebViewBackend(),
 #endif
-        "settings", settings.get(),
         "web-context", m_webContext.get(),
         "user-content-manager", m_userContentManager.get(),
         nullptr));

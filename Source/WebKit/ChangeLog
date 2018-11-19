@@ -1,3 +1,23 @@
+2018-11-19  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Solve some issues in the enumerateDevices code
+        https://bugs.webkit.org/show_bug.cgi?id=191832
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp:
+        Increase the version to 2.24.
+        (webkitDeviceInfoPermissionRequestAllow):
+        (webkitDeviceInfoPermissionRequestDeny):
+        * UIProcess/API/glib/WebKitDeviceInfoPermissionRequestPrivate.h:
+        Replace the forward declaration with the include.
+        * UIProcess/API/gtk/WebKitDeviceInfoPermissionRequest.h: Typo.
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        Increase the version to 2.24.
+        * UIProcess/API/wpe/WebKitDeviceInfoPermissionRequest.h: Typo.
+        * UIProcess/API/wpe/WebKitWebsiteData.h:
+        Increase the version to 2.24.
+
 2018-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r238318.

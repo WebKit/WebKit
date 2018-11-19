@@ -19,11 +19,8 @@
 #pragma once
 
 #include "APISecurityOrigin.h"
+#include "DeviceIdHashSaltStorage.h"
 
 typedef struct _WebKitDeviceInfoPermissionRequest WebKitDeviceInfoPermissionRequest;
-
-namespace WebKit {
-class DeviceIdHashSaltStorage;
-};
 
 WebKitDeviceInfoPermissionRequest* webkitDeviceInfoPermissionRequestCreate(WebKit::UserMediaPermissionCheckProxy&, WebKit::DeviceIdHashSaltStorage*);

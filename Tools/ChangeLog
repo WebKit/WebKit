@@ -1,3 +1,18 @@
+2018-11-19  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Solve some issues in the enumerateDevices code
+        https://bugs.webkit.org/show_bug.cgi?id=191832
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (serverCallback): Make all the Strings with HTML code static.
+        (testWebsiteDataDeviceIdHashSalt): Change the webView settings in
+        the test.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::initializeWebView): Remove the initialization of the
+        webView settings, we now do it in the specific test.
+
 2018-11-18  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Received an invalid message "WebPageProxy.DidPerformClientRedirect" from the web process

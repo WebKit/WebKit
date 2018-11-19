@@ -42,7 +42,7 @@ using namespace WebKit;
  * When a WebKitDeviceInfoPermissionRequest is not handled by the user,
  * it is denied by default.
  *
- * Since: 2.22
+ * Since: 2.24
  */
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
@@ -61,7 +61,7 @@ static void webkitDeviceInfoPermissionRequestAllow(WebKitPermissionRequest* requ
 {
     ASSERT(WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST(request));
 
-    auto& priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
+    auto* priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
 
     if (!priv->deviceIdHashSaltStorage) {
         priv->request->setUserMediaAccessInfo(false);
@@ -80,7 +80,7 @@ static void webkitDeviceInfoPermissionRequestDeny(WebKitPermissionRequest* reque
 {
     ASSERT(WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST(request));
 
-    auto& priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
+    auto* priv = WEBKIT_DEVICE_INFO_PERMISSION_REQUEST(request)->priv;
 
     if (!priv->deviceIdHashSaltStorage) {
         priv->request->setUserMediaAccessInfo(false);

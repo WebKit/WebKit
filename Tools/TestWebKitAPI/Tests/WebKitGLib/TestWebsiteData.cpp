@@ -33,18 +33,18 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     }
 
     if (g_str_equal(path, "/empty")) {
-        const char* emptyHTML = "<html><body></body></html>";
+        static const char* emptyHTML = "<html><body></body></html>";
         soup_message_headers_replace(message->response_headers, "Set-Cookie", "foo=bar; Max-Age=60");
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/appcache")) {
-        const char* appcacheHTML = "<html manifest=appcache.manifest><body></body></html>";
+        static const char* appcacheHTML = "<html manifest=appcache.manifest><body></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, appcacheHTML, strlen(appcacheHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/appcache.manifest")) {
-        const char* appcacheManifest = "CACHE MANIFEST\nCACHE:\nappcache/foo.txt\n";
+        static const char* appcacheManifest = "CACHE MANIFEST\nCACHE:\nappcache/foo.txt\n";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, appcacheManifest, strlen(appcacheManifest));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
@@ -53,17 +53,17 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/sessionstorage")) {
-        const char* sessionStorageHTML = "<html><body onload=\"sessionStorage.foo = 'bar';\"></body></html>";
+        static const char* sessionStorageHTML = "<html><body onload=\"sessionStorage.foo = 'bar';\"></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, sessionStorageHTML, strlen(sessionStorageHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/localstorage")) {
-        const char* localStorageHTML = "<html><body onload=\"localStorage.foo = 'bar';\"></body></html>";
+        static const char* localStorageHTML = "<html><body onload=\"localStorage.foo = 'bar';\"></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, localStorageHTML, strlen(localStorageHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
     } else if (g_str_equal(path, "/enumeratedevices")) {
-        const char* enumerateDevicesHTML = "<html><body onload=\"navigator.mediaDevices.enumerateDevices().then(function(devices) { document.title = 'Finished'; })\"></body></html>";
+        static const char* enumerateDevicesHTML = "<html><body onload=\"navigator.mediaDevices.enumerateDevices().then(function(devices) { document.title = 'Finished'; })\"></body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, enumerateDevicesHTML, strlen(enumerateDevicesHTML));
         soup_message_body_complete(message->response_body);
         soup_message_set_status(message, SOUP_STATUS_OK);
@@ -525,6 +525,10 @@ static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
 
 static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer)
 {
+    WebKitSettings* settings = webkit_web_view_get_settings(test->m_webView);
+    gboolean enabled = webkit_settings_get_enable_media_stream(settings);
+    webkit_settings_set_enable_media_stream(settings, TRUE);
+
     test->clear(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT, 0);
 
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT);
@@ -568,6 +572,8 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
     test->clear(cacheAndAppcacheTypes, 0);
     dataList = test->fetch(cacheAndAppcacheTypes);
     g_assert(!dataList);
+
+    webkit_settings_set_enable_media_stream(settings, enabled);
 }
 
 void beforeAll()

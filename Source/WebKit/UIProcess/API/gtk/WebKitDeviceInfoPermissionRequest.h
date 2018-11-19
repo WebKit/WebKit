@@ -56,7 +56,7 @@ struct _WebKitDeviceInfoPermissionRequestClass {
 };
 
 WEBKIT_API GType
-webkit_device_info_permission_request_get_type    (void);
+webkit_device_info_permission_request_get_type (void);
 
 G_END_DECLS
 

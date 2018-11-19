@@ -44,7 +44,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
  * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data.
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
- * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages.
+ * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages. Since 2.24
  * @WEBKIT_WEBSITE_DATA_ALL: All types.
  *
  * Enum values with flags representing types of Website data.
