@@ -95,6 +95,7 @@ private:
 
     // RemoteWebInspectorProxy messages.
     void frontendDidClose();
+    void reopen();
     void bringToFront();
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);
@@ -118,6 +119,9 @@ private:
 
     RemoteWebInspectorProxyClient* m_client { nullptr };
     WebPageProxy* m_inspectorPage { nullptr };
+
+    String m_debuggableType;
+    String m_backendCommandsURL;
 
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorView;

@@ -36,6 +36,7 @@
 ] interface InspectorFrontendHost {
     void loaded();
     void closeWindow();
+    void reopen();
     void bringToFront();
     void inspectedURLChanged(DOMString newURL);
 

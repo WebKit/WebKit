@@ -128,6 +128,11 @@ void RemoteWebInspectorUI::closeWindow()
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::FrontendDidClose(), m_page.pageID());
 }
 
+void RemoteWebInspectorUI::reopen()
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::Reopen(), m_page.pageID());
+}
+
 void RemoteWebInspectorUI::openInNewTab(const String& url)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorProxy::OpenInNewTab(url), m_page.pageID());

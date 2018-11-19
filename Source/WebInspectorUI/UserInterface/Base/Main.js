@@ -1584,8 +1584,7 @@ WI._contextMenuRequested = function(event)
         proposedContextMenu = WI.ContextMenu.createFromEvent(event);
         proposedContextMenu.appendSeparator();
         proposedContextMenu.appendItem(WI.unlocalizedString("Reload Web Inspector"), () => {
-            // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
-            window.location.reload();
+            InspectorFrontendHost.reopen();
         });
 
         let protocolSubMenu = proposedContextMenu.appendSubMenuItem(WI.unlocalizedString("Protocol Debugging"), null, false);
@@ -2253,8 +2252,7 @@ WI.setLayoutDirection = function(value)
     if (WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR && this._dockConfiguration === WI.DockConfiguration.Left)
         this._dockRight();
 
-    // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
-    window.location.reload();
+    InspectorFrontendHost.reopen();
 };
 
 WI._showTabAtIndex = function(i, event)

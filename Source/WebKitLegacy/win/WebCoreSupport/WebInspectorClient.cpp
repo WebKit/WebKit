@@ -270,6 +270,14 @@ void WebInspectorFrontendClient::closeWindow()
     destroyInspectorView();
 }
 
+void WebInspectorFrontendClient::reopen()
+{
+    destroyInspectorView();
+
+    if (Page* inspectedPage = m_inspectedWebView->page())
+        inspectedPage->inspectorController().show();
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if (m_attached)

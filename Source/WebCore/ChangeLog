@@ -1,3 +1,21 @@
+2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: "Reload Web Inspector" button no longer partially works
+        https://bugs.webkit.org/show_bug.cgi?id=191773
+        <rdar://problem/46139932>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::reopen):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        Provide a host call to reopen an inspector window to reload it.
+
+        * testing/Internals.cpp:
+        Stub implementation, this is not used in tests.
+
 2018-11-19  Rob Buis  <rbuis@igalia.com>
 
         Setting document.title should have no effect for non SVG/HTML documents

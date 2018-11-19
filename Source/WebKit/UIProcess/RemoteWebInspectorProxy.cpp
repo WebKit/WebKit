@@ -56,6 +56,9 @@ void RemoteWebInspectorProxy::load(const String& debuggableType, const String& b
 {
     createFrontendPageAndWindow();
 
+    m_debuggableType = debuggableType;
+    m_backendCommandsURL = backendCommandsURL;
+
     m_inspectorPage->process().send(Messages::RemoteWebInspectorUI::Initialize(debuggableType, backendCommandsURL), m_inspectorPage->pageID());
     m_inspectorPage->loadRequest(URL(URL(), WebInspectorProxy::inspectorPageURL()));
 }
@@ -89,6 +92,14 @@ void RemoteWebInspectorProxy::frontendDidClose()
         m_client->closeFromFrontend();
 
     closeFrontendPageAndWindow();
+}
+
+void RemoteWebInspectorProxy::reopen()
+{
+    ASSERT(!m_debuggableType.isEmpty());
+
+    closeFrontendPageAndWindow();
+    load(m_debuggableType, m_backendCommandsURL);
 }
 
 void RemoteWebInspectorProxy::bringToFront()

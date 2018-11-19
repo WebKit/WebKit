@@ -22,6 +22,7 @@
 
 messages -> RemoteWebInspectorProxy {
     FrontendDidClose()
+    Reopen()
     BringToFront()
 
     Save(String filename, String content, bool base64Encoded, bool forceSaveAs)

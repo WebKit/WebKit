@@ -61,6 +61,7 @@ public:
 
     virtual void bringToFront() = 0;
     virtual void closeWindow() = 0;
+    virtual void reopen() = 0;
 
     virtual UserInterfaceLayoutDirection userInterfaceLayoutDirection() const = 0;
 

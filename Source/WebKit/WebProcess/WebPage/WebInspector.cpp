@@ -142,6 +142,12 @@ void WebInspector::close()
     closeFrontendConnection();
 }
 
+void WebInspector::reopen()
+{
+    close();
+    show();
+}
+
 void WebInspector::openInNewTab(const String& urlString)
 {
     UserGestureIndicator indicator { ProcessingUserGesture };

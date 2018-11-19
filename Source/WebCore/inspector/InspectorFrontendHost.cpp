@@ -190,6 +190,12 @@ void InspectorFrontendHost::closeWindow()
     }
 }
 
+void InspectorFrontendHost::reopen()
+{
+    if (m_client)
+        m_client->reopen();
+}
+
 void InspectorFrontendHost::bringToFront()
 {
     if (m_client)

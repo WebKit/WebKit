@@ -103,6 +103,7 @@ public:
 
     void bringToFront() override;
     void closeWindow() override;
+    void reopen() override;
 
     void setAttachedWindowHeight(unsigned) override;
     void setAttachedWindowWidth(unsigned) override;

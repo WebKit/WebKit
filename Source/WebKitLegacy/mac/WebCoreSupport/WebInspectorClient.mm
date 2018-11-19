@@ -250,6 +250,13 @@ void WebInspectorFrontendClient::closeWindow()
     [m_frontendWindowController.get() destroyInspectorView];
 }
 
+void WebInspectorFrontendClient::reopen()
+{
+    WebInspector* inspector = [m_inspectedWebView inspector];
+    [inspector close:nil];
+    [inspector show:nil];
+}
+
 void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if ([m_frontendWindowController.get() attached])
@@ -691,8 +698,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
         return;
     _destroyingInspectorView = YES;
 
-    if (_attachedToInspectedWebView)
-        [self close];
+    [self close];
 
     _visible = NO;
 

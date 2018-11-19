@@ -52,6 +52,7 @@ public:
 
     void show();
     void close();
+    void reopen();
 
     void openInNewTab(const String& urlString);
 

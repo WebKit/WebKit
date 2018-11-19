@@ -117,6 +117,7 @@ public:
 
     void bringToFront() override;
     void closeWindow() override;
+    void reopen() override;
 
     void attachWindow(DockSide) override;
     void detachWindow() override;

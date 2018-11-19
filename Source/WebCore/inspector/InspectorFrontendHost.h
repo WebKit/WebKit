@@ -57,6 +57,7 @@ public:
     void loaded();
     void requestSetDockSide(const String&);
     void closeWindow();
+    void reopen();
     void bringToFront();
     void inspectedURLChanged(const String&);
 

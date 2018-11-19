@@ -125,6 +125,7 @@ void WebInspectorFrontendClient::frontendLoaded() { }
 String WebInspectorFrontendClient::localizedStringsURL() { return String(); }
 void WebInspectorFrontendClient::bringToFront() { }
 void WebInspectorFrontendClient::closeWindow() { }
+void WebInspectorFrontendClient::reopen() { }
 void WebInspectorFrontendClient::attachWindow(DockSide) { }
 void WebInspectorFrontendClient::detachWindow() { }
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned) { }

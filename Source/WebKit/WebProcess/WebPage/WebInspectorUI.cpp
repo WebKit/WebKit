@@ -167,6 +167,12 @@ void WebInspectorUI::closeWindow()
     m_underTest = false;
 }
 
+void WebInspectorUI::reopen()
+{
+    if (m_backendConnection)
+        m_backendConnection->send(Messages::WebInspector::Reopen(), 0);
+}
+
 WebCore::UserInterfaceLayoutDirection WebInspectorUI::userInterfaceLayoutDirection() const
 {
     return m_page.corePage()->userInterfaceLayoutDirection();

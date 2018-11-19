@@ -66,6 +66,7 @@ public:
 
     void bringToFront() override;
     void closeWindow() override;
+    void reopen() override;
 
     void openInNewTab(const String& url) override;
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;

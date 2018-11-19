@@ -257,7 +257,6 @@ Document any additional information that might be useful in resolving the proble
         <dd><a class="bypass-event-blocking" id="dismiss-error-sheet">Click to close this view</a> and return
         to the Web Inspector without reloading. However, some things might not work without reloading if the error corrupted the Inspector's internal state.</dd>`;
 
-    // FIXME: Reload Web Inspector does not work with MultiplexingBackendTarget.
     let sheetElement = window.__sheetElement = document.createElement("div");
     sheetElement.classList.add("sheet-container");
     sheetElement.innerHTML = `<div class="uncaught-exception-sheet">
@@ -273,7 +272,7 @@ Document any additional information that might be useful in resolving the proble
         <a href="${prefilledBugReportLink}" target="_blank">click to file a pre-populated
         bug with this information</a>. It is possible that someone else broke it by accident.</dd>
         <dt>Oops, can I try again?</dt>
-        <dd><a href="javascript:window.location.reload()">Click to reload the Inspector</a>
+        <dd><a href="javascript:InspectorFrontendHost.reopen()">Click to reload the Inspector</a>
         again after making local changes.</dd>
         ${dismissOptionHTML}
     </dl>

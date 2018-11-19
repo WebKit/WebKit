@@ -1,3 +1,14 @@
+2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: "Reload Web Inspector" button no longer partially works
+        https://bugs.webkit.org/show_bug.cgi?id=191773
+        <rdar://problem/46139932>
+
+        Reviewed by Devin Rousso.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::reopen):
+
 2018-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Switch from PLATFORM(IOS) to PLATFORM(IOS_FAMILY)

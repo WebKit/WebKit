@@ -36,7 +36,7 @@ WI.runBootstrapOperations = function() {
 
     // Reload the Web Inspector.
     new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Option | WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "R", () => {
-        window.location.reload();
+        InspectorFrontendHost.reopen();
     });
 
     // Toggle Inspector Messages Filtering.
