@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 let bigArray = new Array(0x7000000);
 bigArray[0] = 1.1;
 bigArray[1] = 1.2;

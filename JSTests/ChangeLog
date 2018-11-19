@@ -1,3 +1,13 @@
+2018-11-19  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip new memory-hungry tests on memory limited devices
+
+        Unreviewed gardening.
+
+        * stress/big-wasm-memory-grow-no-max.js:
+        * stress/big-wasm-memory-grow.js:
+        * stress/big-wasm-memory.js:
+
 2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, rolling in the rest of r237254
