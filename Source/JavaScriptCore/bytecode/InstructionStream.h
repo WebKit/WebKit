@@ -162,6 +162,11 @@ public:
         return m_instructions.size();
     }
 
+    const void* rawPointer() const
+    {
+        return m_instructions.data();
+    }
+
 protected:
     explicit InstructionStream(InstructionBuffer&&);
 

@@ -1127,17 +1127,11 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
 
     # Set up the PC.
     if JSVALUE64
-        # FIXME: cleanup double load
-        # https://bugs.webkit.org/show_bug.cgi?id=190932
-        loadp CodeBlock::m_instructions[t1], PB
-        loadp [PB], PB
+        loadp CodeBlock::m_instructionsRawPointer[t1], PB
         unpoison(_g_CodeBlockPoison, PB, t3)
         move 0, PC
     else
-        # FIXME: cleanup double load
-        # https://bugs.webkit.org/show_bug.cgi?id=190932
-        loadp CodeBlock::m_instructions[t1], PC
-        loadp [PC], PC
+        loadp CodeBlock::m_instructionsRawPointer[t1], PC
     end
 
     # Get new sp in t0 and check stack height.

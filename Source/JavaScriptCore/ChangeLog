@@ -1,3 +1,24 @@
+2018-11-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Consider removing double load for accessing the instructions from LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=190932
+
+        Reviewed by Mark Lam.
+
+        Changing InstructionStream to RefCountedArray like structure involves so much changes
+        including BytecodeGraph, PreciseJumpTargets etc. Instead, CodeBlock simply hold a raw
+        pointer to the InstructionStream's data. Since InstructionStream is not changed
+        anymore, this pointer is valid while CodeBlock is live.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStream::rawPointer const):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-11-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r238039) WebCore::JSDOMGlobalObject::createStructure is using JSC::Structure::create without including StructureInlines.h

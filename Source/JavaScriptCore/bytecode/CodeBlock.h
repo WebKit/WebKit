@@ -949,8 +949,9 @@ private:
     WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
     Poisoned<CodeBlockPoison, VM*> m_poisonedVM;
 
-    unsigned m_instructionCount { 0 };
     const InstructionStream* m_instructions;
+    const void* m_instructionsRawPointer { nullptr };
+    unsigned m_instructionCount { 0 };
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
