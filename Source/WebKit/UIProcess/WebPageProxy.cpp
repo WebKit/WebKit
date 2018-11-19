@@ -4442,8 +4442,6 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == this);
-
-    MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
     if (frame->isMainFrame()) {

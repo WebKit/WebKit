@@ -1,3 +1,24 @@
+2018-11-18  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Received an invalid message "WebPageProxy.DidPerformClientRedirect" from the web process
+        https://bugs.webkit.org/show_bug.cgi?id=191828
+
+        Reviewed by Antti Koivisto.
+
+        WebPageProxy::didPerformClientRedirect() had a MESSAGE_CHECK_URL() for both the source
+        and the destination URL. The macro calls WebProcessProxy::checkURLReceivedFromWebProcess()
+        to make sure that both URLs were actually loaded by this WebContent process.
+
+        However, now that we're enabled process-swap on cross-site navigation, these checks are no
+        longer fully valid. If the client-side redirect is cross-site, then the source and destination
+        URLs get loaded by 2 different WebContent processes. Since didPerformClientRedirect() gets
+        called after the redirect and gets set by the new WebContent process, only the destination URL
+        is guaranteed to have been loaded by this process. The source URL may have been loaded in
+        another process so this patch drops the message check for the source URL.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+
 2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Use Box<BinarySemaphore> instead of dispatch_semaphore_t

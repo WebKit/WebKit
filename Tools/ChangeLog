@@ -1,3 +1,16 @@
+2018-11-18  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Received an invalid message "WebPageProxy.DidPerformClientRedirect" from the web process
+        https://bugs.webkit.org/show_bug.cgi?id=191828
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/client-side-redirect.html: Added.
+
 2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes

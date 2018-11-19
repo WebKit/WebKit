@@ -587,6 +587,7 @@
 		8361F1781E610B4E00759B25 /* link-with-download-attribute-with-slashes.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */; };
 		83779C381F82FECE007CDA8A /* VisitedLinkStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */; };
 		837A35F11D9A1E7D00663C57 /* DownloadRequestBlobURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */; };
+		839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 839AA35E21A26ACD00980DD6 /* client-side-redirect.html */; };
 		83B6DE6F1EE75221001E792F /* RestoreSessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */; };
 		83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */; };
 		83BC5AC020E6C0DF00F5879F /* StartLoadInDidFailProvisionalLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83BC5ABF20E6C0D300F5879F /* StartLoadInDidFailProvisionalLoad.mm */; };
@@ -998,6 +999,7 @@
 				2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */,
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
+				839AA35F21A26B0300980DD6 /* client-side-redirect.html in Copy Resources */,
 				1A50AA201A2A51FC00F4C345 /* close-from-within-create-page.html in Copy Resources */,
 				9B270FEE1DDC2C0B002D53F3 /* closed-shadow-tree-test.html in Copy Resources */,
 				E5036F78211BC25400BFDBE2 /* color-drop.html in Copy Resources */,
@@ -1736,6 +1738,7 @@
 		8361F1771E610B2100759B25 /* link-with-download-attribute-with-slashes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "link-with-download-attribute-with-slashes.html"; sourceTree = "<group>"; };
 		83779C371F82FEB0007CDA8A /* VisitedLinkStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisitedLinkStore.mm; sourceTree = "<group>"; };
 		837A35F01D9A1E6400663C57 /* DownloadRequestBlobURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestBlobURL.html; sourceTree = "<group>"; };
+		839AA35E21A26ACD00980DD6 /* client-side-redirect.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "client-side-redirect.html"; sourceTree = "<group>"; };
 		83B6DE6E1EE7520F001E792F /* RestoreSessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionState.cpp; sourceTree = "<group>"; };
 		83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParserIdioms.cpp; sourceTree = "<group>"; };
 		83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginLoadClientPolicies.mm; sourceTree = "<group>"; };
@@ -2720,6 +2723,7 @@
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,
+				839AA35E21A26ACD00980DD6 /* client-side-redirect.html */,
 				E5036F77211BC22800BFDBE2 /* color-drop.html */,
 				F4B825D61EF4DBD4006E417F /* compressed-files.zip */,
 				F469FB231F01803500401539 /* contenteditable-and-target.html */,
