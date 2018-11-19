@@ -1,3 +1,22 @@
+2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Dragging image with a border-image larger than the image element crashes
+        https://bugs.webkit.org/show_bug.cgi?id=191817
+        <rdar://problem/46159222>
+
+        Reviewed by Ryosuke Niwa.
+
+        Verifies that an image that meets the pathological criteria described in Source/WebCore/ChangeLog can still be
+        dragged and dropped into an editable area.
+
+        * fast/events/drag-image-with-border-image.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+        Enable this test only in WebKit1.
+
 2018-11-18  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Unreviewed, rolling in the rest of r237254

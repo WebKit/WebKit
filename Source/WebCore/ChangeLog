@@ -1,3 +1,28 @@
+2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Dragging image with a border-image larger than the image element crashes
+        https://bugs.webkit.org/show_bug.cgi?id=191817
+        <rdar://problem/46159222>
+
+        Reviewed by Ryosuke Niwa.
+
+        When dragging an image element, if the image element has:
+
+        (1) box-sizing: border-box;
+        (2) a border-image
+        (3) a border-top-width that is at least as large as the height of the element and/or a border-left-width that is
+            at least as large as the width of the element
+
+        ...then upon drag, we will fail to create a suitable drag image using the bounding box of the image element
+        since the size is empty, thereby causing a crash. To fix this, we bail out of this bounding-rect-dependent
+        codepath for generating a drag image in the case where the bounding rect is empty, and instead fall back to an
+        icon representation for the drag image.
+
+        Test: fast/events/drag-image-with-border-image.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+
 2018-11-18  Zan Dobersek  <zdobersek@igalia.com>
 
         HarfBuzzFace::CacheEntry should use 32-bit values in its HashMap
