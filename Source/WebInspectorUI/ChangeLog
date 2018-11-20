@@ -1,3 +1,14 @@
+2018-11-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: removing and re-adding the tab will duplicate tests
+        https://bugs.webkit.org/show_bug.cgi?id=191843
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.loadStoredTests):
+        If we already have tests, don't attempt to load any stored tests.
+
 2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Reload Web Inspector" button no longer partially works

@@ -139,6 +139,9 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     loadStoredTests()
     {
+        if (this._tests.length)
+            return;
+
         WI.objectStores.audits.getAll().then(async (tests) => {
             for (let payload of tests) {
                 let test = await WI.AuditTestGroup.fromPayload(payload) || await WI.AuditTestCase.fromPayload(payload);
