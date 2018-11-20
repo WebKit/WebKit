@@ -1,3 +1,21 @@
+2018-11-19  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API for CertificateInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=191647
+
+        Reviewed by Alex Christensen.
+
+        Minor changes for WebKit API.
+
+        Tests: TestWebKitAPI/Tests/WebKit/curl/Certificates.cpp
+
+        * platform/network/curl/CertificateInfo.h:
+        * platform/network/curl/CertificateInfoCurl.cpp:
+        (WebCore::CertificateInfo::CertificateInfo):
+        (WebCore::CertificateInfo::makeCertificate):
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::BIOHolder::asCertificate):
+
 2018-11-19  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Begin implementing WebGPUTexture, WebGPUTextureView, and WebGPUTextureFormatEnum, and WebGPUSwapChain::configure upgrades

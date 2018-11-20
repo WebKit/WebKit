@@ -48,12 +48,36 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
     return resourceRequest.decodeWithPlatformData(decoder);
 }
 
-void ArgumentCoder<CertificateInfo>::encode(Encoder&, const CertificateInfo&)
+void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateInfo& certificateInfo)
 {
+    encoder << certificateInfo.verificationError();
+    encoder << certificateInfo.certificateChain().size();
+
+    for (auto certificate : certificateInfo.certificateChain())
+        encoder << certificate;
 }
 
-bool ArgumentCoder<CertificateInfo>::decode(Decoder&, CertificateInfo&)
+bool ArgumentCoder<CertificateInfo>::decode(Decoder& decoder, CertificateInfo& certificateInfo)
 {
+    int verificationError;
+    if (!decoder.decode(verificationError))
+        return false;
+
+    size_t certificateChainSize;
+    if (!decoder.decode(certificateChainSize))
+        return false;
+
+    CertificateInfo::CertificateChain certificateChain;
+    for (size_t i = 0; i < certificateChainSize; i++) {
+        CertificateInfo::Certificate certificate;
+        if (!decoder.decode(certificate))
+            return false;
+
+        certificateChain.append(certificate);
+    }
+
+    certificateInfo = CertificateInfo { verificationError, WTFMove(certificateChain) };
+
     return true;
 }
 

@@ -23,33 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CertificateInfo.h"
+#pragma once
 
-#include <wtf/CrossThreadCopier.h>
+#include <WebKit/WKBase.h>
 
-#if USE(CURL)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebCore {
+WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef);
 
-CertificateInfo::CertificateInfo(int verificationError, CertificateChain&& certificateChain)
-    : m_verificationError(verificationError)
-    , m_certificateChain(WTFMove(certificateChain))
-{
+WK_EXPORT int WKCertificateInfoGetVerificationError(WKCertificateInfoRef);
+WK_EXPORT size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef);
+WK_EXPORT WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef, size_t);
+
+#ifdef __cplusplus
 }
-
-CertificateInfo CertificateInfo::isolatedCopy() const
-{
-    return { m_verificationError, crossThreadCopy(m_certificateChain) };
-}
-
-CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buffer, size_t size)
-{
-    Certificate certificate;
-    certificate.append(buffer, size);
-    return certificate;
-}
-
-}
-
 #endif

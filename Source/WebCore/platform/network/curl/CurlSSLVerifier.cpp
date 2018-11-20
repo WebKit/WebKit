@@ -117,7 +117,7 @@ public:
     bool write(X509* data) { return PEM_write_bio_X509(m_bio, data); }
     CertificateInfo::Certificate asCertificate()
     {
-        char* data;
+        uint8_t* data;
         long length = BIO_get_mem_data(m_bio, &data);
         if (length < 0)
             return CertificateInfo::Certificate();

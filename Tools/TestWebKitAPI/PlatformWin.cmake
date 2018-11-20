@@ -189,6 +189,12 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/win/UtilitiesWin.cpp
     )
 
+    if (${WTF_PLATFORM_WIN_CAIRO})
+        list(APPEND test_webkit_api_SOURCES
+            ${TESTWEBKITAPI_DIR}/Tests/WebKit/curl/Certificates.cpp
+        )
+    endif ()
+
     add_library(TestWebKitLib SHARED
         ${TESTWEBKITAPI_DIR}/win/main.cpp
         ${test_webkit_api_SOURCES}

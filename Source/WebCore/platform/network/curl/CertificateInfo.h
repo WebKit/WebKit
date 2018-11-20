@@ -37,9 +37,10 @@ namespace WebCore {
 class CertificateInfo : public CertificateInfoBase {
 public:
     using Certificate = Vector<uint8_t>;
+    using CertificateChain = Vector<Certificate>;
 
     CertificateInfo() = default;
-    WEBCORE_EXPORT CertificateInfo(int verificationError, Vector<Certificate>&&);
+    WEBCORE_EXPORT CertificateInfo(int verificationError, CertificateChain&&);
 
     WEBCORE_EXPORT CertificateInfo isolatedCopy() const;
 
@@ -52,11 +53,11 @@ public:
 
     bool isEmpty() const { return m_certificateChain.isEmpty(); }
 
-    static Certificate makeCertificate(const char*, size_t);
+    static Certificate makeCertificate(const uint8_t*, size_t);
 
 private:
     int m_verificationError { 0 };
-    Vector<Certificate> m_certificateChain;
+    CertificateChain m_certificateChain;
 };
 
 inline bool operator==(const CertificateInfo& a, const CertificateInfo& b)

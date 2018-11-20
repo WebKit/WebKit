@@ -1,3 +1,25 @@
+2018-11-19  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API for CertificateInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=191647
+
+        Reviewed by Alex Christensen.
+
+        Added API for CertificateInfo to create, fetch contents.
+
+        Tests: TestWebKitAPI/Tests/WebKit/curl/Certificates.cpp
+
+        * PlatformWin.cmake:
+        * Shared/API/c/curl/WKCertificateInfoCurl.cpp: Added.
+        (WKCertificateInfoCreateWithCertficateChain):
+        (WKCertificateInfoGetVerificationError):
+        (WKCertificateInfoGetCertificateChainSize):
+        (WKCertificateInfoCopyCertificateAtIndex):
+        * Shared/API/c/curl/WKCertificateInfoCurl.h: Copied from Source/WebCore/platform/network/curl/CertificateInfoCurl.cpp.
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<CertificateInfo>::encode):
+        (IPC::ArgumentCoder<CertificateInfo>::decode):
+
 2018-11-19  Don Olmstead  <don.olmstead@sony.com>
 
         Add USE(LIBWPE) for WebKit events

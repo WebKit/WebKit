@@ -1,3 +1,18 @@
+2018-11-19  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API for CertificateInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=191647
+
+        Reviewed by Alex Christensen.
+
+        Added test for new WKCertificateInfo API.
+
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/Tests/WebKit/curl/Certificates.cpp: Added.
+        (TestWebKitAPI::Curl::makeCertificateInfo):
+        (TestWebKitAPI::Curl::isSamePEM):
+        (TestWebKitAPI::Curl::TEST):
+
 2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS debug build after r238380

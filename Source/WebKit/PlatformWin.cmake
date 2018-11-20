@@ -19,6 +19,8 @@ list(APPEND WebKit_SOURCES
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
+    Shared/API/c/curl/WKCertificateInfoCurl.cpp
+
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
 
     Shared/win/ChildProcessMainWin.cpp
@@ -201,11 +203,18 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     UIProcess/API/C
     UIProcess/API/cpp
 
-    UIProcess/API/C/curl
     UIProcess/API/C/win
 
     WebProcess/InjectedBundle/API/c
 )
+
+if (${WTF_PLATFORM_WIN_CAIRO})
+    list(APPEND WebKit_FORWARDING_HEADERS_DIRECTORIES
+        Shared/API/c/curl
+
+        UIProcess/API/C/curl
+    )
+endif ()
 
 WEBKIT_MAKE_FORWARDING_HEADERS(WebKit
     DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES}
