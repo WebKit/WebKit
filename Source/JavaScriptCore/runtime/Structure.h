@@ -828,6 +828,9 @@ private:
     uint32_t m_propertyHash;
 };
 
+// We deliberately put Structure::create here in Structure.h instead of StructureInlines.h, because
+// it is used everywhere. This is so we don't have to hunt down all the places where we would need
+// to #include StructureInlines.h otherwise.
 inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingType, unsigned inlineCapacity)
 {
     ASSERT(vm.structureStructure);

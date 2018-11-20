@@ -1,3 +1,13 @@
+2018-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r238039) WebCore::JSDOMGlobalObject::createStructure is using JSC::Structure::create without including StructureInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=191626
+        <rdar://problem/46161064>
+
+        Unreviewed adding comment for my change r238366.
+
+        * runtime/Structure.h: Added a comment for Structure::create.
+
 2018-11-19  Mark Lam  <mark.lam@apple.com>
 
         globalFuncImportModule() should return a promise when it clears exceptions.
