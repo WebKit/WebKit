@@ -52,7 +52,7 @@ typedef union _GdkEvent GdkEvent;
 OBJC_CLASS WebEvent;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct wpe_input_keyboard_event;
 #endif
 
@@ -71,7 +71,7 @@ public:
     NativeWebKeyboardEvent(GdkEvent*, const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition, Vector<String>&& commands);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebKeyboardEvent(::WebEvent *);
-#elif PLATFORM(WPE)
+#elif USE(LIBWPE)
     NativeWebKeyboardEvent(struct wpe_input_keyboard_event*);
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);

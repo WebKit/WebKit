@@ -81,18 +81,18 @@ Shared/cairo/ShareableBitmapCairo.cpp
 Shared/glib/ProcessExecutablePathGLib.cpp
 Shared/glib/WebContextMenuItemGlib.cpp
 
+Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
+Shared/libwpe/NativeWebMouseEventLibWPE.cpp
+Shared/libwpe/NativeWebTouchEventLibWPE.cpp
+Shared/libwpe/NativeWebWheelEventLibWPE.cpp
+Shared/libwpe/WebEventFactory.cpp
+
 Shared/linux/WebMemorySamplerLinux.cpp
 
 Shared/soup/WebCoreArgumentCodersSoup.cpp
 Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/ChildProcessMain.cpp
-
-Shared/wpe/NativeWebKeyboardEventWPE.cpp
-Shared/wpe/NativeWebMouseEventWPE.cpp
-Shared/wpe/NativeWebTouchEventWPE.cpp
-Shared/wpe/NativeWebWheelEventWPE.cpp
-Shared/wpe/WebEventFactory.cpp
 
 UIProcess/AcceleratedDrawingAreaProxy.cpp
 UIProcess/DefaultUndoController.cpp

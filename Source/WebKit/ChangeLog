@@ -1,3 +1,31 @@
+2018-11-19  Don Olmstead  <don.olmstead@sony.com>
+
+        Add USE(LIBWPE) for WebKit events
+        https://bugs.webkit.org/show_bug.cgi?id=191842
+
+        Reviewed by Michael Catanzaro.
+
+        Moves all WPE events to USE(LIBWPE) instead of PLATFORM(WPE). Updates
+        filenames to LibWPE.
+
+        * PlatformWPE.cmake:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/NativeWebTouchEvent.h:
+        * Shared/NativeWebWheelEvent.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp: Renamed from Source/WebKit/Shared/wpe/NativeWebKeyboardEventWPE.cpp.
+        * Shared/libwpe/NativeWebMouseEventLibWPE.cpp: Renamed from Source/WebKit/Shared/wpe/NativeWebMouseEventWPE.cpp.
+        * Shared/libwpe/NativeWebTouchEventLibWPE.cpp: Renamed from Source/WebKit/Shared/wpe/NativeWebTouchEventWPE.cpp.
+        * Shared/libwpe/NativeWebWheelEventLibWPE.cpp: Renamed from Source/WebKit/Shared/wpe/NativeWebWheelEventWPE.cpp.
+        * Shared/libwpe/WebEventFactory.cpp: Renamed from Source/WebKit/Shared/wpe/WebEventFactory.cpp.
+        * Shared/libwpe/WebEventFactory.h: Renamed from Source/WebKit/Shared/wpe/WebEventFactory.h.
+        * SourcesWPE.txt:
+
 2018-11-19  David Quesada  <david_quesada@apple.com>
 
         EXC_BAD_ACCESS when invoking a DownloadProxy's destination decision handler after the download has been canceled

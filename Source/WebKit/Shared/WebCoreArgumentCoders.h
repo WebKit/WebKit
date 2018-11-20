@@ -148,7 +148,7 @@ struct DataListSuggestionInformation;
 struct SoupNetworkProxySettings;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct PasteboardWebContent;
 #endif
 
@@ -446,7 +446,7 @@ template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {
 };
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 template<> struct ArgumentCoder<WebCore::PasteboardWebContent> {
     static void encode(Encoder&, const WebCore::PasteboardWebContent&);
     static bool decode(Decoder&, WebCore::PasteboardWebContent&);

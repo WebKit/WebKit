@@ -104,14 +104,18 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     ASSERT(isKeyboardEventType(type));
 }
 
-#elif PLATFORM(WPE)
+#elif USE(LIBWPE)
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isKeypad, Modifiers modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(text)
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
+#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)

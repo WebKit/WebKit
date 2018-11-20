@@ -1826,7 +1826,7 @@ bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& p
 
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
 {
     encoder << content.text;
@@ -1841,7 +1841,7 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
         return false;
     return true;
 }
-#endif // PLATFORM(WPE)
+#endif // USE(LIBWPE)
 
 void ArgumentCoder<DictationAlternative>::encode(Encoder& encoder, const DictationAlternative& dictationAlternative)
 {

@@ -43,7 +43,7 @@ typedef union _GdkEvent GdkEvent;
 OBJC_CLASS WebEvent;
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 struct wpe_input_pointer_event;
 #endif
 
@@ -63,7 +63,7 @@ public:
     NativeWebMouseEvent(GdkEvent*, int);
 #elif PLATFORM(IOS_FAMILY)
     NativeWebMouseEvent(::WebEvent *);
-#elif PLATFORM(WPE)
+#elif USE(LIBWPE)
     NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor);
 #elif PLATFORM(WIN)
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
