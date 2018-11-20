@@ -359,7 +359,7 @@ void WebEditorClient::redo()
     m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
 }
 
-#if !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(WPE)
+#if PLATFORM(WIN)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -370,7 +370,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
 {
     notImplemented();
 }
-#endif
+#endif // PLATFORM(WIN)
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {

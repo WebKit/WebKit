@@ -1,3 +1,15 @@
+2018-11-19  Don Olmstead  <don.olmstead@sony.com>
+
+        Simplify platform check in WebEditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=191848
+
+        Reviewed by Fujii Hironori.
+
+        !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(WPE) can be better
+        represented as PLATFORM(WIN).
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+
 2018-11-19  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable JIT in a WKWebView
