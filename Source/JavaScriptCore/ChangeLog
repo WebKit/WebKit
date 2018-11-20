@@ -1,3 +1,19 @@
+2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] X86Assembler.h(108): error C2666: 'WebCore::operator -': 7 overloads have similar conversions
+        https://bugs.webkit.org/show_bug.cgi?id=189467
+        <rdar://problem/44290945>
+
+        Reviewed by Mark Lam.
+
+        This issue has happened several times. And, it seems that it will
+        take more time for Microsoft to fix the MSVC bug. We need a
+        effective workaround not to repeat this issue until they fix MSVC.
+
+        Remove ": int8_t" of RegisterID only for COMPILER(MSVC).
+
+        * assembler/X86Assembler.h: Added JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE macro.
+
 2018-11-19  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [WebAssembly] I64 arguments / return value check should be moved from callWebAssemblyFunction to JSToWasm wrapper

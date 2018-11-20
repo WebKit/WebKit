@@ -41,7 +41,13 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 
 namespace X86Registers {
 
-typedef enum : int8_t {
+#if COMPILER(MSVC)
+#define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE
+#else
+#define JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE : int8_t
+#endif
+
+typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
     eax,
     ecx,
     edx,
@@ -63,12 +69,12 @@ typedef enum : int8_t {
     InvalidGPRReg = -1,
 } RegisterID;
 
-typedef enum : int8_t {
+typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
     eip,
     eflags
 } SPRegisterID;
 
-typedef enum : int8_t {
+typedef enum JSC_X86_ASM_REGISTER_ID_ENUM_BASE_TYPE {
     xmm0,
     xmm1,
     xmm2,
