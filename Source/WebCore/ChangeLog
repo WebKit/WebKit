@@ -1,3 +1,24 @@
+2018-11-20  Christopher Reid  <chris.reid@sony.com>
+
+        Remove the need for LocalizedStringsWPE.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=191854
+
+        Reviewed by Michael Catanzaro.
+
+        No change in behavior.
+
+        Consolidate "Search the Web" as the default search context menu text on non-COCOA ports.
+
+        GTK, WPE, and non-CF WIN all had the same default localizedString function
+        of String::fromUTF8. Move that to LocalizedString.cpp as the default implementation
+        for all ports not using CF.
+
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        * platform/win/LocalizedStringsWin.cpp:
+        * platform/wpe/LocalizedStringsWPE.cpp: Removed.
+
 2018-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Segfaults on https://terminalizer.com/

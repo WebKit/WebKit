@@ -108,11 +108,6 @@ String contextMenuItemTagInputMethods()
     return String::fromUTF8(_("Input _Methods"));
 }
 
-String contextMenuItemTagSearchWeb()
-{
-    return String::fromUTF8(_("_Search the Web"));
-}
-
 String contextMenuItemTagUnicodeInsertLRMMark()
 {
     return String::fromUTF8(_("LRM _Left-to-right mark"));
@@ -174,16 +169,6 @@ String validationMessageTooLongText(int, int maxLength)
 {
     GUniquePtr<char> string(g_strdup_printf(ngettext("Use no more than one character", "Use no more than %d characters", maxLength), maxLength));
     return String::fromUTF8(string.get());
-}
-
-String unacceptableTLSCertificate()
-{
-    return String::fromUTF8(_("Unacceptable TLS certificate"));
-}
-
-String localizedString(const char* key)
-{
-    return String::fromUTF8(key, strlen(key));
 }
 
 } // namespace WebCore

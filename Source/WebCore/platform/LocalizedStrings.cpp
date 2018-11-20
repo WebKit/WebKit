@@ -72,6 +72,13 @@ String formatLocalizedString(String format, ...)
 #endif
 }
 
+#if !USE(CF)
+String localizedString(const char* key)
+{
+    return String::fromUTF8(key, strlen(key));
+}
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
 
 static String truncatedStringForLookupMenuItem(const String& original)
@@ -405,6 +412,13 @@ String contextMenuItemTagInspectElement()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Inspect Element", "Inspect _Element", "Inspect Element context menu item");
 }
+
+#if !PLATFORM(COCOA)
+String contextMenuItemTagSearchWeb()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Search the Web", "_Search the Web", "Search the Web context menu item");
+}
+#endif
 
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -1081,6 +1095,13 @@ String datePickerYearLabelTitle()
     return WEB_UI_STRING_KEY("YEAR", "YEAR (Date picker for extra zoom mode)", "Year label in date picker");
 }
 
+#endif
+
+#if USE(SOUP)
+String unacceptableTLSCertificate()
+{
+    return WEB_UI_STRING("Unacceptable TLS certificate", "Unacceptable TLS certificate error");
+}
 #endif
 
 } // namespace WebCore

@@ -598,8 +598,8 @@
 /* Search with search provider context menu item with provider name inserted */
 "Search with %@" = "Search with %@";
 
-/* Search with Google context menu item */
-"Search with Google" = "Search with Google";
+/* Search the Web context menu item */
+"Search the Web" = "Search the Web";
 
 /* Validation message for required file inputs that have no value */
 "Select a file" = "Select a file";
