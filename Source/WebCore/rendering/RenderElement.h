@@ -97,8 +97,6 @@ public:
     void moveLayers(RenderLayer* oldParent, RenderLayer* newParent);
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
-    virtual RenderElement* hoverAncestor() const;
-
     virtual void dirtyLinesFromChangedChild(RenderObject&) { }
 
     bool ancestorLineBoxDirty() const { return m_ancestorLineBoxDirty; }

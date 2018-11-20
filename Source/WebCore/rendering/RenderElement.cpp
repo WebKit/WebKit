@@ -974,11 +974,6 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
         setLayerNeedsFullRepaint();
 }
 
-RenderElement* RenderElement::hoverAncestor() const
-{
-    return parent();
-}
-
 static inline void paintPhase(RenderElement& element, PaintPhase phase, PaintInfo& paintInfo, const LayoutPoint& childPoint)
 {
     paintInfo.phase = phase;

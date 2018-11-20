@@ -1,3 +1,27 @@
+2018-11-20  Antti Koivisto  <antti@apple.com>
+
+        Update hover state in composed tree
+        https://bugs.webkit.org/show_bug.cgi?id=191860
+
+        Reviewed by Zalan Bujtas.
+
+        The code was already mostly switched over from render tree to composed tree.
+        This patch replaces the remaining common ancestor search code with a DOM based equivalent.
+
+        * dom/Document.cpp:
+        (WebCore::findNearestCommonComposedAncestor):
+        (WebCore::Document::updateHoverActiveState):
+        (WebCore::nearestCommonHoverAncestor): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hoverAncestor const): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::hoverAncestor const): Deleted.
+
+        No longer needed.
+
+        * rendering/RenderElement.h:
+
 2018-11-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Measure run with non-breakable start/end.

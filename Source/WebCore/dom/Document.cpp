@@ -7136,18 +7136,22 @@ DocumentParserYieldToken::~DocumentParserYieldToken()
         parser->didEndYieldingParser();
 }
 
-static RenderElement* nearestCommonHoverAncestor(RenderElement* obj1, RenderElement* obj2)
+static Element* findNearestCommonComposedAncestor(Element* elementA, Element* elementB)
 {
-    if (!obj1 || !obj2)
+    if (!elementA || !elementB)
         return nullptr;
 
-    for (RenderElement* currObj1 = obj1; currObj1; currObj1 = currObj1->hoverAncestor()) {
-        for (RenderElement* currObj2 = obj2; currObj2; currObj2 = currObj2->hoverAncestor()) {
-            if (currObj1 == currObj2)
-                return currObj1;
-        }
-    }
+    if (elementA == elementB)
+        return elementA;
 
+    HashSet<Element*> ancestorChain;
+    for (auto* element = elementA; element; element = element->parentElementInComposedTree())
+        ancestorChain.add(element);
+
+    for (auto* element = elementB; element; element = element->parentElementInComposedTree()) {
+        if (ancestorChain.contains(element))
+            return element;
+    }
     return nullptr;
 }
 
@@ -7208,26 +7212,21 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
     m_hoveredElement = newHoveredElement;
 
-    // We have two different objects. Fetch their renderers.
-    RenderElement* oldHoverObj = oldHoveredElement ? oldHoveredElement->renderer() : nullptr;
-    RenderElement* newHoverObj = newHoveredElement ? newHoveredElement->renderer() : nullptr;
-
-    // Locate the common ancestor render object for the two renderers.
-    RenderElement* ancestor = nearestCommonHoverAncestor(oldHoverObj, newHoverObj);
+    auto* commonAncestor = findNearestCommonComposedAncestor(oldHoveredElement.get(), newHoveredElement);
 
     Vector<RefPtr<Element>, 32> elementsToRemoveFromChain;
     Vector<RefPtr<Element>, 32> elementsToAddToChain;
 
-    if (oldHoverObj != newHoverObj) {
+    if (oldHoveredElement != newHoveredElement) {
         for (auto* element = oldHoveredElement.get(); element; element = element->parentElementInComposedTree()) {
-            if (ancestor && ancestor->element() == element)
+            if (element == commonAncestor)
                 break;
             if (!mustBeInActiveChain || element->inActiveChain())
                 elementsToRemoveFromChain.append(element);
         }
         // Unset hovered nodes in sub frame documents if the old hovered node was a frame owner.
         if (is<HTMLFrameOwnerElement>(oldHoveredElement)) {
-            if (Document* contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
+            if (auto* contentDocument = downcast<HTMLFrameOwnerElement>(*oldHoveredElement).contentDocument())
                 contentDocument->updateHoverActiveState(request, nullptr);
         }
     }
@@ -7244,7 +7243,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     for (auto& element : elementsToAddToChain) {
         if (allowActiveChanges)
             element->setActive(true);
-        if (ancestor && element == ancestor->element())
+        if (element == commonAncestor)
             sawCommonAncestor = true;
         if (!sawCommonAncestor) {
             // Elements after the common hover ancestor does not change hover state, but are iterated over because they may change active state.

@@ -2781,13 +2781,6 @@ LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* 
     return r;
 }
 
-RenderElement* RenderBlock::hoverAncestor() const
-{
-    if (auto* continuation = this->continuation())
-        return continuation;
-    return RenderBox::hoverAncestor();
-}
-
 void RenderBlock::updateDragState(bool dragOn)
 {
     RenderBox::updateDragState(dragOn);
