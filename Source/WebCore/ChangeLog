@@ -1,3 +1,35 @@
+2018-11-20  Zalan Butjas  <zalan@apple.com>
+
+        [LFC][IFC] Introduce InlineItem::nonBreakableStart/End
+        https://bugs.webkit.org/show_bug.cgi?id=191839
+
+        Reviewed by Antti Koivisto.
+
+        Non-breakable start/end marks margin/padding/border space (even when it does not directly come from the associated layout box)
+
+        <span style="padding: 5px"><span>nested content with padding parent</span</span>
+        <nested content with padding parent> <- inline run has 5px non-breakable start/end.
+
+        <span style="border: 5px solid green"><span style="padding-right: 10px; margin-right: 1px">1</span>2</span><span>    3</span>
+        <1> <- inline run has 5px non-breakable start and 11px non-breakable end.
+        <2> <- inline run has 0px non-breakable start and 5px non-breakable end.
+        <3> <- no non-breakable values.
+
+        This is what the runs look like (input to line breaking)
+        <     1           2     >
+        < > (whitespace)
+        <3>
+        The line breaking treats the paddding/border etc space as part of the run and as non-breaking opportunity.
+        With the given runs the first position where we can break the line is at the whitespace.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItem::nonBreakableStart const):
+        (WebCore::Layout::InlineItem::nonBreakableEnd const):
+        (WebCore::Layout::InlineItem::addNonBreakableStart):
+        (WebCore::Layout::InlineItem::addNonBreakableEnd):
+
 2018-11-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move detaching rules from InlineFormattingState to InlineItem

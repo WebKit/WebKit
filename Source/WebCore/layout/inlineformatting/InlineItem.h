@@ -68,9 +68,19 @@ public:
     void addDetachingRule(OptionSet<DetachingRule> detachingRule) { m_detachingRules.add(detachingRule); }
     OptionSet<DetachingRule> detachingRules() const { return m_detachingRules; }
 
+    // Non-breakable start/end marks margin/padding/border space (even when it does not directly come from the associated layout box)
+    // <span style="padding: 5px"><span>nested content with padding parent</span</span>
+    // <nested content with padding parent> inline run has 5px non-breakable start/end.
+    LayoutUnit nonBreakableStart() const { return m_nonBreakableStart; }
+    LayoutUnit nonBreakableEnd() const { return m_nonBreakableEnd; }
+    void addNonBreakableStart(LayoutUnit value) { m_nonBreakableStart += value; }
+    void addNonBreakableEnd(LayoutUnit value) { m_nonBreakableEnd += value; }
+
 private:
     const Box& m_layoutBox;
     OptionSet<DetachingRule> m_detachingRules;
+    LayoutUnit m_nonBreakableStart;
+    LayoutUnit m_nonBreakableEnd;
 };
 
 // FIXME: Fix HashSet/ListHashSet to support smart pointer types.

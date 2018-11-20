@@ -477,6 +477,8 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         child = child->nextInFlowOrFloatingSibling();
     }
 
+    // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
+    auto padding = Geometry::computedPadding(layoutState(), root);
     // Setup breaking boundaries for this subtree.
     auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
     // Empty container?
@@ -485,11 +487,15 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     auto rootBreaksAtStart = [&] {
         // FIXME: add padding-inline-start, margin-inline-start etc.
+        if (padding && padding->horizontal.left)
+            return true;
         return root.isPositioned();
     };
 
     auto rootBreaksAtEnd = [&] {
         // FIXME: add padding-inline-end, margin-inline-end etc.
+        if (padding && padding->horizontal.right)
+            return true;
         return root.isPositioned();
     };
 
@@ -505,10 +511,15 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
         ASSERT(firstDescendantInlineBox);
         firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
+        if (padding && padding->horizontal.left)
+            firstDescendantInlineBox->addNonBreakableStart(padding->horizontal.left);
     }
 
-    if (rootBreaksAtEnd())
+    if (rootBreaksAtEnd()) {
         lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
+        if (padding && padding->horizontal.right)
+            lastDescendantInlineBox->addNonBreakableEnd(padding->horizontal.right);
+    }
 }
 
 void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunProvider) const
