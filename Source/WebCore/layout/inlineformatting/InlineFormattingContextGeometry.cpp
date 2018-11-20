@@ -99,9 +99,9 @@ static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLo
     return lineLogicalLeft;
 }
 
-void InlineFormattingContext::Geometry::justifyRuns(InlineFormattingState& formattingState, Line& line, Line::RunRange runRange)
+void InlineFormattingContext::Geometry::justifyRuns(Line& line)
 {
-    auto& inlineRuns = formattingState.inlineRuns();
+    auto& inlineRuns = line.runs();
     auto& lastInlineRun = inlineRuns.last();
 
     // Adjust (forbid) trailing expansion for the last text run on line.
@@ -117,17 +117,15 @@ void InlineFormattingContext::Geometry::justifyRuns(InlineFormattingState& forma
         return;
 
     auto expansionOpportunities = 0;
-    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
-    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex)
-        expansionOpportunities += inlineRuns[runIndex].expansionOpportunity().count;
+    for (auto& inlineRun : inlineRuns)
+        expansionOpportunities += inlineRun.expansionOpportunity().count;
 
     if (!expansionOpportunities)
         return;
 
     float expansion = widthToDistribute.toFloat() / expansionOpportunities;
     LayoutUnit accumulatedExpansion;
-    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex) {
-        auto& inlineRun = inlineRuns[runIndex];
+    for (auto& inlineRun : inlineRuns) {
         auto expansionForRun = inlineRun.expansionOpportunity().count * expansion;
 
         inlineRun.expansionOpportunity().expansion = expansionForRun;
@@ -137,7 +135,7 @@ void InlineFormattingContext::Geometry::justifyRuns(InlineFormattingState& forma
     }
 }
 
-void InlineFormattingContext::Geometry::computeExpansionOpportunities(InlineFormattingState& formattingState, const InlineRunProvider::Run& run, InlineRunProvider::Run::Type lastRunType)
+void InlineFormattingContext::Geometry::computeExpansionOpportunities(Line& line, const InlineRunProvider::Run& run, InlineRunProvider::Run::Type lastRunType)
 {
     auto isExpansionOpportunity = [](auto currentRunIsWhitespace, auto lastRunIsWhitespace) {
         return currentRunIsWhitespace || (!currentRunIsWhitespace && !lastRunIsWhitespace);
@@ -151,7 +149,7 @@ void InlineFormattingContext::Geometry::computeExpansionOpportunities(InlineForm
 
     auto isAtExpansionOpportunity = isExpansionOpportunity(run.isWhitespace(), lastRunType == InlineRunProvider::Run::Type::Whitespace);
 
-    auto& currentInlineRun = formattingState.inlineRuns().last();
+    auto& currentInlineRun = line.runs().last();
     auto& expansionOpportunity = currentInlineRun.expansionOpportunity();
     if (isAtExpansionOpportunity)
         ++expansionOpportunity.count;
@@ -159,11 +157,11 @@ void InlineFormattingContext::Geometry::computeExpansionOpportunities(InlineForm
     expansionOpportunity.behavior = expansionBehavior(isAtExpansionOpportunity);
 }
 
-void InlineFormattingContext::Geometry::alignRuns(InlineFormattingState& inlineFormattingState, TextAlignMode textAlign, Line& line, Line::RunRange runRange, IsLastLine isLastLine)
+void InlineFormattingContext::Geometry::alignRuns(TextAlignMode textAlign, Line& line,  IsLastLine isLastLine)
 {
     auto adjutedTextAlignment = textAlign != TextAlignMode::Justify ? textAlign : isLastLine == IsLastLine::No ? TextAlignMode::Justify : TextAlignMode::Left;
     if (adjutedTextAlignment == TextAlignMode::Justify) {
-        justifyRuns(inlineFormattingState, line, runRange);
+        justifyRuns(line);
         return;
     }
 
@@ -172,11 +170,9 @@ void InlineFormattingContext::Geometry::alignRuns(InlineFormattingState& inlineF
     if (adjustedLogicalLeft == lineLogicalLeft)
         return;
 
-    auto& inlineRuns = inlineFormattingState.inlineRuns();
     auto delta = adjustedLogicalLeft - lineLogicalLeft;
-    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
-    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex)
-        inlineRuns[runIndex].setLogicalLeft(inlineRuns[runIndex].logicalLeft() + delta);
+    for (auto& inlineRun : line.runs())
+        inlineRun.setLogicalLeft(inlineRun.logicalLeft() + delta);
 }
 
 }

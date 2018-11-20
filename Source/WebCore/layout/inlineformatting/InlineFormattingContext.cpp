@@ -127,10 +127,8 @@ void InlineFormattingContext::initializeNewLine(Line& line) const
 
 void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun, InlineRuns& splitRuns) const
 {
-    if (!inlineRun.overlapsMultipleInlineItems())
-        return;
-
     ASSERT(inlineRun.textContext());
+    ASSERT(inlineRun.overlapsMultipleInlineItems());
     // In certain cases, a run can overlap multiple inline elements like this:
     // <span>normal text content</span><span style="position: relative; left: 10px;">but this one needs a dedicated run</span><span>end of text</span>
     // The content above generates one long run <normal text contentbut this one needs dedicated runend of text>
@@ -224,58 +222,52 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
 }
 
-InlineFormattingContext::Line::RunRange InlineFormattingContext::splitInlineRunsIfNeeded(Line::RunRange runRange) const
-{
-    auto& inlineRuns = inlineFormattingState().inlineRuns();
-    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
-
-    auto runIndex = *runRange.firstRunIndex;
-    auto& lastInlineRun = inlineRuns[*runRange.lastRunIndex];
-    while (runIndex < inlineRuns.size()) {
-        auto& inlineRun = inlineRuns[runIndex];
-        auto isLastRunInRange = &inlineRun == &lastInlineRun;
-
-        InlineRuns splitRuns;
-        splitInlineRunIfNeeded(inlineRun, splitRuns);
-        if (!splitRuns.isEmpty()) {
-            ASSERT(splitRuns.size() > 1);
-            // Replace the continous run with new ones.
-            // Reuse the original one.
-            auto& firstRun = splitRuns.first();
-            inlineRun.setWidth(firstRun.width());
-            inlineRun.textContext()->setLength(firstRun.textContext()->length());
-            splitRuns.remove(0);
-            // Insert the rest.
-            for (auto& splitRun : splitRuns)
-                inlineRuns.insert(++runIndex, splitRun);
-        }
-
-        if (isLastRunInRange)
-            break;
-
-        ++runIndex;
-    }
-
-    return { runRange.firstRunIndex, runIndex };
-}
-
-void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine, Line::RunRange runRange) const
+void InlineFormattingContext::createFinalRuns(Line& line) const
 {
     auto& inlineFormattingState = this->inlineFormattingState();
-    Geometry::alignRuns(inlineFormattingState, root().style().textAlign(), line, runRange, isLastLine);
-    runRange = splitInlineRunsIfNeeded(runRange);
-    placeInFlowPositionedChildren(runRange);
+    for (auto& inlineRun : line.runs()) {
+        if (inlineRun.overlapsMultipleInlineItems()) {
+            InlineRuns splitRuns;
+            splitInlineRunIfNeeded(inlineRun, splitRuns);
+            for (auto& splitRun : splitRuns)
+                inlineFormattingState.appendInlineRun(splitRun);
+
+            if (!splitRuns.isEmpty())
+                continue;
+        }
+
+        auto finalRun = [&] {
+            auto& inlineItem = inlineRun.inlineItem();
+            if (inlineItem.detachingRules().isEmpty())
+                return inlineRun;
+
+            InlineRun adjustedRun = inlineRun;
+            auto width = inlineRun.width() - inlineItem.nonBreakableStart() - inlineItem.nonBreakableEnd();
+            adjustedRun.setLogicalLeft(inlineRun.logicalLeft() + inlineItem.nonBreakableStart());
+            adjustedRun.setWidth(width);
+            return adjustedRun;
+        };
+
+        inlineFormattingState.appendInlineRun(finalRun());
+    }
+}
+
+void InlineFormattingContext::postProcessInlineRuns(Line& line, IsLastLine isLastLine) const
+{
+    Geometry::alignRuns(root().style().textAlign(), line, isLastLine);
+    auto firstRunIndex = inlineFormattingState().inlineRuns().size();
+    createFinalRuns(line);
+
+    placeInFlowPositionedChildren(firstRunIndex);
 }
 
 void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
 {
-    auto runRange = line.close();
-    ASSERT(!runRange.firstRunIndex || runRange.lastRunIndex);
-
-    if (!runRange.firstRunIndex)
+    line.close();
+    if (!line.hasContent())
         return;
 
-    postProcessInlineRuns(line, isLastLine, runRange);
+    postProcessInlineRuns(line, isLastLine);
 }
 
 void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBreaker::Run& run) const
@@ -284,7 +276,7 @@ void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBr
     line.appendContent(run);
 
     if (root().style().textAlign() == TextAlignMode::Justify)
-        Geometry::computeExpansionOpportunities(inlineFormattingState(), run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
+        Geometry::computeExpansionOpportunities(line, run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
 }
 
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
@@ -293,7 +285,7 @@ void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlin
     auto& inlineFormattingState = this->inlineFormattingState();
     auto floatingContext = FloatingContext { inlineFormattingState.floatingState() };
 
-    Line line(inlineFormattingState);
+    Line line;
     initializeNewLine(line);
 
     InlineLineBreaker lineBreaker(layoutState, inlineFormattingState.inlineContent(), inlineRunProvider.runs());
@@ -421,12 +413,10 @@ void InlineFormattingContext::computeFloatPosition(const FloatingContext& floati
     displayBox.setTopLeft(floatingContext.positionForFloat(floatBox));
 }
 
-void InlineFormattingContext::placeInFlowPositionedChildren(Line::RunRange runRange) const
+void InlineFormattingContext::placeInFlowPositionedChildren(unsigned fistRunIndex) const
 {
     auto& inlineRuns = inlineFormattingState().inlineRuns();
-    ASSERT(*runRange.lastRunIndex < inlineRuns.size());
-
-    for (auto runIndex = *runRange.firstRunIndex; runIndex <= *runRange.lastRunIndex; ++runIndex) {
+    for (auto runIndex = fistRunIndex; runIndex < inlineRuns.size(); ++runIndex) {
         auto& inlineRun = inlineRuns[runIndex];
 
         auto positionOffset = [&](auto& layoutBox) {

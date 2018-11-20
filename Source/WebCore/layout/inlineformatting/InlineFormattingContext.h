@@ -51,23 +51,19 @@ public:
 private:
     class Line {
     public:
-        Line(InlineFormattingState&);
-
         void init(const Display::Box::Rect&);
-        struct RunRange {
-            std::optional<unsigned> firstRunIndex;
-            std::optional<unsigned> lastRunIndex;
-        };
-        RunRange close();
+        void close();
 
         void appendContent(const InlineLineBreaker::Run&);
 
         void adjustLogicalLeft(LayoutUnit delta);
         void adjustLogicalRight(LayoutUnit delta);
 
-        bool hasContent() const { return m_firstRunIndex.has_value(); }
+        bool hasContent() const { return !m_inlineRuns.isEmpty(); }
         bool isClosed() const { return m_closed; }
         bool isFirstLine() const { return m_isFirstLine; }
+        Vector<InlineRun>& runs() { return m_inlineRuns; }
+
         LayoutUnit contentLogicalRight() const;
         LayoutUnit contentLogicalLeft() const { return m_logicalRect.left(); }
         LayoutUnit availableWidth() const { return m_availableWidth; }
@@ -85,12 +81,10 @@ private:
         std::optional<InlineRunProvider::Run::Type> m_lastRunType;
         bool m_lastRunCanExpand { false };
 
-        InlineFormattingState& m_formattingState;
-
         Display::Box::Rect m_logicalRect;
         LayoutUnit m_availableWidth;
 
-        std::optional<unsigned> m_firstRunIndex;
+        Vector<InlineRun> m_inlineRuns;
         bool m_isFirstLine { true };
         bool m_closed { true };
     };
@@ -100,19 +94,19 @@ private:
     public:
         static HeightAndMargin inlineBlockHeightAndMargin(const LayoutState&, const Box&);
         static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&);
-        static void alignRuns(InlineFormattingState&, TextAlignMode, Line&, Line::RunRange, IsLastLine);
-        static void computeExpansionOpportunities(InlineFormattingState&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType);
+        static void alignRuns(TextAlignMode, Line&, IsLastLine);
+        static void computeExpansionOpportunities(Line&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType);
 
     private:
-        static void justifyRuns(InlineFormattingState&, Line&, Line::RunRange);
+        static void justifyRuns(Line&);
     };
 
     void layoutInlineContent(const InlineRunProvider&) const;
     void initializeNewLine(Line&) const;
     void closeLine(Line&, IsLastLine) const;
     void appendContentToLine(Line&, const InlineLineBreaker::Run&) const;
-    void postProcessInlineRuns(Line&, IsLastLine, Line::RunRange) const;
-    Line::RunRange splitInlineRunsIfNeeded(Line::RunRange) const  WARN_UNUSED_RETURN;
+    void postProcessInlineRuns(Line&, IsLastLine) const;
+    void createFinalRuns(Line&) const;
     void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;
 
     void layoutFormattingContextRoot(const Box&) const;
@@ -120,7 +114,7 @@ private:
     void computeHeightAndMargin(const Box&) const;
     void computeWidthAndMargin(const Box&) const;
     void computeFloatPosition(const FloatingContext&, Line&, const Box&) const;
-    void placeInFlowPositionedChildren(Line::RunRange) const;
+    void placeInFlowPositionedChildren(unsigned firstRunIndex) const;
 
     void collectInlineContent(InlineRunProvider&) const;
     void collectInlineContentForSubtree(const Box& root, InlineRunProvider&) const;

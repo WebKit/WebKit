@@ -1,3 +1,37 @@
+2018-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingContext::Line should hold the list of runs for the current line.
+        https://bugs.webkit.org/show_bug.cgi?id=191845
+
+        Reviewed by Antti Koivisto.
+
+        Collect the runs in InlineFormattingContext::Line and transfer them to InlineFormattingState during line closing.
+        (In the most common cases, this is only one extra vector::append() call.)
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::createFinalRuns const):
+        (WebCore::Layout::InlineFormattingContext::postProcessInlineRuns const):
+        (WebCore::Layout::InlineFormattingContext::closeLine const):
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        (WebCore::Layout::InlineFormattingContext::placeInFlowPositionedChildren const):
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunsIfNeeded const): Deleted.
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::hasContent const):
+        (WebCore::Layout::InlineFormattingContext::Line::runs):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::justifyRuns):
+        (WebCore::Layout::InlineFormattingContext::Geometry::computeExpansionOpportunities):
+        (WebCore::Layout::InlineFormattingContext::Geometry::alignRuns):
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::InlineFormattingContext::Line::adjustLogicalLeft):
+        (WebCore::Layout::InlineFormattingContext::Line::contentLogicalRight const):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+        (WebCore::Layout::InlineFormattingContext::Line::Line): Deleted.
+
 2018-11-20  Zalan Butjas  <zalan@apple.com>
 
         [LFC][IFC] Introduce InlineItem::nonBreakableStart/End
