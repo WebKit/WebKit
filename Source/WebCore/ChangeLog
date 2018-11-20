@@ -1,3 +1,25 @@
+2018-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move detaching rules from InlineFormattingState to InlineItem
+        https://bugs.webkit.org/show_bug.cgi?id=191838
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for adding more context to InlineItem. In addition to
+        detaching rules it will also hold non-breakable start/end information.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineFormattingState.cpp:
+        (WebCore::Layout::InlineFormattingState::addDetachingRule): Deleted.
+        (WebCore::Layout::InlineFormattingState::detachingRules const): Deleted.
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::setDetachingRules): Deleted.
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItem::addDetachingRule):
+        (WebCore::Layout::InlineItem::detachingRules const):
+
 2018-11-20  Zalan Bujjtas  <zalan@apple.com>
 
         [LFC][IFC] InlineRunProvider::append() should just take const InlineItem&.

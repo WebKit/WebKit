@@ -172,7 +172,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         // 2. Break at the beginning of the inline element -> commit what we've got so far. Current element becomes the first uncommitted.
         // 3. Break at the end of the inline element -> commit what we've got so far including the current element.
         // 4. Break before/after -> requires dedicated run -> commit what we've got so far and also commit the current inline element as a separate inline run.
-        auto detachingRules = inlineFormattingState().detachingRules(inlineItem.layoutBox());
+        auto detachingRules = inlineItem.detachingRules();
 
         // #1
         if (detachingRules.isEmpty()) {
@@ -194,7 +194,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         };
 
         // #2
-        if (detachingRules == InlineFormattingState::DetachingRule::BreakAtStart) {
+        if (detachingRules == InlineItem::DetachingRule::BreakAtStart) {
             commit();
             firstUncommittedInlineItem = &inlineItem;
             uncommittedLength = currentLength();
@@ -202,7 +202,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         }
 
         // #3
-        if (detachingRules == InlineFormattingState::DetachingRule::BreakAtEnd) {
+        if (detachingRules == InlineItem::DetachingRule::BreakAtEnd) {
             ASSERT(firstUncommittedInlineItem);
             uncommittedLength += currentLength();
             commit();
@@ -460,8 +460,8 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     if (root.establishesFormattingContext() && &root != &(this->root())) {
         createAndAppendInlineItem();
+        inlineFormattingState.inlineContent().last()->addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
         // Skip formatting root subtree. They are not part of this inline formatting context.
-        inlineFormattingState.setDetachingRules(root, { InlineFormattingState::DetachingRule::BreakAtStart, InlineFormattingState::DetachingRule::BreakAtEnd });
         return;
     }
 
@@ -504,11 +504,11 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
             firstDescendantInlineBox = inlineContent.first().get();
 
         ASSERT(firstDescendantInlineBox);
-        inlineFormattingState.addDetachingRule(firstDescendantInlineBox->layoutBox(), InlineFormattingState::DetachingRule::BreakAtStart);
+        firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
     }
 
     if (rootBreaksAtEnd())
-        inlineFormattingState.addDetachingRule(lastDescendantInlineBox->layoutBox(), InlineFormattingState::DetachingRule::BreakAtEnd);
+        lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
 }
 
 void InlineFormattingContext::collectInlineContent(InlineRunProvider& inlineRunProvider) const
