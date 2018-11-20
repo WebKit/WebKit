@@ -66,6 +66,9 @@ public:
     {
         auto it = m_map.find(key);
         exists = it != m_map.end();
+        if (!exists)
+            return nullptr;
+        
         return it->value.get();
     }
 

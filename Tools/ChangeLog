@@ -1,3 +1,16 @@
+2018-11-20  Jeff Miller  <jeffm@apple.com>
+
+        Return nullptr immediately if the key doesn't exist in the HashMap.
+        https://bugs.webkit.org/show_bug.cgi?id=191841
+
+        Reviewed by Chris Dumez.
+        
+        Add a test that would crash prior to the fix for this bug.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKNSDictionaryEmptyDictionaryCrash.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2018-11-19  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable JIT in a WKWebView
