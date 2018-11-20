@@ -173,6 +173,10 @@ void ProcessLauncher::launchProcess()
 
     // FIXME: Switch to xpc_connection_set_bootstrap once it's available everywhere we need.
     auto bootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    
+    if (m_client && !m_client->isJITEnabled())
+        xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-jit", true);
+
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);

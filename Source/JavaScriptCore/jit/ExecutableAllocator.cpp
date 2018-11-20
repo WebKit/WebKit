@@ -113,12 +113,40 @@ JS_EXPORT_PRIVATE JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 static uintptr_t startOfFixedWritableMemoryPool;
 #endif
 
-static bool allowJIT()
+class FixedVMPoolExecutableAllocator;
+static FixedVMPoolExecutableAllocator* allocator = nullptr;
+static ExecutableAllocator* executableAllocator = nullptr;
+
+static bool s_isJITEnabled = true;
+static bool isJITEnabled()
 {
 #if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
-    return processHasEntitlement("dynamic-codesigning");
+    return processHasEntitlement("dynamic-codesigning") && s_isJITEnabled;
 #else
-    return true;
+    return s_isJITEnabled;
+#endif
+}
+
+void ExecutableAllocator::setJITEnabled(bool enabled)
+{
+    ASSERT(!allocator);
+    if (s_isJITEnabled == enabled)
+        return;
+
+    s_isJITEnabled = enabled;
+
+#if PLATFORM(IOS_FAMILY) && (CPU(ARM64) || CPU(ARM))
+    if (!enabled) {
+        constexpr size_t size = 1;
+        constexpr int protection = PROT_READ | PROT_WRITE | PROT_EXEC;
+        constexpr int flags = MAP_PRIVATE | MAP_ANON | MAP_JIT;
+        constexpr int fd = OSAllocator::JSJITCodePages;
+        void* allocation = mmap(nullptr, size, protection, flags, fd, 0);
+        const void* executableMemoryAllocationFailure = reinterpret_cast<void*>(-1);
+        RELEASE_ASSERT_WITH_MESSAGE(allocation && allocation != executableMemoryAllocationFailure, "We should not have allocated executable memory before disabling the JIT.");
+        RELEASE_ASSERT_WITH_MESSAGE(!munmap(allocation, size), "Unmapping executable memory should succeed so we do not have any executable memory in the address space");
+        RELEASE_ASSERT_WITH_MESSAGE(mmap(nullptr, size, protection, flags, fd, 0) == executableMemoryAllocationFailure, "Allocating executable memory should fail after setJITEnabled(false) is called.");
+    }
 #endif
 }
 
@@ -128,7 +156,7 @@ public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
     {
-        if (!allowJIT())
+        if (!isJITEnabled())
             return;
 
         size_t reservationSize;
@@ -375,9 +403,6 @@ private:
     MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryStart;
     MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryEnd;
 };
-
-static FixedVMPoolExecutableAllocator* allocator;
-static ExecutableAllocator* executableAllocator;
 
 void ExecutableAllocator::initializeAllocator()
 {

@@ -147,6 +147,9 @@ public:
     bool shouldCaptureDisplayInUIProcess() const { return m_shouldCaptureDisplayInUIProcess; }
     void setShouldCaptureDisplayInUIProcess(bool shouldCaptureDisplayInUIProcess) { m_shouldCaptureDisplayInUIProcess = shouldCaptureDisplayInUIProcess; }
 
+    bool isJITEnabled() const { return m_isJITEnabled; }
+    void setJITEnabled(bool enabled) { m_isJITEnabled = enabled; }
+    
 #if PLATFORM(IOS_FAMILY)
     const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
@@ -220,6 +223,7 @@ private:
     bool m_processSwapsOnWindowOpenWithOpener { false };
     std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
     WTF::String m_customWebContentServiceBundleIdentifier;
+    bool m_isJITEnabled { true };
 
 #if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;

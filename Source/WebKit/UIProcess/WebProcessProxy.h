@@ -110,7 +110,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    WebProcessPool& processPool() { ASSERT(m_processPool); return *m_processPool.get(); }
+    WebProcessPool& processPool() const { ASSERT(m_processPool); return *m_processPool.get(); }
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2
     WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
@@ -258,6 +258,8 @@ protected:
     void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
 
+    bool isJITEnabled() const final;
+    
 private:
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);

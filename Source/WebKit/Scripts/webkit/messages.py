@@ -190,7 +190,7 @@ def forward_declarations_and_headers(receiver):
     ])
 
     for message in receiver.messages:
-        if message.reply_parameters != None and message.has_attribute(DELAYED_ATTRIBUTE):
+        if message.reply_parameters != None:
             headers.add('<wtf/ThreadSafeRefCounted.h>')
             types_by_namespace['IPC'].update([('class', 'Connection')])
 

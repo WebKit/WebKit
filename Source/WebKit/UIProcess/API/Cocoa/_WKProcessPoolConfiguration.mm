@@ -298,6 +298,16 @@
     return _processPoolConfiguration->suppressesConnectionTerminationOnSystemChange();
 }
 
+- (BOOL)isJITEnabled
+{
+    return _processPoolConfiguration->isJITEnabled();
+}
+
+- (void)setJITEnabled:(BOOL)enabled
+{
+    _processPoolConfiguration->setJITEnabled(enabled);
+}
+
 - (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
 {
     _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);

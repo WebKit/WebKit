@@ -141,6 +141,8 @@ messages -> WebProcess LegacyReceiver {
 #endif
 #endif
 
+    IsJITEnabled() -> (bool enabled) Async
+
 #if PLATFORM(COCOA)
     SetMediaMIMETypes(Vector<String> types)
 #endif

@@ -272,6 +272,7 @@
 		57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9BC371A67482300FE5678 /* WeakPtr.cpp */; };
 		57F4AAA0208FAEF000A68E9E /* SSLKeyGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */; };
 		57F56A5C1C7F8CC100F31D7E /* IsNavigationActionTrusted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */; };
+		5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C0160C021A132320077FA32 /* JITEnabled.mm */; };
 		5C0BF88D1DD5964D00B00328 /* MemoryPressureHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C0BF88C1DD5957400B00328 /* MemoryPressureHandler.mm */; };
 		5C0BF8911DD599A900B00328 /* WebViewCanPasteZeroPng.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C0BF88F1DD5999B00B00328 /* WebViewCanPasteZeroPng.mm */; };
 		5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FB6CC1CA34BE500966124 /* EarlyKVOCrash.mm */; };
@@ -1606,6 +1607,7 @@
 		57F10D921C7E7B3800ECDF30 /* IsNavigationActionTrusted.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IsNavigationActionTrusted.mm; sourceTree = "<group>"; };
 		57F4AA9F208FA83D00A68E9E /* SSLKeyGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGenerator.mm; sourceTree = "<group>"; };
 		57F56A5B1C7F8A4000F31D7E /* IsNavigationActionTrusted.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IsNavigationActionTrusted.html; sourceTree = "<group>"; };
+		5C0160C021A132320077FA32 /* JITEnabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JITEnabled.mm; sourceTree = "<group>"; };
 		5C0BF88C1DD5957400B00328 /* MemoryPressureHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandler.mm; sourceTree = "<group>"; };
 		5C0BF88F1DD5999B00B00328 /* WebViewCanPasteZeroPng.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteZeroPng.mm; sourceTree = "<group>"; };
 		5C19A5231FD0F32600EEA323 /* CookiePrivateBrowsing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookiePrivateBrowsing.mm; sourceTree = "<group>"; };
@@ -2424,6 +2426,7 @@
 				79C5D430209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm */,
 				2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */,
 				5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */,
+				5C0160C021A132320077FA32 /* JITEnabled.mm */,
 				C25CCA051E51380B0026CB8A /* LineBreaking.mm */,
 				37D36ED61AF42ECD00BAF5D9 /* LoadAlternateHTMLString.mm */,
 				A125478D1DB18B9400358564 /* LoadDataWithNilMIMEType.mm */,
@@ -3952,6 +3955,7 @@
 				5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */,
 				7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */,
 				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
+				5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */,
 				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
 				F45E15732112CE2900307E82 /* KeyboardInputTestsIOS.mm in Sources */,
 				7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,

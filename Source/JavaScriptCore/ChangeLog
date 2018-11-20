@@ -1,3 +1,18 @@
+2018-11-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable JIT in a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=191822
+        <rdar://problem/28119360>
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::jitDisabled):
+        (JSC::allowJIT):
+        (JSC::ExecutableAllocator::setJITEnabled):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::setJITEnabled):
+
 2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] X86Assembler.h(108): error C2666: 'WebCore::operator -': 7 overloads have similar conversions

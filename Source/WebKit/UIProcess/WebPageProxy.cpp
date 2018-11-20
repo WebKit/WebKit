@@ -6533,6 +6533,11 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     return parameters;
 }
 
+void WebPageProxy::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_process->connection()->sendWithAsyncReply(Messages::WebProcess::IsJITEnabled(), WTFMove(completionHandler));
+}
+
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);

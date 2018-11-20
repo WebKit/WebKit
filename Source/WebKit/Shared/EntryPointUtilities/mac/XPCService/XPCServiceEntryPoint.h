@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPCServiceEntryPoint_h
-#define XPCServiceEntryPoint_h
+#pragma once
 
 #import "ChildProcess.h"
 #import "WebKit2Initialize.h"
+#import <JavaScriptCore/ExecutableAllocator.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
@@ -70,6 +70,9 @@ protected:
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
+    if (initializerMessage && xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
+        JSC::ExecutableAllocator::setJITEnabled(false);
+
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
@@ -124,5 +127,3 @@ int XPCServiceMain(int, const char**);
 void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
 
 } // namespace WebKit
-
-#endif // XPCServiceEntryPoint_h

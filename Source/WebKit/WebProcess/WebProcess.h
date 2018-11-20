@@ -204,6 +204,8 @@ public:
 
     void sendPrewarmInformation(const WebCore::URL&);
 
+    void isJITEnabled(CompletionHandler<void(bool)>&&);
+
 #if PLATFORM(IOS_FAMILY)
     void resetAllGeolocationPermissions();
 #endif

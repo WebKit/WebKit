@@ -1,3 +1,38 @@
+2018-11-19  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable JIT in a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=191822
+        <rdar://problem/28119360>
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _canUseJIT:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration enableJIT]):
+        (-[_WKProcessPoolConfiguration setEnableJIT:]):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::Client::enableJIT const):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canUseJIT):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::enableJIT const):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::processPool const):
+        (WebKit::WebProcessProxy::processPool): Deleted.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::canUseJIT):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-11-19  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Add API for CertificateInfo.

@@ -4768,6 +4768,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return WebKit::SafeBrowsingWarning::visitUnsafeWebsiteSentinel();
 }
 
+- (void)_isJITEnabled:(void(^)(BOOL))completionHandler
+{
+    _page->isJITEnabled([completionHandler = makeBlockPtr(completionHandler)] (bool enabled) {
+        completionHandler(enabled);
+    });
+}
+
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
     [self _evaluateJavaScript:javaScriptString forceUserGesture:NO completionHandler:completionHandler];
