@@ -1,3 +1,18 @@
+2018-11-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Click on node assigned to slot in button's shadow cause loss of button focus
+        https://bugs.webkit.org/show_bug.cgi?id=191694
+        <rdar://problem/46107920>
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug by traversing the parent in the composed tree when looking for an element to focus.
+
+        Test: fast/shadow-dom/focus-slot-parent.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Fixed the bug. Also use RefPtr instead of a raw pointer.
+
 2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r238350) [curl] CertificateInfo.h: error: template specialization requires 'template<>'

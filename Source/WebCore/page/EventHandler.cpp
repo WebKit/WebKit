@@ -2598,8 +2598,8 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     // from the user interface of Windows, where pushing a button moves focus to the button.
 
     // Walk up the DOM tree to search for an element to focus.
-    Element* element;
-    for (element = m_elementUnderMouse.get(); element; element = element->parentOrShadowHostElement()) {
+    RefPtr<Element> element;
+    for (element = m_elementUnderMouse.get(); element; element = element->parentElementInComposedTree()) {
         if (element->isMouseFocusable())
             break;
     }
@@ -2622,7 +2622,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
 
     // If focus shift is blocked, we eat the event.
     auto* page = m_frame.page();
-    if (page && !page->focusController().setFocusedElement(element, m_frame))
+    if (page && !page->focusController().setFocusedElement(element.get(), m_frame))
         return false;
 
     return true;
