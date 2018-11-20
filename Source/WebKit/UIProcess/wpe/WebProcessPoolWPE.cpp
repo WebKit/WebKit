@@ -34,13 +34,19 @@
 #include "WebCookieManagerProxy.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include <JavaScriptCore/RemoteInspectorServer.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/GStreamerCommon.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/SchemeRegistry.h>
 #include <cstdlib>
+
+#if ENABLE(REMOTE_INSPECTOR)
+#include <JavaScriptCore/RemoteInspectorServer.h>
 #include <wtf/glib/GUniquePtr.h>
+#endif
+
+#if USE(GSTREAMER)
+#include <WebCore/GStreamerCommon.h>
+#endif
 
 namespace WebKit {
 
@@ -89,7 +95,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if USE(GSTREAMER)
     parameters.gstreamerOptions = WebCore::extractGStreamerOptionsFromCommandLine();
 #endif
-
 }
 
 void WebProcessPool::platformInvalidateContext()

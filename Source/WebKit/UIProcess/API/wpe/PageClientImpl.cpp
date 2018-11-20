@@ -181,6 +181,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
 }
 
+#if ENABLE(TOUCH_EVENTS)
 void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, bool wasEventHandled)
 {
     if (wasEventHandled)
@@ -227,6 +228,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
 
     page.handleMouseEvent(NativeWebMouseEvent(&pointerEvent, page.deviceScaleFactor()));
 }
+#endif
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&)
 {
