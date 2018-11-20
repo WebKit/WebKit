@@ -177,7 +177,6 @@ private:
 
     bool m_isThrottlingLayerFlushes { false };
     bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
-    bool m_hasPendingFlush { false };
 
     WebCore::Timer m_layerFlushThrottlingTimer;
 };

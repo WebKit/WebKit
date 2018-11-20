@@ -1,3 +1,41 @@
+2018-11-20  Antti Koivisto  <antti@apple.com>
+
+        Avoid potential longer than expected layer flush delays
+        https://bugs.webkit.org/show_bug.cgi?id=191833
+
+        Reviewed by Dean Jackson.
+
+        Layer flush throttling also stops style recalcs and layouts. Layouts schedule layer flushes. Especially
+        on a slow network we can in principle end up in situation where layer flush timer fires but there is no
+        flush scheduled and so nothing happens. However there is a pending style recalc or layout that would
+        actually schedule a flush (in practice various things force style recalcs and this doesn't occur
+        commonly).
+
+        To avoid this we should flush unconditionally when the flush timer fires. This performs any pending
+        style recalc and layout too. If there is nothing to do the flush will be cheap.
+
+        PLT doesn't appear to hit cases affected by this patch and there shouldn't be any impact.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+
+        Remove now unnecessary m_hasPendingFlush bit, simplifying the logic.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen):
+
+        Schedule unconditionally when unfreezing.
+
+        (WebKit::TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush):
+
+        Remove branch that starts the flush timer. It is not needed as either it was already running
+        or immediate flush is already scheduled and will start the timer anyway.
+
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling):
+        (WebKit::TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired):
+
+        Flush unconditionally.
+
 2018-11-19  Don Olmstead  <don.olmstead@sony.com>
 
         Simplify platform check in WebEditorClient

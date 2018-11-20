@@ -180,8 +180,7 @@ void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStat
         m_layerFlushThrottlingTimer.stop();
     } else {
         // Immediate flush as any delay in unfreezing can result in flashes.
-        if (m_hasPendingFlush)
-            scheduleLayerFlushRunLoopObserver();
+        scheduleLayerFlushRunLoopObserver();
     }
 }
 
@@ -196,8 +195,6 @@ void TiledCoreAnimationDrawingArea::scheduleInitialDeferredPaint()
 
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 {
-    m_hasPendingFlush = true;
-
     if (m_layerTreeStateIsFrozen) {
         m_isLayerFlushThrottlingTemporarilyDisabledForInteraction = false;
         return;
@@ -212,11 +209,6 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerFlush()
 
     if (m_layerFlushThrottlingTimer.isActive()) {
         ASSERT(m_isThrottlingLayerFlushes);
-        return;
-    }
-
-    if (m_isThrottlingLayerFlushes) {
-        startLayerFlushThrottlingTimer();
         return;
     }
 
@@ -487,7 +479,7 @@ void TiledCoreAnimationDrawingArea::flushLayers()
                 drawingArea->sendPendingNewlyReachedLayoutMilestones();
         } forPhase:kCATransactionPhasePostCommit];
 
-        m_hasPendingFlush = !m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
+        bool didFlushAllFrames = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 
 #if ENABLE(ASYNC_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator())
@@ -504,7 +496,7 @@ void TiledCoreAnimationDrawingArea::flushLayers()
             m_pendingCallbackIDs.clear();
         }
 
-        if (!m_hasPendingFlush)
+        if (didFlushAllFrames)
             invalidateLayerFlushRunLoopObserver();
 
         if (m_isThrottlingLayerFlushes)
@@ -965,7 +957,7 @@ bool TiledCoreAnimationDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlu
     if (m_isThrottlingLayerFlushes) {
         invalidateLayerFlushRunLoopObserver();
         startLayerFlushThrottlingTimer();
-    } else if (m_hasPendingFlush)
+    } else
         scheduleLayerFlushRunLoopObserver();
 
     return true;
@@ -987,8 +979,6 @@ void TiledCoreAnimationDrawingArea::startLayerFlushThrottlingTimer()
 void TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired()
 {
     if (m_layerTreeStateIsFrozen)
-        return;
-    if (!m_hasPendingFlush)
         return;
     scheduleLayerFlushRunLoopObserver();
 }
