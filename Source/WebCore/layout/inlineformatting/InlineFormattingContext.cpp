@@ -58,7 +58,7 @@ void InlineFormattingContext::layout() const
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
 
-    InlineRunProvider inlineRunProvider(inlineFormattingState());
+    InlineRunProvider inlineRunProvider;
     collectInlineContent(inlineRunProvider);
     // Compute width/height for non-text content.
     for (auto& inlineRun : inlineRunProvider.runs()) {
@@ -452,15 +452,21 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     // Collect inline content recursively and set breaking rules for the inline elements (for paddings, margins, positioned element etc).
     auto& inlineFormattingState = this->inlineFormattingState();
 
+    auto createAndAppendInlineItem = [&] {
+        auto inlineItem = std::make_unique<InlineItem>(root);
+        inlineRunProvider.append(*inlineItem);
+        inlineFormattingState.inlineContent().add(WTFMove(inlineItem));
+    };
+
     if (root.establishesFormattingContext() && &root != &(this->root())) {
+        createAndAppendInlineItem();
         // Skip formatting root subtree. They are not part of this inline formatting context.
-        inlineRunProvider.append(root);
         inlineFormattingState.setDetachingRules(root, { InlineFormattingState::DetachingRule::BreakAtStart, InlineFormattingState::DetachingRule::BreakAtEnd });
         return;
     }
 
     if (!is<Container>(root)) {
-        inlineRunProvider.append(root);
+        createAndAppendInlineItem();
         return;
     }
 
@@ -517,7 +523,7 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
         return *instrinsicWidthConstraints;
 
     auto& inlineFormattingState = this->inlineFormattingState();
-    InlineRunProvider inlineRunProvider(inlineFormattingState);
+    InlineRunProvider inlineRunProvider;
     collectInlineContent(inlineRunProvider);
 
     // Compute width for non-text content.

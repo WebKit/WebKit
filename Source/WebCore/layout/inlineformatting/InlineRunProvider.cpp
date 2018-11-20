@@ -37,34 +37,29 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineRunProvider);
 
-InlineRunProvider::InlineRunProvider(InlineFormattingState& inlineFormattingState)
-    : m_inlineFormattingState(inlineFormattingState)
+InlineRunProvider::InlineRunProvider()
 {
 }
 
-void InlineRunProvider::append(const Box& layoutBox)
+void InlineRunProvider::append(const InlineItem& inlineItem)
 {
-    auto inlineItem = std::make_unique<InlineItem>(layoutBox);
-
-    // Special case text item. Texts can overlap multiple items. <span>foo</span><span>bar</span>
-    switch (inlineItem->type()) {
+    switch (inlineItem.type()) {
     case InlineItem::Type::Text:
-        processInlineTextItem(*inlineItem);
+        // Special case text content. They can overlap multiple items. <span>foo</span><span>bar</span>
+        processInlineTextItem(inlineItem);
         break;
     case InlineItem::Type::HardLineBreak:
-        m_inlineRuns.append(InlineRunProvider::Run::createHardLineBreakRun(*inlineItem));
+        m_inlineRuns.append(InlineRunProvider::Run::createHardLineBreakRun(inlineItem));
         break;
     case InlineItem::Type::InlineBox:
-        m_inlineRuns.append(InlineRunProvider::Run::createBoxRun(*inlineItem));
+        m_inlineRuns.append(InlineRunProvider::Run::createBoxRun(inlineItem));
         break;
     case InlineItem::Type::Float:
-        m_inlineRuns.append(InlineRunProvider::Run::createFloatRun(*inlineItem));
+        m_inlineRuns.append(InlineRunProvider::Run::createFloatRun(inlineItem));
         break;
     default:
         ASSERT_NOT_IMPLEMENTED_YET();
     }
-
-    m_inlineFormattingState.inlineContent().add(WTFMove(inlineItem));
 }
 
 void InlineRunProvider::insertBefore(const Box&, const Box&)

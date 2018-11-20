@@ -34,16 +34,14 @@
 namespace WebCore {
 namespace Layout {
 
-class InlineFormattingState;
-
 using ItemPosition = unsigned;
 
 class InlineRunProvider {
     WTF_MAKE_ISO_ALLOCATED(InlineRunProvider);
 public:
-    InlineRunProvider(InlineFormattingState&);
+    InlineRunProvider();
 
-    void append(const Box&);
+    void append(const InlineItem&);
     void insertBefore(const Box&, const Box& before);
     void remove(const Box&);
 
@@ -117,7 +115,6 @@ private:
 
     LazyLineBreakIterator m_lineBreakIterator;
 
-    InlineFormattingState& m_inlineFormattingState;
     Vector<InlineRunProvider::Run> m_inlineRuns;
 };
 

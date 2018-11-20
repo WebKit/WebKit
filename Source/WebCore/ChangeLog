@@ -1,3 +1,20 @@
+2018-11-20  Zalan Bujjtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineRunProvider::append() should just take const InlineItem&.
+        https://bugs.webkit.org/show_bug.cgi?id=191837
+
+        Reviewed by Antti Koivisto.
+
+        This allows us to remove the InlineFormattingState dependency as well.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineRunProvider.cpp:
+        (WebCore::Layout::InlineRunProvider::InlineRunProvider):
+        (WebCore::Layout::InlineRunProvider::append):
+        * layout/inlineformatting/InlineRunProvider.h:
+
 2018-11-20  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer] Enhance debugging by making sure to print the pipeline in MediaPlayerPrivateGStreamer
