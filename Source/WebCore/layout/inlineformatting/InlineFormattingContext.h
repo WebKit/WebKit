@@ -96,6 +96,7 @@ private:
         static WidthAndMargin inlineBlockWidthAndMargin(LayoutState&, const Box&);
         static void alignRuns(TextAlignMode, Line&, IsLastLine);
         static void computeExpansionOpportunities(Line&, const InlineRunProvider::Run&, InlineRunProvider::Run::Type lastRunType);
+        static LayoutUnit runWidth(const InlineContent&, const InlineItem&, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft); 
 
     private:
         static void justifyRuns(Line&);

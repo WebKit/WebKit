@@ -30,47 +30,16 @@
 
 #include "FontCascade.h"
 #include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(TextUtil);
-
-TextUtil::TextUtil(const InlineContent& inlineContent)
-    : m_inlineContent(inlineContent)
-{
-}
-
-LayoutUnit TextUtil::width(const InlineItem& inlineItem, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft) const
-{
-    LayoutUnit width;
-    auto startPosition = from;
-    auto iterator = m_inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineItem);
-    auto inlineItemEnd = m_inlineContent.end();
-    while (length) {
-        ASSERT(iterator != inlineItemEnd);
-        auto& currentInlineItem = **iterator;
-        auto endPosition = std::min<ItemPosition>(startPosition + length, currentInlineItem.textContent().length());
-        auto textWidth = this->textWidth(currentInlineItem, startPosition, endPosition, contentLogicalLeft);
-
-        contentLogicalLeft += textWidth;
-        width += textWidth;
-        length -= (endPosition - startPosition);
-
-        startPosition = 0;
-        ++iterator;
-    }
-
-    return width;
-}
-
-std::optional<ItemPosition> TextUtil::hyphenPositionBefore(const InlineItem&, ItemPosition, unsigned) const
+std::optional<ItemPosition> TextUtil::hyphenPositionBefore(const InlineItem&, ItemPosition, unsigned)
 {
     return std::nullopt;
 }
 
-LayoutUnit TextUtil::textWidth(const InlineItem& inlineTextItem, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft) const
+LayoutUnit TextUtil::width(const InlineItem& inlineTextItem, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft)
 {
     auto& style = inlineTextItem.style();
     auto& font = style.fontCascade();
@@ -78,6 +47,8 @@ LayoutUnit TextUtil::textWidth(const InlineItem& inlineTextItem, ItemPosition fr
         return 0;
 
     auto text = inlineTextItem.textContent();
+    ASSERT(to <= text.length());
+
     if (font.isFixedPitch())
         return fixedPitchWidth(text, style, from, to, contentLogicalLeft);
 
@@ -99,7 +70,7 @@ LayoutUnit TextUtil::textWidth(const InlineItem& inlineTextItem, ItemPosition fr
     return std::max<LayoutUnit>(0, width);
 }
 
-LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft) const
+LayoutUnit TextUtil::fixedPitchWidth(String text, const RenderStyle& style, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft)
 {
     auto& font = style.fontCascade();
     auto monospaceCharacterWidth = font.spaceWidth();

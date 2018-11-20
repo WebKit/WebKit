@@ -28,25 +28,17 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineItem.h"
-#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class TextUtil {
-    WTF_MAKE_ISO_ALLOCATED(TextUtil);
 public:
-    TextUtil(const InlineContent&);
-
-    LayoutUnit width(const InlineItem&, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft) const;
-    std::optional<ItemPosition> hyphenPositionBefore(const InlineItem&, ItemPosition from, unsigned length) const;
+    static LayoutUnit width(const InlineItem&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);
+    static std::optional<ItemPosition> hyphenPositionBefore(const InlineItem&, ItemPosition from, unsigned length);
 
 private:
-    LayoutUnit textWidth(const InlineItem&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft) const;
-    LayoutUnit fixedPitchWidth(String, const RenderStyle&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft) const;
-
-    const InlineContent& m_inlineContent;
+    static LayoutUnit fixedPitchWidth(String, const RenderStyle&, ItemPosition from, ItemPosition to, LayoutUnit contentLogicalLeft);
 };
 
 }

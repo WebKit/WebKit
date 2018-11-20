@@ -1,5 +1,39 @@
 2018-11-20  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Measure run with non-breakable start/end.
+        https://bugs.webkit.org/show_bug.cgi?id=191850
+
+        Reviewed by Antti Koivisto.
+
+        Line breaking needs to know the complete width of the run including padding etc.
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::collectFlowBoxSubtree):
+        (WebCore::Layout::collectInlineBoxes):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::runWidth):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::InlineLineBreaker):
+        (WebCore::Layout::InlineLineBreaker::runWidth const):
+        (WebCore::Layout::InlineLineBreaker::textWidth const):
+        * layout/inlineformatting/InlineLineBreaker.h:
+        * layout/inlineformatting/text/TextUtil.cpp:
+        (WebCore::Layout::TextUtil::hyphenPositionBefore):
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::fixedPitchWidth):
+        (WebCore::Layout::TextUtil::TextUtil): Deleted.
+        (WebCore::Layout::TextUtil::width const): Deleted.
+        (WebCore::Layout::TextUtil::hyphenPositionBefore const): Deleted.
+        (WebCore::Layout::TextUtil::textWidth const): Deleted.
+        (WebCore::Layout::TextUtil::fixedPitchWidth const): Deleted.
+        * layout/inlineformatting/text/TextUtil.h:
+
+2018-11-20  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] InlineFormattingContext::Line should hold the list of runs for the current line.
         https://bugs.webkit.org/show_bug.cgi?id=191845
 

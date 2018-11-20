@@ -38,6 +38,7 @@
 #include "LayoutInlineBox.h"
 #include "LayoutInlineContainer.h"
 #include "Logging.h"
+#include "Textutil.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -138,11 +139,9 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     // 2. either find an inline item that needs a dedicated run or we reach the end of the run
     // 3. Create dedicate inline runs.
     auto& inlineContent = inlineFormattingState().inlineContent();
-    auto textUtil = TextUtil { inlineContent };
 
     auto split=[&](const auto& inlineItem, auto startPosition, auto length, auto contentStart) {
-        auto width = textUtil.width(inlineItem, startPosition, length, contentStart);
-
+        auto width = Geometry::runWidth(inlineContent, inlineItem, startPosition, length, contentStart);
         auto run = InlineRun { { inlineRun.logicalTop(), contentStart, width, inlineRun.height() }, inlineItem };
         run.setTextContext({ startPosition, length });
         splitRuns.append(run);

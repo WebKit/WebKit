@@ -31,6 +31,7 @@
 #include "FontCascade.h"
 #include "Hyphenation.h"
 #include "InlineRunProvider.h"
+#include "TextUtil.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineLineBreaker);
 
 InlineLineBreaker::InlineLineBreaker(const LayoutState& layoutState, const InlineContent& inlineContent, const Vector<InlineRunProvider::Run>& inlineRuns)
     : m_layoutState(layoutState)
-    , m_textUtil(inlineContent)
+    , m_inlineContent(inlineContent)
     , m_inlineRuns(inlineRuns)
 {
 }
@@ -139,16 +140,47 @@ LayoutUnit InlineLineBreaker::runWidth(const InlineRunProvider::Run& inlineRun, 
 {
     ASSERT(!inlineRun.isLineBreak());
 
-    if (inlineRun.isText()) {
-        auto textContext = inlineRun.textContext();
-        return m_textUtil.width(inlineRun.inlineItem(), textContext->start(), textContext->isCollapsed() ? 1 : textContext->length(), contentLogicalLeft);
-    }
+    if (inlineRun.isText())
+        return textWidth(inlineRun, contentLogicalLeft);
 
     ASSERT(inlineRun.isBox() || inlineRun.isFloat());
-    auto& layoutBox = inlineRun.inlineItem().layoutBox();
+    auto& inlineItem = inlineRun.inlineItem();
+    auto& layoutBox = inlineItem.layoutBox();
     ASSERT(m_layoutState.hasDisplayBox(layoutBox));
     auto& displayBox = m_layoutState.displayBoxForLayoutBox(layoutBox);
-    return displayBox.width();
+    return inlineItem.nonBreakableStart() + displayBox.width() + inlineItem.nonBreakableEnd();
+}
+
+LayoutUnit InlineLineBreaker::textWidth(const InlineRunProvider::Run& inlineRun, LayoutUnit contentLogicalLeft) const
+{
+    // FIXME: Find a way to merge this and InlineFormattingContext::Geometry::runWidth.
+    auto& inlineItem = inlineRun.inlineItem();
+    auto textContext = inlineRun.textContext();
+    auto startPosition = textContext->start();
+    auto length = textContext->isCollapsed() ? 1 : textContext->length();
+
+    // FIXME: It does not do proper kerning/ligature handling.
+    LayoutUnit width;
+    auto iterator = m_inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineItem);
+    auto inlineItemEnd = m_inlineContent.end();
+    while (length) {
+        ASSERT(iterator != inlineItemEnd);
+        auto& currentInlineItem = **iterator;
+        auto inlineItemLength = currentInlineItem.textContent().length();
+        auto endPosition = std::min<ItemPosition>(startPosition + length, inlineItemLength);
+        auto textWidth = TextUtil::width(currentInlineItem, startPosition, endPosition, contentLogicalLeft);
+
+        auto nonBreakableStart = !startPosition ? currentInlineItem.nonBreakableStart() : LayoutUnit();
+        auto nonBreakableEnd =  endPosition == inlineItemLength ? currentInlineItem.nonBreakableEnd() : LayoutUnit();
+        auto contentWidth = nonBreakableStart + textWidth + nonBreakableEnd;
+        contentLogicalLeft += contentWidth;
+        width += contentWidth;
+        length -= (endPosition - startPosition);
+
+        startPosition = 0;
+        ++iterator;
+    }
+    return width;
 }
 
 InlineLineBreaker::Run InlineLineBreaker::splitRun(const InlineRunProvider::Run& inlineRun, LayoutUnit, LayoutUnit, bool)

@@ -28,7 +28,6 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineRunProvider.h"
-#include "TextUtil.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -53,10 +52,11 @@ private:
     bool isAtContentEnd() const;
     Run splitRun(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool lineIsEmpty);
     LayoutUnit runWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
+    LayoutUnit textWidth(const InlineRunProvider::Run&, LayoutUnit contentLogicalLeft) const;
     std::optional<ItemPosition> adjustSplitPositionWithHyphenation(const InlineRunProvider::Run&, ItemPosition splitPosition, LayoutUnit contentLogicalLeft, LayoutUnit availableWidth, bool isLineEmpty) const;
 
     const LayoutState& m_layoutState;
-    const TextUtil m_textUtil;
+    const InlineContent& m_inlineContent;
     const Vector<InlineRunProvider::Run>& m_inlineRuns;
 
     unsigned m_currentRunIndex { 0 };

@@ -33,6 +33,7 @@
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutFormattingState.h"
+#include "TextUtil.h"
 
 namespace WebCore {
 namespace Layout {
@@ -173,6 +174,28 @@ void InlineFormattingContext::Geometry::alignRuns(TextAlignMode textAlign, Line&
     auto delta = adjustedLogicalLeft - lineLogicalLeft;
     for (auto& inlineRun : line.runs())
         inlineRun.setLogicalLeft(inlineRun.logicalLeft() + delta);
+}
+
+LayoutUnit InlineFormattingContext::Geometry::runWidth(const InlineContent& inlineContent, const InlineItem& inlineItem, ItemPosition from, unsigned length, LayoutUnit contentLogicalLeft) 
+{
+    LayoutUnit width;
+    auto startPosition = from;
+    auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineItem);
+    auto inlineItemEnd = inlineContent.end();
+    while (length) {
+        ASSERT(iterator != inlineItemEnd);
+        auto& currentInlineItem = **iterator;
+        auto endPosition = std::min<ItemPosition>(startPosition + length, currentInlineItem.textContent().length());
+        auto textWidth = TextUtil::width(currentInlineItem, startPosition, endPosition, contentLogicalLeft);
+
+        contentLogicalLeft += textWidth;
+        width += textWidth;
+        length -= (endPosition - startPosition);
+
+        startPosition = 0;
+        ++iterator;
+    }
+    return width;
 }
 
 }

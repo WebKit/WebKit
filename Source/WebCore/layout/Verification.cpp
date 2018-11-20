@@ -95,6 +95,31 @@ static bool checkForMatchingTextRuns(const InlineRun& inlineRun, float logicalLe
     return areEssentiallyEqual(logicalLeft, inlineRun.logicalLeft()) && areEssentiallyEqual(logicalRight, inlineRun.logicalRight()) && start == inlineRun.textContext()->start() && (end == (inlineRun.textContext()->start() + inlineRun.textContext()->length()));
 }
 
+static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
+{
+    auto* inlineBox = flowbox.firstLeafChild();
+    auto* lastLeafChild = flowbox.lastLeafChild();
+    while (inlineBox) {
+        inlineBoxes.append(inlineBox);
+        if (inlineBox == lastLeafChild)
+            break;
+        inlineBox = inlineBox->nextLeafChild();
+    }
+}
+
+static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::InlineBox*>& inlineBoxes)
+{
+    for (auto* rootLine = root.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
+        for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
+            if (!is<InlineFlowBox>(inlineBox)) {
+                inlineBoxes.append(inlineBox);
+                continue;
+            }
+            collectFlowBoxSubtree(downcast<InlineFlowBox>(*inlineBox), inlineBoxes);
+        }
+    }
+}
+
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
@@ -103,10 +128,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
 
     // Collect inlineboxes.
     Vector<WebCore::InlineBox*> inlineBoxes;
-    for (auto* rootLine = blockFlow.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
-        for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine())
-            inlineBoxes.append(inlineBox);
-    }
+    collectInlineBoxes(blockFlow, inlineBoxes);
 
     auto mismatched = false;
     unsigned runIndex = 0;
