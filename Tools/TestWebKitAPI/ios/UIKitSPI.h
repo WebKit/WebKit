@@ -92,14 +92,14 @@ WTF_EXTERN_C_END
 @interface UIKeyboard : UIView
 @end
 
+@interface UICalloutBar : UIView
++ (UICalloutBar *)sharedCalloutBar;
+@end
+
 #endif
 
 @protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
 - (NSDictionary *)_autofillContext;
-@end
-
-@interface UICalloutBar : UIView
-+ (UICalloutBar *)sharedCalloutBar;
 @end
 
 #if ENABLE(DRAG_SUPPORT)

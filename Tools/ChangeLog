@@ -1,3 +1,12 @@
+2018-11-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS debug build after r238380
+
+        UICalloutBar should only be declared when the public (non-internal) SDK is used to build WebKit; otherwise, we
+        end up with duplicate declarations of UICalloutBar.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2018-11-19  David Quesada  <david_quesada@apple.com>
 
         EXC_BAD_ACCESS when invoking a DownloadProxy's destination decision handler after the download has been canceled
