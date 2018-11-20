@@ -783,36 +783,36 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto* globalObject = exec->lexicalGlobalObject();
 
     auto* promise = JSPromiseDeferred::create(exec, globalObject);
-    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto reject = [&] (JSValue rejectionReason) {
+        catchScope.clearException();
+        promise->reject(exec, rejectionReason);
+        catchScope.clearException();
+        return JSValue::encode(promise->promise());
+    };
 
     auto sourceOrigin = exec->callerSourceOrigin();
     RELEASE_ASSERT(exec->argumentCount() == 1);
     auto* specifier = exec->uncheckedArgument(0).toString(exec);
-    if (Exception* exception = catchScope.exception()) {
-        catchScope.clearException();
-        promise->reject(exec, exception->value());
-        CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
-        return JSValue::encode(promise->promise());
-    }
+    if (Exception* exception = catchScope.exception())
+        return reject(exception->value());
 
     // We always specify parameters as undefined. Once dynamic import() starts accepting fetching parameters,
     // we should retrieve this from the arguments.
     JSValue parameters = jsUndefined();
     auto* internalPromise = globalObject->moduleLoader()->importModule(exec, specifier, parameters, sourceOrigin);
-    if (Exception* exception = catchScope.exception()) {
-        catchScope.clearException();
-        promise->reject(exec, exception->value());
-        CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
-        return JSValue::encode(promise->promise());
-    }
+    if (Exception* exception = catchScope.exception())
+        return reject(exception->value());
     promise->resolve(exec, internalPromise);
-    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
 
+    catchScope.clearException();
     return JSValue::encode(promise->promise());
 }
 

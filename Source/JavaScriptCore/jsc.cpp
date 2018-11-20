@@ -801,29 +801,34 @@ static String absolutePath(const String& fileName)
 JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSString* moduleNameValue, JSValue parameters, const SourceOrigin& sourceOrigin)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto rejectPromise = [&] (JSValue error) {
-        return JSInternalPromiseDeferred::create(exec, globalObject)->reject(exec, error);
+    auto* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto reject = [&] (JSValue rejectionReason) {
+        catchScope.clearException();
+        auto result = deferred->reject(exec, rejectionReason);
+        catchScope.clearException();
+        return result;
     };
 
     if (sourceOrigin.isNull())
-        return rejectPromise(createError(exec, "Could not resolve the module specifier."_s));
+        return reject(createError(exec, "Could not resolve the module specifier."_s));
 
     auto referrer = sourceOrigin.string();
     auto moduleName = moduleNameValue->value(exec);
-    if (UNLIKELY(scope.exception())) {
-        JSValue exception = scope.exception();
-        scope.clearException();
-        return rejectPromise(exception);
-    }
+    if (UNLIKELY(catchScope.exception()))
+        return reject(catchScope.exception());
 
     auto directoryName = extractDirectoryName(referrer.impl());
     if (!directoryName)
-        return rejectPromise(createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
+        return reject(createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
 
     auto result = JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), parameters, jsUndefined());
-    scope.releaseAssertNoException();
+    if (UNLIKELY(catchScope.exception()))
+        return reject(catchScope.exception());
     return result;
 }
 
@@ -991,36 +996,46 @@ static bool fetchModuleFromLocalFileSystem(const String& fileName, Vector& buffe
 JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue key, JSValue, JSValue)
 {
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto reject = [&] (JSValue rejectionReason) {
+        catchScope.clearException();
+        auto result = deferred->reject(exec, rejectionReason);
+        catchScope.clearException();
+        return result;
+    };
+
     String moduleKey = key.toWTFString(exec);
-    if (UNLIKELY(scope.exception())) {
-        JSValue exception = scope.exception();
-        scope.clearException();
-        return deferred->reject(exec, exception);
-    }
+    if (UNLIKELY(catchScope.exception()))
+        return reject(catchScope.exception());
 
     // Here, now we consider moduleKey as the fileName.
     Vector<uint8_t> buffer;
-    if (!fetchModuleFromLocalFileSystem(moduleKey, buffer)) {
-        auto result = deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
-        scope.releaseAssertNoException();
-        return result;
-    }
+    if (!fetchModuleFromLocalFileSystem(moduleKey, buffer))
+        return reject(createError(exec, makeString("Could not open file '", moduleKey, "'.")));
 
 #if ENABLE(WEBASSEMBLY)
     // FileSystem does not have mime-type header. The JSC shell recognizes WebAssembly's magic header.
     if (buffer.size() >= 4) {
         if (buffer[0] == '\0' && buffer[1] == 'a' && buffer[2] == 's' && buffer[3] == 'm') {
-            auto result = deferred->resolve(exec, JSSourceCode::create(vm, SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleKey }, moduleKey))));
-            scope.releaseAssertNoException();
+            auto source = SourceCode(WebAssemblySourceProvider::create(WTFMove(buffer), SourceOrigin { moduleKey }, moduleKey));
+            catchScope.releaseAssertNoException();
+            auto sourceCode = JSSourceCode::create(vm, WTFMove(source));
+            catchScope.releaseAssertNoException();
+            auto result = deferred->resolve(exec, sourceCode);
+            catchScope.clearException();
             return result;
         }
     }
 #endif
 
-    auto result = deferred->resolve(exec, JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module)));
-    scope.releaseAssertNoException();
+    auto sourceCode = JSSourceCode::create(vm, makeSource(stringFromUTF(buffer), SourceOrigin { moduleKey }, moduleKey, TextPosition(), SourceProviderSourceType::Module));
+    catchScope.releaseAssertNoException();
+    auto result = deferred->resolve(exec, sourceCode);
+    catchScope.clearException();
     return result;
 }
 

@@ -1,3 +1,13 @@
+2018-11-19  Mark Lam  <mark.lam@apple.com>
+
+        globalFuncImportModule() should return a promise when it clears exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=191792
+        <rdar://problem/46090763>
+
+        Reviewed by Michael Saboff.
+
+        * stress/global-import-function-should-return-a-promise-when-clearing-exceptions.js: Added.
+
 2018-11-19  Guillaume Emont  <guijemont@igalia.com>
 
         Skip new memory-hungry tests on memory limited devices

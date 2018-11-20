@@ -1,3 +1,41 @@
+2018-11-19  Mark Lam  <mark.lam@apple.com>
+
+        globalFuncImportModule() should return a promise when it clears exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=191792
+        <rdar://problem/46090763>
+
+        Reviewed by Michael Saboff.
+
+        If we're clearing the exceptions in a CatchScope, then it means that we've handled
+        the exception, and is able to proceed in a normal manner.  Hence, we should not
+        return the empty JSValue in this case: instead, we should return a Promise as
+        expected by import's API.
+
+        The only time when we can't return a promise is when we fail to create a Promise.
+        In that case, we should be propagating the exception.
+
+        Hence, globalFuncImportModule() contains a ThrowScope (for propagating the
+        exception that arises from failure to create the Promise) wrapping a CatchScope
+        (for catching any exception that arises from failure to execute the import).
+
+        Also fixed similar issues, and some exception check issues in JSModuleLoader and
+        the jsc shell.
+
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncImportModule):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::moduleLoaderParseModule):
+        (JSC::moduleLoaderResolveSync):
+
 2018-11-19  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to disable JIT in a WKWebView

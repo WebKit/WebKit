@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All Rights Reserved.
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,7 +158,9 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
+    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return jsCast<JSInternalPromise*>(promise);
 }
 
 JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
@@ -178,7 +180,9 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
+    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return jsCast<JSInternalPromise*>(promise);
 }
 
 JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey, JSValue scriptFetcher)
@@ -217,7 +221,9 @@ JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Id
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
 
-    RELEASE_AND_RETURN(scope, jsCast<JSInternalPromise*>(call(exec, function, callType, callData, this, arguments)));
+    JSValue promise = call(exec, function, callType, callData, this, arguments);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    return jsCast<JSInternalPromise*>(promise);
 }
 
 JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer)
@@ -227,20 +233,25 @@ JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* modul
 
     auto* globalObject = exec->lexicalGlobalObject();
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
-        return globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, exec, this, moduleName, parameters, referrer);
+        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, exec, this, moduleName, parameters, referrer));
 
     auto* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
     auto moduleNameString = moduleName->value(exec);
-    if (UNLIKELY(scope.exception())) {
-        JSValue exception = scope.exception()->value();
-        scope.clearException();
+    if (UNLIKELY(catchScope.exception())) {
+        JSValue exception = catchScope.exception()->value();
+        catchScope.clearException();
         deferred->reject(exec, exception);
+        catchScope.clearException();
         return deferred->promise();
     }
     deferred->reject(exec, createError(exec, makeString("Could not import the module '", moduleNameString, "'.")));
+    catchScope.clearException();
     return deferred->promise();
 }
 
@@ -258,18 +269,23 @@ Identifier JSModuleLoader::resolveSync(ExecState* exec, JSValue name, JSValue re
 JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue scriptFetcher)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
-    scope.releaseAssertNoException();
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
     const Identifier moduleKey = resolveSync(exec, name, referrer, scriptFetcher);
-    if (UNLIKELY(scope.exception())) {
-        JSValue exception = scope.exception();
-        scope.clearException();
-        return deferred->reject(exec, exception);
+    if (UNLIKELY(catchScope.exception())) {
+        JSValue exception = catchScope.exception();
+        catchScope.clearException();
+        auto result = deferred->reject(exec, exception);
+        catchScope.clearException();
+        return result;
     }
     auto result = deferred->resolve(exec, identifierToJSValue(vm, moduleKey));
-    scope.releaseAssertNoException();
+    catchScope.clearException();
     return result;
 }
 
@@ -280,18 +296,26 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue p
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
-        return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, parameters, scriptFetcher);
+        RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, parameters, scriptFetcher));
+
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    RETURN_IF_EXCEPTION(throwScope, nullptr);
+
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
     String moduleKey = key.toWTFString(exec);
-    if (UNLIKELY(scope.exception())) {
-        JSValue exception = scope.exception()->value();
-        scope.clearException();
+    if (UNLIKELY(catchScope.exception())) {
+        JSValue exception = catchScope.exception()->value();
+        catchScope.clearException();
         deferred->reject(exec, exception);
+        catchScope.clearException();
         return deferred->promise();
     }
     deferred->reject(exec, createError(exec, makeString("Could not open the module '", moduleKey, "'.")));
+    catchScope.clearException();
     return deferred->promise();
 }
 
@@ -336,22 +360,22 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exe
 EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
-    scope.releaseAssertNoException();
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    auto reject = [&] {
-        JSValue exception = scope.exception();
-        scope.clearException();
-        auto result = deferred->reject(exec, exception);
-        scope.releaseAssertNoException();
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+    auto reject = [&] (JSValue rejectionReason) {
+        catchScope.clearException();
+        auto result = deferred->reject(exec, rejectionReason);
+        catchScope.clearException();
         return JSValue::encode(result);
     };
 
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
-    if (UNLIKELY(scope.exception()))
-        return reject();
+    if (UNLIKELY(catchScope.exception()))
+        return reject(catchScope.exception());
 
     JSValue source = exec->argument(1);
     auto* jsSourceCode = jsCast<JSSourceCode*>(source);
@@ -368,19 +392,16 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(ExecState* exec)
     std::unique_ptr<ModuleProgramNode> moduleProgramNode = parse<ModuleProgramNode>(
         &vm, sourceCode, Identifier(), JSParserBuiltinMode::NotBuiltin,
         JSParserStrictMode::Strict, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, SuperBinding::NotNeeded, error);
-    if (error.isValid()) {
-        auto result = deferred->reject(exec, error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
-        scope.releaseAssertNoException();
-        return JSValue::encode(result);
-    }
+    if (error.isValid())
+        return reject(error.toErrorObject(exec->lexicalGlobalObject(), sourceCode));
     ASSERT(moduleProgramNode);
 
     ModuleAnalyzer moduleAnalyzer(exec, moduleKey, sourceCode, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
-    if (UNLIKELY(scope.exception()))
-        return reject();
+    if (UNLIKELY(catchScope.exception()))
+        return reject(catchScope.exception());
 
     auto result = deferred->resolve(exec, moduleAnalyzer.analyze(*moduleProgramNode));
-    scope.releaseAssertNoException();
+    catchScope.clearException();
     return JSValue::encode(result);
 }
 
@@ -437,7 +458,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderResolve(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL moduleLoaderResolveSync(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSModuleLoader* loader = jsDynamicCast<JSModuleLoader*>(vm, exec->thisValue());
     if (!loader)
