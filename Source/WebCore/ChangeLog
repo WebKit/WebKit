@@ -1,3 +1,22 @@
+2018-11-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Segfaults on https://terminalizer.com/
+        https://bugs.webkit.org/show_bug.cgi?id=191805
+
+        Reviewed by Michael Catanzaro.
+
+        In HarfBuzzFace, the CacheEntry's HashMap object that caches Unicode
+        codepoints and their corresponding glyph indices should allow zero
+        values as valid keys since zero is a valid Unicode codepoint.
+
+        This change enables properly caching zero codepoints, avoiding
+        repetitive additions to the HashMap cache that end up in a crash.
+
+        * platform/graphics/harfbuzz/HarfBuzzFace.h: Move the elongated
+        GlyphCache type alias to the public section of HarfBuzzFace class
+        declaration, making it reusable in the helper HarfBuzzFontData struct.
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+
 2018-11-20  Antti Koivisto  <antti@apple.com>
 
         Update hover state in composed tree

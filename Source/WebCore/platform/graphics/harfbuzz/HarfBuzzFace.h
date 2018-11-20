@@ -57,11 +57,10 @@ public:
 
     void setScriptForVerticalGlyphSubstitution(hb_buffer_t*);
 
+    using GlyphCache = HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 private:
     class CacheEntry : public RefCounted<CacheEntry> {
     public:
-        using GlyphCache = HashMap<uint32_t, uint32_t>;
-
         static Ref<CacheEntry> create(hb_face_t* face)
         {
             return adoptRef(*new CacheEntry(face));
