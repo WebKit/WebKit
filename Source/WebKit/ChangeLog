@@ -1,5 +1,19 @@
 2018-11-20  Don Olmstead  <don.olmstead@sony.com>
 
+        WebPasteboard should USE(LIBWPE)
+        https://bugs.webkit.org/show_bug.cgi?id=191846
+
+        Reviewed by Michael Catanzaro.
+
+        Add USE(LIBWPE) for Pasteboard related functionality within WebKit.
+
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
+2018-11-20  Don Olmstead  <don.olmstead@sony.com>
+
         [WPE] Fix some feature guards in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=191847
 

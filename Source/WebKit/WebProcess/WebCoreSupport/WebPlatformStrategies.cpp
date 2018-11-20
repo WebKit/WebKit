@@ -399,7 +399,7 @@ Ref<SelectionData> WebPlatformStrategies::readFromClipboard(const String& pasteb
 
 #endif // PLATFORM(GTK)
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
 // PasteboardStrategy
 
 void WebPlatformStrategies::getTypes(Vector<String>& types)
@@ -424,7 +424,7 @@ void WebPlatformStrategies::writeToPasteboard(const String& pasteboardType, cons
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteStringToPasteboard(pasteboardType, text), 0);
 }
 
-#endif // PLATFORM(WPE)
+#endif // USE(LIBWPE)
 
 Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName, const String& origin)
 {

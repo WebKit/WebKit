@@ -113,7 +113,7 @@ private:
     WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif // PLATFORM(GTK)
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     void getPasteboardTypes(Vector<String>& pasteboardTypes);
     void readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String&);
     void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);

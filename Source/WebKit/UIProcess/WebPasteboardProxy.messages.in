@@ -65,7 +65,7 @@ messages -> WebPasteboardProxy {
     ReadFromClipboard(String pasteboardName) -> (struct WebKit::WebSelectionData pasteboardContent) LegacySync
 #endif
 
-#if PLATFORM(WPE)
+#if USE(LIBWPE)
     GetPasteboardTypes() -> (Vector<String> types) LegacySync
     ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string) LegacySync
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content) LegacySync
