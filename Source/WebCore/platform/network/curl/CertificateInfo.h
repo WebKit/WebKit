@@ -70,16 +70,18 @@ inline bool operator==(const CertificateInfo& a, const CertificateInfo& b)
 namespace WTF {
 namespace Persistence {
 
-void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
-{
-    notImplemented();
-}
+template<> struct Coder<WebCore::CertificateInfo> {
+    static void encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
+    {
+        notImplemented();
+    }
 
-bool Coder<WebCore::CertificateInfo>::decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
-{
-    notImplemented();
-    return false;
-}
+    static bool decode(Decoder& decoder, WebCore::CertificateInfo& certificateInfo)
+    {
+        notImplemented();
+        return false;
+    }
+};
 
 } // namespace WTF::Persistence
 } // namespace WTF

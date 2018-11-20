@@ -1,3 +1,16 @@
+2018-11-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r238350) [curl] CertificateInfo.h: error: template specialization requires 'template<>'
+        https://bugs.webkit.org/show_bug.cgi?id=191849
+
+        Unreviewed build fix for clang-cl builds.
+
+        No new tests because there's no behaviour change.
+
+        * platform/network/curl/CertificateInfo.h:
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+
 2018-11-19  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Add API for CertificateInfo.
