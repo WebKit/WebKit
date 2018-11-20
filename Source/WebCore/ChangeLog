@@ -1,3 +1,24 @@
+2018-11-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Consider scrollbars in populateGridPositionsForDirection()
+        https://bugs.webkit.org/show_bug.cgi?id=191656
+
+        Reviewed by Javier Fernandez.
+
+        We never care about scrollbars in RenderGrid::populateGridPositionsForDirection(),
+        that's fine if the scrollbars are at the end (e.g. on the right in horizontal writing mode and LTR direction)
+        but it causes problems when they're at the beginning (e.g. on the left in horizontal writing mode and RTL direction).
+
+        The patch modifies the method so it takes into account scrollbar size
+        in order to compute the position of the columns/rows depending on the direction and the writing mode.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html
+               imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+
 2018-11-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Click on node assigned to slot in button's shadow cause loss of button focus

@@ -1,3 +1,20 @@
+2018-11-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Consider scrollbars in populateGridPositionsForDirection()
+        https://bugs.webkit.org/show_bug.cgi?id=191656
+
+        Reviewed by Javier Fernandez.
+
+        Imported tests from WPT.
+
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001-expected.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+
 2018-11-19  Rob Buis  <rbuis@igalia.com>
 
         Setting document.title should have no effect for non SVG/HTML documents
