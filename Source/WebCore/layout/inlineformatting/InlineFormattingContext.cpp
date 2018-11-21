@@ -462,6 +462,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
     auto padding = Geometry::computedPadding(layoutState(), root);
+    auto border = Geometry::computedBorder(layoutState(), root);
     // Setup breaking boundaries for this subtree.
     auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
     // Empty container?
@@ -469,17 +470,15 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         return;
 
     auto rootBreaksAtStart = [&] {
-        // FIXME: add padding-inline-start, margin-inline-start etc.
-        if (padding && padding->horizontal.left)
-            return true;
-        return root.isPositioned();
+        if (&root == &(this->root()))
+            return false;
+        return (padding && padding->horizontal.left) || border.horizontal.left || root.isPositioned();
     };
 
     auto rootBreaksAtEnd = [&] {
-        // FIXME: add padding-inline-end, margin-inline-end etc.
-        if (padding && padding->horizontal.right)
-            return true;
-        return root.isPositioned();
+        if (&root == &(this->root()))
+            return false;
+        return (padding && padding->horizontal.right) || border.horizontal.right || root.isPositioned();
     };
 
     if (rootBreaksAtStart()) {
@@ -494,14 +493,16 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
         ASSERT(firstDescendantInlineBox);
         firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
-        if (padding && padding->horizontal.left)
+        if (padding)
             firstDescendantInlineBox->addNonBreakableStart(padding->horizontal.left);
+        firstDescendantInlineBox->addNonBreakableStart(border.horizontal.left);
     }
 
     if (rootBreaksAtEnd()) {
         lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
-        if (padding && padding->horizontal.right)
+        if (padding)
             lastDescendantInlineBox->addNonBreakableEnd(padding->horizontal.right);
+        lastDescendantInlineBox->addNonBreakableEnd(border.horizontal.right);
     }
 }
 

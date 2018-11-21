@@ -1,5 +1,14 @@
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Border should be considered as non-breakable space
+        https://bugs.webkit.org/show_bug.cgi?id=191891
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
+2018-11-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Take nonBreakableStart/End into use.
         https://bugs.webkit.org/show_bug.cgi?id=191873
 
