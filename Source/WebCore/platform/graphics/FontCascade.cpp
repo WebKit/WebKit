@@ -1739,8 +1739,11 @@ public:
         , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
         , m_fontData(glyphBuffer.fontAt(m_index))
-        , m_translation(AffineTransform::translation(textOrigin.x(), textOrigin.y()).scale(1, -1))
+        , m_translation(AffineTransform::translation(textOrigin.x(), textOrigin.y()))
     {
+#if USE(CG)
+        m_translation.flipY();
+#endif
     }
 
     bool containsMorePaths() { return m_index != m_glyphBuffer.size(); }

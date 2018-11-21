@@ -1,3 +1,15 @@
+2018-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r237845): [cairo] Hyperlink underscore layout issue
+        https://bugs.webkit.org/show_bug.cgi?id=191630
+
+        Reviewed by Michael Catanzaro.
+
+        Only flip Y in GlyphToPathTranslator for ports using CG.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::GlyphToPathTranslator::GlyphToPathTranslator):
+
 2018-11-21  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Refactor AppendPipeline deinitialization
