@@ -45,29 +45,25 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState()
+LayoutState::LayoutState(const Container& initialContainingBlock, const LayoutSize& containerSize)
+    : m_initialContainingBlock(makeWeakPtr(initialContainingBlock))
 {
-}
+    // LayoutState is always initiated with the ICB.
+    ASSERT(!initialContainingBlock.parent());
+    ASSERT(initialContainingBlock.establishesBlockFormattingContext());
 
-void LayoutState::initializeRoot(const Container& root, const LayoutSize& containerSize)
-{
-    ASSERT(root.establishesFormattingContext());
-
-    m_root = makeWeakPtr(root);
-    auto& displayBox = displayBoxForLayoutBox(root);
-
-    // FIXME: m_root could very well be a formatting context root with ancestors and resolvable border and padding (as opposed to the topmost root)
+    auto& displayBox = displayBoxForLayoutBox(initialContainingBlock);
     displayBox.setHorizontalMargin({ });
     displayBox.setHorizontalNonComputedMargin({ });
     displayBox.setVerticalMargin({ });
     displayBox.setVerticalNonCollapsedMargin({ });
     displayBox.setBorder({ });
     displayBox.setPadding({ });
+    displayBox.setTopLeft({ });
     displayBox.setContentBoxHeight(containerSize.height());
     displayBox.setContentBoxWidth(containerSize.width());
-    displayBox.setTopLeft({ });
 
-    m_formattingContextRootListForLayout.add(&root);
+    m_formattingContextRootListForLayout.add(&initialContainingBlock);
 }
 
 void LayoutState::updateLayout()

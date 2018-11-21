@@ -1,5 +1,26 @@
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] LayoutState should always be initialized with the initial containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=191896
+
+        Reviewed by Antti Koivisto.
+
+        There should always be only one LayoutState per layout tree (it does not mean that layout always starts at the ICB).
+        The ICB is a special formatting context root because it does not have a parent formatting context. All the other formatting contexts
+        first need to be laid out (partially at least e.g margin) in their parent formatting context.
+        Having a non-null parent formatting context as root could lead to undefined behaviour.
+
+        * layout/LayoutFormattingState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        (WebCore::Layout::LayoutState::initializeRoot): Deleted.
+        * layout/LayoutFormattingState.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+
+2018-11-21  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Horizontal margins should be considered as non-breakable space
         https://bugs.webkit.org/show_bug.cgi?id=191894
 

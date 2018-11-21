@@ -56,8 +56,7 @@ namespace WebCore {
 static void layoutUsingFormattingContext(const RenderView& renderView)
 {
     auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
-    auto layoutState = std::make_unique<Layout::LayoutState>();
-    layoutState->initializeRoot(*initialContainingBlock, renderView.size());
+    auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock, renderView.size());
     layoutState->setInQuirksMode(renderView.document().inQuirksMode());
     layoutState->updateLayout();
     layoutState->verifyAndOutputMismatchingLayoutTree(renderView);
