@@ -1,3 +1,61 @@
+2018-11-21  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] JSBigInt::createWithLength should throw when length is greater than JSBigInt::maxLength
+        https://bugs.webkit.org/show_bug.cgi?id=190836
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        In this patch we are creating a new method called `JSBigInt::createWithLengthUnchecked`
+        where we allocate a BigInt trusting the length received as argument.
+        With this additional method, we now check if length passed to
+        `JSBigInt::tryCreateWithLength` is not greater than JSBigInt::maxLength.
+        When the length is greater than JSBigInt::maxLength, we then throw OOM
+        exception.
+        This required us to change the interface of some JSBigInt operations to
+        receive `ExecState*` instead of `VM&`. We changed only operations that
+        can throw because of OOM.
+        We beleive that this approach of throwing instead of finishing the
+        execution abruptly is better because JS programs can catch such
+        exception and handle this issue properly.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createZero):
+        (JSC::JSBigInt::tryCreateWithLength):
+        (JSC::JSBigInt::createWithLengthUnchecked):
+        (JSC::JSBigInt::createFrom):
+        (JSC::JSBigInt::multiply):
+        (JSC::JSBigInt::divide):
+        (JSC::JSBigInt::copy):
+        (JSC::JSBigInt::unaryMinus):
+        (JSC::JSBigInt::remainder):
+        (JSC::JSBigInt::add):
+        (JSC::JSBigInt::sub):
+        (JSC::JSBigInt::bitwiseAnd):
+        (JSC::JSBigInt::bitwiseOr):
+        (JSC::JSBigInt::bitwiseXor):
+        (JSC::JSBigInt::absoluteAdd):
+        (JSC::JSBigInt::absoluteSub):
+        (JSC::JSBigInt::absoluteDivWithDigitDivisor):
+        (JSC::JSBigInt::absoluteDivWithBigIntDivisor):
+        (JSC::JSBigInt::absoluteLeftShiftAlwaysCopy):
+        (JSC::JSBigInt::absoluteBitwiseOp):
+        (JSC::JSBigInt::absoluteAddOne):
+        (JSC::JSBigInt::absoluteSubOne):
+        (JSC::JSBigInt::toStringGeneric):
+        (JSC::JSBigInt::rightTrim):
+        (JSC::JSBigInt::allocateFor):
+        (JSC::JSBigInt::createWithLength): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+        * runtime/Operations.h:
+        (JSC::jsSub):
+        (JSC::jsMul):
+
 2018-11-20  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid assertion in VMTraps::SignalSender's SignalAction.
