@@ -1,3 +1,22 @@
+2018-11-20  Dean Jackson  <dino@apple.com>
+
+        Removing using namespace WebCore from WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=191870
+        <rdar://problem/46192206>
+
+        Rubber-stamped by Sam Weinig.
+
+        Remove "using namespace WebCore" from WebLayer.mm
+        because it will cause type clashes in unified source
+        builds.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+        (-[WebSimpleLayer setNeedsDisplay]):
+        (-[WebSimpleLayer setNeedsDisplayInRect:]):
+        (-[WebSimpleLayer display]):
+        (-[WebSimpleLayer drawInContext:]):
+
 2018-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input element gains focus when a selectstart event listener on document prevents the default action
