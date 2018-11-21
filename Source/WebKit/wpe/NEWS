@@ -1,4 +1,14 @@
 =================
+WPE WebKit 2.22.2
+=================
+
+What's new in WPE WebKit 2.22.2?
+
+  - Fix a crash when using Cairo versions between 1.15 and 1.16.0
+  - Fix the build with -DLOG_DISABLED=0.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.22.1
 =================
 
