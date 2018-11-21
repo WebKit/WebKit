@@ -1,3 +1,19 @@
+2018-11-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [SOUP] Follow-up robustness improvements to the certificate decoder
+        https://bugs.webkit.org/show_bug.cgi?id=191892
+
+        Reviewed by Michael Catanzaro.
+
+        If at any point the certificate fails to be constructed from
+        the DER data, bail out. Likewise, if the certificate returned
+        is NULL, return false from the decoder to notify the failure
+        to decode it.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WTF::Persistence::certificateFromCertificatesDataList):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Border should be considered as non-breakable space

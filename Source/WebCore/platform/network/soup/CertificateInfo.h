@@ -119,6 +119,8 @@ static GRefPtr<GTlsCertificate> certificateFromCertificatesDataList(const Vector
     for (auto& certificateData : certificatesDataList) {
         certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
             certificateType, nullptr, nullptr, "certificate", certificateData.get(), "issuer", certificate.get(), nullptr)));
+        if (!certificate)
+            break;
     }
 
     return certificate;
@@ -145,7 +147,10 @@ template<> struct Coder<WebCore::CertificateInfo> {
 
         if (certificatesDataList.isEmpty())
             return true;
-        certificateInfo.setCertificate(certificateFromCertificatesDataList(certificatesDataList).get());
+        auto certificate = certificateFromCertificatesDataList(certificatesDataList);
+        if (!certificate)
+            return false;
+        certificateInfo.setCertificate(certificate.get());
 
         uint32_t tlsErrors;
         if (!decoder.decode(tlsErrors))
