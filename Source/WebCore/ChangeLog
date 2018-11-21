@@ -1,3 +1,273 @@
+2018-11-20  Dean Jackson  <dino@apple.com>
+
+        Move WebGPU platform code to platform/graphics/gpu
+        https://bugs.webkit.org/show_bug.cgi?id=191867
+        <rdar://problem/46190993>
+
+        Reviewed by Antoine Quint.
+
+        The underlying implementation of WebGPU doesn't need to live in
+        Modules, since it technically could be used by other parts of the system. It
+        makes more sense for it to be in platform/graphics/gpu.
+
+        Move...
+        - Modules/webgpu/GPU* -> platform/graphics/gpu
+        - Modules/webgpu/cocoa -> platform/graphics/gpu/cocoa
+        - platform/graphics/gpu/GPULegacy* -> platform/graphics/gpu/legacy/
+        - platform/graphics/gpu/cocoa/GPULegacy* -> platform/graphics/gpu/legacy/cocoa
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUCommandBuffer.h: Renamed from Source/WebCore/Modules/webgpu/GPUCommandBuffer.h.
+        * platform/graphics/gpu/GPUDevice.cpp: Renamed from Source/WebCore/Modules/webgpu/GPUDevice.cpp.
+        (WebCore::GPUDevice::createShaderModule const):
+        (WebCore::GPUDevice::createRenderPipeline const):
+        (WebCore::GPUDevice::createCommandBuffer):
+        (WebCore::GPUDevice::getQueue):
+        * platform/graphics/gpu/GPUDevice.h: Renamed from Source/WebCore/Modules/webgpu/GPUDevice.h.
+        (WebCore::GPUDevice::platformDevice const):
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h: Renamed from Source/WebCore/Modules/webgpu/GPUPipelineDescriptorBase.h.
+        * platform/graphics/gpu/GPUPipelineStageDescriptor.h: Renamed from Source/WebCore/Modules/webgpu/GPUPipelineStageDescriptor.h.
+        * platform/graphics/gpu/GPUQueue.h: Renamed from Source/WebCore/Modules/webgpu/GPUQueue.h.
+        (WebCore::GPUQueue::platformQueue const):
+        * platform/graphics/gpu/GPURenderPipeline.h: Renamed from Source/WebCore/Modules/webgpu/GPURenderPipeline.h.
+        (WebCore::GPURenderPipeline::platformRenderPipeline const):
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Renamed from Source/WebCore/Modules/webgpu/GPURenderPipelineDescriptor.h.
+        * platform/graphics/gpu/GPUShaderModule.h: Renamed from Source/WebCore/Modules/webgpu/GPUShaderModule.h.
+        (WebCore::GPUShaderModule::platformShaderModule const):
+        * platform/graphics/gpu/GPUShaderModuleDescriptor.h: Renamed from Source/WebCore/Modules/webgpu/GPUShaderModuleDescriptor.h.
+        * platform/graphics/gpu/GPUSwapChain.h: Renamed from Source/WebCore/Modules/webgpu/GPUSwapChain.h.
+        (WebCore::GPUSwapChain::platformLayer const):
+        * platform/graphics/gpu/GPUTexture.h: Renamed from Source/WebCore/Modules/webgpu/GPUTexture.h.
+        * platform/graphics/gpu/GPUTextureFormatEnum.h: Renamed from Source/WebCore/Modules/webgpu/GPUTextureFormatEnum.h.
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUCommandBufferMetal.mm.
+        (WebCore::GPUCommandBuffer::create):
+        (WebCore::GPUCommandBuffer::GPUCommandBuffer):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUDeviceMetal.mm.
+        (WebCore::GPUDevice::create):
+        (WebCore::GPUDevice::GPUDevice):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUQueueMetal.mm.
+        (WebCore::GPUQueue::create):
+        (WebCore::GPUQueue::GPUQueue):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPURenderPipelineMetal.mm.
+        (WebCore::setFunctionsForPipelineDescriptor):
+        (WebCore::GPURenderPipeline::create):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUShaderModuleMetal.mm.
+        (WebCore::GPUShaderModule::create):
+        (WebCore::GPUShaderModule::GPUShaderModule):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUSwapChainMetal.mm.
+        (WebCore::GPUSwapChain::create):
+        (WebCore::GPUSwapChain::GPUSwapChain):
+        (WebCore::GPUSwapChain::setDevice):
+        (WebCore::platformTextureFormatForGPUTextureFormat):
+        (WebCore::GPUSwapChain::setFormat):
+        (WebCore::GPUSwapChain::reshape):
+        (WebCore::GPUSwapChain::getNextTexture):
+        (WebCore::GPUSwapChain::present):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm: Renamed from Source/WebCore/Modules/webgpu/cocoa/GPUTextureMetal.mm.
+        (WebCore::GPUTexture::create):
+        (WebCore::GPUTexture::GPUTexture):
+        (WebCore::GPUTexture::createDefaultTextureView):
+        * platform/graphics/gpu/legacy/GPULegacyBuffer.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyBuffer.cpp.
+        (WebCore::GPULegacyBuffer::~GPULegacyBuffer):
+        (WebCore::GPULegacyBuffer::length const):
+        * platform/graphics/gpu/legacy/GPULegacyBuffer.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyBuffer.h.
+        (WebCore::GPULegacyBuffer::contents const):
+        (WebCore::GPULegacyBuffer::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyCommandBuffer.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyCommandBuffer.cpp.
+        (WebCore::GPULegacyCommandBuffer::~GPULegacyCommandBuffer):
+        * platform/graphics/gpu/legacy/GPULegacyCommandBuffer.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyCommandBuffer.h.
+        (WebCore::GPULegacyCommandBuffer::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyCommandQueue.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyCommandQueue.cpp.
+        (WebCore::GPULegacyCommandQueue::~GPULegacyCommandQueue):
+        * platform/graphics/gpu/legacy/GPULegacyCommandQueue.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyCommandQueue.h.
+        (WebCore::GPULegacyCommandQueue::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyComputeCommandEncoder.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyComputeCommandEncoder.cpp.
+        (WebCore::GPULegacyComputeCommandEncoder::~GPULegacyComputeCommandEncoder):
+        * platform/graphics/gpu/legacy/GPULegacyComputeCommandEncoder.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyComputeCommandEncoder.h.
+        * platform/graphics/gpu/legacy/GPULegacyComputePipelineState.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyComputePipelineState.cpp.
+        (WebCore::GPULegacyComputePipelineState::~GPULegacyComputePipelineState):
+        * platform/graphics/gpu/legacy/GPULegacyComputePipelineState.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyComputePipelineState.h.
+        (WebCore::GPULegacyComputePipelineState::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDepthStencilDescriptor.cpp.
+        (WebCore::GPULegacyDepthStencilDescriptor::~GPULegacyDepthStencilDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDepthStencilDescriptor.h.
+        (WebCore::GPULegacyDepthStencilDescriptor::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilState.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDepthStencilState.cpp.
+        (WebCore::GPULegacyDepthStencilState::~GPULegacyDepthStencilState):
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilState.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDepthStencilState.h.
+        (WebCore::GPULegacyDepthStencilState::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyDevice.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDevice.cpp.
+        (WebCore::GPULegacyDevice::~GPULegacyDevice):
+        * platform/graphics/gpu/legacy/GPULegacyDevice.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDevice.h.
+        (WebCore::GPULegacyDevice::layer const):
+        (WebCore::GPULegacyDevice::metal const):
+        (WebCore::GPULegacyDevice::markLayerComposited const):
+        * platform/graphics/gpu/legacy/GPULegacyDrawable.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDrawable.cpp.
+        (WebCore::GPULegacyDrawable::~GPULegacyDrawable):
+        * platform/graphics/gpu/legacy/GPULegacyDrawable.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyDrawable.h.
+        * platform/graphics/gpu/legacy/GPULegacyEnums.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyEnums.h.
+        * platform/graphics/gpu/legacy/GPULegacyFunction.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyFunction.cpp.
+        (WebCore::GPULegacyFunction::~GPULegacyFunction):
+        * platform/graphics/gpu/legacy/GPULegacyFunction.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyFunction.h.
+        (WebCore::GPULegacyFunction::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyLibrary.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyLibrary.cpp.
+        (WebCore::GPULegacyLibrary::~GPULegacyLibrary):
+        * platform/graphics/gpu/legacy/GPULegacyLibrary.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyLibrary.h.
+        (WebCore::GPULegacyLibrary::metal const):
+        * platform/graphics/gpu/legacy/GPULegacyRenderCommandEncoder.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderCommandEncoder.cpp.
+        (WebCore::GPULegacyRenderCommandEncoder::~GPULegacyRenderCommandEncoder):
+        * platform/graphics/gpu/legacy/GPULegacyRenderCommandEncoder.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderCommandEncoder.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassAttachmentDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassAttachmentDescriptor.cpp.
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::~GPULegacyRenderPassAttachmentDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassAttachmentDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassAttachmentDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassColorAttachmentDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassColorAttachmentDescriptor.cpp.
+        (WebCore::GPULegacyRenderPassColorAttachmentDescriptor::~GPULegacyRenderPassColorAttachmentDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassColorAttachmentDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassColorAttachmentDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDepthAttachmentDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassDepthAttachmentDescriptor.cpp.
+        (WebCore::GPULegacyRenderPassDepthAttachmentDescriptor::~GPULegacyRenderPassDepthAttachmentDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDepthAttachmentDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassDepthAttachmentDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassDescriptor.cpp.
+        (WebCore::GPULegacyRenderPassDescriptor::~GPULegacyRenderPassDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPassDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineColorAttachmentDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineColorAttachmentDescriptor.cpp.
+        (WebCore::GPULegacyRenderPipelineColorAttachmentDescriptor::~GPULegacyRenderPipelineColorAttachmentDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineColorAttachmentDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineColorAttachmentDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineDescriptor.cpp.
+        (WebCore::GPULegacyRenderPipelineDescriptor::~GPULegacyRenderPipelineDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineDescriptor.h.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineState.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineState.cpp.
+        (WebCore::GPULegacyRenderPipelineState::~GPULegacyRenderPipelineState):
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineState.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyRenderPipelineState.h.
+        * platform/graphics/gpu/legacy/GPULegacySize.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacySize.h.
+        * platform/graphics/gpu/legacy/GPULegacyTexture.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyTexture.cpp.
+        (WebCore::GPULegacyTexture::~GPULegacyTexture):
+        * platform/graphics/gpu/legacy/GPULegacyTexture.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyTexture.h.
+        * platform/graphics/gpu/legacy/GPULegacyTextureDescriptor.cpp: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyTextureDescriptor.cpp.
+        (WebCore::GPULegacyTextureDescriptor::~GPULegacyTextureDescriptor):
+        * platform/graphics/gpu/legacy/GPULegacyTextureDescriptor.h: Renamed from Source/WebCore/platform/graphics/gpu/GPULegacyTextureDescriptor.h.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyBufferMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyBufferMetal.mm.
+        (WebCore::GPULegacyBuffer::GPULegacyBuffer):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyCommandBufferMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyCommandBufferMetal.mm.
+        (WebCore::GPULegacyCommandBuffer::GPULegacyCommandBuffer):
+        (WebCore::GPULegacyCommandBuffer::presentDrawable const):
+        (WebCore::GPULegacyCommandBuffer::commit const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyCommandQueueMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyCommandQueueMetal.mm.
+        (WebCore::GPULegacyCommandQueue::GPULegacyCommandQueue):
+        (WebCore::GPULegacyCommandQueue::label const):
+        (WebCore::GPULegacyCommandQueue::setLabel const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyComputeCommandEncoderMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyComputeCommandEncoderMetal.mm.
+        (WebCore::MTLSizeMake):
+        (WebCore::GPULegacyComputeCommandEncoder::GPULegacyComputeCommandEncoder):
+        (WebCore::GPULegacyComputeCommandEncoder::setComputePipelineState const):
+        (WebCore::GPULegacyComputeCommandEncoder::setBuffer const):
+        (WebCore::GPULegacyComputeCommandEncoder::dispatch const):
+        (WebCore::GPULegacyComputeCommandEncoder::endEncoding const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyComputePipelineStateMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyComputePipelineStateMetal.mm.
+        (WebCore::GPULegacyComputePipelineState::GPULegacyComputePipelineState):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyDepthStencilDescriptorMetal.mm.
+        (WebCore::GPULegacyDepthStencilDescriptor::GPULegacyDepthStencilDescriptor):
+        (WebCore::GPULegacyDepthStencilDescriptor::depthWriteEnabled const):
+        (WebCore::GPULegacyDepthStencilDescriptor::setDepthWriteEnabled const):
+        (WebCore::GPULegacyDepthStencilDescriptor::depthCompareFunction const):
+        (WebCore::GPULegacyDepthStencilDescriptor::setDepthCompareFunction const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilStateMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyDepthStencilStateMetal.mm.
+        (WebCore::GPULegacyDepthStencilState::GPULegacyDepthStencilState):
+        (WebCore::GPULegacyDepthStencilState::label const):
+        (WebCore::GPULegacyDepthStencilState::setLabel const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDeviceMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyDeviceMetal.mm.
+        (WebCore::GPULegacyDevice::GPULegacyDevice):
+        (WebCore::GPULegacyDevice::disconnect):
+        (WebCore::GPULegacyDevice::reshape const):
+        (WebCore::GPULegacyDevice::platformLayer const):
+        (WebCore::GPULegacyDevice::operator! const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDrawableMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyDrawableMetal.mm.
+        (WebCore::GPULegacyDrawable::GPULegacyDrawable):
+        (WebCore::GPULegacyDrawable::release):
+        (WebCore::GPULegacyDrawable::metal const):
+        (WebCore::GPULegacyDrawable::texture const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyFunctionMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyFunctionMetal.mm.
+        (WebCore::GPULegacyFunction::GPULegacyFunction):
+        (WebCore::GPULegacyFunction::name const):
+        (WebCore::GPULegacyFunction::operator! const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyLibraryMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyLibraryMetal.mm.
+        (WebCore::GPULegacyLibrary::GPULegacyLibrary):
+        (WebCore::GPULegacyLibrary::label const):
+        (WebCore::GPULegacyLibrary::setLabel const):
+        (WebCore::GPULegacyLibrary::functionNames const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderCommandEncoderMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderCommandEncoderMetal.mm.
+        (WebCore::GPULegacyRenderCommandEncoder::GPULegacyRenderCommandEncoder):
+        (WebCore::GPULegacyRenderCommandEncoder::setRenderPipelineState const):
+        (WebCore::GPULegacyRenderCommandEncoder::setDepthStencilState const):
+        (WebCore::GPULegacyRenderCommandEncoder::setVertexBuffer const):
+        (WebCore::GPULegacyRenderCommandEncoder::setFragmentBuffer const):
+        (WebCore::GPULegacyRenderCommandEncoder::drawPrimitives const):
+        (WebCore::GPULegacyRenderCommandEncoder::endEncoding const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassAttachmentDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPassAttachmentDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::GPULegacyRenderPassAttachmentDescriptor):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::loadAction const):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::setLoadAction const):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::storeAction const):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::setStoreAction const):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::setTexture const):
+        (WebCore::GPULegacyRenderPassAttachmentDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassColorAttachmentDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPassColorAttachmentDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPassColorAttachmentDescriptor::GPULegacyRenderPassColorAttachmentDescriptor):
+        (WebCore::GPULegacyRenderPassColorAttachmentDescriptor::clearColor const):
+        (WebCore::GPULegacyRenderPassColorAttachmentDescriptor::setClearColor const):
+        (WebCore::GPULegacyRenderPassColorAttachmentDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPassDepthAttachmentDescriptor::GPULegacyRenderPassDepthAttachmentDescriptor):
+        (WebCore::GPULegacyRenderPassDepthAttachmentDescriptor::clearDepth const):
+        (WebCore::GPULegacyRenderPassDepthAttachmentDescriptor::setClearDepth const):
+        (WebCore::GPULegacyRenderPassDepthAttachmentDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPassDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPassDescriptor::GPULegacyRenderPassDescriptor):
+        (WebCore::GPULegacyRenderPassDescriptor::colorAttachments const):
+        (WebCore::GPULegacyRenderPassDescriptor::depthAttachment const):
+        (WebCore::GPULegacyRenderPassDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPipelineColorAttachmentDescriptor::GPULegacyRenderPipelineColorAttachmentDescriptor):
+        (WebCore::GPULegacyRenderPipelineColorAttachmentDescriptor::pixelFormat const):
+        (WebCore::GPULegacyRenderPipelineColorAttachmentDescriptor::setPixelFormat const):
+        (WebCore::GPULegacyRenderPipelineColorAttachmentDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPipelineDescriptorMetal.mm.
+        (WebCore::GPULegacyRenderPipelineDescriptor::GPULegacyRenderPipelineDescriptor):
+        (WebCore::GPULegacyRenderPipelineDescriptor::depthAttachmentPixelFormat const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::setDepthAttachmentPixelFormat const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::setVertexFunction const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::setFragmentFunction const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::colorAttachments const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::reset const):
+        (WebCore::GPULegacyRenderPipelineDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineStateMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyRenderPipelineStateMetal.mm.
+        (WebCore::GPULegacyRenderPipelineState::GPULegacyRenderPipelineState):
+        (WebCore::GPULegacyRenderPipelineState::label const):
+        (WebCore::GPULegacyRenderPipelineState::setLabel const):
+        (WebCore::GPULegacyRenderPipelineState::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyTextureDescriptorMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyTextureDescriptorMetal.mm.
+        (WebCore::GPULegacyTextureDescriptor::GPULegacyTextureDescriptor):
+        (WebCore::GPULegacyTextureDescriptor::width const):
+        (WebCore::GPULegacyTextureDescriptor::setWidth const):
+        (WebCore::GPULegacyTextureDescriptor::height const):
+        (WebCore::GPULegacyTextureDescriptor::setHeight const):
+        (WebCore::GPULegacyTextureDescriptor::sampleCount const):
+        (WebCore::GPULegacyTextureDescriptor::setSampleCount const):
+        (WebCore::GPULegacyTextureDescriptor::textureType const):
+        (WebCore::GPULegacyTextureDescriptor::setTextureType const):
+        (WebCore::GPULegacyTextureDescriptor::storageMode const):
+        (WebCore::GPULegacyTextureDescriptor::setStorageMode const):
+        (WebCore::GPULegacyTextureDescriptor::usage const):
+        (WebCore::GPULegacyTextureDescriptor::setUsage const):
+        (WebCore::GPULegacyTextureDescriptor::metal const):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyTextureMetal.mm: Renamed from Source/WebCore/platform/graphics/metal/GPULegacyTextureMetal.mm.
+        (WebCore::GPULegacyTexture::GPULegacyTexture):
+        (WebCore::GPULegacyTexture::width const):
+        (WebCore::GPULegacyTexture::height const):
+        (WebCore::GPULegacyTexture::metal const):
+
 2018-11-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         [SOUP] Certificate decoder always returns GByteArray with zero size

@@ -39,7 +39,7 @@ namespace WebCore {
 GPULegacyRenderPipelineDescriptor::GPULegacyRenderPipelineDescriptor()
     : m_metal { adoptNS([MTLRenderPipelineDescriptor new]) }
 {
-    LOG(WebMetal, "GPURenderPipelineDescriptor::GPURenderPipelineDescriptor()");
+    LOG(WebMetal, "GPULegacyRenderPipelineDescriptor::GPULegacyRenderPipelineDescriptor()");
 }
 
 unsigned GPULegacyRenderPipelineDescriptor::depthAttachmentPixelFormat() const

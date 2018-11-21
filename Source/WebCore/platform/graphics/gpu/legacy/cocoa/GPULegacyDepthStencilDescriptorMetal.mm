@@ -24,39 +24,41 @@
  */
 
 #import "config.h"
-#import "GPULegacyRenderPassDepthAttachmentDescriptor.h"
+#import "GPULegacyDepthStencilDescriptor.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyRenderPassAttachmentDescriptor.h"
+#import "GPULegacyEnums.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPULegacyRenderPassDepthAttachmentDescriptor::GPULegacyRenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *metal)
-    : GPULegacyRenderPassAttachmentDescriptor { metal }
+GPULegacyDepthStencilDescriptor::GPULegacyDepthStencilDescriptor()
+    : m_metal { adoptNS([MTLDepthStencilDescriptor new]) }
 {
-    LOG(WebMetal, "GPURenderPassDepthAttachmentDescriptor::GPURenderPassDepthAttachmentDescriptor()");
+    LOG(WebMetal, "GPULegacyDepthStencilDescriptor::GPULegacyDepthStencilDescriptor()");
 }
 
-double GPULegacyRenderPassDepthAttachmentDescriptor::clearDepth() const
+bool GPULegacyDepthStencilDescriptor::depthWriteEnabled() const
 {
-    auto* metal = this->metal();
-    if (!metal)
-        return 0;
-
-    return [metal clearDepth];
+    return [m_metal isDepthWriteEnabled];
 }
 
-void GPULegacyRenderPassDepthAttachmentDescriptor::setClearDepth(double newClearDepth) const
+void GPULegacyDepthStencilDescriptor::setDepthWriteEnabled(bool newDepthWriteEnabled) const
 {
-    [metal() setClearDepth:newClearDepth];
+    [m_metal setDepthWriteEnabled:newDepthWriteEnabled];
 }
 
-MTLRenderPassDepthAttachmentDescriptor *GPULegacyRenderPassDepthAttachmentDescriptor::metal() const
+GPULegacyCompareFunction GPULegacyDepthStencilDescriptor::depthCompareFunction() const
 {
-    return static_cast<MTLRenderPassDepthAttachmentDescriptor *>(GPULegacyRenderPassAttachmentDescriptor::metal());
+    return static_cast<GPULegacyCompareFunction>([m_metal depthCompareFunction]);
+}
+
+void GPULegacyDepthStencilDescriptor::setDepthCompareFunction(GPULegacyCompareFunction newFunction) const
+{
+    // FIXME: Do we need to check if the function value is in range before casting to MTLCompareFunction?
+    [m_metal setDepthCompareFunction:static_cast<MTLCompareFunction>(newFunction)];
 }
 
 } // namespace WebCore

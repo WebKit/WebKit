@@ -891,6 +891,40 @@
 		31288E750E3005D6003619AE /* CSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 31288E710E3005D6003619AE /* CSSKeyframesRule.h */; };
 		3128CA6B147331630074C72A /* NotificationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3128CA6A147331630074C72A /* NotificationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312C0C41146DC6CC0016C911 /* Notification.h in Headers */ = {isa = PBXBuildFile; fileRef = 333F704F0FB49CA2008E12A6 /* Notification.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF91121A4C36500EB199D /* GPUCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */; };
+		312FF91221A4C36500EB199D /* GPUDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8BE21A4C2F100EB199D /* GPUDevice.h */; };
+		312FF91321A4C36500EB199D /* GPUPipelineDescriptorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */; };
+		312FF91421A4C36500EB199D /* GPUPipelineStageDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C221A4C2F300EB199D /* GPUPipelineStageDescriptor.h */; };
+		312FF91521A4C36500EB199D /* GPUQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C121A4C2F200EB199D /* GPUQueue.h */; };
+		312FF91621A4C36500EB199D /* GPURenderPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8B921A4C2EF00EB199D /* GPURenderPipeline.h */; };
+		312FF91721A4C36500EB199D /* GPURenderPipelineDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8BC21A4C2F000EB199D /* GPURenderPipelineDescriptor.h */; };
+		312FF91821A4C36500EB199D /* GPUShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8BB21A4C2F000EB199D /* GPUShaderModule.h */; };
+		312FF91921A4C36500EB199D /* GPUShaderModuleDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */; };
+		312FF91A21A4C36500EB199D /* GPUSwapChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */; };
+		312FF91B21A4C36500EB199D /* GPUTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C521A4C2F400EB199D /* GPUTexture.h */; };
+		312FF91C21A4C36500EB199D /* GPUTextureFormatEnum.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8C321A4C2F300EB199D /* GPUTextureFormatEnum.h */; };
+		312FF91D21A4C37300EB199D /* GPULegacyRenderPassDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8FF21A4C33F00EB199D /* GPULegacyRenderPassDescriptor.h */; };
+		312FF91E21A4C37300EB199D /* GPULegacyBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90221A4C33F00EB199D /* GPULegacyBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF91F21A4C37300EB199D /* GPULegacyTextureDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90421A4C33F00EB199D /* GPULegacyTextureDescriptor.h */; };
+		312FF92021A4C37300EB199D /* GPULegacyRenderPassAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90A21A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptor.h */; };
+		312FF92121A4C37300EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90B21A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */; };
+		312FF92221A4C37300EB199D /* GPULegacyLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90C21A4C33F00EB199D /* GPULegacyLibrary.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF92321A4C37300EB199D /* GPULegacyRenderPipelineState.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF90E21A4C33F00EB199D /* GPULegacyRenderPipelineState.h */; };
+		312FF92421A4C37300EB199D /* GPULegacyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF91021A4C33F00EB199D /* GPULegacyFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF92521A4C38B00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D121A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.h */; };
+		312FF92621A4C38B00EB199D /* GPULegacyDepthStencilDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D221A4C33F00EB199D /* GPULegacyDepthStencilDescriptor.h */; };
+		312FF92721A4C38B00EB199D /* GPULegacyDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D321A4C33F00EB199D /* GPULegacyDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF92821A4C38B00EB199D /* GPULegacyTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D421A4C33F00EB199D /* GPULegacyTexture.h */; };
+		312FF92921A4C38B00EB199D /* GPULegacyRenderCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D621A4C33F00EB199D /* GPULegacyRenderCommandEncoder.h */; };
+		312FF92A21A4C38B00EB199D /* GPULegacyCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8D921A4C33F00EB199D /* GPULegacyCommandQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		312FF92B21A4C38B00EB199D /* GPULegacyDrawable.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8DB21A4C33F00EB199D /* GPULegacyDrawable.h */; };
+		312FF92C21A4C38B00EB199D /* GPULegacyEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8DC21A4C33F00EB199D /* GPULegacyEnums.h */; };
+		312FF92D21A4C38B00EB199D /* GPULegacySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8DF21A4C33F00EB199D /* GPULegacySize.h */; };
+		312FF92E21A4C38B00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8E321A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.h */; };
+		312FF92F21A4C38B00EB199D /* GPULegacyComputeCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8E421A4C33F00EB199D /* GPULegacyComputeCommandEncoder.h */; };
+		312FF93021A4C38B00EB199D /* GPULegacyDepthStencilState.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8E621A4C33F00EB199D /* GPULegacyDepthStencilState.h */; };
+		312FF93121A4C38B00EB199D /* GPULegacyRenderPipelineDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8E721A4C33F00EB199D /* GPULegacyRenderPipelineDescriptor.h */; };
+		312FF93221A4C55200EB199D /* GPULegacyCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 312FF8DE21A4C33F00EB199D /* GPULegacyCommandBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		313171561FB079E5008D91FC /* CanvasBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 313171541FB079D1008D91FC /* CanvasBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		313591061E7DDC7300F30630 /* RTCIceConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591001E7DDC6000F30630 /* RTCIceConnectionState.h */; };
 		313591071E7DDC7300F30630 /* RTCIceGatheringState.h in Headers */ = {isa = PBXBuildFile; fileRef = 313591011E7DDC6000F30630 /* RTCIceGatheringState.h */; };
@@ -910,27 +944,7 @@
 		314877E61FAAB02500C05759 /* JSOffscreenCanvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 314877E41FAAB02200C05759 /* JSOffscreenCanvas.h */; };
 		314BE3A11B30F6B700141982 /* CSSNamedImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A01B30F6B700141982 /* CSSNamedImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */; };
-		316BDB861E6E0A2700DE0D5A /* GPULegacyDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB851E6E0A2100DE0D5A /* GPULegacyDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316BDB8C1E6E153000DE0D5A /* WebMetalLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */; };
-		316BDB951E70C89700DE0D5A /* GPULegacyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB931E70C89700DE0D5A /* GPULegacyFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316BDB9B1E70CBBF00DE0D5A /* GPULegacyLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDB991E70CBBF00DE0D5A /* GPULegacyLibrary.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316BDBAA1E71FA9300DE0D5A /* GPULegacyBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBA81E71FA9300DE0D5A /* GPULegacyBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316BDBB21E7354BB00DE0D5A /* GPULegacyTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBB01E7354BB00DE0D5A /* GPULegacyTexture.h */; };
-		316BDBB81E7357CB00DE0D5A /* GPULegacyTextureDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBB61E7357CB00DE0D5A /* GPULegacyTextureDescriptor.h */; };
-		316BDBBC1E73880600DE0D5A /* GPULegacyCommandQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBBA1E73880600DE0D5A /* GPULegacyCommandQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		316BDBCD1E75F18400DE0D5A /* GPULegacyDrawable.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBCB1E75F17600DE0D5A /* GPULegacyDrawable.h */; };
-		316BDBCE1E75F18A00DE0D5A /* GPULegacyCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBC51E75EE2400DE0D5A /* GPULegacyCommandBuffer.h */; };
-		316BDBD31E75F7B600DE0D5A /* GPULegacyRenderPassDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBD11E75F7AE00DE0D5A /* GPULegacyRenderPassDescriptor.h */; };
-		316BDBDB1E7612E200DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBD91E7612DB00DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.h */; };
-		316BDBDF1E76137500DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBDD1E76136C00DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.h */; };
-		316BDBE41E761F0500DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBE31E761EFF00DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.h */; };
-		316BDBEB1E76244D00DE0D5A /* GPULegacyRenderCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBE91E76244400DE0D5A /* GPULegacyRenderCommandEncoder.h */; };
-		316BDBF01E76292000DE0D5A /* GPULegacyDepthStencilState.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBEF1E76291B00DE0D5A /* GPULegacyDepthStencilState.h */; };
-		316BDBF71E762AD500DE0D5A /* GPULegacyDepthStencilDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBF51E762ACD00DE0D5A /* GPULegacyDepthStencilDescriptor.h */; };
-		316BDBFB1E762D0400DE0D5A /* GPULegacyEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBFA1E762D0400DE0D5A /* GPULegacyEnums.h */; };
-		316BDC021E762F6400DE0D5A /* GPULegacyRenderPipelineDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBFD1E762F5700DE0D5A /* GPULegacyRenderPipelineDescriptor.h */; };
-		316BDC031E762F6900DE0D5A /* GPULegacyRenderPipelineState.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDBFF1E762F5700DE0D5A /* GPULegacyRenderPipelineState.h */; };
-		316BDC0D1E7634D200DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 316BDC091E76342700DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */; };
 		316DCB201E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB1A1E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h */; };
 		316DCB221E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB1C1E78CA55001B5F87 /* JSRTCRtpTransceiverDirection.h */; };
 		316DCB4C1E7910A6001B5F87 /* JSRTCIceConnectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 316DCB461E7910A6001B5F87 /* JSRTCIceConnectionState.h */; };
@@ -2651,9 +2665,6 @@
 		93A806171E03B51C008A1F26 /* LongRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A806131E03B51C008A1F26 /* LongRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93A8061E1E03B585008A1F26 /* JSDoubleRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A8061A1E03B585008A1F26 /* JSDoubleRange.h */; };
 		93A806201E03B585008A1F26 /* JSLongRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A8061C1E03B585008A1F26 /* JSLongRange.h */; };
-		93A953B020EBD3C900A619F6 /* GPULegacyComputePipelineState.h in Headers */ = {isa = PBXBuildFile; fileRef = 381E35EC1E8E23E40043E850 /* GPULegacyComputePipelineState.h */; };
-		93A953B420EBD43200A619F6 /* GPULegacyComputeCommandEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 381E35EA1E8E20D90043E850 /* GPULegacyComputeCommandEncoder.h */; };
-		93A953B520EC9C3F00A619F6 /* GPULegacySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 381E35F61E8E4D0E0043E850 /* GPULegacySize.h */; };
 		93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B6A0E50B0BCA5C00F5027A /* ContextMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6845,6 +6856,91 @@
 		31288E710E3005D6003619AE /* CSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSKeyframesRule.h; sourceTree = "<group>"; };
 		3128CA67147331520074C72A /* NotificationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationController.cpp; sourceTree = "<group>"; };
 		3128CA6A147331630074C72A /* NotificationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationController.h; sourceTree = "<group>"; };
+		312FF8B921A4C2EF00EB199D /* GPURenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURenderPipeline.h; sourceTree = "<group>"; };
+		312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUSwapChain.h; sourceTree = "<group>"; };
+		312FF8BB21A4C2F000EB199D /* GPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUShaderModule.h; sourceTree = "<group>"; };
+		312FF8BC21A4C2F000EB199D /* GPURenderPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURenderPipelineDescriptor.h; sourceTree = "<group>"; };
+		312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCommandBuffer.h; sourceTree = "<group>"; };
+		312FF8BE21A4C2F100EB199D /* GPUDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUDevice.h; sourceTree = "<group>"; };
+		312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDevice.cpp; sourceTree = "<group>"; };
+		312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUShaderModuleDescriptor.h; sourceTree = "<group>"; };
+		312FF8C121A4C2F200EB199D /* GPUQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUQueue.h; sourceTree = "<group>"; };
+		312FF8C221A4C2F300EB199D /* GPUPipelineStageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineStageDescriptor.h; sourceTree = "<group>"; };
+		312FF8C321A4C2F300EB199D /* GPUTextureFormatEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTextureFormatEnum.h; sourceTree = "<group>"; };
+		312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineDescriptorBase.h; sourceTree = "<group>"; };
+		312FF8C521A4C2F400EB199D /* GPUTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTexture.h; sourceTree = "<group>"; };
+		312FF8C721A4C32500EB199D /* GPUQueueMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUQueueMetal.mm; path = platform/graphics/gpu/cocoa/GPUQueueMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8C821A4C32500EB199D /* GPUTextureMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUTextureMetal.mm; path = platform/graphics/gpu/cocoa/GPUTextureMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8C921A4C32600EB199D /* GPUDeviceMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUDeviceMetal.mm; path = platform/graphics/gpu/cocoa/GPUDeviceMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8CA21A4C32600EB199D /* GPUShaderModuleMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUShaderModuleMetal.mm; path = platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8CB21A4C32700EB199D /* GPUSwapChainMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUSwapChainMetal.mm; path = platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8CC21A4C32700EB199D /* GPUCommandBufferMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPUCommandBufferMetal.mm; path = platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8CD21A4C32800EB199D /* GPURenderPipelineMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GPURenderPipelineMetal.mm; path = platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm; sourceTree = SOURCE_ROOT; };
+		312FF8CF21A4C33F00EB199D /* GPULegacyTextureDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyTextureDescriptor.cpp; sourceTree = "<group>"; };
+		312FF8D021A4C33F00EB199D /* GPULegacyRenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
+		312FF8D121A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassDepthAttachmentDescriptor.h; sourceTree = "<group>"; };
+		312FF8D221A4C33F00EB199D /* GPULegacyDepthStencilDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyDepthStencilDescriptor.h; sourceTree = "<group>"; };
+		312FF8D321A4C33F00EB199D /* GPULegacyDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyDevice.h; sourceTree = "<group>"; };
+		312FF8D421A4C33F00EB199D /* GPULegacyTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyTexture.h; sourceTree = "<group>"; };
+		312FF8D521A4C33F00EB199D /* GPULegacyTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyTexture.cpp; sourceTree = "<group>"; };
+		312FF8D621A4C33F00EB199D /* GPULegacyRenderCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderCommandEncoder.h; sourceTree = "<group>"; };
+		312FF8D721A4C33F00EB199D /* GPULegacyComputePipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyComputePipelineState.h; sourceTree = "<group>"; };
+		312FF8D821A4C33F00EB199D /* GPULegacyFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyFunction.cpp; sourceTree = "<group>"; };
+		312FF8D921A4C33F00EB199D /* GPULegacyCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyCommandQueue.h; sourceTree = "<group>"; };
+		312FF8DA21A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		312FF8DB21A4C33F00EB199D /* GPULegacyDrawable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyDrawable.h; sourceTree = "<group>"; };
+		312FF8DC21A4C33F00EB199D /* GPULegacyEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyEnums.h; sourceTree = "<group>"; };
+		312FF8DD21A4C33F00EB199D /* GPULegacyRenderCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderCommandEncoder.cpp; sourceTree = "<group>"; };
+		312FF8DE21A4C33F00EB199D /* GPULegacyCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyCommandBuffer.h; sourceTree = "<group>"; };
+		312FF8DF21A4C33F00EB199D /* GPULegacySize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacySize.h; sourceTree = "<group>"; };
+		312FF8E021A4C33F00EB199D /* GPULegacyBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyBuffer.cpp; sourceTree = "<group>"; };
+		312FF8E121A4C33F00EB199D /* GPULegacyDepthStencilState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDepthStencilState.cpp; sourceTree = "<group>"; };
+		312FF8E221A4C33F00EB199D /* GPULegacyDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDevice.cpp; sourceTree = "<group>"; };
+		312FF8E321A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassColorAttachmentDescriptor.h; sourceTree = "<group>"; };
+		312FF8E421A4C33F00EB199D /* GPULegacyComputeCommandEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyComputeCommandEncoder.h; sourceTree = "<group>"; };
+		312FF8E521A4C33F00EB199D /* GPULegacyRenderPassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassDescriptor.cpp; sourceTree = "<group>"; };
+		312FF8E621A4C33F00EB199D /* GPULegacyDepthStencilState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyDepthStencilState.h; sourceTree = "<group>"; };
+		312FF8E721A4C33F00EB199D /* GPULegacyRenderPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineDescriptor.h; sourceTree = "<group>"; };
+		312FF8E821A4C33F00EB199D /* GPULegacyComputePipelineState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyComputePipelineState.cpp; sourceTree = "<group>"; };
+		312FF8EA21A4C33F00EB199D /* GPULegacyDepthStencilDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDepthStencilDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8EB21A4C33F00EB199D /* GPULegacyRenderCommandEncoderMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderCommandEncoderMetal.mm; sourceTree = "<group>"; };
+		312FF8EC21A4C33F00EB199D /* GPULegacyTextureDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyTextureDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8ED21A4C33F00EB199D /* GPULegacyFunctionMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyFunctionMetal.mm; sourceTree = "<group>"; };
+		312FF8EE21A4C33F00EB199D /* GPULegacyDrawableMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDrawableMetal.mm; sourceTree = "<group>"; };
+		312FF8EF21A4C33F00EB199D /* GPULegacyRenderPipelineDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8F021A4C33F00EB199D /* GPULegacyRenderPassDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8F121A4C33F00EB199D /* GPULegacyCommandQueueMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyCommandQueueMetal.mm; sourceTree = "<group>"; };
+		312FF8F221A4C33F00EB199D /* GPULegacyLibraryMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyLibraryMetal.mm; sourceTree = "<group>"; };
+		312FF8F321A4C33F00EB199D /* GPULegacyComputeCommandEncoderMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyComputeCommandEncoderMetal.mm; sourceTree = "<group>"; };
+		312FF8F421A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8F521A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassColorAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8F621A4C33F00EB199D /* GPULegacyCommandBufferMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyCommandBufferMetal.mm; sourceTree = "<group>"; };
+		312FF8F721A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8F821A4C33F00EB199D /* GPULegacyDeviceMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDeviceMetal.mm; sourceTree = "<group>"; };
+		312FF8F921A4C33F00EB199D /* GPULegacyDepthStencilStateMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDepthStencilStateMetal.mm; sourceTree = "<group>"; };
+		312FF8FA21A4C33F00EB199D /* GPULegacyBufferMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyBufferMetal.mm; sourceTree = "<group>"; };
+		312FF8FB21A4C33F00EB199D /* GPULegacyComputePipelineStateMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyComputePipelineStateMetal.mm; sourceTree = "<group>"; };
+		312FF8FC21A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
+		312FF8FD21A4C33F00EB199D /* GPULegacyRenderPipelineStateMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineStateMetal.mm; sourceTree = "<group>"; };
+		312FF8FE21A4C33F00EB199D /* GPULegacyTextureMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyTextureMetal.mm; sourceTree = "<group>"; };
+		312FF8FF21A4C33F00EB199D /* GPULegacyRenderPassDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassDescriptor.h; sourceTree = "<group>"; };
+		312FF90021A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		312FF90121A4C33F00EB199D /* GPULegacyRenderPipelineState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineState.cpp; sourceTree = "<group>"; };
+		312FF90221A4C33F00EB199D /* GPULegacyBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyBuffer.h; sourceTree = "<group>"; };
+		312FF90321A4C33F00EB199D /* GPULegacyCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyCommandBuffer.cpp; sourceTree = "<group>"; };
+		312FF90421A4C33F00EB199D /* GPULegacyTextureDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyTextureDescriptor.h; sourceTree = "<group>"; };
+		312FF90521A4C33F00EB199D /* GPULegacyLibrary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyLibrary.cpp; sourceTree = "<group>"; };
+		312FF90621A4C33F00EB199D /* GPULegacyComputeCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyComputeCommandEncoder.cpp; sourceTree = "<group>"; };
+		312FF90721A4C33F00EB199D /* GPULegacyDrawable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDrawable.cpp; sourceTree = "<group>"; };
+		312FF90821A4C33F00EB199D /* GPULegacyDepthStencilDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDepthStencilDescriptor.cpp; sourceTree = "<group>"; };
+		312FF90921A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassDepthAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		312FF90A21A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassAttachmentDescriptor.h; sourceTree = "<group>"; };
+		312FF90B21A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineColorAttachmentDescriptor.h; sourceTree = "<group>"; };
+		312FF90C21A4C33F00EB199D /* GPULegacyLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyLibrary.h; sourceTree = "<group>"; };
+		312FF90D21A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassAttachmentDescriptor.cpp; sourceTree = "<group>"; };
+		312FF90E21A4C33F00EB199D /* GPULegacyRenderPipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineState.h; sourceTree = "<group>"; };
+		312FF90F21A4C33F00EB199D /* GPULegacyCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyCommandQueue.cpp; sourceTree = "<group>"; };
+		312FF91021A4C33F00EB199D /* GPULegacyFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyFunction.h; sourceTree = "<group>"; };
 		313171541FB079D1008D91FC /* CanvasBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasBase.h; sourceTree = "<group>"; };
 		313171571FB0969E008D91FC /* CanvasBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasBase.cpp; sourceTree = "<group>"; };
 		313591001E7DDC6000F30630 /* RTCIceConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceConnectionState.h; sourceTree = "<group>"; };
@@ -6881,63 +6977,24 @@
 		314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedImageGeneratedImage.cpp; sourceTree = "<group>"; };
 		314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedImageGeneratedImage.h; sourceTree = "<group>"; };
 		315574CC218F66D000D88F66 /* PointerEventIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEventIOS.cpp; sourceTree = "<group>"; };
-		316BDB841E6E0A2100DE0D5A /* GPULegacyDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDevice.cpp; sourceTree = "<group>"; };
-		316BDB851E6E0A2100DE0D5A /* GPULegacyDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyDevice.h; sourceTree = "<group>"; };
 		316BDB881E6E141C00DE0D5A /* GPULegacyDeviceMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDeviceMetal.mm; sourceTree = "<group>"; };
 		316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMetalLayer.h; sourceTree = "<group>"; };
-		316BDB921E70C89700DE0D5A /* GPULegacyFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyFunction.cpp; sourceTree = "<group>"; };
-		316BDB931E70C89700DE0D5A /* GPULegacyFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyFunction.h; sourceTree = "<group>"; };
 		316BDB961E70CA2400DE0D5A /* GPULegacyFunctionMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyFunctionMetal.mm; sourceTree = "<group>"; };
-		316BDB981E70CBBF00DE0D5A /* GPULegacyLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyLibrary.cpp; sourceTree = "<group>"; };
-		316BDB991E70CBBF00DE0D5A /* GPULegacyLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyLibrary.h; sourceTree = "<group>"; };
 		316BDB9C1E70CD9000DE0D5A /* GPULegacyLibraryMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyLibraryMetal.mm; sourceTree = "<group>"; };
 		316BDBA51E71FA6F00DE0D5A /* GPULegacyBufferMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyBufferMetal.mm; sourceTree = "<group>"; };
-		316BDBA71E71FA9300DE0D5A /* GPULegacyBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyBuffer.cpp; sourceTree = "<group>"; };
-		316BDBA81E71FA9300DE0D5A /* GPULegacyBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyBuffer.h; sourceTree = "<group>"; };
-		316BDBAF1E7354BB00DE0D5A /* GPULegacyTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyTexture.cpp; sourceTree = "<group>"; };
-		316BDBB01E7354BB00DE0D5A /* GPULegacyTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyTexture.h; sourceTree = "<group>"; };
 		316BDBB31E7357B000DE0D5A /* GPULegacyTextureDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyTextureDescriptorMetal.mm; sourceTree = "<group>"; };
-		316BDBB51E7357CB00DE0D5A /* GPULegacyTextureDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyTextureDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBB61E7357CB00DE0D5A /* GPULegacyTextureDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyTextureDescriptor.h; sourceTree = "<group>"; };
-		316BDBB91E73880600DE0D5A /* GPULegacyCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyCommandQueue.cpp; sourceTree = "<group>"; };
-		316BDBBA1E73880600DE0D5A /* GPULegacyCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyCommandQueue.h; sourceTree = "<group>"; };
 		316BDBBD1E73881300DE0D5A /* GPULegacyCommandQueueMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyCommandQueueMetal.mm; sourceTree = "<group>"; };
-		316BDBC41E75EE2400DE0D5A /* GPULegacyCommandBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyCommandBuffer.cpp; sourceTree = "<group>"; };
-		316BDBC51E75EE2400DE0D5A /* GPULegacyCommandBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyCommandBuffer.h; sourceTree = "<group>"; };
 		316BDBC61E75EE3D00DE0D5A /* GPULegacyCommandBufferMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyCommandBufferMetal.mm; sourceTree = "<group>"; };
 		316BDBC91E75F16200DE0D5A /* GPULegacyDrawableMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDrawableMetal.mm; sourceTree = "<group>"; };
-		316BDBCA1E75F17600DE0D5A /* GPULegacyDrawable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDrawable.cpp; sourceTree = "<group>"; };
-		316BDBCB1E75F17600DE0D5A /* GPULegacyDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyDrawable.h; sourceTree = "<group>"; };
-		316BDBD01E75F7AE00DE0D5A /* GPULegacyRenderPassDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBD11E75F7AE00DE0D5A /* GPULegacyRenderPassDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassDescriptor.h; sourceTree = "<group>"; };
 		316BDBD41E75F7CA00DE0D5A /* GPULegacyRenderPassDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassDescriptorMetal.mm; sourceTree = "<group>"; };
 		316BDBD61E7612C400DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassColorAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
-		316BDBD81E7612DB00DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBD91E7612DB00DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassColorAttachmentDescriptor.h; sourceTree = "<group>"; };
-		316BDBDC1E76136C00DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBDD1E76136C00DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassAttachmentDescriptor.h; sourceTree = "<group>"; };
 		316BDBE01E761CB500DE0D5A /* GPULegacyRenderPassAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
-		316BDBE21E761EFF00DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPassDepthAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBE31E761EFF00DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPassDepthAttachmentDescriptor.h; sourceTree = "<group>"; };
 		316BDBE61E761F2700DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
-		316BDBE81E76244300DE0D5A /* GPULegacyRenderCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderCommandEncoder.cpp; sourceTree = "<group>"; };
-		316BDBE91E76244400DE0D5A /* GPULegacyRenderCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderCommandEncoder.h; sourceTree = "<group>"; };
 		316BDBEC1E76246B00DE0D5A /* GPULegacyRenderCommandEncoderMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderCommandEncoderMetal.mm; sourceTree = "<group>"; };
-		316BDBEE1E76291B00DE0D5A /* GPULegacyDepthStencilState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDepthStencilState.cpp; sourceTree = "<group>"; };
-		316BDBEF1E76291B00DE0D5A /* GPULegacyDepthStencilState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyDepthStencilState.h; sourceTree = "<group>"; };
 		316BDBF21E76293700DE0D5A /* GPULegacyDepthStencilStateMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDepthStencilStateMetal.mm; sourceTree = "<group>"; };
-		316BDBF41E762ACD00DE0D5A /* GPULegacyDepthStencilDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyDepthStencilDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBF51E762ACD00DE0D5A /* GPULegacyDepthStencilDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyDepthStencilDescriptor.h; sourceTree = "<group>"; };
 		316BDBF81E762BEF00DE0D5A /* GPULegacyDepthStencilDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyDepthStencilDescriptorMetal.mm; sourceTree = "<group>"; };
-		316BDBFA1E762D0400DE0D5A /* GPULegacyEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyEnums.h; sourceTree = "<group>"; };
-		316BDBFC1E762F5700DE0D5A /* GPULegacyRenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
-		316BDBFD1E762F5700DE0D5A /* GPULegacyRenderPipelineDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineDescriptor.h; sourceTree = "<group>"; };
-		316BDBFE1E762F5700DE0D5A /* GPULegacyRenderPipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineState.cpp; sourceTree = "<group>"; };
-		316BDBFF1E762F5700DE0D5A /* GPULegacyRenderPipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineState.h; sourceTree = "<group>"; };
 		316BDC041E762F7E00DE0D5A /* GPULegacyRenderPipelineDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineDescriptorMetal.mm; sourceTree = "<group>"; };
 		316BDC051E762F7E00DE0D5A /* GPULegacyRenderPipelineStateMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineStateMetal.mm; sourceTree = "<group>"; };
-		316BDC081E76342700DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyRenderPipelineColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		316BDC091E76342700DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineColorAttachmentDescriptor.h; sourceTree = "<group>"; };
 		316BDC0A1E76343600DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm; sourceTree = "<group>"; };
 		316DCB121E78BE43001B5F87 /* RTCOfferAnswerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCOfferAnswerOptions.idl; sourceTree = "<group>"; };
 		316DCB171E78C330001B5F87 /* RTCRtpTransceiverDirection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCRtpTransceiverDirection.idl; sourceTree = "<group>"; };
@@ -7221,14 +7278,9 @@
 		381E35E71E8E1E0A0043E850 /* WebGPUComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUComputeCommandEncoder.h; sourceTree = "<group>"; };
 		381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
 		381E35E91E8E20AC0043E850 /* GPULegacyComputeCommandEncoderMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyComputeCommandEncoderMetal.mm; sourceTree = "<group>"; };
-		381E35EA1E8E20D90043E850 /* GPULegacyComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyComputeCommandEncoder.h; sourceTree = "<group>"; };
-		381E35EB1E8E21990043E850 /* GPULegacyComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyComputeCommandEncoder.cpp; sourceTree = "<group>"; };
-		381E35EC1E8E23E40043E850 /* GPULegacyComputePipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacyComputePipelineState.h; sourceTree = "<group>"; };
-		381E35ED1E8E247A0043E850 /* GPULegacyComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyComputePipelineState.cpp; sourceTree = "<group>"; };
 		381E35EE1E8E24CB0043E850 /* GPULegacyComputePipelineStateMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyComputePipelineStateMetal.mm; sourceTree = "<group>"; };
 		381E35EF1E8E3D7F0043E850 /* WebGPUSize.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUSize.idl; sourceTree = "<group>"; };
 		381E35F51E8E4C420043E850 /* WebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSize.h; sourceTree = "<group>"; };
-		381E35F61E8E4D0E0043E850 /* GPULegacySize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPULegacySize.h; sourceTree = "<group>"; };
 		387AE9581E8E92EF0000DE96 /* JSWebGPUSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUSize.cpp; sourceTree = "<group>"; };
 		387AE9591E8E92EF0000DE96 /* JSWebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUSize.h; sourceTree = "<group>"; };
 		38F23AAE1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
@@ -13817,21 +13869,14 @@
 		D045AD2121682474000A6E9B /* WebMetalBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalBuffer.cpp; sourceTree = "<group>"; };
 		D045AD2221682474000A6E9B /* WebMetalCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalCommandBuffer.h; sourceTree = "<group>"; };
 		D045AD2321682475000A6E9B /* WebMetalCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandQueue.cpp; sourceTree = "<group>"; };
-		D046FB65218D073C00CB8F62 /* GPURenderPipelineDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURenderPipelineDescriptor.h; sourceTree = "<group>"; };
-		D046FB67218D180300CB8F62 /* GPUPipelineStageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineStageDescriptor.h; sourceTree = "<group>"; };
-		D046FB68218D18CD00CB8F62 /* GPUPipelineDescriptorBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineDescriptorBase.h; sourceTree = "<group>"; };
 		D0573D42217EB81E00D1BE91 /* GPULegacyTextureMetal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GPULegacyTextureMetal.mm; sourceTree = "<group>"; };
 		D05CED270A40BB2C00C5AF38 /* FormatBlockCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormatBlockCommand.cpp; sourceTree = "<group>"; };
 		D05CED280A40BB2C00C5AF38 /* FormatBlockCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormatBlockCommand.h; sourceTree = "<group>"; };
 		D060D88421825D5F00339318 /* WebGPUShaderModuleDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModuleDescriptor.idl; sourceTree = "<group>"; };
 		D060D8872182697000339318 /* WebGPUShaderModuleDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleDescriptor.h; sourceTree = "<group>"; };
-		D060D888218280C100339318 /* GPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUShaderModule.h; sourceTree = "<group>"; };
-		D060D889218280C100339318 /* GPUShaderModuleMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUShaderModuleMetal.mm; sourceTree = "<group>"; };
 		D0615FCC217FE5C6008A48A8 /* WebGPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModule.h; sourceTree = "<group>"; };
 		D0615FCD217FE5C6008A48A8 /* WebGPUShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModule.cpp; sourceTree = "<group>"; };
 		D0615FCE217FE5C6008A48A8 /* WebGPUShaderModule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModule.idl; sourceTree = "<group>"; };
-		D0615FCF217FF185008A48A8 /* GPUDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUDevice.h; sourceTree = "<group>"; };
-		D0615FD1217FF1E1008A48A8 /* GPUDeviceMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUDeviceMetal.mm; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
 		D07DEAB70A36554A00CA30F8 /* InsertListCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InsertListCommand.cpp; sourceTree = "<group>"; };
@@ -13843,9 +13888,6 @@
 		D093D225217951D400329217 /* WebGPURenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderingContext.h; sourceTree = "<group>"; };
 		D093D227217951D400329217 /* WebGPURenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderingContext.idl; sourceTree = "<group>"; };
 		D093D2292179541600329217 /* WebGPURenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderingContext.cpp; sourceTree = "<group>"; };
-		D09727B62187F44300942F3A /* GPUSwapChainMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUSwapChainMetal.mm; sourceTree = "<group>"; };
-		D09727C2218A472900942F3A /* GPUShaderModuleDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUShaderModuleDescriptor.h; sourceTree = "<group>"; };
-		D09727CA218BD7A500942F3A /* GPUDevice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDevice.cpp; sourceTree = "<group>"; };
 		D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureASTC.h; sourceTree = "<group>"; };
 		D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureASTC.cpp; sourceTree = "<group>"; };
 		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
@@ -13865,7 +13907,6 @@
 		D0C419F7218404DA009EC1DE /* WebGPURenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPipeline.h; sourceTree = "<group>"; };
 		D0C419F8218404DA009EC1DE /* WebGPURenderPipeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPipeline.cpp; sourceTree = "<group>"; };
 		D0C419F9218404DA009EC1DE /* WebGPURenderPipeline.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderPipeline.idl; sourceTree = "<group>"; };
-		D0C419FB21840F6C009EC1DE /* GPURenderPipelineMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPURenderPipelineMetal.mm; sourceTree = "<group>"; };
 		D0CAAE98216824A6001C91C7 /* WebMetalBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalBuffer.idl; sourceTree = "<group>"; };
 		D0CAAE9A216824A6001C91C7 /* WebMetalCommandBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebMetalCommandBuffer.idl; sourceTree = "<group>"; };
 		D0CAAE9B216824A7001C91C7 /* WebMetalCommandQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalCommandQueue.h; sourceTree = "<group>"; };
@@ -13878,14 +13919,6 @@
 		D0EACF7621937228000FA75C /* WebGPUCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCommandBuffer.h; sourceTree = "<group>"; };
 		D0EACF7721937228000FA75C /* WebGPUCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCommandBuffer.cpp; sourceTree = "<group>"; };
 		D0EACF7821937228000FA75C /* WebGPUCommandBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUCommandBuffer.idl; sourceTree = "<group>"; };
-		D0EACF7B21938253000FA75C /* GPUCommandBufferMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUCommandBufferMetal.mm; sourceTree = "<group>"; };
-		D0EACF7C219382AF000FA75C /* GPUSwapChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GPUSwapChain.h; path = Modules/webgpu/GPUSwapChain.h; sourceTree = SOURCE_ROOT; };
-		D0EACF7D219382B0000FA75C /* GPURenderPipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GPURenderPipeline.h; path = Modules/webgpu/GPURenderPipeline.h; sourceTree = SOURCE_ROOT; };
-		D0EACF7E219382B0000FA75C /* GPUCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GPUCommandBuffer.h; path = Modules/webgpu/GPUCommandBuffer.h; sourceTree = SOURCE_ROOT; };
-		D0EACF80219391EE000FA75C /* GPUQueueMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUQueueMetal.mm; sourceTree = "<group>"; };
-		D0EACF812193921A000FA75C /* GPUQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUQueue.h; sourceTree = "<group>"; };
-		D0EACF822193AB38000FA75C /* GPUTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTexture.h; sourceTree = "<group>"; };
-		D0EACF832193AB38000FA75C /* GPUTextureMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUTextureMetal.mm; sourceTree = "<group>"; };
 		D0EACF842193B02E000FA75C /* WebGPUTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUTexture.h; sourceTree = "<group>"; };
 		D0EACF852193B02E000FA75C /* WebGPUTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTexture.cpp; sourceTree = "<group>"; };
 		D0EACF862193B02E000FA75C /* WebGPUTexture.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUTexture.idl; sourceTree = "<group>"; };
@@ -13894,7 +13927,6 @@
 		D0EACF892193EE4E000FA75C /* WebGPUTextureView.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUTextureView.idl; sourceTree = "<group>"; };
 		D0EACFAD219E30FD000FA75C /* WebGPUTextureFormatEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUTextureFormatEnum.h; sourceTree = "<group>"; };
 		D0EACFAE219E30FD000FA75C /* WebGPUTextureFormatEnum.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUTextureFormatEnum.idl; sourceTree = "<group>"; };
-		D0EACFB2219E4F14000FA75C /* GPUTextureFormatEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTextureFormatEnum.h; sourceTree = "<group>"; };
 		D0EDA772143E303C0028E383 /* CachedRawResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedRawResource.cpp; sourceTree = "<group>"; };
 		D0EDA773143E303C0028E383 /* CachedRawResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResource.h; sourceTree = "<group>"; };
 		D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoader.cpp; sourceTree = "<group>"; };
@@ -17154,6 +17186,101 @@
 			path = workers;
 			sourceTree = "<group>";
 		};
+		312FF8C621A4C30200EB199D /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				312FF8CC21A4C32700EB199D /* GPUCommandBufferMetal.mm */,
+				312FF8C921A4C32600EB199D /* GPUDeviceMetal.mm */,
+				312FF8C721A4C32500EB199D /* GPUQueueMetal.mm */,
+				312FF8CD21A4C32800EB199D /* GPURenderPipelineMetal.mm */,
+				312FF8CA21A4C32600EB199D /* GPUShaderModuleMetal.mm */,
+				312FF8CB21A4C32700EB199D /* GPUSwapChainMetal.mm */,
+				312FF8C821A4C32500EB199D /* GPUTextureMetal.mm */,
+			);
+			name = cocoa;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		312FF8CE21A4C33F00EB199D /* legacy */ = {
+			isa = PBXGroup;
+			children = (
+				312FF8E921A4C33F00EB199D /* cocoa */,
+				312FF8E021A4C33F00EB199D /* GPULegacyBuffer.cpp */,
+				312FF90221A4C33F00EB199D /* GPULegacyBuffer.h */,
+				312FF90321A4C33F00EB199D /* GPULegacyCommandBuffer.cpp */,
+				312FF8DE21A4C33F00EB199D /* GPULegacyCommandBuffer.h */,
+				312FF90F21A4C33F00EB199D /* GPULegacyCommandQueue.cpp */,
+				312FF8D921A4C33F00EB199D /* GPULegacyCommandQueue.h */,
+				312FF90621A4C33F00EB199D /* GPULegacyComputeCommandEncoder.cpp */,
+				312FF8E421A4C33F00EB199D /* GPULegacyComputeCommandEncoder.h */,
+				312FF8E821A4C33F00EB199D /* GPULegacyComputePipelineState.cpp */,
+				312FF8D721A4C33F00EB199D /* GPULegacyComputePipelineState.h */,
+				312FF90821A4C33F00EB199D /* GPULegacyDepthStencilDescriptor.cpp */,
+				312FF8D221A4C33F00EB199D /* GPULegacyDepthStencilDescriptor.h */,
+				312FF8E121A4C33F00EB199D /* GPULegacyDepthStencilState.cpp */,
+				312FF8E621A4C33F00EB199D /* GPULegacyDepthStencilState.h */,
+				312FF8E221A4C33F00EB199D /* GPULegacyDevice.cpp */,
+				312FF8D321A4C33F00EB199D /* GPULegacyDevice.h */,
+				312FF90721A4C33F00EB199D /* GPULegacyDrawable.cpp */,
+				312FF8DB21A4C33F00EB199D /* GPULegacyDrawable.h */,
+				312FF8DC21A4C33F00EB199D /* GPULegacyEnums.h */,
+				312FF8D821A4C33F00EB199D /* GPULegacyFunction.cpp */,
+				312FF91021A4C33F00EB199D /* GPULegacyFunction.h */,
+				312FF90521A4C33F00EB199D /* GPULegacyLibrary.cpp */,
+				312FF90C21A4C33F00EB199D /* GPULegacyLibrary.h */,
+				312FF8DD21A4C33F00EB199D /* GPULegacyRenderCommandEncoder.cpp */,
+				312FF8D621A4C33F00EB199D /* GPULegacyRenderCommandEncoder.h */,
+				312FF90D21A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptor.cpp */,
+				312FF90A21A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptor.h */,
+				312FF90021A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.cpp */,
+				312FF8E321A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.h */,
+				312FF90921A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.cpp */,
+				312FF8D121A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.h */,
+				312FF8E521A4C33F00EB199D /* GPULegacyRenderPassDescriptor.cpp */,
+				312FF8FF21A4C33F00EB199D /* GPULegacyRenderPassDescriptor.h */,
+				312FF8DA21A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.cpp */,
+				312FF90B21A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */,
+				312FF8D021A4C33F00EB199D /* GPULegacyRenderPipelineDescriptor.cpp */,
+				312FF8E721A4C33F00EB199D /* GPULegacyRenderPipelineDescriptor.h */,
+				312FF90121A4C33F00EB199D /* GPULegacyRenderPipelineState.cpp */,
+				312FF90E21A4C33F00EB199D /* GPULegacyRenderPipelineState.h */,
+				312FF8DF21A4C33F00EB199D /* GPULegacySize.h */,
+				312FF8D521A4C33F00EB199D /* GPULegacyTexture.cpp */,
+				312FF8D421A4C33F00EB199D /* GPULegacyTexture.h */,
+				312FF8CF21A4C33F00EB199D /* GPULegacyTextureDescriptor.cpp */,
+				312FF90421A4C33F00EB199D /* GPULegacyTextureDescriptor.h */,
+			);
+			path = legacy;
+			sourceTree = "<group>";
+		};
+		312FF8E921A4C33F00EB199D /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				312FF8FA21A4C33F00EB199D /* GPULegacyBufferMetal.mm */,
+				312FF8F621A4C33F00EB199D /* GPULegacyCommandBufferMetal.mm */,
+				312FF8F121A4C33F00EB199D /* GPULegacyCommandQueueMetal.mm */,
+				312FF8F321A4C33F00EB199D /* GPULegacyComputeCommandEncoderMetal.mm */,
+				312FF8FB21A4C33F00EB199D /* GPULegacyComputePipelineStateMetal.mm */,
+				312FF8EA21A4C33F00EB199D /* GPULegacyDepthStencilDescriptorMetal.mm */,
+				312FF8F921A4C33F00EB199D /* GPULegacyDepthStencilStateMetal.mm */,
+				312FF8F821A4C33F00EB199D /* GPULegacyDeviceMetal.mm */,
+				312FF8EE21A4C33F00EB199D /* GPULegacyDrawableMetal.mm */,
+				312FF8ED21A4C33F00EB199D /* GPULegacyFunctionMetal.mm */,
+				312FF8F221A4C33F00EB199D /* GPULegacyLibraryMetal.mm */,
+				312FF8EB21A4C33F00EB199D /* GPULegacyRenderCommandEncoderMetal.mm */,
+				312FF8F721A4C33F00EB199D /* GPULegacyRenderPassAttachmentDescriptorMetal.mm */,
+				312FF8F521A4C33F00EB199D /* GPULegacyRenderPassColorAttachmentDescriptorMetal.mm */,
+				312FF8FC21A4C33F00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm */,
+				312FF8F021A4C33F00EB199D /* GPULegacyRenderPassDescriptorMetal.mm */,
+				312FF8F421A4C33F00EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm */,
+				312FF8EF21A4C33F00EB199D /* GPULegacyRenderPipelineDescriptorMetal.mm */,
+				312FF8FD21A4C33F00EB199D /* GPULegacyRenderPipelineStateMetal.mm */,
+				312FF8EC21A4C33F00EB199D /* GPULegacyTextureDescriptorMetal.mm */,
+				312FF8FE21A4C33F00EB199D /* GPULegacyTextureMetal.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		316FE1060E6E1D8400BF6088 /* animation */ = {
 			isa = PBXGroup;
 			children = (
@@ -18029,50 +18156,21 @@
 		498770C11242C50D002226BA /* gpu */ = {
 			isa = PBXGroup;
 			children = (
-				316BDBA71E71FA9300DE0D5A /* GPULegacyBuffer.cpp */,
-				316BDBA81E71FA9300DE0D5A /* GPULegacyBuffer.h */,
-				316BDBC41E75EE2400DE0D5A /* GPULegacyCommandBuffer.cpp */,
-				316BDBC51E75EE2400DE0D5A /* GPULegacyCommandBuffer.h */,
-				316BDBB91E73880600DE0D5A /* GPULegacyCommandQueue.cpp */,
-				316BDBBA1E73880600DE0D5A /* GPULegacyCommandQueue.h */,
-				381E35EB1E8E21990043E850 /* GPULegacyComputeCommandEncoder.cpp */,
-				381E35EA1E8E20D90043E850 /* GPULegacyComputeCommandEncoder.h */,
-				381E35ED1E8E247A0043E850 /* GPULegacyComputePipelineState.cpp */,
-				381E35EC1E8E23E40043E850 /* GPULegacyComputePipelineState.h */,
-				316BDBF41E762ACD00DE0D5A /* GPULegacyDepthStencilDescriptor.cpp */,
-				316BDBF51E762ACD00DE0D5A /* GPULegacyDepthStencilDescriptor.h */,
-				316BDBEE1E76291B00DE0D5A /* GPULegacyDepthStencilState.cpp */,
-				316BDBEF1E76291B00DE0D5A /* GPULegacyDepthStencilState.h */,
-				316BDB841E6E0A2100DE0D5A /* GPULegacyDevice.cpp */,
-				316BDB851E6E0A2100DE0D5A /* GPULegacyDevice.h */,
-				316BDBCA1E75F17600DE0D5A /* GPULegacyDrawable.cpp */,
-				316BDBCB1E75F17600DE0D5A /* GPULegacyDrawable.h */,
-				316BDBFA1E762D0400DE0D5A /* GPULegacyEnums.h */,
-				316BDB921E70C89700DE0D5A /* GPULegacyFunction.cpp */,
-				316BDB931E70C89700DE0D5A /* GPULegacyFunction.h */,
-				316BDB981E70CBBF00DE0D5A /* GPULegacyLibrary.cpp */,
-				316BDB991E70CBBF00DE0D5A /* GPULegacyLibrary.h */,
-				316BDBE81E76244300DE0D5A /* GPULegacyRenderCommandEncoder.cpp */,
-				316BDBE91E76244400DE0D5A /* GPULegacyRenderCommandEncoder.h */,
-				316BDBDC1E76136C00DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.cpp */,
-				316BDBDD1E76136C00DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.h */,
-				316BDBD81E7612DB00DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.cpp */,
-				316BDBD91E7612DB00DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.h */,
-				316BDBE21E761EFF00DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.cpp */,
-				316BDBE31E761EFF00DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.h */,
-				316BDBD01E75F7AE00DE0D5A /* GPULegacyRenderPassDescriptor.cpp */,
-				316BDBD11E75F7AE00DE0D5A /* GPULegacyRenderPassDescriptor.h */,
-				316BDC081E76342700DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.cpp */,
-				316BDC091E76342700DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.h */,
-				316BDBFC1E762F5700DE0D5A /* GPULegacyRenderPipelineDescriptor.cpp */,
-				316BDBFD1E762F5700DE0D5A /* GPULegacyRenderPipelineDescriptor.h */,
-				316BDBFE1E762F5700DE0D5A /* GPULegacyRenderPipelineState.cpp */,
-				316BDBFF1E762F5700DE0D5A /* GPULegacyRenderPipelineState.h */,
-				381E35F61E8E4D0E0043E850 /* GPULegacySize.h */,
-				316BDBAF1E7354BB00DE0D5A /* GPULegacyTexture.cpp */,
-				316BDBB01E7354BB00DE0D5A /* GPULegacyTexture.h */,
-				316BDBB51E7357CB00DE0D5A /* GPULegacyTextureDescriptor.cpp */,
-				316BDBB61E7357CB00DE0D5A /* GPULegacyTextureDescriptor.h */,
+				312FF8C621A4C30200EB199D /* cocoa */,
+				312FF8CE21A4C33F00EB199D /* legacy */,
+				312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */,
+				312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */,
+				312FF8BE21A4C2F100EB199D /* GPUDevice.h */,
+				312FF8C421A4C2F400EB199D /* GPUPipelineDescriptorBase.h */,
+				312FF8C221A4C2F300EB199D /* GPUPipelineStageDescriptor.h */,
+				312FF8C121A4C2F200EB199D /* GPUQueue.h */,
+				312FF8B921A4C2EF00EB199D /* GPURenderPipeline.h */,
+				312FF8BC21A4C2F000EB199D /* GPURenderPipelineDescriptor.h */,
+				312FF8BB21A4C2F000EB199D /* GPUShaderModule.h */,
+				312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */,
+				312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */,
+				312FF8C521A4C2F400EB199D /* GPUTexture.h */,
+				312FF8C321A4C2F300EB199D /* GPUTextureFormatEnum.h */,
 				498770D71242C535002226BA /* Texture.cpp */,
 				498770D81242C535002226BA /* Texture.h */,
 				498770D91242C535002226BA /* TilingData.cpp */,
@@ -25554,23 +25652,9 @@
 		D00F593E216ECC43000D71DB /* webgpu */ = {
 			isa = PBXGroup;
 			children = (
-				D0615FD2217FFEE3008A48A8 /* cocoa */,
 				D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */,
 				D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */,
 				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,
-				D0EACF7E219382B0000FA75C /* GPUCommandBuffer.h */,
-				D09727CA218BD7A500942F3A /* GPUDevice.cpp */,
-				D0615FCF217FF185008A48A8 /* GPUDevice.h */,
-				D046FB68218D18CD00CB8F62 /* GPUPipelineDescriptorBase.h */,
-				D046FB67218D180300CB8F62 /* GPUPipelineStageDescriptor.h */,
-				D0EACF812193921A000FA75C /* GPUQueue.h */,
-				D0EACF7D219382B0000FA75C /* GPURenderPipeline.h */,
-				D046FB65218D073C00CB8F62 /* GPURenderPipelineDescriptor.h */,
-				D060D888218280C100339318 /* GPUShaderModule.h */,
-				D09727C2218A472900942F3A /* GPUShaderModuleDescriptor.h */,
-				D0EACF7C219382AF000FA75C /* GPUSwapChain.h */,
-				D0EACF822193AB38000FA75C /* GPUTexture.h */,
-				D0EACFB2219E4F14000FA75C /* GPUTextureFormatEnum.h */,
 				D00F5947216EFE54000D71DB /* WebGPU.cpp */,
 				D00F5946216EFE54000D71DB /* WebGPU.h */,
 				D00F5948216EFE54000D71DB /* WebGPU.idl */,
@@ -25617,20 +25701,6 @@
 				D0EACF892193EE4E000FA75C /* WebGPUTextureView.idl */,
 			);
 			path = webgpu;
-			sourceTree = "<group>";
-		};
-		D0615FD2217FFEE3008A48A8 /* cocoa */ = {
-			isa = PBXGroup;
-			children = (
-				D0EACF7B21938253000FA75C /* GPUCommandBufferMetal.mm */,
-				D0615FD1217FF1E1008A48A8 /* GPUDeviceMetal.mm */,
-				D0EACF80219391EE000FA75C /* GPUQueueMetal.mm */,
-				D0C419FB21840F6C009EC1DE /* GPURenderPipelineMetal.mm */,
-				D060D889218280C100339318 /* GPUShaderModuleMetal.mm */,
-				D09727B62187F44300942F3A /* GPUSwapChainMetal.mm */,
-				D0EACF832193AB38000FA75C /* GPUTextureMetal.mm */,
-			);
-			path = cocoa;
 			sourceTree = "<group>";
 		};
 		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
@@ -28794,29 +28864,40 @@
 				C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */,
 				0873B86B136064EA00A522C2 /* GlyphPage.h in Headers */,
 				311518FC1E78C15F00EC514A /* GPUBasedCanvasRenderingContext.h in Headers */,
-				316BDBAA1E71FA9300DE0D5A /* GPULegacyBuffer.h in Headers */,
-				316BDBCE1E75F18A00DE0D5A /* GPULegacyCommandBuffer.h in Headers */,
-				316BDBBC1E73880600DE0D5A /* GPULegacyCommandQueue.h in Headers */,
-				93A953B420EBD43200A619F6 /* GPULegacyComputeCommandEncoder.h in Headers */,
-				93A953B020EBD3C900A619F6 /* GPULegacyComputePipelineState.h in Headers */,
-				316BDBF71E762AD500DE0D5A /* GPULegacyDepthStencilDescriptor.h in Headers */,
-				316BDBF01E76292000DE0D5A /* GPULegacyDepthStencilState.h in Headers */,
-				316BDB861E6E0A2700DE0D5A /* GPULegacyDevice.h in Headers */,
-				316BDBCD1E75F18400DE0D5A /* GPULegacyDrawable.h in Headers */,
-				316BDBFB1E762D0400DE0D5A /* GPULegacyEnums.h in Headers */,
-				316BDB951E70C89700DE0D5A /* GPULegacyFunction.h in Headers */,
-				316BDB9B1E70CBBF00DE0D5A /* GPULegacyLibrary.h in Headers */,
-				316BDBEB1E76244D00DE0D5A /* GPULegacyRenderCommandEncoder.h in Headers */,
-				316BDBDF1E76137500DE0D5A /* GPULegacyRenderPassAttachmentDescriptor.h in Headers */,
-				316BDBDB1E7612E200DE0D5A /* GPULegacyRenderPassColorAttachmentDescriptor.h in Headers */,
-				316BDBE41E761F0500DE0D5A /* GPULegacyRenderPassDepthAttachmentDescriptor.h in Headers */,
-				316BDBD31E75F7B600DE0D5A /* GPULegacyRenderPassDescriptor.h in Headers */,
-				316BDC0D1E7634D200DE0D5A /* GPULegacyRenderPipelineColorAttachmentDescriptor.h in Headers */,
-				316BDC021E762F6400DE0D5A /* GPULegacyRenderPipelineDescriptor.h in Headers */,
-				316BDC031E762F6900DE0D5A /* GPULegacyRenderPipelineState.h in Headers */,
-				93A953B520EC9C3F00A619F6 /* GPULegacySize.h in Headers */,
-				316BDBB21E7354BB00DE0D5A /* GPULegacyTexture.h in Headers */,
-				316BDBB81E7357CB00DE0D5A /* GPULegacyTextureDescriptor.h in Headers */,
+				312FF91121A4C36500EB199D /* GPUCommandBuffer.h in Headers */,
+				312FF91221A4C36500EB199D /* GPUDevice.h in Headers */,
+				312FF91E21A4C37300EB199D /* GPULegacyBuffer.h in Headers */,
+				312FF93221A4C55200EB199D /* GPULegacyCommandBuffer.h in Headers */,
+				312FF92A21A4C38B00EB199D /* GPULegacyCommandQueue.h in Headers */,
+				312FF92F21A4C38B00EB199D /* GPULegacyComputeCommandEncoder.h in Headers */,
+				312FF92621A4C38B00EB199D /* GPULegacyDepthStencilDescriptor.h in Headers */,
+				312FF93021A4C38B00EB199D /* GPULegacyDepthStencilState.h in Headers */,
+				312FF92721A4C38B00EB199D /* GPULegacyDevice.h in Headers */,
+				312FF92B21A4C38B00EB199D /* GPULegacyDrawable.h in Headers */,
+				312FF92C21A4C38B00EB199D /* GPULegacyEnums.h in Headers */,
+				312FF92421A4C37300EB199D /* GPULegacyFunction.h in Headers */,
+				312FF92221A4C37300EB199D /* GPULegacyLibrary.h in Headers */,
+				312FF92921A4C38B00EB199D /* GPULegacyRenderCommandEncoder.h in Headers */,
+				312FF92021A4C37300EB199D /* GPULegacyRenderPassAttachmentDescriptor.h in Headers */,
+				312FF92E21A4C38B00EB199D /* GPULegacyRenderPassColorAttachmentDescriptor.h in Headers */,
+				312FF92521A4C38B00EB199D /* GPULegacyRenderPassDepthAttachmentDescriptor.h in Headers */,
+				312FF91D21A4C37300EB199D /* GPULegacyRenderPassDescriptor.h in Headers */,
+				312FF92121A4C37300EB199D /* GPULegacyRenderPipelineColorAttachmentDescriptor.h in Headers */,
+				312FF93121A4C38B00EB199D /* GPULegacyRenderPipelineDescriptor.h in Headers */,
+				312FF92321A4C37300EB199D /* GPULegacyRenderPipelineState.h in Headers */,
+				312FF92D21A4C38B00EB199D /* GPULegacySize.h in Headers */,
+				312FF92821A4C38B00EB199D /* GPULegacyTexture.h in Headers */,
+				312FF91F21A4C37300EB199D /* GPULegacyTextureDescriptor.h in Headers */,
+				312FF91321A4C36500EB199D /* GPUPipelineDescriptorBase.h in Headers */,
+				312FF91421A4C36500EB199D /* GPUPipelineStageDescriptor.h in Headers */,
+				312FF91521A4C36500EB199D /* GPUQueue.h in Headers */,
+				312FF91621A4C36500EB199D /* GPURenderPipeline.h in Headers */,
+				312FF91721A4C36500EB199D /* GPURenderPipelineDescriptor.h in Headers */,
+				312FF91821A4C36500EB199D /* GPUShaderModule.h in Headers */,
+				312FF91921A4C36500EB199D /* GPUShaderModuleDescriptor.h in Headers */,
+				312FF91A21A4C36500EB199D /* GPUSwapChain.h in Headers */,
+				312FF91B21A4C36500EB199D /* GPUTexture.h in Headers */,
+				312FF91C21A4C36500EB199D /* GPUTextureFormatEnum.h in Headers */,
 				BC53C5F50DA56B920021EB5D /* Gradient.h in Headers */,
 				B22279640D00BF220071B782 /* GradientAttributes.h in Headers */,
 				2D481F04146B5C6B00AA7834 /* GradientImage.h in Headers */,

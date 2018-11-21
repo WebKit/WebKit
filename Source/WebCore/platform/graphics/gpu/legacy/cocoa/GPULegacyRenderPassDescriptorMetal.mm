@@ -24,45 +24,39 @@
  */
 
 #import "config.h"
-#import "GPULegacyTexture.h"
+#import "GPULegacyRenderPassDescriptor.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyDevice.h"
-#import "GPULegacyDrawable.h"
-#import "GPULegacyTextureDescriptor.h"
+#import "GPULegacyRenderPassColorAttachmentDescriptor.h"
+#import "GPULegacyRenderPassDepthAttachmentDescriptor.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
+#import <wtf/Vector.h>
 
 namespace WebCore {
 
-GPULegacyTexture::GPULegacyTexture(const GPULegacyDevice& device, const GPULegacyTextureDescriptor& descriptor)
+GPULegacyRenderPassDescriptor::GPULegacyRenderPassDescriptor()
+    : m_metal { adoptNS([MTLRenderPassDescriptor new]) }
 {
-    LOG(WebMetal, "GPUTexture::GPUTexture()");
-
-    if (!descriptor.metal())
-        return;
-
-    m_metal = adoptNS([device.metal() newTextureWithDescriptor:descriptor.metal()]);
+    LOG(WebMetal, "GPULegacyRenderPassDescriptor::GPULegacyRenderPassDescriptor()");
 }
 
-GPULegacyTexture::GPULegacyTexture(const GPULegacyDrawable& other)
-    : m_metal { other.texture() }
+Vector<GPULegacyRenderPassColorAttachmentDescriptor> GPULegacyRenderPassDescriptor::colorAttachments() const
 {
-    LOG(WebMetal, "GPUTexture::GPUTexture()");
+    if (!m_metal)
+        return { };
+
+    // FIXME: Why is it correct to return one color here?
+    return { { [[m_metal colorAttachments] objectAtIndexedSubscript:0] } };
 }
 
-unsigned GPULegacyTexture::width() const
+GPULegacyRenderPassDepthAttachmentDescriptor GPULegacyRenderPassDescriptor::depthAttachment() const
 {
-    return m_metal.get().width;
+    return [m_metal depthAttachment];
 }
 
-unsigned GPULegacyTexture::height() const
-{
-    return m_metal.get().height;
-}
-
-MTLTexture *GPULegacyTexture::metal() const
+MTLRenderPassDescriptor *GPULegacyRenderPassDescriptor::metal() const
 {
     return m_metal.get();
 }

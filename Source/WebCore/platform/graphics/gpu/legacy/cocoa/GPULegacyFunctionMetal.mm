@@ -36,9 +36,10 @@
 namespace WebCore {
 
 GPULegacyFunction::GPULegacyFunction(const GPULegacyLibrary& library, const String& name)
-    : m_metal { adoptNS([library.metal() newFunctionWithName:name]) }
 {
     LOG(WebMetal, "GPULegacyFunction::GPULegacyFunction()");
+
+    m_metal = adoptNS([library.metal() newFunctionWithName:name]);
 }
 
 String GPULegacyFunction::name() const

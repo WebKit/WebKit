@@ -24,43 +24,40 @@
  */
 
 #import "config.h"
-#import "GPULegacyRenderPipelineState.h"
+#import "GPULegacyDepthStencilState.h"
 
 #if ENABLE(WEBMETAL)
 
+#import "GPULegacyDepthStencilDescriptor.h"
 #import "GPULegacyDevice.h"
-#import "GPULegacyRenderPipelineDescriptor.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-GPULegacyRenderPipelineState::GPULegacyRenderPipelineState(const GPULegacyDevice& device, const GPULegacyRenderPipelineDescriptor& descriptor)
-    : m_metal { adoptNS([device.metal() newRenderPipelineStateWithDescriptor:descriptor.metal() error:nil]) }
+GPULegacyDepthStencilState::GPULegacyDepthStencilState(const GPULegacyDevice& device, const GPULegacyDepthStencilDescriptor& descriptor)
 {
-    LOG(WebMetal, "GPULegacyRenderPipelineState::GPULegacyRenderPipelineState()");
+    LOG(WebMetal, "GPULegacyDepthStencilState::GPULegacyDepthStencilState()");
+
+    m_metal = adoptNS([device.metal() newDepthStencilStateWithDescriptor:descriptor.metal()]);
 }
 
-String GPULegacyRenderPipelineState::label() const
+String GPULegacyDepthStencilState::label() const
 {
     if (!m_metal)
         return emptyString();
+
     return [m_metal label];
 }
 
-void GPULegacyRenderPipelineState::setLabel(const String&) const
+void GPULegacyDepthStencilState::setLabel(const String&) const
 {
-    // FIXME: The MTLRenderPipelineState protocol does not allow setting the label.
+    // FIXME: The MTLDepthStencilState protocol does not allow setting the label.
     // The label has to be set on the descriptor when creating the state object.
     // We should consider changing the WebMetal interface to not require this!
 }
     
-MTLRenderPipelineState *GPULegacyRenderPipelineState::metal() const
-{
-    return m_metal.get();
-}
-
 } // namespace WebCore
 
 #endif

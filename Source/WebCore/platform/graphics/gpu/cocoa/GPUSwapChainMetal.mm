@@ -81,17 +81,17 @@ void GPUSwapChain::setDevice(const GPUDevice& device)
 static std::optional<PlatformTextureFormat> platformTextureFormatForGPUTextureFormat(GPUTextureFormatEnum format)
 {
     switch (format) {
-        case GPUTextureFormatEnum::R8G8B8A8Unorm:
-            return MTLPixelFormatRGBA8Unorm;
-        case GPUTextureFormatEnum::R8G8B8A8Uint:
-            return MTLPixelFormatRGBA8Uint;
-        case GPUTextureFormatEnum::B8G8R8A8Unorm:
-            return MTLPixelFormatBGRA8Unorm;
-        case GPUTextureFormatEnum::D32FloatS8Uint:
-            return MTLPixelFormatDepth32Float_Stencil8;
-        default:
-            LOG(WebGPU, "GPUSwapChain::setFormat(): Invalid texture format specified!");
-            return std::nullopt;
+    case GPUTextureFormatEnum::R8G8B8A8Unorm:
+        return MTLPixelFormatRGBA8Unorm;
+    case GPUTextureFormatEnum::R8G8B8A8Uint:
+        return MTLPixelFormatRGBA8Uint;
+    case GPUTextureFormatEnum::B8G8R8A8Unorm:
+        return MTLPixelFormatBGRA8Unorm;
+    case GPUTextureFormatEnum::D32FloatS8Uint:
+        return MTLPixelFormatDepth32Float_Stencil8;
+    default:
+        LOG(WebGPU, "GPUSwapChain::setFormat(): Invalid texture format specified!");
+        return std::nullopt;
     }
 }
 

@@ -34,9 +34,10 @@
 namespace WebCore {
 
 GPULegacyTextureDescriptor::GPULegacyTextureDescriptor(unsigned pixelFormat, unsigned width, unsigned height, bool mipmapped)
-    : m_metal { [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:static_cast<MTLPixelFormat>(pixelFormat) width:width height:height mipmapped:mipmapped] }
 {
-    LOG(WebMetal, "GPUTextureDescriptor::GPUTextureDescriptor()");
+    LOG(WebMetal, "GPULegacyTextureDescriptor::GPULegacyTextureDescriptor()");
+
+    m_metal = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:static_cast<MTLPixelFormat>(pixelFormat) width:width height:height mipmapped:mipmapped];
 }
 
 unsigned GPULegacyTextureDescriptor::width() const

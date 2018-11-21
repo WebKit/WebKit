@@ -301,7 +301,6 @@ Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
 Modules/webgpu/DOMWindowWebGPU.cpp
-Modules/webgpu/GPUDevice.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUCommandBuffer.cpp
@@ -1733,27 +1732,28 @@ platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp
 platform/graphics/filters/SpotLightSource.cpp
 
-platform/graphics/gpu/GPULegacyBuffer.cpp
-platform/graphics/gpu/GPULegacyCommandBuffer.cpp
-platform/graphics/gpu/GPULegacyCommandQueue.cpp
-platform/graphics/gpu/GPULegacyComputeCommandEncoder.cpp
-platform/graphics/gpu/GPULegacyComputePipelineState.cpp
-platform/graphics/gpu/GPULegacyDepthStencilDescriptor.cpp
-platform/graphics/gpu/GPULegacyDepthStencilState.cpp
-platform/graphics/gpu/GPULegacyDevice.cpp
-platform/graphics/gpu/GPULegacyDrawable.cpp
-platform/graphics/gpu/GPULegacyFunction.cpp
-platform/graphics/gpu/GPULegacyLibrary.cpp
-platform/graphics/gpu/GPULegacyRenderCommandEncoder.cpp
-platform/graphics/gpu/GPULegacyRenderPassAttachmentDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPassColorAttachmentDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPassDepthAttachmentDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPassDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPipelineColorAttachmentDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPipelineDescriptor.cpp
-platform/graphics/gpu/GPULegacyRenderPipelineState.cpp
-platform/graphics/gpu/GPULegacyTexture.cpp
-platform/graphics/gpu/GPULegacyTextureDescriptor.cpp
+platform/graphics/gpu/GPUDevice.cpp
+platform/graphics/gpu/legacy/GPULegacyBuffer.cpp
+platform/graphics/gpu/legacy/GPULegacyCommandBuffer.cpp
+platform/graphics/gpu/legacy/GPULegacyCommandQueue.cpp
+platform/graphics/gpu/legacy/GPULegacyComputeCommandEncoder.cpp
+platform/graphics/gpu/legacy/GPULegacyComputePipelineState.cpp
+platform/graphics/gpu/legacy/GPULegacyDepthStencilDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyDepthStencilState.cpp
+platform/graphics/gpu/legacy/GPULegacyDevice.cpp
+platform/graphics/gpu/legacy/GPULegacyDrawable.cpp
+platform/graphics/gpu/legacy/GPULegacyFunction.cpp
+platform/graphics/gpu/legacy/GPULegacyLibrary.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderCommandEncoder.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPassAttachmentDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPassColorAttachmentDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPassDepthAttachmentDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPassDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPipelineColorAttachmentDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPipelineDescriptor.cpp
+platform/graphics/gpu/legacy/GPULegacyRenderPipelineState.cpp
+platform/graphics/gpu/legacy/GPULegacyTexture.cpp
+platform/graphics/gpu/legacy/GPULegacyTextureDescriptor.cpp
 
 platform/graphics/iso/ISOBox.cpp
 platform/graphics/iso/ISOOriginalFormatBox.cpp

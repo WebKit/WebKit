@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,55 @@
  */
 
 #import "config.h"
-#import "GPULegacyBuffer.h"
+#import "GPULegacyComputeCommandEncoder.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyDevice.h"
+#import "GPULegacyBuffer.h"
+#import "GPULegacyCommandBuffer.h"
+#import "GPULegacyComputePipelineState.h"
+#import "GPULegacySize.h"
 #import "Logging.h"
-#import <JavaScriptCore/ArrayBufferView.h>
 #import <Metal/Metal.h>
-#import <wtf/Gigacage.h>
-#import <wtf/PageBlock.h>
 
 namespace WebCore {
 
-GPULegacyBuffer::GPULegacyBuffer(const GPULegacyDevice& device, const JSC::ArrayBufferView& data)
+static inline MTLSize MTLSizeMake(GPULegacySize size)
 {
-    LOG(WebMetal, "GPUBuffer::GPUBuffer()");
+    return { size.width, size.height, size.depth };
+}
 
-    if (!device.metal())
+GPULegacyComputeCommandEncoder::GPULegacyComputeCommandEncoder(const GPULegacyCommandBuffer& buffer)
+{
+    LOG(WebMetal, "GPULegacyComputeCommandEncoder::GPULegacyComputeCommandEncoder()");
+
+    m_metal = [buffer.metal() computeCommandEncoder];
+}
+
+void GPULegacyComputeCommandEncoder::setComputePipelineState(const GPULegacyComputePipelineState& computePipelineState) const
+{
+    if (!computePipelineState.metal())
         return;
-    
-    size_t pageSize = WTF::pageSize();
-    size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data.byteLength());
-    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(Gigacage::Primitive, pageSize, pageAlignedSize);
-    if (!pageAlignedCopy)
+
+    [m_metal setComputePipelineState:computePipelineState.metal()];
+}
+
+void GPULegacyComputeCommandEncoder::setBuffer(const GPULegacyBuffer& buffer, unsigned offset, unsigned index) const
+{
+    if (!buffer.metal())
         return;
-    memcpy(pageAlignedCopy, data.baseAddress(), data.byteLength());
-    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data.byteLength(), [] (void* ptr) {
-        Gigacage::alignedFree(Gigacage::Primitive, ptr);
-    });
-    m_contents->ref();
-    ArrayBuffer* capturedContents = m_contents.get();
-    m_metal = adoptNS([device.metal() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) {
-        capturedContents->deref();
-    }]);
-    if (!m_metal) {
-        m_contents->deref();
-        m_contents = nullptr;
-    }
+
+    [m_metal setBuffer:buffer.metal() offset:offset atIndex:index];
+}
+
+void GPULegacyComputeCommandEncoder::dispatch(GPULegacySize threadgroupsPerGrid, GPULegacySize threadsPerThreadgroup) const
+{
+    [m_metal dispatchThreadgroups:MTLSizeMake(threadgroupsPerGrid) threadsPerThreadgroup:MTLSizeMake(threadsPerThreadgroup)];
+}
+
+void GPULegacyComputeCommandEncoder::endEncoding() const
+{
+    [m_metal endEncoding];
 }
 
 } // namespace WebCore

@@ -24,48 +24,41 @@
  */
 
 #import "config.h"
-#import "GPULegacyCommandQueue.h"
+#import "GPULegacyDrawable.h"
 
 #if ENABLE(WEBMETAL)
 
 #import "GPULegacyDevice.h"
 #import "Logging.h"
-#import <Metal/Metal.h>
-#import <wtf/text/WTFString.h>
+#import "WebMetalLayer.h"
 
 namespace WebCore {
 
-static NSString * const commandQueueDefaultLabel = @"com.apple.WebKit";
-static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
-
-GPULegacyCommandQueue::GPULegacyCommandQueue(const GPULegacyDevice& device)
-    : m_metal { adoptNS([device.metal() newCommandQueue]) }
+GPULegacyDrawable::GPULegacyDrawable(const GPULegacyDevice& device)
 {
-    LOG(WebMetal, "GPULegacyCommandQueue::GPULegacyCommandQueue()");
+    LOG(WebMetal, "GPULegacyDrawable::GPULegacyDrawable()");
 
-    [m_metal setLabel:commandQueueDefaultLabel];
+    m_metal = [device.layer() nextDrawable];
 }
 
-String GPULegacyCommandQueue::label() const
+void GPULegacyDrawable::release()
 {
-    if (!m_metal)
-        return emptyString();
-
-    NSString *prefixedLabel = [m_metal label];
-
-    if ([prefixedLabel isEqualToString:commandQueueDefaultLabel])
-        return emptyString();
-
-    ASSERT(prefixedLabel.length > commandQueueLabelPrefix.length);
-    return [prefixedLabel substringFromIndex:commandQueueLabelPrefix.length];
+    LOG(WebMetal, "GPULegacyDrawable::release()");
+    m_metal = nil;
 }
 
-void GPULegacyCommandQueue::setLabel(const String& label) const
+MTLDrawable *GPULegacyDrawable::metal() const
 {
-    if (label.isEmpty())
-        [m_metal setLabel:commandQueueDefaultLabel];
-    else
-        [m_metal setLabel:[commandQueueLabelPrefix stringByAppendingString:label]];
+    return m_metal.get();
+}
+
+MTLTexture *GPULegacyDrawable::texture() const
+{
+    if (![m_metal conformsToProtocol:@protocol(CAMetalDrawable)]) {
+        ASSERT(!m_metal);
+        return nil;
+    }
+    return [(id<CAMetalDrawable>)m_metal.get() texture];
 }
 
 } // namespace WebCore

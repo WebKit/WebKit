@@ -24,41 +24,42 @@
  */
 
 #import "config.h"
-#import "GPULegacyRenderPassDescriptor.h"
+#import "GPULegacyCommandBuffer.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyRenderPassColorAttachmentDescriptor.h"
-#import "GPULegacyRenderPassDepthAttachmentDescriptor.h"
+#import "GPULegacyCommandQueue.h"
+#import "GPULegacyDrawable.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
-#import <wtf/Vector.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/MainThread.h>
 
 namespace WebCore {
 
-GPULegacyRenderPassDescriptor::GPULegacyRenderPassDescriptor()
-    : m_metal { adoptNS([MTLRenderPassDescriptor new]) }
+GPULegacyCommandBuffer::GPULegacyCommandBuffer(const GPULegacyCommandQueue& queue, Function<void()>&& completedCallback)
 {
-    LOG(WebMetal, "GPURenderPassDescriptor::GPURenderPassDescriptor()");
+    LOG(WebMetal, "GPULegacyCommandBuffer::GPULegacyCommandBuffer()");
+
+    m_metal = [queue.metal() commandBuffer];
+
+    [m_metal addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
+        callOnMainThread(WTFMove(completedCallback));
+    }).get()];
 }
 
-Vector<GPULegacyRenderPassColorAttachmentDescriptor> GPULegacyRenderPassDescriptor::colorAttachments() const
+void GPULegacyCommandBuffer::presentDrawable(GPULegacyDrawable& drawable) const
 {
-    if (!m_metal)
-        return { };
+    if (!m_metal || !drawable.metal())
+        return;
 
-    // FIXME: Why is it correct to return one color here?
-    return { { [[m_metal colorAttachments] objectAtIndexedSubscript:0] } };
+    [m_metal presentDrawable:drawable.metal()];
+    drawable.release();
 }
 
-GPULegacyRenderPassDepthAttachmentDescriptor GPULegacyRenderPassDescriptor::depthAttachment() const
+void GPULegacyCommandBuffer::commit() const
 {
-    return [m_metal depthAttachment];
-}
-
-MTLRenderPassDescriptor *GPULegacyRenderPassDescriptor::metal() const
-{
-    return m_metal.get();
+    [m_metal commit];
 }
 
 } // namespace WebCore

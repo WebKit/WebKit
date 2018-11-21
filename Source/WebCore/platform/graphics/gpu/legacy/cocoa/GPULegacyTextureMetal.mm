@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yuichiro Kikura (y.kikura@gmail.com)
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,54 +24,47 @@
  */
 
 #import "config.h"
-#import "GPULegacyComputeCommandEncoder.h"
+#import "GPULegacyTexture.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyBuffer.h"
-#import "GPULegacyCommandBuffer.h"
-#import "GPULegacyComputePipelineState.h"
-#import "GPULegacySize.h"
+#import "GPULegacyDevice.h"
+#import "GPULegacyDrawable.h"
+#import "GPULegacyTextureDescriptor.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-static inline MTLSize MTLSizeMake(GPULegacySize size)
+GPULegacyTexture::GPULegacyTexture(const GPULegacyDevice& device, const GPULegacyTextureDescriptor& descriptor)
 {
-    return { size.width, size.height, size.depth };
-}
+    LOG(WebMetal, "GPULegacyTexture::GPULegacyTexture()");
 
-GPULegacyComputeCommandEncoder::GPULegacyComputeCommandEncoder(const GPULegacyCommandBuffer& buffer)
-    : m_metal { [buffer.metal() computeCommandEncoder] }
-{
-    LOG(WebMetal, "GPULegacyComputeCommandEncoder::GPULegacyComputeCommandEncoder()");
-}
-
-void GPULegacyComputeCommandEncoder::setComputePipelineState(const GPULegacyComputePipelineState& computePipelineState) const
-{
-    if (!computePipelineState.metal())
+    if (!descriptor.metal())
         return;
 
-    [m_metal setComputePipelineState:computePipelineState.metal()];
-}
-    
-void GPULegacyComputeCommandEncoder::setBuffer(const GPULegacyBuffer& buffer, unsigned offset, unsigned index) const
-{
-    if (!buffer.metal())
-        return;
-
-    [m_metal setBuffer:buffer.metal() offset:offset atIndex:index];
-}
-    
-void GPULegacyComputeCommandEncoder::dispatch(GPULegacySize threadgroupsPerGrid, GPULegacySize threadsPerThreadgroup) const
-{
-    [m_metal dispatchThreadgroups:MTLSizeMake(threadgroupsPerGrid) threadsPerThreadgroup:MTLSizeMake(threadsPerThreadgroup)];
+    m_metal = adoptNS([device.metal() newTextureWithDescriptor:descriptor.metal()]);
 }
 
-void GPULegacyComputeCommandEncoder::endEncoding() const
+GPULegacyTexture::GPULegacyTexture(const GPULegacyDrawable& other)
+    : m_metal { other.texture() }
 {
-    [m_metal endEncoding];
+    LOG(WebMetal, "GPULegacyTexture::GPULegacyTexture()");
+}
+
+unsigned GPULegacyTexture::width() const
+{
+    return m_metal.get().width;
+}
+
+unsigned GPULegacyTexture::height() const
+{
+    return m_metal.get().height;
+}
+
+MTLTexture *GPULegacyTexture::metal() const
+{
+    return m_metal.get();
 }
 
 } // namespace WebCore

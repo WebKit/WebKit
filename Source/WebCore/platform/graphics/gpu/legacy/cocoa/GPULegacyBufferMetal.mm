@@ -24,41 +24,44 @@
  */
 
 #import "config.h"
-#import "GPULegacyCommandBuffer.h"
+#import "GPULegacyBuffer.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyCommandQueue.h"
-#import "GPULegacyDrawable.h"
+#import "GPULegacyDevice.h"
 #import "Logging.h"
+#import <JavaScriptCore/ArrayBufferView.h>
 #import <Metal/Metal.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/MainThread.h>
+#import <wtf/Gigacage.h>
+#import <wtf/PageBlock.h>
 
 namespace WebCore {
 
-GPULegacyCommandBuffer::GPULegacyCommandBuffer(const GPULegacyCommandQueue& queue, Function<void()>&& completedCallback)
-    : m_metal { [queue.metal() commandBuffer] }
+GPULegacyBuffer::GPULegacyBuffer(const GPULegacyDevice& device, const JSC::ArrayBufferView& data)
 {
-    LOG(WebMetal, "GPUCommandBuffer::GPUCommandBuffer()");
+    LOG(WebMetal, "GPULegacyBuffer::GPULegacyBuffer()");
 
-    [m_metal addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
-        callOnMainThread(WTFMove(completedCallback));
-    }).get()];
-}
-
-void GPULegacyCommandBuffer::presentDrawable(GPULegacyDrawable& drawable) const
-{
-    if (!m_metal || !drawable.metal())
+    if (!device.metal())
         return;
 
-    [m_metal presentDrawable:drawable.metal()];
-    drawable.release();
-}
-
-void GPULegacyCommandBuffer::commit() const
-{
-    [m_metal commit];
+    size_t pageSize = WTF::pageSize();
+    size_t pageAlignedSize = roundUpToMultipleOf(pageSize, data.byteLength());
+    void* pageAlignedCopy = Gigacage::tryAlignedMalloc(Gigacage::Primitive, pageSize, pageAlignedSize);
+    if (!pageAlignedCopy)
+        return;
+    memcpy(pageAlignedCopy, data.baseAddress(), data.byteLength());
+    m_contents = ArrayBuffer::createFromBytes(pageAlignedCopy, data.byteLength(), [] (void* ptr) {
+        Gigacage::alignedFree(Gigacage::Primitive, ptr);
+    });
+    m_contents->ref();
+    ArrayBuffer* capturedContents = m_contents.get();
+    m_metal = adoptNS([device.metal() newBufferWithBytesNoCopy:m_contents->data() length:pageAlignedSize options:MTLResourceOptionCPUCacheModeDefault deallocator:^(void*, NSUInteger) {
+        capturedContents->deref();
+    }]);
+    if (!m_metal) {
+        m_contents->deref();
+        m_contents = nullptr;
+    }
 }
 
 } // namespace WebCore

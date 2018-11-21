@@ -27,14 +27,6 @@ Modules/plugins/QuickTimePluginReplacement.mm
 Modules/plugins/YouTubePluginReplacement.cpp
 Modules/webdatabase/cocoa/DatabaseManagerCocoa.mm
 
-Modules/webgpu/cocoa/GPUCommandBufferMetal.mm
-Modules/webgpu/cocoa/GPUDeviceMetal.mm
-Modules/webgpu/cocoa/GPUQueueMetal.mm
-Modules/webgpu/cocoa/GPURenderPipelineMetal.mm
-Modules/webgpu/cocoa/GPUShaderModuleMetal.mm
-Modules/webgpu/cocoa/GPUSwapChainMetal.mm
-Modules/webgpu/cocoa/GPUTextureMetal.mm
-
 accessibility/ios/AccessibilityObjectIOS.mm
 accessibility/ios/AXObjectCacheIOS.mm
 accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
@@ -326,6 +318,13 @@ platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/TextureCacheCV.mm
 platform/graphics/cv/VideoTextureCopierCV.cpp
 
+platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm
+platform/graphics/gpu/cocoa/GPUDeviceMetal.mm
+platform/graphics/gpu/cocoa/GPUQueueMetal.mm
+platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm
+platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm
+platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm
+platform/graphics/gpu/cocoa/GPUTextureMetal.mm
 platform/graphics/gpu/Texture.cpp
 platform/graphics/gpu/TilingData.cpp
 
@@ -352,27 +351,27 @@ platform/graphics/mac/SimpleFontDataCoreText.cpp
 platform/graphics/mac/WebLayer.mm
 platform/graphics/mac/WebKitNSImageExtras.mm
 
-platform/graphics/metal/GPULegacyBufferMetal.mm
-platform/graphics/metal/GPULegacyCommandBufferMetal.mm
-platform/graphics/metal/GPULegacyCommandQueueMetal.mm
-platform/graphics/metal/GPULegacyComputeCommandEncoderMetal.mm
-platform/graphics/metal/GPULegacyComputePipelineStateMetal.mm
-platform/graphics/metal/GPULegacyDepthStencilDescriptorMetal.mm
-platform/graphics/metal/GPULegacyDepthStencilStateMetal.mm
-platform/graphics/metal/GPULegacyDeviceMetal.mm
-platform/graphics/metal/GPULegacyDrawableMetal.mm
-platform/graphics/metal/GPULegacyFunctionMetal.mm
-platform/graphics/metal/GPULegacyLibraryMetal.mm
-platform/graphics/metal/GPULegacyRenderCommandEncoderMetal.mm
-platform/graphics/metal/GPULegacyRenderPassAttachmentDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPassColorAttachmentDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPassDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPipelineDescriptorMetal.mm
-platform/graphics/metal/GPULegacyRenderPipelineStateMetal.mm
-platform/graphics/metal/GPULegacyTextureDescriptorMetal.mm
-platform/graphics/metal/GPULegacyTextureMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyBufferMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyCommandBufferMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyCommandQueueMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyComputeCommandEncoderMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyComputePipelineStateMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilStateMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyDeviceMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyDrawableMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyFunctionMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyLibraryMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderCommandEncoderMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassAttachmentDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassColorAttachmentDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineStateMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyTextureDescriptorMetal.mm
+platform/graphics/gpu/legacy/cocoa/GPULegacyTextureMetal.mm
 
 platform/graphics/opengl/Extensions3DOpenGL.cpp
 platform/graphics/opengl/Extensions3DOpenGLCommon.cpp

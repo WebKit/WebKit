@@ -24,41 +24,39 @@
  */
 
 #import "config.h"
-#import "GPULegacyDepthStencilDescriptor.h"
+#import "GPULegacyRenderPassDepthAttachmentDescriptor.h"
 
 #if ENABLE(WEBMETAL)
 
-#import "GPULegacyEnums.h"
+#import "GPULegacyRenderPassAttachmentDescriptor.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 
 namespace WebCore {
 
-GPULegacyDepthStencilDescriptor::GPULegacyDepthStencilDescriptor()
-    : m_metal { adoptNS([MTLDepthStencilDescriptor new]) }
+GPULegacyRenderPassDepthAttachmentDescriptor::GPULegacyRenderPassDepthAttachmentDescriptor(MTLRenderPassDepthAttachmentDescriptor *metal)
+    : GPULegacyRenderPassAttachmentDescriptor { metal }
 {
-    LOG(WebMetal, "GPUDepthStencilDescriptor::GPUDepthStencilDescriptor()");
+    LOG(WebMetal, "GPULegacyRenderPassDepthAttachmentDescriptor::GPULegacyRenderPassDepthAttachmentDescriptor()");
 }
 
-bool GPULegacyDepthStencilDescriptor::depthWriteEnabled() const
+double GPULegacyRenderPassDepthAttachmentDescriptor::clearDepth() const
 {
-    return [m_metal isDepthWriteEnabled];
+    auto* metal = this->metal();
+    if (!metal)
+        return 0;
+
+    return [metal clearDepth];
 }
 
-void GPULegacyDepthStencilDescriptor::setDepthWriteEnabled(bool newDepthWriteEnabled) const
+void GPULegacyRenderPassDepthAttachmentDescriptor::setClearDepth(double newClearDepth) const
 {
-    [m_metal setDepthWriteEnabled:newDepthWriteEnabled];
+    [metal() setClearDepth:newClearDepth];
 }
 
-GPULegacyCompareFunction GPULegacyDepthStencilDescriptor::depthCompareFunction() const
+MTLRenderPassDepthAttachmentDescriptor *GPULegacyRenderPassDepthAttachmentDescriptor::metal() const
 {
-    return static_cast<GPULegacyCompareFunction>([m_metal depthCompareFunction]);
-}
-
-void GPULegacyDepthStencilDescriptor::setDepthCompareFunction(GPULegacyCompareFunction newFunction) const
-{
-    // FIXME: Do we need to check if the function value is in range before casting to MTLCompareFunction?
-    [m_metal setDepthCompareFunction:static_cast<MTLCompareFunction>(newFunction)];
+    return static_cast<MTLRenderPassDepthAttachmentDescriptor *>(GPULegacyRenderPassAttachmentDescriptor::metal());
 }
 
 } // namespace WebCore
