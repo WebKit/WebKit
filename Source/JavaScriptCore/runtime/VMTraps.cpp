@@ -148,6 +148,11 @@ void VMTraps::tryInstallTrapBreakpoints(SignalContext& context, StackBounds stac
         if (!locker)
             return; // Let the SignalSender try again later.
 
+        if (!needTrapHandling()) {
+            // Too late. Someone else already handled the trap.
+            return;
+        }
+
         if (!foundCodeBlock->hasInstalledVMTrapBreakpoints())
             foundCodeBlock->installVMTrapBreakpoints();
         return;
@@ -190,7 +195,7 @@ class VMTraps::SignalSender final : public AutomaticThread {
 public:
     using Base = AutomaticThread;
     SignalSender(const AbstractLocker& locker, VM& vm)
-        : Base(locker, vm.traps().m_lock, vm.traps().m_trapSet.copyRef())
+        : Base(locker, vm.traps().m_lock, vm.traps().m_condition.copyRef())
         , m_vm(vm)
     {
         static std::once_flag once;
@@ -211,9 +216,8 @@ public:
                 }
                 ASSERT(currentCodeBlock->hasInstalledVMTrapBreakpoints());
                 VM& vm = *currentCodeBlock->vm();
-                ASSERT(vm.traps().needTrapHandling()); // We should have already jettisoned this code block when we handled the trap.
 
-                // We are in JIT code so it's safe to aquire this lock.
+                // We are in JIT code so it's safe to acquire this lock.
                 auto codeBlockSetLocker = holdLock(vm.heap.codeBlockSet().getLock());
                 bool sawCurrentCodeBlock = false;
                 vm.heap.forEachCodeBlockIgnoringJITPlans(codeBlockSetLocker, [&] (CodeBlock* codeBlock) {
@@ -279,7 +283,7 @@ protected:
             auto locker = holdLock(*traps().m_lock);
             if (traps().m_isShuttingDown)
                 return WorkResult::Stop;
-            traps().m_trapSet->waitFor(*traps().m_lock, 1_ms);
+            traps().m_condition->waitFor(*traps().m_lock, 1_ms);
         }
         return WorkResult::Continue;
     }
@@ -299,7 +303,7 @@ void VMTraps::willDestroyVM()
         {
             auto locker = holdLock(*m_lock);
             if (!m_signalSender->tryStop(locker))
-                m_trapSet->notifyAll(locker);
+                m_condition->notifyAll(locker);
         }
         m_signalSender->join();
         m_signalSender = nullptr;
@@ -320,12 +324,12 @@ void VMTraps::fireTrap(VMTraps::EventType eventType)
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     if (!Options::usePollingTraps()) {
         // sendSignal() can loop until it has confirmation that the mutator thread
-        // has received the trap request. We'll call it from another trap so that
+        // has received the trap request. We'll call it from another thread so that
         // fireTrap() does not block.
         auto locker = holdLock(*m_lock);
         if (!m_signalSender)
             m_signalSender = adoptRef(new SignalSender(locker, vm()));
-        m_trapSet->notifyAll(locker);
+        m_condition->notifyAll(locker);
     }
 #endif
 }
@@ -384,7 +388,7 @@ auto VMTraps::takeTopPriorityTrap(VMTraps::Mask mask) -> EventType
 
 VMTraps::VMTraps()
     : m_lock(Box<Lock>::create())
-    , m_trapSet(AutomaticThreadCondition::create())
+    , m_condition(AutomaticThreadCondition::create())
 {
 }
 

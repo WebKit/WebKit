@@ -146,7 +146,7 @@ private:
 #endif
 
     Box<Lock> m_lock;
-    Ref<AutomaticThreadCondition> m_trapSet;
+    Ref<AutomaticThreadCondition> m_condition;
     union {
         BitField m_needTrapHandling { 0 };
         BitField m_trapsBitField;

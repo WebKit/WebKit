@@ -1,3 +1,36 @@
+2018-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid assertion in VMTraps::SignalSender's SignalAction.
+        https://bugs.webkit.org/show_bug.cgi?id=191856
+        <rdar://problem/46089992>
+
+        Reviewed by Yusuke Suzuki.
+
+        The ASSERT(vm.traps().needTrapHandling()) assertion in SignalSender's SigAction
+        function is invalid because we can't be sure that the trap has been handled yet
+        by the time the trap fires.  This is because the main thread may also check traps
+        (in LLInt, baseline JIT and VM runtime code).  There's a race to handle the trap.
+        Hence, the SigAction cannot assume that the trap still needs handling by the time
+        it is executed.  This patch removed the invalid assertion.
+
+        Also renamed m_trapSet to m_condition because it is a AutomaticThreadCondition,
+        and all the ways it is used is as a condvar.  The m_trapSet name doesn't seem
+        appropriate nor meaningful.
+
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        - Added a !needTrapHandling() check as an optimization: there's no need to install
+          VMTrap breakpoints if someone already beat us to handling the trap (remember,
+          the main thread is racing against the VMTraps signalling thread to handle the
+          trap too).  We only need to install the VMTraps breakpoints if we need DFG/FTL
+          compiled code to deopt so that they can check and handle pending traps.  If the
+          trap has already been handled, it's better to not deopt any DFG/FTL functions.
+
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::VMTraps):
+        * runtime/VMTraps.h:
+
 2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable JIT on ARM/Linux

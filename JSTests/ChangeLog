@@ -1,3 +1,14 @@
+2018-11-20  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid assertion in VMTraps::SignalSender's SignalAction.
+        https://bugs.webkit.org/show_bug.cgi?id=191856
+        <rdar://problem/46089992>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/regress-191856.js: Added.
+        - this test is skipped for now until we have a fix for webkit.org/b/191855.
+
 2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable JIT on ARM/Linux
