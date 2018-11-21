@@ -773,7 +773,7 @@ webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html 
 webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Timeout ]
+webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Failure ]
 webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
@@ -1293,6 +1293,8 @@ webkit.org/b/188406 [ Debug ] imported/w3c/web-platform-tests/html/semantics/sel
 
 webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
 webkit.org/b/190738 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Crash Pass ]
+webkit.org/b/191882 fast/forms/validation-message-clone.html [ Failure Crash ]
+webkit.org/b/191882 fast/forms/validation-message-in-relative-body.html [ Failure Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -3611,6 +3613,21 @@ webkit.org/b/191688 compositing/layer-creation/overlap-animation.html [ Failure 
 webkit.org/b/191688 compositing/layer-creation/overlap-transforms.html [ Failure ]
 webkit.org/b/191688 compositing/overflow/clip-descendents.html [ Failure ]
 webkit.org/b/191688 compositing/repaint/absolute-painted-into-composited-ancestor.html [ Failure ]
+
+webkit.org/b/191882 fast/forms/validation-message-on-range.html [ Failure ]
+webkit.org/b/191882 fast/forms/validation-message-on-textarea.html [ Failure ]
+webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
+
+webkit.org/b/191883 fast/events/touch/emulate-touch-events.html [ Failure ]
+
+webkit.org/b/191884 fast/images/icon-decoding.html [ Failure ]
+
+webkit.org/b/191885 fast/inline/simple-inline-inflow-positioned.html [ Failure ]
+webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant.html [ Failure ]
+webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
+webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
+
+webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

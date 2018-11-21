@@ -1,3 +1,10 @@
+2018-11-21  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=191887
+
+        * platform/gtk/TestExpectations:
+
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Take nonBreakableStart/End into use.
