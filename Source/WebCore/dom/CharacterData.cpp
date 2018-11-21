@@ -96,6 +96,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (!characterLengthLimit)
         return 0;
 
+    String oldData = m_data;
     if (string.is8Bit())
         m_data.append(string.characters8() + offset, characterLengthLimit);
     else
@@ -106,6 +107,10 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
     notifyParentAfterChange(ContainerNode::ChildChangeSource::Parser);
+
+    auto mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(*this);
+    if (UNLIKELY(mutationRecipients))
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(*this, oldData));
 
     return characterLengthLimit;
 }

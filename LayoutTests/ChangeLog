@@ -1,3 +1,15 @@
+2018-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mutation observers doesn't get notified of character data mutation made by the parser
+        https://bugs.webkit.org/show_bug.cgi?id=191874
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * fast/dom/MutationObserver/observe-parser-character-data-change-expected.txt: Added.
+        * fast/dom/MutationObserver/observe-parser-character-data-change.html: Added.
+
 2018-11-21  Zalan Bujtas <zalan@apple.com>
 
         [LFC][IFC] Border should be considered as non-breakable space
