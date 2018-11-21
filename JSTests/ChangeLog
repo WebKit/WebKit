@@ -1,3 +1,13 @@
+2018-11-20  Saam barati  <sbarati@apple.com>
+
+        Merging an IC variant may lead to the IC status containing overlapping structure sets
+        https://bugs.webkit.org/show_bug.cgi?id=191869
+        <rdar://problem/45403453>
+
+        Reviewed by Mark Lam.
+
+        * stress/merging-ic-variants-should-bail-if-structures-overlap.js: Added.
+
 2018-11-19  Mark Lam  <mark.lam@apple.com>
 
         globalFuncImportModule() should return a promise when it clears exceptions.

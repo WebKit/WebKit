@@ -1,3 +1,49 @@
+2018-11-20  Saam barati  <sbarati@apple.com>
+
+        Merging an IC variant may lead to the IC status containing overlapping structure sets
+        https://bugs.webkit.org/show_bug.cgi?id=191869
+        <rdar://problem/45403453>
+
+        Reviewed by Mark Lam.
+
+        When merging two IC variant lists, we may end up in a world where we have
+        overlapping structure sets. We defend against this when we append a new
+        variant, but we should also defend against it once we merge in a new variant.
+        
+        Consider this case with MultiPutByOffset, where we merge two PutByIdStatuses
+        together, P1 and P2.
+        
+        Let's consider these structures:
+        s1 = {}
+        s2 = {p: 0}
+        s3 = {p: 0, p2: 1}
+        
+        P1 contains these variants:
+        Transition: [s1 => s2]
+        Replace: [s2, s3]
+        
+        P2 contains:
+        Replace: [s2]
+        
+        Because of the ordering of the variants, we may end up combining
+        P2's replace into P1's transition, forming this new list:
+        Transition: [(s1, s2) => s2]
+        Replace: [s2, s3]
+        
+        Obviously the ideal thing here is to have some ordering when we merge
+        in variants to choose the most ideal option. It'd be ideal for P2's
+        Replace to be merged into P1's replace.
+        
+        If we notice that this is super important, we can implement some kind
+        of ordering. None of our tests (until this patch) stress this. This patch
+        just makes it so we defend against this crazy scenario by falling back
+        to the slow path gracefully. This prevents us from emitting invalid
+        IR in FTL->B3 lowering by creating a switch with two case labels being
+        identical values.
+
+        * bytecode/ICStatusUtils.h:
+        (JSC::appendICStatusVariant):
+
 2018-11-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r238039) WebCore::JSDOMGlobalObject::createStructure is using JSC::Structure::create without including StructureInlines.h
