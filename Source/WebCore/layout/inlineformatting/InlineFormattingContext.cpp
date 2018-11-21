@@ -179,13 +179,13 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
             return std::min(remaningLength, inlineItem.textContent().length() - startPosition);
         };
 
-        // 1. Inline element does not require run breaking -> add current inline element to uncommitted. Jump to the next element.
+        // 1. Break before/after -> requires dedicated run -> commit what we've got so far and also commit the current inline element as a separate inline run.
         // 2. Break at the beginning of the inline element -> commit what we've got so far. Current element becomes the first uncommitted.
         // 3. Break at the end of the inline element -> commit what we've got so far including the current element.
-        // 4. Break before/after -> requires dedicated run -> commit what we've got so far and also commit the current inline element as a separate inline run.
+        // 4. Inline element does not require run breaking -> add current inline element to uncommitted. Jump to the next element.
         auto detachingRules = inlineItem.detachingRules();
 
-        // #4
+        // #1
         if (detachingRules.containsAll({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd })) {
             commit();
             uncommitted = Uncommitted { &inlineItem, &inlineItem, currentLength() };
@@ -194,17 +194,18 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         }
 
         // #2
-        if (detachingRules == InlineItem::DetachingRule::BreakAtStart)
+        if (detachingRules.contains(InlineItem::DetachingRule::BreakAtStart))
             commit();
 
         // Add current inline item to uncommitted.
+        // #3 and #4
         if (!uncommitted)
             uncommitted = Uncommitted { &inlineItem, &inlineItem, 0 };
         uncommitted->length += currentLength();
         uncommitted->lastInlineItem = &inlineItem;
 
         // #3
-        if (detachingRules == InlineItem::DetachingRule::BreakAtEnd)
+        if (detachingRules.contains(InlineItem::DetachingRule::BreakAtEnd))
             commit();
     }
     // Either all inline elements needed dedicated runs or neither of them.

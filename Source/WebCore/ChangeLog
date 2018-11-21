@@ -1,3 +1,15 @@
+2018-11-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use contains and containsAll in InlineFormattingContext::splitInlineRunIfNeeded consistently
+        https://bugs.webkit.org/show_bug.cgi?id=191890
+
+        Rearrange the comment numbers to match the logic below.
+
+        Reviewed by Antti Koivisto.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+
 2018-11-20  Dean Jackson  <dino@apple.com>
 
         Move WebGPU platform code to platform/graphics/gpu
