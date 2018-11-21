@@ -1,3 +1,34 @@
+2018-11-21  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Refactor AppendPipeline deinitialization
+        https://bugs.webkit.org/show_bug.cgi?id=191759
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        AppendPipeline currently has a method, clearPlayerPrivate(), that the
+        client code uses to deinitialize most of the AppendPipeline... just
+        before actually destructing it in the next line of code.
+
+        Since at that point there should not be alive RefPtr's pointing to the
+        AppendPipeline there is no need for this kind of pre-deinitialization
+        in this usage pattern. Instead, we can just rely on C++ destructors,
+        cleaning the code a bit and removing the potential for the question
+        "what if `clearPlayerPrivate() has been called before?`": it has not.
+
+        Assertions have been added to ensure that there is only one alive
+        RefPtr pointing to AppendPipeline, therefore guaranteeing its immediate
+        destruction.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::deinitialize):
+        (WebCore::AppendPipeline::clearPlayerPrivate): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+
 2018-11-20  Dean Jackson  <dino@apple.com>
 
         Removing using namespace WebCore from WebLayer

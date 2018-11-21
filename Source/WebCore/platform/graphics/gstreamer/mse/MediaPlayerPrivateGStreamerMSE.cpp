@@ -97,8 +97,13 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
 {
     GST_TRACE("destroying the player (%p)", this);
 
+    // Clear the AppendPipeline map. This should cause the destruction of all the AppendPipeline's since there should
+    // be no alive references at this point.
+#ifndef NDEBUG
     for (auto iterator : m_appendPipelinesMap)
-        iterator.value->clearPlayerPrivate();
+        ASSERT(iterator.value->hasOneRef());
+#endif
+    m_appendPipelinesMap.clear();
 
     if (m_source) {
         webKitMediaSrcSetMediaPlayerPrivate(WEBKIT_MEDIA_SRC(m_source.get()), nullptr);

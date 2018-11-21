@@ -50,7 +50,6 @@ public:
     virtual ~AppendPipeline();
 
     GstFlowReturn pushNewBuffer(GstBuffer*);
-    void clearPlayerPrivate();
     void abort();
     Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }

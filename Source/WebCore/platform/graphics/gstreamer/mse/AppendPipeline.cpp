@@ -225,29 +225,25 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
 
 AppendPipeline::~AppendPipeline()
 {
+    GST_TRACE("Destructing AppendPipeline (%p)", this);
     ASSERT(isMainThread());
 
     setAppendState(AppendState::Invalid);
     // Forget all pending tasks and unblock the streaming thread if it was blocked.
     m_taskQueue.startAborting();
 
-    GST_TRACE("Destroying AppendPipeline (%p)", this);
-
-    // FIXME: Maybe notify appendComplete here?
+    // Disconnect all synchronous event handlers and probes susceptible of firing from the main thread
+    // when changing the pipeline state.
 
     if (m_pipeline) {
         ASSERT(m_bus);
         g_signal_handlers_disconnect_by_data(m_bus.get(), this);
         gst_bus_disable_sync_message_emission(m_bus.get());
         gst_bus_remove_signal_watch(m_bus.get());
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
-        m_pipeline = nullptr;
     }
 
-    if (m_appsrc) {
+    if (m_appsrc)
         g_signal_handlers_disconnect_by_data(m_appsrc.get(), this);
-        m_appsrc = nullptr;
-    }
 
     if (m_demux) {
 #if !LOG_DISABLED
@@ -256,7 +252,6 @@ AppendPipeline::~AppendPipeline()
 #endif
 
         g_signal_handlers_disconnect_by_data(m_demux.get(), this);
-        m_demux = nullptr;
     }
 
     if (m_appsink) {
@@ -271,12 +266,12 @@ AppendPipeline::~AppendPipeline()
 #if ENABLE(ENCRYPTED_MEDIA)
         gst_pad_remove_probe(appsinkPad.get(), m_appsinkPadEventProbeInformation.probeId);
 #endif
-        m_appsink = nullptr;
     }
 
-    m_appsinkCaps = nullptr;
-    m_demuxerSrcPadCaps = nullptr;
-};
+    // We can tear down the pipeline safely now.
+    if (m_pipeline)
+        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+}
 
 GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo* padProbeInfo)
 {
@@ -297,22 +292,6 @@ GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*
         handleEndOfAppend();
     });
     return GST_PAD_PROBE_DROP;
-}
-
-void AppendPipeline::clearPlayerPrivate()
-{
-    ASSERT(isMainThread());
-    GST_DEBUG("cleaning private player");
-
-    // Make sure that AppendPipeline won't process more data from now on and
-    // instruct handleNewSample to abort itself from now on as well.
-    setAppendState(AppendState::Invalid);
-    m_taskQueue.startAborting();
-
-    // And now that no handleNewSample operations will remain stalled waiting
-    // for the main thread, stop the pipeline.
-    if (m_pipeline)
-        gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
 void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
