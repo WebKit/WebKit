@@ -66,6 +66,13 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
     // https://www.freetype.org/freetype2/docs/design/design-4.html
     // https://lists.nongnu.org/archive/html/freetype-devel/2004-10/msg00022.html
 
+    // Workaround crash in cairo 1.16.0. See https://webkit.org/b/191595.
+    int version = cairo_version();
+    if (version >= CAIRO_VERSION_ENCODE(1, 15, 0) && version < CAIRO_VERSION_ENCODE(1, 16, 1)) {
+        FT_Init_FreeType(&library);
+        return true;
+    }
+
     FT_Memory memory = bitwise_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
     if (!memory)
         return false;

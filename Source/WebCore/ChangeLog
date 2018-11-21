@@ -1,3 +1,17 @@
+2018-11-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [FreeType] Problem under WebCore::FontPlatformData::FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=191595
+
+        Unofficially reviewed stable branch commit.
+
+        Blacklist cairo 1.15 and 1.16.0 when setting FreeType memory allocation functions. These
+        broken versions of cairo free memory allocated by FreeType with system free. We can avoid
+        trouble by using the system allocator instead of bmalloc.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::initializeFreeTypeLibrary):
+
 2018-11-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Segfaults on https://terminalizer.com/
