@@ -83,7 +83,8 @@ template<> struct Coder<GRefPtr<GByteArray>> {
             return false;
 
         byteArray = adoptGRef(g_byte_array_sized_new(size));
-        return decoder.decodeFixedLengthData(byteArray->data, byteArray->len);
+        g_byte_array_set_size(byteArray.get(), size);
+        return decoder.decodeFixedLengthData(byteArray->data, size);
     }
 };
 

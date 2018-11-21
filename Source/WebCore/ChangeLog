@@ -1,3 +1,17 @@
+2018-11-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [SOUP] Certificate decoder always returns GByteArray with zero size
+        https://bugs.webkit.org/show_bug.cgi?id=191888
+
+        Reviewed by Žan Doberšek.
+
+        No new tests needed.
+
+        * platform/network/soup/CertificateInfo.h:
+        (WTF::Persistence::Coder<GRefPtr<GByteArray>>::decode): Add missing
+        call to g_byte_array_set_size() to make sure byteArray->len has the
+        correct value.
+
 2018-11-21  Zalan Butjas  <zalan@apple.com>
 
         [LFC][IFC] Take nonBreakableStart/End into use.
