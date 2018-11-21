@@ -1,4 +1,17 @@
 =================
+WebKitGTK+ 2.22.4
+=================
+
+What's new in WebKitGTK+ 2.22.4?
+
+  - Expose ENABLE_MEDIA_SOURCE as a public build option.
+  - Fix a crash when using Cairo versions between 1.15 and 1.16.0
+  - Fix the build with -DLOG_DISABLED=0.
+  - Fix the build with ENABLE_VIDEO=OFF and ENABLE_WEB_AUDIO=OFF.
+  - Fix debug builds of JavaScriptCore.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.22.3
 =================
 
