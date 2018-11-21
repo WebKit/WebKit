@@ -74,6 +74,7 @@ fast/inline/simple-inline-with-out-of-flow-descendant.html
 fast/inline/simple-inline-with-out-of-flow-descendant2.html
 fast/inline/inline-content-with-padding-left-right.html
 fast/inline/inline-content-with-border-left-right.html
+fast/inline/inline-content-with-margin-left-right.html
 fast/block/basic/height-percentage-simple.html
 fast/block/basic/child-block-level-box-with-height-percent.html
 fast/block/basic/quirk-mode-percent-height.html

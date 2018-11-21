@@ -463,6 +463,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
     auto padding = Geometry::computedPadding(layoutState(), root);
     auto border = Geometry::computedBorder(layoutState(), root);
+    auto horizontalMargins = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
     // Setup breaking boundaries for this subtree.
     auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
     // Empty container?
@@ -472,13 +473,13 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     auto rootBreaksAtStart = [&] {
         if (&root == &(this->root()))
             return false;
-        return (padding && padding->horizontal.left) || border.horizontal.left || root.isPositioned();
+        return (padding && padding->horizontal.left) || border.horizontal.left || horizontalMargins.left || root.isPositioned();
     };
 
     auto rootBreaksAtEnd = [&] {
         if (&root == &(this->root()))
             return false;
-        return (padding && padding->horizontal.right) || border.horizontal.right || root.isPositioned();
+        return (padding && padding->horizontal.right) || border.horizontal.right || horizontalMargins.right || root.isPositioned();
     };
 
     if (rootBreaksAtStart()) {
@@ -496,6 +497,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         if (padding)
             firstDescendantInlineBox->addNonBreakableStart(padding->horizontal.left);
         firstDescendantInlineBox->addNonBreakableStart(border.horizontal.left);
+        firstDescendantInlineBox->addNonBreakableStart(horizontalMargins.left);
     }
 
     if (rootBreaksAtEnd()) {
@@ -503,6 +505,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         if (padding)
             lastDescendantInlineBox->addNonBreakableEnd(padding->horizontal.right);
         lastDescendantInlineBox->addNonBreakableEnd(border.horizontal.right);
+        lastDescendantInlineBox->addNonBreakableEnd(horizontalMargins.right);
     }
 }
 

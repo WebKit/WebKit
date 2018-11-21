@@ -1,3 +1,13 @@
+2018-11-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Horizontal margins should be considered as non-breakable space
+        https://bugs.webkit.org/show_bug.cgi?id=191894
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-content-with-margin-left-right-expected.txt: Added.
+        * fast/inline/inline-content-with-margin-left-right.html: Added.
+
 2018-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mutation observers doesn't get notified of character data mutation made by the parser
