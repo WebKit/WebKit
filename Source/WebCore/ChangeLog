@@ -1,3 +1,20 @@
+2018-11-21  Zalan Butjas  <zalan@apple.com>
+
+        [LFC][IFC] Take nonBreakableStart/End into use.
+        https://bugs.webkit.org/show_bug.cgi?id=191873
+
+        Reviewed by Antti Koivisto.
+
+        Offset the final inline runs with the nonBreakableStart/End values.
+        (This patch also fixes relative positioned run verification.)
+
+        Test: fast/inline/inline-content-with-padding-left-right.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+
 2018-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r237845): [cairo] Hyperlink underscore layout issue

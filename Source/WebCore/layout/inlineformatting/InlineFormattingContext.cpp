@@ -139,21 +139,35 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
     // 2. either find an inline item that needs a dedicated run or we reach the end of the run
     // 3. Create dedicate inline runs.
     auto& inlineContent = inlineFormattingState().inlineContent();
-
-    auto split=[&](const auto& inlineItem, auto startPosition, auto length, auto contentStart) {
-        auto width = Geometry::runWidth(inlineContent, inlineItem, startPosition, length, contentStart);
-        auto run = InlineRun { { inlineRun.logicalTop(), contentStart, width, inlineRun.height() }, inlineItem };
-        run.setTextContext({ startPosition, length });
-        splitRuns.append(run);
-        return contentStart + width;
-    };
-
     auto contentStart = inlineRun.logicalLeft();
     auto startPosition = inlineRun.textContext()->start();
     auto remaningLength = inlineRun.textContext()->length();
 
-    unsigned uncommittedLength = 0;
-    InlineItem* firstUncommittedInlineItem = nullptr;
+    struct Uncommitted {
+        const InlineItem* firstInlineItem { nullptr };
+        const InlineItem* lastInlineItem { nullptr };
+        unsigned length { 0 };
+    };
+    std::optional<Uncommitted> uncommitted;
+
+    auto commit = [&] {
+        if (!uncommitted)
+            return;
+
+        contentStart += uncommitted->firstInlineItem->nonBreakableStart();
+
+        auto runWidth = Geometry::runWidth(inlineContent, *uncommitted->firstInlineItem, startPosition, uncommitted->length, contentStart);
+        auto run = InlineRun { { inlineRun.logicalTop(), contentStart, runWidth, inlineRun.height() }, *uncommitted->firstInlineItem };
+        run.setTextContext({ startPosition, uncommitted->length });
+        splitRuns.append(run);
+
+        contentStart += runWidth + uncommitted->lastInlineItem->nonBreakableEnd();
+        remaningLength -= uncommitted->length;
+
+        startPosition = 0;
+        uncommitted = { };
+    };
+
     for (auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
         auto& inlineItem = **iterator;
 
@@ -171,54 +185,33 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         // 4. Break before/after -> requires dedicated run -> commit what we've got so far and also commit the current inline element as a separate inline run.
         auto detachingRules = inlineItem.detachingRules();
 
-        // #1
-        if (detachingRules.isEmpty()) {
-            uncommittedLength += currentLength();
-            firstUncommittedInlineItem = !firstUncommittedInlineItem ? &inlineItem : firstUncommittedInlineItem;
+        // #4
+        if (detachingRules.containsAll({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd })) {
+            commit();
+            uncommitted = Uncommitted { &inlineItem, &inlineItem, currentLength() };
+            commit();
             continue;
         }
-
-        auto commit = [&] {
-            if (!firstUncommittedInlineItem)
-                return;
-
-            contentStart = split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
-
-            remaningLength -= uncommittedLength;
-            startPosition = 0;
-            uncommittedLength = 0;
-            firstUncommittedInlineItem = nullptr;
-        };
 
         // #2
-        if (detachingRules == InlineItem::DetachingRule::BreakAtStart) {
+        if (detachingRules == InlineItem::DetachingRule::BreakAtStart)
             commit();
-            firstUncommittedInlineItem = &inlineItem;
-            uncommittedLength = currentLength();
-            continue;
-        }
+
+        // Add current inline item to uncommitted.
+        if (!uncommitted)
+            uncommitted = Uncommitted { &inlineItem, &inlineItem, 0 };
+        uncommitted->length += currentLength();
+        uncommitted->lastInlineItem = &inlineItem;
 
         // #3
-        if (detachingRules == InlineItem::DetachingRule::BreakAtEnd) {
-            ASSERT(firstUncommittedInlineItem);
-            uncommittedLength += currentLength();
+        if (detachingRules == InlineItem::DetachingRule::BreakAtEnd)
             commit();
-            continue;
-        }
-
-        // #4
-        commit();
-        firstUncommittedInlineItem = &inlineItem;
-        uncommittedLength = currentLength();
-        commit();
     }
-
     // Either all inline elements needed dedicated runs or neither of them.
     if (!remaningLength || remaningLength == inlineRun.textContext()->length())
         return;
 
-    ASSERT(remaningLength == uncommittedLength);
-    split(*firstUncommittedInlineItem, startPosition, uncommittedLength, contentStart);
+    commit();
 }
 
 void InlineFormattingContext::createFinalRuns(Line& line) const

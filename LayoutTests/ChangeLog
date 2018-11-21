@@ -1,3 +1,13 @@
+2018-11-21  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Take nonBreakableStart/End into use.
+        https://bugs.webkit.org/show_bug.cgi?id=191873
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-content-with-padding-left-right-expected.txt: Added.
+        * fast/inline/inline-content-with-padding-left-right.html: Added.
+
 2018-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Input element gains focus when a selectstart event listener on document prevents the default action

@@ -120,6 +120,19 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Inli
     }
 }
 
+static LayoutUnit resolveForRelativePositionIfNeeded(const InlineTextBox& inlineTextBox)
+{
+    LayoutUnit xOffset;
+    auto* parent = inlineTextBox.parent();
+    while (is<InlineFlowBox>(parent)) {
+        auto& renderer = parent->renderer();
+        if (renderer.isInFlowPositioned())
+            xOffset = downcast<RenderInline>(renderer).offsetForInFlowPosition().width();
+        parent = parent->parent();
+    }
+    return xOffset;
+}
+
 static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
@@ -145,7 +158,8 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
         auto& inlineRun = inlineRunList[runIndex];
         auto matchingRuns = false;
         if (inlineTextBox) {
-            matchingRuns = checkForMatchingTextRuns(inlineRun, inlineTextBox->logicalLeft(), inlineTextBox->logicalRight(), inlineTextBox->start(), inlineTextBox->end() + 1);
+            auto xOffset = resolveForRelativePositionIfNeeded(*inlineTextBox);
+            matchingRuns = checkForMatchingTextRuns(inlineRun, inlineTextBox->logicalLeft() + xOffset, inlineTextBox->logicalRight() + xOffset, inlineTextBox->start(), inlineTextBox->end() + 1);
 
             // <span>foobar</span>foobar generates 2 inline text boxes while we only generate one inline run.
             // also <div>foo<img style="float: left;">bar</div> too.
@@ -153,8 +167,8 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
             auto textRunMightBeExtended = !matchingRuns && inlineTextBox->end() < inlineRunEnd && inlineBoxIndex < inlineBoxes.size() - 1;
 
             if (textRunMightBeExtended) {
-                auto logicalLeft = inlineTextBox->logicalLeft();
-                auto logicalRight = inlineTextBox->logicalRight();
+                auto logicalLeft = inlineTextBox->logicalLeft() + xOffset;
+                auto logicalRight = inlineTextBox->logicalRight() + xOffset;
                 auto start = inlineTextBox->start();
                 auto end = inlineTextBox->end() + 1;
                 auto index = ++inlineBoxIndex;
@@ -165,7 +179,8 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
                     if (!inlineTextBox)
                         break;
 
-                    logicalRight = inlineTextBox->logicalRight();
+                    auto xOffset = resolveForRelativePositionIfNeeded(*inlineTextBox);
+                    logicalRight = inlineTextBox->logicalRight() + xOffset;
                     end += (inlineTextBox->end() + 1);
                     if (checkForMatchingTextRuns(inlineRun, logicalLeft, logicalRight, start, end)) {
                         matchingRuns = true;
@@ -178,13 +193,6 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
                         break;
                 }
             }
-        } else if (is<InlineFlowBox>(inlineBox)) {
-            // FIXME: This does not work for nested InlineFlowBoxes and we should really look inside these flow boxes and verify the leaf nodes.
-            auto& renderer = inlineBox->renderer();
-            LayoutUnit xOffset;
-            if (renderer.isInFlowPositioned())
-                xOffset = downcast<RenderInline>(renderer).offsetForInFlowPosition().width();
-            matchingRuns = areEssentiallyEqual(inlineBox->logicalLeft() + xOffset, inlineRun.logicalLeft()) && areEssentiallyEqual(inlineBox->logicalRight() + xOffset, inlineRun.logicalRight());
         } else
             matchingRuns = checkForMatchingNonTextRuns(inlineRun, *inlineBox);
 
