@@ -510,8 +510,10 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     if (Position::nodeIsUserSelectNone(targetNode))
         return false;
 
-    if (!dispatchSelectStart(targetNode))
+    if (!dispatchSelectStart(targetNode)) {
+        m_mouseDownMayStartSelect = false;
         return false;
+    }
 
     if (selection.isRange())
         m_selectionInitiationState = ExtendedSelection;
@@ -953,14 +955,20 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
 
     // Special case to limit selection to the containing block for SVG text.
     // FIXME: Isn't there a better non-SVG-specific way to do this?
-    if (Node* selectionBaseNode = newSelection.base().deprecatedNode())
-        if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer())
-            if (selectionBaseRenderer->isSVGText())
+    if (Node* selectionBaseNode = newSelection.base().deprecatedNode()) {
+        if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer()) {
+            if (selectionBaseRenderer->isSVGText()) {
                 if (target->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
                     return;
+            }
+        }
+    }
 
-    if (m_selectionInitiationState == HaveNotStartedSelection && !dispatchSelectStart(target))
+
+    if (m_selectionInitiationState == HaveNotStartedSelection && !dispatchSelectStart(target)) {
+        m_mouseDownMayStartSelect = false;
         return;
+    }
 
     if (m_selectionInitiationState != ExtendedSelection) {
         // Always extend selection here because it's caused by a mouse drag

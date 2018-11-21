@@ -1,3 +1,27 @@
+2018-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Input element gains focus when a selectstart event listener on document prevents the default action
+        https://bugs.webkit.org/show_bug.cgi?id=191714
+        <rdar://problem/46174389>
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by WebKit keep firing selectstart upon mousemove after the drag had already started
+        when preventDefault had been called in the previous firings of selectstart event. Because input element
+        has its own editable element and fires selectstart on the input element itself, which won't be prevented
+        by selectstart on docuemnt, this allowed the selection to be set inside the input element even though
+        the mouse cursor was simply passing over the input element after the drag had already started.
+
+        Fixed the bug by not firing selectstart if the default action had been prevented by the initial firing
+        of selectstart by setting m_mouseDownMayStartDrag to false. This also matches the behaviors of Chrome
+        and Firefox.
+
+        Test: fast/events/selectstart-prevent-default-should-not-focus-input.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
 2018-11-20  Christopher Reid  <chris.reid@sony.com>
 
         Remove the need for LocalizedStringsWPE.cpp
