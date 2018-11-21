@@ -1016,6 +1016,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
         emitJumpSlowToHot(jump(), currentInstruction->size());
     }
 #else
+    UNUSED_PARAM(currentInstruction);
     UNUSED_PARAM(iter);
 #endif
 }

@@ -558,10 +558,10 @@ end
 #         end
 #     )
 #
-if X86_64 or ARM64 or ARM64E
+if X86_64 or ARM64 or ARM64E or ARMv7
     macro probe(action)
         # save all the registers that the LLInt may use.
-        if ARM64 or ARM64E
+        if ARM64 or ARM64E or ARMv7
             push cfr, lr
         end
         push a0, a1
@@ -575,6 +575,8 @@ if X86_64 or ARM64 or ARM64E
             push csr4, csr5
             push csr6, csr7
             push csr8, csr9
+        elsif ARMv7
+            push csr0
         end
 
         action()
@@ -586,13 +588,15 @@ if X86_64 or ARM64 or ARM64E
             pop csr5, csr4
             pop csr3, csr2
             pop csr1, csr0
+        elsif ARMv7
+            pop csr0
         end
         pop t5, t4
         pop t3, t2
         pop t1, t0
         pop a3, a2
         pop a1, a0
-        if ARM64 or ARM64E
+        if ARM64 or ARM64E or ARMv7
             pop lr, cfr
         end
     end
@@ -759,7 +763,7 @@ macro restoreCalleeSavesUsedByLLInt()
 end
 
 macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -796,12 +800,14 @@ macro copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(vm, temp)
             storeq csr4, 32[temp]
             storeq csr5, 40[temp]
             storeq csr6, 48[temp]
+        elsif ARMv7
+            storep csr0, [temp]
         end
     end
 end
 
 macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
-    if ARM64 or ARM64E or X86_64 or X86_64_WIN
+    if ARM64 or ARM64E or X86_64 or X86_64_WIN or ARMv7
         loadp VM::topEntryFrame[vm], temp
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
@@ -838,6 +844,8 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadq 32[temp], csr4
             loadq 40[temp], csr5
             loadq 48[temp], csr6
+        elsif ARMv7
+            loadp [temp], csr0
         end
     end
 end

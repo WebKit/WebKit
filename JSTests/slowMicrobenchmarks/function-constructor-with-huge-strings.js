@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 var hugeString = "x";
 for (i = 0; i < 25; ++i) {
     hugeString += hugeString;

@@ -1,3 +1,13 @@
+2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable JIT on ARM/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=191548
+
+        Reviewed by Yusuke Suzuki.
+
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::startAllocating):
+
 2018-11-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CommonRandom SPI with API

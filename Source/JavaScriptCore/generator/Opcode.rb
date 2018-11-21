@@ -192,7 +192,7 @@ class Opcode
             if (*stream != op_wide)
                 return { stream };
 
-            auto wideStream = reinterpret_cast<const uint32_t*>(stream + 1);
+            auto wideStream = bitwise_cast<const uint32_t*>(stream + 1);
             return { wideStream };
         }
 

@@ -55,8 +55,8 @@ public:
     template<typename Op, typename Functor>
     ALWAYS_INLINE void forEach(const Functor& func)
     {
-        auto* metadata = reinterpret_cast<typename Op::Metadata*>(get(Op::opcodeID));
-        auto* end = reinterpret_cast<typename Op::Metadata*>(getImpl(Op::opcodeID + 1));
+        auto* metadata = bitwise_cast<typename Op::Metadata*>(get(Op::opcodeID));
+        auto* end = bitwise_cast<typename Op::Metadata*>(getImpl(Op::opcodeID + 1));
         for (; metadata + 1 <= end; ++metadata)
             func(*metadata);
     }

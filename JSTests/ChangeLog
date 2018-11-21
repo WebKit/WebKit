@@ -1,3 +1,15 @@
+2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable JIT on ARM/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=191548
+
+        Reviewed by Yusuke Suzuki.
+
+        Disable test on system with limited memory. Program was killed by
+        the OS before the exception was thrown.
+
+        * slowMicrobenchmarks/function-constructor-with-huge-strings.js:
+
 2018-11-20  Saam barati  <sbarati@apple.com>
 
         Merging an IC variant may lead to the IC status containing overlapping structure sets

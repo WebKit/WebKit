@@ -1,3 +1,15 @@
+2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Enable JIT on ARM/Linux
+        https://bugs.webkit.org/show_bug.cgi?id=191548
+
+        Reviewed by Yusuke Suzuki.
+
+        Enable JIT by default on ARMv7/Linux after it was disabled with
+        recent bytcode format change.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-11-16  Don Olmstead  <don.olmstead@sony.com>
 
         Add USE(LIBWPE) to WebCore

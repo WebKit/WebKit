@@ -74,7 +74,7 @@ class Argument
         {
             if (!#{Fits::check "size", "value", @type})
                 value = func();
-            auto* stream = reinterpret_cast<typename TypeBySize<size>::type*>(reinterpret_cast<uint8_t*>(this) + #{@index} * size + PaddingBySize<size>::value);
+            auto* stream = bitwise_cast<typename TypeBySize<size>::type*>(reinterpret_cast<uint8_t*>(this) + #{@index} * size + PaddingBySize<size>::value);
             *stream = #{Fits::convert "size", "value", @type};
         }
         EOF

@@ -860,7 +860,7 @@ public:
     Metadata& metadata(OpcodeID opcodeID, unsigned metadataID)
     {
         ASSERT(m_metadata);
-        return reinterpret_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
+        return bitwise_cast<Metadata*>(m_metadata->get(opcodeID))[metadataID];
     }
 
     size_t metadataSizeInBytes()

@@ -201,6 +201,8 @@ RegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.set(FPRInfo::fpRegCS5);
     result.set(FPRInfo::fpRegCS6);
     result.set(FPRInfo::fpRegCS7);
+#elif CPU(ARM_THUMB2)
+    result.set(GPRInfo::regCS0);
 #endif
     return result;
 }

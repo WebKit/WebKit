@@ -528,7 +528,11 @@ public:
 
 #if CPU(ARM)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#if CPU(ARM_THUMB2)
+#define NUMBER_OF_CALLEE_SAVES_REGISTERS 1u
+#else
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
+#endif
 
 class GPRInfo {
 public:

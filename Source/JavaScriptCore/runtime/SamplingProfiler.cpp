@@ -440,7 +440,8 @@ static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* c
     return 0;
 #else
     Instruction* instruction = bitwise_cast<Instruction*>(llintPC);
-    if (instruction >= codeBlock->instructions().begin() && instruction < codeBlock->instructions().end()) {
+
+    if (codeBlock->instructions().contains(instruction)) {
         isValid = true;
         return codeBlock->bytecodeOffset(instruction);
     }

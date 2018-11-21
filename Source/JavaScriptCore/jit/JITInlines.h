@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(JIT)
-
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -131,7 +130,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
 #if USE(JSVALUE32_64)
-    Instruction* instruction = &m_codeBlock->instructions()[m_bytecodeOffset]; 
+    const Instruction* instruction = m_codeBlock->instructions().at(m_bytecodeOffset).ptr();
     uint32_t locationBits = CallSiteIndex(instruction).bits();
 #else
     uint32_t locationBits = CallSiteIndex(m_bytecodeOffset).bits();
@@ -706,6 +705,8 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
     addSlowCase(branchIfNotNumber(reg));
 }
 
+#endif // USE(JSVALUE32_64)
+
 ALWAYS_INLINE int JIT::jumpTarget(const Instruction* instruction, int target)
 {
     if (target)
@@ -735,8 +736,6 @@ ALWAYS_INLINE ArithProfile JIT::copiedArithProfile(BinaryOp bytecode)
     m_copiedArithProfiles.add(key, arithProfile);
     return arithProfile;
 }
-
-#endif // USE(JSVALUE32_64)
 
 } // namespace JSC
 

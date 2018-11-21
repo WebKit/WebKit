@@ -91,7 +91,7 @@ public:
     T* cast()
     {
         ASSERT(is<T>());
-        return reinterpret_cast<T*>(this);
+        return bitwise_cast<T*>(this);
     }
 
     template<class T>
