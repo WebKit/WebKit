@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 2.23.1
+=================
+
+What's new in WebKitGTK+ 2.23.1?
+
+  - Add initial support for subprocess sandboxing in Linux.
+  - Add new permission request type for media device information.
+  - Make scrollbars follow gtk-primary-button-warps-slider setting.
+  - Script dialogs are now modal to the current web view only.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.21.5
 =================
 

@@ -1,3 +1,9 @@
+2018-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.1 release.
+
+        * gtk/NEWS: Add release notes for 2.23.1.
+
 2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WebKit2] Add support for replacing find-in-page text matches

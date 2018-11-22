@@ -1,3 +1,9 @@
+2018-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.1 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable JIT on ARM/Linux
