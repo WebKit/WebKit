@@ -1,3 +1,14 @@
+2018-11-22  Mark Lam  <mark.lam@apple.com>
+
+        Rollout r238432: Breaks internal Mac builds.
+        https://bugs.webkit.org/show_bug.cgi?id=191909
+        <rdar://problem/46214163>
+
+        Unreviewed. Rolling out r238432: Remove @no-unify of InjectedBundleRangeHandle.cpp and InjectedBundleNodeHandle.cpp
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.1 release.
