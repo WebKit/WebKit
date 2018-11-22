@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,18 @@
 
 #pragma once
 
+#if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+
+// FIXME: PassKit does not declare its NSString constant symbols with C linkage, so we end up with
+// linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
+// these includes in an extern "C" block.
+WTF_EXTERN_C_BEGIN
+#import <PassKit/PKConstants.h>
+#import <PassKit/PKError.h>
+WTF_EXTERN_C_END
+
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <PassKit/PassKit.h>
@@ -39,8 +51,8 @@
 
 #elif PLATFORM(MAC)
 
+#import <AppKit/AppKit.h>
 #import <Contacts/Contacts.h>
-#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,6 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class PKPaymentRequestShippingContactUpdate;
 
 typedef NSString *PKContactField;
+typedef NSString *PKPaymentErrorKey;
 
 extern NSString * const PKPaymentErrorDomain;
 typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
@@ -225,7 +238,7 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 
 NS_ASSUME_NONNULL_END
 
-#endif
+#endif // PLATFORM(MAC)
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -261,7 +274,7 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
 
 NS_ASSUME_NONNULL_END
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 typedef NS_ENUM(NSInteger, PKPaymentButtonStyle) {
@@ -323,5 +336,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
 @end
+
+typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
 
 NS_ASSUME_NONNULL_END

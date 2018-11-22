@@ -1,3 +1,17 @@
+2018-11-21  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Create a soft-linking file for PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=191875
+        <rdar://problem/46203215>
+
+        Reviewed by Myles Maxfield.
+
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm: Removed SOFT_LINK macros and included PassKitSoftLink.h instead.
+        * Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm: Ditto.
+        * SourcesCocoa.txt: Removed @no-unify from PaymentMerchantSessionCocoa.mm.
+        * WebCore.xcodeproj/project.pbxproj: Removed PaymentMerchantSessionCocoa.mm from the WebCore target.
+        * rendering/RenderThemeCocoa.mm: Removed SOFT_LINK macros and included PassKitSoftLink.h instead.
+
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] LayoutState should always be initialized with the initial containing block.

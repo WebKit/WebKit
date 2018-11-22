@@ -34,10 +34,7 @@
 #import <PassKit/PassKit.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(PassKit)
-SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
+#import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebKit {
 
@@ -54,7 +51,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& origi
 
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
-    m_paymentAuthorizationViewController = adoptNS([allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:paymentRequest.get()]);
+    m_paymentAuthorizationViewController = adoptNS([PAL::allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:paymentRequest.get()]);
     if (!m_paymentAuthorizationViewController) {
         completionHandler(false);
         return;

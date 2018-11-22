@@ -30,29 +30,18 @@
 
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
-#import <pal/spi/cocoa/PassKitSPI.h>
+#import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PassKit)
-
-SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
-SOFT_LINK_CONSTANT(PassKit, PKExtensionPaymentAuthorizationUIExtensionPointName, NSString *);
 
 namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, WTF::Function<void (bool)>&& completionHandler)
 {
-    if (!PassKitLibrary()) {
-        completionHandler(false);
-        return;
-    }
-
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = makeWeakPtr(*this);
-    [getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:BlockPtr<void (PKPaymentAuthorizationViewController *, NSError *)>::fromCallable([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) {
+    [PAL::get_PassKit_PKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:BlockPtr<void(PKPaymentAuthorizationViewController *, NSError *)>::fromCallable([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
             return;

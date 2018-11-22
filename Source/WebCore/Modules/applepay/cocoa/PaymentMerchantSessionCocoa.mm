@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #import <JavaScriptCore/JSONObject.h>
-#import <pal/spi/cocoa/PassKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-#if PLATFORM(MAC)
-SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
-#else
-SOFT_LINK_FRAMEWORK(PassKit)
-#endif
-
-SOFT_LINK_CLASS(PassKit, PKPaymentMerchantSession)
+#import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
 
@@ -53,7 +44,7 @@ std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::ExecSt
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 
-    auto pkPaymentMerchantSession = adoptNS([allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary]);
+    auto pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary]);
 
     return PaymentMerchantSession(pkPaymentMerchantSession.get());
 }

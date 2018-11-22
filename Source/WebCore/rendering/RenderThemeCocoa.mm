@@ -32,16 +32,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <pal/spi/cocoa/PassKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-#if PLATFORM(MAC)
-SOFT_LINK_PRIVATE_FRAMEWORK(PassKit);
-#else
-SOFT_LINK_FRAMEWORK(PassKit);
-#endif
-
-SOFT_LINK_MAY_FAIL(PassKit, PKDrawApplePayButton, void, (CGContextRef context, CGRect drawRect, CGFloat scale, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, type, style, languageCode));
+#import <pal/cocoa/PassKitSoftLink.h>
 
 #endif // ENABLE(APPLE_PAY)
 
@@ -108,9 +99,6 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
 
 bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
-    if (!canLoadPKDrawApplePayButton())
-        return false;
-
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
     paintInfo.context().setShouldSmoothFonts(true);

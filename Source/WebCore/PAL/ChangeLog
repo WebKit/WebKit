@@ -1,3 +1,18 @@
+2018-11-21  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Create a soft-linking file for PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=191875
+        <rdar://problem/46203215>
+
+        Reviewed by Myles Maxfield.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/PassKitSoftLink.h: Added.
+        * pal/cocoa/PassKitSoftLink.mm: Added. Used _WITH_EXPORT soft-linking macros in order to
+        make the PAL soft-linking symbols visible to WebKit.
+        * pal/spi/cocoa/PassKitSPI.h:
+
 2018-11-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove all usages of UIItemProvider, UIItemProviderReading, and related classes

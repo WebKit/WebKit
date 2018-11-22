@@ -3,6 +3,8 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cf/CoreMediaSoftLink.h
 
+    cocoa/PassKitSoftLink.h
+
     spi/cf/CFLocaleSPI.h
     spi/cf/CFNetworkConnectionCacheSPI.h
     spi/cf/CFNetworkSPI.h
@@ -96,6 +98,7 @@ list(APPEND PAL_SOURCES
 
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/LoggingCocoa.mm
+    cocoa/PassKitSoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
@@ -114,6 +117,7 @@ list(APPEND PAL_SOURCES
 list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal/avfoundation"
     "${PAL_DIR}/pal/cf"
+    "${PAL_DIR}/pal/cocoa"
     "${PAL_DIR}/pal/spi/cf"
     "${PAL_DIR}/pal/spi/cg"
     "${PAL_DIR}/pal/spi/cocoa"

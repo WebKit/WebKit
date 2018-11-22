@@ -28,6 +28,7 @@
 
 #import "SafeBrowsingSPI.h"
 #import <WebCore/LocalizedStrings.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/Language.h>
 
 namespace WebKit {

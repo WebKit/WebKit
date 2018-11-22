@@ -1,3 +1,16 @@
+2018-11-21  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Create a soft-linking file for PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=191875
+        <rdar://problem/46203215>
+
+        Reviewed by Myles Maxfield.
+
+        * wtf/Platform.h: Defined USE_PASSKIT.
+        * wtf/cocoa/SoftLinking.h: Added _WITH_EXPORT variants of SOFT_LINK_FRAMEWORK_FOR_SOURCE,
+        SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE, SOFT_LINK_CLASS_FOR_SOURCE,
+        SOFT_LINK_FUNCTION_FOR_SOURCE, and SOFT_LINK_CONSTANT_FOR_SOURCE.
+
 2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable JIT on ARM/Linux

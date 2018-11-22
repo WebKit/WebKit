@@ -33,25 +33,11 @@
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <WebCore/URL.h>
-#import <pal/spi/cocoa/PassKitSPI.h>
+#import <pal/cocoa/PassKitSoftLink.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
-#import <wtf/SoftLinking.h>
 
-#if PLATFORM(MAC)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PassKit)
-#else
-SOFT_LINK_FRAMEWORK(PassKit)
-#endif
-
-SOFT_LINK_CLASS(PassKit, PKPassLibrary);
-SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
-SOFT_LINK_CLASS(PassKit, PKPaymentMerchantSession);
-SOFT_LINK_CLASS(PassKit, PKPaymentRequest);
-SOFT_LINK_CLASS(PassKit, PKPaymentSummaryItem);
-SOFT_LINK_CLASS(PassKit, PKShippingMethod);
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300)
 SOFT_LINK_FRAMEWORK(Contacts)
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStreetKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressSubLocalityKey, NSString *);
@@ -61,29 +47,8 @@ SOFT_LINK_CONSTANT(Contacts, CNPostalAddressStateKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressPostalCodeKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressCountryKey, NSString *);
 SOFT_LINK_CONSTANT(Contacts, CNPostalAddressISOCountryCodeKey, NSString *);
-SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationResult)
-SOFT_LINK_CLASS(PassKit, PKPaymentRequestPaymentMethodUpdate)
-SOFT_LINK_CLASS(PassKit, PKPaymentRequestShippingContactUpdate)
-SOFT_LINK_CLASS(PassKit, PKPaymentRequestShippingMethodUpdate)
-SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorDomain, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKContactFieldPostalAddress, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKContactFieldEmailAddress, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKContactFieldPhoneNumber, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKContactFieldName, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKContactFieldPhoneticName, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorContactFieldUserInfoKey, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentErrorPostalAddressUserInfoKey, NSString *);
+SOFT_LINK_CONSTANT(PAL::PassKit, PKPaymentErrorDomain, NSString *);
 #endif
-
-typedef void (^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *error);
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-extern "C" void PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion);
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion));
-#else
-extern "C" void PKCanMakePaymentsWithMerchantIdentifierAndDomain(NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion);
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion));
-#endif
-
 
 @implementation WKPaymentAuthorizationViewControllerDelegate
 
@@ -102,7 +67,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMer
     _webPaymentCoordinatorProxy = nullptr;
     if (_paymentAuthorizedCompletion) {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-        _paymentAuthorizedCompletion(adoptNS([allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
+        _paymentAuthorizedCompletion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
 #else
         _paymentAuthorizedCompletion(PKPaymentAuthorizationStatusFailure);
 #endif
@@ -119,7 +84,7 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, PassKit, PKCanMakePaymentsWithMer
     ASSERT(!_sessionBlock);
     _sessionBlock = sessionBlock;
 
-    [getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
+    [PAL::get_PassKit_PKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -155,7 +120,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
+        completion(adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:PKPaymentAuthorizationStatusFailure errors:@[ ]]).get());
         return;
     }
 
@@ -170,7 +135,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
+        completion(adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
     }
 
@@ -183,7 +148,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didSelectShippingMethod:(PKShippingMethod *)shippingMethod handler:(void (^)(PKPaymentRequestShippingMethodUpdate *update))completion {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
+        completion(adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:@[ ]]).get());
         return;
     }
 
@@ -197,7 +162,7 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!_webPaymentCoordinatorProxy) {
-        completion(adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
+        completion(adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:@[ ] paymentSummaryItems:@[ ] shippingMethods:@[ ]]).get());
         return;
     }
 
@@ -293,32 +258,13 @@ namespace WebKit {
 
 bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 {
-#if PLATFORM(MAC)
-    if (!PassKitLibrary())
-        return false;
-#endif
-
-    return [getPKPaymentAuthorizationViewControllerClass() canMakePayments];
+    return [PAL::get_PassKit_PKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
-#if PLATFORM(MAC)
-    if (!PassKitLibrary()) {
-        completionHandler(false);
-        return;
-    }
-#endif
-
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication()) {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
-            completionHandler(false);
-        });
-        return;
-    }
-
-    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.process().processPool().configuration().sourceApplicationSecondaryIdentifier(), BlockPtr<void (BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.process().processPool().configuration().sourceApplicationSecondaryIdentifier(), BlockPtr<void(BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -327,14 +273,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
         });
     }).get());
 #else
-    if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain()) {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
-            completionHandler(false);
-        });
-        return;
-    }
-
-    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain(merchantIdentifier, domainName, BlockPtr<void (BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
+    PKCanMakePaymentsWithMerchantIdentifierAndDomain(merchantIdentifier, domainName, BlockPtr<void(BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -347,14 +286,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
-#if PLATFORM(MAC)
-    if (!PassKitLibrary()) {
-        completionHandler(false);
-        return;
-    }
-#endif
-
-    auto passLibrary = adoptNS([allocPKPassLibraryInstance() init]);
+    auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:BlockPtr<void (BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result] {
             completionHandler(result);
@@ -368,15 +300,15 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     Vector<NSString *> result;
 
     if (contactFields.postalAddress)
-        result.append(getPKContactFieldPostalAddress());
+        result.append(PAL::get_PassKit_PKContactFieldPostalAddress());
     if (contactFields.phone)
-        result.append(getPKContactFieldPhoneNumber());
+        result.append(PAL::get_PassKit_PKContactFieldPhoneNumber());
     if (contactFields.email)
-        result.append(getPKContactFieldEmailAddress());
+        result.append(PAL::get_PassKit_PKContactFieldEmailAddress());
     if (contactFields.name)
-        result.append(getPKContactFieldName());
+        result.append(PAL::get_PassKit_PKContactFieldName());
     if (contactFields.phoneticName)
-        result.append(getPKContactFieldPhoneticName());
+        result.append(PAL::get_PassKit_PKContactFieldPhoneticName());
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
@@ -418,7 +350,7 @@ static NSDecimalNumber *toDecimalNumber(const String& amount)
 
 static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
-    return [getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    return [PAL::get_PassKit_PKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
 static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
@@ -477,7 +409,7 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
 
 static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
-    RetainPtr<PKShippingMethod> result = [getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
+    RetainPtr<PKShippingMethod> result = [PAL::get_PassKit_PKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
 
@@ -512,7 +444,7 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
 
 RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
-    auto result = adoptNS([allocPKPaymentRequestInstance() init]);
+    auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
 
     [result setOriginatingURL:originatingURL];
 
@@ -632,69 +564,69 @@ static RetainPtr<NSError> toNSError(const WebCore::PaymentError& error)
 
         switch (*error.contactField) {
         case WebCore::PaymentError::ContactField::PhoneNumber:
-            pkContactField = getPKContactFieldPhoneNumber();
+            pkContactField = PAL::get_PassKit_PKContactFieldPhoneNumber();
             break;
 
         case WebCore::PaymentError::ContactField::EmailAddress:
-            pkContactField = getPKContactFieldEmailAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldEmailAddress();
             break;
 
         case WebCore::PaymentError::ContactField::Name:
-            pkContactField = getPKContactFieldName();
+            pkContactField = PAL::get_PassKit_PKContactFieldName();
             break;
 
         case WebCore::PaymentError::ContactField::PhoneticName:
-            pkContactField = getPKContactFieldPhoneticName();
+            pkContactField = PAL::get_PassKit_PKContactFieldPhoneticName();
             break;
 
         case WebCore::PaymentError::ContactField::PostalAddress:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             break;
 
         case WebCore::PaymentError::ContactField::AddressLines:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStreetKey();
             break;
 
         case WebCore::PaymentError::ContactField::SubLocality:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubLocalityKey();
             break;
 
         case WebCore::PaymentError::ContactField::Locality:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCityKey();
             break;
 
         case WebCore::PaymentError::ContactField::PostalCode:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressPostalCodeKey();
             break;
 
         case WebCore::PaymentError::ContactField::SubAdministrativeArea:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
             break;
 
         case WebCore::PaymentError::ContactField::AdministrativeArea:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStateKey();
             break;
 
         case WebCore::PaymentError::ContactField::Country:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCountryKey();
             break;
 
         case WebCore::PaymentError::ContactField::CountryCode:
-            pkContactField = getPKContactFieldPostalAddress();
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressISOCountryCodeKey();
             break;
         }
 
-        [userInfo setObject:pkContactField forKey:getPKPaymentErrorContactFieldUserInfoKey()];
+        [userInfo setObject:pkContactField forKey:PAL::get_PassKit_PKPaymentErrorContactFieldUserInfoKey()];
         if (postalAddressKey)
-            [userInfo setObject:postalAddressKey forKey:getPKPaymentErrorPostalAddressUserInfoKey()];
+            [userInfo setObject:postalAddressKey forKey:PAL::get_PassKit_PKPaymentErrorPostalAddressUserInfoKey()];
     }
 
     return adoptNS([[NSError alloc] initWithDomain:getPKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code) userInfo:userInfo.get()]);
@@ -761,7 +693,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optio
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     auto status = result ? result->status : WebCore::PaymentAuthorizationStatus::Success;
-    auto pkPaymentAuthorizationResult = adoptNS([allocPKPaymentAuthorizationResultInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:result ? toNSErrors(result->errors).get() : @[ ]]);
+    auto pkPaymentAuthorizationResult = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:toPKPaymentAuthorizationStatus(status) errors:result ? toNSErrors(result->errors).get() : @[ ]]);
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(pkPaymentAuthorizationResult.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_paymentAuthorizedCompletion(toPKPaymentAuthorizationStatus(result));
@@ -787,7 +719,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingMethodSelection(const s
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    auto pkShippingMethodUpdate = adoptNS([allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
+    auto pkShippingMethodUpdate = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(pkShippingMethodUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingMethodCompletion(PKPaymentAuthorizationStatusSuccess, m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
@@ -839,7 +771,7 @@ void WebPaymentCoordinatorProxy::platformCompleteShippingContactSelection(const 
     }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    auto pkShippingContactUpdate = adoptNS([allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
+    auto pkShippingContactUpdate = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithErrors:update ? toNSErrors(update->errors).get() : @[ ] paymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get() shippingMethods:m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(pkShippingContactUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectShippingContactCompletion(toPKPaymentAuthorizationStatus(update), m_paymentAuthorizationViewControllerDelegate->_shippingMethods.get(), m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
@@ -856,7 +788,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
         m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems = toPKPaymentSummaryItems(update->newTotalAndLineItems);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
-    auto pkPaymentMethodUpdate = adoptNS([allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
+    auto pkPaymentMethodUpdate = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get()]);
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(pkPaymentMethodUpdate.get());
 #else
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion(m_paymentAuthorizationViewControllerDelegate->_paymentSummaryItems.get());
@@ -866,12 +798,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
 
 Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()
 {
-#if PLATFORM(MAC)
-    if (!PassKitLibrary())
-        return { };
-#endif
-    
-    NSArray<PKPaymentNetwork> *availableNetworks = [getPKPaymentRequestClass() availableNetworks];
+    NSArray<PKPaymentNetwork> *availableNetworks = [PAL::get_PassKit_PKPaymentRequestClass() availableNetworks];
     Vector<String> result;
     result.reserveInitialCapacity(availableNetworks.count);
     for (PKPaymentNetwork network in availableNetworks)

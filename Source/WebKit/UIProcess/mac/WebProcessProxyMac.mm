@@ -30,6 +30,7 @@
 #if PLATFORM(MAC)
 
 #import "WKFullKeyboardAccessWatcher.h"
+#import <wtf/ProcessPrivilege.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
 #import <Kernel/kern/cs_blobs.h>

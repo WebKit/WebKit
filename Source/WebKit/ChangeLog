@@ -1,3 +1,20 @@
+2018-11-21  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Create a soft-linking file for PassKit
+        https://bugs.webkit.org/show_bug.cgi?id=191875
+        <rdar://problem/46203215>
+
+        Reviewed by Myles Maxfield.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm: Removed SOFT_LINK macros and included PassKitSoftLink.h instead.
+        * SourcesCocoa.txt: Removed @no-unify from WebPaymentCoordinatorProxyIOS.mm and WebPaymentCoordinatorProxyMac.mm.
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm: Removed SOFT_LINK macros and included PassKitSoftLink.h instead.
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm: Ditto.
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm: Ditto.
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm: Included NSAttributedStringSPI.h.
+        * UIProcess/mac/WebProcessProxyMac.mm: Included ProcessPrivilege.h.
+        * WebKit.xcodeproj/project.pbxproj: Removed WebPaymentCoordinatorProxyIOS.mm and WebPaymentCoordinatorProxyMac.mm from the WebKit target.
+
 2018-11-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove @no-unify of InjectedBundleRangeHandle.cpp and InjectedBundleNodeHandle.cpp

@@ -587,7 +587,7 @@ platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 
     Modules/applepay/cocoa/PaymentCocoa.mm
     Modules/applepay/cocoa/PaymentContactCocoa.mm
-    Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm @no-unify
+    Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm
     Modules/applepay/cocoa/PaymentMethodCocoa.mm
 
     Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp

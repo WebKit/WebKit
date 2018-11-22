@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -340,9 +340,9 @@
     } \
     }
 
-#define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
     namespace functionNamespace { \
-    void* framework##Library(bool isOptional = false); \
+    export void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
@@ -356,9 +356,12 @@
     } \
     }
 
-#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
+#define SOFT_LINK_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
+    SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, )
+
+#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, export) \
     namespace functionNamespace { \
-    void* framework##Library(bool isOptional = false); \
+    export void* framework##Library(bool isOptional = false); \
     void* framework##Library(bool isOptional) \
     { \
         static void* frameworkLibrary; \
@@ -372,6 +375,9 @@
     } \
     }
 
+#define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
+    SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, )
+
 #define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, framework, className) \
     @class className; \
     namespace functionNamespace { \
@@ -383,11 +389,11 @@
     } \
     }
 
-#define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, export) \
     @class className; \
     namespace functionNamespace { \
     static Class init##className(); \
-    Class (*get_##framework##_##className##Class)() = init##className; \
+    export Class (*get_##framework##_##className##Class)() = init##className; \
     static Class class##className; \
     \
     static Class className##Function() \
@@ -408,6 +414,9 @@
     } \
     }
 
+#define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, )
+
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
     extern const variableType variableName; \
@@ -416,12 +425,12 @@
     variableType get_##framework##_##variableName(); \
     }
 
-#define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+#define SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, export) \
     WTF_EXTERN_C_BEGIN \
     extern const variableType variableName; \
     WTF_EXTERN_C_END \
     namespace functionNamespace { \
-    variableType get_##framework##_##variableName(); \
+    export variableType get_##framework##_##variableName(); \
     variableType get_##framework##_##variableName() \
     { \
         static variableType constant##framework##variableName; \
@@ -434,6 +443,9 @@
         return constant##framework##variableName; \
     } \
     }
+
+#define SOFT_LINK_CONSTANT_FOR_SOURCE(functionNamespace, framework, variableName, variableType) \
+    SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, variableName, variableType, )
 
 #define SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
@@ -489,13 +501,13 @@
         return functionNamespace::softLink##framework##functionName parameterNames; \
     }
 
-#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+#define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \
     resultType functionName parameterDeclarations; \
     WTF_EXTERN_C_END \
     namespace functionNamespace { \
     static resultType init##framework##functionName parameterDeclarations; \
-    resultType (*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
+    export resultType(*softLink##framework##functionName) parameterDeclarations = init##framework##functionName; \
     static resultType init##framework##functionName parameterDeclarations \
     { \
         static dispatch_once_t once; \
@@ -506,6 +518,9 @@
         return softLink##framework##functionName parameterNames; \
     } \
     }
+
+#define SOFT_LINK_FUNCTION_FOR_SOURCE(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
+    SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, )
 
 #define SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames) \
     WTF_EXTERN_C_BEGIN \

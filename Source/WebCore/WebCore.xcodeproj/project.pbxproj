@@ -4482,7 +4482,6 @@
 		DE5F860D1FA2386B006DB63A /* UnifiedSource478.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D21FA23856006DB63A /* UnifiedSource478.cpp */; };
 		DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CF1FA23850006DB63A /* UnifiedSource479.cpp */; };
 		DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D31FA23859006DB63A /* UnifiedSource480.cpp */; };
-		DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA4A1B1D22F2C0005A9A15 /* PaymentMerchantSessionCocoa.mm */; };
 		DE5F86111FA239DA006DB63A /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; };
 		DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
 		DE5F861D1FA2815B006DB63A /* WebAccessibilityObjectWrapperMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */; };
@@ -32426,7 +32425,6 @@
 				A31C4E4D16E02AA6002F7957 /* OESTextureHalfFloat.cpp in Sources */,
 				31078CC71880AAB5008099DC /* OESTextureHalfFloatLinear.cpp in Sources */,
 				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
-				DE5F86101FA238D9006DB63A /* PaymentMerchantSessionCocoa.mm in Sources */,
 				CEA284662141E84900E407E8 /* PlatformEventFactoryIOS.mm in Sources */,
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */,
 				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,

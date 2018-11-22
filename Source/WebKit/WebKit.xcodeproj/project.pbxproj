@@ -684,8 +684,6 @@
 		2D92A795212B6AD400F493FD /* PluginProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */; };
 		2D92A796212B6ADA00F493FD /* NetscapePluginModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4A9C5312B816CF008FE984 /* NetscapePluginModule.cpp */; };
 		2D92A797212B6ADA00F493FD /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
-		2D92A79821348D8500F493FD /* WebPaymentCoordinatorProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F77D1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyMac.mm */; };
-		2D92A79F2134B07E00F493FD /* WebPaymentCoordinatorProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB1F77B1D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyIOS.mm */; };
 		2D931169212F61B200044BFE /* WKContentView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */; };
 		2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E6B18BBF26A000FCFC9 /* WKContentViewInteraction.mm */; };
 		2D9EA30D1A96CB59002D2807 /* WKPageInjectedBundleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EA30C1A96CB59002D2807 /* WKPageInjectedBundleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11006,8 +11004,6 @@
 				7CE9CE101FA0767A000177DE /* WebPageUpdatePreferences.cpp in Sources */,
 				7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */,
 				1AB1F7961D1B3613007C9BD1 /* WebPaymentCoordinatorMessageReceiver.cpp in Sources */,
-				2D92A79F2134B07E00F493FD /* WebPaymentCoordinatorProxyIOS.mm in Sources */,
-				2D92A79821348D8500F493FD /* WebPaymentCoordinatorProxyMac.mm in Sources */,
 				1AB1F7981D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessageReceiver.cpp in Sources */,
 				2D92A78D212B6AB100F493FD /* WebPlatformTouchPoint.cpp in Sources */,
 				2D91344E212CF9F000128AFD /* WebPluginInfoProvider.cpp in Sources */,
