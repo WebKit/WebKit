@@ -88,12 +88,6 @@ WebKitBuildbot = function()
         }},
         "GTK Wayland Testers": {platform: Dashboard.Platform.LinuxGTK, heading: "Wayland", combinedQueues: {
             "GTK Linux 64-bit Release Wayland (Tests)": {heading: "Wayland"},
-        }},
-        "GTK ARM Testers": {platform: Dashboard.Platform.LinuxGTK, heading: "ARM", combinedQueues: {
-            "GTK Linux ARM Release": {heading: "ARM"}
-        }},
-        "GTK 32-bit Testers": {platform: Dashboard.Platform.LinuxGTK, heading: "32-bit", combinedQueues: {
-            "GTK Linux 32-bit Release": {heading: "32-bit"},
         }}
     };
 

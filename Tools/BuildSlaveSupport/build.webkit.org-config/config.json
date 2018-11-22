@@ -294,11 +294,6 @@
                       "slavenames": ["bot543"]
                     },
                     {
-                      "name": "GTK Linux 32-bit Release", "type": "BuildAndNonLayoutTestAndGenerateJSCBundle", "builddir": "gtk-linux-32-release",
-                      "platform": "gtk", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["gtk-linux-slave-1"]
-                    },
-                    {
                       "name": "GTK Linux 64-bit Release (Build)", "type": "BuildAndGenerateJSCBundle", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
@@ -319,11 +314,6 @@
                       "name": "GTK Linux 64-bit Debug (Tests)", "type": "Test", "builddir": "gtk-linux-64-debug-tests",
                       "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["gtk-linux-slave-7"]
-                    },
-                    {
-                      "name": "GTK Linux ARM Release", "type": "BuildAndNonLayoutTest", "builddir": "gtk-linux-arm-release",
-                      "platform": "gtk", "configuration": "release", "architectures": ["armv7"],
-                      "slavenames": ["gtk-linux-slave-5"]
                     },
                     {
                       "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
