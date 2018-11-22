@@ -1,3 +1,24 @@
+2018-11-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove @no-unify of InjectedBundleRangeHandle.cpp and InjectedBundleNodeHandle.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=191853
+
+        Reviewed by Michael Catanzaro.
+
+        In r235845, I excluded InjectedBundleRangeHandle.cpp and
+        InjectedBundleNodeHandle.cpp from unify source builds in order to
+        work around a MSVC bug.
+
+        Then, I commited a different workaround for the MSVC bug in
+        r238386. Now, we can include InjectedBundleRangeHandle.cpp and
+        InjectedBundleNodeHandle.cpp in unified source builds. Revert
+        r235845.
+
+        * Sources.txt: Removed @no-unify of InjectedBundleRangeHandle.cpp
+        and InjectedBundleNodeHandle.cpp
+        * WebKit.xcodeproj/project.pbxproj: Unchecked Target Membership
+        not to be compiled by XCode.
+
 2018-11-20  Jeff Miller  <jeffm@apple.com>
 
         Return nullptr immediately if the key doesn't exist in the HashMap.
