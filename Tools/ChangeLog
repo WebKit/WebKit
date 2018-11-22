@@ -1,3 +1,12 @@
+2018-11-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Offset formatting context root runs with horizontal margins.
+        https://bugs.webkit.org/show_bug.cgi?id=191900
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2018-11-22  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Remove unmaintained bots

@@ -1,0 +1,30 @@
+<style>
+.inlineRoot {
+	border: 1px solid green;
+	width: 400px;
+	height: 50px;
+	overflow: hidden;
+	font-size: 12px;
+}
+
+.inline-block {
+	height: 20px;
+    display: inline-block;
+}
+
+.breakStart {
+    margin-left: 10px;
+	border-left: 1px solid green;
+    padding-left: 10px;
+}
+
+.breakEnd {
+    margin-right: 10px;
+	border-right: 1px solid red	;
+    padding-right: 10px;
+}
+</style>
+
+<div class=inlineRoot>1<span class="inline-block breakStart">2</span>3</div>
+<div class=inlineRoot>1<span class="inline-block breakEnd">2</span>3</div>
+<div class=inlineRoot>1<span class="inline-block breakStart breakEnd">2</span>3</div>

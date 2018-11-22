@@ -443,7 +443,12 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     if (root.establishesFormattingContext() && &root != &(this->root())) {
         createAndAppendInlineItem();
-        inlineFormattingState.inlineContent().last()->addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
+        auto& inlineRun = *inlineFormattingState.inlineContent().last();
+
+        auto horizontalMargins = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
+        inlineRun.addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
+        inlineRun.addNonBreakableStart(horizontalMargins.left);
+        inlineRun.addNonBreakableEnd(horizontalMargins.right);
         // Skip formatting root subtree. They are not part of this inline formatting context.
         return;
     }
