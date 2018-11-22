@@ -1,3 +1,59 @@
+2018-11-22  Dean Jackson  <dino@apple.com>
+
+        Implement WebGPUQueue and device.getQueue()
+        https://bugs.webkit.org/show_bug.cgi?id=191911
+        <rdar://problem/46214871>
+
+        Reviewed by Antoine Quint.
+
+        Implement WebGPUDevice::getQueue(), which creates a WebGPUQueue
+        instance if necessary. Also link WebGPUQueue to the existing
+        GPUQueue object, and expose the label IDL property.
+
+        This patch is based on some work from Justin Fan.
+
+        Test: webgpu/queue-creation.html
+
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+            New files.
+
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        (WebCore::WebGPUCommandBuffer::commandBuffer const):
+            Expose a GPUCommandBuffer getter, used when submitting (even though
+            the actual GPU submission isn't implemented yet).
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::getQueue):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+            Implement getQueue().
+
+        * Modules/webgpu/WebGPUQueue.cpp:
+        (WebCore::WebGPUQueue::create):
+        (WebCore::WebGPUQueue::WebGPUQueue):
+        (WebCore::WebGPUQueue::submit):
+        * Modules/webgpu/WebGPUQueue.h:
+        (WebCore::WebGPUQueue::label const):
+        (WebCore::WebGPUQueue::setLabel):
+        * Modules/webgpu/WebGPUQueue.idl:
+            New class. Mostly sends stuff onto GPUQueue.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+            Add WebGPUQueue.
+
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::create):
+        (WebCore::GPUQueue::submit):
+        (WebCore::GPUQueue::label const):
+        (WebCore::GPUQueue::setLabel const):
+            "label" getter/setter that uses
+            the underlying MTLCommandQueue label property, but prefixes
+            it with a WebKit identifier, so it can be correctly
+            identified in system crash logs as coming from WebGPU.
+
 2018-11-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Merge addNonBreakableStart/NonBreakableEnd calls.

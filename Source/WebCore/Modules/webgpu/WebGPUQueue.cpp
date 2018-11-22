@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUQueue.h"
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "GPUCommandBuffer.h"
+#include "GPUQueue.h"
+#include "WebGPUCommandBuffer.h"
 
 namespace WebCore {
 
-class GPUCommandBuffer;
+RefPtr<WebGPUQueue> WebGPUQueue::create(RefPtr<GPUQueue>&& queue)
+{
+    if (!queue)
+        return nullptr;
 
-class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
-public:
-    static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
+    return adoptRef(new WebGPUQueue(queue.releaseNonNull()));
+}
 
-    const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+WebGPUQueue::WebGPUQueue(Ref<GPUQueue>&& queue)
+    : m_queue(WTFMove(queue))
+{
+}
 
-private:
-    WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);
-
-    Ref<GPUCommandBuffer> m_commandBuffer;
-};
+void WebGPUQueue::submit(Vector<RefPtr<WebGPUCommandBuffer>>&& buffers)
+{
+    auto gpuBuffers = buffers.map([] (const auto& buffer) -> Ref<const GPUCommandBuffer> {
+        return buffer->commandBuffer();
+    });
+    m_queue->submit(WTFMove(gpuBuffers));
+}
 
 } // namespace WebCore
 

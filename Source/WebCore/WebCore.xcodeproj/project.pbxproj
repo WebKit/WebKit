@@ -6940,6 +6940,11 @@
 		312FF90E21A4C33F00EB199D /* GPULegacyRenderPipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyRenderPipelineState.h; sourceTree = "<group>"; };
 		312FF90F21A4C33F00EB199D /* GPULegacyCommandQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPULegacyCommandQueue.cpp; sourceTree = "<group>"; };
 		312FF91021A4C33F00EB199D /* GPULegacyFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPULegacyFunction.h; sourceTree = "<group>"; };
+		312FF93921A61C9F00EB199D /* WebGPUQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUQueue.h; sourceTree = "<group>"; };
+		312FF93B21A61CA000EB199D /* WebGPUQueue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUQueue.idl; sourceTree = "<group>"; };
+		312FF93C21A61CA100EB199D /* WebGPUQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUQueue.cpp; sourceTree = "<group>"; };
+		312FF93D21A61F0700EB199D /* JSWebGPUQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebGPUQueue.h; path = JSWebGPUQueue.h; sourceTree = "<group>"; };
+		312FF93E21A61F0700EB199D /* JSWebGPUQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebGPUQueue.cpp; path = JSWebGPUQueue.cpp; sourceTree = "<group>"; };
 		313171541FB079D1008D91FC /* CanvasBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasBase.h; sourceTree = "<group>"; };
 		313171571FB0969E008D91FC /* CanvasBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasBase.cpp; sourceTree = "<group>"; };
 		313591001E7DDC6000F30630 /* RTCIceConnectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceConnectionState.h; sourceTree = "<group>"; };
@@ -22729,6 +22734,8 @@
 				31A0892F1E738D59003B6609 /* JSWebGPUFunction.h */,
 				31A089301E738D59003B6609 /* JSWebGPULibrary.cpp */,
 				31A089321E738D59003B6609 /* JSWebGPULibrary.h */,
+				312FF93E21A61F0700EB199D /* JSWebGPUQueue.cpp */,
+				312FF93D21A61F0700EB199D /* JSWebGPUQueue.h */,
 				31A089331E738D59003B6609 /* JSWebGPURenderCommandEncoder.cpp */,
 				31A089351E738D59003B6609 /* JSWebGPURenderCommandEncoder.h */,
 				31A089361E738D59003B6609 /* JSWebGPURenderingContext.cpp */,
@@ -25672,6 +25679,9 @@
 				D0C419F12183EB31009EC1DE /* WebGPUPipelineDescriptorBase.idl */,
 				D0C419EB2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.h */,
 				D0C419EC2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.idl */,
+				312FF93C21A61CA100EB199D /* WebGPUQueue.cpp */,
+				312FF93921A61C9F00EB199D /* WebGPUQueue.h */,
+				312FF93B21A61CA000EB199D /* WebGPUQueue.idl */,
 				D093D2292179541600329217 /* WebGPURenderingContext.cpp */,
 				D093D225217951D400329217 /* WebGPURenderingContext.h */,
 				D093D227217951D400329217 /* WebGPURenderingContext.idl */,

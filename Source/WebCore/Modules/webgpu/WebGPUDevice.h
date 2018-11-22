@@ -29,7 +29,7 @@
 
 #include "GPUDevice.h"
 #include "WebGPUAdapter.h"
-
+#include "WebGPUQueue.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -55,13 +55,14 @@ public:
     RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
 
     RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
+    RefPtr<WebGPUQueue> getQueue();
 
 private:
     WebGPUDevice(Ref<WebGPUAdapter>&&, RefPtr<GPUDevice>&&);
 
     Ref<WebGPUAdapter> m_adapter;
-
     RefPtr<GPUDevice> m_device;
+    RefPtr<WebGPUQueue> m_queue;
 };
 
 } // namespace WebCore

@@ -33,13 +33,17 @@
 
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static NSString * const commandQueueDefaultLabel = @"com.apple.WebKit";
+static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
 
 RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
 {
     if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice!");
+        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice.");
         return nullptr;
     }
 
@@ -48,11 +52,12 @@ RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     queue = adoptNS([device.platformDevice() newCommandQueue]);
+    [queue setLabel:commandQueueDefaultLabel];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!queue) {
-        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue!");
+        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue.");
         return nullptr;
     }
 
@@ -62,6 +67,33 @@ RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
 GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
     : m_platformQueue(WTFMove(queue))
 {
+}
+
+void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&&)
+{
+    // FIXME: Missing implementation.
+}
+
+String GPUQueue::label() const
+{
+    if (!m_platformQueue)
+        return emptyString();
+
+    NSString *prefixedLabel = [m_platformQueue label];
+
+    if ([prefixedLabel isEqualToString:commandQueueDefaultLabel])
+        return emptyString();
+
+    ASSERT(prefixedLabel.length > commandQueueLabelPrefix.length);
+    return [prefixedLabel substringFromIndex:commandQueueLabelPrefix.length];
+}
+
+void GPUQueue::setLabel(const String& label) const
+{
+    if (label.isEmpty())
+        [m_platformQueue setLabel:commandQueueDefaultLabel];
+    else
+        [m_platformQueue setLabel:[commandQueueLabelPrefix stringByAppendingString:label]];
 }
 
 } // namespace WebCore

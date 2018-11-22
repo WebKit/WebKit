@@ -27,24 +27,28 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/Ref.h>
+#include "GPUQueue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GPUCommandBuffer;
+class WebGPUCommandBuffer;
 
-class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
+class WebGPUQueue : public RefCounted<WebGPUQueue> {
 public:
-    static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
+    static RefPtr<WebGPUQueue> create(RefPtr<GPUQueue>&&);
 
-    const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+    void submit(Vector<RefPtr<WebGPUCommandBuffer>>&&);
+
+    String label() const { return m_queue->label(); }
+    void setLabel(const String& label) { m_queue->setLabel(label); }
 
 private:
-    WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);
+    WebGPUQueue(Ref<GPUQueue>&&);
 
-    Ref<GPUCommandBuffer> m_commandBuffer;
+    Ref<GPUQueue> m_queue;
 };
 
 } // namespace WebCore

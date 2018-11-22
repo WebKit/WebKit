@@ -22,31 +22,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUQueue {
+    void submit(sequence<WebGPUCommandBuffer> buffers);
 
-#if ENABLE(WEBGPU)
-
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-
-class GPUCommandBuffer;
-
-class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
-public:
-    static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
-
-    const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
-
-private:
-    WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);
-
-    Ref<GPUCommandBuffer> m_commandBuffer;
+    // FIXME: Unimplemented.
+    // void signal(WebGPUFence fence, u64 signalValue);
+    // void wait(WebGPUFence fence, u64 valueToWait);
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

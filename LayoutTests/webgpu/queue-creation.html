@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset=utf-8>
+<title>Get the WebGPUDevice and ask for the WebGPUQueue</title>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+'use strict';
+
+promise_test(async t => {
+    assert_not_equals(window.webgpu, undefined, "window.webgpu exists");
+
+    const swapChain = document.createElement("canvas").getContext("webgpu");
+    assert_true(swapChain instanceof WebGPUSwapChain, "getContext returned a WebGPUSwapChain.");
+
+    const adapter = await window.webgpu.requestAdapter({});
+    assert_true(adapter instanceof WebGPUAdapter, "requestAdapter returned a WebGPUAdapter.");
+
+    const device = adapter.createDevice();
+    assert_true(device instanceof WebGPUDevice, "createDevice returned a WebGPUDevice.");
+
+    const queue = device.getQueue();
+    assert_true(queue instanceof WebGPUQueue, "getQueue returned a WebGPUQueue.");
+
+    queue.label = "Example label";
+    assert_equals(queue.label, "Example label", "queue.label was set.");
+}, "getQueue() on WebGPUDevice.");
+
+</script>
+</body>

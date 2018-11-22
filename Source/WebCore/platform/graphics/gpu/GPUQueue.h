@@ -35,16 +35,22 @@ OBJC_PROTOCOL(MTLCommandQueue);
 
 namespace WebCore {
 
-class GPUDevice;
-
 using PlatformQueue = MTLCommandQueue;
 using PlatformQueueSmartPtr = RetainPtr<MTLCommandQueue>;
+
+class GPUCommandBuffer;
+class GPUDevice;
 
 class GPUQueue : public RefCounted<GPUQueue> {
 public:
     static RefPtr<GPUQueue> create(const GPUDevice&);
 
     PlatformQueue* platformQueue() const { return m_platformQueue.get(); }
+
+    void submit(Vector<Ref<const GPUCommandBuffer>>&&);
+
+    String label() const;
+    void setLabel(const String&) const;
 
 private:
     GPUQueue(PlatformQueueSmartPtr&&);

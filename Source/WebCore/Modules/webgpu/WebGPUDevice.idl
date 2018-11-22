@@ -39,25 +39,24 @@
     // FIXME: Currently, WebGPUCommandBufferDescriptor is an empty dictionary.
     WebGPUCommandBuffer createCommandBuffer(/*WebGPUCommandBufferDescriptor descriptor*/);
 
-/* To Be Implemented:
-    WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
-    WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
-    WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
-
-    WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
-    WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
-    WebGPUBindGroup createBindGroup(WebGPUBindGroupDescriptor descriptor);
-
-    WebGPUBlendState createBlendState(WebGPUBlendStateDescriptor descriptor);
-    WebGPUDepthStencilState createDepthStencilState(WebGPUDepthStencilStateDescriptor descriptor);
-    WebGPUInputState createInputState(WebGPUInputStateDescriptor descriptor);
-    WebGPUAttachmentState createAttachmentState(WebGPUAttachmentStateDescriptor descriptor);
-    WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
-    WebGPUFence createFence(WebGPUFenceDescriptor descriptor);
-
     WebGPUQueue getQueue();
 
-    attribute WebGPULogCallback onLog;
-    WebGPUObjectStatusQuery getObjectStatus(StatusableObject statusableObject);
-*/
+    // FIXME: Unimplemented.
+    // WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
+    // WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
+    // WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
+    //
+    // WebGPUBindGroupLayout createBindGroupLayout(WebGPUBindGroupLayoutDescriptor descriptor);
+    // WebGPUPipelineLayout createPipelineLayout(WebGPUPipelineLayoutDescriptor descriptor);
+    // WebGPUBindGroup createBindGroup(WebGPUBindGroupDescriptor descriptor);
+    //
+    // WebGPUBlendState createBlendState(WebGPUBlendStateDescriptor descriptor);
+    // WebGPUDepthStencilState createDepthStencilState(WebGPUDepthStencilStateDescriptor descriptor);
+    // WebGPUInputState createInputState(WebGPUInputStateDescriptor descriptor);
+    // WebGPUAttachmentState createAttachmentState(WebGPUAttachmentStateDescriptor descriptor);
+    // WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
+    // WebGPUFence createFence(WebGPUFenceDescriptor descriptor);
+    //
+    // attribute WebGPULogCallback onLog;
+    // WebGPUObjectStatusQuery getObjectStatus(StatusableObject statusableObject);
 };

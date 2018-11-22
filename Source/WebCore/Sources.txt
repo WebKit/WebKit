@@ -305,6 +305,7 @@ Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUCommandBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
+Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPURenderingContext.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
@@ -3214,6 +3215,7 @@ JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUDevice.cpp
+JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineStageDescriptor.cpp
 JSWebGPURenderingContext.cpp

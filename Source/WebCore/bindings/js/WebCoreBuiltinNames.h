@@ -181,6 +181,7 @@ namespace WebCore {
     macro(WebGPUAdapter) \
     macro(WebGPUDevice) \
     macro(WebGPUCommandBuffer) \
+    macro(WebGPUQueue) \
     macro(WebGPURenderingContext) \
     macro(WebGPURenderPipeline) \
     macro(WebGPUShaderStage) \

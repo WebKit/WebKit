@@ -1,3 +1,16 @@
+2018-11-22  Dean Jackson  <dino@apple.com>
+
+        Implement WebGPUQueue and device.getQueue()
+        https://bugs.webkit.org/show_bug.cgi?id=191911
+        <rdar://problem/46214871>
+
+        Reviewed by Antoine Quint.
+
+        WPT-style test for queue creation.
+
+        * webgpu/queue-creation-expected.txt: Added.
+        * webgpu/queue-creation.html: Added.
+
 2018-11-22  Frederic Wang  <fwang@igalia.com>
 
         Improve fast/scrolling/scrolling-tree-includes-frame.html
