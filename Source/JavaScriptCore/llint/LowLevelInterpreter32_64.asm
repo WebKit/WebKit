@@ -214,7 +214,7 @@ macro doVMEntry(makeCall)
 
 .stackHeightOK:
     move t3, sp
-    move 4, t3
+    move (constexpr ProtoCallFrame::numberOfRegisters), t3
 
 .copyHeaderLoop:
     subi 1, t3

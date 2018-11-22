@@ -35,6 +35,9 @@ namespace JSC {
 struct JS_EXPORT_PRIVATE ProtoCallFrame {
     WTF_FORBID_HEAP_ALLOCATION;
 public:
+    // CodeBlock, Callee, ArgumentCount, and |this|.
+    static constexpr unsigned numberOfRegisters { 4 };
+
     Register codeBlockValue;
     Register calleeValue;
     Register argCountAndCodeOriginValue;
