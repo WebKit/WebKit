@@ -10286,23 +10286,15 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     switch (edge.useKind()) {
     case UntypedUse:
         break;
-    case KnownInt32Use:
-        ASSERT(!needsTypeCheck(edge, SpecInt32Only));
-        break;
     case DoubleRepUse:
-        ASSERT(!needsTypeCheck(edge, SpecFullDouble));
-        break;
     case Int52RepUse:
-        ASSERT(!needsTypeCheck(edge, SpecAnyInt));
-        break;
+    case KnownInt32Use:
     case KnownCellUse:
-        ASSERT(!needsTypeCheck(edge, SpecCell));
-        break;
     case KnownStringUse:
-        ASSERT(!needsTypeCheck(edge, SpecString));
-        break;
     case KnownPrimitiveUse:
-        ASSERT(!needsTypeCheck(edge, SpecHeapTop & ~SpecObject));
+    case KnownOtherUse:
+    case KnownBooleanUse:
+        ASSERT(!m_interpreter.needsTypeCheck(edge));
         break;
     case Int32Use:
         speculateInt32(edge);
@@ -10326,9 +10318,6 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
 #endif
     case BooleanUse:
         speculateBoolean(edge);
-        break;
-    case KnownBooleanUse:
-        ASSERT(!needsTypeCheck(edge, SpecBoolean));
         break;
     case CellUse:
         speculateCell(edge);
@@ -10404,9 +10393,6 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotCellUse:
         speculateNotCell(edge);
-        break;
-    case KnownOtherUse:
-        ASSERT(!needsTypeCheck(edge, SpecOther));
         break;
     case OtherUse:
         speculateOther(edge);

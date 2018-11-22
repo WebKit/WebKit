@@ -15339,6 +15339,8 @@ private:
         case KnownOtherUse:
         case DoubleRepUse:
         case Int52RepUse:
+        case KnownCellUse:
+        case KnownBooleanUse:
             ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
         case Int32Use:
@@ -15349,9 +15351,6 @@ private:
             break;
         case CellOrOtherUse:
             speculateCellOrOther(edge);
-            break;
-        case KnownCellUse:
-            ASSERT(!m_interpreter.needsTypeCheck(edge));
             break;
         case AnyIntUse:
             speculateAnyInt(edge);

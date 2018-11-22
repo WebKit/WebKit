@@ -1,3 +1,23 @@
+2018-11-21  Saam barati  <sbarati@apple.com>
+
+        Fix assertion in KnownCellUse inside SpeculativeJIT::speculate
+        https://bugs.webkit.org/show_bug.cgi?id=191895
+        <rdar://problem/46167406>
+
+        Reviewed by Mark Lam.
+
+        We were asserting that the input edge should have type SpecCell but it should
+        really be SpecCellCheck since the type filter for KnownCellUse is SpecCellCheck.
+        
+        This patch cleans up that assertion code by joining a bunch of cases into a
+        single function call which grabs the type filter for the edge UseKind and
+        asserts that the incoming edge meets the type filter criteria.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+
 2018-11-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Use ProtoCallFrame::numberOfRegisters instead of raw number `4`
