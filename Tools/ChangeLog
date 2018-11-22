@@ -1,3 +1,18 @@
+2018-11-22  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Do not disable signals when running "usual" commands
+        https://bugs.webkit.org/show_bug.cgi?id=190679
+
+        Reviewed by Philippe Normand.
+
+        Otherwise <ctr>c doesn't work while compiling. It is not the best fix
+        as there are cases we want to let only children receive signals, but
+        it is not clear how to determine when (when running gdb, we still
+        disable those).
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+
 2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WebKit2] Add support for replacing find-in-page text matches

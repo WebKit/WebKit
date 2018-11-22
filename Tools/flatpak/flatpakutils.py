@@ -746,12 +746,11 @@ class WebkitFlatpak:
             _log.debug('Running in sandbox: "%s" %s\n' % ('" "'.join(flatpak_command), shell_string))
             flatpak_command.extend(['sh', "/run/host/" + tmpscript.name])
 
-            with disable_signals():
-                try:
-                    subprocess.check_call(flatpak_command, stdout=stdout)
-                except subprocess.CalledProcessError as e:
-                    sys.stderr.write(str(e) + "\n")
-                    return e.returncode
+            try:
+                subprocess.check_call(flatpak_command, stdout=stdout)
+            except subprocess.CalledProcessError as e:
+                sys.stderr.write(str(e) + "\n")
+                return e.returncode
 
         return 0
 
