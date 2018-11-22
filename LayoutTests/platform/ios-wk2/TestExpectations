@@ -14,6 +14,7 @@ fast/visual-viewport/ios/ [ Pass ]
 scrollingcoordinator/ios [ Pass ]
 tiled-drawing/ios [ Pass ]
 fast/web-share [ Pass ]
+editing/find [ Pass ]
 
 editing/selection/character-granularity-rect.html [ Failure ]
 

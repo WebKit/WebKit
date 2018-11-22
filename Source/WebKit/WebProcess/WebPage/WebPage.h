@@ -408,6 +408,8 @@ public:
 #endif
 
     bool findStringFromInjectedBundle(const String&, FindOptions);
+    void findStringMatchesFromInjectedBundle(const String&, FindOptions);
+    void replaceStringMatchesFromInjectedBundle(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly);
 
     WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
 
@@ -1304,6 +1306,7 @@ private:
     void selectFindMatch(uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, uint32_t findOptions, uint32_t maxMatchCount);
+    void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CallbackID);
 
 #if USE(COORDINATED_GRAPHICS)
     void sendViewportAttributesChanged(const WebCore::ViewportArguments&);

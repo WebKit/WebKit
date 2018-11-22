@@ -1,0 +1,12 @@
+Verifies that find and replace ignores matches that span editing boundaries. This test requires WebKitTestRunner.
+
+After replacing 'apple' with 'pear':
+| "
+        "
+| <span>
+|   contenteditable=""
+|   "<#selection-anchor>pear<#selection-focus> ap"
+| <span>
+|   "ple apple"
+| "
+    "

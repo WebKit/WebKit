@@ -1,3 +1,47 @@
+2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Add support for replacing find-in-page text matches
+        https://bugs.webkit.org/show_bug.cgi?id=191786
+        <rdar://problem/45813871>
+
+        Reviewed by Ryosuke Niwa.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView replaceMatches:withString:inSelectionOnly:resultCollector:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::replaceMatches):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient replaceMatches:withString:inSelectionOnly:resultCollector:]):
+
+        Implement this method to opt in to "Replace…" UI on macOS in the find bar. In this API, we're given a list of
+        matches to replace. We propagate the indices of each match to the web process, where FindController maps them to
+        corresponding replacement ranges. Currently, the given list of matches is only ever a list containing the first
+        match, or a list containing all matches.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageFindStringMatches):
+        (WKBundlePageReplaceStringMatches):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::replaceMatches):
+
+        Map match indices to Ranges, and then call into WebCore::Page to do the heavy lifting (see WebCore ChangeLog for
+        more details). Additionally add a hard find-and-replace limit here to prevent the web process from spinning
+        indefinitely if there are an enormous number of find matches.
+
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findStringMatchesFromInjectedBundle):
+        (WebKit::WebPage::replaceStringMatchesFromInjectedBundle):
+
+        Add helpers to exercise find and replace in WebKit2.
+
+        (WebKit::WebPage::replaceMatches):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-11-21  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Create a soft-linking file for PassKit

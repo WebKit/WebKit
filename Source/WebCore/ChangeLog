@@ -1,3 +1,54 @@
+2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Add support for replacing find-in-page text matches
+        https://bugs.webkit.org/show_bug.cgi?id=191786
+        <rdar://problem/45813871>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for replacing Find-in-Page matches. See below for details. Covered by new layout tests as well as a
+        new API test.
+
+        Tests: editing/find/find-and-replace-adjacent-words.html
+               editing/find/find-and-replace-at-editing-boundary.html
+               editing/find/find-and-replace-basic.html
+               editing/find/find-and-replace-in-subframes.html
+               editing/find/find-and-replace-no-matches.html
+               editing/find/find-and-replace-noneditable-matches.html
+               editing/find/find-and-replace-replacement-text-input-events.html
+
+        API test: WebKit.FindAndReplace
+
+        * page/Page.cpp:
+        (WebCore::replaceRanges):
+        (WebCore::Page::replaceRangesWithText):
+
+        Add a helper that, given a list of Ranges, replaces each range with the given text. To do this, we first map
+        each Range to editing offsets within the topmost editable root for each Range. This results in a map of editable
+        root to list of editing offsets we need to replace. To apply the replacements, for each editable root in the
+        map, we iterate over each replacement range (i.e. an offset and length), set the current selection to contain
+        that replacement range, and use `Editor::replaceSelectionWithText`. To prevent prior text replacements from
+        clobbering the offsets of latter text replacement ranges, we also iterate backwards through text replacement
+        ranges when performing each replacement.
+
+        Likewise, we also apply text replacement to each editing container in backwards order: for nodes in the same
+        frame, we compare their position in the document, and for nodes in different frames, we instead compare their
+        frames in frame tree traversal order.
+
+        We map Ranges to editing offsets and back when performing text replacement because each text replacement may
+        split or merge text nodes, which causes adjacent Ranges to shrink or extend while replacing text. In an earlier
+        attempt to implement this, I simply iterated over each Range to replace and carried out text replacement for
+        each Range. This led to incorrect behavior in some cases, such as replacing adjacent matches. Thus, by computing
+        the set of text replacement offsets prior to replacing any text, we're able to target the correct ranges for
+        replacement.
+
+        (WebCore::Page::replaceSelectionWithText):
+
+        Add a helper method on Page to replace the current selection with some text. This simply calls out to
+        `Editor::replaceSelectionWithText`.
+
+        * page/Page.h:
+
 2018-11-21  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Create a soft-linking file for PassKit

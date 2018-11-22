@@ -1,3 +1,60 @@
+2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Add support for replacing find-in-page text matches
+        https://bugs.webkit.org/show_bug.cgi?id=191786
+        <rdar://problem/45813871>
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce a `LayoutTests/editing/find` directory to contain tests around `FindController`, and add 7 new layout
+        tests. These are currently enabled only for WebKit2 on macOS and iOS.
+
+        * TestExpectations:
+        * editing/find/find-and-replace-adjacent-words-expected.txt: Added.
+        * editing/find/find-and-replace-adjacent-words.html: Added.
+
+        Test find-and-replace with adjacent words.
+
+        * editing/find/find-and-replace-at-editing-boundary-expected.txt: Added.
+        * editing/find/find-and-replace-at-editing-boundary.html: Added.
+
+        Test find-and-replace when one of the find matches straddles an editing boundary. In this case, we verify that
+        the replacement does not occur, since only part of the word would be replaced.
+
+        * editing/find/find-and-replace-basic-expected.txt: Added.
+        * editing/find/find-and-replace-basic.html: Added.
+
+        Add a basic test that exercises a single text replacement, and "replace all".
+
+        * editing/find/find-and-replace-in-subframes-expected.txt: Added.
+        * editing/find/find-and-replace-in-subframes.html: Added.
+
+        Test find-and-replace when some of the matches are in editable content in subframes. This test additionally
+        contains matches in shadow content (in this case, text fields) within both the main document and the subframe,
+        and verifies that text replacement reaches these elements as well.
+
+        * editing/find/find-and-replace-no-matches-expected.txt: Added.
+        * editing/find/find-and-replace-no-matches.html: Added.
+
+        Test find-and-replace when no replacement matches are specified. In this case, we fall back to inserting the
+        replacement text at the current selection.
+
+        * editing/find/find-and-replace-noneditable-matches-expected.txt: Added.
+        * editing/find/find-and-replace-noneditable-matches.html: Added.
+
+        Test find-and-replace when some of the matches to replace are noneditable, others are editable, and others are
+        editable but are nested within noneditable elements (i.e. `contenteditable=false`). In this case, "replace all"
+        should still replace all fully editable matches.
+
+        * editing/find/find-and-replace-replacement-text-input-events-expected.txt: Added.
+        * editing/find/find-and-replace-replacement-text-input-events.html: Added.
+
+        Tests that find-and-replace emits input events of `inputType` "insertReplacementText", except when inserting
+        replacement text at a caret selection.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-11-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Horizontal margins should be considered as non-breakable space

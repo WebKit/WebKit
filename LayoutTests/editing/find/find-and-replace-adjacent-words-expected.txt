@@ -1,0 +1,11 @@
+Verifies that find and replace can be used to replace adjacent words in an editable area. This test requires WebKitTestRunner.
+
+After replacing 'apple' with an empty string:
+| <#selection-caret>
+| <br>
+
+After replacing 'apple' with 'appleapple':
+| "<#selection-anchor>appleapple<#selection-focus>appleappleappleapple"
+
+After replacing 'apple' with 'APPLE':
+| "<#selection-anchor>APPLE<#selection-focus>APPLEAPPLE"

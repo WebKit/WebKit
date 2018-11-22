@@ -266,6 +266,7 @@ messages -> WebPage LegacyReceiver {
     SelectFindMatch(uint32_t matchIndex)
     HideFindUI()
     CountStringMatches(String string, uint32_t findOptions, unsigned maxMatchCount)
+    ReplaceMatches(Vector<uint32_t> matchIndices, String replacementText, bool selectionOnly, WebKit::CallbackID callbackID)
     
     AddMIMETypeWithCustomContentProvider(String mimeType)
 

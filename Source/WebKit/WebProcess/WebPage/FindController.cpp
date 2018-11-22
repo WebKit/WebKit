@@ -99,6 +99,27 @@ void FindController::countStringMatches(const String& string, FindOptions option
     m_webPage->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount));
 }
 
+uint32_t FindController::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly)
+{
+    if (matchIndices.isEmpty())
+        return m_webPage->corePage()->replaceSelectionWithText(replacementText);
+
+    // FIXME: This is an arbitrary cap on the maximum number of matches to try and replace, to prevent the web process from
+    // hanging while replacing an enormous amount of matches. In the future, we should handle replacement in batches, and
+    // periodically update an NSProgress in the UI process when a batch of find-in-page matches are replaced.
+    const uint32_t maximumNumberOfMatchesToReplace = 1000;
+
+    Vector<Ref<Range>> rangesToReplace;
+    rangesToReplace.reserveCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
+    for (auto index : matchIndices) {
+        if (index < m_findMatches.size())
+            rangesToReplace.uncheckedAppend(*m_findMatches[index]);
+        if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
+            break;
+    }
+    return m_webPage->corePage()->replaceRangesWithText(WTFMove(rangesToReplace), replacementText, selectionOnly);
+}
+
 static Frame* frameWithSelection(Page* page)
 {
     for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {

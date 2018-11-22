@@ -43,6 +43,7 @@
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
 #include "DragController.h"
+#include "Editing.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EmptyClients.h"
@@ -109,6 +110,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SubframeLoader.h"
+#include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
 #include "UserInputBridge.h"
@@ -762,6 +764,122 @@ unsigned Page::markAllMatchesForText(const String& target, FindOptions options, 
 unsigned Page::countFindMatches(const String& target, FindOptions options, unsigned maxMatchCount)
 {
     return findMatchesForText(target, options, maxMatchCount, DoNotHighlightMatches, DoNotMarkMatches);
+}
+
+struct FindReplacementRange {
+    RefPtr<ContainerNode> root;
+    size_t location { notFound };
+    size_t length { 0 };
+};
+
+static void replaceRanges(Page& page, Vector<FindReplacementRange>&& ranges, const String& replacementText)
+{
+    HashMap<RefPtr<ContainerNode>, Vector<FindReplacementRange>> rangesByContainerNode;
+    for (auto& range : ranges) {
+        auto& rangeList = rangesByContainerNode.ensure(range.root, [] {
+            return Vector<FindReplacementRange> { };
+        }).iterator->value;
+
+        // Ensure that ranges are sorted by their end offsets, per editing container.
+        auto endOffsetForRange = range.location + range.length;
+        auto insertionIndex = rangeList.size();
+        for (auto iterator = rangeList.rbegin(); iterator != rangeList.rend(); ++iterator) {
+            auto endOffsetBeforeInsertionIndex = iterator->location + iterator->length;
+            if (endOffsetForRange >= endOffsetBeforeInsertionIndex)
+                break;
+            insertionIndex--;
+        }
+        rangeList.insert(insertionIndex, range);
+    }
+
+    HashMap<RefPtr<Frame>, unsigned> frameToTraversalIndexMap;
+    unsigned currentFrameTraversalIndex = 0;
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext())
+        frameToTraversalIndexMap.set(frame, currentFrameTraversalIndex++);
+
+    // Likewise, iterate backwards (in document and frame order) through editing containers that contain text matches,
+    // so that we're consistent with our backwards iteration behavior per editing container when replacing text.
+    auto containerNodesInOrderOfReplacement = copyToVector(rangesByContainerNode.keys());
+    std::sort(containerNodesInOrderOfReplacement.begin(), containerNodesInOrderOfReplacement.end(), [frameToTraversalIndexMap] (auto& firstNode, auto& secondNode) {
+        if (firstNode == secondNode)
+            return false;
+
+        auto firstFrame = makeRefPtr(firstNode->document().frame());
+        if (!firstFrame)
+            return true;
+
+        auto secondFrame = makeRefPtr(secondNode->document().frame());
+        if (!secondFrame)
+            return false;
+
+        if (firstFrame == secondFrame) {
+            // comparePositions is used here instead of Node::compareDocumentPosition because some editing roots may exist inside shadow roots.
+            return comparePositions({ firstNode.get(), Position::PositionIsBeforeChildren }, { secondNode.get(), Position::PositionIsBeforeChildren }) > 0;
+        }
+        return frameToTraversalIndexMap.get(firstFrame) > frameToTraversalIndexMap.get(secondFrame);
+    });
+
+    for (auto container : containerNodesInOrderOfReplacement) {
+        auto frame = makeRefPtr(container->document().frame());
+        if (!frame)
+            continue;
+
+        // Iterate backwards through ranges when replacing text, such that earlier text replacements don't clobber replacement ranges later on.
+        auto& ranges = rangesByContainerNode.find(container)->value;
+        for (auto iterator = ranges.rbegin(); iterator != ranges.rend(); ++iterator) {
+            auto range = TextIterator::rangeFromLocationAndLength(container.get(), iterator->location, iterator->length);
+            if (!range || range->collapsed())
+                continue;
+
+            frame->selection().setSelectedRange(range.get(), DOWNSTREAM, true);
+            frame->editor().replaceSelectionWithText(replacementText, true, false, EditAction::InsertReplacement);
+        }
+    }
+}
+
+uint32_t Page::replaceRangesWithText(Vector<Ref<Range>>&& rangesToReplace, const String& replacementText, bool selectionOnly)
+{
+    // FIXME: In the future, we should respect the `selectionOnly` flag by checking whether each range being replaced is
+    // contained within its frame's selection.
+    UNUSED_PARAM(selectionOnly);
+
+    Vector<FindReplacementRange> replacementRanges;
+    replacementRanges.reserveInitialCapacity(rangesToReplace.size());
+
+    for (auto& range : rangesToReplace) {
+        auto highestRoot = makeRefPtr(highestEditableRoot(range->startPosition()));
+        if (!highestRoot || highestRoot != highestEditableRoot(range->endPosition()))
+            continue;
+
+        auto frame = makeRefPtr(highestRoot->document().frame());
+        if (!frame)
+            continue;
+
+        size_t replacementLocation = notFound;
+        size_t replacementLength = 0;
+        if (!TextIterator::getLocationAndLengthFromRange(highestRoot.get(), range.ptr(), replacementLocation, replacementLength))
+            continue;
+
+        if (replacementLocation == notFound || !replacementLength)
+            continue;
+
+        replacementRanges.append({ WTFMove(highestRoot), replacementLocation, replacementLength });
+    }
+
+    replaceRanges(*this, WTFMove(replacementRanges), replacementText);
+    return rangesToReplace.size();
+}
+
+uint32_t Page::replaceSelectionWithText(const String& replacementText)
+{
+    auto frame = makeRef(focusController().focusedOrMainFrame());
+    auto selection = frame->selection().selection();
+    if (!selection.isContentEditable())
+        return 0;
+
+    auto editAction = selection.isRange() ? EditAction::InsertReplacement : EditAction::Insert;
+    frame->editor().replaceSelectionWithText(replacementText, true, false, editAction);
+    return 1;
 }
 
 void Page::unmarkAllTextMatches()

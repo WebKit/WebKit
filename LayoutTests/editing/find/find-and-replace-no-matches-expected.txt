@@ -1,0 +1,29 @@
+Verifies that find and replace will insert the replacement text at the selection, if no matches are specified. This test requires WebKitTestRunner.
+
+After replacing 'banana' with 'pear':
+| "
+        "
+| <p>
+|   id="p1"
+|   "Apple <#selection-anchor>pear<#selection-focus> orange."
+| "
+        "
+| <p>
+|   id="p2"
+|   "Kiwi banana pear."
+| "
+    "
+
+After inserting 'watermelon' after 'Kiwi':
+| "
+        "
+| <p>
+|   id="p1"
+|   "Apple pear orange."
+| "
+        "
+| <p>
+|   id="p2"
+|   "Kiwi<#selection-anchor>watermelon<#selection-focus> banana pear."
+| "
+    "

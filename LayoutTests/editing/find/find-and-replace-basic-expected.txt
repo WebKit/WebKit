@@ -1,0 +1,25 @@
+Verifies that find and replace can be used to replace words in an editable area. This test requires WebKitTestRunner.
+
+After replacing 'orange' with 'apricot':
+| "
+        "
+| <p>
+|   "Apple banana <#selection-anchor>apricot<#selection-focus>."
+| "
+        "
+| <p>
+|   "Kiwi banana pear."
+| "
+    "
+
+After replacing 'banana' with 'watermelon':
+| "
+        "
+| <p>
+|   "Apple <#selection-anchor>watermelon<#selection-focus> apricot."
+| "
+        "
+| <p>
+|   "Kiwi watermelon pear."
+| "
+    "

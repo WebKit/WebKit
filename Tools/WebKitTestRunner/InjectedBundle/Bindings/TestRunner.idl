@@ -146,6 +146,8 @@ interface TestRunner {
 
     // Text search testing.
     boolean findString(DOMString target, object optionsArray);
+    void findStringMatchesInPage(DOMString target, object optionsArray);
+    void replaceFindMatchesAtIndices(object matchIndicesArray, DOMString replacementText, boolean selectionOnly);
 
     // Evaluating script in a special context.
     [PassContext] void evaluateScriptInIsolatedWorld(unsigned long worldID, DOMString script);

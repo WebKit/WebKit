@@ -1,3 +1,15 @@
+2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] [WebKit2] Add support for replacing find-in-page text matches
+        https://bugs.webkit.org/show_bug.cgi?id=191786
+        <rdar://problem/45813871>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add `-replaceMatches:withString:inSelectionOnly:resultCollector:`.
+
+        * pal/spi/mac/NSTextFinderSPI.h:
+
 2018-11-21  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Create a soft-linking file for PassKit

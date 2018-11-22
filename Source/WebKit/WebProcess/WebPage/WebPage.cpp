@@ -3791,6 +3791,16 @@ bool WebPage::findStringFromInjectedBundle(const String& target, FindOptions opt
     return m_page->findString(target, core(options));
 }
 
+void WebPage::findStringMatchesFromInjectedBundle(const String& target, FindOptions options)
+{
+    findController().findStringMatches(target, options, 0);
+}
+
+void WebPage::replaceStringMatchesFromInjectedBundle(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly)
+{
+    findController().replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly);
+}
+
 void WebPage::findString(const String& string, uint32_t options, uint32_t maxMatchCount)
 {
     findController().findString(string, static_cast<FindOptions>(options), maxMatchCount);
@@ -3819,6 +3829,12 @@ void WebPage::hideFindUI()
 void WebPage::countStringMatches(const String& string, uint32_t options, uint32_t maxMatchCount)
 {
     findController().countStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
+}
+
+void WebPage::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)
+{
+    auto numberOfReplacements = findController().replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly);
+    send(Messages::WebPageProxy::UnsignedCallback(numberOfReplacements, callbackID));
 }
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)

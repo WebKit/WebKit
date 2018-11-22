@@ -34,9 +34,9 @@
 #import "WebPageProxy.h"
 #import <algorithm>
 #import <pal/spi/mac/NSTextFinderSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 
-// FIXME: Implement support for replace.
 // FIXME: Implement scrollFindMatchToVisible.
 // FIXME: The NSTextFinder overlay doesn't move with scrolling; we should have a mode where we manage the overlay.
 
@@ -170,6 +170,19 @@ private:
 }
 
 #pragma mark - NSTextFinderClient SPI
+
+- (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementText inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
+{
+    Vector<uint32_t> matchIndices;
+    matchIndices.reserveCapacity(matches.count);
+    for (id match in matches) {
+        if ([match isKindOfClass:WKTextFinderMatch.class])
+            matchIndices.uncheckedAppend([(WKTextFinderMatch *)match index]);
+    }
+    _page->replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly, [collector = makeBlockPtr(resultCollector)] (uint64_t numberOfReplacements, auto error) {
+        collector(error == WebKit::CallbackBase::Error::None ? numberOfReplacements : 0);
+    });
+}
 
 - (void)findMatchesForString:(NSString *)targetString relativeToMatch:(id <NSTextFinderAsynchronousDocumentFindMatch>)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector
 {

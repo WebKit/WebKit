@@ -763,11 +763,8 @@ static NSSet *dataTypes()
 
 - (void)setFindBarView:(NSView *)findBarView
 {
-    if (_textFindBarView)
-        [_textFindBarView removeFromSuperview];
     _textFindBarView = findBarView;
     _findBarVisible = YES;
-    [containerView addSubview:_textFindBarView];
     [_textFindBarView setFrame:NSMakeRect(0, 0, containerView.bounds.size.width, _textFindBarView.frame.size.height)];
 }
 

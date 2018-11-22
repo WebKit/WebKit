@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -52,6 +53,7 @@ typedef id <NSTextFinderAsynchronousDocumentFindMatch> FindMatch;
 @interface WKWebView (NSTextFinderSupport)
 
 - (void)findMatchesForString:(NSString *)targetString relativeToMatch:(FindMatch)relativeMatch findOptions:(NSTextFinderAsynchronousDocumentFindOptions)findOptions maxResults:(NSUInteger)maxResults resultCollector:(void (^)(NSArray *matches, BOOL didWrap))resultCollector;
+- (void)replaceMatches:(NSArray<FindMatch> *)matches withString:(NSString *)replacementString inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector;
 
 @end
 
@@ -73,6 +75,20 @@ static FindResult findMatches(WKWebView *webView, NSString *findString, NSTextFi
 
     TestWebKitAPI::Util::run(&done);
 
+    return result;
+}
+
+static NSUInteger replaceMatches(WKWebView *webView, NSArray<FindMatch> *matchesToReplace, NSString *replacementText)
+{
+    __block NSUInteger result;
+    __block bool done = false;
+
+    [webView replaceMatches:matchesToReplace withString:replacementText inSelectionOnly:NO resultCollector:^(NSUInteger replacementCount) {
+        result = replacementCount;
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
     return result;
 }
 
@@ -205,4 +221,31 @@ TEST(WebKit, FindInPageWrappingSubframe)
     EXPECT_TRUE(result.didWrap);
 }
 
-#endif
+TEST(WebKit, FindAndReplace)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable><input id='first' value='hello'>hello world<input id='second' value='world'></body>"];
+
+    auto result = findMatches(webView.get(), @"hello");
+    EXPECT_EQ(2U, [result.matches count]);
+    EXPECT_EQ(2U, replaceMatches(webView.get(), result.matches.get(), @"hi"));
+    EXPECT_WK_STREQ("hi", [webView stringByEvaluatingJavaScript:@"first.value"]);
+    EXPECT_WK_STREQ("world", [webView stringByEvaluatingJavaScript:@"second.value"]);
+    EXPECT_WK_STREQ("hi world", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+
+    result = findMatches(webView.get(), @"world");
+    EXPECT_EQ(2U, [result.matches count]);
+    EXPECT_EQ(1U, replaceMatches(webView.get(), @[ [result.matches firstObject] ], @"hi"));
+    EXPECT_WK_STREQ("hi", [webView stringByEvaluatingJavaScript:@"first.value"]);
+    EXPECT_WK_STREQ("world", [webView stringByEvaluatingJavaScript:@"second.value"]);
+    EXPECT_WK_STREQ("hi hi", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+
+    result = findMatches(webView.get(), @"world");
+    EXPECT_EQ(1U, [result.matches count]);
+    EXPECT_EQ(1U, replaceMatches(webView.get(), @[ [result.matches firstObject] ], @"hi"));
+    EXPECT_WK_STREQ("hi", [webView stringByEvaluatingJavaScript:@"first.value"]);
+    EXPECT_WK_STREQ("hi", [webView stringByEvaluatingJavaScript:@"second.value"]);
+    EXPECT_WK_STREQ("hi hi", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+#endif // WK_API_ENABLED && !PLATFORM(IOS_FAMILY)

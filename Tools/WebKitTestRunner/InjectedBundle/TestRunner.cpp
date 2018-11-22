@@ -45,11 +45,13 @@
 #include <WebKit/WKBundlePrivate.h>
 #include <WebKit/WKBundleScriptWorld.h>
 #include <WebKit/WKData.h>
+#include <WebKit/WKNumber.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSerializedScriptValue.h>
 #include <WebKit/WebKit2_C.h>
 #include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -299,10 +301,8 @@ void TestRunner::execCommand(JSStringRef name, JSStringRef showUI, JSStringRef v
     WKBundlePageExecuteEditingCommand(InjectedBundle::singleton().page()->page(), toWK(name).get(), toWK(value).get());
 }
 
-bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
+static std::optional<WKFindOptions> findOptionsFromArray(JSValueRef optionsArrayAsValue)
 {
-    WKFindOptions options = 0;
-
     auto& injectedBundle = InjectedBundle::singleton();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -310,8 +310,9 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
     JSObjectRef optionsArray = JSValueToObject(context, optionsArrayAsValue, 0);
     JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
     if (!JSValueIsNumber(context, lengthValue))
-        return false;
+        return std::nullopt;
 
+    WKFindOptions options = 0;
     size_t length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
     for (size_t i = 0; i < length; ++i) {
         JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
@@ -334,8 +335,45 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
             // FIXME: No kWKFindOptionsStartInSelection.
         }
     }
+    return options;
+}
 
-    return WKBundlePageFindString(injectedBundle.page()->page(), toWK(target).get(), options);
+bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
+{
+    if (auto options = findOptionsFromArray(optionsArrayAsValue))
+        return WKBundlePageFindString(InjectedBundle::singleton().page()->page(), toWK(target).get(), *options);
+
+    return false;
+}
+
+void TestRunner::findStringMatchesInPage(JSStringRef target, JSValueRef optionsArrayAsValue)
+{
+    if (auto options = findOptionsFromArray(optionsArrayAsValue))
+        return WKBundlePageFindStringMatches(InjectedBundle::singleton().page()->page(), toWK(target).get(), *options);
+}
+
+void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSStringRef replacementText, bool selectionOnly)
+{
+    auto& bundle = InjectedBundle::singleton();
+    auto mainFrame = WKBundlePageGetMainFrame(bundle.page()->page());
+    auto context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
+    auto matchIndicesObject = JSValueToObject(context, matchIndicesAsValue, 0);
+    auto lengthValue = JSObjectGetProperty(context, matchIndicesObject, lengthPropertyName.get(), 0);
+    if (!JSValueIsNumber(context, lengthValue))
+        return;
+
+    auto indices = adoptWK(WKMutableArrayCreate());
+    auto length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
+    for (size_t i = 0; i < length; ++i) {
+        auto value = JSObjectGetPropertyAtIndex(context, matchIndicesObject, i, 0);
+        if (!JSValueIsNumber(context, value))
+            continue;
+
+        auto index = adoptWK(WKUInt64Create(std::round(JSValueToNumber(context, value, nullptr))));
+        WKArrayAppendItem(indices.get(), index.get());
+    }
+    WKBundlePageReplaceStringMatches(bundle.page()->page(), indices.get(), toWK(replacementText).get(), selectionOnly);
 }
 
 void TestRunner::clearAllDatabases()

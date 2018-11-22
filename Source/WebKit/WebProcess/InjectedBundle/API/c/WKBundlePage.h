@@ -92,6 +92,8 @@ WK_EXPORT bool WKBundlePageHasLocalDataForURL(WKBundlePageRef page, WKURLRef url
 WK_EXPORT bool WKBundlePageCanHandleRequest(WKURLRequestRef request);
 
 WK_EXPORT bool WKBundlePageFindString(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
+WK_EXPORT void WKBundlePageFindStringMatches(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
+WK_EXPORT void WKBundlePageReplaceStringMatches(WKBundlePageRef page, WKArrayRef matchIndices, WKStringRef replacementText, bool selectionOnly);
 
 WK_EXPORT WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef page, WKRect rect, WKSnapshotOptions options);
 
