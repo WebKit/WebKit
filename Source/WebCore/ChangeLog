@@ -1,3 +1,30 @@
+2018-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Phantom focus/blur events fire on clicking between text input fields when listening with addEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=179990
+
+        Reviewed by Tim Horton.
+
+        The bug was caused by TemporarySelectionChange which is used by TextIndicator::createWithRange
+        to set and restore the selection putting the focus on the newly mouse-down'ed input element
+        and restoring the focus back to the input element which originally had the focus immediately.
+
+        Fixed the bug by avoiding to set the focus since only selection highlights need to be updated here.
+        Also made TemporarySelectionOption an enum class.
+
+        Unfortunately, no new tests since force click testing is broken :( See <rdar://problem/31301721>.
+
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::TemporarySelectionChange):
+        (WebCore::TemporarySelectionChange::~TemporarySelectionChange):
+        (WebCore::TemporarySelectionChange::setSelection): Extracted. Fixed the bug by adding
+        FrameSelection::DoNotSetFocus to the option when TemporarySelectionOption::DoNotSetFocus is set.
+        * editing/Editor.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        * page/TextIndicator.cpp:
+        (WebCore::TextIndicator::createWithRange): Set TemporarySelectionOption::DoNotSetFocus.
+
 2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WebKit2] Add support for replacing find-in-page text matches

@@ -206,33 +206,41 @@ TemporarySelectionChange::TemporarySelectionChange(Frame& frame, std::optional<V
 #endif
 {
 #if PLATFORM(IOS_FAMILY)
-    if (options & TemporarySelectionOptionEnableAppearanceUpdates)
+    if (options & TemporarySelectionOption::EnableAppearanceUpdates)
         frame.selection().setUpdateAppearanceEnabled(true);
 #endif
 
-    if (options & TemporarySelectionOptionIgnoreSelectionChanges)
+    if (options & TemporarySelectionOption::IgnoreSelectionChanges)
         frame.editor().setIgnoreSelectionChanges(true);
 
     if (temporarySelection) {
         m_selectionToRestore = frame.selection().selection();
-        frame.selection().setSelection(temporarySelection.value());
+        setSelection(temporarySelection.value());
     }
 }
 
 TemporarySelectionChange::~TemporarySelectionChange()
 {
     if (m_selectionToRestore)
-        m_frame->selection().setSelection(m_selectionToRestore.value());
+        setSelection(m_selectionToRestore.value());
 
-    if (m_options & TemporarySelectionOptionIgnoreSelectionChanges) {
-        auto revealSelection = m_options & TemporarySelectionOptionRevealSelection ? Editor::RevealSelection::Yes : Editor::RevealSelection::No;
+    if (m_options & TemporarySelectionOption::IgnoreSelectionChanges) {
+        auto revealSelection = m_options & TemporarySelectionOption::RevealSelection ? Editor::RevealSelection::Yes : Editor::RevealSelection::No;
         m_frame->editor().setIgnoreSelectionChanges(m_wasIgnoringSelectionChanges, revealSelection);
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (m_options & TemporarySelectionOptionEnableAppearanceUpdates)
+    if (m_options & TemporarySelectionOption::EnableAppearanceUpdates)
         m_frame->selection().setUpdateAppearanceEnabled(m_appearanceUpdatesWereEnabled);
 #endif
+}
+
+void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
+{
+    auto options = FrameSelection::defaultSetSelectionOptions();
+    if (m_options & TemporarySelectionOption::DoNotSetFocus)
+        options.add(FrameSelection::DoNotSetFocus);
+    m_frame->selection().setSelection(selection, options);
 }
 
 // When an event handler has moved the selection outside of a text control

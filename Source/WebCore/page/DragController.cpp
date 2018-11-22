@@ -251,7 +251,7 @@ inline static bool dragIsHandledByDocument(DragController::DragHandlingMethod dr
 bool DragController::performDragOperation(const DragData& dragData)
 {
     SetForScope<bool> isPerformingDrop(m_isPerformingDrop, true);
-    TemporarySelectionChange ignoreSelectionChanges(m_page.focusController().focusedOrMainFrame(), std::nullopt, TemporarySelectionOptionIgnoreSelectionChanges);
+    TemporarySelectionChange ignoreSelectionChanges(m_page.focusController().focusedOrMainFrame(), std::nullopt, TemporarySelectionOption::IgnoreSelectionChanges);
 
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 

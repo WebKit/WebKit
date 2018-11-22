@@ -102,15 +102,15 @@ enum class MailBlockquoteHandling {
 class HTMLAttachmentElement;
 #endif
 
-enum TemporarySelectionOption : uint8_t {
-    // Scroll to reveal the selection.
-    TemporarySelectionOptionRevealSelection = 1 << 0,
+enum class TemporarySelectionOption : uint8_t {
+    RevealSelection = 1 << 0,
+    DoNotSetFocus = 1 << 1,
 
     // Don't propagate selection changes to the client layer.
-    TemporarySelectionOptionIgnoreSelectionChanges = 1 << 1,
+    IgnoreSelectionChanges = 1 << 2,
 
     // Force the render tree to update selection state. Only respected on iOS.
-    TemporarySelectionOptionEnableAppearanceUpdates = 1 << 2
+    EnableAppearanceUpdates = 1 << 3,
 };
 
 class TemporarySelectionChange {
@@ -119,6 +119,8 @@ public:
     ~TemporarySelectionChange();
 
 private:
+    void setSelection(const VisibleSelection&);
+
     Ref<Frame> m_frame;
     OptionSet<TemporarySelectionOption> m_options;
     bool m_wasIgnoringSelectionChanges;
