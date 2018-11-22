@@ -1,3 +1,25 @@
+2018-11-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        Tables with vertical-lr writing-mode doesn't apply correctly vertical-align: baseline
+        https://bugs.webkit.org/show_bug.cgi?id=191881
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Tests to verify that columns of a vertical-lr table vertically aligned by baseline work like
+        in the case of horizontal tables.
+        Also added tests to verify flexbox baseline alignment works as expected in vertical-lr mode.
+
+        The vertical-align-table-baseline.html test has been rebaselined due to the new behavior.
+
+        * fast/writing-mode/vertical-align-table-baseline-latin-expected.html: Added.
+        * fast/writing-mode/vertical-align-table-baseline-latin.html: Added.
+        * fast/writing-mode/vertical-align-flex-baseline-expected.html: Added.
+        * fast/writing-mode/vertical-align-flex-baseline-html: Added.
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.txt: Rebaseline.
+        * platform/gtk/fast/writing-mode/vertical-align-table-baseline-expected.png: Rebaseline.
+        * platform/win/fast/writing-mode/vertical-align-table-baseline-expected.txt: Rebaseline.
+        * platform/win/fast/writing-mode/vertical-align-table-baseline-expected.png: Rebaseline.
+
 2018-11-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] [WebKit2] Add support for replacing find-in-page text matches

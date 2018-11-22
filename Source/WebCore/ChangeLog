@@ -1,3 +1,20 @@
+2018-11-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        Tables with vertical-lr writing-mode doesn't apply correctly vertical-align: baseline
+        https://bugs.webkit.org/show_bug.cgi?id=191881
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        We should use the font's descent value when wriring-mode flips line flow (vertical-lr).
+
+        This change also fixes bug 170175, since Flexbox use the same code to determine the first
+        line baseline of a flex item.
+
+        Test: fast/writing-mode/vertical-align-table-baseline-latin.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+
 2018-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Phantom focus/blur events fire on clicking between text input fields when listening with addEventListener
