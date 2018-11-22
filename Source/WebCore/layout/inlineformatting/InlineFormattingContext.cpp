@@ -499,18 +499,18 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
         ASSERT(firstDescendantInlineBox);
         firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
+        auto startOffset = border.horizontal.left + horizontalMargins.left;
         if (padding)
-            firstDescendantInlineBox->addNonBreakableStart(padding->horizontal.left);
-        firstDescendantInlineBox->addNonBreakableStart(border.horizontal.left);
-        firstDescendantInlineBox->addNonBreakableStart(horizontalMargins.left);
+            startOffset += padding->horizontal.left;
+        firstDescendantInlineBox->addNonBreakableStart(startOffset);
     }
 
     if (rootBreaksAtEnd()) {
         lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
+        auto endOffset = border.horizontal.right + horizontalMargins.right;
         if (padding)
-            lastDescendantInlineBox->addNonBreakableEnd(padding->horizontal.right);
-        lastDescendantInlineBox->addNonBreakableEnd(border.horizontal.right);
-        lastDescendantInlineBox->addNonBreakableEnd(horizontalMargins.right);
+            endOffset += padding->horizontal.right;
+        lastDescendantInlineBox->addNonBreakableEnd(endOffset);
     }
 }
 
