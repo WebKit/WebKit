@@ -81,11 +81,11 @@ void FEImage::determineAbsolutePaintRect()
 RenderElement* FEImage::referencedRenderer() const
 {
     if (!m_document)
-        return 0;
-    Element* hrefElement = SVGURIReference::targetElementFromIRIString(m_href, *m_document);
-    if (!hrefElement || !hrefElement->isSVGElement())
-        return 0;
-    return hrefElement->renderer();
+        return nullptr;
+    auto target = SVGURIReference::targetElementFromIRIString(m_href, *m_document);
+    if (!is<SVGElement>(target.element))
+        return nullptr;
+    return target.element->renderer();
 }
 
 void FEImage::platformApplySoftware()

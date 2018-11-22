@@ -167,10 +167,9 @@ void SVGTRefElement::detachTarget()
         return;
 
     // Mark the referenced ID as pending.
-    String id;
-    SVGURIReference::targetElementFromIRIString(href(), document(), &id);
-    if (!id.isEmpty())
-        document().accessSVGExtensions().addPendingResource(id, this);
+    auto target = SVGURIReference::targetElementFromIRIString(href(), document());
+    if (!target.identifier.isEmpty())
+        document().accessSVGExtensions().addPendingResource(target.identifier, this);
 }
 
 void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -231,13 +230,12 @@ void SVGTRefElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    String id;
-    RefPtr<Element> target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
-    if (!target.get()) {
-        if (id.isEmpty())
+    auto target = SVGURIReference::targetElementFromIRIString(href(), document());
+    if (!target.element) {
+        if (target.identifier.isEmpty())
             return;
 
-        document().accessSVGExtensions().addPendingResource(id, this);
+        document().accessSVGExtensions().addPendingResource(target.identifier, this);
         ASSERT(hasPendingResources());
         return;
     }
@@ -247,9 +245,9 @@ void SVGTRefElement::buildPendingResource()
     // expects every element instance to have an associated shadow tree element - which is not the
     // case when we land here from SVGUseElement::buildShadowTree().
     if (!isInShadowTree())
-        m_targetListener->attach(target.copyRef());
+        m_targetListener->attach(target.element.copyRef());
 
-    updateReferencedText(target.get());
+    updateReferencedText(target.element.get());
 }
 
 Node::InsertedIntoAncestorResult SVGTRefElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)

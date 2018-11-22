@@ -87,47 +87,30 @@ String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const
     return emptyString();
 }
 
-static inline URL urlFromIRIStringWithFragmentIdentifier(const String& url, const Document& document, String& fragmentIdentifier)
-{
-    size_t startOfFragmentIdentifier = url.find('#');
-    if (startOfFragmentIdentifier == notFound)
-        return URL();
-
-    // Exclude the '#' character when determining the fragmentIdentifier.
-    fragmentIdentifier = url.substring(startOfFragmentIdentifier + 1);
-    if (startOfFragmentIdentifier) {
-        URL base(document.baseURL(), url.substring(0, startOfFragmentIdentifier));
-        return URL(base, url.substring(startOfFragmentIdentifier));
-    }
-
-    return URL(document.baseURL(), url.substring(startOfFragmentIdentifier));
-}
-
-Element* SVGURIReference::targetElementFromIRIString(const String& iri, const Document& document, String* fragmentIdentifier, const Document* externalDocument)
+auto SVGURIReference::targetElementFromIRIString(const String& iri, const Document& document, RefPtr<Document> externalDocument) -> TargetElementResult
 {
     // If there's no fragment identifier contained within the IRI string, we can't lookup an element.
-    String id;
-    URL url = urlFromIRIStringWithFragmentIdentifier(iri, document, id);
-    if (url == URL())
-        return 0;
+    size_t startOfFragmentIdentifier = iri.find('#');
+    if (startOfFragmentIdentifier == notFound)
+        return { };
 
-    if (fragmentIdentifier)
-        *fragmentIdentifier = id;
-
+    // Exclude the '#' character when determining the fragmentIdentifier.
+    auto id = iri.substring(startOfFragmentIdentifier + 1);
     if (id.isEmpty())
-        return 0;
+        return { };
 
+    auto url = document.completeURL(iri);
     if (externalDocument) {
         // Enforce that the referenced url matches the url of the document that we've loaded for it!
         ASSERT(equalIgnoringFragmentIdentifier(url, externalDocument->url()));
-        return externalDocument->getElementById(id);
+        return { externalDocument->getElementById(id), WTFMove(id) };
     }
 
     // Exit early if the referenced url is external, and we have no externalDocument given.
     if (isExternalURIReference(iri, document))
-        return 0;
+        return { nullptr, WTFMove(id) };
 
-    return document.getElementById(id);
+    return { document.getElementById(id), WTFMove(id) };
 }
 
 }

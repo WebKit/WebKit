@@ -410,18 +410,19 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
     auto* correspondingElement = this->correspondingElement();
     auto& original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
 
-    auto targetCandidate = makeRefPtr(targetElementFromIRIString(original.href(), original.document(), targetID, original.externalDocument()));
-    if (targetID && !targetID->isNull()) {
+    auto targetResult = targetElementFromIRIString(original.href(), original.document(), original.externalDocument());
+    if (targetID) {
+        *targetID = WTFMove(targetResult.identifier);
         // If the reference is external, don't return the target ID to the caller.
         // The caller would use the target ID to wait for a pending resource on the wrong document.
         // If we ever want the change that and let the caller to wait on the external document,
         // we should change this function so it returns the appropriate document to go with the ID.
-        if (isExternalURIReference(original.href(), original.document()))
-            *targetID = String();
+        if (!targetID->isNull() && isExternalURIReference(original.href(), original.document()))
+            *targetID = String { };
     }
-    if (!is<SVGElement>(targetCandidate))
+    if (!is<SVGElement>(targetResult.element))
         return nullptr;
-    auto& target = downcast<SVGElement>(*targetCandidate);
+    auto& target = downcast<SVGElement>(*targetResult.element);
 
     if (!target.isConnected() || isDisallowedElement(target))
         return nullptr;

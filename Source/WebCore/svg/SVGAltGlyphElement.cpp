@@ -81,18 +81,17 @@ RenderPtr<RenderElement> SVGAltGlyphElement::createElementRenderer(RenderStyle&&
 
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 {
-    String target;
-    auto element = makeRefPtr(targetElementFromIRIString(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), document(), &target));
+    auto target = targetElementFromIRIString(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), document());
 
-    if (is<SVGGlyphElement>(element)) {
-        glyphNames.append(target);
+    if (is<SVGGlyphElement>(target.element)) {
+        glyphNames.append(target.identifier);
         return true;
     }
+    
+    if (!is<SVGAltGlyphDefElement>(target.element))
+        return false;
 
-    if (is<SVGAltGlyphDefElement>(element) && downcast<SVGAltGlyphDefElement>(*element).hasValidGlyphElements(glyphNames))
-        return true;
-
-    return false;
+    return downcast<SVGAltGlyphDefElement>(*target.element).hasValidGlyphElements(glyphNames);
 }
 
 }

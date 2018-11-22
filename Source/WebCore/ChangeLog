@@ -1,3 +1,53 @@
+2018-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Modernize SVGURIReference::targetElementFromIRIString
+        https://bugs.webkit.org/show_bug.cgi?id=191898
+
+        Reviewed by Daniel Bates.
+
+        Made targetElementFromIRIString return an element and the fragment identifier,
+        and merged urlFromIRIStringWithFragmentIdentifier into it.
+
+        Also replaced the code computing the full URL using the base URL after removing
+        the fragment identifier and rejoining it later with a single call to completeURL.
+
+        No new tests since there should be no observable behavior change.
+
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::targetForUseElement const):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateCursorElement):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath const):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements const):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement const):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        (WebCore::SVGMPathElement::pathElement):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::detachTarget):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::targetElementFromIRIString):
+        (WebCore::urlFromIRIStringWithFragmentIdentifier): Deleted.
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::findTarget const):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::referencedRenderer const):
+
 2018-11-22  Dean Jackson  <dino@apple.com>
 
         Implement WebGPUQueue and device.getQueue()

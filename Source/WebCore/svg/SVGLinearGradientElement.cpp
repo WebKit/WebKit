@@ -141,17 +141,17 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
     if (!renderer())
         return false;
 
-    HashSet<SVGGradientElement*> processedGradients;
-    SVGGradientElement* current = this;
+    HashSet<Ref<SVGGradientElement>> processedGradients;
+    Ref<SVGGradientElement> current { *this };
 
-    setGradientAttributes(*current, attributes);
-    processedGradients.add(current);
+    setGradientAttributes(current.get(), attributes);
+    processedGradients.add(current.copyRef());
 
     while (true) {
         // Respect xlink:href, take attributes from referenced element
-        auto refNode = makeRefPtr(SVGURIReference::targetElementFromIRIString(current->href(), document()));
-        if (is<SVGGradientElement>(refNode)) {
-            current = downcast<SVGGradientElement>(refNode.get());
+        auto target = SVGURIReference::targetElementFromIRIString(current->href(), document());
+        if (is<SVGGradientElement>(target.element)) {
+            current = downcast<SVGGradientElement>(*target.element);
 
             // Cycle detection
             if (processedGradients.contains(current))
@@ -160,8 +160,8 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
             if (!current->renderer())
                 return false;
 
-            setGradientAttributes(*current, attributes, current->hasTagName(SVGNames::linearGradientTag));
-            processedGradients.add(current);
+            setGradientAttributes(current.get(), attributes, current->hasTagName(SVGNames::linearGradientTag));
+            processedGradients.add(current.copyRef());
         } else
             return true;
     }

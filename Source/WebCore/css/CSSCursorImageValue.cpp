@@ -69,7 +69,7 @@ SVGCursorElement* CSSCursorImageValue::updateCursorElement(const Document& docum
     if (!m_originalURL.hasFragmentIdentifier())
         return nullptr;
 
-    auto* element = SVGURIReference::targetElementFromIRIString(m_originalURL, document);
+    auto element = SVGURIReference::targetElementFromIRIString(m_originalURL, document).element;
     if (!is<SVGCursorElement>(element))
         return nullptr;
 

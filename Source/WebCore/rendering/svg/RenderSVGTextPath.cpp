@@ -46,12 +46,12 @@ SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 
 Path RenderSVGTextPath::layoutPath() const
 {
-    Element* targetElement = SVGURIReference::targetElementFromIRIString(textPathElement().href(), document());
-    if (!targetElement || !targetElement->hasTagName(SVGNames::pathTag))
+    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), document());
+    if (!is<SVGPathElement>(target.element))
         return Path();
-    
-    SVGPathElement& pathElement = downcast<SVGPathElement>(*targetElement);
-    
+
+    SVGPathElement& pathElement = downcast<SVGPathElement>(*target.element);
+
     Path path = pathFromGraphicsElement(&pathElement);
 
     // Spec:  The transform attribute on the referenced 'path' element represents a
