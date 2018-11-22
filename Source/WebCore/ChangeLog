@@ -1,3 +1,17 @@
+2018-11-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Extremely small monospace text size when SVG is included as an img
+        https://bugs.webkit.org/show_bug.cgi?id=191834
+
+        Reviewed by Myles C. Maxfield.
+
+        Give defaultFixedFontSize a reasonable default value in Settings, so that clients
+        who omit to set it (like SVGImages) don't get broken rendering.
+
+        Test: svg/text/monospace-text-size-in-img.html
+
+        * page/Settings.yaml:
+
 2018-11-22  Javier Fernandez  <jfernandez@igalia.com>
 
         Tables with vertical-lr writing-mode doesn't apply correctly vertical-align: baseline

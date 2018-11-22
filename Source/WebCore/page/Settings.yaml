@@ -74,7 +74,7 @@ defaultFontSize:
   onChange: setNeedsRecalcStyleInAllFrames
 defaultFixedFontSize:
   type: int
-  initial: 0
+  initial: 13
   onChange: setNeedsRecalcStyleInAllFrames
 
 editingBehaviorType:

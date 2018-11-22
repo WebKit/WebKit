@@ -1,3 +1,16 @@
+2018-11-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Extremely small monospace text size when SVG is included as an img
+        https://bugs.webkit.org/show_bug.cgi?id=191834
+
+        Reviewed by Myles C. Maxfield.
+        
+        The test has an x offset in the text transform to work around a different bug
+        with text position (webkit.org/b/191871).
+
+        * svg/text/monospace-text-size-in-img-expected.html: Added.
+        * svg/text/monospace-text-size-in-img.html: Added.
+
 2018-11-22  Javier Fernandez  <jfernandez@igalia.com>
 
         Tables with vertical-lr writing-mode doesn't apply correctly vertical-align: baseline
