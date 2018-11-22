@@ -1840,8 +1840,6 @@ void SpeculativeJIT::compileCurrentBlock()
         m_interpreter.executeKnownEdgeTypes(m_currentNode);
         m_jit.setForNode(m_currentNode);
         m_origin = m_currentNode->origin;
-        if (validationEnabled())
-            m_origin.exitOK &= mayExit(m_jit.graph(), m_currentNode) == Exits;
         m_lastGeneratedNode = m_currentNode->op();
         
         ASSERT(m_currentNode->shouldGenerate());

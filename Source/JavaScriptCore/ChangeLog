@@ -1,5 +1,38 @@
 2018-11-21  Saam barati  <sbarati@apple.com>
 
+        DFGSpeculativeJIT should not &= exitOK with mayExit(node)
+        https://bugs.webkit.org/show_bug.cgi?id=191897
+        <rdar://problem/45871998>
+
+        Reviewed by Mark Lam.
+
+        exitOK is a statement about it being legal to exit. mayExit() is about being
+        conservative and returning false only if an OSR exit *could never* happen.
+        mayExit() tries to be as smart as possible to see if it can return false.
+        It can't return false if a runtime exit *could* happen. However, there is
+        code in the compiler where mayExit() returns false (because it uses data
+        generated from AI about type checks being proved), but the code we emit in the
+        compiler backend unconditionally generates an OSR exit, even if that exit may
+        never execute. For example, let's say we have this IR:
+        
+        SomeNode(Boolean:@input)
+        
+        And we always emit code like this as a way of emitting a boolean type check:
+        
+        jump L1 if input == true
+        jump L1 if input == false
+        emit an OSR exit
+        
+        In such a program, when we generate the above OSR exit, in a validationEnabled()
+        build, and if @input is proved to be a boolean, we'll end up crashing because we
+        have the bogus assertion saying !exitOK. This is one reason why things are cleaner
+        if we don't conflate mayExit() with exitOK.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+
+2018-11-21  Saam barati  <sbarati@apple.com>
+
         Fix assertion in KnownCellUse inside SpeculativeJIT::speculate
         https://bugs.webkit.org/show_bug.cgi?id=191895
         <rdar://problem/46167406>

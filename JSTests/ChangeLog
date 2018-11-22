@@ -1,5 +1,17 @@
 2018-11-21  Saam barati  <sbarati@apple.com>
 
+        DFGSpeculativeJIT should not &= exitOK with mayExit(node)
+        https://bugs.webkit.org/show_bug.cgi?id=191897
+        <rdar://problem/45871998>
+
+        Reviewed by Mark Lam.
+
+        * stress/exitok-is-not-the-same-as-mayExit.js: Added.
+        (bar):
+        (foo):
+
+2018-11-21  Saam barati  <sbarati@apple.com>
+
         Fix assertion in KnownCellUse inside SpeculativeJIT::speculate
         https://bugs.webkit.org/show_bug.cgi?id=191895
         <rdar://problem/46167406>
