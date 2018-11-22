@@ -1,3 +1,13 @@
+2018-11-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Drop ARM_TRADITIONAL support in LLInt, baseline JIT, and DFG
+        https://bugs.webkit.org/show_bug.cgi?id=191675
+
+        Reviewed by Mark Lam.
+
+        * wtf/InlineASM.h:
+        * wtf/Platform.h:
+
 2018-11-21  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Create a soft-linking file for PassKit

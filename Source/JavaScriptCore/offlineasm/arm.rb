@@ -59,19 +59,6 @@ def isARMv7
     case $activeBackend
     when "ARMv7"
         true
-    when "ARMv7_TRADITIONAL", "ARM"
-        false
-    else
-        raise "bad value for $activeBackend: #{$activeBackend}"
-    end
-end
-
-def isARMv7Traditional
-    case $activeBackend
-    when "ARMv7_TRADITIONAL"
-        true
-    when "ARMv7", "ARM"
-        false
     else
         raise "bad value for $activeBackend: #{$activeBackend}"
     end
@@ -104,7 +91,7 @@ def armMoveImmediate(value, register)
         $asm.puts "mov #{register.armOperand}, \##{value}"
     elsif (~value) >= 0 && (~value) < 256
         $asm.puts "mvn #{register.armOperand}, \##{~value}"
-    elsif isARMv7 or isARMv7Traditional
+    elsif isARMv7
         $asm.puts "movw #{register.armOperand}, \##{value & 0xffff}"
         if (value & 0xffff0000) != 0
             $asm.puts "movt #{register.armOperand}, \##{(value >> 16) & 0xffff}"
@@ -301,18 +288,8 @@ def armLowerLabelReferences(list)
 end
 
 class Sequence
-    def getModifiedListARM
-        raise unless $activeBackend == "ARM"
-        getModifiedListARMCommon
-    end
-
     def getModifiedListARMv7
         raise unless $activeBackend == "ARMv7"
-        getModifiedListARMCommon
-    end
-
-    def getModifiedListARMv7_TRADITIONAL
-        raise unless $activeBackend == "ARMv7_TRADITIONAL"
         getModifiedListARMCommon
     end
 
@@ -414,18 +391,8 @@ def emitArmTestSet(operands, code)
 end
 
 class Instruction
-    def lowerARM
-        raise unless $activeBackend == "ARM"
-        lowerARMCommon
-    end
-
     def lowerARMv7
         raise unless $activeBackend == "ARMv7"
-        lowerARMCommon
-    end
-
-    def lowerARMv7_TRADITIONAL
-        raise unless $activeBackend == "ARMv7_TRADITIONAL"
         lowerARMCommon
     end
 

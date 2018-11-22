@@ -298,9 +298,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, void* ownerUID, JITCom
     ASSERT(m_code);
     AssemblerBuffer& buffer = macroAssembler.m_assembler.buffer();
     void* code = m_code.dataLocation();
-#if CPU(ARM_TRADITIONAL)
-    macroAssembler.m_assembler.prepareExecutableCopy(code);
-#elif CPU(ARM64)
+#if CPU(ARM64)
     RELEASE_ASSERT(roundUpToMultipleOf<Assembler::instructionSize>(code) == code);
 #endif
     performJITMemcpy(code, buffer.data(), buffer.codeSize());
@@ -400,23 +398,6 @@ void LinkBuffer::dumpCode(void* code, size_t size)
         
     for (unsigned i = 0; i < tsize; i++)
         dataLogF("\t.short\t0x%x\n", tcode[i]);
-#elif CPU(ARM_TRADITIONAL)
-    //   gcc -c jit.s
-    //   objdump -D jit.o
-    static unsigned codeCount = 0;
-    unsigned int* tcode = static_cast<unsigned int*>(code);
-    size_t tsize = size / sizeof(unsigned int);
-    char nameBuf[128];
-    snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit%u", codeCount++);
-    dataLogF("\t.globl\t%s\n"
-            "\t.align 4\n"
-            "\t.code 32\n"
-            "\t.text\n"
-            "# %p\n"
-            "%s:\n", nameBuf, code, nameBuf);
-
-    for (unsigned i = 0; i < tsize; i++)
-        dataLogF("\t.long\t0x%x\n", tcode[i]);
 #endif
 }
 #endif

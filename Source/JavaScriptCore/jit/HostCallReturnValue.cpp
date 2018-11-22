@@ -85,17 +85,6 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_TRADITIONAL)
-asm (
-".text" "\n"
-".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
-HIDE_SYMBOL(getHostCallReturnValue) "\n"
-INLINE_ARM_FUNCTION(getHostCallReturnValue)
-SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "sub r0, sp, #8" "\n"
-    "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
-);
-
 #elif CPU(ARM64)
 asm (
 ".text" "\n"

@@ -68,13 +68,6 @@ public:
 
     bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
-#if CPU(ARM_TRADITIONAL)
-        // FIXME: Remove this workaround once the proper fixes are landed.
-        // [ARM] Disable Inline Caching on ARMv7 traditional until proper fix
-        // https://bugs.webkit.org/show_bug.cgi?id=159759
-        return false;
-#endif
-
         state.fastPathStart = jit.label();
         size_t startSize = jit.m_assembler.buffer().codeSize();
 

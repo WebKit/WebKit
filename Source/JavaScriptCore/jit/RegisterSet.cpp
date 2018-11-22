@@ -51,7 +51,7 @@ RegisterSet RegisterSet::reservedHardwareRegisters()
 #else
     return RegisterSet(ARM64Registers::lr);
 #endif // PLATFORM(IOS_FAMILY)
-#elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
+#elif CPU(ARM_THUMB2)
     return RegisterSet(ARMRegisters::lr, ARMRegisters::pc);
 #else
     return { };
@@ -135,15 +135,6 @@ RegisterSet RegisterSet::calleeSaveRegisters()
 #if !PLATFORM(IOS_FAMILY)
     result.set(ARMRegisters::r9);
 #endif
-    result.set(ARMRegisters::r10);
-    result.set(ARMRegisters::r11);
-#elif CPU(ARM_TRADITIONAL)
-    result.set(ARMRegisters::r4);
-    result.set(ARMRegisters::r5);
-    result.set(ARMRegisters::r6);
-    result.set(ARMRegisters::r7);
-    result.set(ARMRegisters::r8);
-    result.set(ARMRegisters::r9);
     result.set(ARMRegisters::r10);
     result.set(ARMRegisters::r11);
 #elif CPU(ARM64)
@@ -239,7 +230,6 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #endif
 #elif CPU(ARM_THUMB2)
     result.set(GPRInfo::regCS0);
-#elif CPU(ARM_TRADITIONAL)
 #elif CPU(ARM64)
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
@@ -276,7 +266,6 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.set(GPRInfo::regCS6);
 #endif
 #elif CPU(ARM_THUMB2)
-#elif CPU(ARM_TRADITIONAL)
 #elif CPU(ARM64)
     ASSERT(GPRInfo::regCS8 == GPRInfo::tagTypeNumberRegister);
     ASSERT(GPRInfo::regCS9 == GPRInfo::tagMaskRegister);

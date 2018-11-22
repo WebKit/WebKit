@@ -1,3 +1,73 @@
+2018-11-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Drop ARM_TRADITIONAL support in LLInt, baseline JIT, and DFG
+        https://bugs.webkit.org/show_bug.cgi?id=191675
+
+        Reviewed by Mark Lam.
+
+        We no longer maintain ARM_TRADITIONAL LLInt and JIT in JSC. This architecture will use
+        CLoop instead. This patch removes ARM_TRADITIONAL support in LLInt and JIT.
+
+        Discussed in https://lists.webkit.org/pipermail/webkit-dev/2018-October/030220.html.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/ARMAssembler.cpp: Removed.
+        * assembler/ARMAssembler.h: Removed.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::dumpCode):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::patchableBranch32):
+        * assembler/MacroAssemblerARM.cpp: Removed.
+        * assembler/MacroAssemblerARM.h: Removed.
+        * assembler/PerfLog.cpp:
+        * assembler/PerfLog.h:
+        * assembler/ProbeContext.h:
+        (JSC::Probe::CPUState::pc):
+        (JSC::Probe::CPUState::fp):
+        (JSC::Probe::CPUState::sp):
+        * assembler/testmasm.cpp:
+        (JSC::isPC):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesStackValues):
+        * bytecode/InlineAccess.h:
+        (JSC::InlineAccess::sizeForPropertyAccess):
+        (JSC::InlineAccess::sizeForPropertyReplace):
+        (JSC::InlineAccess::sizeForLengthAccess):
+        * dfg/DFGSpeculativeJIT.h:
+        * disassembler/CapstoneDisassembler.cpp:
+        (JSC::tryToDisassemble):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/HostCallReturnValue.cpp:
+        * jit/JITMathIC.h:
+        (JSC::isProfileEmpty):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters):
+        (JSC::RegisterSet::calleeSaveRegisters):
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        * jit/Repatch.cpp:
+        (JSC::forceICFailure):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * offlineasm/arm.rb:
+        * offlineasm/backends.rb:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+
 2018-11-21  Saam barati  <sbarati@apple.com>
 
         DFGSpeculativeJIT should not &= exitOK with mayExit(node)

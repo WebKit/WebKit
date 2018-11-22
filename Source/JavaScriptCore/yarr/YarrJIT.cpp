@@ -43,7 +43,7 @@ namespace JSC { namespace Yarr {
 template<YarrJITCompileMode compileMode>
 class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
-#if CPU(ARM)
+#if CPU(ARM_THUMB2)
     static const RegisterID input = ARMRegisters::r0;
     static const RegisterID index = ARMRegisters::r1;
     static const RegisterID length = ARMRegisters::r2;
@@ -3723,7 +3723,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         // The ABI doesn't guarantee the upper bits are zero on unsigned arguments, so clear them ourselves.
         zeroExtend32ToPtr(index, index);
         zeroExtend32ToPtr(length, length);
-#elif CPU(ARM)
+#elif CPU(ARM_THUMB2)
         push(ARMRegisters::r4);
         push(ARMRegisters::r5);
         push(ARMRegisters::r6);
@@ -3776,7 +3776,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 #elif CPU(ARM64)
         if (m_decodeSurrogatePairs)
             popPair(framePointerRegister, linkRegister);
-#elif CPU(ARM)
+#elif CPU(ARM_THUMB2)
         pop(ARMRegisters::r8);
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);

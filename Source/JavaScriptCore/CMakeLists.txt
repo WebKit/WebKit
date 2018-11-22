@@ -240,8 +240,6 @@ else ()
         set(OFFLINE_ASM_BACKEND "ARM64")
     elseif (ARM_THUMB2_DETECTED)
         set(OFFLINE_ASM_BACKEND "ARMv7")
-    elseif (ARM_TRADITIONAL_DETECTED)
-        set(OFFLINE_ASM_BACKEND "ARMv7_TRADITIONAL")
     elseif (WTF_CPU_MIPS)
         set(OFFLINE_ASM_BACKEND "MIPS")
     endif ()
@@ -424,7 +422,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/OpaqueJSString.h
 
     assembler/ARM64Assembler.h
-    assembler/ARMAssembler.h
     assembler/ARMv7Assembler.h
     assembler/AbortReason.h
     assembler/AbstractMacroAssembler.h
@@ -436,7 +433,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/LinkBuffer.h
     assembler/MIPSAssembler.h
     assembler/MacroAssembler.h
-    assembler/MacroAssemblerARM.h
     assembler/MacroAssemblerARM64.h
     assembler/MacroAssemblerARMv7.h
     assembler/MacroAssemblerCodeRef.h

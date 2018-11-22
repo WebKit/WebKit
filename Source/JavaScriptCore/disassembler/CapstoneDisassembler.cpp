@@ -44,9 +44,6 @@ bool tryToDisassemble(const MacroAssemblerCodePtr<DisassemblyPtrTag>& codePtr, s
 #elif CPU(X86_64)
     if (cs_open(CS_ARCH_X86, CS_MODE_64, &handle) != CS_ERR_OK)
         return false;
-#elif CPU(ARM_TRADITIONAL)
-    if (cs_open(CS_ARCH_ARM, CS_MODE_ARM, &handle) != CS_ERR_OK)
-        return false;
 #elif CPU(ARM_THUMB2)
     if (cs_open(CS_ARCH_ARM, CS_MODE_THUMB, &handle) != CS_ERR_OK)
         return false;

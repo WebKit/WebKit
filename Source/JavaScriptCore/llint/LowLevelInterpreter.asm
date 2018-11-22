@@ -71,11 +71,10 @@
 #  They are callee-save registers, and guaranteed to be distinct from all other
 #  registers on all architectures.
 #
-#  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, ARM,
-#  ARMv7_TRADITIONAL, MIPS and CLOOP) and holds the return PC
+#  - lr is defined on non-X86 architectures (ARM64, ARM64E, ARMv7, MIPS and CLOOP)
+#  and holds the return PC
 #
-#  - pc holds the (native) program counter on 32-bits ARM architectures (ARM,
-#  ARMv7, ARMv7_TRADITIONAL)
+#  - pc holds the (native) program counter on 32-bits ARM architectures (ARMv7)
 #
 #  - t0, t1, t2, t3, t4 and optionally t5 are temporary registers that can get trashed on
 #  calls, and are pairwise distinct registers. t4 holds the JS program counter, so use
@@ -612,7 +611,7 @@ macro checkStackPointerAlignment(tempReg, location)
             # C_LOOP does not need the alignment, and can use a little perf
             # improvement from avoiding useless work.
         else
-            if ARM or ARMv7 or ARMv7_TRADITIONAL
+            if ARMv7
                 # ARM can't do logical ops with the sp as a source
                 move sp, tempReg
                 andp StackAlignmentMask, tempReg
@@ -629,7 +628,7 @@ end
 
 if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
     const CalleeSaveRegisterCount = 0
-elsif ARM or ARMv7_TRADITIONAL or ARMv7
+elsif ARMv7
     const CalleeSaveRegisterCount = 7
 elsif MIPS
     const CalleeSaveRegisterCount = 1
@@ -645,8 +644,6 @@ const VMEntryTotalFrameSize = (CalleeRegisterSaveSize + sizeof VMEntryRecord + S
 
 macro pushCalleeSaves()
     if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
-    elsif ARM or ARMv7_TRADITIONAL
-        emit "push {r4-r10}"
     elsif ARMv7
         emit "push {r4-r6, r8-r11}"
     elsif MIPS
@@ -667,8 +664,6 @@ end
 
 macro popCalleeSaves()
     if C_LOOP or ARM64 or ARM64E or X86_64 or X86_64_WIN
-    elsif ARM or ARMv7_TRADITIONAL
-        emit "pop {r4-r10}"
     elsif ARMv7
         emit "pop {r4-r6, r8-r11}"
     elsif MIPS
@@ -686,7 +681,7 @@ macro popCalleeSaves()
 end
 
 macro preserveCallerPCAndCFR()
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    if C_LOOP or ARMv7 or MIPS
         push lr
         push cfr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -701,7 +696,7 @@ end
 
 macro restoreCallerPCAndCFR()
     move cfr, sp
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    if C_LOOP or ARMv7 or MIPS
         pop cfr
         pop lr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -715,7 +710,6 @@ macro preserveCalleeSavesUsedByLLInt()
     subp CalleeSaveSpaceStackAligned, sp
     if C_LOOP
         storep metadataTable, -PtrSize[cfr]
-    elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
         storep metadataTable, -4[cfr]
     elsif ARM64 or ARM64E
@@ -740,7 +734,6 @@ end
 macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP
         loadp -PtrSize[cfr], metadataTable
-    elsif ARM or ARMv7_TRADITIONAL
     elsif ARMv7
         loadp -4[cfr], metadataTable
     elsif ARM64 or ARM64E
@@ -851,7 +844,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or ARM64E or MIPS
+    if C_LOOP or ARMv7 or ARM64 or ARM64E or MIPS
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -874,7 +867,7 @@ macro functionPrologue()
         push cfr
     elsif ARM64 or ARM64E
         push cfr, lr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARMv7 or MIPS
         push lr
         push cfr
     end
@@ -886,7 +879,7 @@ macro functionEpilogue()
         pop cfr
     elsif ARM64 or ARM64E
         pop lr, cfr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    elsif C_LOOP or ARMv7 or MIPS
         pop cfr
         pop lr
     end
@@ -958,7 +951,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3, callPtrTag)
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
-    if ARM or ARMv7_TRADITIONAL or ARMv7 or ARM64 or ARM64E or C_LOOP or MIPS
+    if ARMv7 or ARM64 or ARM64E or C_LOOP or MIPS
         addp CallerFrameAndPCSize, sp
         subi CallerFrameAndPCSize, temp2
         loadp CallerFrameAndPC::returnPC[cfr], lr
@@ -1117,7 +1110,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         if ARM64 or ARM64E
             pop lr, cfr
             untagReturnAddress sp
-        elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+        elsif ARMv7 or MIPS
             pop cfr
             pop lr
         else
@@ -1324,10 +1317,6 @@ else
         _relativePCBase:
             move pc, pcBase
             subp 3, pcBase   # Need to back up the PC and set the Thumb2 bit
-        elsif ARM or ARMv7_TRADITIONAL
-        _relativePCBase:
-            move pc, pcBase
-            subp 8, pcBase
         elsif MIPS
             la _relativePCBase, pcBase
             setcallreg pcBase # needed to set $t9 to the right value for the .cpload created by the label.
@@ -1358,7 +1347,7 @@ macro setEntryAddressCommon(index, label, map)
         pcrtoaddr label, t2
         move index, t4
         storep t2, [map, t4, PtrSize]
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+    elsif ARMv7
         mvlbl (label - _relativePCBase), t4
         addp t4, t2, t4
         move index, t3

@@ -88,7 +88,7 @@ macro dispatchAfterCall(size, op, dispatch)
 end
 
 macro cCall2(function)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    if ARMv7 or MIPS
         call function
     elsif X86 or X86_WIN
         subp 8, sp
@@ -112,7 +112,7 @@ macro cCall2Void(function)
 end
 
 macro cCall4(function)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
+    if ARMv7 or MIPS
         call function
     elsif X86 or X86_WIN
         push a3
@@ -174,15 +174,11 @@ macro doVMEntry(makeCall)
         addp CallFrameAlignSlots * SlotSize, sp, t3
         andp ~StackAlignmentMask, t3
         subp t3, CallFrameAlignSlots * SlotSize, sp
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
+    elsif ARMv7
         addp CallFrameAlignSlots * SlotSize, sp, t3
         clrbp t3, StackAlignmentMask, t3
-        if ARMv7
-            subp t3, CallFrameAlignSlots * SlotSize, t3
-            move t3, sp
-        else
-            subp t3, CallFrameAlignSlots * SlotSize, sp
-        end
+        subp t3, CallFrameAlignSlots * SlotSize, t3
+        move t3, sp
     end
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
@@ -2035,7 +2031,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
+    elsif ARMv7 or C_LOOP or MIPS
         if MIPS
         # calling convention says to save stack space for 4 first registers in
         # all cases. To match our 16-byte alignment, that means we need to
@@ -2102,7 +2098,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
+    elsif ARMv7 or C_LOOP or MIPS
         subp 8, sp # align stack pointer
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1

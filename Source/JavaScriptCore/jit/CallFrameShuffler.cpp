@@ -383,7 +383,7 @@ void CallFrameShuffler::prepareForTailCall()
     // sp will point to head0 and we will move it up half a slot
     // manually
     m_newFrameOffset = 0;
-#elif CPU(ARM) || CPU(MIPS)
+#elif CPU(ARM_THUMB2) || CPU(MIPS)
     // We load the frame pointer and link register
     // manually. We could ask the algorithm to load them for us,
     // and it would allow us to use the link register as an extra
@@ -445,7 +445,7 @@ void CallFrameShuffler::prepareForTailCall()
         m_newFrameBase);
 
     // We load the link register manually for architectures that have one
-#if CPU(ARM) || CPU(ARM64)
+#if CPU(ARM_THUMB2) || CPU(ARM64)
     m_jit.loadPtr(MacroAssembler::Address(MacroAssembler::framePointerRegister, CallFrame::returnPCOffset()),
         MacroAssembler::linkRegister);
 #if USE(POINTER_PROFILING)

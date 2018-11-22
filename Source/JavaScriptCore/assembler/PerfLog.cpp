@@ -30,11 +30,13 @@
 
 #include <elf.h>
 #include <fcntl.h>
+#include <mutex>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/DataLog.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>

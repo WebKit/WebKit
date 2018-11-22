@@ -49,12 +49,8 @@ public:
         return 27;
 #elif CPU(ARM64)
         return 40;
-#elif CPU(ARM)
-#if CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
         return 48;
-#else
-        return 52;
-#endif
 #elif CPU(MIPS)
         return 72;
 #else
@@ -71,12 +67,8 @@ public:
         return 27;
 #elif CPU(ARM64)
         return 40;
-#elif CPU(ARM)
-#if CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
         return 48;
-#else
-        return 48;
-#endif
 #elif CPU(MIPS)
         return 72;
 #else
@@ -96,12 +88,8 @@ public:
         size_t size = 27;
 #elif CPU(ARM64)
         size_t size = 32;
-#elif CPU(ARM)
-#if CPU(ARM_THUMB2)
+#elif CPU(ARM_THUMB2)
         size_t size = 30;
-#else
-        size_t size = 32;
-#endif
 #elif CPU(MIPS)
         size_t size = 56;
 #else
