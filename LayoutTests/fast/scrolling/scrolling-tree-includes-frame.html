@@ -3,20 +3,37 @@
   <head>
     <title>Check whether scrollable iframes are included in the scrolling tree when async frame scrolling is enabled</title>
     <script>
-      if (window.testRunner)
+      if (window.testRunner) {
           testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
       if (window.internals)
           window.internals.settings.setAsyncFrameScrollingEnabled(true);
       function doTest()
       {
           if (window.internals)
               document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+          if (window.testRunner)
+              testRunner.notifyDone();
       }
-      window.addEventListener('load', doTest, false);
     </script>
+    <style>
+      iframe {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100px;
+          height: 200px;
+          margin: 0;
+          border: 0;
+          padding: 0;
+      }
+    </style>
   </head>
   <body>
-    <iframe id="frame" style="width: 100px; height: 200px; border: 1px solid black;" src="data:text/html,<div style='width: 300px; height: 400px; background: gray;'></div>"></iframe>
+    <iframe onload="doTest()" srcdoc="
+        <div style='width: 300px; height: 400px; background: gray;'></div>">
+    </iframe>
     <pre id="scrollingTree"></pre>
   </body>
 </html>
