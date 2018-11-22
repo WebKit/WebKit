@@ -24,7 +24,7 @@ try {
         throw "Error: bad result at end: " + result;
     ok = true;
 } catch (e) {
-    if (e.toString() != "RangeError: WebAssembly.Memory 'initial' page count is too large")
+    if (e.toString() != "Error: Out of memory")
         throw e;
 }
 

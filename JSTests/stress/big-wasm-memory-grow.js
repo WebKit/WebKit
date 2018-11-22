@@ -26,7 +26,7 @@ try {
         throw "Error: bad result at end: " + result;
     ok = true;
 } catch (e) {
-    if (e.toString() != "RangeError: WebAssembly.Memory.grow expects the grown size to be a valid page count")
+    if (e.toString() != "Error: Out of memory")
         throw e;
 }
 

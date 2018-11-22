@@ -1,3 +1,31 @@
+2018-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Creating a wasm memory that is bigger than the ArrayBuffer limit but smaller than the spec limit should throw OOME not RangeError.
+        https://bugs.webkit.org/show_bug.cgi?id=191776
+        <rdar://problem/46152851>
+
+        Reviewed by Saam Barati.
+
+        * stress/big-wasm-memory-grow-no-max.js:
+        * stress/big-wasm-memory-grow.js:
+        * stress/big-wasm-memory.js:
+        - updated these to expect an OutOfMemoryError.
+
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE-2.js: Added.
+        (Binary.prototype.emit_u8):
+        (Binary.prototype.emit_u32v):
+        (Binary.prototype.emit_header):
+        (Binary.prototype.emit_section):
+        (Binary):
+        (WasmModuleBuilder):
+        (WasmModuleBuilder.prototype.addMemory):
+        (WasmModuleBuilder.prototype.toArray):
+        (WasmModuleBuilder.prototype.toBuffer):
+        (WasmModuleBuilder.prototype.instantiate):
+        (catch):
+        * wasm/regress/wasm-memory-requested-more-than-MAX_ARRAY_BUFFER_SIZE.js: Added.
+        (catch):
+
 2018-11-21  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] JSBigInt::createWithLength should throw when length is greater than JSBigInt::maxLength

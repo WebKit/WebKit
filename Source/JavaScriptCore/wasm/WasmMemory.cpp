@@ -282,7 +282,8 @@ RefPtr<Memory> Memory::tryCreate(PageCount initial, PageCount maximum, WTF::Func
     const size_t initialBytes = initial.bytes();
     const size_t maximumBytes = maximum ? maximum.bytes() : 0;
 
-    RELEASE_ASSERT(initialBytes <= MAX_ARRAY_BUFFER_SIZE);
+    if (initialBytes > MAX_ARRAY_BUFFER_SIZE)
+        return nullptr; // Client will throw OOMError.
 
     if (maximum && !maximumBytes) {
         // User specified a zero maximum, initial size must also be zero.
@@ -374,11 +375,10 @@ Expected<PageCount, Memory::GrowFailReason> Memory::grow(PageCount delta)
         return makeUnexpected(GrowFailReason::InvalidDelta);
     
     const Wasm::PageCount newPageCount = oldPageCount + delta;
-    // FIXME: Creating a wasm memory that is bigger than the ArrayBuffer limit but smaller than the spec limit should throw
-    // OOME not RangeError
-    // https://bugs.webkit.org/show_bug.cgi?id=191776
-    if (!newPageCount || !newPageCount.isValid() || newPageCount.bytes() >= MAX_ARRAY_BUFFER_SIZE)
+    if (!newPageCount || !newPageCount.isValid())
         return makeUnexpected(GrowFailReason::InvalidGrowSize);
+    if (newPageCount.bytes() > MAX_ARRAY_BUFFER_SIZE)
+        return makeUnexpected(GrowFailReason::OutOfMemory);
 
     auto success = [&] () {
         m_growSuccessCallback(GrowSuccessTag, oldPageCount, newPageCount);

@@ -1,3 +1,21 @@
+2018-11-21  Mark Lam  <mark.lam@apple.com>
+
+        Creating a wasm memory that is bigger than the ArrayBuffer limit but smaller than the spec limit should throw OOME not RangeError.
+        https://bugs.webkit.org/show_bug.cgi?id=191776
+        <rdar://problem/46152851>
+
+        Reviewed by Saam Barati.
+
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::tryCreate):
+        - return nullptr if the requested bytes exceed MAX_ARRAY_BUFFER_SIZE.
+          The clients will already do a null check and throw an OutOfMemoryError if needed.
+        (JSC::Wasm::Memory::grow):
+        - throw OOME if newPageCount.bytes() > MAX_ARRAY_BUFFER_SIZE.
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        - throw OOME if newPageCount.bytes() > MAX_ARRAY_BUFFER_SIZE.
+
 2018-11-21  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] JSBigInt::createWithLength should throw when length is greater than JSBigInt::maxLength
