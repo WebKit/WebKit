@@ -1,3 +1,15 @@
+2018-11-23  Jim Mason  <jmason@ibinx.com>
+
+        [GTK] Scrollbars not following gtk-primary-button-warps-slider setting
+        https://bugs.webkit.org/show_bug.cgi?id=191067
+
+        Updated code per the style guide, removed unreachable break (non-semantic change)
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::handleMousePressEvent):
+
 2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable drag and drop support for iOSMac
