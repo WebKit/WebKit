@@ -41,11 +41,11 @@ struct InlineRun {
     LayoutUnit logicalTop() const { return m_logicalRect.top(); }
     LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
 
-    LayoutUnit width() const { return m_logicalRect.width(); }
-    LayoutUnit height() const { return m_logicalRect.height(); }
+    LayoutUnit logicalWidth() const { return m_logicalRect.width(); }
+    LayoutUnit logicalHeight() const { return m_logicalRect.height(); }
     bool overlapsMultipleInlineItems() const;
 
-    void setWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
+    void setLogicalWidth(LayoutUnit width) { m_logicalRect.setWidth(width); }
     void setLogicalLeft(LayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
     void setLogicalRight(LayoutUnit logicalRight) { m_logicalRect.shiftRightTo(logicalRight); }
     void moveVertically(LayoutUnit delta) { m_logicalRect.moveVertically(delta); }

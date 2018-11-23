@@ -1,3 +1,53 @@
+2018-11-23  Zalan Butjas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for variable height runs.
+        https://bugs.webkit.org/show_bug.cgi?id=191925
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/CSS22/visudet.html#inline-box-height
+
+        10.8 Line height calculations: the 'line-height' and 'vertical-align' properties
+
+        The height of each inline-level box in the line box is calculated. For replaced elements, inline-block elements,
+        and inline-table elements, this is the height of their margin box; for inline boxes, this is their 'line-height'.
+
+        The line box height is the distance between the uppermost box top and the lowermost box bottom.
+
+        The minimum height consists of a minimum height above the baseline and a minimum depth below it,
+        exactly as if each line box starts with a zero-width inline box with the element's font and line height properties.
+        We call that imaginary box a "strut." (The name is inspired by TeX.).
+
+        Test: fast/inline/inline-content-with-image-simple.html
+
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const):
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::createFinalRuns const):
+        (WebCore::Layout::InlineFormattingContext::appendContentToLine const):
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        (WebCore::Layout::InlineFormattingContext::Line::logicalHeight const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::justifyRuns):
+        * layout/inlineformatting/InlineRun.h:
+        (WebCore::Layout::InlineRun::logicalWidth const):
+        (WebCore::Layout::InlineRun::logicalHeight const):
+        (WebCore::Layout::InlineRun::setLogicalWidth):
+        (WebCore::Layout::InlineRun::width const): Deleted.
+        (WebCore::Layout::InlineRun::height const): Deleted.
+        (WebCore::Layout::InlineRun::setWidth): Deleted.
+        * layout/inlineformatting/Line.cpp:
+        (WebCore::Layout::InlineFormattingContext::Line::init):
+        (WebCore::Layout::InlineFormattingContext::Line::appendContent):
+        (WebCore::Layout::InlineFormattingContext::Line::close):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::outputInlineRuns):
+
 2018-11-23  Antti Koivisto  <antti@apple.com>
 
         UI side compositing doesn't paint on Mac

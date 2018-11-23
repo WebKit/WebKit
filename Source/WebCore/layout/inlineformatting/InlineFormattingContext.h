@@ -29,7 +29,6 @@
 
 #include "DisplayBox.h"
 #include "FormattingContext.h"
-#include "InlineLineBreaker.h"
 #include "InlineRun.h"
 #include <wtf/IsoMalloc.h>
 
@@ -51,10 +50,10 @@ public:
 private:
     class Line {
     public:
-        void init(const Display::Box::Rect&);
+        void init(const LayoutPoint& topLeft, LayoutUnit availableWidth, LayoutUnit minimalHeight);
         void close();
 
-        void appendContent(const InlineLineBreaker::Run&);
+        void appendContent(const InlineRunProvider::Run&, const LayoutSize&);
 
         void adjustLogicalLeft(LayoutUnit delta);
         void adjustLogicalRight(LayoutUnit delta);
@@ -71,6 +70,7 @@ private:
 
         LayoutUnit logicalTop() const { return m_logicalRect.top(); }
         LayoutUnit logicalBottom() const { return m_logicalRect.bottom(); }
+        LayoutUnit logicalHeight() const { return logicalBottom() - logicalTop(); }
 
     private:
         struct TrailingTrimmableContent {
@@ -105,7 +105,7 @@ private:
     void layoutInlineContent(const InlineRunProvider&) const;
     void initializeNewLine(Line&) const;
     void closeLine(Line&, IsLastLine) const;
-    void appendContentToLine(Line&, const InlineLineBreaker::Run&) const;
+    void appendContentToLine(Line&, const InlineRunProvider::Run&, const LayoutSize&) const;
     void postProcessInlineRuns(Line&, IsLastLine) const;
     void createFinalRuns(Line&) const;
     void splitInlineRunIfNeeded(const InlineRun&, InlineRuns& splitRuns) const;

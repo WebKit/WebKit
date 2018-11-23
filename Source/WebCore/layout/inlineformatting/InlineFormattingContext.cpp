@@ -117,13 +117,7 @@ void InlineFormattingContext::initializeNewLine(Line& line) const
         }
     }
 
-    Display::Box::Rect logicalRect;
-    logicalRect.setTop(lineLogicalTop);
-    logicalRect.setLeft(lineLogicalLeft);
-    logicalRect.setWidth(availableWidth);
-    logicalRect.setHeight(formattingRoot.style().computedLineHeight());
-
-    line.init(logicalRect);
+    line.init({ lineLogicalLeft, lineLogicalTop }, availableWidth, formattingRoot.style().computedLineHeight());
 }
 
 void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun, InlineRuns& splitRuns) const
@@ -157,7 +151,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         contentStart += uncommitted->firstInlineItem->nonBreakableStart();
 
         auto runWidth = Geometry::runWidth(inlineContent, *uncommitted->firstInlineItem, startPosition, uncommitted->length, contentStart);
-        auto run = InlineRun { { inlineRun.logicalTop(), contentStart, runWidth, inlineRun.height() }, *uncommitted->firstInlineItem };
+        auto run = InlineRun { { inlineRun.logicalTop(), contentStart, runWidth, inlineRun.logicalHeight() }, *uncommitted->firstInlineItem };
         run.setTextContext({ startPosition, uncommitted->length });
         splitRuns.append(run);
 
@@ -235,9 +229,9 @@ void InlineFormattingContext::createFinalRuns(Line& line) const
                 return inlineRun;
 
             InlineRun adjustedRun = inlineRun;
-            auto width = inlineRun.width() - inlineItem.nonBreakableStart() - inlineItem.nonBreakableEnd();
+            auto width = inlineRun.logicalWidth() - inlineItem.nonBreakableStart() - inlineItem.nonBreakableEnd();
             adjustedRun.setLogicalLeft(inlineRun.logicalLeft() + inlineItem.nonBreakableStart());
-            adjustedRun.setWidth(width);
+            adjustedRun.setLogicalWidth(width);
             return adjustedRun;
         };
 
@@ -263,13 +257,13 @@ void InlineFormattingContext::closeLine(Line& line, IsLastLine isLastLine) const
     postProcessInlineRuns(line, isLastLine);
 }
 
-void InlineFormattingContext::appendContentToLine(Line& line, const InlineLineBreaker::Run& run) const
+void InlineFormattingContext::appendContentToLine(Line& line, const InlineRunProvider::Run& run, const LayoutSize& runSize) const
 {
     auto lastRunType = line.lastRunType();
-    line.appendContent(run);
+    line.appendContent(run, runSize);
 
     if (root().style().textAlign() == TextAlignMode::Justify)
-        Geometry::computeExpansionOpportunities(line, run.content, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
+        Geometry::computeExpansionOpportunities(line, run, lastRunType.value_or(InlineRunProvider::Run::Type::NonWhitespace));
 }
 
 void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlineRunProvider) const
@@ -318,8 +312,11 @@ void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlin
             }
          }
 
-        if (generatesInlineRun)
-            appendContentToLine(line, *run);
+        if (generatesInlineRun) {
+            auto width = run->width;
+            auto height = run->content.isText() ? LayoutUnit(root().style().computedLineHeight()) : layoutState.displayBoxForLayoutBox(run->content.inlineItem().layoutBox()).height(); 
+            appendContentToLine(line, run->content, { width, height });
+        }
 
         if (isLastRun)
             closeLine(line, IsLastLine::No);

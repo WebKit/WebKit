@@ -151,7 +151,7 @@ static void outputInlineRuns(TextStream& stream, const LayoutState& layoutState,
             stream << "(" << inlineRun.textContext()->start() << ", " << inlineRun.textContext()->start() + inlineRun.textContext()->length() << ") ";
         else
             stream << "(x, x) ";
-        stream << "at [" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << "] size [" << inlineRun.width() << " " << inlineRun.height() << "]";
+        stream << "at [" << inlineRun.logicalLeft() << ", " << inlineRun.logicalTop() << "] size [" << inlineRun.logicalWidth() << " " << inlineRun.logicalHeight() << "]";
         stream.nextLine();
     }
 }

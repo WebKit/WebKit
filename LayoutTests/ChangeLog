@@ -1,3 +1,13 @@
+2018-11-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Add support for variable height runs.
+        https://bugs.webkit.org/show_bug.cgi?id=191925
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-content-with-image-simple-expected.txt: Added.
+        * fast/inline/inline-content-with-image-simple.html: Added.
+
 2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Implement Baseline Alignment for grid items

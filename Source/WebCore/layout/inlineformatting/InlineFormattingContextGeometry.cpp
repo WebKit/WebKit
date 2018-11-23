@@ -131,7 +131,7 @@ void InlineFormattingContext::Geometry::justifyRuns(Line& line)
 
         inlineRun.expansionOpportunity().expansion = expansionForRun;
         inlineRun.setLogicalLeft(inlineRun.logicalLeft() + accumulatedExpansion);
-        inlineRun.setWidth(inlineRun.width() + expansionForRun);
+        inlineRun.setLogicalWidth(inlineRun.logicalWidth() + expansionForRun);
         accumulatedExpansion += expansionForRun;
     }
 }
