@@ -1319,6 +1319,15 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_FALSE(serverRedirected);
     EXPECT_EQ(3, numberOfDecidePolicyCalls);
     EXPECT_EQ(2u, seenPIDs.size());
+
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
+
+    [webView goBack];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
 }
 
 enum class ShouldEnablePSON { No, Yes };
