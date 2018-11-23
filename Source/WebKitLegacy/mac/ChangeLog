@@ -1,3 +1,16 @@
+2018-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback after r238438
+        https://bugs.webkit.org/show_bug.cgi?id=191913
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        * WebView/WebView.mm:
+        (-[WebView setSelectedDOMRange:affinity:]):
+
 2018-11-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Reload Web Inspector" button no longer partially works

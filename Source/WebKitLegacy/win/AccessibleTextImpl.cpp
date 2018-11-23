@@ -656,7 +656,7 @@ HRESULT AccessibleText::replaceText(long startOffset, long endOffset, BSTR* text
 
     addSelection(startOffset, endOffset);
 
-    frame->editor().replaceSelectionWithText(*text, true, false);
+    frame->editor().replaceSelectionWithText(*text, Editor::SelectReplacement::Yes, Editor::SmartReplace::No);
     return S_OK;
 }
 

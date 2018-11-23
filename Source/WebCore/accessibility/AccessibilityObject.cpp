@@ -838,7 +838,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
         
         String closestString = closestStringRange->text();
         bool replaceSelection = false;
-        if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, true)) {
+        if (frame->selection().setSelectedRange(closestStringRange.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes)) {
             switch (activity) {
             case AccessibilitySelectTextActivity::FindAndCapitalize:
                 replacementString = capitalize(closestString, ' '); // FIXME: Needs to take locale into account to work correctly.
@@ -871,7 +871,7 @@ String AccessibilityObject::selectText(AccessibilitySelectTextCriteria* criteria
             // A bit obvious, but worth noting the API contract for this method is that we should
             // return the replacement string when replacing, but the selected string if not.
             if (replaceSelection) {
-                frame->editor().replaceSelectionWithText(replacementString, true, true);
+                frame->editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, Editor::SmartReplace::Yes);
                 return replacementString;
             }
             

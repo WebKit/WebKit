@@ -61,7 +61,7 @@ public:
     void selectFindMatch(uint32_t matchIndex);
     void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
-    uint32_t replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly);
+    uint32_t replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly);
     
     void hideFindIndicator();
     void showFindIndicatorInSelection();

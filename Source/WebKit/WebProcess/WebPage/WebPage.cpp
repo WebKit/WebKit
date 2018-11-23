@@ -3796,9 +3796,9 @@ void WebPage::findStringMatchesFromInjectedBundle(const String& target, FindOpti
     findController().findStringMatches(target, options, 0);
 }
 
-void WebPage::replaceStringMatchesFromInjectedBundle(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly)
+void WebPage::replaceStringMatchesFromInjectedBundle(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly)
 {
-    findController().replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly);
+    findController().replaceMatches(matchIndices, replacementText, selectionOnly);
 }
 
 void WebPage::findString(const String& string, uint32_t options, uint32_t maxMatchCount)
@@ -3831,9 +3831,9 @@ void WebPage::countStringMatches(const String& string, uint32_t options, uint32_
     findController().countStringMatches(string, static_cast<FindOptions>(options), maxMatchCount);
 }
 
-void WebPage::replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)
+void WebPage::replaceMatches(const Vector<uint32_t>& matchIndices, const String& replacementText, bool selectionOnly, CallbackID callbackID)
 {
-    auto numberOfReplacements = findController().replaceMatches(WTFMove(matchIndices), replacementText, selectionOnly);
+    auto numberOfReplacements = findController().replaceMatches(matchIndices, replacementText, selectionOnly);
     send(Messages::WebPageProxy::UnsignedCallback(numberOfReplacements, callbackID));
 }
 
@@ -4036,9 +4036,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 
 void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 {
-    bool selectReplacement = true;
-    bool smartReplace = false;
-    return frame->editor().replaceSelectionWithText(text, selectReplacement, smartReplace);
+    return frame->editor().replaceSelectionWithText(text, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No);
 }
 
 #if !PLATFORM(IOS_FAMILY)

@@ -772,7 +772,7 @@ struct FindReplacementRange {
     size_t length { 0 };
 };
 
-static void replaceRanges(Page& page, Vector<FindReplacementRange>&& ranges, const String& replacementText)
+static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges, const String& replacementText)
 {
     HashMap<RefPtr<ContainerNode>, Vector<FindReplacementRange>> rangesByContainerNode;
     for (auto& range : ranges) {
@@ -819,7 +819,7 @@ static void replaceRanges(Page& page, Vector<FindReplacementRange>&& ranges, con
         return frameToTraversalIndexMap.get(firstFrame) > frameToTraversalIndexMap.get(secondFrame);
     });
 
-    for (auto container : containerNodesInOrderOfReplacement) {
+    for (auto& container : containerNodesInOrderOfReplacement) {
         auto frame = makeRefPtr(container->document().frame());
         if (!frame)
             continue;
@@ -831,13 +831,13 @@ static void replaceRanges(Page& page, Vector<FindReplacementRange>&& ranges, con
             if (!range || range->collapsed())
                 continue;
 
-            frame->selection().setSelectedRange(range.get(), DOWNSTREAM, true);
-            frame->editor().replaceSelectionWithText(replacementText, true, false, EditAction::InsertReplacement);
+            frame->selection().setSelectedRange(range.get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+            frame->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
         }
     }
 }
 
-uint32_t Page::replaceRangesWithText(Vector<Ref<Range>>&& rangesToReplace, const String& replacementText, bool selectionOnly)
+uint32_t Page::replaceRangesWithText(const Vector<Ref<Range>>& rangesToReplace, const String& replacementText, bool selectionOnly)
 {
     // FIXME: In the future, we should respect the `selectionOnly` flag by checking whether each range being replaced is
     // contained within its frame's selection.
@@ -866,7 +866,7 @@ uint32_t Page::replaceRangesWithText(Vector<Ref<Range>>&& rangesToReplace, const
         replacementRanges.append({ WTFMove(highestRoot), replacementLocation, replacementLength });
     }
 
-    replaceRanges(*this, WTFMove(replacementRanges), replacementText);
+    replaceRanges(*this, replacementRanges, replacementText);
     return rangesToReplace.size();
 }
 
@@ -878,7 +878,7 @@ uint32_t Page::replaceSelectionWithText(const String& replacementText)
         return 0;
 
     auto editAction = selection.isRange() ? EditAction::InsertReplacement : EditAction::Insert;
-    frame->editor().replaceSelectionWithText(replacementText, true, false, editAction);
+    frame->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, editAction);
     return 1;
 }
 

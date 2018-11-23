@@ -1979,7 +1979,7 @@ void FrameSelection::selectAll()
     }
 }
 
-bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping, EUserTriggered userTriggered)
+bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
 {
     if (!range)
         return false;
@@ -1994,7 +1994,7 @@ bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool clo
 #endif
 
     OptionSet<SetSelectionOption> selectionOptions {  ClearTypingStyle };
-    if (closeTyping)
+    if (closeTyping == ShouldCloseTyping::Yes)
         selectionOptions.add(CloseTyping);
 
     if (userTriggered == UserTriggered) {

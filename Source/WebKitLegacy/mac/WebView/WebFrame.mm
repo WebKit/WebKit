@@ -1482,7 +1482,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
         }
     }
 
-    frame->selection().setSelectedRange(core(range), (EAffinity)affinity, closeTyping);
+    frame->selection().setSelectedRange(core(range), (EAffinity)affinity, closeTyping ? FrameSelection::ShouldCloseTyping::Yes : FrameSelection::ShouldCloseTyping::No);
     if (!closeTyping)
         frame->editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
 }
@@ -1952,7 +1952,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 {
     if (_private->coreFrame->selection().isNone() || !fragment)
         return;
-    _private->coreFrame->editor().replaceSelectionWithFragment(*core(fragment), selectReplacement, smartReplace, matchStyle);
+    _private->coreFrame->editor().replaceSelectionWithFragment(*core(fragment), selectReplacement ? Editor::SelectReplacement::Yes : Editor::SelectReplacement::No, smartReplace ? Editor::SmartReplace::Yes : Editor::SmartReplace::No, matchStyle ? Editor::MatchStyle::Yes : Editor::MatchStyle::No);
 }
 
 #if PLATFORM(IOS_FAMILY)

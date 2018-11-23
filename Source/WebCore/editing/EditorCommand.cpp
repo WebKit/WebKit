@@ -185,7 +185,7 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
     EAffinity affinity = selection.affinity();
     if (!frame.editor().client()->shouldChangeSelectedRange(oldRange.get(), newRange.get(), affinity, false))
         return false;
-    frame.selection().setSelectedRange(newRange.get(), affinity, true);
+    frame.selection().setSelectedRange(newRange.get(), affinity, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 
@@ -355,7 +355,7 @@ static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const
     RefPtr<Range> mark = frame.editor().mark().toNormalizedRange();
     FrameSelection& selection = frame.selection();
     if (mark && frame.editor().selectedRange()) {
-        bool selected = selection.setSelectedRange(unionDOMRanges(*mark, *frame.editor().selectedRange()).get(), DOWNSTREAM, true);
+        bool selected = selection.setSelectedRange(unionDOMRanges(*mark, *frame.editor().selectedRange()).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
         ASSERT(selected);
         if (!selected)
             return false;
@@ -1030,7 +1030,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
         PAL::systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionDOMRanges(*mark, *selection).get(), DOWNSTREAM, true);
+    frame.selection().setSelectedRange(unionDOMRanges(*mark, *selection).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 

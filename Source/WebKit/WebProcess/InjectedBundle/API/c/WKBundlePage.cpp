@@ -461,11 +461,12 @@ void WKBundlePageReplaceStringMatches(WKBundlePageRef pageRef, WKArrayRef matchI
     Vector<uint32_t> indices;
     indices.reserveInitialCapacity(matchIndices->size());
 
-    for (size_t arrayIndex = 0; arrayIndex < matchIndices->size(); ++arrayIndex) {
-        if (auto* indexAsObject = matchIndices->at<API::UInt64>(arrayIndex))
+    auto numberOfMatchIndices = matchIndices->size();
+    for (size_t i = 0; i < numberOfMatchIndices; ++i) {
+        if (auto* indexAsObject = matchIndices->at<API::UInt64>(i))
             indices.uncheckedAppend(indexAsObject->value());
     }
-    toImpl(pageRef)->replaceStringMatchesFromInjectedBundle(WTFMove(indices), toWTFString(replacementText), selectionOnly);
+    toImpl(pageRef)->replaceStringMatchesFromInjectedBundle(indices, toWTFString(replacementText), selectionOnly);
 }
 
 WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef pageRef, WKRect rect, WKSnapshotOptions options)

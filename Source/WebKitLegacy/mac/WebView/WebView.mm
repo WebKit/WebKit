@@ -8351,7 +8351,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         if (!coreFrame)
             return;
 
-        coreFrame->selection().setSelectedRange(core(range), core(selectionAffinity), true);
+        coreFrame->selection().setSelectedRange(core(range), core(selectionAffinity), WebCore::FrameSelection::ShouldCloseTyping::Yes);
     }
 }
 
