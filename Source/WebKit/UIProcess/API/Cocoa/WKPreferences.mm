@@ -140,6 +140,16 @@
     _preferences->setStorageAccessPromptsEnabled(enabled);
 }
 
+- (void)setSafeBrowsingEnabled:(BOOL)enabled
+{
+    _preferences->setSafeBrowsingEnabled(enabled);
+}
+
+- (BOOL)isSafeBrowsingEnabled
+{
+    return _preferences->safeBrowsingEnabled();
+}
+
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)
@@ -695,16 +705,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 - (void)_setICECandidateFilteringEnabled:(BOOL)enabled
 {
     _preferences->setICECandidateFilteringEnabled(enabled);
-}
-
-- (void)setSafeBrowsingEnabled:(BOOL)enabled
-{
-    _preferences->setSafeBrowsingEnabled(enabled);
-}
-
-- (BOOL)isSafeBrowsingEnabled
-{
-    return _preferences->safeBrowsingEnabled();
 }
 
 - (BOOL)_webRTCLegacyAPIEnabled
