@@ -1,3 +1,18 @@
+2018-11-22  Mark Lam  <mark.lam@apple.com>
+
+        Make the jsc shell's dumpException() more robust against long exception strings.
+        https://bugs.webkit.org/show_bug.cgi?id=191910
+        <rdar://problem/46212980>
+
+        Reviewed by Michael Saboff.
+
+        This only affects the dumping of the exception string in the jsc shell due to
+        unhandled exceptions or exceptions at shell boot time before any JS code is
+        running.
+
+        * jsc.cpp:
+        (dumpException):
+
 2018-11-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Drop ARM_TRADITIONAL support in LLInt, baseline JIT, and DFG

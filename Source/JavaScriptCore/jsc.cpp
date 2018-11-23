@@ -2302,7 +2302,12 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
         } \
     } while (false)
 
-    printf("Exception: %s\n", exception.toWTFString(globalObject->globalExec()).utf8().data());
+    auto exceptionString = exception.toWTFString(globalObject->globalExec());
+    Expected<CString, UTF8ConversionError> expectedCString = exceptionString.tryGetUtf8();
+    if (expectedCString)
+        printf("Exception: %s\n", expectedCString.value().data());
+    else
+        printf("Exception: <out of memory while extracting exception string>\n");
 
     Identifier nameID = Identifier::fromString(globalObject->globalExec(), "name");
     CHECK_EXCEPTION();
