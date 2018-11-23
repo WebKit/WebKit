@@ -1,3 +1,19 @@
+2018-11-23  Antti Koivisto  <antti@apple.com>
+
+        UI side compositing doesn't paint on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=191908
+
+        Reviewed by Tim Horton.
+
+        For clarity put RGB10 and RGB10A8 formats behind PLATFORM(IOS_FAMILY). They are not supported on Mac.
+
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::IOSurface):
+        (WebCore::IOSurface::ensurePlatformContext):
+        (WebCore::IOSurface::format const):
+        (WebCore::operator<<):
+
 2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Implement Baseline Alignment for grid items

@@ -204,12 +204,14 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpa
     case Format::RGBA:
         options = optionsFor32BitSurface(size, 'BGRA');
         break;
+#if HAVE(IOSURFACE_RGB10)
     case Format::RGB10:
         options = optionsFor32BitSurface(size, 'w30r');
         break;
     case Format::RGB10A8:
         options = optionsForBiplanarSurface(size, 'b3a8', 4, 1);
         break;
+#endif
     case Format::YUV422:
         options = optionsForBiplanarSurface(size, '422f', 1, 1);
         break;
@@ -287,6 +289,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
     switch (format()) {
     case Format::RGBA:
         break;
+#if HAVE(IOSURFACE_RGB10)
     case Format::RGB10:
     case Format::RGB10A8:
         // A half-float format will be used if CG needs to read back the IOSurface contents,
@@ -295,6 +298,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         bitsPerPixel = 64;
         bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;
         break;
+#endif
     case Format::YUV422:
         ASSERT_NOT_REACHED();
         break;
@@ -362,11 +366,13 @@ IOSurface::Format IOSurface::format() const
     if (pixelFormat == 'BGRA')
         return Format::RGBA;
 
+#if HAVE(IOSURFACE_RGB10)
     if (pixelFormat == 'w30r')
         return Format::RGB10;
 
     if (pixelFormat == 'b3a8')
         return Format::RGB10A8;
+#endif
 
     if (pixelFormat == '422f')
         return Format::YUV422;
@@ -404,8 +410,10 @@ void IOSurface::releaseGraphicsContext()
 
 bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format destFormat)
 {
+#if HAVE(IOSURFACE_RGB10)
     if ((sourceFormat == Format::RGB10 || sourceFormat == Format::RGB10A8) && destFormat == Format::YUV422)
         return false;
+#endif
 
     return true;
 }
@@ -466,12 +474,14 @@ static TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     case IOSurface::Format::YUV422:
         ts << "YUV422";
         break;
+#if HAVE(IOSURFACE_RGB10)
     case IOSurface::Format::RGB10:
         ts << "RGB10";
         break;
     case IOSurface::Format::RGB10A8:
         ts << "RGB10A8";
         break;
+#endif
     }
     return ts;
 }

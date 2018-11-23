@@ -31,6 +31,10 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 
+#if PLATFORM(IOS_FAMILY)
+#define HAVE_IOSURFACE_RGB10 1
+#endif
+
 namespace WTF {
 class MachSendRight;
 class TextStream;
@@ -50,8 +54,10 @@ public:
     enum class Format {
         RGBA,
         YUV422,
+#if HAVE(IOSURFACE_RGB10)
         RGB10,
         RGB10A8,
+#endif
     };
     
     class Locker {

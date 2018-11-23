@@ -181,8 +181,10 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
     switch (surfaceBufferFormat()) {
     case WebCore::IOSurface::Format::RGBA: return 4;
     case WebCore::IOSurface::Format::YUV422: return 2;
+#if HAVE(IOSURFACE_RGB10)
     case WebCore::IOSurface::Format::RGB10: return 4;
     case WebCore::IOSurface::Format::RGB10A8: return 5;
+#endif
     }
 #endif
     return 4;
@@ -500,8 +502,10 @@ void RemoteLayerBackingStore::Buffer::discard()
 #if HAVE(IOSURFACE)
 WebCore::IOSurface::Format RemoteLayerBackingStore::surfaceBufferFormat() const
 {
+#if HAVE(IOSURFACE_RGB10)
     if (m_deepColor)
         return m_isOpaque ? WebCore::IOSurface::Format::RGB10 : WebCore::IOSurface::Format::RGB10A8;
+#endif
 
     return WebCore::IOSurface::Format::RGBA;
 }
