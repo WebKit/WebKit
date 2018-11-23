@@ -1,3 +1,15 @@
+2018-11-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Updating href on textPath doesn't update its rendering
+        https://bugs.webkit.org/show_bug.cgi?id=191920
+
+        Reviewed by Dean Jackson.
+
+        Added a ref test.
+
+        * svg/text/textpath-reference-update-expected.html: Added.
+        * svg/text/textpath-reference-update.html: Added.
+
 2018-11-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for variable height runs.
