@@ -11,7 +11,6 @@ PASS .grid 9
 PASS .grid 10 
 PASS .grid 11 
 PASS .grid 12 
-
 This test checks that baseline is applied correctly on a grid aling both axis and different writing-modes when using symbolic fonts, which will use middle-baseline.
 
 A

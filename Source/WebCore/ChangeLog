@@ -1,3 +1,96 @@
+2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Implement Baseline Alignment for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=145566
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This patch impements the Baseline Self-Alignment feature for grid items according to
+        the CSS Box Alignment specification [1].
+
+        This new layout logic is handled by the Self-Alignment (justify-self and align-self)
+        and Default-Alignment (justify-items and align-items) CSS properties.
+
+        This feature allows users to align the grid items sharing a Baseline Alignment Context,
+        either row or column contexts, based on their respective baselines.
+
+        [1] https://drafts.csswg.org/css-align-3/#baseline-align-self
+
+        Tests: fast/css-grid-layout/grid-self-baseline-and-flex-tracks-with-indefinite-container-crash.html
+               fast/css-grid-layout/grid-self-baseline-and-flexible-tracks-should-not-crash.html
+               fast/css-grid-layout/grid-self-baseline-and-item-relayout-should-not-crash.html
+               fast/css-grid-layout/grid-self-baseline-and-relative-sized-items-crash.html
+               fast/css-grid-layout/grid-self-baseline-and-relative-sized-tracks-crash.html
+               fast/css-grid-layout/grid-self-baseline-followed-by-item-style-change-should-not-crash.html
+
+        * Sources.txt:
+        * rendering/GridBaselineAlignment.cpp: Added.
+        (WebCore::GridBaselineAlignment::marginOverForChild const):
+        (WebCore::GridBaselineAlignment::marginUnderForChild const):
+        (WebCore::GridBaselineAlignment::logicalAscentForChild const):
+        (WebCore::GridBaselineAlignment::ascentForChild const):
+        (WebCore::GridBaselineAlignment::descentForChild const):
+        (WebCore::GridBaselineAlignment::isDescentBaselineForChild const):
+        (WebCore::GridBaselineAlignment::isHorizontalBaselineAxis const):
+        (WebCore::GridBaselineAlignment::isOrthogonalChildForBaseline const):
+        (WebCore::GridBaselineAlignment::isParallelToBaselineAxisForChild const):
+        (WebCore::GridBaselineAlignment::baselineGroupForChild const):
+        (WebCore::GridBaselineAlignment::updateBaselineAlignmentContext):
+        (WebCore::GridBaselineAlignment::baselineOffsetForChild const):
+        (WebCore::GridBaselineAlignment::clear):
+        (WebCore::BaselineGroup::BaselineGroup):
+        (WebCore::BaselineGroup::update):
+        (WebCore::BaselineGroup::isOppositeBlockFlow const):
+        (WebCore::BaselineGroup::isOrthogonalBlockFlow const):
+        (WebCore::BaselineGroup::isCompatible const):
+        (WebCore::BaselineContext::BaselineContext):
+        (WebCore::BaselineContext::sharedGroup const):
+        (WebCore::BaselineContext::updateSharedGroup):
+        (WebCore::BaselineContext::findCompatibleSharedGroup):
+        * rendering/GridBaselineAlignment.h: Added.
+        (WebCore::BaselineGroup::maxAscent const):
+        (WebCore::BaselineGroup::maxDescent const):
+        (WebCore::BaselineGroup::size const):
+        (WebCore::isBaselinePosition):
+        (WebCore::GridBaselineAlignment::setBlockFlow):
+        * rendering/GridLayoutFunctions.h:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::gridAxisForDirection):
+        (WebCore::gridDirectionForAxis):
+        (WebCore::GridTrackSizingAlgorithm::availableSpace const):
+        (WebCore::GridTrackSizingAlgorithm::isIntrinsicSizedGridArea const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::logicalHeightForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minContentForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::maxContentForChild const):
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+        (WebCore::GridTrackSizingAlgorithm::canParticipateInBaselineAlignment const):
+        (WebCore::GridTrackSizingAlgorithm::participateInBaselineAlignment const):
+        (WebCore::GridTrackSizingAlgorithm::updateBaselineAlignmentContext):
+        (WebCore::GridTrackSizingAlgorithm::baselineOffsetForChild const):
+        (WebCore::GridTrackSizingAlgorithm::clearBaselineItemsCache):
+        (WebCore::GridTrackSizingAlgorithm::cacheBaselineAlignedItem):
+        (WebCore::GridTrackSizingAlgorithm::copyBaselineItemsCache):
+        (WebCore::GridTrackSizingAlgorithm::setup):
+        (WebCore::GridTrackSizingAlgorithm::computeBaselineAlignmentContext):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderGrid::placeItemsOnGrid const):
+        (WebCore::RenderGrid::performGridItemsPreLayout const):
+        (WebCore::synthesizedBaselineFromMarginBox):
+        (WebCore::RenderGrid::isBaselineAlignmentForChild const):
+        (WebCore::RenderGrid::baselinePosition const):
+        (WebCore::RenderGrid::firstLineBaseline const):
+        (WebCore::RenderGrid::inlineBlockBaseline const):
+        (WebCore::RenderGrid::columnAxisBaselineOffsetForChild const):
+        (WebCore::RenderGrid::rowAxisBaselineOffsetForChild const):
+        (WebCore::RenderGrid::columnAxisOffsetForChild const):
+        (WebCore::RenderGrid::rowAxisOffsetForChild const):
+        * rendering/RenderGrid.h:
+
 2018-11-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address post-review feedback after r238438

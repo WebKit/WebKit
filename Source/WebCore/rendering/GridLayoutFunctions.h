@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+enum GridAxis { GridRowAxis, GridColumnAxis };
+
 namespace GridLayoutFunctions {
 
 LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);

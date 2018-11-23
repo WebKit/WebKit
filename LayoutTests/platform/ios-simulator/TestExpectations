@@ -94,6 +94,17 @@ imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selectors-empty-001.xml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Pass Failure ]
 
+# Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
+webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-two-dimensional.html [ Failure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-03.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-04.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-05.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-vertical-rl-04.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-06.html [ ImageOnlyFailure ]
+webkit.org/b/170293 fast/css-grid-layout/grid-self-baseline-07.html [ ImageOnlyFailure ]
+
+
 # A sub-test in this test is extremely flaky and fails most of the time, messing up partial-failure expectations
 webkit.org/b/189686 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Skip ]
 webkit.org/b/189686 webgl/2.0.0/conformance/reading/read-pixels-test.html [ Slow ]

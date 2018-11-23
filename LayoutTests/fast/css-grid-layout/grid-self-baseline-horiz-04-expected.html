@@ -23,10 +23,10 @@ body { margin: 0; }
 }
 .extraRightPadding { padding-right: 30px; }
 .extraLeftPadding { padding-left: 30px; }
-.item { display: inline; }
+.item { float: left; clear: both; }
 .left { vertical-align: bottom; }
 </style>
 
 <p>4x1 with parallel items. <br>No item shares any row-like Baseline Context. All items share 'first-column' Baseline Context.<br>All the items are orthogonal to the column-axis, so they don't participate in the column-like Baseline Context; since no items shares row-like Baseline context, neither 'justify-self' or 'align-self' should apply.</p>
-<div class="block verticalLR"><div class="item horizontalTB left">A</div><div class="item horizontalTB left">A</div><div class="item horizontalTB left">A</div><div class="item horizontalTB left">A</div></div>
-<div class="block verticalLR"><div class="item horizontalTB extraRightPadding left">A</div><div class="item horizontalTB left">A</div><div class="item horizontalTB extraLeftPadding left">A</div><div class="item horizontalTB left">A</div></div>
+<div class="block"><div class="item left">A</div><div class="item left">A</div><div class="item left">A</div><div class="item left">A</div></div>
+<div class="block"><div class="item extraRightPadding left">A</div><div class="item left">A</div><div class="item extraLeftPadding left">A</div><div class="item left">A</div></div>

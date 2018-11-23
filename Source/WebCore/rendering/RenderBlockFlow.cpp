@@ -3000,7 +3000,7 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
 
 std::optional<int> RenderBlockFlow::firstLineBaseline() const
 {
-    if (isWritingModeRoot() && !isRubyRun())
+    if (isWritingModeRoot() && !isRubyRun() && !isGridItem())
         return std::nullopt;
 
     if (!childrenInline())

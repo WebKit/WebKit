@@ -1,0 +1,5 @@
+
+PASS No crash or assertion failure when changing align-self from 'auto' to 'baseline'. 
+PASS No crash or assertion failure when changing align-self from 'baseline' to 'start'. 
+PASS No crash or assertion failure when item's writing-mode changes from orthogonal to parallel. 
+

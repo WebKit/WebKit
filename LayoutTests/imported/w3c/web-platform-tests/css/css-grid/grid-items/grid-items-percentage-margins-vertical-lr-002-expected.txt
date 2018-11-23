@@ -1,30 +1,10 @@
 
-FAIL .grid 1 assert_equals: 
-<div class="grid directionRTL">
-  <div class="marginBottom50Percent" data-expected-margin-bottom="50" data-offset-y="440" data-expected-width="10" data-expected-height="10">X</div>
-  <div data-offset-x="10" data-offset-y="400" data-expected-width="10" data-expected-height="100"></div>
-</div>
-offsetTop expected 440 but got 365
-FAIL .grid 2 assert_equals: 
-<div class="grid directionRTL">
-  <div class="marginTop50Percent" data-expected-margin-top="50" data-offset-y="490" data-expected-width="10" data-expected-height="10">X</div>
-  <div data-offset-x="10" data-offset-y="400" data-expected-width="10" data-expected-height="100"></div>
-</div>
-margin-top expected "50" but got "125"
+PASS .grid 1 
+PASS .grid 2 
 PASS .grid 3 
 PASS .grid 4 
-FAIL .grid 5 assert_equals: 
-<div class="grid">
-  <div class="marginBottom50Percent" data-expected-margin-bottom="50" data-offset-y="0" data-expected-width="10" data-expected-height="10">X</div>
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="10" data-expected-height="100"></div>
-</div>
-margin-bottom expected "50" but got "125"
-FAIL .grid 6 assert_equals: 
-<div class="grid">
-  <div class="marginTop50Percent" data-expected-margin-top="50" data-offset-y="50" data-expected-width="10" data-expected-height="10">X</div>
-  <div data-offset-x="10" data-offset-y="0" data-expected-width="10" data-expected-height="100"></div>
-</div>
-offsetTop expected 50 but got 125
+PASS .grid 5 
+PASS .grid 6 
 PASS .grid 7 
 PASS .grid 8 
 Direction LTR

@@ -17,16 +17,12 @@
 .border { border: 11px solid pink; }
 .padding { padding: 13px; }
 .margin { margin: 8px 0; }
-.border-padding-margin {
-   border: 5px solid pink;
-   padding: 7px;
-   margin: 3px 0;
-}
 .flexbox > div {
     min-width: 0;
     min-height: 0;
 }
 </style>
+<p>This test ensures that Baseline Alignment works for 1-dimensional Grid like in Flexible Box, even using margins, paddings and borders.</p>
 <div>
 before text
 <div class="border" style="display: inline-block; background-color: lightgrey">
@@ -76,8 +72,8 @@ the grey box.
 
 <div>
 Should align with the top
-<div class="inline-block border-padding-margin" style="background-color: pink;">
-  <div class="flexbox border-padding-margin" style="width: 100px; height: 100px; background-color: pink">
+<div class="inline-block border margin padding" style="background-color: pink">
+  <div class="flexbox border margin padding" style="width: 100px; height: 100px; background-color: pink">
       <div style="width: 200px; overflow: scroll; background-color: lightgrey; margin: 10px 0px; border-top: 10px solid pink; border-bottom: 10px solid pink;"></div>
   </div>
 </div>

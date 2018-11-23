@@ -1,3 +1,36 @@
+2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Implement Baseline Alignment for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=145566
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Most of the baseline realated tests pass now; just a few still fail because of unrelated bugs.
+
+        * TestExpectations: Removed several entries, related to the baseline tests that are now passing.
+        * fast/css-grid-layout/grid-align-baseline-expected.txt:
+        * fast/css-grid-layout/grid-align-baseline-vertical-expected.txt:
+        * fast/css-grid-layout/grid-baseline-expected.html:
+        * fast/css-grid-layout/grid-baseline-margins-expected.html:
+        * fast/css-grid-layout/grid-baseline-margins.html:
+        * fast/css-grid-layout/grid-baseline-must-respect-grid-order-expected.txt:
+        * fast/css-grid-layout/grid-baseline-must-respect-grid-order.html:
+        * fast/css-grid-layout/grid-baseline.html:
+        * fast/css-grid-layout/grid-self-baseline-and-flex-tracks-with-indefinite-container-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-flex-tracks-with-indefinite-container-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-flexible-tracks-should-not-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-flexible-tracks-should-not-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-item-relayout-should-not-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-item-relayout-should-not-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-relative-sized-items-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-relative-sized-items-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-relative-sized-tracks-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-and-relative-sized-tracks-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-followed-by-item-style-change-should-not-crash-expected.txt: Added.
+        * fast/css-grid-layout/grid-self-baseline-followed-by-item-style-change-should-not-crash.html: Added.
+        * fast/css-grid-layout/grid-self-baseline-two-dimensional-expected.txt:
+        * fast/css-grid-layout/grid-self-baseline-two-dimensional.html:
+
 2018-11-22  Dean Jackson  <dino@apple.com>
 
         Implement WebGPUQueue and device.getQueue()

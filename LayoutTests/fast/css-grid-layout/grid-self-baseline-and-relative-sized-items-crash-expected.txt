@@ -1,0 +1,7 @@
+This test should not crash
+
+PASS
+
+PASS
+PASS
+

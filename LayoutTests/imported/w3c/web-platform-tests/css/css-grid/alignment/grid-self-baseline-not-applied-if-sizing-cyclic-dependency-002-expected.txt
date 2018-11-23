@@ -75,49 +75,25 @@ baseline is not applied initially, but orthogonal items force repeating the trac
 É
 ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É
 
-FAIL .inline-grid 1 assert_equals: 
-<div class="inline-grid verticalRL alignItemsBaseline columns max-flex-rows">
-  <div class="firstRowFirstColumn bigFont paddingLeft" data-offset-x="-10" data-offset-y="0" data-expected-width="75" data-expected-height="100">É</div>
-  <div class="firstRowSecondColumn horizontalTB" data-offset-x="25" data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
-  <div class="autoRowAutoColumnSpanning2 width25" data-offset-x="0" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
-</div>
-offsetLeft expected -10 but got 366
+PASS .inline-grid 1 
 PASS .inline-grid 2 
 PASS .inline-grid 3 
 PASS .inline-grid 4 
 PASS .inline-grid 5 
 PASS .inline-grid 6 
-FAIL .inline-grid 7 assert_equals: 
-<div class="inline-grid verticalLR alignItemsBaseline columns max-flex-rows">
-  <div class="firstRowFirstColumn bigFont paddingLeft" data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="100">É</div>
-  <div class="firstRowSecondColumn horizontalTB" data-offset-x="35" data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
-  <div class="autoRowAutoColumnSpanning2 width25" data-offset-x="416" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
-</div>
-offsetLeft expected 35 but got 0
+PASS .inline-grid 7 
 PASS .inline-grid 8 
 PASS .inline-grid 9 
 PASS .inline-grid 10 
 PASS .inline-grid 11 
 PASS .inline-grid 12 
-FAIL .inline-grid 13 assert_equals: 
-<div class="inline-grid justifyItemsBaseline rows max-flex-columns">
-  <div class="firstRowFirstColumn bigFont verticalLR paddingLeft" data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="100">É</div>
-  <div class="secondRowFirstColumn" data-offset-x="35" data-offset-y="100" data-expected-width="416" data-expected-height="100">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
-  <div class="firstRowSpanning2AutoColumn width25" data-offset-x="416" data-offset-y="0" data-expected-width="25" data-expected-height="200"></div>
-</div>
-offsetLeft expected 35 but got 0
+PASS .inline-grid 13 
 PASS .inline-grid 14 
 PASS .inline-grid 15 
 PASS .inline-grid 16 
 PASS .inline-grid 17 
 PASS .inline-grid 18 
-FAIL .inline-grid 19 assert_equals: 
-<div class="inline-grid alignItemsBaseline columns max-flex-rows">
-  <div class="firstRowFirstColumn bigFont paddingBottom" data-offset-x="0" data-offset-y="376" data-expected-width="100" data-expected-height="75">É</div>
-  <div class="firstRowSecondColumn verticalLR" data-offset-x="100" data-offset-y="0" data-expected-width="100" data-expected-height="416">ÉÉ É ÉÉ ÉÉÉÉ É ÉÉ ÉÉÉ ÉÉ É</div>
-  <div class="autoRowAutoColumnSpanning2 height25" data-offset-x="0" data-offset-y="416" data-expected-width="200" data-expected-height="25"></div>
-</div>
-offsetTop expected 376 but got 0
+PASS .inline-grid 19 
 PASS .inline-grid 20 
 PASS .inline-grid 21 
 PASS .inline-grid 22 

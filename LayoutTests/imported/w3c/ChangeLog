@@ -1,3 +1,45 @@
+2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Implement Baseline Alignment for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=145566
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Updated test expectations of severla tests, that are now passing with the new code.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-005-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-006-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-007-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-alignment-style-changes-008-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-column-axis-self-baseline-synthesized-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-row-axis-self-baseline-synthesized-004-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-002-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-003-expected.txt:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-007.html:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-009.html:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-010.html:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-011.html:
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-012.html:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-margins-vertical-rl-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+
 2018-11-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Consider scrollbars in populateGridPositionsForDirection()

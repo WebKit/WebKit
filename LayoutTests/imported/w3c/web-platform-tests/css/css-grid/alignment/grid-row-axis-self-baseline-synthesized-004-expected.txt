@@ -7,32 +7,8 @@ Horizontal grid and verticalLR item with relative width
  VerticalRL grid and item with fixed height
 É É ÉÉ
 
-FAIL .inline-grid 1 assert_equals: 
-<div class="inline-grid justifyItemsBaseline verticalRL">
-  <div class="firstRowFirstColumn fixedHeight" data-offset-x="200" data-offset-y="0" data-expected-width="100" data-expected-height="125"></div>
-  <div class="secondRowFirstColumn bigFont horizontalTB" data-offset-x="0" data-offset-y="85" data-expected-width="200" data-expected-height="100">É É ÉÉ</div>
-  <div class="autoRowSpanning2AutoColumn height25"></div>
-</div>
-offsetTop expected 85 but got 0
-FAIL .inline-grid 2 assert_equals: 
-<div class="inline-grid justifyItemsBaseline verticalLR">
-  <div class="firstRowFirstColumn fixedHeight" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="125"></div>
-  <div class="secondRowFirstColumn bigFont horizontalTB" data-offset-x="100" data-offset-y="85" data-expected-width="200" data-expected-height="100">É É ÉÉ</div>
-  <div class="autoRowSpanning2AutoColumn height25"></div>
-</div>
-offsetTop expected 85 but got 0
-FAIL .inline-grid 3 assert_equals: 
-<div class="inline-grid justifyItemsBaseline" data-expected-width="210" data-expected-height="300">
-  <div class="firstRowFirstColumn fixedWidth" data-offset-x="60" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
-  <div class="secondRowFirstColumn bigFont paddingRight verticalRL" data-offset-x="0" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
-  <div class="autoRowSpanning2AutoColumn width25"></div>
-</div>
-width expected 210 but got 150
-FAIL .inline-grid 4 assert_equals: 
-<div class="inline-grid justifyItemsBaseline" data-expected-width="180" data-expected-height="300">
-  <div class="firstRowFirstColumn fixedWidth" data-offset-x="30" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
-  <div class="secondRowFirstColumn bigFont paddingLeft verticalLR" data-offset-x="0" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
-  <div class="autoRowSpanning2AutoColumn width25"></div>
-</div>
-width expected 180 but got 150
+PASS .inline-grid 1 
+PASS .inline-grid 2 
+PASS .inline-grid 3 
+PASS .inline-grid 4 
 

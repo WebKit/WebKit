@@ -1,3 +1,22 @@
+
+PASS .grid, container 1 
+PASS .grid, container 2 
+PASS .grid, container 3 
+PASS .grid, container 4 
+PASS .grid, container 5 
+PASS .grid, container 6 
+PASS .grid, container 7 
+PASS .grid, container 8 
+PASS .grid, container 9 
+PASS .grid, container 10 
+PASS .grid, container 11 
+PASS .grid, container 12 
+PASS .grid, container 13 
+PASS .grid, container 14 
+PASS .grid, container 15 
+PASS .grid, container 16 
+PASS .grid, container 17 
+PASS .grid, container 18 
 The test shows 3 grids each of them with 3 items sorted differently in the DOM.
 Each grid container must use its first (grid order) item to compute its baseline, and using document-oder in case of element with same grid-order. Hence they might be baseline aligned each other accordingly.
 
@@ -5,41 +24,24 @@ This case shows 3 items located along the first row and in different columns, so
 
  
  
- PASS
-PASS
-PASS
 This case shows 3 items located along the first row and in different columns, so such item is used to determine the grid's baseline instead of using the grid order.
 
  
  
- PASS
-PASS
-PASS
 This case shows 3 items' areas intersecting the first row and first column, so the dom order must be used to determine each grid's baseline.
 
  
  
- PASS
-PASS
-PASS
 This case shows 3 items' areas intersecting the first row and first column, but one of the items participates in baseline alignment, so such item is used to determine the grid's baseline instead of using the dom order.
 
  
  
- PASS
-PASS
-PASS
 This case shows one of the grids with no items, hence its baseline must be synthesized.
 
  
  
-PASS
-PASS
-PASS
 This case shows one of the grids with no items in the first row, hence its baseline must be synthesized.
 
  
  
- PASS
-PASS
-PASS
+

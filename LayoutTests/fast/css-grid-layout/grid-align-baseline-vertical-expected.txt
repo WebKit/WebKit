@@ -14,8 +14,6 @@ ahem
 
 
 
-baseline1 and baseline2 should have the same baseline.
-baseline4 and baseline5 should be below baseline6.
 
 PASS .grid 1 
 PASS .grid 2 

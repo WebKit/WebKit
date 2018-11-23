@@ -5,25 +5,7 @@ VerticalLR grid and item with fixed width
 VerticalRL grid and item with fixed width
 É É ÉÉ
 
-FAIL .grid 1 assert_equals: 
-<div class="grid alignItemsBaseline verticalRL">
-  <div class="firstRowFirstColumn fixedWidth" data-offset-x="175" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
-  <div class="firstRowSecondColumn bigFont paddingRight" data-offset-x="115" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
-  <div class="autoRowAutoColumnSpanning2 width25"></div>
-</div>
-offsetLeft expected 115 but got 180
-FAIL .grid 2 assert_equals: 
-<div class="grid alignItemsBaseline verticalLR">
-  <div class="firstRowFirstColumn fixedWidth" data-offset-x="30" data-offset-y="0" data-expected-width="125" data-expected-height="100"></div>
-  <div class="firstRowSecondColumn bigFont paddingLeft" data-offset-x="0" data-offset-y="100" data-expected-width="120" data-expected-height="200">É É ÉÉ</div>
-  <div class="autoRowAutoColumnSpanning2 width25"></div>
-</div>
-offsetLeft expected 30 but got 0
-FAIL .grid 3 assert_equals: 
-<div class="grid width300 alignItemsBaseline">
-  <div class="firstRowFirstColumn fixedHeight" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="125"></div>
-  <div class="firstRowSecondColumn bigFont" data-offset-x="100" data-offset-y="85" data-expected-width="200" data-expected-height="100">É É ÉÉ</div>
-  <div class="autoRowAutoColumnSpanning2 height25"></div>
-</div>
-offsetTop expected 85 but got 0
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
 

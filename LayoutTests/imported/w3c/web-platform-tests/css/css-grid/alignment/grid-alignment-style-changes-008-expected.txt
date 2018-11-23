@@ -6,5 +6,5 @@ PASS .before 1
 PASS .before 2 
 FAIL .before 3 assert_equals: 
 <div id="item1" data-expected-width="20" data-expected-height="50" data-offset-y="0" class=" before" data-offset-x="5">É</div>
-offsetLeft expected 5 but got 0
+offsetLeft expected 5 but got 2
 

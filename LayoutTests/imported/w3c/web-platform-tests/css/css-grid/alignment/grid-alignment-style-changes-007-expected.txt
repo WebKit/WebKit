@@ -2,11 +2,7 @@
 É
 É
 
-FAIL .before 1 assert_equals: 
-<div id="item3" data-expected-width="30" data-expected-height="50" data-offset-y="100" class=" before" data-offset-x="2">É</div>
-offsetLeft expected 2 but got 0
+PASS .before 1 
 PASS .before 2 
-FAIL .before 3 assert_equals: 
-<div id="item1" data-expected-width="20" data-expected-height="50" data-offset-y="0" class=" before" data-offset-x="4">É</div>
-offsetLeft expected 4 but got 0
+PASS .before 3 
 

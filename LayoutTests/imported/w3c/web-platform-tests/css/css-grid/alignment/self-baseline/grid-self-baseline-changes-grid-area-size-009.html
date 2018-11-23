@@ -29,6 +29,7 @@
   grid-auto-rows: 50px;
   justify-items: baseline;
   justify-content: start;
+  -webkit-text-orientation: sideways;
 }
 .grid > div { writing-mode: vertical-lr; }
 .firstRowFirstColumn {
@@ -46,10 +47,10 @@
 </style>
 <p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
 <div class="block">
-  <div style="top: 0px; left: 10px; width: 40px; background: red; height: 40px;"></div>
-  <div style="top: 0px; left: 50px;">X</div>
-  <div style="top: 10px; left: 50px;">X</div>
-  <div style="top: 30px; left: 50px;">X</div>
+  <div style="top: 0px; left: 4px; width: 40px; background: red; height: 40px;"></div>
+  <div style="top: 0px; left: 44px;">X</div>
+  <div style="top: 10px; left: 44px;">X</div>
+  <div style="top: 30px; left: 44px;">X</div>
   <div style="top: 50px; left: 0px" class="big">X</div>
 </div>
 <div class="grid">

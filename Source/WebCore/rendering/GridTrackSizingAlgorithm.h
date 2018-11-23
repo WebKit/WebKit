@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Grid.h"
+#include "GridBaselineAlignment.h"
 #include "GridTrackSize.h"
 #include "LayoutUnit.h"
 
@@ -110,6 +111,11 @@ public:
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
 
     LayoutSize estimatedGridAreaBreadthForChild(const RenderBox&) const;
+    LayoutUnit baselineOffsetForChild(const RenderBox&, GridAxis) const;
+
+    void cacheBaselineAlignedItem(const RenderBox&, GridAxis);
+    void copyBaselineItemsCache(const GridTrackSizingAlgorithm&, GridAxis);
+    void clearBaselineItemsCache();
 
     Vector<GridTrack>& tracks(GridTrackSizingDirection direction) { return direction == ForColumns ? m_columns : m_rows; }
     const Vector<GridTrack>& tracks(GridTrackSizingDirection direction) const { return direction == ForColumns ? m_columns : m_rows; }
@@ -129,7 +135,7 @@ public:
 #endif
 
 private:
-    std::optional<LayoutUnit> availableSpace() const { return availableSpace(m_direction); }
+    std::optional<LayoutUnit> availableSpace() const;
     bool isRelativeGridLengthAsAuto(const GridLength&, GridTrackSizingDirection) const;
     GridTrackSize gridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
     const GridTrackSize& rawGridTrackSize(GridTrackSizingDirection, unsigned translatedIndex) const;
@@ -148,6 +154,12 @@ private:
     LayoutUnit estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
     LayoutUnit gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
+    void computeBaselineAlignmentContext();
+    void updateBaselineAlignmentContext(const RenderBox&, GridAxis);
+    bool canParticipateInBaselineAlignment(const RenderBox&, GridAxis) const;
+    bool participateInBaselineAlignment(const RenderBox&, GridAxis) const;
+
+    bool isIntrinsicSizedGridArea(const RenderBox&, GridAxis) const;
     void computeGridContainerIntrinsicSizes();
 
     // Helper methods for step 4. Strech flexible tracks.
@@ -209,6 +221,11 @@ private:
         RowSizingSecondIteration
     };
     SizingState m_sizingState;
+
+    GridBaselineAlignment m_baselineAlignment;
+    typedef HashMap<const RenderBox*, bool> BaselineItemsCache;
+    BaselineItemsCache m_columnBaselineItemsMap;
+    BaselineItemsCache m_rowBaselineItemsMap;
 
     // This is a RAII class used to ensure that the track sizing algorithm is
     // executed as it is suppossed to be, i.e., first resolve columns and then

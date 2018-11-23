@@ -206,8 +206,18 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             // We may need to repeat the track sizing in case of any grid item was orthogonal.
             if (GridLayoutFunctions::isOrthogonalChild(*this, *child))
                 m_hasAnyOrthogonalItem = true;
-        }
 
+            // We keep a cache of items with baseline as alignment values so
+            // that we only compute the baseline shims for such items. This
+            // cache is needed for performance related reasons due to the
+            // cost of evaluating the item's participation in a baseline
+            // context during the track sizing algorithm.
+            if (isBaselineAlignmentForChild(*child, GridColumnAxis))
+                m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridColumnAxis);
+            if (isBaselineAlignmentForChild(*child, GridRowAxis))
+                m_trackSizingAlgorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
+        }
+        m_baselineItemsCached = true;
         setLogicalHeight(0);
         updateLogicalWidth();
 
@@ -298,6 +308,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     repainter.repaintAfterLayout();
 
     clearNeedsLayout();
+
+    m_trackSizingAlgorithm.clearBaselineItemsCache();
+    m_baselineItemsCached = false;
 }
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize) const
@@ -391,6 +404,17 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     placeItemsOnGrid(algorithm, std::nullopt);
 
     performGridItemsPreLayout(algorithm);
+
+    if (m_baselineItemsCached)
+        algorithm.copyBaselineItemsCache(m_trackSizingAlgorithm, GridRowAxis);
+    else {
+        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isOutOfFlowPositioned())
+                continue;
+            if (isBaselineAlignmentForChild(*child, GridRowAxis))
+                algorithm.cacheBaselineAlignedItem(*child, GridRowAxis);
+        }
+    }
 
     computeTrackSizesForIndefiniteSize(algorithm, ForColumns, minLogicalWidth, maxLogicalWidth);
 
@@ -593,6 +617,13 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, std::opti
         if (grid.orderIterator().shouldSkipChild(*child))
             continue;
 
+        // Grid items should use the grid area sizes instead of the containing block (grid container)
+        // sizes, we initialize the overrides here if needed to ensure it.
+        if (!child->hasOverrideContainingBlockContentLogicalWidth())
+            child->setOverrideContainingBlockContentLogicalWidth(LayoutUnit());
+        if (!child->hasOverrideContainingBlockContentLogicalHeight())
+            child->setOverrideContainingBlockContentLogicalHeight(LayoutUnit(-1));
+
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
             area.rows.translate(std::abs(grid.smallestTrackStart(ForRows)));
@@ -650,6 +681,14 @@ void RenderGrid::performGridItemsPreLayout(const GridTrackSizingAlgorithm& algor
         // Orthogonal items should be laid out in order to properly compute content-sized tracks that may depend on item's intrinsic size.
         // We also need to properly estimate its grid area size, since it may affect to the baseline shims if such item particiaptes in baseline alignment. 
         if (GridLayoutFunctions::isOrthogonalChild(*this, *child)) {
+            updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child));
+            child->layoutIfNeeded();
+            continue;
+        }
+        // We need to layout the item to know whether it must synthesize its
+        // baseline or not, which may imply a cyclic sizing dependency.
+        // FIXME: Can we avoid it ?
+        if (isBaselineAlignmentForChild(*child)) {
             updateGridAreaLogicalSize(*child, algorithm.estimatedGridAreaBreadthForChild(*child));
             child->layoutIfNeeded();
         }
@@ -1182,9 +1221,23 @@ static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionM
     return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
 }
 
-bool RenderGrid::isInlineBaselineAlignedChild(const RenderBox& child) const
+static int synthesizedBaselineFromMarginBox(const RenderBox& box, LineDirectionMode direction)
 {
-    return alignSelfForChild(child).position() == ItemPosition::Baseline && !GridLayoutFunctions::isOrthogonalChild(*this, child) && !hasAutoMarginsInColumnAxis(child);
+    return (direction == HorizontalLine ? box.size().height() + box.verticalMarginExtent() : box.size().width() + box.horizontalMarginExtent()).toInt();
+}
+
+bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child) const
+{
+    return isBaselineAlignmentForChild(child, GridRowAxis) || isBaselineAlignmentForChild(child, GridColumnAxis);
+}
+
+bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis baselineAxis) const
+{
+    if (child.isOutOfFlowPositioned())
+        return false;
+    ItemPosition align = selfAlignmentForChild(baselineAxis, child).position();
+    bool hasAutoMargins = baselineAxis == GridColumnAxis ? hasAutoMarginsInColumnAxis(child) : hasAutoMarginsInRowAxis(child);
+    return isBaselinePosition(align) && !hasAutoMargins;
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
@@ -1195,10 +1248,7 @@ int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction
 #else
     UNUSED_PARAM(mode);
 #endif
-    int baseline = firstLineBaseline().value_or(synthesizedBaselineFromBorderBox(*this, direction));
-
-    int marginSize = direction == HorizontalLine ? verticalMarginExtent() : horizontalMarginExtent();
-    return baseline + marginSize;
+    return firstLineBaseline().value_or(synthesizedBaselineFromMarginBox(*this, direction));
 }
 
 std::optional<int> RenderGrid::firstLineBaseline() const
@@ -1213,7 +1263,7 @@ std::optional<int> RenderGrid::firstLineBaseline() const
         for (auto& child : m_grid.cell(0, column)) {
             ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
-            if (isInlineBaselineAlignedChild(*child)) {
+            if (isBaselineAlignmentForChild(*child)) {
                 // FIXME: self-baseline and content-baseline alignment not implemented yet.
                 baselineChild = child.get();
                 break;
@@ -1242,8 +1292,18 @@ std::optional<int> RenderGrid::inlineBlockBaseline(LineDirectionMode direction) 
     if (std::optional<int> baseline = firstLineBaseline())
         return baseline;
 
-    int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
+    int marginAscent = direction == HorizontalLine ? marginBottom() : marginRight();
     return synthesizedBaselineFromBorderBox(*this, direction) + marginAscent;
+}
+
+LayoutUnit RenderGrid::columnAxisBaselineOffsetForChild(const RenderBox& child) const
+{
+    return m_trackSizingAlgorithm.baselineOffsetForChild(child, GridColumnAxis);
+}
+
+LayoutUnit RenderGrid::rowAxisBaselineOffsetForChild(const RenderBox& child) const
+{
+    return m_trackSizingAlgorithm.baselineOffsetForChild(child, GridRowAxis);
 }
 
 GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) const
@@ -1393,7 +1453,7 @@ LayoutUnit RenderGrid::columnAxisOffsetForChild(const RenderBox& child) const
     GridAxisPosition axisPosition = columnAxisPositionForChild(child);
     switch (axisPosition) {
     case GridAxisStart:
-        return startPosition;
+        return startPosition + columnAxisBaselineOffsetForChild(child);
     case GridAxisEnd:
     case GridAxisCenter: {
         LayoutUnit columnAxisChildSize = GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalWidth() + child.marginLogicalWidth() : child.logicalHeight() + child.marginLogicalHeight();
@@ -1418,7 +1478,7 @@ LayoutUnit RenderGrid::rowAxisOffsetForChild(const RenderBox& child) const
     GridAxisPosition axisPosition = rowAxisPositionForChild(child);
     switch (axisPosition) {
     case GridAxisStart:
-        return startPosition;
+        return startPosition + rowAxisBaselineOffsetForChild(child);
     case GridAxisEnd:
     case GridAxisCenter: {
         LayoutUnit rowAxisChildSize = GridLayoutFunctions::isOrthogonalChild(*this, child) ? child.logicalHeight() + child.marginLogicalHeight() : child.logicalWidth() + child.marginLogicalWidth();
