@@ -1,3 +1,16 @@
+2018-11-23  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] [WPE] Tools/Platform{GTK,WPE}.cmake files missing from the tarballs
+        https://bugs.webkit.org/show_bug.cgi?id=191923
+
+        Add Tools/PlatformGTK.cmake and Tools/PlatformWPE.cmake to their
+        respective tarballs.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/manifest.txt.in:
+        * wpe/manifest.txt.in:
+
 2018-11-22  Chris Dumez  <cdumez@apple.com>
 
         Regression(r238353) Load sometimes hangs when navigating back after a cross-site navigation

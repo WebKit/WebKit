@@ -91,6 +91,7 @@ directory Tools/TestWebKitAPI
 
 file CMakeLists.txt
 file Tools/CMakeLists.txt
+file Tools/PlatformWPE.cmake
 
 # FIXME: We are not currently generating documentation for WPE.
 #directory ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html
