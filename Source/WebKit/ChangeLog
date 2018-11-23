@@ -1,3 +1,28 @@
+2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable drag and drop support for iOSMac
+        https://bugs.webkit.org/show_bug.cgi?id=191818
+        <rdar://problem/43907454>
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (defaultCustomPasteboardDataEnabled):
+
+        Enable custom pasteboard data by default on iOSMac. While writing and reading custom pasteboard data is
+        currently broken in iOSMac due to the lack of `teamData` and `preferredPresentationStyle`, opting into custom
+        pasteboard data at least allows us to avoid writing unsanitized data types to the pasteboard.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+
+        Fix a regression from <https://trac.webkit.org/r236619> wherein the web process crashes when attempting to edit
+        a text field. This happens because the call to `-[UIKeyboard isInHardwareKeyboardMode]` on the iOSMac platform
+        attempts to initialize a `UHASWorkspace` from the web process, which then attempts to connect to the UIKit host
+        application. Instead, we can skip this call altogether on iOSMac, where the platform never considers a hardware
+        keyboard to be "connected", even when typing.
+
 2018-11-23  Antti Koivisto  <antti@apple.com>
 
         UI side compositing doesn't paint on Mac

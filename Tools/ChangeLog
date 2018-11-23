@@ -1,3 +1,13 @@
+2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable drag and drop support for iOSMac
+        https://bugs.webkit.org/show_bug.cgi?id=191818
+        <rdar://problem/43907454>
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2018-11-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Add support for variable height runs.

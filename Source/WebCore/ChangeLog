@@ -1,3 +1,27 @@
+2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable drag and drop support for iOSMac
+        https://bugs.webkit.org/show_bug.cgi?id=191818
+        <rdar://problem/43907454>
+
+        Reviewed by Dean Jackson.
+
+        Enables drag and drop by default on iOSMac by switching on ENABLE_DATA_INTERACTION and ENABLE_DRAG_SUPPORT. This
+        enables support for dragging links, text selections, and images, though many advanced features (e.g. custom
+        pasteboard data) will require additional support from the platform.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        (WebCore::registerItemToPasteboard):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderLoadResult canBeRepresentedAsFileUpload]):
+        (-[WebItemProviderPasteboard numberOfFiles]):
+
+        Disable codepaths which attempt to access or set `teamData` or `preferredPresentationStyle` on `NSItemProvider`
+        in iOSMac, since these are currently unimplemented.
+
 2018-11-23  Zalan Butjas  <zalan@apple.com>
 
         [LFC][IFC] Add support for variable height runs.

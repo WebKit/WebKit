@@ -47,6 +47,7 @@
 #import <wtf/text/StringHash.h>
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
+#define PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA (PASTEBOARD_SUPPORTS_ITEM_PROVIDERS && !PLATFORM(IOSMAC))
 #define NSURL_SUPPORTS_TITLE (!PLATFORM(IOSMAC))
 
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -110,6 +111,8 @@ int PlatformPasteboard::numberOfFiles() const
 
 #if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
 
+#if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
+
 static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferredPresentationStyle style)
 {
     switch (style) {
@@ -124,6 +127,8 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
         return PasteboardItemPresentationStyle::Unspecified;
     }
 }
+
+#endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
 Vector<PasteboardItemInfo> PlatformPasteboard::allPasteboardItemInfo()
 {
@@ -146,7 +151,9 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
     }
 
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
+#if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
+#endif
     info.suggestedFileName = itemProvider.suggestedName;
     for (NSString *typeIdentifier in itemProvider.registeredTypeIdentifiers) {
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
@@ -285,13 +292,19 @@ static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard typ
 static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
 {
 #if PLATFORM(IOSMAC)
-    auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-    [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
-        if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
-            [itemDictionary setObject:item.dataForClient forKey:item.typeIdentifierForClient];
-    }];
-    [pasteboard setItems:@[ itemDictionary.get() ]];
-#else
+    // In iOSMac, -[UIPasteboard setItemProviders:] is not yet supported, so we fall back to setting an item dictionary when
+    // populating the pasteboard upon copy.
+    if ([pasteboard isKindOfClass:getUIPasteboardClass()]) {
+        auto itemDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+        [representationsToRegister enumerateItems:[itemDictionary] (id <WebItemProviderRegistrar> item, NSUInteger) {
+            if ([item respondsToSelector:@selector(typeIdentifierForClient)] && [item respondsToSelector:@selector(dataForClient)])
+                [itemDictionary setObject:item.dataForClient forKey:item.typeIdentifierForClient];
+        }];
+        [pasteboard setItems:@[ itemDictionary.get() ]];
+        return;
+    }
+#endif // PLATFORM(IOSMAC)
+
     if (NSItemProvider *itemProvider = representationsToRegister.itemProvider)
         [pasteboard setItemProviders:@[ itemProvider ]];
     else
@@ -299,8 +312,6 @@ static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *repres
 
     if ([pasteboard respondsToSelector:@selector(stageRegistrationList:)])
         [pasteboard stageRegistrationList:representationsToRegister];
-#endif
-    
 }
 
 long PlatformPasteboard::setColor(const Color& color)
@@ -466,6 +477,7 @@ static const char customTypesKeyForTeamData[] = "com.apple.WebKit.drag-and-drop-
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
 {
     ListHashSet<String> domPasteboardTypes;
+#if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     for (NSItemProvider *provider in [m_pasteboard itemProviders]) {
         if (!provider.teamData.length)
             continue;
@@ -487,6 +499,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         for (NSString *type in customTypes)
             domPasteboardTypes.add(type);
     }
+#endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
     if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());

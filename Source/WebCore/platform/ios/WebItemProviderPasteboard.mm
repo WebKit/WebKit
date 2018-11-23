@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebItemProviderPasteboard.h"
 
-#if ENABLE(DATA_INTERACTION) || PLATFORM(IOSMAC)
+#if ENABLE(DATA_INTERACTION)
 
 #import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
@@ -342,7 +342,11 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 - (BOOL)canBeRepresentedAsFileUpload
 {
+#if PLATFORM(IOSMAC)
+    return false;
+#else
     return [_itemProvider preferredPresentationStyle] != UIPreferredPresentationStyleInline;
+#endif
 }
 
 - (NSArray<NSString *> *)typesToLoad
@@ -643,8 +647,10 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
     NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
     NSInteger numberOfFiles = 0;
     for (NSItemProvider *itemProvider in _itemProviders.get()) {
+#if !PLATFORM(IOSMAC)
         if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleInline)
             continue;
+#endif
 
         for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
             if (!typeConformsToTypes(identifier, supportedFileTypes))
@@ -829,4 +835,4 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 @end
 
-#endif // ENABLE(DATA_INTERACTION) || PLATFORM(IOSMAC)
+#endif // ENABLE(DATA_INTERACTION)
