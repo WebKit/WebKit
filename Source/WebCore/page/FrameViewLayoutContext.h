@@ -139,7 +139,7 @@ private:
     // Subtree push/pop
     void pushLayoutState(RenderElement&);
     bool pushLayoutStateForPaginationIfNeeded(RenderBlockFlow&);
-    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false);
+    bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0_lu, bool pageHeightChanged = false);
     void popLayoutState();
 
     // Suspends the LayoutState optimization. Used under transforms that cannot be represented by

@@ -53,7 +53,7 @@ public:
 
     void layoutExcludedChildren(bool relayoutChildren) override;
     void layout() override;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0_lu) override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 

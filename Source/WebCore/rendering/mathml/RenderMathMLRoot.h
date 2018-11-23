@@ -56,7 +56,7 @@ private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
     void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
     struct HorizontalParameters {

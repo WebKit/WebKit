@@ -170,8 +170,8 @@ LayoutUnit InlineLineBreaker::textWidth(const InlineRunProvider::Run& inlineRun,
         auto endPosition = std::min<ItemPosition>(startPosition + length, inlineItemLength);
         auto textWidth = TextUtil::width(currentInlineItem, startPosition, endPosition, contentLogicalLeft);
 
-        auto nonBreakableStart = !startPosition ? currentInlineItem.nonBreakableStart() : LayoutUnit();
-        auto nonBreakableEnd =  endPosition == inlineItemLength ? currentInlineItem.nonBreakableEnd() : LayoutUnit();
+        auto nonBreakableStart = !startPosition ? currentInlineItem.nonBreakableStart() : 0_lu;
+        auto nonBreakableEnd =  endPosition == inlineItemLength ? currentInlineItem.nonBreakableEnd() : 0_lu;
         auto contentWidth = nonBreakableStart + textWidth + nonBreakableEnd;
         contentLogicalLeft += contentWidth;
         width += contentWidth;

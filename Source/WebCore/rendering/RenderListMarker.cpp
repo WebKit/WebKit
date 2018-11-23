@@ -1177,8 +1177,8 @@ LayoutRect RenderListMarker::localSelectionRect()
     const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
     LayoutUnit newLogicalTop = rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop();
     if (rootBox.blockFlow().style().isHorizontalWritingMode())
-        return LayoutRect(0, newLogicalTop, width(), rootBox.selectionHeight());
-    return LayoutRect(newLogicalTop, 0, rootBox.selectionHeight(), height());
+        return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());
+    return LayoutRect(newLogicalTop, 0_lu, rootBox.selectionHeight(), height());
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1385,9 +1385,9 @@ void RenderListMarker::layout()
     for (auto* ancestor = parentBox(); ancestor && ancestor != &m_listItem; ancestor = ancestor->parentBox())
         blockOffset += ancestor->logicalTop();
     if (style().isLeftToRightDirection())
-        m_lineOffsetForListItem = m_listItem.logicalLeftOffsetForLine(blockOffset, DoNotIndentText, LayoutUnit());
+        m_lineOffsetForListItem = m_listItem.logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
     else
-        m_lineOffsetForListItem = m_listItem.logicalRightOffsetForLine(blockOffset, DoNotIndentText, LayoutUnit());
+        m_lineOffsetForListItem = m_listItem.logicalRightOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
  
     if (isImage()) {
         updateMarginsAndContent();
@@ -1441,7 +1441,7 @@ void RenderListMarker::updateContent()
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        LayoutUnit bulletWidth = style().fontMetrics().ascent() / LayoutUnit(2);
+        LayoutUnit bulletWidth = style().fontMetrics().ascent() / 2_lu;
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
         LayoutSize imageSize = calculateImageIntrinsicDimensions(m_image.get(), defaultBulletSize, DoNotScaleByEffectiveZoom);
         m_image->setContainerContextForRenderer(*this, imageSize, style().effectiveZoom());
@@ -1700,7 +1700,7 @@ void RenderListMarker::updateMargins()
                 case ListStyleType::None:
                     break;
                 default:
-                    marginStart = m_text.isEmpty() ? LayoutUnit() : -minPreferredLogicalWidth() - offset / 2;
+                    marginStart = m_text.isEmpty() ? 0_lu : -minPreferredLogicalWidth() - offset / 2;
                 }
             }
             marginEnd = -marginStart - minPreferredLogicalWidth();
@@ -1907,7 +1907,7 @@ LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObjec
         return LayoutRect();
 
     RootInlineBox& rootBox = inlineBoxWrapper()->root();
-    LayoutRect rect(0, rootBox.selectionTop() - y(), width(), rootBox.selectionHeight());
+    LayoutRect rect(0_lu, rootBox.selectionTop() - y(), width(), rootBox.selectionHeight());
             
     if (clipToVisibleContent)
         return computeRectForRepaint(rect, repaintContainer);

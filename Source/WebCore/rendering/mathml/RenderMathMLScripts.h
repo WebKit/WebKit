@@ -49,7 +49,7 @@ protected:
     const char* renderName() const override { return "RenderMathMLScripts"; }
     ScriptType scriptType() const;
     void computePreferredLogicalWidths() override;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
 private:
     MathMLScriptsElement& element() const;

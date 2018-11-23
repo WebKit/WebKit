@@ -1895,7 +1895,7 @@ LayoutRect FrameView::rectForViewportConstrainedObjects(const LayoutRect& visibl
     // We impose an lower limit on the size (so an upper limit on the scale) of
     // the rect used to position fixed objects so that they don't crowd into the
     // center of the screen at larger scales.
-    const LayoutUnit maxContentWidthForZoomThreshold = LayoutUnit::fromPixel(1024);
+    const LayoutUnit maxContentWidthForZoomThreshold = 1024_lu;
     float zoomedOutScale = frameScaleFactor * visibleContentRect.width() / std::min(maxContentWidthForZoomThreshold, totalContentsSize.width());
     float constraintThresholdScale = 1.5 * zoomedOutScale;
     float maxPostionedObjectsRectScale = std::min(frameScaleFactor, constraintThresholdScale);

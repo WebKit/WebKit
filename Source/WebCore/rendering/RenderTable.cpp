@@ -303,19 +303,19 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     LayoutUnit borders;
     bool isCSSTable = !is<HTMLTableElement>(element());
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style().boxSizing() == BoxSizing::ContentBox)
-        borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());
+        borders = borderStart() + borderEnd() + (collapseBorders() ? 0_lu : paddingStart() + paddingEnd());
 
     return minimumValueForLength(styleLogicalWidth, availableWidth) + borders;
 }
 
 LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight)
 {
-    LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? LayoutUnit() : paddingBefore());
-    LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? LayoutUnit() : paddingAfter());
+    LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? 0_lu : paddingBefore());
+    LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? 0_lu : paddingAfter());
     LayoutUnit borderAndPadding = borderAndPaddingBefore + borderAndPaddingAfter;
     if (styleLogicalHeight.isFixed()) {
         // HTML tables size as though CSS height includes border/padding, CSS tables do not.
-        LayoutUnit borders = LayoutUnit();
+        LayoutUnit borders;
         // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
         if (is<HTMLTableElement>(element()) || style().boxSizing() == BoxSizing::BorderBox) {
             borders = borderAndPadding;
@@ -327,7 +327,7 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).value_or(0);
     else
         ASSERT_NOT_REACHED();
-    return LayoutUnit();
+    return 0_lu;
 }
 
 void RenderTable::layoutCaption(RenderTableCaption& caption)
@@ -457,8 +457,8 @@ void RenderTable::layout()
             movedSectionLogicalTop = std::min(logicalHeight(), oldTableLogicalTop);
         }
 
-        LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? LayoutUnit() : paddingBefore());
-        LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? LayoutUnit() : paddingAfter());
+        LayoutUnit borderAndPaddingBefore = borderBefore() + (collapsing ? 0_lu : paddingBefore());
+        LayoutUnit borderAndPaddingAfter = borderAfter() + (collapsing ? 0_lu : paddingAfter());
 
         setLogicalHeight(logicalHeight() + borderAndPaddingBefore);
 
@@ -724,11 +724,11 @@ void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)
         if (style().isHorizontalWritingMode()) {
             rect.setHeight(rect.height() - captionLogicalHeight);
             if (captionIsBefore)
-                rect.move(0, captionLogicalHeight);
+                rect.move(0_lu, captionLogicalHeight);
         } else {
             rect.setWidth(rect.width() - captionLogicalHeight);
             if (captionIsBefore)
-                rect.move(captionLogicalHeight, 0);
+                rect.move(captionLogicalHeight, 0_lu);
         }
     }
     
@@ -915,7 +915,7 @@ LayoutUnit RenderTable::offsetTopForColumn(const RenderTableCol& column) const
         return m_columnOffsetTop;
     }
     RenderTableSection* section = topNonEmptySection();
-    return m_columnOffsetTop = section ? section->offsetTop() : LayoutUnit(0);
+    return m_columnOffsetTop = section ? section->offsetTop() : 0_lu;
 }
 
 LayoutUnit RenderTable::offsetLeftForColumn(const RenderTableCol& column) const

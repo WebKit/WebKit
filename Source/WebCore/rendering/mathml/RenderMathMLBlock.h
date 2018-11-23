@@ -75,7 +75,7 @@ protected:
     }
 
     LayoutUnit mathAxisHeight() const;
-    LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0) const;
+    LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, LayoutUnit boxWidth = 0_lu) const;
     LayoutUnit mirrorIfNeeded(LayoutUnit horizontalOffset, const RenderBox& child) const { return mirrorIfNeeded(horizontalOffset, child.logicalWidth()); }
 
     static LayoutUnit ascentForChild(const RenderBox& child)
@@ -83,7 +83,7 @@ protected:
         return child.firstLineBaseline().value_or(child.logicalHeight());
     }
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void layoutInvalidMarkup(bool relayoutChildren);
 
 private:

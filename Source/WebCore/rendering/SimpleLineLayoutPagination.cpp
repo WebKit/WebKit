@@ -88,7 +88,7 @@ static unsigned computeLineBreakIndex(unsigned breakCandidate, unsigned lineCoun
 static LayoutUnit computeOffsetAfterLineBreak(LayoutUnit lineBreakPosition, bool isFirstLine, bool atTheTopOfColumnOrPage, const RenderBlockFlow& flow)
 {
     // No offset for top of the page lines unless widows pushed the line break.
-    LayoutUnit offset = isFirstLine ? flow.borderAndPaddingBefore() : LayoutUnit();
+    LayoutUnit offset = isFirstLine ? flow.borderAndPaddingBefore() : 0_lu;
     if (atTheTopOfColumnOrPage)
         return offset;
     return offset + flow.pageRemainingLogicalHeightForOffset(lineBreakPosition, RenderBlockFlow::ExcludePageBoundary);
@@ -104,8 +104,8 @@ static void setPageBreakForLine(unsigned lineBreakIndex, PaginatedLines& lines, 
     auto orphanDoesNotFit = !style.hasAutoOrphans() && style.orphans() > (short)lineBreakIndex;
     if (firstLineDoesNotFit || orphanDoesNotFit) {
         auto firstLine = lines.first();
-        auto firstLineOverflowRect = computeOverflow(flow, LayoutRect(0, firstLine.top, 0, firstLine.height));
-        auto firstLineUpperOverhang = std::max<LayoutUnit>(-firstLineOverflowRect.y(), 0);
+        auto firstLineOverflowRect = computeOverflow(flow, LayoutRect(0_lu, firstLine.top, 0_lu, firstLine.height));
+        auto firstLineUpperOverhang = std::max<LayoutUnit>(-firstLineOverflowRect.y(), 0_lu);
         flow.setPaginationStrut(line.top + remainingLogicalHeight + firstLineUpperOverhang);
         return;
     }

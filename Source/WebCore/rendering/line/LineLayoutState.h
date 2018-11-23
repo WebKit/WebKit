@@ -144,7 +144,7 @@ public:
         m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight;
     }
 
-    void updateRepaintRangeFromBox(RootInlineBox* box, LayoutUnit paginationDelta = 0)
+    void updateRepaintRangeFromBox(RootInlineBox* box, LayoutUnit paginationDelta = 0_lu)
     {
         m_usesRepaintBounds = true;
         m_repaintLogicalTop = std::min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + std::min<LayoutUnit>(paginationDelta, 0));

@@ -2115,7 +2115,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     // both halves helps to prevent cases where we have a fully loaded menu bar or masthead with
     // no content beneath that.
     LayoutRect topRelevantRect = relevantRect;
-    topRelevantRect.contract(LayoutSize(0, relevantRect.height() / 2));
+    topRelevantRect.contract(LayoutSize(0_lu, relevantRect.height() / 2));
     LayoutRect bottomRelevantRect = topRelevantRect;
     bottomRelevantRect.setY(relevantRect.height() / 2);
 

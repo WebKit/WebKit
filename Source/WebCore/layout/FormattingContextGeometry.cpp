@@ -458,10 +458,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGe
                 marginLeft = marginRight = marginLeftAndRight / 2;  
             else {
                 if (isLeftToRightDirection) {
-                    marginLeft = LayoutUnit { 0 };
+                    marginLeft = 0_lu;
                     marginRight = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + *width + paddingRight + borderRight + *right);
                 } else {
-                    marginRight = LayoutUnit { 0 };
+                    marginRight = 0_lu;
                     marginLeft = containingBlockWidth - (*left + borderLeft + paddingLeft + *width + paddingRight + borderRight + *marginRight + *right);
                 }
             }
@@ -659,10 +659,10 @@ HorizontalGeometry FormattingContext::Geometry::outOfFlowReplacedHorizontalGeome
             marginLeft = marginRight = marginLeftAndRight / 2;
         else {
             if (isLeftToRightDirection) {
-                marginLeft = LayoutUnit { 0 };
+                marginLeft = 0_lu;
                 marginRight = containingBlockWidth - (*left + *marginLeft + borderLeft + paddingLeft + width + paddingRight + borderRight + *right);
             } else {
-                marginRight = LayoutUnit { 0 };
+                marginRight = 0_lu;
                 marginLeft = containingBlockWidth - (*left + borderLeft + paddingLeft + width + paddingRight + borderRight + *marginRight + *right);
             }
         }
@@ -900,14 +900,14 @@ WidthAndMargin FormattingContext::Geometry::inlineReplacedWidthAndMargin(const L
         if (precomputedMarginRight)
             return precomputedMarginRight.value();
         auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth);
-        return marginRight.value_or(LayoutUnit { 0 });
+        return marginRight.value_or(0_lu);
     };
 
     auto computeMarginLeft = [&]() {
         if (precomputedMarginLeft)
             return precomputedMarginLeft.value();
         auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth);
-        return marginLeft.value_or(LayoutUnit { 0 });
+        return marginLeft.value_or(0_lu);
     };
 
     auto replaced = layoutBox.replaced();
@@ -1052,8 +1052,8 @@ HorizontalEdges FormattingContext::Geometry::computedNonCollapsedHorizontalMargi
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
-    auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth).value_or(LayoutUnit { 0 });
-    auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(LayoutUnit { 0 });
+    auto marginLeft = computedValueIfNotAuto(style.marginLeft(), containingBlockWidth).value_or(0_lu);
+    auto marginRight = computedValueIfNotAuto(style.marginRight(), containingBlockWidth).value_or(0_lu);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed horizontal -> margin(" << marginLeft << "px, " << marginRight << "px) -> layoutBox: " << &layoutBox);
     return { marginLeft, marginRight };
@@ -1064,8 +1064,8 @@ VerticalEdges FormattingContext::Geometry::computedNonCollapsedVerticalMarginVal
     auto& style = layoutBox.style();
     auto containingBlockWidth = layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock()).contentBoxWidth();
 
-    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(LayoutUnit { 0 });
-    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(LayoutUnit { 0 });
+    auto marginTop = computedValueIfNotAuto(style.marginTop(), containingBlockWidth).value_or(0_lu);
+    auto marginBottom = computedValueIfNotAuto(style.marginBottom(), containingBlockWidth).value_or(0_lu);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Margin] -> non collapsed vertical -> margin(" << marginTop << "px, " << marginBottom << "px) -> layoutBox: " << &layoutBox);
     return { marginTop, marginBottom };

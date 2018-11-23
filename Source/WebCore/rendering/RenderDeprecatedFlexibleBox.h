@@ -40,7 +40,7 @@ public:
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0) override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0_lu) override;
     void layoutHorizontalBox(bool relayoutChildren);
     void layoutVerticalBox(bool relayoutChildren);
 

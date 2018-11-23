@@ -46,7 +46,7 @@ private:
     MathMLUnderOverElement& element() const;
 
     void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
     void stretchHorizontalOperatorsAndLayoutChildren();
     bool isValid() const;

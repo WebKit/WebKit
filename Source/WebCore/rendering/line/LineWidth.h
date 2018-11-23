@@ -61,7 +61,7 @@ public:
     bool hasCommitted() const { return m_hasCommitted; }
     bool hasCommittedReplaced() const { return m_hasCommittedReplaced; }
 
-    void updateAvailableWidth(LayoutUnit minimumHeight = 0);
+    void updateAvailableWidth(LayoutUnit minimumHeight = 0_lu);
     void shrinkAvailableWidthForNewFloatIfNeeded(const FloatingObject&);
     void addUncommittedWidth(float delta)
     {

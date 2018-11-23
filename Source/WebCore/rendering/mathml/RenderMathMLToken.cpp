@@ -607,7 +607,7 @@ void RenderMathMLToken::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     GlyphBuffer buffer;
     buffer.add(mathVariantGlyph.glyph, mathVariantGlyph.font, mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph));
     LayoutUnit glyphAscent = static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y()));
-    info.context().drawGlyphs(*mathVariantGlyph.font, buffer, 0, 1, paintOffset + location() + LayoutPoint(0, glyphAscent), style().fontCascade().fontDescription().fontSmoothing());
+    info.context().drawGlyphs(*mathVariantGlyph.font, buffer, 0, 1, paintOffset + location() + LayoutPoint(0_lu, glyphAscent), style().fontCascade().fontDescription().fontSmoothing());
 }
 
 void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)

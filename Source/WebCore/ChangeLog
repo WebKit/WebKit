@@ -1,3 +1,93 @@
+2018-11-23  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Introduce user-defined literal for LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=191915
+
+        Reviewed by Dean Jackson.
+
+        * platform/LayoutUnit.h:
+        Introduce a user-defined literal for LayoutUnit, _lu, replacing the existing "fromPixel" factory function.
+
+        * layout/FormattingContextGeometry.cpp:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        * page/FrameView.cpp:
+        * page/FrameViewLayoutContext.h:
+        * page/Page.cpp:
+        * page/SpatialNavigation.h:
+        * platform/ScrollableArea.cpp:
+        * rendering/EllipsisBox.cpp:
+        * rendering/FlexibleBoxAlgorithm.cpp:
+        * rendering/FloatingObjects.cpp:
+        * rendering/GridLayoutFunctions.cpp:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/LayoutState.h:
+        * rendering/LogicalSelectionOffsetCaches.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        * rendering/RenderElement.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderFragmentContainer.cpp:
+        * rendering/RenderFragmentedFlow.cpp:
+        * rendering/RenderGrid.cpp:
+        * rendering/RenderGrid.h:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderMultiColumnFlow.cpp:
+        * rendering/RenderMultiColumnSet.cpp:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/RenderView.cpp:
+        * rendering/RootInlineBox.h:
+        * rendering/SimpleLineLayout.cpp:
+        * rendering/SimpleLineLayoutPagination.cpp:
+        * rendering/TableLayout.h:
+        * rendering/line/BreakingContext.h:
+        * rendering/line/LineLayoutState.h:
+        * rendering/line/LineWidth.h:
+        * rendering/mathml/MathOperator.cpp:
+        * rendering/mathml/MathOperator.h:
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLMath.cpp:
+        * rendering/mathml/RenderMathMLMath.h:
+        * rendering/mathml/RenderMathMLMenclose.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLPadded.h:
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLSpace.h:
+        * rendering/mathml/RenderMathMLToken.cpp:
+        * rendering/mathml/RenderMathMLToken.h:
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        * rendering/style/CollapsedBorderValue.h:
+        Update all instances of LayoutUnit(), LayoutUnit(0), LayoutUnit { 0 }, etc. and add any other
+        literal conversions that will be needed when making non-int LayoutUnit constructors explicit.
+        For good measure, also mark all default values for LayoutUnit parameters.
+
 2018-11-23  Jim Mason  <jmason@ibinx.com>
 
         [GTK] Scrollbars not following gtk-primary-button-warps-slider setting

@@ -169,7 +169,7 @@ const Shape& ShapeOutsideInfo::computedShape() const
     const RenderStyle& containingBlockStyle = m_renderer.containingBlock()->style();
 
     WritingMode writingMode = containingBlockStyle.writingMode();
-    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : LayoutUnit());
+    float margin = floatValueForLength(m_renderer.style().shapeMargin(), m_renderer.containingBlock() ? m_renderer.containingBlock()->contentWidth() : 0_lu);
     float shapeImageThreshold = style.shapeImageThreshold();
     const ShapeValue& shapeValue = *style.shapeOutside();
 
@@ -227,7 +227,7 @@ LayoutUnit ShapeOutsideInfo::logicalTopOffset() const
     case CSSBoxType::MarginBox:
         return -m_renderer.marginBefore(&m_renderer.containingBlock()->style());
     case CSSBoxType::BorderBox:
-        return LayoutUnit();
+        return 0_lu;
     case CSSBoxType::PaddingBox:
         return borderBeforeInWritingMode(m_renderer, m_renderer.containingBlock()->style().writingMode());
     case CSSBoxType::ContentBox:
@@ -243,7 +243,7 @@ LayoutUnit ShapeOutsideInfo::logicalTopOffset() const
     }
     
     ASSERT_NOT_REACHED();
-    return LayoutUnit();
+    return 0_lu;
 }
 
 static inline LayoutUnit borderStartWithStyleForWritingMode(const RenderBox& renderer, const RenderStyle& style)
@@ -277,13 +277,13 @@ static inline LayoutUnit borderAndPaddingStartWithStyleForWritingMode(const Rend
 LayoutUnit ShapeOutsideInfo::logicalLeftOffset() const
 {
     if (m_renderer.isRenderFragmentContainer())
-        return LayoutUnit();
+        return 0_lu;
     
     switch (referenceBox(*m_renderer.style().shapeOutside())) {
     case CSSBoxType::MarginBox:
         return -m_renderer.marginStart(&m_renderer.containingBlock()->style());
     case CSSBoxType::BorderBox:
-        return LayoutUnit();
+        return 0_lu;
     case CSSBoxType::PaddingBox:
         return borderStartWithStyleForWritingMode(m_renderer, m_renderer.containingBlock()->style());
     case CSSBoxType::ContentBox:
@@ -299,7 +299,7 @@ LayoutUnit ShapeOutsideInfo::logicalLeftOffset() const
     }
 
     ASSERT_NOT_REACHED();
-    return LayoutUnit();
+    return 0_lu;
 }
 
 bool ShapeOutsideInfo::isEnabledFor(const RenderBox& box)
@@ -326,18 +326,18 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
 
     if (isShapeDirty() || !m_shapeOutsideDeltas.isForLine(borderBoxLineTop, lineHeight)) {
         LayoutUnit referenceBoxLineTop = borderBoxLineTop - logicalTopOffset();
-        LayoutUnit floatMarginBoxWidth = std::max<LayoutUnit>(LayoutUnit(), containingBlock.logicalWidthForFloat(floatingObject));
+        LayoutUnit floatMarginBoxWidth = std::max<LayoutUnit>(0_lu, containingBlock.logicalWidthForFloat(floatingObject));
 
         if (computedShape().lineOverlapsShapeMarginBounds(referenceBoxLineTop, lineHeight)) {
             LineSegment segment = computedShape().getExcludedInterval((borderBoxLineTop - logicalTopOffset()), std::min(lineHeight, shapeLogicalBottom() - borderBoxLineTop));
             if (segment.isValid) {
                 LayoutUnit logicalLeftMargin = containingBlock.style().isLeftToRightDirection() ? containingBlock.marginStartForChild(m_renderer) : containingBlock.marginEndForChild(m_renderer);
                 LayoutUnit rawLeftMarginBoxDelta = segment.logicalLeft + logicalLeftOffset() + logicalLeftMargin;
-                LayoutUnit leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, LayoutUnit(), floatMarginBoxWidth);
+                LayoutUnit leftMarginBoxDelta = clampTo<LayoutUnit>(rawLeftMarginBoxDelta, 0_lu, floatMarginBoxWidth);
 
                 LayoutUnit logicalRightMargin = containingBlock.style().isLeftToRightDirection() ? containingBlock.marginEndForChild(m_renderer) : containingBlock.marginStartForChild(m_renderer);
                 LayoutUnit rawRightMarginBoxDelta = segment.logicalRight + logicalLeftOffset() - containingBlock.logicalWidthForChild(m_renderer) - logicalRightMargin;
-                LayoutUnit rightMarginBoxDelta = clampTo<LayoutUnit>(rawRightMarginBoxDelta, -floatMarginBoxWidth, LayoutUnit());
+                LayoutUnit rightMarginBoxDelta = clampTo<LayoutUnit>(rawRightMarginBoxDelta, -floatMarginBoxWidth, 0_lu);
 
                 m_shapeOutsideDeltas = ShapeOutsideDeltas(leftMarginBoxDelta, rightMarginBoxDelta, true, borderBoxLineTop, lineHeight);
                 return m_shapeOutsideDeltas;

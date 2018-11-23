@@ -118,7 +118,7 @@ IntRect EllipsisBox::selectionRect()
     const FontCascade& font = lineStyle.fontCascade();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect = LayoutRect(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock(), 0, rootBox.selectionHeightAdjustedForPrecedingBlock());
+    LayoutRect selectionRect = LayoutRect(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock(), 0_lu, rootBox.selectionHeightAdjustedForPrecedingBlock());
     font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, AllowTrailingExpansion), selectionRect);
     // FIXME: use directional pixel snapping instead.
     return enclosingIntRect(selectionRect);
@@ -139,7 +139,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     const RootInlineBox& rootBox = root();
     GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0, rootBox.selectionHeight());
+    LayoutRect selectionRect = LayoutRect(x() + paintOffset.x(), y() + paintOffset.y() + rootBox.selectionTop(), 0_lu, rootBox.selectionHeight());
     TextRun run = RenderBlock::constructTextRun(m_str, style, AllowTrailingExpansion);
     font.adjustSelectionRectForText(run, selectionRect);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);

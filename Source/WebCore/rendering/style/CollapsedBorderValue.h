@@ -47,7 +47,7 @@ public:
     {
     }
 
-    LayoutUnit width() const { return style() > BorderStyle::Hidden ? m_width : LayoutUnit::fromPixel(0); }
+    LayoutUnit width() const { return style() > BorderStyle::Hidden ? m_width : 0_lu; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
     bool exists() const { return precedence() != BorderPrecedence::Off; }
     const Color& color() const { return m_color; }

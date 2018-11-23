@@ -43,7 +43,7 @@ private:
     const char* renderName() const final { return "RenderMathMLMath"; }
 
     void centerChildren(LayoutUnit contentWidth);
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 };
 
 }

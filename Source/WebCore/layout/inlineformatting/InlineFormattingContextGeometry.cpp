@@ -88,10 +88,10 @@ static LayoutUnit adjustedLineLogicalLeft(TextAlignMode align, LayoutUnit lineLo
     case TextAlignMode::Right:
     case TextAlignMode::WebKitRight:
     case TextAlignMode::End:
-        return lineLogicalLeft + std::max(remainingWidth, LayoutUnit());
+        return lineLogicalLeft + std::max(remainingWidth, 0_lu);
     case TextAlignMode::Center:
     case TextAlignMode::WebKitCenter:
-        return lineLogicalLeft + std::max(remainingWidth / 2, LayoutUnit());
+        return lineLogicalLeft + std::max(remainingWidth / 2, 0_lu);
     case TextAlignMode::Justify:
         ASSERT_NOT_REACHED();
         break;

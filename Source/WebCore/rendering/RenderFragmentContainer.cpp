@@ -81,7 +81,7 @@ LayoutPoint RenderFragmentContainer::mapFragmentPointIntoFragmentedFlowCoordinat
     effectiveFixedPointDenominator.setRawValue(1);
 
     if (pointLogicalTop < 0) {
-        LayoutPoint pointInThread(0, fragmentedFlowLogicalTop);
+        LayoutPoint pointInThread(0_lu, fragmentedFlowLogicalTop);
         return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
     }
 

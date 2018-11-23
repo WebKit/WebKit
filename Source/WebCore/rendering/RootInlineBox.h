@@ -207,7 +207,7 @@ private:
     bool includeInitialLetterForBox(InlineBox&) const;
     bool includeMarginForBox(InlineBox&) const;
 
-    LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0) const;
+    LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0_lu) const;
 
     LayoutUnit beforeAnnotationsAdjustment() const;
 

@@ -173,7 +173,7 @@ bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& l
 
 RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const
 {
-    return { !shouldUsePrintingLayout() ? LayoutUnit(viewLogicalHeight()) : logicalHeight, LayoutUnit(), ComputedMarginValues() };
+    return { !shouldUsePrintingLayout() ? LayoutUnit(viewLogicalHeight()) : logicalHeight, 0_lu, ComputedMarginValues() };
 }
 
 void RenderView::updateLogicalWidth()
@@ -209,7 +209,7 @@ void RenderView::layout()
 
     if (shouldUsePrintingLayout()) {
         if (!m_pageLogicalSize)
-            m_pageLogicalSize = LayoutSize(logicalWidth(), 0);
+            m_pageLogicalSize = LayoutSize(logicalWidth(), 0_lu);
         m_minPreferredLogicalWidth = m_pageLogicalSize->width();
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
     }

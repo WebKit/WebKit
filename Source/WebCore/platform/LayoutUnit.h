@@ -85,11 +85,6 @@ public:
         m_value = clampToInteger(value * kFixedPointDenominator);
     }
 
-    static LayoutUnit fromPixel(int value)
-    {
-        return LayoutUnit(value);
-    }
-
     static LayoutUnit fromFloatCeil(float value)
     {
         LayoutUnit v;
@@ -824,6 +819,15 @@ inline LayoutUnit absoluteValue(const LayoutUnit& value)
 inline bool isIntegerValue(const LayoutUnit value)
 {
     return value.toInt() == value;
+}
+
+inline namespace StringLiterals {
+
+inline LayoutUnit operator"" _lu(unsigned long long value)
+{
+    return LayoutUnit(value);
+}
+
 }
 
 } // namespace WebCore

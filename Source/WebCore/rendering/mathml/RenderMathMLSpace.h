@@ -43,7 +43,7 @@ private:
     bool isRenderMathMLSpace() const final { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
     void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<int> firstLineBaseline() const final;
 
     LayoutUnit spaceWidth() const;

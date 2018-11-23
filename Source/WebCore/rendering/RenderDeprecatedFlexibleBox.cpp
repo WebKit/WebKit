@@ -415,7 +415,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         // Our first pass is done without flexing.  We simply lay the children
         // out within the box.  We have to do a layout first in order to determine
         // our box's intrinsic height.
-        LayoutUnit maxAscent = 0, maxDescent = 0;
+        LayoutUnit maxAscent, maxDescent;
         for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
             if (relayoutChildren)
                 child->setChildNeedsLayout(MarkOnlyThis);
@@ -650,7 +650,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                     remainingSpace -= (remainingSpace/totalChildren);
                     --totalChildren;
 
-                    placeChild(child, child->location() + LayoutSize(offset, 0));
+                    placeChild(child, child->location() + LayoutSize(offset, 0_lu));
                 }
             }
         } else {
@@ -662,7 +662,7 @@ void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
                 if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
 
-                placeChild(child, child->location() + LayoutSize(offset, 0));
+                placeChild(child, child->location() + LayoutSize(offset, 0_lu));
             }
         }
     }
@@ -906,7 +906,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     offset += remainingSpace/totalChildren;
                     remainingSpace -= (remainingSpace/totalChildren);
                     --totalChildren;
-                    placeChild(child, child->location() + LayoutSize(0, offset));
+                    placeChild(child, child->location() + LayoutSize(0_lu, offset));
                 }
             }
         } else {
@@ -917,7 +917,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
                 if (childDoesNotAffectWidthOrFlexing(child))
                     continue;
-                placeChild(child, child->location() + LayoutSize(0, offset));
+                placeChild(child, child->location() + LayoutSize(0_lu, offset));
             }
         }
     }

@@ -246,8 +246,8 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
         if (!hasDefiniteLogicalHeight) {
-            m_minContentHeight = LayoutUnit();
-            m_maxContentHeight = LayoutUnit();
+            m_minContentHeight = 0_lu;
+            m_maxContentHeight = 0_lu;
             computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows, *m_minContentHeight, *m_maxContentHeight);
             // FIXME: This should be really added to the intrinsic height in RenderBox::computeContentAndScrollbarLogicalHeightUsing().
             // Remove this when that is fixed.
@@ -317,7 +317,7 @@ LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, std::optional
 {
     const GapLength& gapLength = direction == ForColumns? style().columnGap() : style().rowGap();
     if (gapLength.isNormal())
-        return LayoutUnit();
+        return 0_lu;
 
     return valueForLength(gapLength.length(), availableSize.value_or(0));
 }
@@ -505,7 +505,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
     }
     // For the purpose of finding the number of auto-repeated tracks, the UA must floor the track size to a UA-specified
     // value to avoid division by zero. It is suggested that this floor be 1px.
-    autoRepeatTracksSize = std::max<LayoutUnit>(LayoutUnit(1), autoRepeatTracksSize);
+    autoRepeatTracksSize = std::max<LayoutUnit>(1_lu, autoRepeatTracksSize);
 
     // There will be always at least 1 auto-repeat track, so take it already into account when computing the total track size.
     LayoutUnit tracksSize = autoRepeatTracksSize;
@@ -875,7 +875,7 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
 
     ASSERT(!m_grid.needsItemsPlacement());
     bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
-    LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : LayoutUnit();
+    LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
     tracks.reserveCapacity(numPositions - 1);
     for (size_t i = 0; i < numPositions - 2; ++i)
         tracks.append(positions[i + 1] - positions[i] - offsetBetweenTracks - gap);
@@ -1057,7 +1057,7 @@ void RenderGrid::populateGridPositionsForDirection(GridTrackSizingDirection dire
     if (numberOfLines > 1) {
         // If we have collapsed tracks we just ignore gaps here and add them later as we might not
         // compute the gap between two consecutive tracks without examining the surrounding ones.
-        LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : LayoutUnit();
+        LayoutUnit gap = !hasCollapsedTracks ? gridGap(direction) : 0_lu;
         unsigned nextToLastLine = numberOfLines - 2;
         for (unsigned i = 0; i < nextToLastLine; ++i)
             positions[i + 1] = positions[i] + offset.distributionOffset + tracks[i].baseSize() + gap;
@@ -1145,11 +1145,11 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overrideContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
-        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, LayoutUnit(-1));
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, -1_lu);
         child.setOverrideContentLogicalHeight(desiredLogicalHeight - child.borderAndPaddingLogicalHeight());
         if (desiredLogicalHeight != child.logicalHeight()) {
             // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-            child.setLogicalHeight(LayoutUnit());
+            child.setLogicalHeight(0_lu);
             child.setNeedsLayout();
         }
     }
@@ -1500,7 +1500,7 @@ bool RenderGrid::gridPositionIsAutoForOutOfFlow(GridPosition position, GridTrack
 LayoutUnit RenderGrid::resolveAutoStartGridPosition(GridTrackSizingDirection direction) const
 {
     if (direction == ForRows || style().isLeftToRightDirection())
-        return LayoutUnit();
+        return 0_lu;
 
     int lastLine = numTracks(ForColumns, m_grid);
     ContentPosition position = style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid());
@@ -1508,7 +1508,7 @@ LayoutUnit RenderGrid::resolveAutoStartGridPosition(GridTrackSizingDirection dir
         return m_columnPositions[lastLine] - clientLogicalWidth();
     if (position == ContentPosition::Start || style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) == ContentDistribution::Stretch)
         return m_columnPositions[0] - borderAndPaddingLogicalLeft();
-    return LayoutUnit();
+    return 0_lu;
 }
 
 LayoutUnit RenderGrid::resolveAutoEndGridPosition(GridTrackSizingDirection direction) const
@@ -1571,13 +1571,13 @@ LayoutUnit RenderGrid::gridAreaBreadthForOutOfFlowChild(const RenderBox& child, 
             end -= isRowAxis ? m_offsetBetweenColumns.distributionOffset : m_offsetBetweenRows.distributionOffset;
         }
     }
-    return std::max(end - start, LayoutUnit());
+    return std::max(end - start, 0_lu);
 }
 
 LayoutUnit RenderGrid::logicalOffsetForChild(const RenderBox& child, GridTrackSizingDirection direction, LayoutUnit trackBreadth) const
 {
     if (hasStaticPositionForChild(child, direction))
-        return LayoutUnit();
+        return 0_lu;
 
     bool isRowAxis = direction == ForColumns;
     bool isFlowAwareRowAxis = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, direction) == ForColumns;
@@ -1662,8 +1662,8 @@ static void contentDistributionOffset(ContentAlignmentData& offset, const Layout
         fallbackPosition = resolveContentDistributionFallback(distribution);
 
     // Initialize to an invalid offset.
-    offset.positionOffset = LayoutUnit(-1);
-    offset.distributionOffset = LayoutUnit(-1);
+    offset.positionOffset = -1_lu;
+    offset.distributionOffset = -1_lu;
     if (availableFreeSpace <= 0)
         return;
 
@@ -1674,7 +1674,7 @@ static void contentDistributionOffset(ContentAlignmentData& offset, const Layout
         if (numberOfGridTracks < 2)
             return;
         distributionOffset = availableFreeSpace / (numberOfGridTracks - 1);
-        positionOffset = LayoutUnit();
+        positionOffset = 0_lu;
         break;
     case ContentDistribution::SpaceAround:
         if (numberOfGridTracks < 1)
@@ -1717,8 +1717,8 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
         return;
 
     if (availableFreeSpace <= 0 && contentAlignmentData.overflow() == OverflowAlignment::Safe) {
-        offset.positionOffset = LayoutUnit();
-        offset.distributionOffset = LayoutUnit();
+        offset.positionOffset = 0_lu;
+        offset.distributionOffset = 0_lu;
         return;
     }
 
@@ -1737,21 +1737,21 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     case ContentPosition::FlexEnd: // Only used in flex layout, for other layout, it's equivalent to 'end'.
     case ContentPosition::End:
         if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? availableFreeSpace : LayoutUnit();
+            positionOffset = style().isLeftToRightDirection() ? availableFreeSpace : 0_lu;
         else
             positionOffset = availableFreeSpace;
         break;
     case ContentPosition::FlexStart: // Only used in flex layout, for other layout, it's equivalent to 'start'.
     case ContentPosition::Start:
         if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace;
+            positionOffset = style().isLeftToRightDirection() ? 0_lu : availableFreeSpace;
         break;
     case ContentPosition::Baseline:
     case ContentPosition::LastBaseline:
         // FIXME: Implement the previous values. For now, we always 'start' align.
         // http://webkit.org/b/145566
         if (isRowAxis)
-            positionOffset = style().isLeftToRightDirection() ? LayoutUnit() : availableFreeSpace;
+            positionOffset = style().isLeftToRightDirection() ? 0_lu : availableFreeSpace;
         break;
     case ContentPosition::Normal:
     default:
@@ -1760,7 +1760,7 @@ void RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDire
     }
 
     offset.positionOffset = positionOffset;
-    offset.distributionOffset = LayoutUnit();
+    offset.distributionOffset = 0_lu;
 }
 
 LayoutUnit RenderGrid::translateOutOfFlowRTLCoordinate(const RenderBox& child, LayoutUnit coordinate) const
