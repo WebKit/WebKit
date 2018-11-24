@@ -42,8 +42,8 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
-#include "LayerRepresentation.h"
 #include "PluginComplexTextInputState.h"
+#include "RemoteLayerTreeNode.h"
 #include "WKFoundation.h"
 
 OBJC_CLASS CALayer;
@@ -245,8 +245,8 @@ public:
     virtual void notifyInputContextAboutDiscardedComposition() = 0;
     virtual void makeFirstResponder() = 0;
     virtual void assistiveTechnologyMakeFirstResponder() = 0;
-    virtual void setAcceleratedCompositingRootLayer(LayerOrView *) = 0;
-    virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
+    virtual void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) = 0;
+    virtual CALayer *acceleratedCompositingRootLayer() const = 0;
     virtual RefPtr<ViewSnapshot> takeViewSnapshot() = 0;
 #if ENABLE(MAC_GESTURE_EVENTS)
     virtual void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&) = 0;

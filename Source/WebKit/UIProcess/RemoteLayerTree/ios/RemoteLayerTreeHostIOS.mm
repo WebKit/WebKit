@@ -58,11 +58,11 @@ static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
     return adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:contextID]);
 }
 
-LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
+void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
 {
-    RetainPtr<LayerOrView>& view = m_layers.add(properties.layerID, nullptr).iterator->value;
+    ASSERT(!m_nodes.contains(properties.layerID));
 
-    ASSERT(!view);
+    RetainPtr<UIView> view;
 
     switch (properties.type) {
     case PlatformCALayer::LayerTypeLayer:
@@ -117,7 +117,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
 
     setLayerID([view layer], properties.layerID);
 
-    return view.get();
+    m_nodes.add(properties.layerID, std::make_unique<RemoteLayerTreeNode>(WTFMove(view)));
 }
 
 RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)

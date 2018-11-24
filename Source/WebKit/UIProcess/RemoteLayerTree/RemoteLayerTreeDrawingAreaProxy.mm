@@ -204,7 +204,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 
     if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
-            m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost->rootLayer());
+            m_webPageProxy.setRemoteLayerTreeRootNode(m_remoteLayerTreeHost->rootNode());
         else
             m_remoteLayerTreeHost->detachRootLayer();
     }
@@ -239,7 +239,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         scrollPosition = layerTreeTransaction.scrollPosition();
 #endif
         updateDebugIndicator(layerTreeTransaction.contentsSize(), rootLayerChanged, scale, scrollPosition);
-        asLayer(m_debugIndicatorLayerTreeHost->rootLayer()).name = @"Indicator host root";
+        m_debugIndicatorLayerTreeHost->rootLayer().name = @"Indicator host root";
     }
 
     m_webPageProxy.layerTreeCommitComplete();
@@ -337,7 +337,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator()
 void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize, bool rootLayerChanged, float scale, const IntPoint& scrollPosition)
 {
     // Make sure we're the last sublayer.
-    CALayer *rootLayer = asLayer(m_remoteLayerTreeHost->rootLayer());
+    CALayer *rootLayer = m_remoteLayerTreeHost->rootLayer();
     [m_tileMapHostLayer removeFromSuperlayer];
     [rootLayer addSublayer:m_tileMapHostLayer.get()];
 
@@ -350,7 +350,7 @@ void RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator(IntSize contentsSize,
 
     if (rootLayerChanged) {
         [m_tileMapHostLayer setSublayers:@[]];
-        [m_tileMapHostLayer addSublayer:asLayer(m_debugIndicatorLayerTreeHost->rootLayer())];
+        [m_tileMapHostLayer addSublayer:m_debugIndicatorLayerTreeHost->rootLayer()];
         [m_tileMapHostLayer addSublayer:m_exposedRectIndicatorLayer.get()];
     }
     
@@ -500,7 +500,7 @@ bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
     return m_webPageProxy.isAlwaysOnLoggingAllowed();
 }
 
-LayerOrView* RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const
+CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const
 {
     return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }

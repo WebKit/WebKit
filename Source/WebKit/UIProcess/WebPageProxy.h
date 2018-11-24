@@ -112,7 +112,7 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if PLATFORM(COCOA)
 #include "DynamicViewportSizeUpdate.h"
-#include "LayerRepresentation.h"
+#include "RemoteLayerTreeNode.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
 #endif
@@ -699,8 +699,8 @@ public:
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 
-    void setAcceleratedCompositingRootLayer(LayerOrView*);
-    LayerOrView* acceleratedCompositingRootLayer() const;
+    void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*);
+    CALayer *acceleratedCompositingRootLayer() const;
 
     void setTextAsync(const String&);
     void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot, bool suppressSelectionUpdate = false);

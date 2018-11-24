@@ -495,12 +495,12 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
 }
 
-void PageClientImpl::setAcceleratedCompositingRootLayer(LayerOrView *rootLayer)
+void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
-    [m_contentView _setAcceleratedCompositingRootView:rootLayer];
+    [m_contentView _setAcceleratedCompositingRootView:rootNode ? rootNode->uiView() : nil];
 }
 
-LayerOrView *PageClientImpl::acceleratedCompositingRootLayer() const
+CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 {
     notImplemented();
     return nullptr;

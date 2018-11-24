@@ -35,6 +35,7 @@
 #import <WebCore/DeviceResponseConverter.h>
 #import <WebCore/FidoConstants.h>
 #import <WebCore/FidoHidMessage.h>
+#import <wtf/RunLoop.h>
 
 namespace WebKit {
 using namespace fido;

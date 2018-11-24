@@ -29,8 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 #if ENABLE(ASYNC_SCROLLING)
 
-#import "LayerRepresentation.h"
 #import "RemoteLayerTreeHost.h"
+#import "RemoteLayerTreeNode.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIView.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
@@ -47,11 +47,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static LayerRepresentation layerRepresentationFromLayerOrView(LayerOrView *layerOrView)
-{
-    return LayerRepresentation(layerOrView.layer);
-}
-
 void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
     for (auto& currNode : stateTree.nodeMap().values()) {
@@ -60,10 +55,10 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                scrollingStateNode.setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.layer())));
+                scrollingStateNode.setLayer(layerTreeHost.layerForID(scrollingStateNode.layer()));
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
-                scrollingStateNode.setScrolledContentsLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.scrolledContentsLayer())));
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode.scrolledContentsLayer()));
             break;
         };
         case MainFrameScrollingNode:
@@ -71,23 +66,23 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                scrollingStateNode.setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.layer())));
+                scrollingStateNode.setLayer(layerTreeHost.layerForID(scrollingStateNode.layer()));
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
-                scrollingStateNode.setCounterScrollingLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.counterScrollingLayer())));
+                scrollingStateNode.setCounterScrollingLayer(layerTreeHost.layerForID(scrollingStateNode.counterScrollingLayer()));
 
             // FIXME: we should never have header and footer layers coming from the WebProcess.
             if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::HeaderLayer))
-                scrollingStateNode.setHeaderLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.headerLayer())));
+                scrollingStateNode.setHeaderLayer(layerTreeHost.layerForID(scrollingStateNode.headerLayer()));
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateFrameScrollingNode::FooterLayer))
-                scrollingStateNode.setFooterLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(scrollingStateNode.footerLayer())));
+                scrollingStateNode.setFooterLayer(layerTreeHost.layerForID(scrollingStateNode.footerLayer()));
             break;
         }
         case FixedNode:
         case StickyNode:
             if (currNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
-                currNode->setLayer(layerRepresentationFromLayerOrView(layerTreeHost.getLayer(currNode->layer())));
+                currNode->setLayer(layerTreeHost.layerForID(currNode->layer()));
             break;
         }
     }

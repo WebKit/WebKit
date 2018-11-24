@@ -1,3 +1,93 @@
+2018-11-23  Antti Koivisto  <antti@apple.com>
+
+        Replace LayerOrView typedef with a class
+        https://bugs.webkit.org/show_bug.cgi?id=191927
+
+        Reviewed by Tim Horton.
+
+        This typedef restricts remote layer representation to be either a CA layer or a view. We might want
+        have more flexibility, for example tiles don't really need to be UIViews. It will also make it easier
+        to unify Mac and iOS code, and hopefully make it less confusing too.
+
+        This patch introduces RemoteLayerTreeNode class that replaces most uses of LayerOrView typedef
+        (the rest are converted to pure CALayer). It also does a bunch of related cleanup.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToUIView):
+        (WebKit::applyPropertiesToLayer): Deleted.
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _propertiesOfLayerWithID:]):
+        * UIProcess/Cocoa/LayerRepresentation.h: Removed.
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        * UIProcess/PageClient.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::updateDebugIndicator):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting const):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        (WebKit::RemoteLayerTreeHost::rootNode const):
+        (WebKit::RemoteLayerTreeHost::rootLayer const): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::nodeForID const):
+        (WebKit::RemoteLayerTreeHost::layerWillBeRemoved):
+        (WebKit::RemoteLayerTreeHost::animationDidStart):
+        (WebKit::RemoteLayerTreeHost::animationDidEnd):
+        (WebKit::RemoteLayerTreeHost::clearLayers):
+        (WebKit::RemoteLayerTreeHost::layerWithIDForTesting const):
+        (WebKit::RemoteLayerTreeHost::layerForID const):
+        (WebKit::RemoteLayerTreeHost::rootLayer const):
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        (WebKit::RemoteLayerTreeHost::detachRootLayer):
+        (WebKit::RemoteLayerTreeHost::mapAllIOSurfaceBackingStore):
+        (WebKit::RemoteLayerTreeHost::getLayer const): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h: Added.
+        (WebKit::RemoteLayerTreeNode::layer const):
+        (WebKit::RemoteLayerTreeNode::uiView const):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm: Added.
+        (WebKit::RemoteLayerTreeNode::RemoteLayerTreeNode):
+        (WebKit::RemoteLayerTreeNode::detachFromParent):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm:
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::blankPixelCount const):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        (WebKit::layerRepresentationFromLayerOrView): Deleted.
+        * UIProcess/WebAuthentication/Cocoa/HidService.h:
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/LayerRepresentation.mm: Removed.
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setRemoteLayerTreeRootNode):
+        (WebKit::PageClientImpl::acceleratedCompositingRootLayer const):
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setRemoteLayerTreeRootNode):
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setRemoteLayerTreeRootNode):
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer): Deleted.
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::createFence):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setRemoteLayerTreeRootNode):
+        (WebKit::WebPageProxy::acceleratedCompositingRootLayer const):
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+
 2018-11-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable Web Authentication as an experimental feature for macOS

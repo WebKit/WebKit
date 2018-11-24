@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayerRepresentation.h"
+#include "RemoteLayerTreeNode.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
 #include <wtf/HashMap.h>
@@ -45,10 +45,13 @@ public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     virtual ~RemoteLayerTreeHost();
 
-    LayerOrView *getLayer(WebCore::GraphicsLayer::PlatformLayerID) const;
-    LayerOrView *rootLayer() const { return m_rootLayer; }
+    RemoteLayerTreeNode* nodeForID(WebCore::GraphicsLayer::PlatformLayerID) const;
+    RemoteLayerTreeNode* rootNode() const { return m_rootNode; }
 
     static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer*);
+
+    CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
+    CALayer *rootLayer() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
@@ -72,18 +75,18 @@ public:
     // This avoids keeping an outstanding InUse reference when suspended.
     void mapAllIOSurfaceBackingStore();
 
-    LayerOrView* layerWithIDForTesting(uint64_t) const;
+    CALayer *layerWithIDForTesting(uint64_t) const;
 
 private:
-    LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
+    void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     RetainPtr<WKEmbeddedView> createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
-    LayerOrView *m_rootLayer { nullptr };
-    HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<LayerOrView>> m_layers;
+    RemoteLayerTreeNode* m_rootNode { nullptr };
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
     HashMap<WebCore::GraphicsLayer::EmbeddedViewID, RetainPtr<WKEmbeddedView>> m_embeddedViews;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, WebCore::GraphicsLayer::EmbeddedViewID> m_layerToEmbeddedViewMap;

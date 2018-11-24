@@ -455,13 +455,13 @@ void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContent
     pageClient().intrinsicContentSizeDidChange(intrinsicContentSize);
 }
 
-void WebPageProxy::setAcceleratedCompositingRootLayer(LayerOrView* rootLayer)
+void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
-    pageClient().setAcceleratedCompositingRootLayer(rootLayer);
+    pageClient().setRemoteLayerTreeRootNode(rootNode);
     m_frozenRemoteLayerTreeHost = nullptr;
 }
 
-LayerOrView* WebPageProxy::acceleratedCompositingRootLayer() const
+CALayer *WebPageProxy::acceleratedCompositingRootLayer() const
 {
     return pageClient().acceleratedCompositingRootLayer();
 }

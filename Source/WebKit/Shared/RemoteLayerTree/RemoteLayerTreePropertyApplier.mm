@@ -126,7 +126,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStore::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
         layer.name = properties.name;
@@ -254,16 +254,22 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         updateCustomAppearance(layer, properties.customAppearance);
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    CALayer *layer = node.layer();
+
     applyPropertiesToLayer(layer, layerTreeHost, properties, layerContentsType);
 
+#if PLATFORM(IOS_FAMILY)
+    applyPropertiesToUIView(node.uiView(), properties, relatedLayers);
+#else
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
         for (auto& child : properties.children) {
-            ASSERT(relatedLayers.get(child));
-            [children addObject:(__bridge id)relatedLayers.get(child)];
+            ASSERT(relatedLayers.contains(child));
+            [children addObject:relatedLayers.get(child)->layer()];
         }
 
         layer.sublayers = children.get();
@@ -273,34 +279,24 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
         if (!properties.maskLayerID)
             layer.mask = nullptr;
         else {
-#if PLATFORM(IOS_FAMILY)
-            UIView *maskView = (__bridge UIView *)relatedLayers.get(properties.maskLayerID);
-            // FIXME: need to check that the mask view is kept alive.
-            ASSERT(!maskView.layer.superlayer);
-            if (!maskView.layer.superlayer)
-                layer.mask = maskView.layer;
-#else
-            CALayer *maskLayer = (__bridge CALayer *)relatedLayers.get(properties.maskLayerID);
+            CALayer *maskLayer = relatedLayers.get(properties.maskLayerID)->layer();
             ASSERT(!maskLayer.superlayer);
             if (!maskLayer.superlayer)
                 layer.mask = maskLayer;
-#endif
         }
     }
+#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    applyPropertiesToLayer(view.layer, layerTreeHost, properties, layerContentsType);
-
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
         for (auto& child : properties.children) {
-            ASSERT(relatedLayers.get(child));
-            [children addObject:(__bridge id)relatedLayers.get(child)];
+            ASSERT(relatedLayers.contains(child));
+            [children addObject:relatedLayers.get(child)->uiView()];
         }
 
         if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
@@ -324,7 +320,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
         if (!properties.maskLayerID)
             maskOwnerLayer.mask = nullptr;
         else {
-            UIView *maskView = (__bridge UIView *)relatedLayers.get(properties.maskLayerID);
+            UIView *maskView = relatedLayers.get(properties.maskLayerID)->uiView();
             // FIXME: need to check that the mask view is kept alive.
             ASSERT(!maskView.layer.superlayer);
             if (!maskView.layer.superlayer)
@@ -335,7 +331,6 @@ void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTr
     if (properties.changedProperties.containsAny({ RemoteLayerTreeTransaction::ContentsHiddenChanged, RemoteLayerTreeTransaction::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
 
-    END_BLOCK_OBJC_EXCEPTIONS;
 }
 #endif
 

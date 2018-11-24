@@ -100,7 +100,7 @@ static CALayer *findTileGridContainerLayer(CALayer *layer)
 
 unsigned RemoteLayerTreeScrollingPerformanceData::blankPixelCount(const FloatRect& visibleRect) const
 {
-    CALayer *rootLayer = asLayer(m_drawingArea.remoteLayerTreeHost().rootLayer());
+    CALayer *rootLayer = m_drawingArea.remoteLayerTreeHost().rootLayer();
 
     CALayer *tileGridContainer = findTileGridContainerLayer(rootLayer);
     if (!tileGridContainer) {

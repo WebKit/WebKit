@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LayerRepresentation.h"
+#include "config.h"
+#include "RemoteLayerTreeNode.h"
+
+namespace WebKit {
+
+RemoteLayerTreeNode::RemoteLayerTreeNode(RetainPtr<CALayer> layer)
+    : m_layer(WTFMove(layer))
+{
+}
 
 #if PLATFORM(IOS_FAMILY)
-#import <UIKit/UIView.h>
-CALayer *asLayer(LayerOrView *view)
+RemoteLayerTreeNode::RemoteLayerTreeNode(RetainPtr<UIView> uiView)
+    : m_layer([uiView.get() layer])
+    , m_uiView(WTFMove(uiView))
 {
-    return view.layer;
 }
 #endif
+
+RemoteLayerTreeNode::~RemoteLayerTreeNode() = default;
+
+void RemoteLayerTreeNode::detachFromParent()
+{
+#if PLATFORM(IOS_FAMILY)
+    [uiView() removeFromSuperview];
+#else
+    [layer() removeFromSuperlayer];
+#endif
+}
+
+}

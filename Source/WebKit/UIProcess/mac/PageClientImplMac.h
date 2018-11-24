@@ -75,8 +75,8 @@ private:
     bool isVisuallyIdle() override;
     LayerHostingMode viewLayerHostingMode() override;
     ColorSpaceData colorSpace() override;
-    void setAcceleratedCompositingRootLayer(LayerOrView *) override;
-    LayerOrView *acceleratedCompositingRootLayer() const override;
+    void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
+    CALayer *acceleratedCompositingRootLayer() const override;
 
     void processDidExit() override;
     void processWillSwap() override;

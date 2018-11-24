@@ -29,6 +29,7 @@
 
 #include "AuthenticatorTransportService.h"
 #include <IOKit/hid/IOHIDManager.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebKit {

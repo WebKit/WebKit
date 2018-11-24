@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerRepresentation_h
-#define LayerRepresentation_h
+#pragma once
 
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CALayer;
 #if PLATFORM(IOS_FAMILY)
-
-OBJC_CLASS CALayer;
 OBJC_CLASS UIView;
-typedef UIView LayerOrView;
-
-CALayer *asLayer(LayerOrView *);
-
-#else
-
-OBJC_CLASS CALayer;
-typedef CALayer LayerOrView;
-
-inline CALayer *asLayer(LayerOrView *layer)
-{
-    return layer;
-}
-
 #endif
 
-#endif // LayerRepresentation_h
+namespace WebKit {
+
+class RemoteLayerTreeNode {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RemoteLayerTreeNode(RetainPtr<CALayer>);
+#if PLATFORM(IOS_FAMILY)
+    RemoteLayerTreeNode(RetainPtr<UIView>);
+#endif
+
+    ~RemoteLayerTreeNode();
+
+    CALayer *layer() const { return m_layer.get(); }
+#if PLATFORM(IOS_FAMILY)
+    UIView *uiView() const { return m_uiView.get(); }
+#endif
+
+    void detachFromParent();
+
+private:
+    RetainPtr<CALayer> m_layer;
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<UIView> m_uiView;
+#endif
+};
+
+}

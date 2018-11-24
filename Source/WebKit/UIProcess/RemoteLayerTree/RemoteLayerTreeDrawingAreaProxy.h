@@ -58,7 +58,7 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-    LayerOrView* layerWithIDForTesting(uint64_t) const;
+    CALayer *layerWithIDForTesting(uint64_t) const;
 
 private:
     void sizeDidChange() override;

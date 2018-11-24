@@ -478,7 +478,8 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint
     }
 
 #if PLATFORM(IOS_FAMILY)
-    UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
+    auto* rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootNode();
+    UIView *parentView = rootNode ? rootNode->uiView() : nil;
     interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture, standby);
 #else
     IntRect initialWindowRect;
