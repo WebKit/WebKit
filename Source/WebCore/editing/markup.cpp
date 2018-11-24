@@ -645,6 +645,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                 }
             }
         }
+        ASSERT(next || !pastEnd);
 
         if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
             // Don't write out empty block containers that aren't fully selected.
@@ -652,10 +653,11 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         }
 
         if (!enterNode(*n)) {
-            next = NodeTraversal::nextSkippingChildren(*n);
+            next = nextSkippingChildren(*n);
             // Don't skip over pastEnd.
             if (pastEnd && isDescendantOf(*pastEnd, *n))
                 next = pastEnd;
+            ASSERT(next || !pastEnd);
         } else {
             if (!hasChildNodes(*n))
                 exitNode(*n);

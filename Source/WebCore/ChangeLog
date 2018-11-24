@@ -1,3 +1,22 @@
+2018-11-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r236785): Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=191921
+
+        Reviewed by Dean Jackson.
+
+        The bug was caused by traverseNodesForSerialization not being able to traverse past the end of shadow root
+        when skipping children of a node for which enterNode returns false because  it was using NodeTraversal's
+        nextSkippingChildren instead of a member function which supports traversing the composed tree.
+
+        Fixed the crash by using variant of nextSkippingChildren which knows how to traverse past the last node
+        in a shadow tree. Also added more assertions to help debug issues like this in the future.
+
+        Test: editing/pasteboard/copy-paste-across-shadow-boundaries-5.html
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization):
+
 2018-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Updating href on textPath doesn't update its rendering
