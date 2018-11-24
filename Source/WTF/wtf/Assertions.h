@@ -44,6 +44,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <wtf/ExportMacros.h>
 
 #if USE(OS_LOG)
@@ -239,6 +240,8 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
     WTFBreakpointTrapUnderConstexprContext(); \
     __builtin_unreachable(); \
 } while (0)
+#elif !ENABLE(DEVELOPER_MODE) && !OS(DARWIN)
+#define CRASH() abort()
 #else
 #define CRASH() WTFCrash()
 #define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFCrash()
