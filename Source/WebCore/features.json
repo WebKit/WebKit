@@ -643,7 +643,8 @@
         "description": "A JavaScript API for web applications to perform cryptographic operations.",
         "contact": {
             "name": "Jiewen Tan",
-            "email": "jiewen_tan@apple.com"
+            "email": "jiewen_tan@apple.com",
+            "twitter": "@alanwaketan"
         }
     },
     {
@@ -1258,7 +1259,12 @@
         "url": "https://w3c.github.io/webauthn/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
         "keywords": ["authentication", "credentials", "webauthn"],
-        "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users."
+        "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users.",
+        "contact": {
+            "name": "Jiewen Tan",
+            "email": "jiewen_tan@apple.com",
+            "twitter": "@alanwaketan"
+        }
     },
     {
         "name": "Web Bluetooth",

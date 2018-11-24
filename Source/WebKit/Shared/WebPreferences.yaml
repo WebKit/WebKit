@@ -737,6 +737,8 @@ WebAuthenticationEnabled:
   humanReadableName: "Web Authentication"
   humanReadableDescription: "Enable Web Authentication support"
   webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(WEB_AUTHN)
 
 ModernMediaControlsEnabled:
   type: bool

@@ -1,3 +1,15 @@
+2018-11-23  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Enable Web Authentication as an experimental feature for macOS
+        https://bugs.webkit.org/show_bug.cgi?id=191932
+        rdar://problem/46225210
+
+        Reviewed by Brent Fulgham.
+
+        Add myself to the contact of Web Authentication.
+
+        * features.json:
+
 2018-11-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r236785): Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization
