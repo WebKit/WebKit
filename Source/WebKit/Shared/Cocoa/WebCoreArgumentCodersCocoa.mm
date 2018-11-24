@@ -55,7 +55,7 @@ bool ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder, WebCore::Payment&
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
     auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
-        PKPayment *pkPayment = [unarchiver decodeObjectOfClass:PAL::get_PassKit_PKPaymentClass() forKey:NSKeyedArchiveRootObjectKey];
+        PKPayment *pkPayment = [unarchiver decodeObjectOfClass:PAL::getPKPaymentClass() forKey:NSKeyedArchiveRootObjectKey];
         payment = Payment(pkPayment);
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode PKPayment: %@", exception);
@@ -106,7 +106,7 @@ bool ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder, WebCore::P
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
     auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
-        PKContact *pkContact = [unarchiver decodeObjectOfClass:PAL::get_PassKit_PKContactClass() forKey:NSKeyedArchiveRootObjectKey];
+        PKContact *pkContact = [unarchiver decodeObjectOfClass:PAL::getPKContactClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentContact = PaymentContact(pkContact);
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode PKContact: %@", exception);
@@ -163,7 +163,7 @@ bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, We
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
     auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
-        PKPaymentMerchantSession *pkPaymentMerchantSession = [unarchiver decodeObjectOfClass:PAL::get_PassKit_PKPaymentMerchantSessionClass() forKey:NSKeyedArchiveRootObjectKey];
+        PKPaymentMerchantSession *pkPaymentMerchantSession = [unarchiver decodeObjectOfClass:PAL::getPKPaymentMerchantSessionClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentMerchantSession = PaymentMerchantSession(pkPaymentMerchantSession);
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode PKPaymentMerchantSession: %@", exception);
@@ -193,7 +193,7 @@ bool ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder, WebCore::Pa
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
     auto unarchiver = secureUnarchiverFromData(data.get());
     @try {
-        PKPaymentMethod *pkPaymentMethod = [unarchiver decodeObjectOfClass:PAL::get_PassKit_PKPaymentMethodClass() forKey:NSKeyedArchiveRootObjectKey];
+        PKPaymentMethod *pkPaymentMethod = [unarchiver decodeObjectOfClass:PAL::getPKPaymentMethodClass() forKey:NSKeyedArchiveRootObjectKey];
         paymentMethod = PaymentMethod(pkPaymentMethod);
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode PKPayment: %@", exception);

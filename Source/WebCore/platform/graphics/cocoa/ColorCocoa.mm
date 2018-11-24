@@ -48,7 +48,7 @@ NSColor *platformColor(const Color& color)
 
 UIColor *platformColor(const Color& color)
 {
-    return [PAL::get_UIKit_UIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
+    return [PAL::getUIColorClass() _disambiguated_due_to_CIImage_colorWithCGColor:cachedCGColor(color)];
 }
 
 #endif

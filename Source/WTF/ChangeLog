@@ -1,3 +1,21 @@
+2018-11-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] SOFT_LINK_CLASS_FOR_{HEADER,SOURCE} should generate a more concise getter function
+        https://bugs.webkit.org/show_bug.cgi?id=191899
+
+        Reviewed by Dean Jackson.
+
+        Currently, SOFT_LINK_CLASS_FOR_HEADER declares a class getter function that includes the
+        framework name. For example, NSView would have a class getter named
+        namespace::get_AppKit_NSViewClass().
+
+        Including the framework name in the getter is unnecessary. Objective-C classes already exist
+        in a global namespace, so there is no need to disambiguate class names by framework. This
+        patch elides the framework name from the getter function. For example, NSView would now have
+        a getter named namespace::getNSViewClass().
+
+        * wtf/cocoa/SoftLinking.h:
+
 2018-11-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         CRASH() should call abort() except on Darwin and in developer builds

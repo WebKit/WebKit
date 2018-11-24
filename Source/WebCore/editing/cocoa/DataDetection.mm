@@ -643,7 +643,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     if (lastTextNodeToUpdate)
         lastTextNodeToUpdate->setData(lastNodeContent);
     
-    return [get_DataDetectorsCore_DDScannerResultClass() resultsFromCoreResults:scannerResults.get()];
+    return [getDDScannerResultClass() resultsFromCoreResults:scannerResults.get()];
 }
 
 #else

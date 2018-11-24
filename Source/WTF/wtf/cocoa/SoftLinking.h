@@ -378,14 +378,14 @@
 #define SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(functionNamespace, framework) \
     SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, )
 
-#define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, framework, className) \
+#define SOFT_LINK_CLASS_FOR_HEADER(functionNamespace, className) \
     @class className; \
     namespace functionNamespace { \
-    extern Class (*get_##framework##_##className##Class)(); \
+    extern Class (*get##className##Class)(); \
     className *alloc##className##Instance(); \
     inline className *alloc##className##Instance() \
     { \
-        return [get_##framework##_##className##Class() alloc]; \
+        return [get##className##Class() alloc]; \
     } \
     }
 
@@ -393,7 +393,7 @@
     @class className; \
     namespace functionNamespace { \
     static Class init##className(); \
-    export Class (*get_##framework##_##className##Class)() = init##className; \
+    export Class (*get##className##Class)() = init##className; \
     static Class class##className; \
     \
     static Class className##Function() \
@@ -408,7 +408,7 @@
             framework##Library(); \
             class##className = objc_getClass(#className); \
             RELEASE_ASSERT(class##className); \
-            get_##framework##_##className##Class = className##Function; \
+            get##className##Class = className##Function; \
         }); \
         return class##className; \
     } \

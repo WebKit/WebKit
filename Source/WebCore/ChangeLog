@@ -1,3 +1,17 @@
+2018-11-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] SOFT_LINK_CLASS_FOR_{HEADER,SOURCE} should generate a more concise getter function
+        https://bugs.webkit.org/show_bug.cgi?id=191899
+
+        Reviewed by Dean Jackson.
+
+        * editing/cocoa/DataDetection.mm:
+        * editing/cocoa/FontAttributesCocoa.mm:
+        * editing/cocoa/FontShadowCocoa.mm:
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/graphics/cocoa/ColorCocoa.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+
 2018-11-23  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Enable Web Authentication as an experimental feature for macOS

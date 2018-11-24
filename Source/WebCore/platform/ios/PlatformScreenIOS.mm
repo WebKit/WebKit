@@ -129,16 +129,16 @@ float screenPPIFactor()
 
 FloatSize screenSize()
 {
-    if (deviceHasIPadCapability() && [[PAL::get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
+    if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
-    return FloatSize([[PAL::get_UIKit_UIScreenClass() mainScreen] _referenceBounds].size);
+    return FloatSize([[PAL::getUIScreenClass() mainScreen] _referenceBounds].size);
 }
 
 FloatSize availableScreenSize()
 {
-    if (deviceHasIPadCapability() && [[PAL::get_UIKit_UIApplicationClass() sharedApplication] _isClassic])
+    if (deviceHasIPadCapability() && [[PAL::getUIApplicationClass() sharedApplication] _isClassic])
         return { 320, 480 };
-    return FloatSize([PAL::get_UIKit_UIScreenClass() mainScreen].bounds.size);
+    return FloatSize([PAL::getUIScreenClass() mainScreen].bounds.size);
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PlatformScreenIOS.mm>)
@@ -153,7 +153,7 @@ FloatSize overrideScreenSize()
 float screenScaleFactor(UIScreen *screen)
 {
     if (!screen)
-        screen = [PAL::get_UIKit_UIScreenClass() mainScreen];
+        screen = [PAL::getUIScreenClass() mainScreen];
 
     return screen.scale;
 }

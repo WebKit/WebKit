@@ -1,3 +1,14 @@
+2018-11-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] SOFT_LINK_CLASS_FOR_{HEADER,SOURCE} should generate a more concise getter function
+        https://bugs.webkit.org/show_bug.cgi?id=191899
+
+        Reviewed by Dean Jackson.
+
+        * Shared/cocoa/WebCoreArgumentCodersCocoa.mm:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+
 2018-11-23  Antti Koivisto  <antti@apple.com>
 
         Replace LayerOrView typedef with a class

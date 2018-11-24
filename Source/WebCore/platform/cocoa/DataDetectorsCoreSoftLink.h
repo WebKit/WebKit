@@ -32,7 +32,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-SOFT_LINK_CLASS_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerResult)
+SOFT_LINK_CLASS_FOR_HEADER(WebCore, DDScannerResult)
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))

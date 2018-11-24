@@ -1,3 +1,13 @@
+2018-11-24  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] SOFT_LINK_CLASS_FOR_{HEADER,SOURCE} should generate a more concise getter function
+        https://bugs.webkit.org/show_bug.cgi?id=191899
+
+        Reviewed by Dean Jackson.
+
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.h:
+
 2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable drag and drop support for iOSMac

@@ -84,7 +84,7 @@ SOFT_LINK_CONSTANT(PAL::PassKit, PKPaymentErrorDomain, NSString *);
     ASSERT(!_sessionBlock);
     _sessionBlock = sessionBlock;
 
-    [PAL::get_PassKit_PKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
+    [PAL::getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -258,7 +258,7 @@ namespace WebKit {
 
 bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 {
-    return [PAL::get_PassKit_PKPaymentAuthorizationViewControllerClass() canMakePayments];
+    return [PAL::getPKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
@@ -350,7 +350,7 @@ static NSDecimalNumber *toDecimalNumber(const String& amount)
 
 static RetainPtr<PKPaymentSummaryItem> toPKPaymentSummaryItem(const WebCore::ApplePaySessionPaymentRequest::LineItem& lineItem)
 {
-    return [PAL::get_PassKit_PKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    return [PAL::getPKPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
 }
 
 static RetainPtr<NSArray> toPKPaymentSummaryItems(const WebCore::ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
@@ -409,7 +409,7 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
 
 static RetainPtr<PKShippingMethod> toPKShippingMethod(const WebCore::ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
-    RetainPtr<PKShippingMethod> result = [PAL::get_PassKit_PKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
+    RetainPtr<PKShippingMethod> result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
 
@@ -798,7 +798,7 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
 
 Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()
 {
-    NSArray<PKPaymentNetwork> *availableNetworks = [PAL::get_PassKit_PKPaymentRequestClass() availableNetworks];
+    NSArray<PKPaymentNetwork> *availableNetworks = [PAL::getPKPaymentRequestClass() availableNetworks];
     Vector<String> result;
     result.reserveInitialCapacity(availableNetworks.count);
     for (PKPaymentNetwork network in availableNetworks)
