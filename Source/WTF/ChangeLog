@@ -1,3 +1,26 @@
+2018-11-23  Sam Weinig  <sam@webkit.org>
+
+        Add raw pointer overloads to ListHashSet via SmartPtr specialized functions
+        https://bugs.webkit.org/show_bug.cgi?id=191936
+
+        Reviewed by Zalan Bujtas.
+
+        Adds overloads for find, contains, insertBefore and remove that take raw pointers
+        when the value type V of a ListHashSet is true for the predicate IsSmartPtr<V>::value.
+        This brings the interface to ListHashSet closer inline with HashSet, HashMap and HashCountedSet
+        which already have this functionality. Like in the other collections, this is especially
+        useful when using std::unique_ptr<> as the value, since there would be no way to pass it
+        to these functions. One difference between this set of overloads is the inclusion of insertBefore,
+        which is unique to ListHashSet. As would be expected, this specialization only changes the first
+        parameter, the one that needs to be found, to support a raw pointer.  
+
+        * wtf/ListHashSet.h:
+        (WTF::U>::find):
+        (WTF::U>::find const):
+        (WTF::U>::contains const):
+        (WTF::U>::insertBefore):
+        (WTF::U>::remove):
+
 2018-11-21  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Drop ARM_TRADITIONAL support in LLInt, baseline JIT, and DFG

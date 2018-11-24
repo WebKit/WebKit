@@ -36,7 +36,7 @@
 namespace TestWebKitAPI {
 
 template<int initialCapacity>
-    struct InitialCapacityTestHashTraits : public WTF::UnsignedWithZeroKeyHashTraits<int> {
+struct InitialCapacityTestHashTraits : public WTF::UnsignedWithZeroKeyHashTraits<int> {
     static const int minimumTableSize = initialCapacity;
 };
 

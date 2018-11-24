@@ -142,6 +142,14 @@ public:
     bool remove(iterator);
     void clear();
 
+    // Overloads for smart pointer values that take the raw pointer type as the parameter.
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, AddResult>::type insertBefore(typename GetPtrHelper<V>::PtrType, const ValueType&);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, AddResult>::type insertBefore(typename GetPtrHelper<V>::PtrType, ValueType&&);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
+
 private:
     void unlink(Node*);
     void unlinkAndDelete(Node*);
@@ -623,6 +631,54 @@ inline void ListHashSet<T, U>::clear()
     m_impl.clear(); 
     m_head = nullptr;
     m_tail = nullptr;
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::find(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
+{
+    auto it = m_impl.template find<BaseTranslator>(value);
+    if (it == m_impl.end())
+        return end();
+    return makeIterator(*it);
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::find(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, const_iterator>::type
+{
+    auto it = m_impl.template find<BaseTranslator>(value);
+    if (it == m_impl.end())
+        return end();
+    return makeConstIterator(*it);
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::contains(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+{
+    return m_impl.template contains<BaseTranslator>(value);
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::insertBefore(typename GetPtrHelper<V>::PtrType beforeValue, const ValueType& newValue) -> typename std::enable_if<IsSmartPtr<V>::value, AddResult>::type
+{
+    return insertBefore(find(beforeValue), newValue);
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::insertBefore(typename GetPtrHelper<V>::PtrType beforeValue, ValueType&& newValue) -> typename std::enable_if<IsSmartPtr<V>::value, AddResult>::type
+{
+    return insertBefore(find(beforeValue), WTFMove(newValue));
+}
+
+template<typename T, typename U>
+template<typename V>
+inline auto ListHashSet<T, U>::remove(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+{
+    return remove(find(value));
 }
 
 template<typename T, typename U>

@@ -1,3 +1,15 @@
+2018-11-23  Sam Weinig  <sam@webkit.org>
+
+        Add raw pointer overloads to ListHashSet via SmartPtr specialized functions
+        https://bugs.webkit.org/show_bug.cgi?id=191936
+
+        Reviewed by Zalan Bujtas.
+
+        Adds tests for raw pointer overloads in ListHashSet.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+
 2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable drag and drop support for iOSMac

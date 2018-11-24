@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "Counters.h"
 #include "MoveOnly.h"
 #include <wtf/ListHashSet.h>
 
@@ -371,6 +372,108 @@ TEST(WTF_ListHashSet, InitializerListConstuctor)
     ++iterator;
     ASSERT_EQ(7, *iterator);
     ++iterator;
+}
+
+TEST(WTF_ListHashSet, UniquePtrKey)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
+
+    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    list.add(WTFMove(uniquePtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    list.clear();
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
+}
+
+TEST(WTF_ListHashSet, UniquePtrKey_FindUsingRawPointer)
+{
+    ListHashSet<std::unique_ptr<int>> list;
+
+    auto uniquePtr = std::make_unique<int>(5);
+    auto ptr = uniquePtr.get();
+    list.add(WTFMove(uniquePtr));
+
+    auto it = list.find(ptr);
+    ASSERT_TRUE(it != list.end());
+    EXPECT_EQ(ptr, it->get());
+    EXPECT_EQ(5, *it->get());
+}
+
+TEST(WTF_ListHashSet, UniquePtrKey_ContainsUsingRawPointer)
+{
+    ListHashSet<std::unique_ptr<int>> list;
+
+    auto uniquePtr = std::make_unique<int>(5);
+    auto ptr = uniquePtr.get();
+    list.add(WTFMove(uniquePtr));
+
+    EXPECT_EQ(true, list.contains(ptr));
+}
+
+TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
+{
+    ListHashSet<std::unique_ptr<int>> list;
+
+    auto uniquePtrWith2 = std::make_unique<int>(2);
+    auto ptrWith2 = uniquePtrWith2.get();
+    auto uniquePtrWith4 = std::make_unique<int>(4);
+    auto ptrWith4 = uniquePtrWith4.get();
+
+    list.add(WTFMove(uniquePtrWith2));
+    list.add(WTFMove(uniquePtrWith4));
+
+    // { 2, 4 }
+    ASSERT_EQ(ptrWith2, list.first().get());
+    ASSERT_EQ(2, *list.first().get());
+    ASSERT_EQ(ptrWith4, list.last().get());
+    ASSERT_EQ(4, *list.last().get());
+
+    auto uniquePtrWith3 = std::make_unique<int>(3);
+    auto ptrWith3 = uniquePtrWith3.get();
+
+    list.insertBefore(ptrWith4, WTFMove(uniquePtrWith3));
+    
+    // { 2, 3, 4 }
+    auto firstWith2 = list.takeFirst();
+    ASSERT_EQ(ptrWith2, firstWith2.get());
+    ASSERT_EQ(2, *firstWith2);
+
+    auto firstWith3 = list.takeFirst();
+    ASSERT_EQ(ptrWith3, firstWith3.get());
+    ASSERT_EQ(3, *firstWith3);
+
+    auto firstWith4 = list.takeFirst();
+    ASSERT_EQ(ptrWith2, firstWith4.get());
+    ASSERT_EQ(4, *firstWith4);
+
+    ASSERT_TRUE(list.isEmpty());
+}
+
+TEST(WTF_ListHashSet, UniquePtrKey_RemoveUsingRawPointer)
+{
+    ConstructorDestructorCounter::TestingScope scope;
+
+    ListHashSet<std::unique_ptr<ConstructorDestructorCounter>> list;
+
+    auto uniquePtr = std::make_unique<ConstructorDestructorCounter>();
+    auto* ptr = uniquePtr.get();
+    list.add(WTFMove(uniquePtr));
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
+
+    bool result = list.remove(ptr);
+    EXPECT_EQ(true, result);
+
+    EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
+    EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
 } // namespace TestWebKitAPI
