@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit/WKDataDetectorTypes.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKAttachment.h>
 #import <WebKit/_WKFindOptions.h>
@@ -193,6 +194,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_removeDataDetectedLinks:(dispatch_block_t)completion WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 - (IBAction)_alignCenter:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_alignJustified:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (IBAction)_alignLeft:(id)sender WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
@@ -215,6 +218,8 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_setFont:(UIFont *)font sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_setFontSize:(CGFloat)fontSize sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_setTextColor:(UIColor *)color sender:(id)sender WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 // DERECATED: The setters of the three following function are deprecated, please use overrideLayoutParameters.
 // Define the smallest size a page take with a regular viewport.

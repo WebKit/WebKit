@@ -852,6 +852,7 @@
 		F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30EB1ED28619000482E1 /* apple.gif */; };
 		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
+		F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47DFB2421A8704A00021FB6 /* data-detectors.html */; };
 		F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */; };
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
@@ -1019,6 +1020,7 @@
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
+				F47DFB2621A878DF00021FB6 /* data-detectors.html in Copy Resources */,
 				F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */,
 				F457A9D6202D68AF00F7E9D5 /* DataTransfer.html in Copy Resources */,
 				F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */,
@@ -2147,6 +2149,8 @@
 		F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-page-contenteditable.html"; sourceTree = "<group>"; };
 		F47D30EB1ED28619000482E1 /* apple.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = apple.gif; sourceTree = "<group>"; };
 		F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gif-and-file-input.html"; sourceTree = "<group>"; };
+		F47DFB2421A8704A00021FB6 /* data-detectors.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "data-detectors.html"; sourceTree = "<group>"; };
+		F47DFB2721A885E700021FB6 /* DataDetectorsCoreSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSPI.h; sourceTree = "<group>"; };
 		F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewEditActions.mm; sourceTree = "<group>"; };
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
 		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
@@ -2311,6 +2315,7 @@
 				A13EBB441B87332B00097110 /* WebProcessPlugIn */,
 				F4517B682054E0AC00C26721 /* ClassMethodSwizzler.h */,
 				F4517B692054E0AC00C26721 /* ClassMethodSwizzler.mm */,
+				F47DFB2721A885E700021FB6 /* DataDetectorsCoreSPI.h */,
 				F46128B4211C861A00D9FADB /* DragAndDropSimulator.h */,
 				F44D06481F3962E3001A0E29 /* EditingTestHarness.h */,
 				F44D06491F3962E3001A0E29 /* EditingTestHarness.mm */,
@@ -2740,6 +2745,7 @@
 				9B1056421F9047CC00D5583F /* copy-html.html */,
 				9B62630B1F8C2510007EE29B /* copy-url.html */,
 				F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */,
+				F47DFB2421A8704A00021FB6 /* data-detectors.html */,
 				F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */,
 				F457A9B3202D535300F7E9D5 /* DataTransfer.html */,
 				F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */,

@@ -8243,6 +8243,20 @@ void WebPageProxy::updateCurrentModifierState()
 #endif
 }
 
+#if ENABLE(DATA_DETECTION)
+
+void WebPageProxy::detectDataInAllFrames(WebCore::DataDetectorTypes types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
+{
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::DetectDataInAllFrames(static_cast<uint64_t>(types)), WTFMove(completionHandler), m_pageID);
+}
+
+void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
+{
+    m_process->connection()->sendWithAsyncReply(Messages::WebPage::RemoveDataDetectedLinks(), WTFMove(completionHandler), m_pageID);
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef MERGE_WHEEL_EVENTS

@@ -48,7 +48,14 @@
 @end
 
 @interface WKWebView (TestWebKitAPI)
+@property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument;
+- (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames;
+- (void)expectElementCount:(NSInteger)count querySelector:(NSString *)querySelector;
+- (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName;
+- (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
+- (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
+- (id)objectByEvaluatingJavaScript:(NSString *)script;
 @end
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
@@ -64,9 +71,6 @@
 - (void)synchronouslyLoadHTMLString:(NSString *)html;
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
-- (id)objectByEvaluatingJavaScript:(NSString *)script;
-- (id)objectByEvaluatingJavaScriptWithUserGesture:(NSString *)script;
-- (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;
 - (void)performAfterLoading:(dispatch_block_t)actions;
 - (void)waitForNextPresentationUpdate;

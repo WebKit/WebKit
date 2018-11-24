@@ -3385,13 +3385,42 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 }
 
 #if ENABLE(DATA_DETECTION)
+
 void WebPage::setDataDetectionResults(NSArray *detectionResults)
 {
     DataDetectionResult dataDetectionResult;
     dataDetectionResult.results = detectionResults;
     send(Messages::WebPageProxy::SetDataDetectionResult(dataDetectionResult));
 }
-#endif
+
+void WebPage::removeDataDetectedLinks(Messages::WebPage::RemoveDataDetectedLinks::AsyncReply&& reply)
+{
+    for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
+        auto document = makeRefPtr(frame->document());
+        if (!document)
+            continue;
+
+        DataDetection::removeDataDetectedLinksInDocument(*document);
+        frame->setDataDetectionResults(nullptr);
+    }
+    reply({ m_page->mainFrame().dataDetectionResults() });
+}
+
+void WebPage::detectDataInAllFrames(uint64_t types, Messages::WebPage::DetectDataInAllFrames::AsyncReply&& reply)
+{
+    auto dataDetectorTypes = static_cast<WebCore::DataDetectorTypes>(types);
+    for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
+        auto document = makeRefPtr(frame->document());
+        if (!document)
+            continue;
+
+        RefPtr<Range> range = Range::create(*document, Position { document.get(), Position::PositionIsBeforeChildren }, Position { document.get(), Position::PositionIsAfterChildren });
+        frame->setDataDetectionResults(DataDetection::detectContentInRange(range, dataDetectorTypes, m_dataDetectionContext.get()));
+    }
+    reply({ m_page->mainFrame().dataDetectionResults() });
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 #if PLATFORM(COCOA)
 void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)

@@ -429,6 +429,16 @@ static inline CFComparisonResult queryOffsetCompare(DDQueryOffset o1, DDQueryOff
     return kCFCompareEqualTo;
 }
 
+void DataDetection::removeDataDetectedLinksInDocument(Document& document)
+{
+    Vector<Ref<HTMLAnchorElement>> allAnchorElements;
+    for (auto& anchor : descendantsOfType<HTMLAnchorElement>(document))
+        allAnchorElements.append(anchor);
+
+    for (auto& anchor : allAnchorElements)
+        removeResultLinksFromAnchor(anchor.get());
+}
+
 NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes types, NSDictionary *context)
 {
     RetainPtr<DDScannerRef> scanner = adoptCF(softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
@@ -647,10 +657,16 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
 }
 
 #else
+
 NSArray *DataDetection::detectContentInRange(RefPtr<Range>&, DataDetectorTypes, NSDictionary *)
 {
     return nil;
 }
+
+void DataDetection::removeDataDetectedLinksInDocument(Document&)
+{
+}
+
 #endif
 
 const String& DataDetection::dataDetectorURLProtocol()

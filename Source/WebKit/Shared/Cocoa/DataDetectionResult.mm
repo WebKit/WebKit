@@ -46,22 +46,23 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
 }
 
-bool DataDetectionResult::decode(IPC::Decoder& decoder, DataDetectionResult& result)
+std::optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
 {
     RetainPtr<CFDataRef> data;
     if (!IPC::decode(decoder, data))
-        return false;
+        return std::nullopt;
 
+    DataDetectionResult result;
     auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
     @try {
         result.results = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:@[ [NSArray class], getDDScannerResultClass()] ] forKey:@"dataDetectorResults"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode NSArray of DDScanResult: %@", exception);
-        return false;
+        return std::nullopt;
     }
     
     [unarchiver finishDecoding];
-    return true;
+    return { WTFMove(result) };
 }
 #endif
 

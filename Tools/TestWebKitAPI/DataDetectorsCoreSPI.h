@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataDetectionResult_h
-#define DataDetectionResult_h
+#pragma once
 
 #if ENABLE(DATA_DETECTION)
 
-#import "ArgumentCoders.h"
+#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 
-#import <wtf/RetainPtr.h>
+#if !USE(APPLE_INTERNAL_SDK)
 
-namespace WebKit {
+@interface DDScannerResult (Private)
+@property (readonly, nonatomic) NSString *value;
+@property (readonly, nonatomic) NSString *type;
+@property (readonly, nonatomic) DDResultCategory category;
+@end
 
-struct DataDetectionResult {
-    RetainPtr<NSArray> results;
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<DataDetectionResult> decode(IPC::Decoder&);
-};
-
-}
+#endif // !USE(APPLE_INTERNAL_SDK)
 
 #endif // ENABLE(DATA_DETECTION)
-
-#endif // DataDetectionResult_h

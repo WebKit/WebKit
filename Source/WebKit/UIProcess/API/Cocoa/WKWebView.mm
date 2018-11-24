@@ -5423,9 +5423,38 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->setMuted(coreState);
 }
 
+- (void)_removeDataDetectedLinks:(dispatch_block_t)completion
+{
+#if ENABLE(DATA_DETECTION)
+    _page->removeDataDetectedLinks([completion = makeBlockPtr(completion), page = makeWeakPtr(_page.get())] (auto& result) {
+        if (page)
+            page->setDataDetectionResult(result);
+        if (completion)
+            completion();
+    });
+#else
+    UNUSED_PARAM(completion);
+#endif
+}
+
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS_FAMILY)
+
+- (void)_detectDataWithTypes:(WKDataDetectorTypes)types completionHandler:(dispatch_block_t)completion
+{
+#if ENABLE(DATA_DETECTION)
+    _page->detectDataInAllFrames(fromWKDataDetectorTypes(types), [completion = makeBlockPtr(completion), page = makeWeakPtr(_page.get())] (auto& result) {
+        if (page)
+            page->setDataDetectionResult(result);
+        if (completion)
+            completion();
+    });
+#else
+    UNUSED_PARAM(types);
+    UNUSED_PARAM(completion);
+#endif
+}
 
 #if ENABLE(FULLSCREEN_API)
 - (void)removeFromSuperview

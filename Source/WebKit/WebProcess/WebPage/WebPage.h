@@ -48,6 +48,7 @@
 #include "SharedMemory.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
+#include "WebPageMessages.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentController.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
@@ -92,7 +93,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
-#include "WebPageMessages.h"
 #include <WebCore/IntPointHash.h>
 #include <WebCore/ViewportConfiguration.h>
 #endif
@@ -105,6 +105,10 @@
 #include <WebKitAdditions/PlatformTouchEventIOS.h>
 #elif ENABLE(TOUCH_EVENTS)
 #include <WebCore/PlatformTouchEvent.h>
+#endif
+
+#if ENABLE(DATA_DETECTION)
+#include <WebCore/DataDetection.h>
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -992,6 +996,8 @@ public:
 
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResults(NSArray *);
+    void detectDataInAllFrames(uint64_t, Messages::WebPage::DetectDataInAllFrames::AsyncReply&&);
+    void removeDataDetectedLinks(Messages::WebPage::RemoveDataDetectedLinks::AsyncReply&&);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();

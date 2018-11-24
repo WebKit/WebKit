@@ -1,3 +1,52 @@
+2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Add WKWebView SPI to trigger and remove data detection
+        https://bugs.webkit.org/show_bug.cgi?id=191918
+        <rdar://problem/36185051>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the new WebKit SPI.
+
+        * TestWebKitAPI/DataDetectorsCoreSPI.h: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+        (-[WKWebView synchronouslyDetectDataWithTypes:]):
+        (-[WKWebView synchronouslyRemoveDataDetectedLinks]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+        (-[TestWKWebView tagsInBody]): Deleted.
+        (-[TestWKWebView expectElementTagsInOrder:]): Deleted.
+        (-[TestWKWebView expectElementCount:tagName:]): Deleted.
+        (-[TestWKWebView expectElementTag:toComeBefore:]): Deleted.
+
+        Rename this from `-expectElementCount:tagName:` to `-expectElementCount:querySelector:`.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/data-detectors.html: Added.
+
+        Add a new test page containing some content that can be data detected.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView tagsInBody]):
+        (-[WKWebView expectElementTagsInOrder:]):
+        (-[WKWebView expectElementCount:querySelector:]):
+        (-[WKWebView expectElementTag:toComeBefore:]):
+
+        Move some testing helper functions from WKAttachmentTests to a testing category on WKWebView. This allows us to
+        use `-expectElementCount:querySelector:` in tests outside of WKAttachmentTests.
+
+        (-[WKWebView objectByEvaluatingJavaScript:]):
+        (-[WKWebView objectByEvaluatingJavaScriptWithUserGesture:]):
+        (-[WKWebView stringByEvaluatingJavaScript:]):
+
+        Move some common helper functions from TestWKWebView to a testing category on WKWebView.
+
+        (-[TestWKWebView objectByEvaluatingJavaScript:]): Deleted.
+        (-[TestWKWebView objectByEvaluatingJavaScriptWithUserGesture:]): Deleted.
+        (-[TestWKWebView stringByEvaluatingJavaScript:]): Deleted.
+
 2018-11-23  Sam Weinig  <sam@webkit.org>
 
         Add raw pointer overloads to ListHashSet via SmartPtr specialized functions

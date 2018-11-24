@@ -25,13 +25,42 @@
 
 #include "config.h"
 
+#import "DataDetectorsCoreSPI.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(IOS_FAMILY)
+
+@interface WKWebView (DataDetection)
+- (void)synchronouslyDetectDataWithTypes:(WKDataDetectorTypes)types;
+- (void)synchronouslyRemoveDataDetectedLinks;
+@end
+
+@implementation WKWebView (DataDetection)
+
+- (void)synchronouslyDetectDataWithTypes:(WKDataDetectorTypes)types
+{
+    __block bool done = false;
+    [self _detectDataWithTypes:types completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+- (void)synchronouslyRemoveDataDetectedLinks
+{
+    __block bool done = false;
+    [self _removeDataDetectedLinks:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+@end
 
 static bool ranScript;
 
@@ -95,6 +124,41 @@ TEST(WebKit, DISABLED_DataDetectionReferenceDate)
     [UIDelegate setReferenceDate:[NSDate dateWithTimeIntervalSinceNow:week]];
     expectLinkCount(webView.get(), @"tomorrow at 6PM", 1);
     expectLinkCount(webView.get(), @"yesterday at 6PM", 1);
+}
+
+TEST(WebKit, AddAndRemoveDataDetectors)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"data-detectors"];
+    [webView expectElementCount:0 querySelector:@"a[x-apple-data-detectors=true]"];
+    EXPECT_EQ(0U, [webView _dataDetectionResults].count);
+
+    auto checkDataDetectionResults = [] (NSArray<DDScannerResult *> *results) {
+        EXPECT_EQ(3U, results.count);
+        EXPECT_EQ(DDResultCategoryUnknown, results[0].category);
+        EXPECT_TRUE([results[0].value containsString:@"+1-234-567-8900"]);
+        EXPECT_TRUE([results[0].value containsString:@"https://www.apple.com"]);
+        EXPECT_TRUE([results[0].value containsString:@"2 Apple Park Way, Cupertino 95014"]);
+        EXPECT_WK_STREQ("SignatureBlock", results[0].type);
+        EXPECT_EQ(DDResultCategoryCalendarEvent, results[1].category);
+        EXPECT_WK_STREQ("Date", results[1].type);
+        EXPECT_WK_STREQ("December 21, 2021", results[1].value);
+        EXPECT_EQ(DDResultCategoryMisc, results[2].category);
+        EXPECT_WK_STREQ("FlightInformation", results[2].type);
+        EXPECT_WK_STREQ("AC780", results[2].value);
+    };
+
+    [webView synchronouslyDetectDataWithTypes:WKDataDetectorTypeAll];
+    [webView expectElementCount:5 querySelector:@"a[x-apple-data-detectors=true]"];
+    checkDataDetectionResults([webView _dataDetectionResults]);
+
+    [webView synchronouslyRemoveDataDetectedLinks];
+    [webView expectElementCount:0 querySelector:@"a[x-apple-data-detectors=true]"];
+    EXPECT_EQ(0U, [webView _dataDetectionResults].count);
+
+    [webView synchronouslyDetectDataWithTypes:WKDataDetectorTypeAddress | WKDataDetectorTypePhoneNumber];
+    [webView expectElementCount:2 querySelector:@"a[x-apple-data-detectors=true]"];
+    checkDataDetectionResults([webView _dataDetectionResults]);
 }
 
 #endif

@@ -193,6 +193,11 @@ messages -> WebPage LegacyReceiver {
     PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    DetectDataInAllFrames(uint64_t types) -> (struct WebKit::DataDetectionResult result) Async
+    RemoveDataDetectedLinks() -> (struct WebKit::DataDetectionResult result) Async
+#endif
+
 #if PLATFORM(MAC)
     PerformDictionaryLookupOfCurrentSelection()
 #endif
