@@ -1,3 +1,14 @@
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        Fix build after r238472.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::runWidth):
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::textWidth const):
+
 2018-11-25  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to insert editable images with a gesture

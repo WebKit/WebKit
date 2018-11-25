@@ -180,7 +180,7 @@ LayoutUnit InlineFormattingContext::Geometry::runWidth(const InlineContent& inli
 {
     LayoutUnit width;
     auto startPosition = from;
-    auto iterator = inlineContent.find(&inlineItem);
+    auto iterator = inlineContent.find(const_cast<InlineItem*>(&inlineItem));
     auto inlineItemEnd = inlineContent.end();
     while (length) {
         ASSERT(iterator != inlineItemEnd);

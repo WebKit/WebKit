@@ -162,7 +162,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         uncommitted = { };
     };
 
-    for (auto iterator = inlineContent.find(&inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
+    for (auto iterator = inlineContent.find(const_cast<InlineItem*>(&inlineRun.inlineItem())); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
         auto& inlineItem = **iterator;
 
         // Skip all non-inflow boxes (floats, out-of-flow positioned elements). They don't participate in the inline run context.
