@@ -46,6 +46,7 @@ SOFT_LINK_CLASS(PencilKit, PKCanvasView);
 
     _pencilView = adoptNS([allocPKCanvasViewInstance() initWithFrame:CGRectZero]);
 
+    [_pencilView setFingerDrawingEnabled:NO];
     [_pencilView setUserInteractionEnabled:YES];
     [_pencilView setOpaque:NO];
 

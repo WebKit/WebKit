@@ -32,6 +32,9 @@
 #else
 
 @interface PKCanvasView : UIView
+
+@property (nonatomic, getter=isFingerDrawingEnabled) BOOL fingerDrawingEnabled;
+
 @end
 
 #endif
