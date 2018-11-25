@@ -92,7 +92,7 @@
 - (NSString *)description
 {
     NSString *viewDescription = [super description];
-    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(self.layer), self.layer.name ? self.layer.name : @""];
     return [viewDescription stringByAppendingString:webKitDetails];
 }
 
@@ -161,7 +161,7 @@
 - (NSString *)description
 {
     NSString *viewDescription = [super description];
-    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(self.layer), self.layer.name ? self.layer.name : @""];
     return [viewDescription stringByAppendingString:webKitDetails];
 }
 
@@ -178,7 +178,7 @@
 - (NSString *)description
 {
     NSString *viewDescription = [super description];
-    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeHost::layerID(self.layer), self.layer.name ? self.layer.name : @""];
+    NSString *webKitDetails = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(self.layer), self.layer.name ? self.layer.name : @""];
     return [viewDescription stringByAppendingString:webKitDetails];
 }
 

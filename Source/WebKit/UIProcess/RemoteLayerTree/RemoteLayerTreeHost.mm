@@ -38,7 +38,6 @@
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
-#import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -69,10 +68,8 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     if (!m_drawingArea)
         return false;
 
-    for (const auto& createdLayer : transaction.createdLayers()) {
-        const RemoteLayerTreeTransaction::LayerProperties* properties = transaction.changedLayerProperties().get(createdLayer.layerID);
-        createLayer(createdLayer, properties);
-    }
+    for (const auto& createdLayer : transaction.createdLayers())
+        createLayer(createdLayer);
 
     bool rootLayerChanged = false;
     auto* rootNode = nodeForID(transaction.rootLayerID());
@@ -231,18 +228,6 @@ CALayer *RemoteLayerTreeHost::layerWithIDForTesting(uint64_t layerID) const
     return layerForID(layerID);
 }
 
-static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
-
-void RemoteLayerTreeHost::setLayerID(CALayer *layer, WebCore::GraphicsLayer::PlatformLayerID layerID)
-{
-    [layer setValue:[NSNumber numberWithUnsignedLongLong:layerID] forKey:WKLayerIDPropertyKey];
-}
-
-WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeHost::layerID(CALayer* layer)
-{
-    return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
-}
-
 CALayer *RemoteLayerTreeHost::layerForID(WebCore::GraphicsLayer::PlatformLayerID layerID) const
 {
     auto* node = nodeForID(layerID);
@@ -258,12 +243,24 @@ CALayer *RemoteLayerTreeHost::rootLayer() const
     return m_rootNode->layer();
 }
 
-#if !PLATFORM(IOS_FAMILY)
-void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties*)
+void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     ASSERT(!m_nodes.contains(properties.layerID));
 
-    RetainPtr<CALayer> layer;
+    auto node = makeNode(properties);
+
+    m_nodes.add(properties.layerID, WTFMove(node));
+}
+
+#if !PLATFORM(IOS_FAMILY)
+std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+{
+    auto makeWithLayer = [&] (RetainPtr<CALayer> layer) {
+        return std::make_unique<RemoteLayerTreeNode>(properties.layerID, WTFMove(layer));
+    };
+    auto makeAdoptingLayer = [&] (CALayer* layer) {
+        return makeWithLayer(adoptNS(layer));
+    };
 
     switch (properties.type) {
     case PlatformCALayer::LayerTypeLayer:
@@ -275,40 +272,34 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
     case PlatformCALayer::LayerTypeScrollingLayer:
     case PlatformCALayer::LayerTypeEditableImageLayer:
-        layer = adoptNS([[CALayer alloc] init]);
-        break;
+        return makeAdoptingLayer([[CALayer alloc] init]);
+
     case PlatformCALayer::LayerTypeTransformLayer:
-        layer = adoptNS([[CATransformLayer alloc] init]);
-        break;
+        return makeAdoptingLayer([[CATransformLayer alloc] init]);
+
     case PlatformCALayer::LayerTypeBackdropLayer:
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
 #if ENABLE(FILTERS_LEVEL_2)
-        layer = adoptNS([[CABackdropLayer alloc] init]);
+        return makeAdoptingLayer([[CABackdropLayer alloc] init]);
 #else
         ASSERT_NOT_REACHED();
-        layer = adoptNS([[CALayer alloc] init]);
+        return makeAdoptingLayer([[CALayer alloc] init]);
 #endif
-        break;
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
-        if (!m_isDebugLayerTreeHost)
-            layer = [CALayer _web_renderLayerWithContextID:properties.hostingContextID];
-        else
-            layer = adoptNS([[CALayer alloc] init]);
-        break;
+        if (m_isDebugLayerTreeHost)
+            return makeAdoptingLayer([[CALayer alloc] init]);
+        return makeWithLayer([CALayer _web_renderLayerWithContextID:properties.hostingContextID]);
+
     case PlatformCALayer::LayerTypeShapeLayer:
-        layer = adoptNS([[CAShapeLayer alloc] init]);
-        break;
+        return makeAdoptingLayer([[CAShapeLayer alloc] init]);
+            
     default:
         ASSERT_NOT_REACHED();
+        return nullptr;
     }
-
-    [layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
-    setLayerID(layer.get(), properties.layerID);
-
-    m_nodes.add(properties.layerID, std::make_unique<RemoteLayerTreeNode>(WTFMove(layer)));
 }
 #endif
 

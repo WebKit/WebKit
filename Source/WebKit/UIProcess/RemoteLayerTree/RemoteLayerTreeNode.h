@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/GraphicsLayer.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
@@ -37,9 +38,9 @@ namespace WebKit {
 class RemoteLayerTreeNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerTreeNode(RetainPtr<CALayer>);
+    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(RetainPtr<UIView>);
+    RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<UIView>);
 #endif
 
     ~RemoteLayerTreeNode();
@@ -51,7 +52,11 @@ public:
 
     void detachFromParent();
 
+    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer*);
+
 private:
+    void setLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+
     RetainPtr<CALayer> m_layer;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;

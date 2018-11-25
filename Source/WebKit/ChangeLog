@@ -1,3 +1,47 @@
+2018-11-25  Antti Koivisto  <antti@apple.com>
+
+        RemoteLayerTreeNode construction cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=191951
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+
+            Drop unused LayerProperties argument.
+
+        (WebKit::RemoteLayerTreeHost::createLayer):
+
+            Split the actual construction out to makeNode.
+            Map updating is shared between platforms.
+            Move setting of layerID and clearing default actions to RemoteLayerTreeNode.
+
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
+            Returns RemoteLayerTreeNode.
+
+        (WebKit::RemoteLayerTreeHost::setLayerID): Deleted.
+        (WebKit::RemoteLayerTreeHost::layerID): Deleted.
+
+            Move to RemoteLayerTreeNode.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (WebKit::RemoteLayerTreeNode::RemoteLayerTreeNode):
+        (WebKit::RemoteLayerTreeNode::setLayerID):
+        (WebKit::RemoteLayerTreeNode::layerID):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        (WebKit::RemoteLayerTreeHost::createEmbeddedView):
+        (WebKit::RemoteLayerTreeHost::createLayer): Deleted.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKCompositingView description]):
+        (-[WKUIRemoteView description]):
+        (-[WKBackdropView description]):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::addAnimationToLayer):
+
 2018-11-25  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to insert editable images with a gesture

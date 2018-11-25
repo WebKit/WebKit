@@ -43,12 +43,10 @@ class WebPageProxy;
 class RemoteLayerTreeHost {
 public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
-    virtual ~RemoteLayerTreeHost();
+    ~RemoteLayerTreeHost();
 
     RemoteLayerTreeNode* nodeForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     RemoteLayerTreeNode* rootNode() const { return m_rootNode; }
-
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer*);
 
     CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     CALayer *rootLayer() const;
@@ -78,9 +76,10 @@ public:
     CALayer *layerWithIDForTesting(uint64_t) const;
 
 private:
-    void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
-    RetainPtr<WKEmbeddedView> createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
-    static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);
+    void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
+
+    RetainPtr<WKEmbeddedView> createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
     void layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLayerID);
 

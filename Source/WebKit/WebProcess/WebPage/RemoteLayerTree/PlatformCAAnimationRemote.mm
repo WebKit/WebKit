@@ -803,7 +803,7 @@ static void addAnimationToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHo
         [caAnimation setValue:@YES forKey:WKExplicitBeginTimeFlag];
     
     if (layerTreeHost) {
-        GraphicsLayer::PlatformLayerID layerID = RemoteLayerTreeHost::layerID(layer);
+        GraphicsLayer::PlatformLayerID layerID = RemoteLayerTreeNode::layerID(layer);
     
         RetainPtr<WKAnimationDelegate>& delegate = layerTreeHost->animationDelegates().add(layerID, nullptr).iterator->value;
         if (!delegate)

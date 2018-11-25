@@ -26,18 +26,23 @@
 #include "config.h"
 #include "RemoteLayerTreeNode.h"
 
+#import <WebCore/WebActionDisablingCALayerDelegate.h>
+
 namespace WebKit {
 
-RemoteLayerTreeNode::RemoteLayerTreeNode(RetainPtr<CALayer> layer)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<CALayer> layer)
     : m_layer(WTFMove(layer))
 {
+    setLayerID(layerID);
+    [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 }
 
 #if PLATFORM(IOS_FAMILY)
-RemoteLayerTreeNode::RemoteLayerTreeNode(RetainPtr<UIView> uiView)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<UIView> uiView)
     : m_layer([uiView.get() layer])
     , m_uiView(WTFMove(uiView))
 {
+    setLayerID(layerID);
 }
 #endif
 
@@ -50,6 +55,18 @@ void RemoteLayerTreeNode::detachFromParent()
 #else
     [layer() removeFromSuperlayer];
 #endif
+}
+
+static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
+
+void RemoteLayerTreeNode::setLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID)
+{
+    [layer() setValue:@(layerID) forKey:WKLayerIDPropertyKey];
+}
+
+WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer* layer)
+{
+    return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
 }
 
 }

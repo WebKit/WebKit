@@ -58,11 +58,14 @@ static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
     return adoptNS([[WKRemoteView alloc] initWithFrame:CGRectZero contextID:contextID]);
 }
 
-void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
+std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    ASSERT(!m_nodes.contains(properties.layerID));
-
-    RetainPtr<UIView> view;
+    auto makeWithView = [&] (RetainPtr<UIView> view) {
+        return std::make_unique<RemoteLayerTreeNode>(properties.layerID, WTFMove(view));
+    };
+    auto makeAdoptingView = [&] (UIView* view) {
+        return makeWithView(adoptNS(view));
+    };
 
     switch (properties.type) {
     case PlatformCALayer::LayerTypeLayer:
@@ -72,55 +75,53 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        view = adoptNS([[WKCompositingView alloc] init]);
-        break;
+        return makeAdoptingView([[WKCompositingView alloc] init]);
+
     case PlatformCALayer::LayerTypeBackdropLayer:
-        view = adoptNS([[WKSimpleBackdropView alloc] init]);
-        break;
+        return makeAdoptingView([[WKSimpleBackdropView alloc] init]);
+
     case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
-        view = adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]);
-        break;
+        return makeAdoptingView([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]);
+
     case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
-        view = adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]);
-        break;
+        return makeAdoptingView([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]);
+
     case PlatformCALayer::LayerTypeTransformLayer:
-        view = adoptNS([[WKTransformView alloc] init]);
-        break;
+        return makeAdoptingView([[WKTransformView alloc] init]);
+
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost) {
-            view = createRemoteView(m_drawingArea->page().processIdentifier(), properties.hostingContextID);
+            auto view = createRemoteView(m_drawingArea->page().processIdentifier(), properties.hostingContextID);
             if (properties.type == PlatformCALayer::LayerTypeAVPlayerLayer) {
                 // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
                 float inverseScale = 1 / properties.hostingDeviceScaleFactor;
                 [[view layer] setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
             }
-        } else
-            view = adoptNS([[WKCompositingView alloc] init]);
-        break;
+            return makeWithView(WTFMove(view));
+        }
+        return makeAdoptingView([[WKCompositingView alloc] init]);
+
     case PlatformCALayer::LayerTypeShapeLayer:
-        view = adoptNS([[WKShapeView alloc] init]);
-        break;
+        return makeAdoptingView([[WKShapeView alloc] init]);
+
     case PlatformCALayer::LayerTypeScrollingLayer:
         if (!m_isDebugLayerTreeHost)
-            view = adoptNS([[WKChildScrollView alloc] init]);
-        else // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
-            view = adoptNS([[UIView alloc] init]);
-        break;
+            return makeAdoptingView([[WKChildScrollView alloc] init]);
+        // The debug indicator parents views under layers, which can cause crashes with UIScrollView.
+        return makeAdoptingView([[UIView alloc] init]);
+
     case PlatformCALayer::LayerTypeEditableImageLayer:
-        view = createEmbeddedView(properties, layerProperties);
-        break;
+        return makeWithView(createEmbeddedView(properties));
+
     default:
         ASSERT_NOT_REACHED();
+        return nullptr;
     }
-
-    setLayerID([view layer], properties.layerID);
-
-    m_nodes.add(properties.layerID, std::make_unique<RemoteLayerTreeNode>(WTFMove(view)));
 }
 
-RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties& properties, const RemoteLayerTreeTransaction::LayerProperties* layerProperties)
+RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     Class embeddedViewClass = nil;
     switch (properties.type) {
