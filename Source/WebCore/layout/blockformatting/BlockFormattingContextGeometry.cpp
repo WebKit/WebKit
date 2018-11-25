@@ -266,7 +266,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin(co
     return { width, nonReplacedWidthAndMargin.margin, nonReplacedWidthAndMargin.nonComputedMargin };
 }
 
-Position BlockFormattingContext::Geometry::staticPosition(const LayoutState& layoutState, const Box& layoutBox)
+Point BlockFormattingContext::Geometry::staticPosition(const LayoutState& layoutState, const Box& layoutBox)
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.

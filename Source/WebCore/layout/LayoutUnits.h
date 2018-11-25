@@ -34,37 +34,37 @@
 namespace WebCore {
 namespace Layout {
 
-struct Position {
+struct Point {
     // FIXME: Use LayoutUnit<Horizontal> to avoid top/left vs. x/y confusion.
     LayoutUnit x; // left
     LayoutUnit y; // top
 
-    Position() = default;
-    Position(LayoutUnit, LayoutUnit);
-    Position(LayoutPoint);
+    Point() = default;
+    Point(LayoutUnit, LayoutUnit);
+    Point(LayoutPoint);
     void moveBy(LayoutPoint);
     operator LayoutPoint() const { return { x, y }; }
 };
 
 // FIXME: Wrap these into structs.
-using PointInContextRoot = Position;
-using PointInContainingBlock = Position;
+using PointInContextRoot = Point;
+using PointInContainingBlock = Point;
 using PositionInContextRoot = LayoutUnit;
 using PositionInContainingBlock = LayoutUnit;
 
-inline Position::Position(LayoutPoint point)
+inline Point::Point(LayoutPoint point)
     : x(point.x())
     , y(point.y())
 {
 }
 
-inline Position::Position(LayoutUnit x, LayoutUnit y)
+inline Point::Point(LayoutUnit x, LayoutUnit y)
     : x(x)
     , y(y)
 {
 }
 
-inline void Position::moveBy(LayoutPoint offset)
+inline void Point::moveBy(LayoutPoint offset)
 {
     x += offset.x();
     y += offset.y();

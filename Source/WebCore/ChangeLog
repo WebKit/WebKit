@@ -1,5 +1,30 @@
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Rename Layout::Position to Layout::Point
+        https://bugs.webkit.org/show_bug.cgi?id=191950
+
+        Reviewed by Antti Koivisto.
+
+        It actually represents a point.
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::mapTopLeftToAncestor):
+        (WebCore::Layout::FormattingContext::mapCoordinateToAncestor):
+        * layout/FormattingContext.h:
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::Point::Point):
+        (WebCore::Layout::Point::moveBy):
+        (WebCore::Layout::Position::operator LayoutPoint const): Deleted.
+        (WebCore::Layout::Position::Position): Deleted.
+        (WebCore::Layout::Position::moveBy): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Floating code should use typed positions (PositionInContextRoot).
         https://bugs.webkit.org/show_bug.cgi?id=191949
 

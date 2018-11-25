@@ -74,7 +74,7 @@ private:
         static HeightAndMargin inFlowHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inFlowWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
 
-        static Position staticPosition(const LayoutState&, const Box&);
+        static Point staticPosition(const LayoutState&, const Box&);
 
         static bool instrinsicWidthConstraintsNeedChildrenWidth(const Box&);
         static InstrinsicWidthConstraints instrinsicWidthConstraints(const LayoutState&, const Box&);
@@ -105,7 +105,7 @@ private:
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
         static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
-        static Position staticPositionForOutOfFlowPositioned(const LayoutState&, const Box&);
+        static Point staticPositionForOutOfFlowPositioned(const LayoutState&, const Box&);
     };
 };
 

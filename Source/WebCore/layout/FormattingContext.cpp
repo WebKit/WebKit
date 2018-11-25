@@ -183,13 +183,13 @@ Display::Box FormattingContext::mapBoxToAncestor(const LayoutState& layoutState,
     return mappedDisplayBox;
 }
 
-Position FormattingContext::mapTopLeftToAncestor(const LayoutState& layoutState, const Box& layoutBox, const Container& ancestor)
+Point FormattingContext::mapTopLeftToAncestor(const LayoutState& layoutState, const Box& layoutBox, const Container& ancestor)
 {
     ASSERT(layoutBox.isDescendantOf(ancestor));
     return mapCoordinateToAncestor(layoutState, layoutState.displayBoxForLayoutBox(layoutBox).topLeft(), *layoutBox.containingBlock(), ancestor);
 }
 
-Position FormattingContext::mapCoordinateToAncestor(const LayoutState& layoutState, Position position, const Container& containingBlock, const Container& ancestor)
+Point FormattingContext::mapCoordinateToAncestor(const LayoutState& layoutState, Point position, const Container& containingBlock, const Container& ancestor)
 {
     auto mappedPosition = position;
     auto* container = &containingBlock;

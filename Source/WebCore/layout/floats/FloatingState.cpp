@@ -95,7 +95,7 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
     // 2. Find the inner left/right floats at verticalPosition.
     // 3. Convert left/right positions back to formattingContextRoot's cooridnate system.
     auto coordinateMappingIsRequired = &root() != &formattingContextRoot;
-    auto adjustedPosition = Position { 0, verticalPosition };
+    auto adjustedPosition = Point { 0, verticalPosition };
 
     if (coordinateMappingIsRequired)
         adjustedPosition = FormattingContext::mapCoordinateToAncestor(m_layoutState, adjustedPosition, downcast<Container>(formattingContextRoot), downcast<Container>(root()));
