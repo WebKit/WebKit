@@ -909,7 +909,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         if (!this.selected)
             return;
 
-        let treeElement = event.data.selectedElement;
+        let treeElement = event.target.selectedTreeElement;
         if (!treeElement)
             return;
 

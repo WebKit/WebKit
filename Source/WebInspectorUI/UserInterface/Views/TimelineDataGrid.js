@@ -416,7 +416,7 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
 
     _popoverCallStackTreeSelectionDidChange(event)
     {
-        let treeElement = event.data.selectedElement;
+        let treeElement = this._popoverCallStackTreeOutline.selectedTreeElement;
         if (!treeElement)
             return;
 

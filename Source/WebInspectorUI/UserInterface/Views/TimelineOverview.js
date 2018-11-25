@@ -842,26 +842,16 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _timelinesTreeSelectionDidChange(event)
     {
-        function updateGraphSelectedState(timeline, selected)
-        {
-            let overviewGraph = this._overviewGraphsByTypeMap.get(timeline.type);
-            console.assert(overviewGraph, "Missing overview graph for timeline", timeline);
-            overviewGraph.selected = selected;
-        }
-
-        let selectedTreeElement = event.data.selectedElement;
-        let deselectedTreeElement = event.data.deselectedElement;
         let timeline = null;
+        let selectedTreeElement = this._timelinesTreeOutline.selectedTreeElement;
         if (selectedTreeElement) {
             timeline = selectedTreeElement.representedObject;
             console.assert(timeline instanceof WI.Timeline, timeline);
             console.assert(this._recording.timelines.get(timeline.type) === timeline, timeline);
 
-            updateGraphSelectedState.call(this, timeline, true);
+            for (let [type, overviewGraph] of this._overviewGraphsByTypeMap)
+                overviewGraph.selected = type === timeline.type;
         }
-
-        if (deselectedTreeElement)
-            updateGraphSelectedState.call(this, deselectedTreeElement.representedObject, false);
 
         this._selectedTimeline = timeline;
         this.dispatchEventToListeners(WI.TimelineOverview.Event.TimelineSelected);

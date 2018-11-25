@@ -239,7 +239,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
     _canvasTreeOutlineSelectionDidChange(event)
     {
-        let selectedElement = event.data.selectedElement;
+        let selectedElement = this._canvasTreeOutline.selectedTreeElement;
         if (!selectedElement)
             return;
 

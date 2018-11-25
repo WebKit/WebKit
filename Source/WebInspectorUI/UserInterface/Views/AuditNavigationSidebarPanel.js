@@ -193,7 +193,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         if (!this.selected)
             return;
 
-        let treeElement = event.data.selectedElement;
+        let treeElement = this.contentTreeOutline.selectedTreeElement;
         if (!treeElement || treeElement instanceof WI.FolderTreeElement) {
             this.showDefaultContentView();
             return;

@@ -421,7 +421,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     _recordingsTreeSelectionDidChange(event)
     {
-        let treeElement = event.data.selectedElement;
+        let treeElement = this._recordingsTreeOutline.selectedTreeElement;
         if (!treeElement)
             return;
 

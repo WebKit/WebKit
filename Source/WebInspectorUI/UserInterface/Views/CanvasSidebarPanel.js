@@ -72,8 +72,8 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._recordingTreeOutline.customIndent = true;
         this._recordingTreeOutline.registerScrollVirtualizer(this._recordingContentContainer, 20);
 
-        this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
-        this._recordingTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
+        this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
+        this._recordingTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
 
         this._recordingProcessingOptionsContainer = null;
 
@@ -312,9 +312,9 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
     }
 
-    _treeOutlineSelectionDidChange(event)
+    _treeSelectionDidChange(event)
     {
-        let treeElement = event.data.selectedElement;
+        let treeElement = event.target.selectedTreeElement;
         if (!treeElement)
             return;
 

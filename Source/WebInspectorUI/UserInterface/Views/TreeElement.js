@@ -527,8 +527,7 @@ WI.TreeElement = class TreeElement extends WI.Object
         treeOutline.processingSelectionChange = true;
 
         // Prevent dispatching a SelectionDidChange event for the deselected element if
-        // it will be dispatched for the selected element. The event data includes both
-        // the selected and deselected elements, so one event is.
+        // it will be dispatched for the selected element.
         if (!suppressOnSelect)
             suppressOnDeselect = true;
 
@@ -548,7 +547,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             if (this.onselect)
                 this.onselect(this, selectedByUser);
 
-            treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange, {selectedElement: this, deselectedElement, selectedByUser});
+            treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange, {selectedByUser});
         }
 
         treeOutline.processingSelectionChange = false;
@@ -581,7 +580,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             if (this.ondeselect)
                 this.ondeselect(this);
 
-            this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange, {deselectedElement: this});
+            this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange);
         }
 
         return true;

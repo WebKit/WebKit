@@ -262,7 +262,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
     _treeSelectionDidChange(event)
     {
-        let treeElement = event.data.selectedElement;
+        let treeElement = this._treeOutline.selectedTreeElement;
         if (!treeElement)
             return;
 

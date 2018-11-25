@@ -1,3 +1,47 @@
+2018-11-25  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove parameters from TreeOutline SelectionDidChange event
+        https://bugs.webkit.org/show_bug.cgi?id=191770
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CallFrameTreeController.js:
+        (WI.CallFrameTreeController.prototype._treeSelectionDidChange):
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange): Deleted.
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView.prototype._canvasTreeOutlineSelectionDidChange):
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WI.StorageSidebarPanel._treeSelectionDidChange):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid.prototype._popoverCallStackTreeSelectionDidChange):
+        (WI.TimelineDataGrid):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.prototype._recordingsTreeSelectionDidChange):
+        Use `event.target.selectedTreeElement` instead of `event.data.selectedElement`.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._timelinesTreeSelectionDidChange):
+        (WI.TimelineOverview.prototype._timelinesTreeSelectionDidChange.updateGraphSelectedState): Deleted.
+        Refactor away the single place `event.data.deselectedElement` was used.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.select):
+        (WI.TreeElement.prototype.deselect):
+        Remove `selectedElement` and `deselectedElement` from event data.
+
 2018-11-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: removing and re-adding the tab will duplicate tests

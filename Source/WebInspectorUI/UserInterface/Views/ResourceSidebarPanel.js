@@ -457,7 +457,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         if (!this.selected)
             return;
 
-        let treeElement = event.data.selectedElement;
+        let treeElement = this.contentTreeOutline.selectedTreeElement;
         if (!treeElement)
             return;
 
