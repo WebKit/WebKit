@@ -1,3 +1,27 @@
+2018-11-24  Sam Weinig  <sam@webkit.org>
+
+        Remove now unnecessary specialized ListHashSet from InlineItem.h
+        https://bugs.webkit.org/show_bug.cgi?id=191946
+
+        Reviewed by Zalan Bujtas.
+
+        Now that ListHashSet supports raw pointer overloads for smart pointers,
+        we can fix the FIXME in InlineItem.h and remove the specialized ListHashSet
+        and ListHashSet::find calls.
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::splitInlineRunIfNeeded const):
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::InlineFormattingContext::Geometry::runWidth):
+        * layout/inlineformatting/InlineItem.h:
+        (WebCore::Layout::InlineItemHashFunctions::hash): Deleted.
+        (WebCore::Layout::InlineItemHashFunctions::equal): Deleted.
+        (WebCore::Layout::InlineItemHashTranslator::hash): Deleted.
+        (WebCore::Layout::InlineItemHashTranslator::equal): Deleted.
+        * layout/inlineformatting/InlineLineBreaker.cpp:
+        (WebCore::Layout::InlineLineBreaker::textWidth const):
+
 2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Add WKWebView SPI to trigger and remove data detection

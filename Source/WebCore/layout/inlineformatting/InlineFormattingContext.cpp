@@ -162,7 +162,7 @@ void InlineFormattingContext::splitInlineRunIfNeeded(const InlineRun& inlineRun,
         uncommitted = { };
     };
 
-    for (auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
+    for (auto iterator = inlineContent.find(&inlineRun.inlineItem()); iterator != inlineContent.end() && remaningLength > 0; ++iterator) {
         auto& inlineItem = **iterator;
 
         // Skip all non-inflow boxes (floats, out-of-flow positioned elements). They don't participate in the inline run context.
@@ -489,7 +489,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         auto& inlineContent = inlineFormattingState.inlineContent();
 
         if (lastInlineBoxBeforeContainer) {
-            auto iterator = inlineContent.find<const InlineItem&, InlineItemHashTranslator>(*lastInlineBoxBeforeContainer);
+            auto iterator = inlineContent.find(lastInlineBoxBeforeContainer);
             firstDescendantInlineBox = (*++iterator).get();
         } else
             firstDescendantInlineBox = inlineContent.first().get();

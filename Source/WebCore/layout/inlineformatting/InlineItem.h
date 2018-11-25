@@ -83,17 +83,7 @@ private:
     LayoutUnit m_nonBreakableEnd;
 };
 
-// FIXME: Fix HashSet/ListHashSet to support smart pointer types.
-struct InlineItemHashFunctions {
-    static unsigned hash(const std::unique_ptr<InlineItem>& key) { return PtrHash<InlineItem*>::hash(key.get()); }
-    static bool equal(const std::unique_ptr<InlineItem>& a, const std::unique_ptr<InlineItem>& b) { return a.get() == b.get(); }
-};
-
-struct InlineItemHashTranslator {
-    static unsigned hash(const InlineItem& key) { return PtrHash<const InlineItem*>::hash(&key); }
-    static bool equal(const std::unique_ptr<InlineItem>& a, const InlineItem& b) { return a.get() == &b; }
-};
-using InlineContent = ListHashSet<std::unique_ptr<InlineItem>, InlineItemHashFunctions>;
+using InlineContent = ListHashSet<std::unique_ptr<InlineItem>>;
 
 inline InlineItem::InlineItem(const Box& layoutBox)
     : m_layoutBox(layoutBox)

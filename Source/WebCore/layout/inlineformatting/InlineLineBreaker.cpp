@@ -161,7 +161,7 @@ LayoutUnit InlineLineBreaker::textWidth(const InlineRunProvider::Run& inlineRun,
 
     // FIXME: It does not do proper kerning/ligature handling.
     LayoutUnit width;
-    auto iterator = m_inlineContent.find<const InlineItem&, InlineItemHashTranslator>(inlineItem);
+    auto iterator = m_inlineContent.find(&inlineItem);
     auto inlineItemEnd = m_inlineContent.end();
     while (length) {
         ASSERT(iterator != inlineItemEnd);
