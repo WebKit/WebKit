@@ -174,9 +174,9 @@ String WebEditCommandProxy::nameForEditAction(EditAction editAction)
     // FIXME: We should give internal clients a way to override these undo names. For instance, Mail refers to ordered and unordered lists as "numbered" and "bulleted" lists, respectively,
     // despite the fact that ordered and unordered lists are not necessarily displayed using bullets and numerals.
     case EditAction::ConvertToOrderedList:
-        return WEB_UI_STRING_KEY("Convert to Ordered List", "Convert to Ordered List (Undo action name)", "Convert to ordered list action name");
+        return WEB_UI_STRING_KEY("Convert to Ordered List", "Convert to Ordered List (Undo action name)", "Undo action name");
     case EditAction::ConvertToUnorderedList:
-        return WEB_UI_STRING_KEY("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Convert to unordered list action name");
+        return WEB_UI_STRING_KEY("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Undo action name");
     }
     return String();
 }

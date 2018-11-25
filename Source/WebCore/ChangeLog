@@ -1,3 +1,14 @@
+2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Fix a few localizable string descriptions in WebEditCommandProxy.cpp and WebEditorClient.mm
+        https://bugs.webkit.org/show_bug.cgi?id=191945
+
+        Reviewed by Anders Carlsson.
+
+        Run `update-webkit-localizable-strings`.
+
+        * en.lproj/Localizable.strings:
+
 2018-11-24  Sam Weinig  <sam@webkit.org>
 
         Remove now unnecessary specialized ListHashSet from InlineItem.h

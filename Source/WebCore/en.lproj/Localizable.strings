@@ -187,10 +187,10 @@
 /* Media Controls context menu item */
 "Controls" = "Controls";
 
-/* Convert to ordered list action name */
+/* Undo action name */
 "Convert to Ordered List (Undo action name)" = "Convert to Ordered List";
 
-/* Convert to unordered list action name */
+/* Undo action name */
 "Convert to Unordered List (Undo action name)" = "Convert to Unordered List";
 
 /* Copy context menu item */
@@ -595,11 +595,11 @@
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";
 
-/* Search with search provider context menu item with provider name inserted */
-"Search with %@" = "Search with %@";
-
 /* Search the Web context menu item */
 "Search the Web" = "Search the Web";
+
+/* Search with search provider context menu item with provider name inserted */
+"Search with %@" = "Search with %@";
 
 /* Validation message for required file inputs that have no value */
 "Select a file" = "Select a file";
@@ -819,6 +819,9 @@
 
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
+
+/* Unacceptable TLS certificate error */
+"Unacceptable TLS certificate" = "Unacceptable TLS certificate";
 
 /* Underline context menu item */
 "Underline" = "Underline";

@@ -1,5 +1,18 @@
 2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [Cocoa] Fix a few localizable string descriptions in WebEditCommandProxy.cpp and WebEditorClient.mm
+        https://bugs.webkit.org/show_bug.cgi?id=191945
+
+        Reviewed by Anders Carlsson.
+
+        Replace some a couple of command undo action name descriptions with "Undo action name", to match all other
+        edit commands.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+
+2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Cocoa] Add WKWebView SPI to trigger and remove data detection
         https://bugs.webkit.org/show_bug.cgi?id=191918
         <rdar://problem/36185051>

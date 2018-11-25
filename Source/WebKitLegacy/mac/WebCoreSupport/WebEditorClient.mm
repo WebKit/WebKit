@@ -653,8 +653,8 @@ static NSString* undoNameForEditAction(EditAction editAction)
     case EditAction::Italics: return UI_STRING_KEY_INTERNAL("Italics", "Italics (Undo action name)", "Undo action name");
     case EditAction::Delete: return UI_STRING_KEY_INTERNAL("Delete", "Delete (Undo action name)", "Undo action name");
     case EditAction::Dictation: return UI_STRING_KEY_INTERNAL("Dictation", "Dictation (Undo action name)", "Undo action name");
-    case EditAction::ConvertToOrderedList: return UI_STRING_KEY_INTERNAL("Convert to Ordered List", "Convert to Ordered List (Undo action name)", "Convert to ordered list action name");
-    case EditAction::ConvertToUnorderedList: return UI_STRING_KEY_INTERNAL("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Convert to unordered list action name");
+    case EditAction::ConvertToOrderedList: return UI_STRING_KEY_INTERNAL("Convert to Ordered List", "Convert to Ordered List (Undo action name)", "Undo action name");
+    case EditAction::ConvertToUnorderedList: return UI_STRING_KEY_INTERNAL("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Undo action name");
     }
     return nil;
 }
