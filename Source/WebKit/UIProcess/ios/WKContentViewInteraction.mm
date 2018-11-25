@@ -691,6 +691,12 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_twoFingerSingleTapGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
+    _stylusSingleTapGestureRecognizer = adoptNS([[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_stylusSingleTapRecognized:)]);
+    [_stylusSingleTapGestureRecognizer setNumberOfTapsRequired:1];
+    [_stylusSingleTapGestureRecognizer setDelegate:self];
+    [_stylusSingleTapGestureRecognizer setAllowedTouchTypes:@[ @(UITouchTypePencil) ]];
+    [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
+
 #if HAVE(LINK_PREVIEW)
     [self _registerPreview];
 #endif
@@ -778,6 +784,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [_twoFingerSingleTapGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
 
+    [_stylusSingleTapGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
+
     _layerTreeTransactionIdAtLastTouchStart = 0;
 
 #if ENABLE(DATA_INTERACTION)
@@ -834,6 +843,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self removeGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self removeGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+    [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if PLATFORM(IOSMAC)
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
@@ -848,6 +858,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self addGestureRecognizer:_nonBlockingDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerDoubleTapGestureRecognizer.get()];
     [self addGestureRecognizer:_twoFingerSingleTapGestureRecognizer.get()];
+    [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if PLATFORM(IOSMAC)
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
 #endif
@@ -1894,6 +1905,15 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     _isTapHighlightIDValid = YES;
     _isExpectingFastSingleTapCommit = YES;
     _page->handleTwoFingerTapAtPoint(roundedIntPoint(gestureRecognizer.centroid), ++_latestTapID);
+}
+
+- (void)_stylusSingleTapRecognized:(UITapGestureRecognizer *)gestureRecognizer
+{
+    if (!_webView._stylusTapGestureShouldCreateEditableImage)
+        return;
+
+    ASSERT(gestureRecognizer == _stylusSingleTapGestureRecognizer);
+    _page->handleStylusSingleTapAtPoint(roundedIntPoint(gestureRecognizer.location), ++_latestTapID);
 }
 
 - (void)_longPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer

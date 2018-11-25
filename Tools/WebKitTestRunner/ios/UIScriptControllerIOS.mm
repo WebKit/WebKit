@@ -890,7 +890,7 @@ void UIScriptController::drawSquareInEditableImage()
     Class pkStrokeClass = NSClassFromString(@"PKStroke");
 
     PKCanvasView *canvasView = findEditableImageCanvas();
-    RetainPtr<PKDrawing> drawing = adoptNS([[pkDrawingClass alloc] init]);
+    RetainPtr<PKDrawing> drawing = canvasView.drawing ?: adoptNS([[pkDrawingClass alloc] init]);
     RetainPtr<CGPathRef> path = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, 50, 50), NULL));
     RetainPtr<PKInk> ink = [pkInkClass inkWithType:0 color:UIColor.greenColor weight:100.0];
     RetainPtr<PKStroke> stroke = adoptNS([[pkStrokeClass alloc] _initWithPath:path.get() ink:ink.get() inputScale:1]);

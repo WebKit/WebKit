@@ -1,3 +1,15 @@
+2018-11-25  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to insert editable images with a gesture
+        https://bugs.webkit.org/show_bug.cgi?id=191937
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::drawSquareInEditableImage):
+        If the canvas already has a drawing, draw a new stroke on top of it
+        instead of removing the existing stroke.
+
 2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Add WKWebView SPI to trigger and remove data detection

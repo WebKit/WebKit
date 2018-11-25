@@ -1,3 +1,25 @@
+2018-11-25  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to insert editable images with a gesture
+        https://bugs.webkit.org/show_bug.cgi?id=191937
+
+        Reviewed by Wenson Hsieh.
+
+        * editing/images/basic-editable-image-from-execCommand-expected.txt: Added.
+        * editing/images/basic-editable-image-from-execCommand.html: Added.
+        Add a test that ensures that editable images also work when
+        inserted via the editor command.
+
+        * editing/images/redo-insert-editable-image-maintains-strokes-expected.txt: Added.
+        * editing/images/redo-insert-editable-image-maintains-strokes.html: Added.
+        Add a test that ensures that strokes are maintained when re-doing an
+        un-done editable image insertion.
+
+        * editing/images/undo-insert-editable-image-expected.txt: Added.
+        * editing/images/undo-insert-editable-image.html: Added.
+        Add a test that ensures that the selection stays in a sensible place
+        when undoing and redoing editable image insertion.
+
 2018-11-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r236785): Nullptr crash in StyledMarkupAccumulator::traverseNodesForSerialization

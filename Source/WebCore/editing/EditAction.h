@@ -87,7 +87,8 @@ enum class EditAction : uint8_t {
     ConvertToOrderedList,
     ConvertToUnorderedList,
     Indent,
-    Outdent
+    Outdent,
+    InsertEditableImage
 };
 
 } // namespace WebCore

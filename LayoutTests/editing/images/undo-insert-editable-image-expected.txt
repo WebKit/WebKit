@@ -1,0 +1,28 @@
+This test inserts a editable image, performs an undo, then a redo, ensuring that the selection remains after the image when re-done.
+
+before undo:
+| "Hello, world!"
+| <img>
+|   height="300px"
+|   style="display: block"
+|   width="100%"
+|   x-apple-editable-image=""
+|   <shadow:root>
+|     <attachment>
+|       style="display: none !important;"
+| <#selection-caret>
+
+after undo:
+| "Hello, world!<#selection-caret>"
+
+after redo:
+| "Hello, world!"
+| <img>
+|   height="300px"
+|   style="display: block"
+|   width="100%"
+|   x-apple-editable-image=""
+|   <shadow:root>
+|     <attachment>
+|       style="display: none !important;"
+| <#selection-caret>

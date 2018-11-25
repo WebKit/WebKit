@@ -914,6 +914,7 @@ editing/FrameSelection.cpp
 editing/HTMLInterchange.cpp
 editing/InsertNestedListCommand.cpp
 editing/IndentOutdentCommand.cpp
+editing/InsertEditableImageCommand.cpp
 editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp
 editing/InsertListCommand.cpp

@@ -597,6 +597,11 @@ void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uin
     process().send(Messages::WebPage::HandleTwoFingerTapAtPoint(point, requestID), m_pageID);
 }
 
+void WebPageProxy::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
+{
+    process().send(Messages::WebPage::HandleStylusSingleTapAtPoint(point, requestID), m_pageID);
+}
+
 void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
 {
     if (!isValid()) {

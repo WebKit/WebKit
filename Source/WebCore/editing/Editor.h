@@ -532,6 +532,8 @@ public:
 #endif
 #endif
 
+    WEBCORE_EXPORT void insertEditableImage();
+
 private:
     Document& document() const;
 

@@ -1,3 +1,33 @@
+2018-11-25  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to insert editable images with a gesture
+        https://bugs.webkit.org/show_bug.cgi?id=191937
+
+        Reviewed by Wenson Hsieh.
+
+        Tests:
+            editing/images/redo-insert-editable-image-maintains-strokes.html,
+            editing/images/undo-insert-editable-image.html,
+            editing/images/basic-editable-image-from-execCommand.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Source/WebCore/editing/EditorCommand.cpp:
+        * Source/WebCore/en.lproj/Localizable.strings:
+        * editing/EditAction.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertEditableImage):
+        * editing/Editor.h:
+        * editing/InsertEditableImageCommand.cpp: Added.
+        (WebCore::InsertEditableImageCommand::InsertEditableImageCommand):
+        (WebCore::InsertEditableImageCommand::doApply):
+        * editing/InsertEditableImageCommand.h: Added.
+        (WebCore::InsertEditableImageCommand::create):
+        * editing/VisibleSelection.cpp:
+        Add an editor command that inserts an editable image.
+        It will likely get a bit more complicated, but for now it just inserts
+        a 100% by 300px editable image.
+
 2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Fix a few localizable string descriptions in WebEditCommandProxy.cpp and WebEditorClient.mm

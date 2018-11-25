@@ -2440,6 +2440,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return !areEssentiallyEqualAsFloat(contentZoomScale(self), 1);
 }
 
+- (BOOL)_stylusTapGestureShouldCreateEditableImage
+{
+    return [_configuration _editableImagesEnabled];
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (BOOL)usesStandardContentView

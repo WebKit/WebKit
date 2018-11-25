@@ -68,6 +68,7 @@
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "InputEvent.h"
+#include "InsertEditableImageCommand.h"
 #include "InsertListCommand.h"
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
@@ -4248,6 +4249,11 @@ String Editor::clientReplacementURLForResource(Ref<SharedBuffer>&& resourceData,
         return editorClient->replacementURLForResource(WTFMove(resourceData), mimeType);
 
     return { };
+}
+
+void Editor::insertEditableImage()
+{
+    InsertEditableImageCommand::create(document())->apply();
 }
 
 } // namespace WebCore

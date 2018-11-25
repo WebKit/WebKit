@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "HTMLInputElement.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include <stdio.h>

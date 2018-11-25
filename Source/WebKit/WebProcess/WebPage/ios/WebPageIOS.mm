@@ -758,6 +758,36 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t
         completeSyntheticClick(nodeRespondingToClick, adjustedPoint, WebCore::TwoFingerTap);
 }
 
+void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+
+    auto pointInDocument = frame.view()->rootViewToContents(point);
+    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, HitTestRequest::ReadOnly | HitTestRequest::Active);
+
+    Node* node = hitTest.innerNonSharedNode();
+    if (!node)
+        return;
+    auto renderer = node->renderer();
+    if (!renderer)
+        return;
+
+    if (renderer->isReplaced())
+        return;
+
+    VisiblePosition position = renderer->positionForPoint(hitTest.localPoint(), nullptr);
+    if (position.isNull())
+        position = firstPositionInOrBeforeNode(node);
+
+    if (position.isNull())
+        return;
+
+    auto range = Range::create(*frame.document(), position, position);
+    frame.selection().setSelectedRange(range.ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
+    frame.editor().insertEditableImage();
+    resetAssistedNodeForFrame(m_mainFrame.get());
+}
+
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
 {
     m_potentialTapNode = m_page->mainFrame().nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());

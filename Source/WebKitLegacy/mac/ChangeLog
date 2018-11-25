@@ -1,3 +1,14 @@
+2018-11-25  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to insert editable images with a gesture
+        https://bugs.webkit.org/show_bug.cgi?id=191937
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction):
+        Add a undo name.
+
 2018-11-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Fix a few localizable string descriptions in WebEditCommandProxy.cpp and WebEditorClient.mm

@@ -1,5 +1,45 @@
 2018-11-25  Tim Horton  <timothy_horton@apple.com>
 
+        Make it possible to insert editable images with a gesture
+        https://bugs.webkit.org/show_bug.cgi?id=191937
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _stylusTapGestureShouldCreateEditableImage]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        Add a internal getter for a WKWebViewConfiguration property.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+        Add a undo name.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        Add a single-stylus-tap gesture recognizer.
+
+        (-[WKContentView _stylusSingleTapRecognized:]):
+        If allowed, request to insert an editable image when a stylus tap occurs.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::handleStylusSingleTapAtPoint):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleStylusSingleTapAtPoint):
+        Do a hit test, select the hit position, insert an editable image, and
+        then de-assist any assisted node (to make the keyboard go away).
+        For now, we'll only insert if we hit non-replaced elements,
+        though this heuristic will need to be enhanced significantly once we
+        decide on a design.
+
+2018-11-25  Tim Horton  <timothy_horton@apple.com>
+
         Scrolling and drawing compete for incoming gestures
         https://bugs.webkit.org/show_bug.cgi?id=191940
 
