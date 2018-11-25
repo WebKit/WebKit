@@ -685,6 +685,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             return;
 
         for (let overviewGraph of this._overviewGraphsByTypeMap.values()) {
+            if (!overviewGraph.visible)
+                continue;
+
             let graphRect = overviewGraph.element.getBoundingClientRect();
             if (!(event.pageX >= graphRect.left && event.pageX <= graphRect.right && event.pageY >= graphRect.top && event.pageY <= graphRect.bottom))
                 continue;

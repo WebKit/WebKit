@@ -25,7 +25,7 @@
 
 WI.DOMNodeEventsContentView = class DOMNodeEventsContentView extends WI.ContentView
 {
-    constructor(domNode, {startTimestamp} = {})
+    constructor(domNode)
     {
         console.assert(domNode instanceof WI.DOMNode);
 
@@ -33,7 +33,6 @@ WI.DOMNodeEventsContentView = class DOMNodeEventsContentView extends WI.ContentV
         super(representedObject);
 
         this._domNode = domNode;
-        this._startTimestamp = startTimestamp || 0;
 
         this.element.classList.add("dom-node-details", "dom-events");
 
@@ -48,7 +47,6 @@ WI.DOMNodeEventsContentView = class DOMNodeEventsContentView extends WI.ContentV
 
         this._breakdownView = new WI.DOMEventsBreakdownView(this._domNode, {
             includeGraph: true,
-            startTimestamp: this._startTimestamp,
         });
         this.addSubview(this._breakdownView);
     }

@@ -111,6 +111,11 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (WI.HeapAllocationsInstrument.supported())
             types.push(WI.TimelineRecord.Type.HeapAllocations);
 
+        if (WI.MediaInstrument.supported()) {
+            let insertionIndex = types.indexOf(WI.TimelineRecord.Type.Layout) + 1;
+            types.insertAtIndex(WI.TimelineRecord.Type.Media, insertionIndex || types.length);
+        }
+
         return types;
     }
 
@@ -251,6 +256,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = [];
 
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.DidFireEvent, this._handleDOMNodeDidFireEvent, this);
+        WI.DOMNode.addEventListener(WI.DOMNode.Event.LowPowerChanged, this._handleDOMNodeLowPowerChanged, this);
+
         this.dispatchEventToListeners(WI.TimelineManager.Event.CapturingStarted, {startTime});
     }
 
@@ -260,6 +268,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         if (!this._isCapturing)
             return;
+
+        WI.DOMNode.removeEventListener(null, null, this);
 
         if (this._stopCapturingTimeout) {
             clearTimeout(this._stopCapturingTimeout);
@@ -1067,6 +1077,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 case WI.TimelineRecord.Type.Network:
                 case WI.TimelineRecord.Type.RenderingFrame:
                 case WI.TimelineRecord.Type.Layout:
+                case WI.TimelineRecord.Type.Media:
                     instrumentSet.add(target.TimelineAgent.Instrument.Timeline);
                     break;
                 case WI.TimelineRecord.Type.Memory:
@@ -1077,6 +1088,30 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             target.TimelineAgent.setInstruments(Array.from(instrumentSet));
         }
+    }
+
+    _handleDOMNodeDidFireEvent(event)
+    {
+        console.assert(this._isCapturing);
+
+        let {domEvent} = event.data;
+
+        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.DOMEvent, domEvent.timestamp, {
+            domNode: event.target,
+            domEvent,
+        }));
+    }
+
+    _handleDOMNodeLowPowerChanged(event)
+    {
+        console.assert(this._isCapturing);
+
+        let {timestamp, isLowPower} = event.data;
+
+        this._addRecord(new WI.MediaTimelineRecord(WI.MediaTimelineRecord.EventType.LowPower, timestamp, {
+            domNode: event.target,
+            isLowPower,
+        }));
     }
 };
 

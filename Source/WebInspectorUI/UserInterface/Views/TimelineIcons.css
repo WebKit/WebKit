@@ -47,6 +47,10 @@
     content: url(../Images/RenderingFramesInstrument.svg);
 }
 
+.media-icon .icon {
+    content: url(../Images/MediaInstrument.svg);
+}
+
 .stopwatch-icon .icon {
     content: url(../Images/Stopwatch.svg);
 }
@@ -115,6 +119,18 @@
 
 .heap-snapshot-record .icon {
     content: url(../Images/HeapSnapshot.svg);
+}
+
+.dom-event-record .icon {
+    content: url(../Images/DOMEvent.svg);
+}
+
+.dom-event-record.fullscreen .icon {
+    content: url(../Images/DOMEventFullscreen.svg);
+}
+
+.low-power-record .icon {
+    content: url(../Images/LowPower.svg);
 }
 
 @media (prefers-dark-interface) {

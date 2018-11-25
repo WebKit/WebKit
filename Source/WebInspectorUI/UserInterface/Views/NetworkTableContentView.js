@@ -84,8 +84,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._typeFilterScopeBar = new WI.ScopeBar("network-type-filter-scope-bar", typeFilterScopeBarItems, typeFilterScopeBarItems[0]);
         this._typeFilterScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._typeFilterScopeBarSelectionChanged, this);
 
-        this._groupByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-by-node", WI.UIString("Group Media Requests"), WI.settings.groupByDOMNode.value);
-        this._groupByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupByDOMNodeCheckedDidChange, this);
+        if (WI.MediaInstrument.supported()) {
+            this._groupByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-by-node", WI.UIString("Group Media Requests"), WI.settings.groupByDOMNode.value);
+            this._groupByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupByDOMNodeCheckedDidChange, this);
+        } else
+            WI.settings.groupByDOMNode.value = false;
 
         this._urlFilterSearchText = null;
         this._urlFilterSearchRegex = null;
@@ -213,7 +216,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     get filterNavigationItems()
     {
-        return [this._urlFilterNavigationItem, this._typeFilterScopeBar, this._groupByDOMNodeNavigationItem];
+        let navigationItems = [this._urlFilterNavigationItem, this._typeFilterScopeBar];
+        if (WI.MediaInstrument.supported())
+            navigationItems.push(this._groupByDOMNodeNavigationItem);
+        return navigationItems;
     }
 
     get supportsSave()
@@ -695,9 +701,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
                     let originator = fullscreenDOMEvents[i].originator || fullscreenDOMEvents[i + 1].originator;
                     if (originator)
-                        fullscreenElement.title = WI.UIString("Fullscreen from “%s“").format(originator.displayName);
+                        fullscreenElement.title = WI.UIString("Full-Screen from “%s“").format(originator.displayName);
                     else
-                        fullscreenElement.title = WI.UIString("Fullscreen");
+                        fullscreenElement.title = WI.UIString("Full-Screen");
                 }
             }
 
@@ -707,7 +713,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
                 let lowPowerElement = container.appendChild(document.createElement("div"));
                 lowPowerElement.classList.add("area", "low-power");
-                lowPowerElement.title = WI.UIString("Low Power Mode");
+                lowPowerElement.title = WI.UIString("Low-Power Mode");
                 positionByStartOffset(lowPowerElement, startTimestamp);
                 setWidthForDuration(lowPowerElement, startTimestamp, endTimestamp);
             }
@@ -1313,9 +1319,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             if (object instanceof WI.Resource)
                 this._detailView = new WI.NetworkResourceDetailView(object, this);
             else if (object instanceof WI.DOMNode) {
-                this._detailView = new WI.NetworkDOMNodeDetailView(object, this, {
-                    startTimestamp: this._waterfallStartTime,
-                });
+                this._detailView = new WI.NetworkDOMNodeDetailView(object, this);
             }
 
             this._detailViewMap.set(object, this._detailView);
@@ -1918,9 +1922,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         let contentElement = this._waterfallPopoverContent();
 
-        let breakdownView = new WI.DOMEventsBreakdownView(domEvents, {
-            startTimestamp: this._waterfallStartTime,
-        });
+        let breakdownView = new WI.DOMEventsBreakdownView(domEvents);
         contentElement.appendChild(breakdownView.element);
         breakdownView.updateLayout();
 

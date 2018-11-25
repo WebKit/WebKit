@@ -368,8 +368,10 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
 
     clearMarkers()
     {
-        for (let markerElement of this._markerElementMap.values())
+        for (let [marker, markerElement] of this._markerElementMap) {
+            marker.removeEventListener(null, null, this);
             markerElement.remove();
+        }
 
         this._markerElementMap.clear();
     }
@@ -728,12 +730,16 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         if (this._mouseMoved)
             return;
 
-        this.element.style.pointerEvents = "none";
-        let newTarget = document.elementFromPoint(event.pageX, event.pageY);
-        this.element.style.pointerEvents = null;
+        for (let newTarget of document.elementsFromPoint(event.pageX, event.pageY)) {
+            if (!newTarget || typeof newTarget.click !== "function")
+                continue;
+            if (this.element.contains(newTarget))
+                continue;
 
-        if (newTarget && newTarget.click)
-            newTarget.click();
+            // Clone the event to dispatch it on the new element.
+            newTarget.dispatchEvent(new event.constructor(event.type, event));
+            return;
+        }
     }
 
     _handleDoubleClick(event)

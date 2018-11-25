@@ -23,41 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NetworkDOMNodeDetailView = class NetworkDOMNodeDetailView extends WI.NetworkDetailView
+WI.MediaInstrument = class MediaInstrument extends WI.Instrument
 {
-    constructor(domNode, delegate)
+    constructor()
     {
-        console.assert(domNode instanceof WI.DOMNode);
+        super();
 
-        super(domNode, delegate);
+        console.assert(WI.MediaInstrument.supported());
+    }
 
-        this.element.classList.add("dom-node");
+    // Static
 
-        this._domEventsContentView = null;
+    static supported()
+    {
+        // COMPATIBILITY (iOS 12): DOM.didFireEvent and DOM.videoLowPowerChanged did not exist.
+        return window.DOMAgent && DOMAgent.hasEvent("didFireEvent") && DOMAgent.hasEvent("videoLowPowerChanged");
     }
 
     // Protected
 
-    initialLayout()
+    get timelineRecordType()
     {
-        this.createDetailNavigationItem("dom-events", WI.UIString("DOM Events"));
-
-        super.initialLayout();
+        return WI.TimelineRecord.Type.Media;
     }
 
-    // Private
-
-    showContentViewForIdentifier(identifier)
+    startInstrumentation(initiatedByBackend)
     {
-        super.showContentViewForIdentifier(identifier);
+        // Nothing to do, media instrumentation is always happening.
+    }
 
-        switch (identifier) {
-        case "dom-events":
-            if (!this._domEventsContentView) {
-                this._domEventsContentView = new WI.DOMNodeEventsContentView(this.representedObject);
-            }
-            this._contentBrowser.showContentView(this._domEventsContentView, this._contentViewCookie);
-            break;
-        }
+    stopInstrumentation(initiatedByBackend)
+    {
+        // Nothing to do, media instrumentation is always happening.
     }
 };

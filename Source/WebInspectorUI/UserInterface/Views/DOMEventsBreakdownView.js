@@ -25,7 +25,7 @@
 
 WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
 {
-    constructor(domNodeOrEvents, {includeGraph, startTimestamp} = {})
+    constructor(domNodeOrEvents, {includeGraph} = {})
     {
         console.assert(domNodeOrEvents instanceof WI.DOMNode || Array.isArray(domNodeOrEvents));
 
@@ -45,7 +45,6 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
         }
 
         this._includeGraph = includeGraph || false;
-        this._startTimestamp = startTimestamp || 0;
 
         this._tableBodyElement = null;
 
@@ -134,16 +133,16 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                     fullscreenArea.style.setProperty("width", percentOfTotalTime(fullscreenRange.endTimestamp - fullscreenRange.startTimestamp) + "%");
 
                     if (fullscreenRange.originator)
-                        fullscreenArea.title = WI.UIString("Fullscreen from “%s“").format(fullscreenRange.originator.displayName);
+                        fullscreenArea.title = WI.UIString("Full-Screen from “%s“").format(fullscreenRange.originator.displayName);
                     else
-                        fullscreenArea.title = WI.UIString("Fullscreen");
+                        fullscreenArea.title = WI.UIString("Full-Screen");
                 }
 
                 let lowPowerRange = lowPowerRanges.find((range) => domEvent.timestamp >= range.startTimestamp && domEvent.timestamp <= range.endTimestamp);
                 if (lowPowerRange) {
                     let lowPowerArea = graphCell.appendChild(document.createElement("div"));
                     lowPowerArea.classList.add("area", "low-power");
-                    lowPowerArea.title = WI.UIString("Low Power Mode");
+                    lowPowerArea.title = WI.UIString("Low-Power Mode");
                     lowPowerArea.style.setProperty(styleAttribute, percentOfTotalTime(lowPowerRange.startTimestamp - startTimestamp) + "%");
                     lowPowerArea.style.setProperty("width", percentOfTotalTime(lowPowerRange.endTimestamp - lowPowerRange.startTimestamp) + "%");
                 }
@@ -157,7 +156,7 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
             timeCell.classList.add("time");
 
             const higherResolution = true;
-            timeCell.textContent = Number.secondsToString(domEvent.timestamp - this._startTimestamp, higherResolution);
+            timeCell.textContent = Number.secondsToString(domEvent.timestamp, higherResolution);
 
             let originatorCell = rowElement.appendChild(document.createElement("td"));
             originatorCell.classList.add("originator");

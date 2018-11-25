@@ -1,3 +1,138 @@
+2018-11-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: add Media timeline
+        https://bugs.webkit.org/show_bug.cgi?id=191625
+
+        Reviewed by Matt Baker.
+
+        Add a new timeline to Timelines for media related events (e.g. event/fullscreen/low-power).
+        Mimics what is visible by using the same instrumentation points as the Network tab when
+        "Group Media Requests" is enabled.
+
+        * UserInterface/Models/MediaInstrument.js: Added.
+        (WI.MediaInstrument):
+        (WI.MediaInstrument.supported):
+        (WI.MediaInstrument.prototype.get timelineRecordType):
+        (WI.MediaInstrument.prototype.startInstrumentation):
+        (WI.MediaInstrument.prototype.stopInstrumentation):
+
+        * UserInterface/Models/MediaTimelineRecord.js: Added.
+        (WI.MediaTimelineRecord):
+        (WI.MediaTimelineRecord.prototype.get eventType):
+        (WI.MediaTimelineRecord.prototype.get domNode):
+        (WI.MediaTimelineRecord.prototype.get domEvent):
+        (WI.MediaTimelineRecord.prototype.get isLowPower):
+        (WI.MediaTimelineRecord.prototype.get displayName):
+        (WI.MediaTimelineRecord.prototype.saveIdentityToCookie):
+
+        * UserInterface/Views/MediaTimelineDataGridNode.js: Added.
+        (WI.MediaTimelineDataGridNode):
+        (WI.MediaTimelineDataGridNode.prototype.get records):
+        (WI.MediaTimelineDataGridNode.prototype.get data):
+        (WI.MediaTimelineDataGridNode.prototype.createCellContent):
+        (WI.MediaTimelineDataGridNode.prototype.iconClassNames):
+        (WI.MediaTimelineDataGridNode.prototype.filterableDataForColumn):
+
+        * UserInterface/Views/MediaTimelineOverviewGraph.js: Added.
+        (WI.MediaTimelineOverviewGraph):
+        (WI.MediaTimelineOverviewGraph.prototype.reset):
+        (WI.MediaTimelineOverviewGraph.prototype.shown):
+        (WI.MediaTimelineOverviewGraph.prototype.hidden):
+        (WI.MediaTimelineOverviewGraph.prototype.layout):
+        (WI.MediaTimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WI.MediaTimelineOverviewGraph.prototype._handleRecordAdded):
+        * UserInterface/Views/MediaTimelineOverviewGraph.css: Added.
+        (.timeline-overview-graph.media > .timeline-record-bar):
+        (.timeline-overview-graph.media > .timeline-record-bar > .segment):
+
+        * UserInterface/Views/MediaTimelineView.js: Added.
+        (WI.MediaTimelineView):
+        (WI.MediaTimelineView.prototype.get secondsPerPixel):
+        (WI.MediaTimelineView.prototype.get selectionPathComponents):
+        (WI.MediaTimelineView.prototype.closed):
+        (WI.MediaTimelineView.prototype.reset):
+        (WI.MediaTimelineView.prototype.dataGridSortComparator.compareDOMNodes):
+        (WI.MediaTimelineView.prototype.dataGridSortComparator.):
+        (WI.MediaTimelineView.prototype.dataGridSortComparator):
+        (WI.MediaTimelineView.prototype.layout):
+        (WI.MediaTimelineView.prototype._processPendingRecords):
+        (WI.MediaTimelineView.prototype._handleRecordAdded):
+        (WI.MediaTimelineView.prototype._handleSelectionPathComponentSiblingSelected):
+        * UserInterface/Views/MediaTimelineView.css: Added.
+        (.timeline-view.media > .data-grid):
+
+        * UserInterface/Views/DOMEventsBreakdownView.js:
+        (WI.DOMEventsBreakdownView.prototype.layout):
+        * UserInterface/Views/DOMNodeEventsContentView.js:
+        (WI.DOMNodeEventsContentView.prototype.initialLayout):
+        * UserInterface/Views/NetworkDOMNodeDetailView.js:
+        (WI.NetworkDOMNodeDetailView):
+        (WI.NetworkDOMNodeDetailView.prototype.showContentViewForIdentifier):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get filterNavigationItems):
+        (WI.NetworkTableContentView.prototype._populateWaterfallGraph):
+        (WI.NetworkTableContentView.prototype._showDetailView):
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForNodeEntry):
+        Remove passing of `startTimestamp` to `WI.DOMEventsBreakdownView`, as we should be showing
+        absolute timestamps for each event, not relative to the start of the recording.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.media-icon .icon): Added.
+        (.dom-event-record .icon): Added.
+        (.dom-event-record.fullscreen .icon): Added.
+        (.low-power-record .icon): Added.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.availableTimelineTypes):
+        (WI.TimelineManager.prototype.capturingStarted):
+        (WI.TimelineManager.prototype.capturingStopped):
+        (WI.TimelineManager.prototype._updateAutoCaptureInstruments):
+        (WI.TimelineManager.prototype._handleDOMNodeDidFireEvent): Added.
+        (WI.TimelineManager.prototype._handleDOMNodeLowPowerChanged): Added.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WI.TimelineRuler.prototype.clearMarkers):
+        (WI.TimelineRuler.prototype._handleClick):
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._timelineRulerMouseClicked):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.prototype.reset):
+        (WI.TimelineRecording.prototype.addEventMarker):
+        (WI.TimelineRecording.prototype.addRecord):
+        (WI.TimelineRecording.prototype._keyForRecord):
+        Drive-by: rework the logic for "click" event pass-through to the graph underneath.
+
+        * UserInterface/Models/Instrument.js:
+        (WI.Instrument.createForTimelineType):
+
+        * UserInterface/Models/TimelineRecord.js:
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForTimelineType):
+        (WI.TimelineTabContentView.genericClassNameForTimelineType):
+        (WI.TimelineTabContentView.iconClassNameForRecord):
+        (WI.TimelineTabContentView.displayNameForRecord):
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-media > .segment): Added.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        (WI.TimelineOverviewGraph.createForTimeline):
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/DOMEvent.svg: Added.
+        * UserInterface/Images/DOMEventFullscreen.svg: Added.
+        * UserInterface/Images/LowPower.svg: Added.
+        * UserInterface/Images/MediaInstrument.svg: Added.
+
 2018-11-25  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove parameters from TreeOutline SelectionDidChange event

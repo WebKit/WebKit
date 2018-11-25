@@ -160,6 +160,7 @@ WI.TimelineRecord.Type = {
     RenderingFrame: "timeline-record-type-rendering-frame",
     Memory: "timeline-record-type-memory",
     HeapAllocations: "timeline-record-type-heap-allocations",
+    Media: "timeline-record-type-media",
 };
 
 WI.TimelineRecord.TypeIdentifier = "timeline-record";

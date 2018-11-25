@@ -42,6 +42,8 @@ WI.Instrument = class Instrument
             return new WI.MemoryInstrument;
         case WI.TimelineRecord.Type.HeapAllocations:
             return new WI.HeapAllocationsInstrument;
+        case WI.TimelineRecord.Type.Media:
+            return new WI.MediaInstrument;
         default:
             console.error("Unknown TimelineRecord.Type: " + type);
             return null;

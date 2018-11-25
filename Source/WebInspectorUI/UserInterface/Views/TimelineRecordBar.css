@@ -126,3 +126,8 @@ body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segm
     background-color: hsl(23, 69%, 73%);
     border-color: hsl(11, 54%, 62%);    
 }
+
+.timeline-record-bar.timeline-record-type-media > .segment {
+    background-color: hsl(143, 24%, 66%);
+    border-color: hsl(153, 24%, 51%);
+}

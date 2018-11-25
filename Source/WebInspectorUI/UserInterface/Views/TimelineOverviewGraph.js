@@ -69,6 +69,9 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         if (timelineType === WI.TimelineRecord.Type.HeapAllocations)
             return new WI.HeapAllocationsTimelineOverviewGraph(timeline, timelineOverview);
 
+        if (timelineType === WI.TimelineRecord.Type.Media)
+            return new WI.MediaTimelineOverviewGraph(timeline, timelineOverview);
+
         throw new Error("Can't make a graph for an unknown timeline.");
     }
 

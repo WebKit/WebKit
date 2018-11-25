@@ -127,7 +127,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         console.assert(!this._readonly, "Can't reset a read-only recording.");
 
         this._sourceCodeTimelinesMap = new Map;
-        this._eventMarkers = [];
         this._startTime = NaN;
         this._endTime = NaN;
         this._discontinuities = [];
@@ -196,8 +195,6 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         if (!this._capturing)
             return;
 
-        this._eventMarkers.push(marker);
-
         this.dispatchEventToListeners(WI.TimelineRecording.Event.MarkerAdded, {marker});
     }
 
@@ -215,7 +212,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         if (record.type === WI.TimelineRecord.Type.Network
             || record.type === WI.TimelineRecord.Type.RenderingFrame
             || record.type === WI.TimelineRecord.Type.Memory
-            || record.type === WI.TimelineRecord.Type.HeapAllocations)
+            || record.type === WI.TimelineRecord.Type.HeapAllocations
+            || record.type === WI.TimelineRecord.Type.Media)
             return;
 
         if (!WI.TimelineRecording.sourceCodeTimelinesSupported())
@@ -332,7 +330,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     _keyForRecord(record)
     {
         var key = record.type;
-        if (record instanceof WI.ScriptTimelineRecord || record instanceof WI.LayoutTimelineRecord)
+        if (record instanceof WI.ScriptTimelineRecord || record instanceof WI.LayoutTimelineRecord || record instanceof WI.MediaTimelineRecord)
             key += ":" + record.eventType;
         if (record instanceof WI.ScriptTimelineRecord && record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched)
             key += ":" + record.details;
