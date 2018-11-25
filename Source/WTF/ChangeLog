@@ -1,5 +1,27 @@
 2018-11-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        CRASH() should call abort() except on Darwin and in developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=184408
+
+        Reviewed by Daniel Bates.
+
+        CRASH() should call abort() except on Darwin and in developer builds, as discussed on
+        webkit-dev. This should be slightly nicer than dereferencing 0xbadbeef.
+
+        On Darwin, CRASH() uses a breakpoint trap, which seems to corrupt the stack on Linux, so we
+        can't do that.
+
+        Continue to call WTFCrash() in developer mode, and make no changes to WTFCrash(), since it
+        is reportedly useful in nightmare scenarios where core dumps are unavailable.
+
+        We also have to define CRASH_UNDER_CONSTEXPR_CONTEXT(). It's a bit odd that it's possible to
+        use a non-constexpr function here, but it works. Currently this macro uses WTFCrash(), which
+        is also non-constexpr.
+
+        * wtf/Assertions.h:
+
+2018-11-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, rolling out r238469.
 
         Broke the build
