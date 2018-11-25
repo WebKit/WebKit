@@ -1,5 +1,22 @@
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Floating code should use typed positions (PositionInContextRoot).
+        https://bugs.webkit.org/show_bug.cgi?id=191949
+
+        Reviewed by Antti Koivisto.
+
+        Use PositionInContextRoot instead of LayoutUnit.
+
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::leftBottom const):
+        (WebCore::Layout::FloatingState::rightBottom const):
+        (WebCore::Layout::FloatingState::bottom const):
+
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
         Fix build after r238472.
 
         * layout/inlineformatting/InlineFormattingContext.cpp:
