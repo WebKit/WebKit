@@ -156,7 +156,7 @@ static LayoutUnit contentHeightForFormattingContextRoot(const LayoutState& layou
 
     auto floatsBottom = layoutState.establishedFormattingState(*formattingContextRoot).floatingState().bottom(*formattingContextRoot);
     if (floatsBottom)
-        bottom = std::max(*floatsBottom, bottom);
+        bottom = std::max<LayoutUnit>(*floatsBottom, bottom);
 
     auto computedHeight = bottom - top;
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height] -> content height for formatting context root -> height(" << computedHeight << "px) layoutBox("<< &layoutBox << ")");

@@ -115,9 +115,9 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
             continue;
 
         if (floatItem.isLeftPositioned())
-            constraints.left = rect.right();
+            constraints.left = PositionInContextRoot { rect.right() };
         else
-            constraints.right = rect.left();
+            constraints.right = PositionInContextRoot { rect.left() };
 
         if (constraints.left && constraints.right)
             break;
@@ -125,10 +125,10 @@ FloatingState::Constraints FloatingState::constraints(PositionInContextRoot vert
 
     if (coordinateMappingIsRequired) {
         if (constraints.left)
-            constraints.left = *constraints.left - adjustedPosition.x;
+            constraints.left = PositionInContextRoot { *constraints.left - adjustedPosition.x };
 
         if (constraints.right)
-            constraints.right = *constraints.right - adjustedPosition.x;
+            constraints.right = PositionInContextRoot { *constraints.right - adjustedPosition.x };
     }
 
     return constraints;
@@ -153,10 +153,10 @@ std::optional<PositionInContextRoot> FloatingState::bottom(const Box& formatting
 
         auto floatsBottom = floatItem.rectWithMargin().bottom();
         if (bottom) {
-            bottom = std::max(*bottom, floatsBottom);
+            bottom = std::max<PositionInContextRoot>(*bottom, { floatsBottom });
             continue;
         }
-        bottom = floatsBottom;
+        bottom = PositionInContextRoot { floatsBottom };
     }
     return bottom;
 }

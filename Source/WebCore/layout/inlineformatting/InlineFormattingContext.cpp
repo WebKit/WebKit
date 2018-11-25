@@ -95,7 +95,7 @@ void InlineFormattingContext::initializeNewLine(Line& line) const
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     auto& floatingState = formattingState().floatingState();
     if (!floatingState.isEmpty()) {
-        auto floatConstraints = floatingState.constraints(lineLogicalTop, formattingRoot);
+        auto floatConstraints = floatingState.constraints({ lineLogicalTop }, formattingRoot);
         // Check if these constraints actually put limitation on the line.
         if (floatConstraints.left && *floatConstraints.left <= formattingRootDisplayBox.contentBoxLeft())
             floatConstraints.left = { };

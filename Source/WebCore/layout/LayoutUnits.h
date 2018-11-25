@@ -34,8 +34,23 @@
 namespace WebCore {
 namespace Layout {
 
+struct Position {
+    operator LayoutUnit() const { return value; }
+    LayoutUnit value;
+};
+
+inline bool operator<(const Position& a, const Position& b)
+{
+    return a.value < b.value;
+}
+
+inline bool operator==(const Position& a, const Position& b)
+{
+    return a.value == b.value;
+}
+
 struct Point {
-    // FIXME: Use LayoutUnit<Horizontal> to avoid top/left vs. x/y confusion.
+    // FIXME: Use Position<Horizontal>, Position<Vertical> to avoid top/left vs. x/y confusion.
     LayoutUnit x; // left
     LayoutUnit y; // top
 
@@ -48,9 +63,7 @@ struct Point {
 
 // FIXME: Wrap these into structs.
 using PointInContextRoot = Point;
-using PointInContainingBlock = Point;
-using PositionInContextRoot = LayoutUnit;
-using PositionInContainingBlock = LayoutUnit;
+using PositionInContextRoot = Position;
 
 inline Point::Point(LayoutPoint point)
     : x(point.x())

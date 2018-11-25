@@ -74,7 +74,7 @@ public:
         bool inFormattingContext(const Box&) const;
 
         Display::Box::Rect rectWithMargin() const { return m_absoluteDisplayBox.rectWithMargin(); }
-        PositionInContextRoot bottom() const { return m_absoluteDisplayBox.bottom(); }
+        PositionInContextRoot bottom() const { return { m_absoluteDisplayBox.bottom() }; }
 
     private:
         WeakPtr<const Box> m_layoutBox;

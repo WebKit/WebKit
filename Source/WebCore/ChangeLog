@@ -1,5 +1,45 @@
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Remove PointInContainingBlock and PositionInContainingBlock
+        https://bugs.webkit.org/show_bug.cgi?id=191954
+
+        Reviewed by Antti Koivisto.
+
+        Use Point and Position instead. Points and positions are by default in the containing block's coordinate system.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::contentHeightForFormattingContextRoot):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::Position::operator LayoutUnit const):
+        (WebCore::Layout::operator<):
+        (WebCore::Layout::operator==):
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::FloatAvoider):
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::horizontalPositionCandidate):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::horizontalPositionCandidate):
+        (WebCore::Layout::FloatBox::verticalPositionCandidate):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::positionForFloatAvoiding const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        (WebCore::Layout::FloatingContext::floatingPosition const):
+        (WebCore::Layout::FloatingPair::horizontalConstraints const):
+        (WebCore::Layout::FloatingPair::bottom const):
+        * layout/floats/FloatingContext.h:
+        * layout/floats/FloatingState.cpp:
+        (WebCore::Layout::FloatingState::constraints const):
+        (WebCore::Layout::FloatingState::bottom const):
+        * layout/floats/FloatingState.h:
+        (WebCore::Layout::FloatingState::FloatItem::bottom const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::initializeNewLine const):
+
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Rename Layout::Position to Layout::Point
         https://bugs.webkit.org/show_bug.cgi?id=191950
 

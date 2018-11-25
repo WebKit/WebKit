@@ -43,7 +43,7 @@ FloatAvoider::FloatAvoider(const Box& layoutBox, const FloatingState& floatingSt
     , m_floatingState(floatingState)
     , m_absoluteDisplayBox(FormattingContext::mapBoxToAncestor(layoutState, layoutBox, downcast<Container>(floatingState.root())))
     , m_containingBlockAbsoluteDisplayBox(layoutBox.containingBlock() == &floatingState.root() ? Display::Box(layoutState.displayBoxForLayoutBox(*layoutBox.containingBlock())) : FormattingContext::mapBoxToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(floatingState.root())))
-    , m_initialVerticalPosition(m_absoluteDisplayBox.top())
+    , m_initialVerticalPosition({ m_absoluteDisplayBox.top() })
 {
     ASSERT(m_layoutBox->establishesBlockFormattingContext());
 }
@@ -61,11 +61,11 @@ void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalCons
         // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
         auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
         if (isLeftAligned())
-            return std::max(containingBlockContentBoxLeft + marginLeft(), left);
+            return std::max<PositionInContextRoot>({ containingBlockContentBoxLeft + marginLeft() }, left);
 
         // Make sure it does not overflow the containing block on the right.
         auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
-        return std::min(left, containingBlockContentBoxRight - marginBoxWidth() + marginLeft());
+        return std::min<PositionInContextRoot>(left, { containingBlockContentBoxRight - marginBoxWidth() + marginLeft() });
     };
 
     auto positionCandidate = horizontalPositionCandidate(horizontalConstraints);
@@ -79,7 +79,7 @@ void FloatAvoider::setVerticalConstraint(PositionInContextRoot verticalConstrain
 
 PositionInContextRoot FloatAvoider::horizontalPositionCandidate(HorizontalConstraints horizontalConstraints)
 {
-    return isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width();
+    return { isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width() };
 }
 
 PositionInContextRoot FloatAvoider::verticalPositionCandidate(PositionInContextRoot verticalConstraint)
@@ -101,7 +101,7 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
     auto left = isLeftAligned() ? containingBlockContentBoxLeft : containingBlockContentBoxRight - marginBoxWidth();
     left += marginLeft();
 
-    return left;
+    return { left };
 }
 
 bool FloatAvoider::overflowsContainingBlock() const

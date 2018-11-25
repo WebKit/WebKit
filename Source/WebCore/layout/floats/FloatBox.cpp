@@ -51,12 +51,12 @@ PositionInContextRoot FloatBox::horizontalPositionCandidate(HorizontalConstraint
     auto positionCandidate = isLeftAligned() ? *horizontalConstraints.left : *horizontalConstraints.right - rect().width();
     positionCandidate += marginLeft();
 
-    return positionCandidate;
+    return { positionCandidate };
 }
 
 PositionInContextRoot FloatBox::verticalPositionCandidate(PositionInContextRoot verticalConstraint)
 {
-    return verticalConstraint + marginTop();
+    return { verticalConstraint + marginTop() };
 }
 
 PositionInContextRoot FloatBox::initialVerticalPosition() const
@@ -68,7 +68,7 @@ PositionInContextRoot FloatBox::initialVerticalPosition() const
         top = std::max(top, lastFloat->rectWithMargin().top());
     top += marginTop();
 
-    return top;
+    return { top };
 }
 
 }

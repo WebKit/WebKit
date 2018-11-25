@@ -116,21 +116,21 @@ FloatingContext::FloatingContext(FloatingState& floatingState)
 {
 }
 
-PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) const
+Point FloatingContext::positionForFloat(const Box& layoutBox) const
 {
     ASSERT(layoutBox.isFloatingPositioned());
 
     if (m_floatingState.isEmpty()) {
         auto& displayBox = layoutState().displayBoxForLayoutBox(layoutBox);
 
-        auto alignWithContainingBlock = [&]() -> PositionInContainingBlock {
+        auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
             auto& containingBlockDisplayBox = layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock());
 
             if (layoutBox.isLeftFloatingPositioned())
-                return containingBlockDisplayBox.contentBoxLeft() + displayBox.marginLeft();
+                return Position { containingBlockDisplayBox.contentBoxLeft() + displayBox.marginLeft() };
 
-            return containingBlockDisplayBox.contentBoxRight() - displayBox.marginRight() - displayBox.width();
+            return Position { containingBlockDisplayBox.contentBoxRight() - displayBox.marginRight() - displayBox.width() };
         };
 
         // No float box on the context yet -> align it with the containing block's left/right edge.
@@ -143,7 +143,7 @@ PointInContainingBlock FloatingContext::positionForFloat(const Box& layoutBox) c
     return floatBox.rectInContainingBlock().topLeft();
 }
 
-std::optional<PointInContainingBlock> FloatingContext::positionForFloatAvoiding(const Box& layoutBox) const
+std::optional<Point> FloatingContext::positionForFloatAvoiding(const Box& layoutBox) const
 {
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
@@ -157,7 +157,7 @@ std::optional<PointInContainingBlock> FloatingContext::positionForFloatAvoiding(
     return { floatAvoider.rectInContainingBlock().topLeft() };
 }
 
-std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
+std::optional<Position> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
     ASSERT(layoutBox.hasFloatClear());
     ASSERT(layoutBox.isBlockLevelBox());
@@ -165,7 +165,7 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
     if (m_floatingState.isEmpty())
         return { };
 
-    auto bottom = [&](std::optional<PositionInContextRoot> floatBottom) -> std::optional<PositionInContainingBlock> {
+    auto bottom = [&](std::optional<PositionInContextRoot> floatBottom) -> std::optional<Position> {
         // 'bottom' is in the formatting root's coordinate system.
         if (!floatBottom)
             return { };
@@ -209,7 +209,7 @@ std::optional<PositionInContainingBlock> FloatingContext::verticalPositionWithCl
 
         // The return vertical position is in the containing block's coordinate system.
         auto containingBlockRootRelativeTop = FormattingContext::mapTopLeftToAncestor(layoutState, *layoutBox.containingBlock(), downcast<Container>(m_floatingState.root())).y;
-        return rootRelativeTop - containingBlockRootRelativeTop;
+        return Position { rootRelativeTop - containingBlockRootRelativeTop };
     };
 
     auto clear = layoutBox.style().clear();
@@ -235,7 +235,7 @@ void FloatingContext::floatingPosition(FloatAvoider& floatAvoider) const
 
     std::optional<PositionInContextRoot> bottomMost;
     auto end = Layout::end(m_floatingState);
-    for (auto iterator = begin(m_floatingState, floatAvoider.rect().top()); iterator != end; ++iterator) {
+    for (auto iterator = begin(m_floatingState, { floatAvoider.rect().top() }); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto floats = *iterator;
 
@@ -327,10 +327,10 @@ FloatAvoider::HorizontalConstraints FloatingPair::horizontalConstraints() const
     std::optional<PositionInContextRoot> rightEdge;
 
     if (left())
-        leftEdge = left()->rectWithMargin().right();
+        leftEdge = PositionInContextRoot { left()->rectWithMargin().right() };
 
     if (right())
-        rightEdge = right()->rectWithMargin().left();
+        rightEdge = PositionInContextRoot { right()->rectWithMargin().left() };
 
     return { leftEdge, rightEdge };
 }
@@ -341,8 +341,8 @@ PositionInContextRoot FloatingPair::bottom() const
     auto* right = this->right();
     ASSERT(left || right);
 
-    auto leftBottom = left ? std::optional<PositionInContextRoot>(left->rectWithMargin().bottom()) : std::nullopt;
-    auto rightBottom = right ? std::optional<PositionInContextRoot>(right->rectWithMargin().bottom()) : std::nullopt;
+    auto leftBottom = left ? std::optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : std::nullopt;
+    auto rightBottom = right ? std::optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : std::nullopt;
 
     if (leftBottom && rightBottom)
         return std::max(*leftBottom, *rightBottom);
