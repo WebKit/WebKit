@@ -1,3 +1,10 @@
+2018-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS 12 build after r238471
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+        (TEST):
+
 2018-11-25  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to insert editable images with a gesture

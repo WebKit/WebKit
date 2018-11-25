@@ -135,17 +135,20 @@ TEST(WebKit, AddAndRemoveDataDetectors)
 
     auto checkDataDetectionResults = [] (NSArray<DDScannerResult *> *results) {
         EXPECT_EQ(3U, results.count);
-        EXPECT_EQ(DDResultCategoryUnknown, results[0].category);
         EXPECT_TRUE([results[0].value containsString:@"+1-234-567-8900"]);
         EXPECT_TRUE([results[0].value containsString:@"https://www.apple.com"]);
         EXPECT_TRUE([results[0].value containsString:@"2 Apple Park Way, Cupertino 95014"]);
         EXPECT_WK_STREQ("SignatureBlock", results[0].type);
-        EXPECT_EQ(DDResultCategoryCalendarEvent, results[1].category);
         EXPECT_WK_STREQ("Date", results[1].type);
         EXPECT_WK_STREQ("December 21, 2021", results[1].value);
-        EXPECT_EQ(DDResultCategoryMisc, results[2].category);
         EXPECT_WK_STREQ("FlightInformation", results[2].type);
         EXPECT_WK_STREQ("AC780", results[2].value);
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+        EXPECT_EQ(DDResultCategoryUnknown, results[0].category);
+        EXPECT_EQ(DDResultCategoryCalendarEvent, results[1].category);
+        EXPECT_EQ(DDResultCategoryMisc, results[2].category);
+#endif
     };
 
     [webView synchronouslyDetectDataWithTypes:WKDataDetectorTypeAll];
