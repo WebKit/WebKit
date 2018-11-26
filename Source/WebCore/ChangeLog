@@ -1,3 +1,34 @@
+2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid container sizing under min-content height
+        https://bugs.webkit.org/show_bug.cgi?id=191889
+
+        Reviewed by Javier Fernandez.
+
+        The spec is quite clear
+        (https://drafts.csswg.org/css-sizing/#valdef-width-min-content):
+          "min-content
+             If specified for the inline axis, use the min-content inline size;
+             otherwise behaves as the property’s initial value."
+
+        So if a grid container has "height: min-content" it should behave
+        the same than with "height: auto".
+
+        The patch removes computeIntrinsicLogicalContentHeightUsing() in
+        RenderGrid as we don't need a custom one anymore.
+        We can also get rid of m_minContentHeight and m_maxContentHeight
+        attributes that were only used for this logic.
+
+        Test: fast/css-grid-layout/grid-track-sizing-with-orthogonal-flows.html
+              fast/css-grid-layout/maximize-tracks-definite-indefinite-height.html
+              imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-sizing-constraints-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderGrid::computeTrackSizesForIndefiniteSize const):
+        * rendering/RenderGrid.h:
+
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Remove PointInContainingBlock and PositionInContainingBlock

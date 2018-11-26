@@ -245,18 +245,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
         // using the grid column sizes calculated in the previous step.
-        if (!hasDefiniteLogicalHeight) {
-            m_minContentHeight = 0_lu;
-            m_maxContentHeight = 0_lu;
-            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows, *m_minContentHeight, *m_maxContentHeight);
-            // FIXME: This should be really added to the intrinsic height in RenderBox::computeContentAndScrollbarLogicalHeightUsing().
-            // Remove this when that is fixed.
-            ASSERT(m_minContentHeight);
-            ASSERT(m_maxContentHeight);
-            LayoutUnit scrollbarHeight = scrollbarLogicalHeight();
-            *m_minContentHeight += scrollbarHeight;
-            *m_maxContentHeight += scrollbarHeight;
-        } else
+        if (!hasDefiniteLogicalHeight)
+            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
+        else
             computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
         LayoutUnit trackBasedLogicalHeight = m_trackSizingAlgorithm.computeTrackBasedSize() + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         setLogicalHeight(trackBasedLogicalHeight);
@@ -416,7 +407,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         }
     }
 
-    computeTrackSizesForIndefiniteSize(algorithm, ForColumns, minLogicalWidth, maxLogicalWidth);
+    computeTrackSizesForIndefiniteSize(algorithm, ForColumns, &minLogicalWidth, &maxLogicalWidth);
 
     if (hadExcludedChildren) {
         minLogicalWidth = std::max(minLogicalWidth, childMinWidth);
@@ -428,7 +419,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     maxLogicalWidth += scrollbarWidth;
 }
 
-void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit& minIntrinsicSize, LayoutUnit& maxIntrinsicSize) const
+void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
 {
     const Grid& grid = algorithm.grid();
     algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, std::nullopt, std::nullopt);
@@ -437,32 +428,12 @@ void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& al
     size_t numberOfTracks = algorithm.tracks(direction).size();
     LayoutUnit totalGuttersSize = guttersSize(grid, direction, 0, numberOfTracks, std::nullopt);
 
-    minIntrinsicSize = algorithm.minContentSize() + totalGuttersSize;
-    maxIntrinsicSize = algorithm.maxContentSize() + totalGuttersSize;
+    if (minIntrinsicSize)
+        *minIntrinsicSize = algorithm.minContentSize() + totalGuttersSize;
+    if (maxIntrinsicSize)
+        *maxIntrinsicSize = algorithm.maxContentSize() + totalGuttersSize;
 
     ASSERT(algorithm.tracksAreWiderThanMinTrackBreadth());
-}
-
-std::optional<LayoutUnit> RenderGrid::computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicLogicalHeight, LayoutUnit borderAndPadding) const
-{
-    if (!intrinsicLogicalHeight)
-        return std::nullopt;
-
-    if (logicalHeightLength.isMinContent())
-        return m_minContentHeight;
-
-    if (logicalHeightLength.isMaxContent())
-        return m_maxContentHeight;
-
-    if (logicalHeightLength.isFitContent()) {
-        LayoutUnit fillAvailableExtent = containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding);
-        return std::min(m_maxContentHeight.value_or(0), std::max(m_minContentHeight.value_or(0), fillAvailableExtent));
-    }
-
-    if (logicalHeightLength.isFillAvailable())
-        return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
 }
 
 unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direction, std::optional<LayoutUnit> availableSize) const

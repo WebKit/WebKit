@@ -1,3 +1,16 @@
+2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid container sizing under min-content height
+        https://bugs.webkit.org/show_bug.cgi?id=191889
+
+        Reviewed by Javier Fernandez.
+
+        Imported tests from WPT.
+
+        * web-platform-tests/css/css-grid/grid-model/grid-container-sizing-constraints-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/grid-model/grid-container-sizing-constraints-001.html: Added.
+        * web-platform-tests/css/css-grid/grid-model/w3c-import.log:
+
 2018-11-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Implement Baseline Alignment for grid items

@@ -1,3 +1,17 @@
+2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid container sizing under min-content height
+        https://bugs.webkit.org/show_bug.cgi?id=191889
+
+        Reviewed by Javier Fernandez.
+
+        Update tests results to the new behavior.
+        Also modified a little bit the test to keep them in sync with Blink versions.
+
+        * fast/css-grid-layout/grid-track-sizing-with-orthogonal-flows-expected.txt:
+        * fast/css-grid-layout/grid-track-sizing-with-orthogonal-flows.html:
+        * fast/css-grid-layout/maximize-tracks-definite-indefinite-height.html:
+
 2018-11-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline webgpu/queue-creation.html.
