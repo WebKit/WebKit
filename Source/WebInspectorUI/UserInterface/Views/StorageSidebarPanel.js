@@ -128,6 +128,13 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
 
     // Protected
 
+    resetFilter()
+    {
+        this._scopeBar.resetToDefault();
+
+        super.resetFilter();
+    }
+
     hasCustomFilters()
     {
         console.assert(this._scopeBar.selectedItems.length === 1);

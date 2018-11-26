@@ -118,9 +118,17 @@ WI.FilterBar = class FilterBar extends WI.Object
 
     clear()
     {
-        this._inputField.value = "";
+        this._filterFunctionsMap.clear();
+        this.filters = null;
+
+        // Only toggle the `WI.FilterBarButton`s after clearing the function map, as otherwise each
+        // toggle will fire another WI.FilterBar.Event.FilterDidChange event.
+        for (let navigationItem of this._filtersNavigationBar.navigationItems) {
+            if (navigationItem instanceof WI.FilterBarButton)
+                navigationItem.toggle(false);
+        }
+
         this._inputField.value = null; // Get the placeholder to show again.
-        this._lastFilterValue = this.filters;
     }
 
     addFilterBarButton(identifier, filterFunction, activatedByDefault, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight)

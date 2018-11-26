@@ -1372,7 +1372,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         if (!this._emptyFilterResultsMessageElement) {
             let buttonElement = document.createElement("button");
-            buttonElement.textContent = WI.UIString("Clear filters");
+            buttonElement.textContent = WI.UIString("Clear Filters");
             buttonElement.addEventListener("click", () => { this._resetFilters(); });
 
             this._emptyFilterResultsMessageElement = WI.createMessageTextView(WI.UIString("No Filter Results"));

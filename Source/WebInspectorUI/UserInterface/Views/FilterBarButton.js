@@ -43,9 +43,9 @@ WI.FilterBarButton = class FilterBarButton extends WI.ActivateButtonNavigationIt
         return this._filterFunction;
     }
 
-    toggle()
+    toggle(value)
     {
-        this.activated = !this.activated;
+        this.activated = value === undefined ? !this.activated : value;
         this._activatedSetting.value = this.activated;
         this.dispatchEventToListeners(WI.FilterBarButton.Event.ActivatedStateToggled);
     }

@@ -308,6 +308,11 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         this._updateFilter();
     }
 
+    resetFilter()
+    {
+        this._filterBar.clear();
+    }
+
     shouldFilterPopulate()
     {
         // Overridden by subclasses if needed.
@@ -513,8 +518,16 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
                 return;
             }
 
+            let message = WI.createMessageTextView(WI.UIString("No Filter Results"));
+
+            let buttonElement = message.appendChild(document.createElement("button"));
+            buttonElement.textContent = WI.UIString("Clear Filters");
+            buttonElement.addEventListener("click", () => {
+                this.resetFilter();
+            });
+
             // All top level tree elements are hidden, so filtering hid everything. Show a message.
-            this.showEmptyContentPlaceholder(WI.UIString("No Filter Results"), treeOutline);
+            this.showEmptyContentPlaceholder(message, treeOutline);
             this._emptyFilterResults.set(treeOutline, true);
         }
 

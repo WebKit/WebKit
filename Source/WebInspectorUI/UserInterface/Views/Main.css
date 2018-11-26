@@ -189,6 +189,10 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     font-size: var(--message-text-view-font-size);
 }
 
+.message-text-view > .message + button {
+    margin-bottom: 15px;
+}
+
 .message-text-view .navigation-item-help {
     display: block;
     line-height: 22px;

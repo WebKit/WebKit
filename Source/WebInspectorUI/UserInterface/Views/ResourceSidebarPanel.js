@@ -208,6 +208,13 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         }
     }
 
+    resetFilter()
+    {
+        this._scopeBar.resetToDefault();
+
+        super.resetFilter();
+    }
+
     hasCustomFilters()
     {
         console.assert(this._scopeBar.selectedItems.length === 1);

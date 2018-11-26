@@ -204,7 +204,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             this.placeholderElement.__placeholderFiltered = true;
 
             let buttonElement = this.placeholderElement.appendChild(document.createElement("button"));
-            buttonElement.textContent = WI.UIString("Clear filters");
+            buttonElement.textContent = WI.UIString("Clear Filters");
             buttonElement.addEventListener("click", () => {
                 this.resetFilter();
                 this.needsLayout();
