@@ -39,7 +39,6 @@
 #include <WebCore/HWndDC.h>
 #include <WebCore/Page.h>
 #include <WebCore/TextRun.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
 #include <wtf/StdLibExtras.h>
 

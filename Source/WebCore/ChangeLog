@@ -1,3 +1,26 @@
+2018-11-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Reduce the use of WKSI library calls: CoreAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=191777
+        <rdar://problem/46140542>
+
+        Reviewed by Zalan Bujtas.
+
+        Update the Windows build of WebKit to refer to the SPI headers, rather than WebKitSystemInterface.
+        Move a small amount of glue code from WKSI to WebCore, and remove any includes or link
+        directives for WebKitSystemInterface.lib.
+        
+        No new tests. No change in behavior.
+
+        * platform/graphics/BitmapImage.cpp:
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (layerTreeHostForLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        * platform/graphics/win/WKCAImageQueue.cpp:
+
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use float box's margin box to adjust the line constraints.

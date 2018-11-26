@@ -35,10 +35,6 @@
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MainThread.h>
 
-#if PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
 namespace WebCore {
 
 static void patternCallback(void* info, CGContextRef context)

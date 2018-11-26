@@ -38,9 +38,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
-#if USE(CG) && PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
 
 namespace WebCore {
 

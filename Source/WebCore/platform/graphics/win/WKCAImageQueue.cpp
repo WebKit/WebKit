@@ -27,7 +27,6 @@
 #include "WKCAImageQueue.h"
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

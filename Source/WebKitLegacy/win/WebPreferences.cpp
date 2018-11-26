@@ -33,7 +33,6 @@
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/CACFLayerTreeHost.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
 #include <CoreFoundation/CoreFoundation.h>

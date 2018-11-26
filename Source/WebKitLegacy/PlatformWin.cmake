@@ -24,7 +24,6 @@ else ()
         PRIVATE CoreGraphics${DEBUG_SUFFIX}
         PRIVATE CoreText${DEBUG_SUFFIX}
         PRIVATE QuartzCore${DEBUG_SUFFIX}
-        PRIVATE WebKitSystemInterface${DEBUG_SUFFIX}
         PRIVATE libdispatch${DEBUG_SUFFIX}
         PRIVATE libicuin${DEBUG_SUFFIX}
         PRIVATE libicuuc${DEBUG_SUFFIX}

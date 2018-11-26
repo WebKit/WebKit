@@ -40,7 +40,6 @@
 #include <CoreGraphics/CGGeometry.h>
 
 interface IDirect3DDevice9;
-struct WKCACFContext;
 
 typedef struct CGImage* CGImageRef;
 

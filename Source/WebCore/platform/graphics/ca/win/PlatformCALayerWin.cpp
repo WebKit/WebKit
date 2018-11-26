@@ -39,7 +39,6 @@
 #include "TileController.h"
 #include "WebTiledBackingLayerWin.h"
 #include <QuartzCore/CoreAnimationCF.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -73,7 +72,10 @@ static CFStringRef toCACFFilterType(PlatformCALayer::FilterType type)
 static AbstractCACFLayerTreeHost* layerTreeHostForLayer(const PlatformCALayer* layer)
 {
     // We need the AbstractCACFLayerTreeHost associated with this layer, which is stored in the UserData of the CACFContext
-    void* userData = wkCACFLayerGetContextUserData(layer->platformLayer());
+    void* userData = nullptr;
+    if (CACFContextRef context = CACFLayerGetContext(layer->platformLayer()))
+        userData = CACFContextGetUserData(context);
+
     if (!userData)
         return nullptr;
 

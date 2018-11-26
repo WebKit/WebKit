@@ -86,7 +86,6 @@ else ()
         CoreGraphics${DEBUG_SUFFIX}
         CoreText${DEBUG_SUFFIX}
         QuartzCore${DEBUG_SUFFIX}
-        WebKitSystemInterface${DEBUG_SUFFIX}
         WebKitQuartzCoreAdditions${DEBUG_SUFFIX}
         libdispatch${DEBUG_SUFFIX}
         libexslt${DEBUG_SUFFIX}
