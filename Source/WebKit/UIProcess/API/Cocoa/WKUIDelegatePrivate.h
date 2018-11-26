@@ -47,11 +47,6 @@
 @protocol UIDragSession;
 @protocol UIDropSession;
 #else
-typedef NS_ENUM(NSInteger, _WKFocusDirection) {
-    _WKFocusDirectionBackward,
-    _WKFocusDirectionForward,
-} WK_API_AVAILABLE(macosx(10.13.4));
-
 typedef NS_ENUM(NSInteger, _WKAutoplayEvent) {
     _WKAutoplayEventDidPreventFromAutoplaying,
     _WKAutoplayEventDidPlayMediaPreventedFromAutoplaying,
@@ -75,6 +70,11 @@ typedef NS_OPTIONS(NSUInteger, _WKAutoplayEventFlags) {
     _WKAutoplayEventFlagsHasAudio = 1 << 0,
 } WK_API_AVAILABLE(macosx(10.13.4));
 #endif
+
+typedef NS_ENUM(NSInteger, _WKFocusDirection) {
+    _WKFocusDirectionBackward,
+    _WKFocusDirectionForward,
+} WK_API_AVAILABLE(macosx(10.13.4), ios(WK_IOS_TBA));
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
 
@@ -122,6 +122,8 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView requestStorageAccessPanelForDomain:(NSString *)requestingDomain underCurrentDomain:(NSString *)currentDomain completionHandler:(void (^)(BOOL result))completionHandler WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 - (void)_webView:(WKWebView *)webView didChangeFontAttributes:(NSDictionary<NSString *, id> *)fontAttributes WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(10.13.4), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 - (BOOL)_webView:(WKWebView *)webView shouldIncludeAppLinkActionsForElement:(_WKActivatedElementInfo *)element WK_API_AVAILABLE(ios(9.0));
@@ -173,7 +175,6 @@ struct UIEdgeInsets;
 - (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13.4));
-- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.13.4));

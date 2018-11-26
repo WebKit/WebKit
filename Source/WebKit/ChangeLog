@@ -1,3 +1,19 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        Wire up ChromeClient::takeFocus() on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=191763
+        <rdar://problem/18584508>
+
+        Reviewed by Dan Bernstein.
+
+        Expose existing Mac SPI for use on iOS. This will allow Safari to be notified when
+        the engine has cycled through all the tab focusable elements on the page.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+
 2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal 32-bit macOS 10.13 build after r238471

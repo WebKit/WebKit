@@ -107,12 +107,12 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
     m_delegateMethods.webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo = [delegate respondsToSelector:@selector(_webView:didResignInputElementStrongPasswordAppearanceWithUserInfo:)];
+    m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
 
 #if PLATFORM(MAC)
     m_delegateMethods.showWebView = [delegate respondsToSelector:@selector(_showWebView:)];
     m_delegateMethods.focusWebView = [delegate respondsToSelector:@selector(_focusWebView:)];
     m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
-    m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewRunModal = [delegate respondsToSelector:@selector(_webViewRunModal:)];
     m_delegateMethods.webViewDidScroll = [delegate respondsToSelector:@selector(_webViewDidScroll:)];
     m_delegateMethods.webViewGetToolbarsAreVisibleWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:getToolbarsAreVisibleWithCompletionHandler:)];
@@ -453,7 +453,6 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
     }).get()];
 }
 
-#if PLATFORM(MAC)
 static inline _WKFocusDirection toWKFocusDirection(WKFocusDirection direction)
 {
     switch (direction) {
@@ -478,6 +477,7 @@ void UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView takeFocus:toWKFocusDirection(direction)];
 }
 
+#if PLATFORM(MAC)
 bool UIDelegate::UIClient::canRunModal() const
 {
     return m_uiDelegate.m_delegateMethods.webViewRunModal;

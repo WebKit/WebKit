@@ -95,9 +95,9 @@ private:
         void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const WTF::String& databaseName, const WTF::String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentUsage, unsigned long long expectedUsage, Function<void(unsigned long long)>&& completionHandler) final;
         void reachedApplicationCacheOriginQuota(WebPageProxy*, const WebCore::SecurityOrigin&, uint64_t currentQuota, uint64_t totalBytesNeeded, Function<void(unsigned long long)>&& completionHandler) final;
         void didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object*) final;
+        void takeFocus(WebPageProxy*, WKFocusDirection) final;
 #if PLATFORM(MAC)
         void showPage(WebPageProxy*) final;
-        void takeFocus(WebPageProxy*, WKFocusDirection) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
         bool canRunModal() const final;
@@ -163,12 +163,12 @@ private:
         bool webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestGeolocationPermissionForFrameDecisionHandler : 1;
         bool webViewDidResignInputElementStrongPasswordAppearanceWithUserInfo : 1;
+        bool webViewTakeFocus : 1;
 #if PLATFORM(MAC)
         bool showWebView : 1;
         bool focusWebView : 1;
         bool unfocusWebView : 1;
         bool webViewRunModal : 1;
-        bool webViewTakeFocus : 1;
         bool webViewDidScroll : 1;
         bool webViewHeaderHeight : 1;
         bool webViewFooterHeight : 1;
