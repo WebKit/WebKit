@@ -1,3 +1,9 @@
+2018-11-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline webgpu/queue-creation.html.
+
+        * webgpu/queue-creation-expected.txt:
+
 2018-11-25  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to insert editable images with a gesture
