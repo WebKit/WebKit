@@ -99,6 +99,56 @@ private:
 };
 #endif
 
+#if ENABLE(TEST_FEATURE)
+class TestAsyncMessageWithNoArguments {
+public:
+    typedef std::tuple<> Arguments;
+
+    static IPC::StringReference receiverName() { return messageReceiverName(); }
+    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessageWithNoArguments"); }
+    static const bool isSync = false;
+
+    static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
+    static void cancelReply(CompletionHandler<void()>&&);
+    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageWithNoArgumentsReply" }; }
+    using AsyncReply = CompletionHandler<void()>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&);
+    typedef std::tuple<> Reply;
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
+#if ENABLE(TEST_FEATURE)
+class TestAsyncMessageWithMultipleArguments {
+public:
+    typedef std::tuple<> Arguments;
+
+    static IPC::StringReference receiverName() { return messageReceiverName(); }
+    static IPC::StringReference name() { return IPC::StringReference("TestAsyncMessageWithMultipleArguments"); }
+    static const bool isSync = false;
+
+    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&, uint64_t&&)>&&);
+    static void cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&&);
+    static IPC::StringReference asyncMessageReplyName() { return { "TestAsyncMessageWithMultipleArgumentsReply" }; }
+    using AsyncReply = CompletionHandler<void(bool flag, uint64_t value)>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, bool flag, uint64_t value);
+    typedef std::tuple<bool&, uint64_t&> Reply;
+    const Arguments& arguments() const
+    {
+        return m_arguments;
+    }
+
+private:
+    Arguments m_arguments;
+};
+#endif
+
 class TestSyncMessage {
 public:
     typedef std::tuple<uint32_t> Arguments;

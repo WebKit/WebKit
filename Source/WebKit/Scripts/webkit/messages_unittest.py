@@ -255,6 +255,21 @@ _expected_superclass_results = {
             'conditions': ('ENABLE(TEST_FEATURE)'),
         },
         {
+            'name': 'TestAsyncMessageWithNoArguments',
+            'parameters': (),
+            'reply_parameters': (),
+            'conditions': ('ENABLE(TEST_FEATURE)'),
+        },
+        {
+            'name': 'TestAsyncMessageWithMultipleArguments',
+            'parameters': (),
+            'reply_parameters': (
+                ('bool', 'flag'),
+                ('uint64_t', 'value'),
+            ),
+            'conditions': ('ENABLE(TEST_FEATURE)'),
+        },
+        {
             'name': 'TestSyncMessage',
             'parameters': (
                 ('uint32_t', 'param'),

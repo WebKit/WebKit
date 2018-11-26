@@ -1,3 +1,45 @@
+2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        CompletionHandler-based async IPC messages only work when the completion handler takes a single argument
+        https://bugs.webkit.org/show_bug.cgi?id=191965
+
+        Reviewed by Tim Horton.
+
+        Teach `messages.py` to handle the case where an async IPC completion handler takes no arguments, or takes more
+        than a single argument. Currently, the generated code attempts to wrap all arguments in a `WTFMove(*~)`, but
+        this either results in `WTFMove(*)` in the case where there are no arguments, or `WTFMove(*foo, *bar, *baz)` in
+        the case where there are several arguments. Both of these results fail to compile.
+
+        Instead, emit `completionHandler()` when there are no arguments, and
+        `completionHandler(WTFMove(*foo), WTFMove(*bar), WTFMove(*baz))` when there are multiple arguments.
+
+        Tests:  TestAsyncMessageWithNoArguments
+                TestAsyncMessageWithMultipleArguments
+
+        * Scripts/webkit/MessageReceiverSuperclass-expected.cpp:
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::callReply):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::send):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::callReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::cancelReply):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::send):
+        (WebKit::WebPage::didReceiveMessage):
+        * Scripts/webkit/MessagesSuperclass-expected.h:
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::receiverName):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::name):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessageWithNoArguments::arguments const):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::receiverName):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::name):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::asyncMessageReplyName):
+        (Messages::WebPage::TestAsyncMessageWithMultipleArguments::arguments const):
+        * Scripts/webkit/messages.py:
+        * Scripts/webkit/messages_unittest.py:
+
+        Add new `messages.py` unit tests to cover these cases.
+
+        * Scripts/webkit/test-superclass-messages.in:
+
 2018-11-26  Jeremy Jones  <jeremyj@apple.com>
 
         Use Full Screen consistently in localizable strings.

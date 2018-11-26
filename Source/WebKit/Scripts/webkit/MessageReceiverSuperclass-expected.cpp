@@ -67,6 +67,58 @@ void TestAsyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connec
 
 #endif
 
+#if ENABLE(TEST_FEATURE)
+
+void TestAsyncMessageWithNoArguments::callReply(IPC::Decoder& decoder, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void TestAsyncMessageWithNoArguments::cancelReply(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void TestAsyncMessageWithNoArguments::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection)
+{
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
+
+#if ENABLE(TEST_FEATURE)
+
+void TestAsyncMessageWithMultipleArguments::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&, uint64_t&&)>&& completionHandler)
+{
+    std::optional<bool> flag;
+    decoder >> flag;
+    if (!flag) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    std::optional<uint64_t> value;
+    decoder >> value;
+    if (!value) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    completionHandler(WTFMove(*flag), WTFMove(*value));
+}
+
+void TestAsyncMessageWithMultipleArguments::cancelReply(CompletionHandler<void(bool&&, uint64_t&&)>&& completionHandler)
+{
+    completionHandler({ }, { });
+}
+
+void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, bool flag, uint64_t value)
+{
+    *encoder << flag;
+    *encoder << value;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
+
 void TestDelayedMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const std::optional<WebKit::TestClassName>& optionalReply)
 {
     *encoder << optionalReply;
@@ -88,6 +140,18 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
 #if ENABLE(TEST_FEATURE)
     if (decoder.messageName() == Messages::WebPage::TestAsyncMessage::name()) {
         IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessage>(connection, decoder, this, &WebPage::testAsyncMessage);
+        return;
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithNoArguments::name()) {
+        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessageWithNoArguments>(connection, decoder, this, &WebPage::testAsyncMessageWithNoArguments);
+        return;
+    }
+#endif
+#if ENABLE(TEST_FEATURE)
+    if (decoder.messageName() == Messages::WebPage::TestAsyncMessageWithMultipleArguments::name()) {
+        IPC::handleMessageAsync<Messages::WebPage::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &WebPage::testAsyncMessageWithMultipleArguments);
         return;
     }
 #endif
