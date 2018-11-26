@@ -555,20 +555,20 @@ private:
 
 - (void)_showPhishingAlert
 {
-    NSString *alertTitle = WEB_UI_STRING("It looks like you are typing while in full screen", "Fullscreen Deceptive Website Warning Sheet Title");
-    NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Fullscreen Deceptive Website Warning Sheet Content Text"), (NSString *)self.location];
+    NSString *alertTitle = WEB_UI_STRING("It looks like you are typing while in full screen", "Full Screen Deceptive Website Warning Sheet Title");
+    NSString *alertMessage = [NSString stringWithFormat:WEB_UI_STRING("Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.", "Full Screen Deceptive Website Warning Sheet Content Text"), (NSString *)self.location];
     UIAlertController* alert = [UIAlertController alertControllerWithTitle:alertTitle message:alertMessage preferredStyle:UIAlertControllerStyleAlert];
 
     if (auto* page = [self._webView _page])
         page->suspendActiveDOMObjectsAndAnimations();
 
-    UIAlertAction* exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Fullscreen)", "Fullscreen Deceptive Website Exit Action") style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+    UIAlertAction* exitAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (Element Full Screen)", "Full Screen Deceptive Website Exit Action") style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
         [self _cancelAction:action];
         if (auto* page = [self._webView _page])
             page->resumeActiveDOMObjectsAndAnimations();
     }];
 
-    UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Fullscreen)", "Fullscreen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    UIAlertAction* stayAction = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen", "Stay in Full Screen (Element Full Screen)", "Full Screen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         if (auto* page = [self._webView _page])
             page->resumeActiveDOMObjectsAndAnimations();
         _secheuristic.reset();

@@ -1,3 +1,21 @@
+2018-11-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Use Full Screen consistently in localizable strings.
+        https://bugs.webkit.org/show_bug.cgi?id=190363
+        rdar://problem/43882333
+
+        Reviewed by Jon Lee.
+
+        No new tests because only change is to localizable strings.
+
+        Rename "Fullscreen" to "Full Screen" in localizable strings for consistency.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagEnterVideoFullscreen):
+        (WebCore::contextMenuItemTagExitVideoFullscreen):
+        (WebCore::localizedMediaControlElementHelpText):
+
 2018-11-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: CoreAnimation

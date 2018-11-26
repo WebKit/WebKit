@@ -259,7 +259,7 @@
 /* Undo action name */
 "Drag (Undo action name)" = "Drag";
 
-/* Video Enter Fullscreen context menu item */
+/* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
 
 /* menu item */
@@ -283,10 +283,10 @@
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
 
-/* Fullscreen Deceptive Website Exit Action */
-"Exit Full Screen (Element Fullscreen)" = "Exit Full Screen";
+/* Full Screen Deceptive Website Exit Action */
+"Exit Full Screen (Element Full Screen)" = "Exit Full Screen";
 
-/* Video Exit Fullscreen context menu item */
+/* Video Exit Full Screen context menu item */
 "Exit Full Screen (context menu)" = "Exit Full Screen";
 
 /* menu item */
@@ -367,7 +367,7 @@
 /* Validation message for input form controls with a value not matching type */
 "Invalid value" = "Invalid value";
 
-/* Fullscreen Deceptive Website Warning Sheet Title */
+/* Full Screen Deceptive Website Warning Sheet Title */
 "It looks like you are typing while in full screen" = "It looks like you are typing while in full screen";
 
 /* Italic context menu item */
@@ -553,8 +553,8 @@
 /* Media Play context menu item */
 "Play" = "Play";
 
-/* accessibility help text for enter fullscreen button */
-"Play movie in fullscreen mode" = "Play movie in fullscreen mode";
+/* accessibility help text for enter full screen button */
+"Play movie in full screen mode" = "Play movie in full screen mode";
 
 /* Label text to be used if plugin host process has crashed */
 "Plug-in Failure" = "Plug-in Failure";
@@ -691,8 +691,8 @@
 /* Start speaking context menu item */
 "Start Speaking" = "Start Speaking";
 
-/* Fullscreen Deceptive Website Stay Action */
-"Stay in Full Screen (Element Fullscreen)" = "Stay in Full Screen";
+/* Full Screen Deceptive Website Stay Action */
+"Stay in Full Screen (Element Full Screen)" = "Stay in Full Screen";
 
 /* Stop context menu item */
 "Stop" = "Stop";
@@ -817,7 +817,7 @@
 /* Undo action name */
 "Typing (Undo action name)" = "Typing";
 
-/* Fullscreen Deceptive Website Warning Sheet Content Text */
+/* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
 
 /* accessibility role description for a URL field. */

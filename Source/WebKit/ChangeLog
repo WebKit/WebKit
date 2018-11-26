@@ -1,3 +1,16 @@
+2018-11-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Use Full Screen consistently in localizable strings.
+        https://bugs.webkit.org/show_bug.cgi?id=190363
+        rdar://problem/43882333
+
+        Reviewed by Jon Lee.
+
+        Rename "Fullscreen" to "Full Screen" in localizable strings for consistency.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController _showPhishingAlert]):
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         Wire up ChromeClient::takeFocus() on iOS

@@ -384,12 +384,12 @@ String contextMenuItemTagToggleMediaLoop()
 
 String contextMenuItemTagEnterVideoFullscreen()
 {
-    return WEB_UI_STRING("Enter Full Screen", "Video Enter Fullscreen context menu item");
+    return WEB_UI_STRING("Enter Full Screen", "Video Enter Full Screen context menu item");
 }
 
 String contextMenuItemTagExitVideoFullscreen()
 {
-    return WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (context menu)", "Video Exit Fullscreen context menu item");
+    return WEB_UI_STRING_KEY("Exit Full Screen", "Exit Full Screen (context menu)", "Video Exit Full Screen context menu item");
 }
 #endif
 
@@ -798,7 +798,7 @@ String localizedMediaControlElementHelpText(const String& name)
     if (name == "SeekForwardButton")
         return WEB_UI_STRING("seek quickly forward", "accessibility help text for fast forward button");
     if (name == "FullscreenButton")
-        return WEB_UI_STRING("Play movie in fullscreen mode", "accessibility help text for enter fullscreen button");
+        return WEB_UI_STRING("Play movie in full screen mode", "accessibility help text for enter full screen button");
     if (name == "ShowClosedCaptionsButton")
         return WEB_UI_STRING("start displaying closed captions", "accessibility help text for show closed captions button");
     if (name == "HideClosedCaptionsButton")
