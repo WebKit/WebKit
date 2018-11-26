@@ -237,10 +237,6 @@ void SVGUseElement::updateShadowTree()
         return;
     document().removeSVGUseElement(*this);
 
-    // FIXME: Enable SVG use elements in shadow trees.
-    if (isInShadowTree())
-        return;
-
     String targetID;
     auto* target = findTarget(&targetID);
     if (!target) {
@@ -410,7 +406,7 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
     auto* correspondingElement = this->correspondingElement();
     auto& original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
 
-    auto targetResult = targetElementFromIRIString(original.href(), original.document(), original.externalDocument());
+    auto targetResult = targetElementFromIRIString(original.href(), original.treeScope(), original.externalDocument());
     if (targetID) {
         *targetID = WTFMove(targetResult.identifier);
         // If the reference is external, don't return the target ID to the caller.

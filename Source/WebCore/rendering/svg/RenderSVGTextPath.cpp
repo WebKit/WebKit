@@ -46,7 +46,7 @@ SVGTextPathElement& RenderSVGTextPath::textPathElement() const
 
 Path RenderSVGTextPath::layoutPath() const
 {
-    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), document());
+    auto target = SVGURIReference::targetElementFromIRIString(textPathElement().href(), textPathElement().treeScope());
     if (!is<SVGPathElement>(target.element))
         return Path();
 

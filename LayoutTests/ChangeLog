@@ -1,3 +1,43 @@
+2018-11-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SVG use element inside a shadow tree cannot reference an element in the same tree
+        https://bugs.webkit.org/show_bug.cgi?id=174977
+        <rdar://problem/33665636>
+
+        Reviewed by Zalan Bujtas.
+
+        Added tests for specifying a fragment URL to refer to other elements within shadow trees.
+
+        This patch doesn't add a test for updating a fragment URL of linearGradient and radialGradient
+        since it doesn't work at all even outside shadow trees. See webkit.org/b/191934.
+
+        * fast/shadow-dom/svg-animate-href-change-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-animate-href-change-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-animate-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-animate-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-feimage-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-feimage-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-linear-gradient-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-linear-gradient-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-mpath-href-change-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-mpath-href-change-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-mpath-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-mpath-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-radial-gradient-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-radial-gradient-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-text-path-href-change-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-text-path-href-change-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-text-path-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-text-path-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-thref-href-change-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-thref-href-change-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-thref-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-thref-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-use-href-change-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-use-href-change-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-use-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-use-href-in-shadow-tree.html: Added.
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         Caret disappears at end of password field when caps lock indicator is shown; password field

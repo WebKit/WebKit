@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host" style="width: 100px; height: 100px;"></div>
+<svg>
+    <defs>
+        <rect id="rect1" width="100" height="50" fill="red">
+    </defs>
+</svg>
+<template>
+    <svg viewbox="0 0 100 100">
+        <defs>
+            <rect id="rect1" width="100" height="50" fill="red">
+            <rect id="rect2" width="100" height="50" fill="green">
+        </defs>
+        <g id="rectGroup">
+            <use href="#rect1">
+                <rect width="100" height="25" fill="red">
+            </use>
+        </g>
+        <use href="#rectGroup" y="50">
+            <rect width="50" height="50" fill="red">
+        </use>
+    </svg>
+</template>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.appendChild(document.querySelector('template').content.cloneNode(true));
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        shadowRoot.querySelector('use').setAttribute('href', '#rect2');
+        if (window.testRunner)
+            requestAnimationFrame(() => testRunner.notifyDone());
+    });
+}
+
+</script>
+</body>
+</html>

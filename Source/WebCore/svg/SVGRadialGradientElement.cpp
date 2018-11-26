@@ -161,7 +161,7 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
 
     while (true) {
         // Respect xlink:href, take attributes from referenced element
-        auto target = SVGURIReference::targetElementFromIRIString(current->href(), document());
+        auto target = SVGURIReference::targetElementFromIRIString(current->href(), treeScope());
         if (is<SVGGradientElement>(target.element)) {
             current = downcast<SVGGradientElement>(target.element.get());
 

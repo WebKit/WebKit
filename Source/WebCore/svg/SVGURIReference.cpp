@@ -87,7 +87,7 @@ String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const
     return emptyString();
 }
 
-auto SVGURIReference::targetElementFromIRIString(const String& iri, const Document& document, RefPtr<Document> externalDocument) -> TargetElementResult
+auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeScope& treeScope, RefPtr<Document> externalDocument) -> TargetElementResult
 {
     // If there's no fragment identifier contained within the IRI string, we can't lookup an element.
     size_t startOfFragmentIdentifier = iri.find('#');
@@ -99,6 +99,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const Docume
     if (id.isEmpty())
         return { };
 
+    auto& document = treeScope.documentScope();
     auto url = document.completeURL(iri);
     if (externalDocument) {
         // Enforce that the referenced url matches the url of the document that we've loaded for it!
@@ -110,7 +111,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const Docume
     if (isExternalURIReference(iri, document))
         return { nullptr, WTFMove(id) };
 
-    return { document.getElementById(id), WTFMove(id) };
+    return { treeScope.getElementById(id), WTFMove(id) };
 }
 
 }

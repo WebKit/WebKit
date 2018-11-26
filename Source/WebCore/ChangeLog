@@ -1,3 +1,71 @@
+2018-11-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SVG use element inside a shadow tree cannot reference an element in the same tree
+        https://bugs.webkit.org/show_bug.cgi?id=174977
+        <rdar://problem/33665636>
+
+        Reviewed by Zalan Bujtas.
+
+        Make fragment URL references used by SVGelements within a shadow tree to refer to other elements
+        in the same shadow tree. To do this, this patch makes targetElementFromIRIString take a TreeScope
+        instead of a Document, and updates its call sites.
+
+        This patch updates the most uses of targetElementFromIRIString except CSS cursor image, altGraph,
+        and glyphRef since the cursor image isn't really a SVG feature, and there aren't really real world
+        use cases in which altGraph and glyphRef are used within shadow trees.
+
+        Tests: fast/shadow-dom/svg-animate-href-change-in-shadow-tree.html
+               fast/shadow-dom/svg-animate-href-in-shadow-tree.html
+               fast/shadow-dom/svg-feimage-href-in-shadow-tree.html
+               fast/shadow-dom/svg-linear-gradient-href-in-shadow-tree.html
+               fast/shadow-dom/svg-mpath-href-change-in-shadow-tree.html
+               fast/shadow-dom/svg-mpath-href-in-shadow-tree.html
+               fast/shadow-dom/svg-radial-gradient-href-in-shadow-tree.html
+               fast/shadow-dom/svg-text-path-href-change-in-shadow-tree.html
+               fast/shadow-dom/svg-text-path-href-in-shadow-tree.html
+               fast/shadow-dom/svg-thref-href-change-in-shadow-tree.html
+               fast/shadow-dom/svg-thref-href-in-shadow-tree.html
+               fast/shadow-dom/svg-use-href-change-in-shadow-tree.html
+               fast/shadow-dom/svg-use-href-in-shadow-tree.html
+
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::targetForUseElement const):
+        * css/CSSCursorImageValue.cpp:
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath const):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements const):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement const):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        (WebCore::SVGMPathElement::pathElement):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::buildPendingResource):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::targetElementFromIRIString):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::updateShadowTree):
+        (WebCore::SVGUseElement::findTarget const):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::buildPendingResource):
+        (WebCore::SVGSMILElement::insertedIntoAncestor):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::createWithIRIReference):
+        (WebCore::FEImage::referencedRenderer const):
+        * svg/graphics/filters/SVGFEImage.h:
+
 2018-11-26  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238357.

@@ -38,14 +38,13 @@ namespace WebCore {
 FEImage::FEImage(Filter& filter, RefPtr<Image> image, const SVGPreserveAspectRatioValue& preserveAspectRatio)
     : FilterEffect(filter)
     , m_image(image)
-    , m_document(nullptr)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
-FEImage::FEImage(Filter& filter, Document& document, const String& href, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+FEImage::FEImage(Filter& filter, TreeScope& treeScope, const String& href, const SVGPreserveAspectRatioValue& preserveAspectRatio)
     : FilterEffect(filter)
-    , m_document(&document)
+    , m_treeScope(&treeScope)
     , m_href(href)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
@@ -56,9 +55,9 @@ Ref<FEImage> FEImage::createWithImage(Filter& filter, RefPtr<Image> image, const
     return adoptRef(*new FEImage(filter, image, preserveAspectRatio));
 }
 
-Ref<FEImage> FEImage::createWithIRIReference(Filter& filter, Document& document, const String& href, const SVGPreserveAspectRatioValue& preserveAspectRatio)
+Ref<FEImage> FEImage::createWithIRIReference(Filter& filter, TreeScope& treeScope, const String& href, const SVGPreserveAspectRatioValue& preserveAspectRatio)
 {
-    return adoptRef(*new FEImage(filter, document, href, preserveAspectRatio));
+    return adoptRef(*new FEImage(filter, treeScope, href, preserveAspectRatio));
 }
 
 void FEImage::determineAbsolutePaintRect()
@@ -80,9 +79,9 @@ void FEImage::determineAbsolutePaintRect()
 
 RenderElement* FEImage::referencedRenderer() const
 {
-    if (!m_document)
+    if (!m_treeScope)
         return nullptr;
-    auto target = SVGURIReference::targetElementFromIRIString(m_href, *m_document);
+    auto target = SVGURIReference::targetElementFromIRIString(m_href, *m_treeScope);
     if (!is<SVGElement>(target.element))
         return nullptr;
     return target.element->renderer();

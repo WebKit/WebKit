@@ -46,7 +46,7 @@ public:
         RefPtr<Element> element;
         String identifier;
     };
-    static TargetElementResult targetElementFromIRIString(const String&, const Document&, RefPtr<Document> externalDocument = nullptr);
+    static TargetElementResult targetElementFromIRIString(const String&, const TreeScope&, RefPtr<Document> externalDocument = nullptr);
 
     static bool isExternalURIReference(const String& uri, const Document& document)
     {

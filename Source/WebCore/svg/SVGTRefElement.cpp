@@ -230,7 +230,7 @@ void SVGTRefElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), document());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!target.element) {
         if (target.identifier.isEmpty())
             return;

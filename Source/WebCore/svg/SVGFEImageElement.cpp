@@ -94,7 +94,7 @@ void SVGFEImageElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), document());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!target.element) {
         if (target.identifier.isEmpty())
             requestImageResource();
@@ -189,7 +189,7 @@ RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter& filter)
 {
     if (m_cachedImage)
         return FEImage::createWithImage(filter, m_cachedImage->imageForRenderer(renderer()), preserveAspectRatio());
-    return FEImage::createWithIRIReference(filter, document(), href(), preserveAspectRatio());
+    return FEImage::createWithIRIReference(filter, treeScope(), href(), preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

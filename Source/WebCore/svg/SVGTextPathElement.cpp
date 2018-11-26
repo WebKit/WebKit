@@ -143,7 +143,7 @@ void SVGTextPathElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), document());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!target.element) {
         // Do not register as pending if we are already pending this resource.
         if (document().accessSVGExtensions().isPendingResource(this, target.identifier))

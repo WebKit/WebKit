@@ -64,6 +64,7 @@ String CSSCursorImageValue::customCSSText() const
     return result.toString();
 }
 
+// FIXME: Should this function take a TreeScope instead?
 SVGCursorElement* CSSCursorImageValue::updateCursorElement(const Document& document)
 {
     if (!m_originalURL.hasFragmentIdentifier())
