@@ -1,5 +1,36 @@
 2018-11-26  Saam barati  <sbarati@apple.com>
 
+        InPlaceAbstractState::endBasicBlock rule for SetLocal should filter the value based on the flush format
+        https://bugs.webkit.org/show_bug.cgi?id=191956
+        <rdar://problem/45665806>
+
+        Reviewed by Yusuke Suzuki.
+
+        This is a similar bug to what Keith fixed in r232134. The issue is if we have
+        a program like this:
+        
+        a: JSConstant(jsNumber(0))
+        b: SetLocal(Int32:@a, loc1, FlushedInt32)
+        c: ArrayifyToStructure(Cell:@a)
+        d: Jump(...)
+        
+        At the point in the program right after the Jump, a GetLocal for loc1
+        would return whatever the ArrayifyToStructure resulting type is. This breaks
+        the invariant that a GetLocal must return a value that is a subtype of its
+        FlushFormat. InPlaceAbstractState::endBasicBlock will know if a SetLocal is
+        the final node touching a local slot. If so, it'll see if any nodes later
+        in the block may have refined the type of the value stored in that slot. If
+        so, endBasicBlock() further refines the type to ensure that any GetLocals
+        loading from the same slot will result in having this more refined type.
+        However, we must ensure that this logic only considers types within the
+        hierarchy of the variable access data's FlushFormat, otherwise, we may
+        break the invariant that a GetLocal's type is a subtype of its FlushFormat.
+
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+
+2018-11-26  Saam barati  <sbarati@apple.com>
+
         Object allocation sinking phase needs to iterate each scope offset instead of just iterating the symbol table's hashmap when handling an activation
         https://bugs.webkit.org/show_bug.cgi?id=191958
         <rdar://problem/46221877>
