@@ -110,6 +110,12 @@ void RenderTextControlSingleLine::layout()
     resetOverriddenHeight(innerBlockRenderer, this);
     resetOverriddenHeight(containerRenderer, this);
 
+    // Save the old size of the inner text (if we have one) as we will need to layout the placeholder if
+    // it changes to keep the size of the placeholder proportional to the size of the inner text.
+    LayoutSize oldInnerTextSize;
+    if (innerTextRenderer)
+        oldInnerTextSize = innerTextRenderer->size();
+
     RenderBlockFlow::layoutBlock(false);
 
     // Set the text block height
@@ -173,6 +179,10 @@ void RenderTextControlSingleLine::layout()
         placeholderBox->mutableStyle().setHeight(Length(innerTextSize.height() - placeholderBox->verticalBorderAndPaddingExtent(), Fixed));
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
+        if (innerTextSize != oldInnerTextSize) {
+            // The caps lock indicator was hidden. Layout the placeholder. Its layout does not affect its parent.
+            placeholderBox->setChildNeedsLayout(MarkOnlyThis);
+        }
         placeholderBox->layoutIfNeeded();
         LayoutPoint textOffset;
         if (innerTextRenderer)

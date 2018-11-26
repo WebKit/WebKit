@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
+}
+
+let step = 0;
+
+function handleKeyUp(event)
+{
+    switch (step++) {
+    case 0:
+        console.assert(event.key === "a");
+        UIHelper.keyDown("\b"); // Backspace
+        return;
+    case 1:
+        console.assert(event.key === "Backspace");
+        internals.startTrackingRepaints();
+        testRunner.toggleCapsLock();
+        return;
+    case 2: {
+        console.assert(event.key === "CapsLock");
+        document.getElementById("result").textContent = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        testRunner.notifyDone();
+        return;
+    }
+    }
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    let input = document.getElementById("input");
+    input.focus();
+
+    function handleCapsLockEnabled(event) {
+        console.assert(event.key === "CapsLock");
+        input.addEventListener("keyup", handleKeyUp, false);
+        UIHelper.keyDown("a");
+    }
+    input.addEventListener("keydown", handleCapsLockEnabled, { once: true });
+    testRunner.toggleCapsLock();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the placeholder text is repainted when the caps lock indicator is hidden.</p>
+<input id="input" type="password" size="5" placeholder="Cupertino">
+<pre id="result"></pre>
+</body>
+</html>

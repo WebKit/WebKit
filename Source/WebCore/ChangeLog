@@ -1,3 +1,27 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        Placeholder text is not repainted after caps lock indicator is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=191968
+        <rdar://problem/46247234>
+
+        Reviewed by Zalan Bujtas.
+
+        Fixes an issue where the placeholder text in a password field is not repainted when the
+        caps lock indicator is hidden.
+
+        The placeholder renderer is special. It is an excluded child renderer and does not take
+        part in normal flow layout. It is also created and destroyed as needed. The caps lock
+        indicator is also special in that it is implemented as a RenderImage and we do not know
+        its dimensions before it is loaded and the load happens asynchronously. As a result we
+        detect when the inner text size changes and mark the placeholder as dirty as a way to
+        keep the dimensions of the placeholder in sync with the dimensions of the inner text.
+
+        Test: fast/repaint/placeholder-after-caps-lock-hidden.html
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout): Mark the placeholder as needing layout
+        the size of the inner text changes.
+
 2018-11-26  Jeremy Jones  <jeremyj@apple.com>
 
         Picture-in-picture window size changes unnecesarily when URL changes.
