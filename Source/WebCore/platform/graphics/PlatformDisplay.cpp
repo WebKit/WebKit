@@ -47,7 +47,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <gdk/gdk.h>
+#include <gtk/gtk.h>
 #endif
 
 #if PLATFORM(GTK) && PLATFORM(X11)
@@ -77,15 +77,17 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 #if defined(GTK_API_VERSION_2)
     return PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
 #else
-    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (gtk_init_check(nullptr, nullptr)) {
+        GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
 #if PLATFORM(X11)
-    if (GDK_IS_X11_DISPLAY(display))
-        return PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
+        if (GDK_IS_X11_DISPLAY(display))
+            return PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
 #endif
 #if PLATFORM(WAYLAND)
-    if (GDK_IS_WAYLAND_DISPLAY(display))
-        return PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
+        if (GDK_IS_WAYLAND_DISPLAY(display))
+            return PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
 #endif
+    }
 #endif
 #endif // PLATFORM(GTK)
 

@@ -1,3 +1,15 @@
+2018-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Accessing default web context before gtk_init results in drawing failure (Gtk-WARNING **: drawing failure for widget 'WebKitWebView': invalid value for an input Visual*)
+        https://bugs.webkit.org/show_bug.cgi?id=150303
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure gtk has been initialized before trying to get the default display.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::createPlatformDisplay):
+
 2018-11-26  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] absolute positioned child is sized wrongly when using auto-fit, generating spurious collapsed tracks
