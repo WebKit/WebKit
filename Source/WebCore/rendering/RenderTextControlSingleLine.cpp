@@ -110,8 +110,9 @@ void RenderTextControlSingleLine::layout()
     resetOverriddenHeight(innerBlockRenderer, this);
     resetOverriddenHeight(containerRenderer, this);
 
-    // Save the old size of the inner text (if we have one) as we will need to layout the placeholder if
-    // it changes to keep the size of the placeholder proportional to the size of the inner text.
+    // Save the old size of the inner text (if we have one) as we will need to layout the placeholder
+    // and update selection if it changes. One way the size may change is if text decorations are
+    // toggled. For example, hiding and showing the caps lock indicator will cause a size change.
     LayoutSize oldInnerTextSize;
     if (innerTextRenderer)
         oldInnerTextSize = innerTextRenderer->size();
@@ -170,6 +171,8 @@ void RenderTextControlSingleLine::layout()
     else if (container && containerRenderer && containerRenderer->height() != contentLogicalHeight())
         centerRenderer(*containerRenderer);
 
+    bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->size() != oldInnerTextSize;
+
     HTMLElement* placeholderElement = inputElement().placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         LayoutSize innerTextSize;
@@ -179,7 +182,7 @@ void RenderTextControlSingleLine::layout()
         placeholderBox->mutableStyle().setHeight(Length(innerTextSize.height() - placeholderBox->verticalBorderAndPaddingExtent(), Fixed));
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
-        if (innerTextSize != oldInnerTextSize) {
+        if (innerTextSizeChanged) {
             // The caps lock indicator was hidden. Layout the placeholder. Its layout does not affect its parent.
             placeholderBox->setChildNeedsLayout(MarkOnlyThis);
         }
@@ -209,6 +212,12 @@ void RenderTextControlSingleLine::layout()
     if (inputElement().isSearchField())
         RenderThemeIOS::adjustRoundBorderRadius(mutableStyle(), *this);
 #endif
+    if (innerTextSizeChanged) {
+        // The caps lock indicator was hidden or shown. If it is now visible then it may be occluding
+        // the current selection (say, the caret was after the last character in the text field).
+        // Schedule an update and reveal of the current selection.
+        frame().selection().setNeedsSelectionUpdate(FrameSelection::RevealSelectionAfterUpdate::Forced);
+    }
 }
 
 bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

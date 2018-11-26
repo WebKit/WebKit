@@ -1,5 +1,38 @@
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
+        Caret disappears at end of password field when caps lock indicator is shown; password field
+        not scrolled when caps lock indicator is shown
+        https://bugs.webkit.org/show_bug.cgi?id=191164
+        <rdar://problem/45738179>
+
+        Reviewed by Dean Jackson.
+
+        Fixes an issue where the caret may be occluded by- or paint on top of- the caps lock indicator on
+        Mac and iOS, respectively.
+
+        If there has not been a previous selection in a focused password field, including a caret
+        selection made by pressing the arrow keys, then we never scroll the password field to reveal
+        the current selection when the caps lock indicator is made visible. When the caps lock indicator
+        is made visible or hidden the size of the inner text renderer changes as it shrinks or expands
+        to make space for the caps lock indicator or to fill the void of the now hidden caps lock indicator,
+        respectively. We should detect such size changes and schedule an update and reveal of the current
+        selection after layout.
+
+        Test: fast/forms/password-scrolled-after-caps-lock-toggled.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setNeedsSelectionUpdate): Modified to take an enum to override the current
+        selection reveal mode for the next update.
+        * editing/FrameSelection.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout): Schedule post-layout a selection update that
+        reveals the current selection. We pass FrameSelection::RevealSelectionAfterUpdate::Forced to ensure
+        that the scheduled selection update scrolls to the reveal the current selection regardless of selection
+        reveal mode. This is necessary because typing into a password field does not change the current
+        selection reveal mode.
+
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
         Placeholder text is not repainted after caps lock indicator is hidden
         https://bugs.webkit.org/show_bug.cgi?id=191968
         <rdar://problem/46247234>

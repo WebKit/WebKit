@@ -403,9 +403,11 @@ static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
 #endif
 }
 
-void FrameSelection::setNeedsSelectionUpdate()
+void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMode)
 {
     m_selectionRevealIntent = AXTextStateChangeIntent();
+    if (revealMode == RevealSelectionAfterUpdate::Forced)
+        m_selectionRevealMode = SelectionRevealMode::Reveal;
     m_pendingSelectionUpdate = true;
     if (RenderView* view = m_frame->contentRenderer())
         view->selection().clear();

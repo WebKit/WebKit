@@ -159,7 +159,9 @@ public:
 
     void updateAppearanceAfterLayout();
     void scheduleAppearanceUpdateAfterStyleChange();
-    void setNeedsSelectionUpdate();
+
+    enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
+    void setNeedsSelectionUpdate(RevealSelectionAfterUpdate = RevealSelectionAfterUpdate::NotForced);
 
     bool contains(const LayoutPoint&) const;
 
