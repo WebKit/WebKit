@@ -361,6 +361,4 @@ interface TestRunner {
     void addTestKeyToKeychain(DOMString privateKeyBase64, DOMString attrLabel, DOMString applicationTagBase64);
     void cleanUpKeychain(DOMString attrLabel);
     boolean keyExistsInKeychain(DOMString attrLabel, DOMString applicationTagBase64);
-
-    void toggleCapsLock();
 };

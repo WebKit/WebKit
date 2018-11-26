@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html><head></head>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+</head>
     <body>
         <p>This test verifies that the function WebCore::currentCapsLockState() returns true when Caps Lock is on.</p>
         <input type="password"></input>
@@ -43,30 +46,35 @@
             input.addEventListener('keydown', keyDown, false);
             input.addEventListener('keyup', keyUp, false);
             input.focus();
-            
+
+            async function runTest()
+            {
+                await UIHelper.toggleCapsLock();
+                testRunner.setWindowIsKey(false);
+                testRunner.setWindowIsKey(true);
+                await UIHelper.toggleCapsLock();
+                
+                testRunner.setWindowIsKey(false);
+                await UIHelper.toggleCapsLock();
+                testRunner.setWindowIsKey(true);
+                await UIHelper.toggleCapsLock();
+
+                testRunner.setWindowIsKey(true);
+                await UIHelper.toggleCapsLock();
+                await UIHelper.toggleCapsLock();
+
+                testRunner.setWindowIsKey(false);
+                await UIHelper.toggleCapsLock();
+                await UIHelper.toggleCapsLock();
+
+                eventSender.keyDown("q", []);
+            }
+
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.waitUntilDone();
-                
-                testRunner.toggleCapsLock();
-                testRunner.setWindowIsKey(false);
-                testRunner.setWindowIsKey(true);
-                testRunner.toggleCapsLock();
-                
-                testRunner.setWindowIsKey(false);
-                testRunner.toggleCapsLock();
-                testRunner.setWindowIsKey(true);
-                testRunner.toggleCapsLock();
 
-                testRunner.setWindowIsKey(true);
-                testRunner.toggleCapsLock();
-                testRunner.toggleCapsLock();
-
-                testRunner.setWindowIsKey(false);
-                testRunner.toggleCapsLock();
-                testRunner.toggleCapsLock();
-
-                eventSender.keyDown("q", []);
+                runTest();
             }
         </script>
     </body>

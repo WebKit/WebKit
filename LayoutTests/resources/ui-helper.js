@@ -66,6 +66,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static toggleCapsLock()
+    {
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`uiController.toggleCapsLock(() => uiController.uiScriptComplete('Done'));`, resolve);
+        });
+    }
+
     static ensurePresentationUpdate()
     {
         if (!this.isWebKit2()) {

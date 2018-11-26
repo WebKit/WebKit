@@ -191,4 +191,22 @@ bool UIScriptController::isWindowContentViewFirstResponder() const
     return [window firstResponder] == [window contentView];
 }
 
+void UIScriptController::toggleCapsLock(JSValueRef callback)
+{
+    m_capsLockOn = !m_capsLockOn;
+    NSWindow *window = [TestController::singleton().mainWebView()->platformView() window];
+    NSEvent *fakeEvent = [NSEvent keyEventWithType:NSEventTypeFlagsChanged
+        location:NSZeroPoint
+        modifierFlags:m_capsLockOn ? NSEventModifierFlagCapsLock : 0
+        timestamp:0
+        windowNumber:window.windowNumber
+        context:nullptr
+        characters:@""
+        charactersIgnoringModifiers:@""
+        isARepeat:NO
+        keyCode:57];
+    [window sendEvent:fakeEvent];
+    doAsyncTask(callback);
+}
+
 } // namespace WTR

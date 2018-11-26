@@ -91,6 +91,7 @@ public:
     void typeCharacterUsingHardwareKeyboard(JSStringRef character, JSValueRef callback);
 
     void keyDown(JSStringRef character, JSValueRef modifierArray);
+    void toggleCapsLock(JSValueRef callback);
 
     void keyboardAccessoryBarNext();
     void keyboardAccessoryBarPrevious();
@@ -221,6 +222,10 @@ private:
     JSObjectRef objectFromRect(const WebCore::FloatRect&) const;
 
     UIScriptContext* m_context;
+
+#if PLATFORM(MAC)
+    bool m_capsLockOn { false };
+#endif
 };
 
 }

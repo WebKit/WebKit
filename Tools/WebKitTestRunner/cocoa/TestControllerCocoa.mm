@@ -389,23 +389,4 @@ bool TestController::keyExistsInKeychain(const String& attrLabel, const String& 
     return false;
 }
 
-#if PLATFORM(MAC)
-void TestController::toggleCapsLock()
-{
-    m_capsLockOn = !m_capsLockOn;
-    NSEvent *fakeEvent = [NSEvent keyEventWithType:NSEventTypeFlagsChanged
-        location:NSZeroPoint
-        modifierFlags:m_capsLockOn ? NSEventModifierFlagCapsLock : 0
-        timestamp:0
-        windowNumber:[mainWebView()->platformWindow() windowNumber]
-        context:nullptr
-        characters:@""
-        charactersIgnoringModifiers:@""
-        isARepeat:NO
-        keyCode:57];
-    
-    [mainWebView()->platformWindow() sendEvent:fakeEvent];
-}
-#endif
-
 } // namespace WTR

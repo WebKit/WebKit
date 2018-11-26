@@ -910,6 +910,12 @@ long UIScriptController::numberOfStrokesInEditableImage()
 #endif
 }
 
+void UIScriptController::toggleCapsLock(JSValueRef callback)
+{
+    // FIXME: Implement for iOS. See <https://bugs.webkit.org/show_bug.cgi?id=191815>.
+    doAsyncTask(callback);
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

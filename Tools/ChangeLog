@@ -1,3 +1,49 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        Move testRunner.toggleCapsLock() to uiController
+        https://bugs.webkit.org/show_bug.cgi?id=191972
+
+        Reviewed by Tim Horton.
+
+        Move testRunner.toggleCapsLock() to uiController as uiController is the preferred JavaScript
+        object for UI test functions. Having this functionality be on uiController makes it an
+        asynchronous function naturally and complements use of onkeydown, onkeyup listeners to know
+        when the Caps Lock key event is dispatched. It also facilitates its use directly as part of
+        scripts with other uiController functions invocations that are passed in a single invocation
+        of testRunner.runUIScript().
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::toggleCapsLock):
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::toggleCapsLock):
+        Added stub functions that invoke the callback. We do not support toggling caps lock in Legacy
+        WebKit at the moment. Legacy WebKit reads the caps lock key state directly from the OS. Modern
+        WebKit caches the caps lock state in the WebProcess as a natural side effect of the fact that
+        the UIProcess is the only process capable of querying the caps lock key state from the OS and
+        hence the UIProcess must send over this state to the WebProcess.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl: Add IDL for new function.
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::toggleCapsLock): Added empty implementation for ports non-Cocoa ports.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::toggleCapsLock): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::toggleCapsLock): Deleted; moved to UIScriptController::toggleCapsLock().
+        Removed logic to handle testRunner.toggleCapsLock().
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::toggleCapsLock): Add stub function that invokes the callback
+        and a FIXME comment that explains that we will implement this function in <https://bugs.webkit.org/show_bug.cgi?id=191815>.
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptController::toggleCapsLock): Moved the implementation from TestController::toggleCapsLock().
+
 2018-11-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: CoreAnimation

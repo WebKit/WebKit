@@ -206,6 +206,7 @@ JSValueRef UIScriptController::didHideKeyboardCallback() const
 }
 
 #if !PLATFORM(COCOA)
+
 void UIScriptController::zoomToScale(double, JSValueRef)
 {
 }
@@ -235,8 +236,12 @@ JSObjectRef UIScriptController::calendarType() const
 {
     return nullptr;
 }
-    
-#endif
+
+void UIScriptController::toggleCapsLock(JSValueRef)
+{
+}
+
+#endif // !PLATFORM(COCOA)
 
 void UIScriptController::playBackEventStream(JSStringRef stream, JSValueRef callback)
 {

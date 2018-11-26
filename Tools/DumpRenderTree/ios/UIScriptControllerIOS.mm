@@ -422,6 +422,11 @@ long UIScriptController::numberOfStrokesInEditableImage()
     return 0;
 }
 
+void UIScriptController::toggleCapsLock(JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

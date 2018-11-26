@@ -281,8 +281,6 @@ public:
     void cleanUpKeychain(const String& attrLabel);
     bool keyExistsInKeychain(const String& attrLabel, const String& applicationTagBase64);
 
-    void toggleCapsLock();
-
 #if PLATFORM(COCOA)
     RetainPtr<NSString> getOverriddenCalendarIdentifier() const;
     void setDefaultCalendarType(NSString *identifier);
@@ -517,8 +515,6 @@ private:
     bool m_shouldDecideResponsePolicyAfterDelay { false };
 
     bool m_didReceiveServerRedirectForProvisionalNavigation { false };
-
-    bool m_capsLockOn { false };
 
     WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
 

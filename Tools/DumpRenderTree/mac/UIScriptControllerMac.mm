@@ -205,7 +205,12 @@ JSObjectRef UIScriptController::calendarType() const
 void UIScriptController::setDefaultCalendarType(JSStringRef calendarIdentifier)
 {
 }
-    
+
+void UIScriptController::toggleCapsLock(JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 }
 
 #endif // PLATFORM(MAC)
