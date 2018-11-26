@@ -1,3 +1,15 @@
+2018-11-26  Alex Christensen  <achristensen@webkit.org>
+
+        Rename WKWebView._safeBrowsingWarningForTesting to _safeBrowsingWarning to use it for more than testing
+        https://bugs.webkit.org/show_bug.cgi?id=191981
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _safeBrowsingWarning]):
+        (-[WKWebView _safeBrowsingWarningForTesting]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r237738): Command Down Arrow doesn't scroll to the end of a page anymore

@@ -4572,6 +4572,18 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->process().terminate();
 }
 
+#if PLATFORM(MAC)
+- (NSView *)_safeBrowsingWarning
+{
+    return _impl->safeBrowsingWarning();
+}
+#else
+- (UIView *)_safeBrowsingWarning
+{
+    return _safeBrowsingWarning.get();
+}
+#endif
+
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
     return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers));
@@ -6846,18 +6858,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     _resolutionForShareSheetImmediateCompletionForTesting = resolved;
 }
-
-#if PLATFORM(MAC)
-- (NSView *)_safeBrowsingWarningForTesting
-{
-    return _impl->safeBrowsingWarning();
-}
-#else
-- (UIView *)_safeBrowsingWarningForTesting
-{
-    return _safeBrowsingWarning.get();
-}
-#endif
 
 - (_WKInspector *)_inspector
 {

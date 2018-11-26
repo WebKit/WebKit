@@ -157,13 +157,13 @@ TEST(SafeBrowsing, Preference)
     [webView setNavigationDelegate:delegate.get()];
     EXPECT_TRUE([webView configuration].preferences.safeBrowsingEnabled);
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
-    while (![webView _safeBrowsingWarningForTesting])
+    while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
     [webView configuration].preferences.safeBrowsingEnabled = NO;
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
     TestWebKitAPI::Util::run(&done);
     EXPECT_FALSE([webView configuration].preferences.safeBrowsingEnabled);
-    EXPECT_FALSE([webView _safeBrowsingWarningForTesting]);
+    EXPECT_FALSE([webView _safeBrowsingWarning]);
 }
 
 static RetainPtr<WKWebView> safeBrowsingView()
@@ -174,10 +174,10 @@ static RetainPtr<WKWebView> safeBrowsingView()
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
-    while (![webView _safeBrowsingWarningForTesting])
+    while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
 #if !PLATFORM(MAC)
-    [[webView _safeBrowsingWarningForTesting] didMoveToWindow];
+    [[webView _safeBrowsingWarning] didMoveToWindow];
 #endif
     return webView;
 }
@@ -201,16 +201,16 @@ static void checkTitleAndClick(UIButton *button, const char* expectedTitle)
 TEST(SafeBrowsing, GoBack)
 {
     auto webView = safeBrowsingView();
-    auto warning = [webView _safeBrowsingWarningForTesting];
+    auto warning = [webView _safeBrowsingWarning];
     auto box = warning.subviews.firstObject;
     checkTitleAndClick(box.subviews[3], "Go Back");
-    EXPECT_EQ([webView _safeBrowsingWarningForTesting], nil);
+    EXPECT_EQ([webView _safeBrowsingWarning], nil);
 }
 
 TEST(SafeBrowsing, VisitUnsafeWebsite)
 {
     auto webView = safeBrowsingView();
-    auto warning = [webView _safeBrowsingWarningForTesting];
+    auto warning = [webView _safeBrowsingWarning];
     EXPECT_EQ(warning.subviews.count, 1ull);
     checkTitleAndClick(warning.subviews.firstObject.subviews[4], "Show Details");
     EXPECT_EQ(warning.subviews.count, 2ull);
@@ -222,9 +222,9 @@ TEST(SafeBrowsing, VisitUnsafeWebsite)
 TEST(SafeBrowsing, NavigationClearsWarning)
 {
     auto webView = safeBrowsingView();
-    EXPECT_NE([webView _safeBrowsingWarningForTesting], nil);
+    EXPECT_NE([webView _safeBrowsingWarning], nil);
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    while ([webView _safeBrowsingWarningForTesting])
+    while ([webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
 }
 
@@ -240,17 +240,17 @@ TEST(SafeBrowsing, ShowWarningSPI)
             completionHandlerCalled = true;
         }];
 #if !PLATFORM(MAC)
-        [[webView _safeBrowsingWarningForTesting] didMoveToWindow];
+        [[webView _safeBrowsingWarning] didMoveToWindow];
 #endif
     };
 
     showWarning();
-    checkTitleAndClick([webView _safeBrowsingWarningForTesting].subviews.firstObject.subviews[3], "Go Back");
+    checkTitleAndClick([webView _safeBrowsingWarning].subviews.firstObject.subviews[3], "Go Back");
     TestWebKitAPI::Util::run(&completionHandlerCalled);
     EXPECT_FALSE(shouldContinueValue);
 
     showWarning();
-    [[webView _safeBrowsingWarningForTesting] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[WKWebView _visitUnsafeWebsiteSentinel]];
+    [[webView _safeBrowsingWarning] performSelector:NSSelectorFromString(@"clickedOnLink:") withObject:[WKWebView _visitUnsafeWebsiteSentinel]];
     TestWebKitAPI::Util::run(&completionHandlerCalled);
     EXPECT_TRUE(shouldContinueValue);
 }
