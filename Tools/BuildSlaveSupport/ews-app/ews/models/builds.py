@@ -23,10 +23,11 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from ews.models.patch import Patch
 
 
 class Builds(models.Model):
-    patchid = models.IntegerField()  # TODO: set foreign key
+    patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
     buildid = models.IntegerField(primary_key=True)
     builderid = models.IntegerField()
     number = models.IntegerField()

@@ -1,5 +1,15 @@
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Set Foreign Keys in EWS Django app models
+        https://bugs.webkit.org/show_bug.cgi?id=191790
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/builds.py: Set Foreign Key.
+        * BuildSlaveSupport/ews-app/ews/models/steps.py: Ditto.
+
+2018-11-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Do not store patch content in database
         https://bugs.webkit.org/show_bug.cgi?id=191788
 
