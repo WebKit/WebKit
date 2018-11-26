@@ -1,3 +1,17 @@
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use float box's margin box to adjust the line constraints.
+        https://bugs.webkit.org/show_bug.cgi?id=191961
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/inline/inline-content-with-float-and-margin.html
+
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        (WebCore::Layout::LayoutState::verifyAndOutputMismatchingLayoutTree const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::layoutInlineContent const):
+
 2018-11-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Accessing default web context before gtk_init results in drawing failure (Gtk-WARNING **: drawing failure for widget 'WebKitWebView': invalid value for an input Visual*)

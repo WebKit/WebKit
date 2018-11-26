@@ -1,3 +1,13 @@
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use float box's margin box to adjust the line constraints.
+        https://bugs.webkit.org/show_bug.cgi?id=191961
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/inline-content-with-float-and-margin-expected.txt: Added.
+        * fast/inline/inline-content-with-float-and-margin.html: Added.
+
 2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid container sizing under min-content height

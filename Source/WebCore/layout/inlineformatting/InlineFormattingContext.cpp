@@ -287,7 +287,7 @@ void InlineFormattingContext::layoutInlineContent(const InlineRunProvider& inlin
             computeFloatPosition(floatingContext, line, floatBox);
             inlineFormattingState.floatingState().append(floatBox);
 
-            auto floatBoxWidth = layoutState.displayBoxForLayoutBox(floatBox).width();
+            auto floatBoxWidth = layoutState.displayBoxForLayoutBox(floatBox).marginBox().width();
             // Shrink availble space for current line and move existing inline runs.
             floatBox.isLeftFloatingPositioned() ? line.adjustLogicalLeft(floatBoxWidth) : line.adjustLogicalRight(floatBoxWidth);
 
