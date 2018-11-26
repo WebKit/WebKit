@@ -1,3 +1,14 @@
+2018-11-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Retry app installation on watchOS simulators (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=191769
+        <rdar://problem/46139850>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice): Increase retry attempts.
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         Move testRunner.toggleCapsLock() to uiController

@@ -454,7 +454,7 @@ class SimulatedDevice(object):
         BOOTED = 3
         SHUTTING_DOWN = 4
 
-    NUM_INSTALL_RETRIES = 3
+    NUM_INSTALL_RETRIES = 5
     NAME_FOR_STATE = [
         'CREATING',
         'SHUTDOWN',
