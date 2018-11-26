@@ -1,3 +1,13 @@
+2018-11-26  Mark Lam  <mark.lam@apple.com>
+
+        NaNs read from Wasm code needs to be be purified.
+        https://bugs.webkit.org/show_bug.cgi?id=191056
+        <rdar://problem/45660341>
+
+        Reviewed by Filip Pizlo.
+
+        * wasm/regress/regress-191056.js: Added.
+
 2018-11-26  Michael Saboff  <msaboff@apple.com>
 
         32-bit JSC test failure: stress/regexp-compile-oom.js

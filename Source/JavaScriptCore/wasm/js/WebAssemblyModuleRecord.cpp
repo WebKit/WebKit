@@ -388,11 +388,11 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                 return;
 
             case Wasm::F32:
-                exportedValue = JSValue(m_instance->instance().loadF32Global(exp.kindIndex));
+                exportedValue = jsNumber(purifyNaN(m_instance->instance().loadF32Global(exp.kindIndex)));
                 break;
 
             case Wasm::F64:
-                exportedValue = JSValue(m_instance->instance().loadF64Global(exp.kindIndex));
+                exportedValue = jsNumber(purifyNaN(m_instance->instance().loadF64Global(exp.kindIndex)));
                 break;
 
             default:
