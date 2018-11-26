@@ -168,6 +168,16 @@ void WKContextConfigurationSetProcessSwapsOnNavigation(WKContextConfigurationRef
     toImpl(configuration)->setProcessSwapsOnNavigation(swaps);
 }
 
+bool WKContextConfigurationPrewarmsProcessesAutomatically(WKContextConfigurationRef configuration)
+{
+    return toImpl(configuration)->isAutomaticProcessWarmingEnabled();
+}
+
+void WKContextConfigurationSetPrewarmsProcessesAutomatically(WKContextConfigurationRef configuration, bool prewarms)
+{
+    toImpl(configuration)->setIsAutomaticProcessWarmingEnabled(prewarms);
+}
+
 bool WKContextConfigurationAlwaysKeepAndReuseSwappedProcesses(WKContextConfigurationRef configuration)
 {
     return toImpl(configuration)->alwaysKeepAndReuseSwappedProcesses();

@@ -1285,7 +1285,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
 
 void WebProcessPool::didReachGoodTimeToPrewarm()
 {
-    if (!configuration().isAutomaticProcessWarmingEnabled())
+    if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation())
         return;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
@@ -2112,6 +2112,13 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 Ref<WebProcessProxy> WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigation& navigation, ProcessSwapRequestedByClient processSwapRequestedByClient, String& reason)
 {
     auto process = processForNavigationInternal(page, navigation, processSwapRequestedByClient, reason);
+
+    // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
+    bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != &page.process();
+    if (doingAnAutomaticProcessSwap && !configuration().wasAutomaticProcessWarmingSetByClient() && !configuration().clientWouldBenefitFromAutomaticProcessPrewarming()) {
+        RELEASE_LOG(PerformanceLogging, "Automatically turning on process prewarming because the client would benefit from it");
+        configuration().setClientWouldBenefitFromAutomaticProcessPrewarming(true);
+    }
 
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != &page.process()) {
         static std::once_flag onceFlag;

@@ -61,11 +61,14 @@ public:
 
     bool isAutomaticProcessWarmingEnabled() const
     {
-        // FIXME: For now, turning on PSON from the experimental features menu also turns on
-        // automatic process warming until clients can be updated.
-        return m_isAutomaticProcessWarmingEnabledByClient.value_or(m_processSwapsOnNavigationFromExperimentalFeatures);
+        return m_isAutomaticProcessWarmingEnabledByClient.value_or(m_clientWouldBenefitFromAutomaticProcessPrewarming);
     }
+
+    bool wasAutomaticProcessWarmingSetByClient() const { return !!m_isAutomaticProcessWarmingEnabledByClient; }
     void setIsAutomaticProcessWarmingEnabled(bool value) { m_isAutomaticProcessWarmingEnabledByClient = value; }
+
+    bool clientWouldBenefitFromAutomaticProcessPrewarming() const { return m_clientWouldBenefitFromAutomaticProcessPrewarming; }
+    void setClientWouldBenefitFromAutomaticProcessPrewarming(bool value) { m_clientWouldBenefitFromAutomaticProcessPrewarming = value; }
 
     bool diskCacheSpeculativeValidationEnabled() const { return m_diskCacheSpeculativeValidationEnabled; }
     void setDiskCacheSpeculativeValidationEnabled(bool enabled) { m_diskCacheSpeculativeValidationEnabled = enabled; }
@@ -222,6 +225,7 @@ private:
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
     std::optional<bool> m_isAutomaticProcessWarmingEnabledByClient;
+    bool m_clientWouldBenefitFromAutomaticProcessPrewarming { false };
     WTF::String m_customWebContentServiceBundleIdentifier;
     bool m_isJITEnabled { true };
 

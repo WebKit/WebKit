@@ -1,3 +1,41 @@
+2018-11-26  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] process pre-warming should not be on for everyone
+        https://bugs.webkit.org/show_bug.cgi?id=191966
+        <rdar://problem/46138499>
+
+        Reviewed by Ryosuke Niwa.
+
+        If automatic process-prewarming is not explicitly turned on/off by the client, then we now only
+        turn it on automatically after the first process swap. Previously, it was always enabled if
+        process-swap on cross-site navigation was enabled (which is the case by default for all apps).
+
+        This is important because some apps do not actually browse (only display static content) or never
+        browse cross-site, and thus would not benefit from process prewarming and yet pay a memory cost.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        Add m_clientWouldBenefitFromAutomaticProcessPrewarming flag which is false by default and is used
+        as a fallback if the client did not call setIsAutomaticProcessWarmingEnabled().
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationPrewarmsProcessesAutomatically):
+        (WKContextConfigurationSetPrewarmsProcessesAutomatically):
+        Add C API to toggle automatic process prewarming. It is needed for Safari to turn on this feature
+        by default for browsing. This way Safari does not have to wait for the first process swap to
+        start prewarming.
+
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        Only do automatic process prewarming if process-swap on cross-site navigation is also enabled.
+        This is needed for clients like Safari that explicitly enable automatic process prewarming but
+        only want to have it enabled if PSON is also enabled via experimental features.
+
+        (WebKit::WebProcessPool::processForNavigation):
+        On first process swap, if the client did not explicitly turn on or off automatic process prewarming
+        then we enable it then. This avoids paying the cost of process prewarming in apps that would not
+        benefit from it.
+
 2018-11-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Make it easier to encode NSObjects
