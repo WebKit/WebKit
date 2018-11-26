@@ -69,7 +69,7 @@ extern NSString* const HIDEventPhaseCanceled;
 
 extern NSUInteger const HIDMaxTouchCount;
 
-RetainPtr<IOHIDEventRef> createHIDKeyDownEvent(NSString *, uint64_t timestamp);
+RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *, uint64_t timestamp, bool isKeyDown);
 
 @interface HIDEventGenerator : NSObject
 

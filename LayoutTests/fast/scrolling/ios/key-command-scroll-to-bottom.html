@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+//  UIKit hides the scroll indicator after 1 second.
+const ScrollIndicatorFlashHideDelay = 1000; // milliseconds
+
+let secondSquareMaxY;
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function didEndScroll()
+{
+    window.onscroll = null;
+    // FIXME: Disable flashing of scroll indicator or find a way know when the flash has finished.
+    window.setTimeout(done, ScrollIndicatorFlashHideDelay);
+}
+
+window.onscroll = function (event) {
+
+    if (window.scrollY + window.innerHeight >= secondSquareMaxY)
+        didEndScroll();
+}
+
+function runTest()
+{
+    let secondSquare = document.getElementById("secondSquare");
+    secondSquareMaxY = secondSquare.offsetTop + secondSquare.offsetHeight;
+    if (window.testRunner)
+        UIHelper.keyDown("downArrow", ["metaKey"]);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p id="description">Tests that pressing <key>Command</key> + <key>&#x2193;</key> scrolls to the bottom of the page. This test PASSED if you see a green square. Otherwise, it FAILED.</p>
+<div style="width: 256px; height: 256px; background-color: red"></div>
+<div style="height: 2000px"></div>
+<div id="secondSquare" style="width: 256px; height: 256px; background-color: green"></div>
+</body>
+</html>

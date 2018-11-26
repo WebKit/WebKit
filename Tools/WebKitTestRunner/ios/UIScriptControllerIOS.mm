@@ -400,6 +400,15 @@ static UIKeyModifierFlags parseModifierArray(JSContextRef context, JSValueRef ar
     return modifiers;
 }
 
+static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(const String& hidInputString, const String& uiEventInputString, UIKeyModifierFlags modifierFlags, bool isKeyDown)
+{
+    auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:(UIKeyboardInputFlags)0];
+    keyboardEvent._modifierFlags = modifierFlags;
+    auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown);
+    [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
+    return keyboardEvent;
+}
+
 void UIScriptController::keyDown(JSStringRef character, JSValueRef modifierArray)
 {
     // Character can be either a single Unicode code point or the name of a special key (e.g. "downArrow").
@@ -412,10 +421,16 @@ void UIScriptController::keyDown(JSStringRef character, JSValueRef modifierArray
     // for a special key.
     String inputString = toWTFString(toWK(character));
     String uiEventInputString = inputString.length() > 1 ? emptyString() : inputString;
-    auto *keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:(UIKeyboardInputFlags)0];
-    keyboardEvent._modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
-    auto hidEvent = createHIDKeyDownEvent(inputString, keyboardEvent.timestamp);
-    [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
+    auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
+
+    // Note that UIKit will call -release on the passed UIPhysicalKeyboardEvent.
+
+    // Key down
+    auto* keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, true /* isKeyDown */);
+    [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
+
+    // Key up
+    keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, false /* isKeyDown */);
     [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
 }
 

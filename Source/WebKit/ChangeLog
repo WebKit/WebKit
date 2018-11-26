@@ -1,3 +1,37 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r237738): Command Down Arrow doesn't scroll to the end of a page anymore
+        https://bugs.webkit.org/show_bug.cgi?id=191967
+        <rdar://problem/45976390>
+
+        Reviewed by Tim Horton.
+
+        Fixes an issue where pressing Command + Down Arrow does not scroll the view to the end of the page.
+
+        Following r237738 the value of the enumerations used to identify modifier keys (e.g. Shift) changed
+        to match the values of the corresponding enumerations in GraphicsServices, which are the
+        enumerations UIKit uses to computes the modifier flags bitmask when instantiating a WebEvent to
+        pass to WebKit. Before r237738 WebKit was using enumerations whose values matched the values
+        of the corresponding UIKit public API UIKeyModifier* enumerations. For non-content editable elements,
+        WebKit intercepts UIKit events in -_handleKeyUIEvent, synthesizes and dispatches its own WebEvent.
+        However it was creating WebEvents with a modifier flags bitmask built from the UIKeyModifier* enumerations,
+        -_modifierFlags, as opposed to a bitmask from the GraphicsServices enumerations, -_gsModifierFlags.
+        Instead WebKit should call -_gsModifierFlags to compute the GraphicsServices-compatible modifier
+        flags bitmask when instantiating a WebEvent.
+
+        * Platform/spi/ios/UIKitSPI.h: Expose -_gsModifierFlags and remove -_modifierFlags.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleKeyUIEvent:]): Remove unnecessary code to update the current modifier state.
+        This will be done by the WebProcess when it receives the keyboard event.
+        (-[WKContentView _didHandleKeyEvent:eventWasHandled:]): Do not pass modifier flags changed events
+        to the scrolling animator as it does not know how to handle these kinds of events and triggers an
+        assertion failure when it tries to read the input string from the event (calls -charactersIgnoringModifiers).
+        FlagsChanged WebEvents events do not have an input string just like a FlagsChanged NSEvent that
+        they model on Mac.
+        * UIProcess/ios/WKWebEvent.mm:
+        (-[WKWebEvent initWithEvent:]): Pass the value of -_gsModifierFlags for the modifier flags bitmask
+        instead of the value of -_modifierFlags.
+
 2018-11-26  Chris Dumez  <cdumez@apple.com>
 
         [PSON] process pre-warming should not be on for everyone

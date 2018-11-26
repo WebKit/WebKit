@@ -57,7 +57,7 @@ window.UIHelper = class UIHelper {
     static keyDown(key, modifiers=[])
     {
         if (!this.isWebKit2() || !this.isIOS()) {
-            eventSender.keyDown(key);
+            eventSender.keyDown(key, modifiers);
             return Promise.resolve();
         }
 

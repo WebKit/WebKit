@@ -199,7 +199,6 @@ typedef enum {
 - (void *)_hidEvent;
 - (NSString *)_unmodifiedInput;
 - (NSString *)_modifiedInput;
-- (NSInteger)_modifierFlags;
 - (BOOL)_isKeyDown;
 @end
 
@@ -1026,6 +1025,7 @@ typedef NSInteger UICompositingMode;
 - (UIPhysicalKeyboardEvent *)_cloneEvent NS_RETURNS_RETAINED;
 @property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
 @property (nonatomic, readonly) CFIndex _keyCode;
+@property (nonatomic, readonly) NSInteger _gsModifierFlags;
 @end
 
 @interface UIColor (IPI)

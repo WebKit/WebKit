@@ -1,3 +1,23 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r237738): Command Down Arrow doesn't scroll to the end of a page anymore
+        https://bugs.webkit.org/show_bug.cgi?id=191967
+        <rdar://problem/45976390>
+
+        Reviewed by Tim Horton.
+
+        Add more test infrastructure to dispatch key up events.
+
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (createHIDKeyEvent): Renamed from createHIDKeyDownEvent() and modified to take a boolean as
+        to whether to create an event for a key down or key up.
+        (createHIDKeyDownEvent): Deleted; renamed to createHIDKeyEvent().
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::createUIPhysicalKeyboardEvent): Added. Convenience function to create a UIPhysicalKeyboardEvent.
+        (WTR::UIScriptController::keyDown): Modified to dispatch a key up event in addition to dispatching
+        a key down event.
+
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Set Foreign Keys in EWS Django app models

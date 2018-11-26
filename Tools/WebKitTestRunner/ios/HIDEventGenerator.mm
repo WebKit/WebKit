@@ -973,9 +973,9 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
     return 0;
 }
 
-RetainPtr<IOHIDEventRef> createHIDKeyDownEvent(NSString *character, uint64_t timestamp)
+RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timestamp, bool isKeyDown)
 {
-    return adoptCF(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, timestamp, kHIDPage_KeyboardOrKeypad, hidUsageCodeForCharacter(character), true /* key down */, kIOHIDEventOptionNone));
+    return adoptCF(IOHIDEventCreateKeyboardEvent(kCFAllocatorDefault, timestamp, kHIDPage_KeyboardOrKeypad, hidUsageCodeForCharacter(character), isKeyDown, kIOHIDEventOptionNone));
 }
 
 - (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock

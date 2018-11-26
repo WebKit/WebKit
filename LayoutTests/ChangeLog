@@ -1,3 +1,22 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r237738): Command Down Arrow doesn't scroll to the end of a page anymore
+        https://bugs.webkit.org/show_bug.cgi?id=191967
+        <rdar://problem/45976390>
+
+        Reviewed by Tim Horton.
+
+        Add tests to ensure that Command + Down Arrow and Command + Up Arrow scroll to the end of
+        the page and the top of the page, respectively.
+
+        * fast/scrolling/ios/key-command-scroll-to-bottom-expected.html: Added.
+        * fast/scrolling/ios/key-command-scroll-to-bottom.html: Added.
+        * fast/scrolling/ios/key-command-scroll-to-top-expected.html: Added.
+        * fast/scrolling/ios/key-command-scroll-to-top.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.keyDown): Pass the modifiers array to EventSender.keyDown() to make
+        this function work on Mac.
+
 2018-11-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         SVG use element inside a shadow tree cannot reference an element in the same tree

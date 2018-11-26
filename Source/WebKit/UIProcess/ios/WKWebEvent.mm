@@ -39,18 +39,21 @@
 {
     uint16_t keyCode;
     UIKeyboardInputFlags inputFlags;
+    NSInteger modifierFlags;
     BOOL isHardwareKeyboardEvent = !!event._hidEvent;
     if (!isHardwareKeyboardEvent) {
         keyCode = 0;
         inputFlags = (UIKeyboardInputFlags)0;
+        modifierFlags = 0;
     } else {
         UIPhysicalKeyboardEvent *keyEvent = (UIPhysicalKeyboardEvent *)event;
         keyCode = keyEvent._keyCode;
         inputFlags = keyEvent._inputFlags;
+        modifierFlags = keyEvent._gsModifierFlags;
         event = [[keyEvent _cloneEvent] autorelease]; // UIKit uses a singleton for hardware keyboard events.
     }
 
-    self = [super initWithKeyEventType:(event._isKeyDown ? WebEventKeyDown : WebEventKeyUp) timeStamp:event.timestamp characters:event._modifiedInput charactersIgnoringModifiers:event._unmodifiedInput modifiers:event._modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags keyCode:keyCode isTabKey:[event._modifiedInput isEqualToString:@"\t"] characterSet:WebEventCharacterSetUnicode];
+    self = [super initWithKeyEventType:(event._isKeyDown ? WebEventKeyDown : WebEventKeyUp) timeStamp:event.timestamp characters:event._modifiedInput charactersIgnoringModifiers:event._unmodifiedInput modifiers:modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags keyCode:keyCode isTabKey:[event._modifiedInput isEqualToString:@"\t"] characterSet:WebEventCharacterSetUnicode];
     if (!self)
         return nil;
 
