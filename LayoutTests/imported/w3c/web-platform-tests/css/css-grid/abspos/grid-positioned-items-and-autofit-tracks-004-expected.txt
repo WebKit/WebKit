@@ -1,11 +1,4 @@
 
-FAIL .grid 1 assert_equals: 
-<div class="container">
-    <div class="grid">
-        <span style="grid-column: 1 / 5" class="abs" data-expected-width="30" data-expected-height="10"></span>
-        <span style="grid-column: 1" data-expected-width="30" data-expected-height="10"></span>
-    </div>
-</div>
-width expected 30 but got 25
+PASS .grid 1 
 
 

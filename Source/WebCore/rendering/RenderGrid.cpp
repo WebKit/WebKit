@@ -355,8 +355,9 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
 
     // If the startLine is the start line of a collapsed track we need to go backwards till we reach
     // a non collapsed track. If we find a non collapsed track we need to add that gap.
+    size_t nonEmptyTracksBeforeStartLine = 0;
     if (startLine && grid.isEmptyAutoRepeatTrack(direction, startLine)) {
-        unsigned nonEmptyTracksBeforeStartLine = startLine;
+        nonEmptyTracksBeforeStartLine = startLine;
         auto begin = grid.autoRepeatEmptyTracks(direction)->begin();
         for (auto it = begin; *it != startLine; ++it) {
             ASSERT(nonEmptyTracksBeforeStartLine);
@@ -377,8 +378,14 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
             ASSERT(nonEmptyTracksAfterEndLine >= 1);
             --nonEmptyTracksAfterEndLine;
         }
-        if (nonEmptyTracksAfterEndLine)
-            gapAccumulator += gap;
+        if (nonEmptyTracksAfterEndLine) {
+            // We shouldn't count the gap twice if the span starts and ends in a collapsed track bewtween two non-empty tracks.
+            if (!nonEmptyTracksBeforeStartLine)
+                gapAccumulator += gap;
+        } else if (nonEmptyTracksBeforeStartLine) {
+            // We shouldn't count the gap if the the span starts and ends in a collapsed but there isn't non-empty tracks afterwards (it's at the end of the grid).
+            gapAccumulator -= gap;
+        }
     }
 
     return gapAccumulator;

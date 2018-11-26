@@ -1,3 +1,17 @@
+2018-11-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] absolute positioned child is sized wrongly when using auto-fit, generating spurious collapsed tracks
+        https://bugs.webkit.org/show_bug.cgi?id=191938
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This change makes several cases of the following tests to pass now.
+
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-004-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-005-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-006-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-and-autofit-tracks-007-expected.txt:
+
 2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid container sizing under min-content height

@@ -1,3 +1,34 @@
+2018-11-26  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] absolute positioned child is sized wrongly when using auto-fit, generating spurious collapsed tracks
+        https://bugs.webkit.org/show_bug.cgi?id=191938
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The guttersSize function has a complex logic to compute the gaps in a
+        specific GridSpan, considering different scenarios of collapsed tracks
+        for such span.
+
+        The first case is avoiding the duplicated gap because of trailing
+        collapsed tracks.
+
+        The second case considered is looking for non-empty tracks before the
+        GridSpan end, if it points to an empty track, so we must add this gap.
+
+        The last case is to consider the gap of non-empty tracks after the
+        GridSpan end line, if it points to an empty track.
+
+        There are several cases that are not considered or incorrectly computed.
+        This patch addresses those cases; basically, we should only consider gaps
+        when there are non-empty tracks before and after the collapsed tracks.
+        Additionally, we should avoid duplicating the gaps size adding both,
+        before and after non-empty track's gap.
+
+        No new tests, this change is covered by current tests and make several cases to pass now.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::guttersSize const):
+
 2018-11-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid container sizing under min-content height
