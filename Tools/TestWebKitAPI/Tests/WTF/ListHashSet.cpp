@@ -450,7 +450,7 @@ TEST(WTF_ListHashSet, UniquePtrKey_InsertBeforeUsingRawPointer)
     ASSERT_EQ(3, *firstWith3);
 
     auto firstWith4 = list.takeFirst();
-    ASSERT_EQ(ptrWith2, firstWith4.get());
+    ASSERT_EQ(ptrWith4, firstWith4.get());
     ASSERT_EQ(4, *firstWith4);
 
     ASSERT_TRUE(list.isEmpty());

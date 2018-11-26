@@ -1,3 +1,10 @@
+2018-11-25  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed test fix after r238467.
+
+        * TestWebKitAPI/Tests/WTF/ListHashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-11-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS 12 build after r238471
