@@ -28,7 +28,6 @@ from django.db import models
 class Patch(models.Model):
     patchid = models.IntegerField(primary_key=True)
     bugid = models.IntegerField()
-    content = models.TextField(default='')
     obsolete = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
