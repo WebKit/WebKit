@@ -1,3 +1,9 @@
+2018-11-26  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed rebaseline after r238460.
+
+        * platform/ios/fast/inline/inline-content-with-image-simple-expected.txt: Added.
+
 2018-11-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use float box's margin box to adjust the line constraints.
