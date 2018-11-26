@@ -1,3 +1,14 @@
+2018-11-26  Michael Saboff  <msaboff@apple.com>
+
+        32-bit JSC test failure: stress/regexp-compile-oom.js
+        https://bugs.webkit.org/show_bug.cgi?id=191375
+
+        Reviewed by Mark Lam.
+
+        Disabled the test for 32 bit platforms.
+
+        * stress/regexp-compile-oom.js:
+
 2018-11-26  Tadeu Zagallo  <tzagallo@apple.com>
 
         ASSERTION FAILED: m_outOfLineJumpTargets.contains(bytecodeOffset)
