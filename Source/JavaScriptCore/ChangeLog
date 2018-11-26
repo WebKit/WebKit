@@ -1,3 +1,21 @@
+2018-11-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        ASSERTION FAILED: m_outOfLineJumpTargets.contains(bytecodeOffset)
+        https://bugs.webkit.org/show_bug.cgi?id=191716
+        <rdar://problem/45723878>
+
+        Reviewed by Saam Barati.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=187373, when updating
+        jump targets during generatorification, we only stored the new jump
+        target when it changed. However, the out-of-line jump targets are
+        cleared at the beginning of the pass, so we need to store it
+        unconditionally.
+
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::extractStoredJumpTargetsForInstruction):
+        (JSC::updateStoredJumpTargetsForInstruction):
+
 2018-11-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable drag and drop support for iOSMac

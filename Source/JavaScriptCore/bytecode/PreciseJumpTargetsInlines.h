@@ -112,7 +112,7 @@ inline int jumpTargetForInstruction(Block&& codeBlock, const InstructionStream::
 }
 
 template<typename Block, typename Function>
-inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction, Function function)
+inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction, const Function& function)
 {
 #define CASE_OP(__op) \
     case __op::opcodeID: \
@@ -133,39 +133,33 @@ SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
 }
 
 template<typename Block, typename Function, typename CodeBlockOrHashMap>
-inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, Function function, CodeBlockOrHashMap codeBlockOrHashMap)
+inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, const Function& function, CodeBlockOrHashMap& codeBlockOrHashMap)
 {
 #define CASE_OP(__op) \
     case __op::opcodeID: { \
         int32_t target = jumpTargetForInstruction<__op>(codeBlockOrHashMap, instruction); \
         int32_t newTarget = function(target); \
-        if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setTarget(BoundLabel(newTarget), [&]() { \
-                codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return BoundLabel(); \
-            }); \
-        } \
+        instruction->cast<__op>()->setTarget(BoundLabel(newTarget), [&]() { \
+            codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
+            return BoundLabel(); \
+        }); \
         break; \
     }
 
 #define SWITCH_CASE(__target) \
     do { \
         int32_t target = __target; \
-        int32_t newTarget = function(target); \
-        if (newTarget != target) \
-            __target = newTarget; \
+        __target = function(target); \
     } while (false)
 
 #define SWITCH_DEFAULT_OFFSET(__op) \
     do { \
         int32_t target = jumpTargetForInstruction(codeBlockOrHashMap, instruction, bytecode.defaultOffset); \
         int32_t newTarget = function(target); \
-        if (newTarget != target || finalOffset) { \
-            instruction->cast<__op>()->setDefaultOffset(BoundLabel(newTarget), [&]() { \
-                codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
-                return BoundLabel(); \
-            }); \
-        } \
+        instruction->cast<__op>()->setDefaultOffset(BoundLabel(newTarget), [&]() { \
+            codeBlock->addOutOfLineJumpTarget(finalOffset + instruction.offset(), newTarget); \
+            return BoundLabel(); \
+        }); \
     } while (false)
 
 SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)

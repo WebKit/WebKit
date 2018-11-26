@@ -1,3 +1,14 @@
+2018-11-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        ASSERTION FAILED: m_outOfLineJumpTargets.contains(bytecodeOffset)
+        https://bugs.webkit.org/show_bug.cgi?id=191716
+        <rdar://problem/45723878>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-187373.js: Added.
+        (async.fn):
+
 2018-11-21  Saam barati  <sbarati@apple.com>
 
         DFGSpeculativeJIT should not &= exitOK with mayExit(node)
