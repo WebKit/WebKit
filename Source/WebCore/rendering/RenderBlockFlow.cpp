@@ -1985,7 +1985,7 @@ void RenderBlockFlow::layoutLineGridBox()
 
 bool RenderBlockFlow::containsFloat(RenderBox& renderer) const
 {
-    return m_floatingObjects && m_floatingObjects->set().contains<RenderBox&, FloatingObjectHashTranslator>(renderer);
+    return m_floatingObjects && m_floatingObjects->set().contains<FloatingObjectHashTranslator>(renderer);
 }
 
 void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -2233,7 +2233,7 @@ FloatingObject* RenderBlockFlow::insertFloatingObject(RenderBox& floatBox)
     else {
         // Don't insert the floatingObject again if it's already in the list
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        auto it = floatingObjectSet.find<RenderBox&, FloatingObjectHashTranslator>(floatBox);
+        auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
         if (it != floatingObjectSet.end())
             return it->get();
     }
@@ -2267,7 +2267,7 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
 {
     if (m_floatingObjects) {
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        auto it = floatingObjectSet.find<RenderBox&, FloatingObjectHashTranslator>(floatBox);
+        auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(floatBox);
         if (it != floatingObjectSet.end()) {
             auto& floatingObject = *it->get();
             if (childrenInline()) {
@@ -2683,7 +2683,7 @@ bool RenderBlockFlow::hasOverhangingFloat(RenderBox& renderer)
         return false;
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    const auto it = floatingObjectSet.find<RenderBox&, FloatingObjectHashTranslator>(renderer);
+    const auto it = floatingObjectSet.find<FloatingObjectHashTranslator>(renderer);
     if (it == floatingObjectSet.end())
         return false;
 
@@ -2709,7 +2709,7 @@ void RenderBlockFlow::addIntrudingFloats(RenderBlockFlow* prev, RenderBlockFlow*
     for (auto prevIt = prevSet.begin(); prevIt != prevEnd; ++prevIt) {
         auto& floatingObject = *prevIt->get();
         if (logicalBottomForFloat(floatingObject) > logicalTopOffset) {
-            if (!m_floatingObjects || !m_floatingObjects->set().contains<FloatingObject&, FloatingObjectHashTranslator>(floatingObject)) {
+            if (!m_floatingObjects || !m_floatingObjects->set().contains(&floatingObject)) {
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
                     createFloatingObjects();

@@ -348,16 +348,13 @@ FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObj
 
 void FloatingObjects::remove(FloatingObject* floatingObject)
 {
-    ASSERT((m_set.contains<FloatingObject&, FloatingObjectHashTranslator>(*floatingObject)));
+    ASSERT((m_set.contains(floatingObject)));
     decreaseObjectsCount(floatingObject->type());
     ASSERT(floatingObject->isPlaced() || !floatingObject->isInPlacedTree());
     if (floatingObject->isPlaced())
         removePlacedObject(floatingObject);
     ASSERT(!floatingObject->originatingLine());
-    auto it = m_set.find<FloatingObject&, FloatingObjectHashTranslator>(*floatingObject);
-    if (it == m_set.end())
-        return;
-    m_set.remove(it);
+    m_set.remove(floatingObject);
 }
 
 void FloatingObjects::computePlacedFloatsTree()

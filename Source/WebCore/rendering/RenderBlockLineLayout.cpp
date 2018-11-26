@@ -1457,7 +1457,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
             auto it = floatingObjectSet.begin();
             auto end = floatingObjectSet.end();
             if (auto* lastFloat = layoutState.floatList().lastFloat()) {
-                auto lastFloatIterator = floatingObjectSet.find<FloatingObject&, FloatingObjectHashTranslator>(*lastFloat);
+                auto lastFloatIterator = floatingObjectSet.find(lastFloat);
                 ASSERT(lastFloatIterator != end);
                 ++lastFloatIterator;
                 it = lastFloatIterator;
@@ -1620,7 +1620,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         auto it = floatingObjectSet.begin();
         auto end = floatingObjectSet.end();
         if (auto* lastFloat = layoutState.floatList().lastFloat()) {
-            auto lastFloatIterator = floatingObjectSet.find<FloatingObject&, FloatingObjectHashTranslator>(*lastFloat);
+            auto lastFloatIterator = floatingObjectSet.find(lastFloat);
             ASSERT(lastFloatIterator != end);
             ++lastFloatIterator;
             it = lastFloatIterator;

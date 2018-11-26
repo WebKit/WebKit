@@ -1,3 +1,15 @@
+2018-11-26  Sam Weinig  <sam@webkit.org>
+
+        Streamline ListHashSet use in floating object code
+        https://bugs.webkit.org/show_bug.cgi?id=191957
+
+        Reviewed by Alex Christensen.
+
+        * wtf/ListHashSet.h:
+        Reverses the order of the template arguments for the find() and contains()
+        overload that allow specifying a hash translator to allow the compiler to
+        deduce type T. This simplifies call sites and matches other WTF containers.
+
 2018-11-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         CRASH() should call abort() except on Darwin and in developer builds

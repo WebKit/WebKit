@@ -111,16 +111,25 @@ private:
 #endif
 };
 
+// FIXME: This could be simplified if we made it inherit from PtrHash<std::unique_ptr<FloatingObject>> and
+// changed PtrHashBase to have all of its hash and equal functions bottleneck through single functions (as
+// is done here). That would allow us to only override those master hash and equal functions.
 struct FloatingObjectHashFunctions {
-    static unsigned hash(const std::unique_ptr<FloatingObject>& key) { return PtrHash<RenderBox*>::hash(&key->renderer()); }
-    static bool equal(const std::unique_ptr<FloatingObject>& a, const std::unique_ptr<FloatingObject>& b) { return &a->renderer() == &b->renderer(); }
+    typedef std::unique_ptr<FloatingObject> T;
+    typedef typename WTF::GetPtrHelper<T>::PtrType PtrType;
+
+    static unsigned hash(PtrType key) { return PtrHash<RenderBox*>::hash(&key->renderer()); }
+    static bool equal(PtrType a, PtrType b) { return &a->renderer() == &b->renderer(); }
     static const bool safeToCompareToEmptyOrDeleted = true;
+
+    static unsigned hash(const T& key) { return hash(WTF::getPtr(key)); }
+    static bool equal(const T& a, const T& b) { return equal(WTF::getPtr(a), WTF::getPtr(b)); }
+    static bool equal(PtrType a, const T& b) { return equal(a, WTF::getPtr(b)); }
+    static bool equal(const T& a, PtrType b) { return equal(WTF::getPtr(a), b); }
 };
 struct FloatingObjectHashTranslator {
     static unsigned hash(const RenderBox& key) { return PtrHash<const RenderBox*>::hash(&key); }
-    static unsigned hash(const FloatingObject& key) { return PtrHash<RenderBox*>::hash(&key.renderer()); }
     static bool equal(const std::unique_ptr<FloatingObject>& a, const RenderBox& b) { return &a->renderer() == &b; }
-    static bool equal(const std::unique_ptr<FloatingObject>& a, const FloatingObject& b) { return &a->renderer() == &b.renderer(); }
 };
 
 typedef ListHashSet<std::unique_ptr<FloatingObject>, FloatingObjectHashFunctions> FloatingObjectSet;

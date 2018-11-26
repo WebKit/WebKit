@@ -1,3 +1,42 @@
+2018-11-26  Sam Weinig  <sam@webkit.org>
+
+        Streamline ListHashSet use in floating object code
+        https://bugs.webkit.org/show_bug.cgi?id=191957
+
+        Reviewed by Alex Christensen.
+
+        Simplify use of ListHashSet by using new raw pointer overloads and
+        making use of reversed order of template arguments in the find() and
+        contains() overloads that take hash translators.  
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::remove):
+        Use raw pointer overloads of contains and remove. Remove seperate call
+        to find / check agains end() which is unnecessary as remove() already
+        does that.
+        
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObjectHashFunctions::hash):
+        (WebCore::FloatingObjectHashFunctions::equal):
+        (WebCore::FloatingObjectHashTranslator::hash):
+        (WebCore::FloatingObjectHashTranslator::equal):
+        Add hash()/equal() overloads for the raw pointer cases. As the FIXME
+        notes, this could be simplified by changing PtrHashBase to use designated
+        bottleneck functions for hash() and equal().
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::containsFloat const):
+        (WebCore::RenderBlockFlow::insertFloatingObject):
+        (WebCore::RenderBlockFlow::removeFloatingObject):
+        (WebCore::RenderBlockFlow::hasOverhangingFloat):
+        (WebCore::RenderBlockFlow::addIntrudingFloats):
+        Use simplified calls.
+        
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        Use simplified calls.
+
 2018-11-26  Jeremy Jones  <jeremyj@apple.com>
 
         Use Full Screen consistently in localizable strings.

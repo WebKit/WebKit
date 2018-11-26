@@ -112,11 +112,9 @@ public:
     // An alternate version of find() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion.
     // The HashTranslator interface is defined in HashSet.
-    // FIXME: We should reverse the order of the template arguments so that callers
-    // can just pass the translator let the compiler deduce T.
-    template<typename T, typename HashTranslator> iterator find(const T&);
-    template<typename T, typename HashTranslator> const_iterator find(const T&) const;
-    template<typename T, typename HashTranslator> bool contains(const T&) const;
+    template<typename HashTranslator, typename T> iterator find(const T&);
+    template<typename HashTranslator, typename T> const_iterator find(const T&) const;
+    template<typename HashTranslator, typename T> bool contains(const T&) const;
 
     // The return value of add is a pair of an iterator to the new value's location, 
     // and a bool that is true if an new entry was added.
@@ -480,7 +478,7 @@ struct ListHashSetTranslatorAdapter {
 };
 
 template<typename ValueType, typename U>
-template<typename T, typename HashTranslator>
+template<typename HashTranslator, typename T>
 inline auto ListHashSet<ValueType, U>::find(const T& value) -> iterator
 {
     auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
@@ -490,7 +488,7 @@ inline auto ListHashSet<ValueType, U>::find(const T& value) -> iterator
 }
 
 template<typename ValueType, typename U>
-template<typename T, typename HashTranslator>
+template<typename HashTranslator, typename T>
 inline auto ListHashSet<ValueType, U>::find(const T& value) const -> const_iterator
 {
     auto it = m_impl.template find<ListHashSetTranslatorAdapter<HashTranslator>>(value);
@@ -500,7 +498,7 @@ inline auto ListHashSet<ValueType, U>::find(const T& value) const -> const_itera
 }
 
 template<typename ValueType, typename U>
-template<typename T, typename HashTranslator>
+template<typename HashTranslator, typename T>
 inline bool ListHashSet<ValueType, U>::contains(const T& value) const
 {
     return m_impl.template contains<ListHashSetTranslatorAdapter<HashTranslator>>(value);
