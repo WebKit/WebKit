@@ -1,5 +1,23 @@
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r238078): Do not draw caps lock indicator when Strong Password button is shown
+        https://bugs.webkit.org/show_bug.cgi?id=191969
+        <rdar://problem/46247569>
+
+        Reviewed by Dean Jackson.
+
+        Add tests to ensure that we show or hide the caps lock indicator depending on whether the
+        Strong Password button is visible.
+
+        * TestExpectations: Skip the tests below on all platforms. We will selectively enable them on Mac.
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-when-after-hiding-auto-fill-strong-password-button-expected.html: Added.
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-when-after-hiding-auto-fill-strong-password-button.html: Added.
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible-expected.html: Added.
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html: Added.
+        * platform/mac-wk2/TestExpectations: Mark the tests above as PASS so that we run them.
+
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
         Move testRunner.toggleCapsLock() to uiController
         https://bugs.webkit.org/show_bug.cgi?id=191972
 

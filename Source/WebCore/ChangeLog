@@ -1,3 +1,25 @@
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r238078): Do not draw caps lock indicator when Strong Password button is shown
+        https://bugs.webkit.org/show_bug.cgi?id=191969
+        <rdar://problem/46247569>
+
+        Reviewed by Dean Jackson.
+
+        Following r238078 we now support drawing the caps lock indicator in password fields on iOS.
+        However it is not meaningful to show the caps lock indicator when the Strong Password button
+        is visible because the password field is not editable. We should not paint the caps lock
+        indicator when the Strong Password button is visible.
+
+        Tests: fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-when-after-hiding-auto-fill-strong-password-button.html
+               fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldDrawCapsLockIndicator const): Do not draw the caps
+        lock indicator when the password field has the Strong Password button.
+        (WebCore::TextFieldInputType::updateAutoFillButton): Call capsLockStateMayHaveChanged() to
+        update the visibility of the caps lock indicator when the auto fill button has changed.
+
 2018-11-26  Sam Weinig  <sam@webkit.org>
 
         Streamline ListHashSet use in floating object code
