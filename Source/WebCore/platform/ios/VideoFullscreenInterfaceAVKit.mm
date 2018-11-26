@@ -784,6 +784,9 @@ void VideoFullscreenInterfaceAVKit::hasVideoChanged(bool hasVideo)
 
 void VideoFullscreenInterfaceAVKit::videoDimensionsChanged(const FloatSize& videoDimensions)
 {
+    if (videoDimensions.isZero())
+        return;
+    
     WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
 
     [playerLayer setVideoDimensions:videoDimensions];

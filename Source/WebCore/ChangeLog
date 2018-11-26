@@ -1,3 +1,17 @@
+2018-11-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Picture-in-picture window size changes unnecesarily when URL changes.
+        https://bugs.webkit.org/show_bug.cgi?id=191787
+
+        Reviewed by Jer Noble.
+
+        When loading a new URL, the video dimensions are temporarily 0,0. Instead of 
+        defaulting back to 4:3 sized pip window temporarily, keep the old dimensions until
+        there is a new valid size.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::videoDimensionsChanged):
+
 2018-11-26  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Make it easier to encode NSObjects
