@@ -1,3 +1,39 @@
+2018-11-26  Antti Koivisto  <antti@apple.com>
+
+        Clean up layer tree freezing logic in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=191826
+
+        Reviewed by Dean Jackson.
+
+        Use OptionSet<LayerTreeFreezeReason> to track various reasons that can cause layer tree to get frozen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        (WebKit::WebPage::updateDrawingAreaLayerTreeFreezeState):
+
+        Layer tree is unfrozen when there there are no reasons to freeze it.
+
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::didCompletePageTransition):
+        (WebKit::WebPage::beginPrinting):
+        (WebKit::WebPage::endPrinting):
+        (WebKit::WebPage::setIsSuspended):
+        (WebKit::WebPage::setLayerTreeStateIsFrozen): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::freezeAllLayerTrees):
+        (WebKit::WebProcess::unfreezeAllLayerTrees):
+        (WebKit::WebProcess::processDidResume):
+        (WebKit::WebProcess::setAllLayerTreeStatesFrozen): Deleted.
+        * WebProcess/WebProcess.h:
+
 2018-11-25  Antti Koivisto  <antti@apple.com>
 
         RemoteLayerTreeNode construction cleanups

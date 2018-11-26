@@ -2882,7 +2882,7 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidEnterBackgroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": [NSNumber numberWithBool:isSuspendedUnderLock]}];
 
     m_isSuspendedUnderLock = isSuspendedUnderLock;
-    setLayerTreeStateIsFrozen(true);
+    freezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
 
     if (m_page)
         m_page->applicationDidEnterBackground();
@@ -2897,7 +2897,7 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 {
     m_isSuspendedUnderLock = false;
     cancelMarkLayersVolatile();
-    setLayerTreeStateIsFrozen(false);
+    unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 

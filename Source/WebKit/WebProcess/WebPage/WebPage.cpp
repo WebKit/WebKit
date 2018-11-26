@@ -659,11 +659,11 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setSize(parameters.viewSize);
 
-    if (m_shouldResetDrawingArea) {
+    if (m_shouldResetDrawingAreaAfterSuspend) {
         // Make sure we destroy the previous drawing area before constructing the new one as DrawingArea registers / unregisters
         // itself as an IPC::MesssageReceiver in its constructor / destructor.
         m_drawingArea = nullptr;
-        m_shouldResetDrawingArea = false;
+        m_shouldResetDrawingAreaAfterSuspend = false;
 
         m_drawingArea = DrawingArea::create(*this, parameters);
         m_drawingArea->setPaintingEnabled(false);
@@ -673,6 +673,7 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 #if PLATFORM(MAC)
         m_shouldAttachDrawingAreaOnPageTransition = parameters.shouldDelayAttachingDrawingArea;
 #endif
+        unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
 
     setViewLayoutSize(parameters.viewLayoutSize);
@@ -2327,13 +2328,23 @@ const WebEvent* WebPage::currentEvent()
     return g_currentEvent;
 }
 
-void WebPage::setLayerTreeStateIsFrozen(bool frozen)
+void WebPage::freezeLayerTree(LayerTreeFreezeReason reason)
 {
-    auto* drawingArea = this->drawingArea();
-    if (!drawingArea)
-        return;
+    m_LayerTreeFreezeReasons.add(reason);
+    updateDrawingAreaLayerTreeFreezeState();
+}
 
-    drawingArea->setLayerTreeStateIsFrozen(frozen || m_isSuspended || m_shouldResetDrawingArea);
+void WebPage::unfreezeLayerTree(LayerTreeFreezeReason reason)
+{
+    m_LayerTreeFreezeReasons.remove(reason);
+    updateDrawingAreaLayerTreeFreezeState();
+}
+
+void WebPage::updateDrawingAreaLayerTreeFreezeState()
+{
+    if (!m_drawingArea)
+        return;
+    m_drawingArea->setLayerTreeStateIsFrozen(!!m_LayerTreeFreezeReasons);
 }
 
 void WebPage::callVolatilityCompletionHandlers(bool succeeded)
@@ -3006,7 +3017,7 @@ void WebPage::continueWillSubmitForm(uint64_t frameID, uint64_t listenerID)
 
 void WebPage::didStartPageTransition()
 {
-    setLayerTreeStateIsFrozen(true);
+    freezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
 #if PLATFORM(MAC)
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
@@ -3030,8 +3041,7 @@ void WebPage::didStartPageTransition()
 
 void WebPage::didCompletePageTransition()
 {
-    // FIXME: Layer tree freezing should be managed entirely in the UI process side.
-    setLayerTreeStateIsFrozen(false);
+    unfreezeLayerTree(LayerTreeFreezeReason::PageTransition);
 
 #if PLATFORM(MAC)
     bool isInitialEmptyDocument = !m_mainFrame;
@@ -4461,7 +4471,8 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
     if (!m_printContext)
         m_printContext = std::make_unique<PrintContext>(coreFrame);
 
-    drawingArea()->setLayerTreeStateIsFrozen(true);
+    freezeLayerTree(LayerTreeFreezeReason::Printing);
+
     m_printContext->begin(printInfo.availablePaperWidth, printInfo.availablePaperHeight);
 
     float fullPageHeight;
@@ -4475,7 +4486,8 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 
 void WebPage::endPrinting()
 {
-    drawingArea()->setLayerTreeStateIsFrozen(false);
+    unfreezeLayerTree(LayerTreeFreezeReason::Printing);
+
     m_printContext = nullptr;
 }
 
@@ -6222,10 +6234,11 @@ void WebPage::setIsSuspended(bool suspended)
 
     m_isSuspended = suspended;
 
-    if (!m_isSuspended)
-        m_shouldResetDrawingArea = true;
-
-    setLayerTreeStateIsFrozen(true);
+    if (m_isSuspended) {
+        // Unfrozen on drawing area reset.
+        freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    } else
+        m_shouldResetDrawingAreaAfterSuspend = true;
 }
 
 void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)

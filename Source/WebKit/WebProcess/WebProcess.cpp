@@ -1378,7 +1378,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     if (!m_suppressMemoryPressureHandler)
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
 
-    setAllLayerTreeStatesFrozen(true);
+    freezeAllLayerTrees();
     
 #if PLATFORM(COCOA)
     destroyRenderingResources();
@@ -1426,7 +1426,7 @@ void WebProcess::prepareToSuspend()
 void WebProcess::cancelPrepareToSuspend()
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
-    setAllLayerTreeStatesFrozen(false);
+    unfreezeAllLayerTrees();
 
 #if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);
@@ -1474,18 +1474,24 @@ void WebProcess::cancelMarkAllLayersVolatile()
         page->cancelMarkLayersVolatile();
 }
 
-void WebProcess::setAllLayerTreeStatesFrozen(bool frozen)
+void WebProcess::freezeAllLayerTrees()
 {
     for (auto& page : m_pageMap.values())
-        page->setLayerTreeStateIsFrozen(frozen);
+        page->freezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
 }
-    
+
+void WebProcess::unfreezeAllLayerTrees()
+{
+    for (auto& page : m_pageMap.values())
+        page->unfreezeLayerTree(WebPage::LayerTreeFreezeReason::ProcessSuspended);
+}
+
 void WebProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume()", this);
 
     cancelMarkAllLayersVolatile();
-    setAllLayerTreeStatesFrozen(false);
+    unfreezeAllLayerTrees();
     
 #if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(false);

@@ -683,7 +683,16 @@ public:
 
     bool hasRichlyEditableSelection() const;
 
-    void setLayerTreeStateIsFrozen(bool);
+    enum class LayerTreeFreezeReason {
+        PageTransition          = 1 << 0,
+        BackgroundApplication   = 1 << 1,
+        ProcessSuspended        = 1 << 2,
+        PageSuspended           = 1 << 3,
+        Printing                = 1 << 4,
+    };
+    void freezeLayerTree(LayerTreeFreezeReason);
+    void unfreezeLayerTree(LayerTreeFreezeReason);
+
     void markLayersVolatile(WTF::Function<void (bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
 
@@ -1175,6 +1184,7 @@ private:
     bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
 #endif
 
+    void updateDrawingAreaLayerTreeFreezeState();
     bool markLayersVolatileImmediatelyIfPossible();
     void layerVolatilityTimerFired();
     void callVolatilityCompletionHandlers(bool succeeded);
@@ -1471,7 +1481,7 @@ private:
 
     WebCore::IntSize m_viewSize;
     std::unique_ptr<DrawingArea> m_drawingArea;
-    bool m_shouldResetDrawingArea { false };
+    bool m_shouldResetDrawingAreaAfterSuspend { false };
 
     HashSet<PluginView*> m_pluginViews;
     bool m_hasSeenPlugin { false };
@@ -1769,6 +1779,7 @@ private:
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;
 #endif
 
+    OptionSet<LayerTreeFreezeReason> m_LayerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
 #if PLATFORM(MAC)
