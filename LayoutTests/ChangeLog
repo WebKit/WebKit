@@ -1,5 +1,11 @@
 2018-11-26  Zalan Bujtas  <zalan@apple.com>
 
+        Unreviewed test gardening after r238280.
+
+        * fast/content-observation/click-event-suppression-on-content-change.html:
+
+2018-11-26  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed rebaseline after r238460.
 
         * platform/ios/fast/inline/inline-content-with-image-simple-expected.txt: Added.

@@ -21,8 +21,13 @@ function output(text) {
 var mutateOnMouseOver = false;
 
 function mouseOver() {
-    if (mutateOnMouseOver)
-        document.querySelector('#test').appendChild(document.createElement("div"));
+    if (mutateOnMouseOver) {
+        let newContent = document.createElement("div");
+        newContent.addEventListener("click", function( event ) {
+            console.log("clicked");
+        }, false);
+        document.querySelector('#test').appendChild(newContent);
+    }
     output('mouseover');
 }
 function mouseOut() {
