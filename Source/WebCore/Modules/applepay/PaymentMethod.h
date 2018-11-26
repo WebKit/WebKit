@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,17 +37,13 @@ struct ApplePayPaymentMethod;
 
 class WEBCORE_EXPORT PaymentMethod {
 public:
-    PaymentMethod() = default;
-    virtual ~PaymentMethod() = default;
-
-    explicit PaymentMethod(PKPaymentMethod *pkPaymentMethod)
-        : m_pkPaymentMethod(pkPaymentMethod)
-    {
-    }
+    PaymentMethod();
+    explicit PaymentMethod(RetainPtr<PKPaymentMethod>&&);
+    virtual ~PaymentMethod();
 
     virtual ApplePayPaymentMethod toApplePayPaymentMethod() const;
 
-    PKPaymentMethod *pkPaymentMethod() const { return m_pkPaymentMethod.get(); }
+    PKPaymentMethod *pkPaymentMethod() const;
 
 private:
     RetainPtr<PKPaymentMethod> m_pkPaymentMethod;

@@ -327,8 +327,17 @@ void PKDrawApplePayButton(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale,
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface PKContact () <NSSecureCoding>
+@end
+
 @interface PKPassLibrary ()
 - (void)openPaymentSetupForMerchantIdentifier:(NSString *)identifier domain:(NSString *)domain completion:(void(^)(BOOL success))completion;
+@end
+
+@interface PKPayment () <NSSecureCoding>
+@end
+
+@interface PKPaymentMethod () <NSSecureCoding>
 @end
 
 @interface PKPaymentRequest ()

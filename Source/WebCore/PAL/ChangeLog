@@ -1,3 +1,12 @@
+2018-11-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Make it easier to encode NSObjects
+        https://bugs.webkit.org/show_bug.cgi?id=191948
+
+        Reviewed by Dean Jackson.
+
+        * pal/spi/cocoa/PassKitSPI.h: Declared some classes that secretly conform to NSSecureCoding.
+
 2018-11-24  Andy Estes  <aestes@apple.com>
 
         [Cocoa] SOFT_LINK_CLASS_FOR_{HEADER,SOURCE} should generate a more concise getter function

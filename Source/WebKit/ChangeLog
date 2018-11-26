@@ -1,3 +1,59 @@
+2018-11-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Make it easier to encode NSObjects
+        https://bugs.webkit.org/show_bug.cgi?id=191948
+
+        Reviewed by Dean Jackson.
+
+        It should be easier to encode objects that conform to NSSecureCoding for WebKit IPC. Right
+        now, several argument coders duplicate the logic for encoding and decoding objects using
+        NSKeyedArchiver and NSKeyedUnarchiver.
+
+        This patch adds encodeObject() and decodeObject() primitives for encoding and decoding using
+        Foundation keyed archiving. It then partially specializes ArgumentCoder for raw pointers and
+        RetainPtrs whose pointee conforms to NSSecureCoding to call these new primitives.
+
+        This allows us to use Encoder::operator<< to encode raw pointers or RetainPtrs and use
+        Decoder::operator>> to decode to an optional RetainPtr. By default, IPC::decode infers the
+        allowed class for decoding by calling `[T class]`. We can also specify the allowed classes
+        explicitly for containers and classes that are loaded at runtime.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.h: Added.
+        * Shared/Cocoa/ArgumentCodersCocoa.mm: Added.
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::encode const): Removed custom encoding code and used ArgumentCodersCocoa instead.
+        (WebKit::DataDetectionResult::decode): Ditto.
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::Payment>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::Payment>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::encode): Ditto.
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::decode): Ditto.
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode): Ditto.
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::description const): Added some needed namespaces due to unified source shuffling.
+        * Shared/WebCoreArgumentCoders.h: Modernized several decoders.
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const): Removed custom encoding code and used ArgumentCodersCocoa instead.
+        (WebKit::InteractionInformationAtPosition::decode): Ditto.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::ProtectionSpace>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<WebCore::ProtectionSpace>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<WebCore::Credential>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<WebCore::Credential>::decodePlatformData): Ditto.
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData): Ditto.
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData): Ditto.
+        (IPC::deviceContextKey): Deleted.
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformEncode const): Ditto.
+        (WebKit::WebHitTestResultData::platformDecode): Ditto.
+        * SourcesCocoa.txt: Added ArgumentCodersCocoa.mm.
+        * WebKit.xcodeproj/project.pbxproj: Ditto.
+
 2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         CompletionHandler-based async IPC messages only work when the completion handler takes a single argument

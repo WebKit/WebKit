@@ -208,6 +208,15 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
     return result;
 }
 
+PaymentContact::PaymentContact() = default;
+
+PaymentContact::PaymentContact(RetainPtr<PKContact>&& pkContact)
+    : m_pkContact { WTFMove(pkContact) }
+{
+}
+
+PaymentContact::~PaymentContact() = default;
+
 PaymentContact PaymentContact::fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact& contact)
 {
     return PaymentContact(convert(version, contact).get());
@@ -216,6 +225,11 @@ PaymentContact PaymentContact::fromApplePayPaymentContact(unsigned version, cons
 ApplePayPaymentContact PaymentContact::toApplePayPaymentContact(unsigned version) const
 {
     return convert(version, m_pkContact.get());
+}
+
+PKContact *PaymentContact::pkContact() const
+{
+    return m_pkContact.get();
 }
 
 }

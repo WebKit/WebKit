@@ -601,7 +601,7 @@ template<> struct ArgumentCoder<WebCore::ResourceLoadStatistics> {
 
 template<> struct ArgumentCoder<WebCore::Payment> {
     static void encode(Encoder&, const WebCore::Payment&);
-    static bool decode(Decoder&, WebCore::Payment&);
+    static std::optional<WebCore::Payment> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentAuthorizationResult> {
@@ -611,7 +611,7 @@ template<> struct ArgumentCoder<WebCore::PaymentAuthorizationResult> {
 
 template<> struct ArgumentCoder<WebCore::PaymentContact> {
     static void encode(Encoder&, const WebCore::PaymentContact&);
-    static bool decode(Decoder&, WebCore::PaymentContact&);
+    static std::optional<WebCore::PaymentContact> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentError> {
@@ -621,12 +621,12 @@ template<> struct ArgumentCoder<WebCore::PaymentError> {
 
 template<> struct ArgumentCoder<WebCore::PaymentMerchantSession> {
     static void encode(Encoder&, const WebCore::PaymentMerchantSession&);
-    static bool decode(Decoder&, WebCore::PaymentMerchantSession&);
+    static std::optional<WebCore::PaymentMerchantSession> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentMethod> {
     static void encode(Encoder&, const WebCore::PaymentMethod&);
-    static bool decode(Decoder&, WebCore::PaymentMethod&);
+    static std::optional<WebCore::PaymentMethod> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentMethodUpdate> {

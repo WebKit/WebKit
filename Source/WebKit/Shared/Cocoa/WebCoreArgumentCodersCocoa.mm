@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
@@ -38,32 +39,16 @@ using namespace WebCore;
 
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
-    auto archiver = secureArchiver();
-    [archiver encodeObject:payment.pkPayment() forKey:NSKeyedArchiveRootObjectKey];
-    [archiver finishEncoding];
-
-    auto data = archiver.get().encodedData;
-    encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    encoder << payment.pkPayment();
 }
 
-bool ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder, WebCore::Payment& payment)
+std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
 {
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    auto payment = IPC::decode<PKPayment>(decoder, PAL::getPKPaymentClass());
+    if (!payment)
+        return std::nullopt;
 
-    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = secureUnarchiverFromData(data.get());
-    @try {
-        PKPayment *pkPayment = [unarchiver decodeObjectOfClass:PAL::getPKPaymentClass() forKey:NSKeyedArchiveRootObjectKey];
-        payment = Payment(pkPayment);
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode PKPayment: %@", exception);
-        return false;
-    }
-
-    [unarchiver finishDecoding];
-    return true;
+    return Payment { WTFMove(*payment) };
 }
 
 void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder, const WebCore::PaymentAuthorizationResult& result)
@@ -83,38 +68,22 @@ std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::Paymen
     decoder >> errors;
     if (!errors)
         return std::nullopt;
-    
+
     return {{ WTFMove(*status), WTFMove(*errors) }};
 }
 
 void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
 {
-    auto archiver = secureArchiver();
-    [archiver encodeObject:paymentContact.pkContact() forKey:NSKeyedArchiveRootObjectKey];
-    [archiver finishEncoding];
-
-    auto data = archiver.get().encodedData;
-    encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    encoder << paymentContact.pkContact();
 }
 
-bool ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder, WebCore::PaymentContact& paymentContact)
+std::optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
 {
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    auto contact = IPC::decode<PKContact>(decoder, PAL::getPKContactClass());
+    if (!contact)
+        return std::nullopt;
 
-    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = secureUnarchiverFromData(data.get());
-    @try {
-        PKContact *pkContact = [unarchiver decodeObjectOfClass:PAL::getPKContactClass() forKey:NSKeyedArchiveRootObjectKey];
-        paymentContact = PaymentContact(pkContact);
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode PKContact: %@", exception);
-        return false;
-    }
-
-    [unarchiver finishDecoding];
-    return true;
+    return WebCore::PaymentContact { WTFMove(*contact) };
 }
 
 void ArgumentCoder<WebCore::PaymentError>::encode(Encoder& encoder, const WebCore::PaymentError& error)
@@ -146,62 +115,30 @@ std::optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decod
 
 void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
 {
-    auto archiver = secureArchiver();
-    [archiver encodeObject:paymentMerchantSession.pkPaymentMerchantSession() forKey:NSKeyedArchiveRootObjectKey];
-    [archiver finishEncoding];
-
-    auto data = archiver.get().encodedData;
-    encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    encoder << paymentMerchantSession.pkPaymentMerchantSession();
 }
 
-bool ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder, WebCore::PaymentMerchantSession& paymentMerchantSession)
+std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
 {
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    auto paymentMerchantSession = IPC::decode<PKPaymentMerchantSession>(decoder, PAL::getPKPaymentMerchantSessionClass());
+    if (!paymentMerchantSession)
+        return std::nullopt;
 
-    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = secureUnarchiverFromData(data.get());
-    @try {
-        PKPaymentMerchantSession *pkPaymentMerchantSession = [unarchiver decodeObjectOfClass:PAL::getPKPaymentMerchantSessionClass() forKey:NSKeyedArchiveRootObjectKey];
-        paymentMerchantSession = PaymentMerchantSession(pkPaymentMerchantSession);
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode PKPaymentMerchantSession: %@", exception);
-        return false;
-    }
-
-    [unarchiver finishDecoding];
-    return true;
+    return WebCore::PaymentMerchantSession { WTFMove(*paymentMerchantSession) };
 }
 
 void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCore::PaymentMethod& paymentMethod)
 {
-    auto archiver = secureArchiver();
-    [archiver encodeObject:paymentMethod.pkPaymentMethod() forKey:NSKeyedArchiveRootObjectKey];
-    [archiver finishEncoding];
-
-    auto data = archiver.get().encodedData;
-    encoder << DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
+    encoder << paymentMethod.pkPaymentMethod();
 }
 
-bool ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder, WebCore::PaymentMethod& paymentMethod)
+std::optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
 {
-    IPC::DataReference dataReference;
-    if (!decoder.decode(dataReference))
-        return false;
+    auto paymentMethod = IPC::decode<PKPaymentMethod>(decoder, PAL::getPKPaymentMethodClass());
+    if (!paymentMethod)
+        return std::nullopt;
 
-    auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(dataReference.data())) length:dataReference.size() freeWhenDone:NO]);
-    auto unarchiver = secureUnarchiverFromData(data.get());
-    @try {
-        PKPaymentMethod *pkPaymentMethod = [unarchiver decodeObjectOfClass:PAL::getPKPaymentMethodClass() forKey:NSKeyedArchiveRootObjectKey];
-        paymentMethod = PaymentMethod(pkPaymentMethod);
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode PKPayment: %@", exception);
-        return false;
-    }
-
-    [unarchiver finishDecoding];
-    return true;
+    return PaymentMethod { WTFMove(*paymentMethod) };
 }
 
 void ArgumentCoder<WebCore::PaymentMethodUpdate>::encode(Encoder& encoder, const WebCore::PaymentMethodUpdate& update)
@@ -254,20 +191,22 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setRequiredBillingContactFields(requiredBillingContactFields);
 
-    PaymentContact billingContact;
-    if (!decoder.decode(billingContact))
+    std::optional<PaymentContact> billingContact;
+    decoder >> billingContact;
+    if (!billingContact)
         return false;
-    request.setBillingContact(billingContact);
+    request.setBillingContact(*billingContact);
 
     ApplePaySessionPaymentRequest::ContactFields requiredShippingContactFields;
     if (!decoder.decode((requiredShippingContactFields)))
         return false;
     request.setRequiredShippingContactFields(requiredShippingContactFields);
 
-    PaymentContact shippingContact;
-    if (!decoder.decode(shippingContact))
+    std::optional<PaymentContact> shippingContact;
+    decoder >> shippingContact;
+    if (!shippingContact)
         return false;
-    request.setShippingContact(shippingContact);
+    request.setShippingContact(*shippingContact);
 
     ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities;
     if (!decoder.decode(merchantCapabilities))

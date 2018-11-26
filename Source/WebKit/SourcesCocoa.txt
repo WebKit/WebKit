@@ -122,6 +122,7 @@ Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 
 Shared/Cocoa/APIDataCocoa.mm
 Shared/Cocoa/APIObject.mm
+Shared/Cocoa/ArgumentCodersCocoa.mm
 Shared/Cocoa/ChildProcessCocoa.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
 Shared/Cocoa/DataDetectionResult.mm

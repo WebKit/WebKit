@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "ArgumentCodersCocoa.h"
 
-#if ENABLE(APPLE_PAY)
+#if PLATFORM(COCOA)
 
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
+#import "ArgumentCodersCF.h"
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
-OBJC_CLASS PKContact;
+namespace IPC {
 
-namespace WebCore {
+void encodeObject(Encoder& encoder, id <NSSecureCoding> object)
+{
+    auto archiver = secureArchiver();
+    [archiver encodeObject:object forKey:NSKeyedArchiveRootObjectKey];
+    [archiver finishEncoding];
 
-struct ApplePayPaymentContact;
-
-class WEBCORE_EXPORT PaymentContact {
-public:
-    PaymentContact();
-    explicit PaymentContact(RetainPtr<PKContact>&&);
-    virtual ~PaymentContact();
-
-    static PaymentContact fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact&);
-    virtual ApplePayPaymentContact toApplePayPaymentContact(unsigned version) const;
-
-    PKContact *pkContact() const;
-
-private:
-    RetainPtr<PKContact> m_pkContact;
-};
-
+    IPC::encode(encoder, (__bridge CFDataRef)[archiver encodedData]);
 }
 
-#endif
+std::optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder& decoder, NSArray<Class> *allowedClasses)
+{
+    RetainPtr<CFDataRef> data;
+    if (!decode(decoder, data))
+        return std::nullopt;
+
+    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
+    @try {
+        id result = [unarchiver decodeObjectOfClasses:[NSSet setWithArray:allowedClasses] forKey:NSKeyedArchiveRootObjectKey];
+        ASSERT(!result || [result conformsToProtocol:@protocol(NSSecureCoding)]);
+        return { result };
+    } @catch (NSException *exception) {
+        LOG_ERROR("Failed to decode object of classes %@: %@", allowedClasses, exception);
+        return std::nullopt;
+    } @finally {
+        [unarchiver finishDecoding];
+    }
+}
+
+} // namespace IPC
+
+#endif // PLATFORM(COCOA)

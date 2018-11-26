@@ -1,3 +1,25 @@
+2018-11-26  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Make it easier to encode NSObjects
+        https://bugs.webkit.org/show_bug.cgi?id=191948
+
+        Reviewed by Dean Jackson.
+
+        * Modules/applepay/Payment.h: Changed the PKPayment * constructor to take a
+        RetainPtr<PKPayment>&& instead.
+        * Modules/applepay/PaymentContact.h: Ditto for PKContact.
+        * Modules/applepay/PaymentMerchantSession.h: Ditto for PKPaymentMerchantSession.
+        * Modules/applepay/PaymentMethod.h: Ditto for PKPaymentMethod.
+        * Modules/applepay/cocoa/PaymentCocoa.mm:
+        (WebCore::Payment::Payment): Moved definition out-of-line.
+        (WebCore::Payment::pkPayment const): Ditto.
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::PaymentContact::PaymentContact): Ditto.
+        (WebCore::PaymentContact::pkContact const): Ditto.
+        * Modules/applepay/cocoa/PaymentMethodCocoa.mm:
+        (WebCore::PaymentMethod::PaymentMethod): Ditto.
+        (WebCore::PaymentMethod::pkPaymentMethod const): Ditto.
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r238078): Do not draw caps lock indicator when Strong Password button is shown

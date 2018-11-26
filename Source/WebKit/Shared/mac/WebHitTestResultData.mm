@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,10 +45,7 @@ void WebHitTestResultData::platformEncode(IPC::Encoder& encoder) const
     if (!hasActionContext)
         return;
 
-    auto archiver = secureArchiver();
-    [archiver encodeObject:detectedDataActionContext.get() forKey:@"actionContext"];
-
-    IPC::encode(encoder, (__bridge CFDataRef)archiver.get().encodedData);
+    encoder << detectedDataActionContext;
 
     encoder << detectedDataBoundingBox;
     encoder << detectedDataOriginatingPageOverlay;
@@ -69,19 +66,11 @@ bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResul
         return true;
     ASSERT(DataDetectorsLibrary());
 
-    RetainPtr<CFDataRef> data;
-    if (!IPC::decode(decoder, data))
+    auto detectedDataActionContext = IPC::decode<DDActionContext>(decoder, getDDActionContextClass());
+    if (!detectedDataActionContext)
         return false;
 
-    auto unarchiver = secureUnarchiverFromData((__bridge NSData *)data.get());
-    @try {
-        hitTestResultData.detectedDataActionContext = [unarchiver decodeObjectOfClass:getDDActionContextClass() forKey:@"actionContext"];
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode DDActionContext: %@", exception);
-        return false;
-    }
-    
-    [unarchiver finishDecoding];
+    hitTestResultData.detectedDataActionContext = WTFMove(*detectedDataActionContext);
 
     if (!decoder.decode(hitTestResultData.detectedDataBoundingBox))
         return false;

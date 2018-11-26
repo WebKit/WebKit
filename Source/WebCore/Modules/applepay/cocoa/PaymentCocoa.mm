@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,10 +66,24 @@ static ApplePayPayment convert(unsigned version, PKPayment *payment)
 
     return result;
 }
+    
+Payment::Payment() = default;
+
+Payment::Payment(RetainPtr<PKPayment>&& pkPayment)
+    : m_pkPayment { WTFMove(pkPayment) }
+{
+}
+
+Payment::~Payment() = default;
 
 ApplePayPayment Payment::toApplePayPayment(unsigned version) const
 {
     return convert(version, m_pkPayment.get());
+}
+
+PKPayment *Payment::pkPayment() const
+{
+    return m_pkPayment.get();
 }
 
 }
