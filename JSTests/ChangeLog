@@ -1,3 +1,15 @@
+2018-11-26  Saam barati  <sbarati@apple.com>
+
+        Object allocation sinking phase needs to iterate each scope offset instead of just iterating the symbol table's hashmap when handling an activation
+        https://bugs.webkit.org/show_bug.cgi?id=191958
+        <rdar://problem/46221877>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/object-allocation-sinking-phase-needs-to-write-to-each-scope-offset.js: Added.
+        (x):
+        (foo):
+
 2018-11-26  Mark Lam  <mark.lam@apple.com>
 
         NaNs read from Wasm code needs to be be purified.

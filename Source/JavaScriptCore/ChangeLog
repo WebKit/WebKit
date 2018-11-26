@@ -1,3 +1,25 @@
+2018-11-26  Saam barati  <sbarati@apple.com>
+
+        Object allocation sinking phase needs to iterate each scope offset instead of just iterating the symbol table's hashmap when handling an activation
+        https://bugs.webkit.org/show_bug.cgi?id=191958
+        <rdar://problem/46221877>
+
+        Reviewed by Yusuke Suzuki.
+
+        There may be more entries in an activation than unique variables
+        in a symbol table's hashmap. For example, if you have two parameters
+        to a function, and they both are the same name, and the function
+        uses eval, we'll end up with two scope slots, but only a single
+        entry in the hashmap in the symbol table. Object allocation sinking
+        phase was previously iterating over the hashmap, assuming these
+        values were equivalent. This is wrong in the above case. Instead,
+        we need to iterate over each scope offset.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * runtime/GenericOffset.h:
+        (JSC::GenericOffset::operator+=):
+        (JSC::GenericOffset::operator-=):
+
 2018-11-26  Mark Lam  <mark.lam@apple.com>
 
         NaNs read from Wasm code needs to be be purified.
