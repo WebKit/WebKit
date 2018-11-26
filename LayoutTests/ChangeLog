@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=191968
         <rdar://problem/46247234>
 
+        Substitute UIHelper.toggleCapsLock() for testRunner.toggleCapsLock() as the former replaces
+        the latter following r238512.
+
+        * fast/repaint/placeholder-after-caps-lock-hidden.html:
+
+2018-11-26  Daniel Bates  <dabates@apple.com>
+
+        Placeholder text is not repainted after caps lock indicator is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=191968
+        <rdar://problem/46247234>
+
         Reviewed by Zalan Bujtas.
 
         Add a test to ensure to that the placeholder text is repainted when the caps lock indicator is hidden.

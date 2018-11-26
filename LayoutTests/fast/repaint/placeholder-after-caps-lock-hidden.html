@@ -20,7 +20,7 @@ function handleKeyUp(event)
     case 1:
         console.assert(event.key === "Backspace");
         internals.startTrackingRepaints();
-        testRunner.toggleCapsLock();
+        UIHelper.toggleCapsLock();
         return;
     case 2: {
         console.assert(event.key === "CapsLock");
@@ -46,7 +46,7 @@ function runTest()
         UIHelper.keyDown("a");
     }
     input.addEventListener("keydown", handleCapsLockEnabled, { once: true });
-    testRunner.toggleCapsLock();
+    UIHelper.toggleCapsLock();
 }
 </script>
 </head>
