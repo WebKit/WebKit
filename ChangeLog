@@ -1,3 +1,15 @@
+2018-11-26  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] [2.22.0] Fails to build in armel
+        https://bugs.webkit.org/show_bug.cgi?id=188862
+
+        Disable the JIT and enable C_LOOP on ARM CPUs without Thumb2
+        support.
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.23.1 release.
