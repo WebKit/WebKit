@@ -1,3 +1,17 @@
+2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal 32-bit macOS 10.13 build after r238471
+
+        r238471 added an `#include WebPageMessages.h` in `WebPage.h`, which causes the 32-bit macOS build using an
+        internal macOS SDK ≤ 10.13 to fail. To address this, move the `#include` back under `PLATFORM(IOS_FAMILY)` by
+        changing the parameters of `WebPage::removeDataDetectedLinks` and `WebPage::detectDataInAllFrames` to completion
+        handlers rather than async IPC replies.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::removeDataDetectedLinks):
+        (WebKit::WebPage::detectDataInAllFrames):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-11-26  Antti Koivisto  <antti@apple.com>
 
         Clean up layer tree freezing logic in WebPage

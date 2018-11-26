@@ -3403,7 +3403,7 @@ void WebPage::setDataDetectionResults(NSArray *detectionResults)
     send(Messages::WebPageProxy::SetDataDetectionResult(dataDetectionResult));
 }
 
-void WebPage::removeDataDetectedLinks(Messages::WebPage::RemoveDataDetectedLinks::AsyncReply&& reply)
+void WebPage::removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
         auto document = makeRefPtr(frame->document());
@@ -3413,10 +3413,10 @@ void WebPage::removeDataDetectedLinks(Messages::WebPage::RemoveDataDetectedLinks
         DataDetection::removeDataDetectedLinksInDocument(*document);
         frame->setDataDetectionResults(nullptr);
     }
-    reply({ m_page->mainFrame().dataDetectionResults() });
+    completionHandler({ m_page->mainFrame().dataDetectionResults() });
 }
 
-void WebPage::detectDataInAllFrames(uint64_t types, Messages::WebPage::DetectDataInAllFrames::AsyncReply&& reply)
+void WebPage::detectDataInAllFrames(uint64_t types, CompletionHandler<void(const DataDetectionResult&)>&& completionHandler)
 {
     auto dataDetectorTypes = static_cast<WebCore::DataDetectorTypes>(types);
     for (auto frame = makeRefPtr(&m_page->mainFrame()); frame; frame = frame->tree().traverseNext()) {
@@ -3427,7 +3427,7 @@ void WebPage::detectDataInAllFrames(uint64_t types, Messages::WebPage::DetectDat
         RefPtr<Range> range = Range::create(*document, Position { document.get(), Position::PositionIsBeforeChildren }, Position { document.get(), Position::PositionIsAfterChildren });
         frame->setDataDetectionResults(DataDetection::detectContentInRange(range, dataDetectorTypes, m_dataDetectionContext.get()));
     }
-    reply({ m_page->mainFrame().dataDetectionResults() });
+    completionHandler({ m_page->mainFrame().dataDetectionResults() });
 }
 
 #endif // ENABLE(DATA_DETECTION)

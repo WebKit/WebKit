@@ -48,7 +48,6 @@
 #include "SharedMemory.h"
 #include "UserData.h"
 #include "WebBackForwardListProxy.h"
-#include "WebPageMessages.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentController.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
@@ -93,6 +92,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
+#include "WebPageMessages.h"
 #include <WebCore/IntPointHash.h>
 #include <WebCore/ViewportConfiguration.h>
 #endif
@@ -240,6 +240,7 @@ enum class DragControllerAction : uint8_t;
 
 struct AssistedNodeInformation;
 struct AttributedString;
+struct DataDetectionResult;
 struct BackForwardListItemState;
 struct EditorState;
 struct InteractionInformationAtPosition;
@@ -1006,8 +1007,8 @@ public:
 
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResults(NSArray *);
-    void detectDataInAllFrames(uint64_t, Messages::WebPage::DetectDataInAllFrames::AsyncReply&&);
-    void removeDataDetectedLinks(Messages::WebPage::RemoveDataDetectedLinks::AsyncReply&&);
+    void detectDataInAllFrames(uint64_t, CompletionHandler<void(const DataDetectionResult&)>&&);
+    void removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&&);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();
