@@ -247,11 +247,13 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        let layerTabEnabled = window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value;
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
         }
 
+        let auditTabEnabled = WI.settings.experimentalEnableAuditTab.value;
         experimentalSettingsView.addSetting(WI.UIString("Audit:"), WI.settings.experimentalEnableAuditTab, WI.UIString("Enable Audit Tab"));
         experimentalSettingsView.addSeparator();
 
@@ -260,7 +262,17 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
-        reloadInspectorButton.addEventListener("click", () => { InspectorFrontendHost.reopen(); });
+        reloadInspectorButton.addEventListener("click", (event) => {
+            // Force a copy so that WI.Setting sees it as a new value.
+            let newTabs = WI._openTabsSetting.value.slice();
+            if (!layerTabEnabled && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)
+                newTabs.push(WI.LayersTabContentView.Type);
+            if (!auditTabEnabled && WI.settings.experimentalEnableAuditTab.value)
+                newTabs.push(WI.AuditTabContentView.Type);
+            WI._openTabsSetting.value = newTabs;
+
+            InspectorFrontendHost.reopen();
+        });
 
         let reloadInspectorContainerElement = experimentalSettingsView.addCenteredContainer(reloadInspectorButton, WI.UIString("for changes to take effect"));
         reloadInspectorContainerElement.classList.add("hidden");
