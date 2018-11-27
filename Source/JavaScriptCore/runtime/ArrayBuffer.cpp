@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +59,7 @@ ArrayBufferContents::ArrayBufferContents(void* data, unsigned sizeInBytes, Array
     : m_data(data)
     , m_sizeInBytes(sizeInBytes)
 {
+    RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     m_destructor = WTFMove(destructor);
 }
 
@@ -97,8 +98,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
     // Do not allow 31-bit overflow of the total size.
     if (numElements) {
         unsigned totalSize = numElements * elementByteSize;
-        if (totalSize / numElements != elementByteSize
-            || totalSize > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
+        if (totalSize / numElements != elementByteSize || totalSize > MAX_ARRAY_BUFFER_SIZE) {
             reset();
             return;
         }
@@ -116,6 +116,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
         memset(m_data.get(), 0, size);
 
     m_sizeInBytes = numElements * elementByteSize;
+    RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     m_destructor = [] (void* p) { Gigacage::free(Gigacage::Primitive, p); };
 }
 
@@ -130,6 +131,7 @@ void ArrayBufferContents::transferTo(ArrayBufferContents& other)
     other.clear();
     other.m_data = m_data;
     other.m_sizeInBytes = m_sizeInBytes;
+    RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     other.m_destructor = WTFMove(m_destructor);
     other.m_shared = m_shared;
     reset();
@@ -143,6 +145,7 @@ void ArrayBufferContents::copyTo(ArrayBufferContents& other)
         return;
     memcpy(other.m_data.get(), m_data.get(), m_sizeInBytes);
     other.m_sizeInBytes = m_sizeInBytes;
+    RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
 }
 
 void ArrayBufferContents::shareWith(ArrayBufferContents& other)
@@ -153,6 +156,7 @@ void ArrayBufferContents::shareWith(ArrayBufferContents& other)
     other.m_shared = m_shared;
     other.m_data = m_data;
     other.m_sizeInBytes = m_sizeInBytes;
+    RELEASE_ASSERT(other.m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
 }
 
 Ref<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned elementByteSize)
