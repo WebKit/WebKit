@@ -1,5 +1,14 @@
 2018-11-27  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test svg/text/monospace-text-size-in-img.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=192011
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2018-11-27  Per Arne Vollan  <pvollan@apple.com>
+
         Layout Test fast/inline/simple-inline-with-out-of-flow-descendant.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=192010
 

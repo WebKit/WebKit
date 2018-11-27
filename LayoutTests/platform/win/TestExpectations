@@ -4267,3 +4267,5 @@ webkit.org/b/192010 fast/inline/inline-content-with-float-and-margin.html [ Fail
 webkit.org/b/192010 fast/inline/simple-inline-inflow-positioned.html [ Failure ]
 webkit.org/b/192010 fast/inline/simple-inline-with-out-of-flow-descendant.html [ Failure ]
 webkit.org/b/192010 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
+
+webkit.org/b/192011 svg/text/monospace-text-size-in-img.html [ ImageOnlyFailure ]
