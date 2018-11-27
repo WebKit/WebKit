@@ -1,3 +1,13 @@
+2018-11-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize the check for async _saveCookies existence
+        https://bugs.webkit.org/show_bug.cgi?id=191987
+
+        Reviewed by Dean Jackson.
+
+        * wtf/Platform.h: Added a specific macro for this. Not changing the behavior here,
+        although it seems very likely that we want to do the same on other iOS family OSes.
+
 2018-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] SOFT_LINK reports warning: implicit conversion between pointer-to-function and pointer-to-object is a Microsoft extension [-Wmicrosoft-cast]

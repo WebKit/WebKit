@@ -1,3 +1,13 @@
+2018-11-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize the check for async _saveCookies existence
+        https://bugs.webkit.org/show_bug.cgi?id=191987
+
+        Reviewed by Dean Jackson.
+
+        * pal/spi/cf/CFNetworkSPI.h: Also removed a check around _socketStreamProperties,
+        which exists everywhere.
+
 2018-11-27  Jer Noble  <jer.noble@apple.com>
 
         Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
