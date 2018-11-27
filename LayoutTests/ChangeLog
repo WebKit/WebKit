@@ -1,3 +1,16 @@
+2018-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add support for forcing color scheme appearance in DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=191820
+        rdar://problem/46153172
+
+        Reviewed by Devin Rousso.
+
+        * TestExpectations: Skip dark mode tests on other platforms.
+        * inspector/css/force-page-appearance-expected.txt: Added.
+        * inspector/css/force-page-appearance.html: Added.
+        * platform/mac/TestExpectations: Expect dark mode tests to pass on Mojave and later.
+
 2018-11-27  Tim Horton  <timothy_horton@apple.com>
 
         Serialize and deserialize editable image strokes

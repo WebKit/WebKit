@@ -47,6 +47,11 @@ WI.PageObserver = class PageObserver
         WI.networkManager.frameDidDetach(frameId);
     }
 
+    defaultAppearanceDidChange(appearance)
+    {
+        WI.cssManager.defaultAppearanceDidChange(appearance);
+    }
+
     frameStartedLoading(frameId)
     {
         // Not handled yet.

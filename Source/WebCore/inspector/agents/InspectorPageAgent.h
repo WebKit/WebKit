@@ -100,6 +100,7 @@ public:
     void setShowRulers(ErrorString&, bool) final;
     void setShowPaintRects(ErrorString&, bool show) final;
     void setEmulatedMedia(ErrorString&, const String&) final;
+    void setForcedAppearance(ErrorString&, const String&) final;
     void getCompositingBordersVisible(ErrorString&, bool* out_param) final;
     void setCompositingBordersVisible(ErrorString&, bool) final;
     void snapshotNode(ErrorString&, int nodeId, String* outDataURL) final;
@@ -116,6 +117,7 @@ public:
     void frameStoppedLoading(Frame&);
     void frameScheduledNavigation(Frame&, Seconds delay);
     void frameClearedScheduledNavigation(Frame&);
+    void defaultAppearanceDidChange(bool useDarkAppearance);
     void applyEmulatedMedia(String&);
     void didPaint(RenderObject&, const LayoutRect&);
     void didLayout();
@@ -160,6 +162,7 @@ private:
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };
     String m_emulatedMedia;
+    String m_forcedAppearance;
 };
 
 } // namespace WebCore

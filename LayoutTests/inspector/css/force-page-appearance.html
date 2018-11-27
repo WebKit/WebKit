@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function switchToDarkAppearance() {
+    if (window.internals)
+        internals.settings.setUseDarkAppearance(true);
+}
+
+function test() {
+    let nodeStyles = null;
+    let suite = InspectorTest.createAsyncSuite("ForcePageAppearance");
+
+    let getProperty = (propertyName) => {
+        let styleDeclaration = nodeStyles.computedStyle;
+        for (let property of styleDeclaration.properties) {
+            if (property.name === propertyName)
+                return property;
+        }
+    };
+
+    suite.addTestCase({
+        name: "Default appearance should be light",
+        test(resolve, reject) {
+            InspectorTest.expectEqual(WI.cssManager.defaultAppearance, WI.CSSManager.Appearance.Light, `WI.cssManager.defaultAppearance should be Light.`);
+            InspectorTest.expectNull(WI.cssManager.forcedAppearance, `WI.cssManager.forcedAppearance should be null.`);
+
+            InspectorTest.expectEqual(getProperty("width").rawValue, "150px");
+            InspectorTest.expectEqual(getProperty("color").rawValue, "rgb(0, 0, 0)");
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Force appearance to Dark",
+        test(resolve, reject) {
+            // Styles should referesh when dark apeparance is forced.
+            WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
+                InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
+                nodeStyles.refresh();
+
+                return nodeStyles.computedStyle.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                    InspectorTest.expectEqual(getProperty("width").rawValue, "200px");
+                    InspectorTest.expectEqual(getProperty("color").rawValue, "rgb(255, 255, 255)");
+                });
+            }).then(resolve, reject);
+
+            WI.cssManager.forcedAppearance = WI.CSSManager.Appearance.Dark;
+
+            InspectorTest.expectEqual(WI.cssManager.defaultAppearance, WI.CSSManager.Appearance.Light, `WI.cssManager.defaultAppearance should be Light.`);
+            InspectorTest.expectEqual(WI.cssManager.forcedAppearance, WI.CSSManager.Appearance.Dark, `WI.cssManager.forcedAppearance should be Dark.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Switch to Dark appearance by default",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`switchToDarkAppearance()`);
+
+            WI.cssManager.awaitEvent(WI.CSSManager.Event.DefaultAppearanceDidChange).then((event) => {
+                InspectorTest.expectEqual(WI.cssManager.defaultAppearance, WI.CSSManager.Appearance.Dark, `WI.cssManager.defaultAppearance should be Dark.`);
+                InspectorTest.expectEqual(WI.cssManager.forcedAppearance, WI.CSSManager.Appearance.Dark, `WI.cssManager.forcedAppearance should be Dark.`);
+                InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
+                nodeStyles.refresh();
+
+                return nodeStyles.computedStyle.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                    InspectorTest.expectEqual(getProperty("width").rawValue, "200px");
+                    InspectorTest.expectEqual(getProperty("color").rawValue, "rgb(255, 255, 255)");
+                });
+            }).then(resolve, reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Force appearance to Light",
+        test(resolve, reject) {
+            // Styles should referesh when light apeparance is forced.
+            WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
+                InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
+                nodeStyles.refresh();
+
+                return nodeStyles.computedStyle.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                    InspectorTest.expectEqual(getProperty("width").rawValue, "150px");
+                    InspectorTest.expectEqual(getProperty("color").rawValue, "rgb(0, 0, 0)");
+                });
+            }).then(resolve, reject);
+
+            WI.cssManager.forcedAppearance = WI.CSSManager.Appearance.Light;
+
+            InspectorTest.expectEqual(WI.cssManager.defaultAppearance, WI.CSSManager.Appearance.Dark, `WI.cssManager.defaultAppearance should be Dark.`);
+            InspectorTest.expectEqual(WI.cssManager.forcedAppearance, WI.CSSManager.Appearance.Light, `WI.cssManager.forcedAppearance should be Light.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Disable forced appearance",
+        test(resolve, reject) {
+            // Styles should referesh when forced apeparance is disabled.
+            WI.cssManager.awaitEvent(WI.CSSManager.Event.ForcedAppearanceDidChange).then((event) => {
+                InspectorTest.expectEqual(nodeStyles.needsRefresh, true, `DOMNodeStyles should need refresh.`);
+                nodeStyles.refresh();
+
+                return nodeStyles.computedStyle.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged).then((event) => {
+                    InspectorTest.expectEqual(getProperty("width").rawValue, "200px");
+                    InspectorTest.expectEqual(getProperty("color").rawValue, "rgb(255, 255, 255)");
+                });
+            }).then(resolve, reject);
+
+            WI.cssManager.forcedAppearance = null;
+
+            InspectorTest.expectEqual(WI.cssManager.defaultAppearance, WI.CSSManager.Appearance.Dark, `WI.cssManager.defaultAppearance should be Dark.`);
+            InspectorTest.expectNull(WI.cssManager.forcedAppearance, `WI.cssManager.forcedAppearance should be null.`);
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish()
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing the default appearance and forced appearance features.</p>
+
+    <style>
+    :root {
+        supported-color-schemes: light dark;
+    }
+
+    .test-node {
+        width: 100px;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .test-node {
+            width: 150px;
+        }
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .test-node {
+            width: 200px;
+        }
+    }
+    </style>
+
+    <div id="x" class="test-node"></div>
+</body>
+</html>

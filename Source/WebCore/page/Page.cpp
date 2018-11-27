@@ -2632,6 +2632,8 @@ void Page::setUseDarkAppearance(bool value)
 
     m_useDarkAppearance = value;
 
+    InspectorInstrumentation::defaultAppearanceDidChange(*this, value);
+
     appearanceDidChange();
 }
 
@@ -2640,7 +2642,19 @@ bool Page::useDarkAppearance() const
     FrameView* view = mainFrame().view();
     if (!view || !equalLettersIgnoringASCIICase(view->mediaType(), "screen"))
         return false;
+    if (m_useDarkAppearanceOverride)
+        return m_useDarkAppearanceOverride.value();
     return m_useDarkAppearance;
+}
+
+void Page::setUseDarkAppearanceOverride(std::optional<bool> valueOverride)
+{
+    if (valueOverride == m_useDarkAppearanceOverride)
+        return;
+
+    m_useDarkAppearanceOverride = valueOverride;
+
+    appearanceDidChange();
 }
 
 void Page::setFullscreenInsets(const FloatBoxExtent& insets)

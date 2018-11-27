@@ -1768,7 +1768,8 @@ webkit.org/b/187393 imported/w3c/web-platform-tests/2dcontext/imagebitmap/create
 [ Mojave+ ] fast/gradients/conic-two-hints.html [ Pass ]
 
 # Dark Mode is Mojave and later.
-[ Sierra HighSierra ] css-dark-mode [ Skip ]
+[ Mojave+ ] css-dark-mode [ Pass ]
+[ Mojave+ ] inspector/css/force-page-appearance.html [ Pass ]
 
 webkit.org/b/185651 legacy-animation-engine/animations/play-state-in-shorthand.html [ Pass Failure ]
 

@@ -1,3 +1,14 @@
+2018-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add support for forcing color scheme appearance in DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=191820
+        rdar://problem/46153172
+
+        Reviewed by Devin Rousso.
+
+        * inspector/protocol/Page.json: Added setForcedAppearance.
+        Also added the defaultAppearanceDidChange event and Appearance enum.
+
 2018-11-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238509.

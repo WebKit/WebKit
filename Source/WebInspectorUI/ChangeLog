@@ -1,3 +1,28 @@
+2018-11-27  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add support for forcing color scheme appearance in DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=191820
+        rdar://problem/46153172
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.get defaultAppearance): Added.
+        (WI.CSSManager.prototype.get forcedAppearance): Added.
+        (WI.CSSManager.prototype.set forcedAppearance): Added.
+        (WI.CSSManager.prototype.canForceAppearance): Added.
+        (WI.CSSManager.prototype.defaultAppearanceDidChange): Added.
+        * UserInterface/Images/Appearance.svg: Added.
+        * UserInterface/Protocol/PageObserver.js:
+        (WI.PageObserver.prototype.defaultAppearanceChanged): Added.
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.get navigationItems):
+        (WI.DOMTreeContentView.prototype._defaultAppearanceDidChange): Added.
+        (WI.DOMTreeContentView.prototype._toggleAppearance): Added.
+
 2018-11-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cookies table needs copy keyboard shortcut and context menu support

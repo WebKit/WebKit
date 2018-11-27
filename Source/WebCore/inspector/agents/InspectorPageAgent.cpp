@@ -300,6 +300,10 @@ void InspectorPageAgent::enable(ErrorString&)
     auto stopwatch = m_environment.executionStopwatch();
     stopwatch->reset();
     stopwatch->start();
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    defaultAppearanceDidChange(m_page.defaultUseDarkAppearance());
+#endif
 }
 
 void InspectorPageAgent::disable(ErrorString&)
@@ -310,6 +314,7 @@ void InspectorPageAgent::disable(ErrorString&)
     ErrorString unused;
     setShowPaintRects(unused, false);
     setEmulatedMedia(unused, emptyString());
+    setForcedAppearance(unused, emptyString());
 }
 
 void InspectorPageAgent::reload(ErrorString&, const bool* optionalReloadFromOrigin, const bool* optionalRevalidateAllResources)
@@ -685,6 +690,11 @@ void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
 }
 
+void InspectorPageAgent::defaultAppearanceDidChange(bool useDarkAppearance)
+{
+    m_frontendDispatcher->defaultAppearanceDidChange(useDarkAppearance ? Inspector::Protocol::Page::Appearance::Dark : Inspector::Protocol::Page::Appearance::Light);
+}
+
 void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect)
 {
     if (!m_enabled || !m_showPaintRects)
@@ -806,6 +816,21 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
 
     if (auto* document = m_page.mainFrame().document())
         document->updateLayout();
+}
+
+void InspectorPageAgent::setForcedAppearance(ErrorString&, const String& appearance)
+{
+    if (appearance == m_forcedAppearance)
+        return;
+
+    m_forcedAppearance = appearance;
+
+    if (appearance == "Light"_s)
+        m_page.setUseDarkAppearanceOverride(false);
+    else if (appearance == "Dark"_s)
+        m_page.setUseDarkAppearanceOverride(true);
+    else
+        m_page.setUseDarkAppearanceOverride(std::nullopt);
 }
 
 void InspectorPageAgent::applyEmulatedMedia(String& media)

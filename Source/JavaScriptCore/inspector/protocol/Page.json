@@ -22,6 +22,12 @@
             "description": "Same-Site policy of a cookie."
         },
         {
+            "id": "Appearance",
+            "type": "string",
+            "enum": ["Light", "Dark"],
+            "description": "Page appearance name."
+        },
+        {
             "id": "Frame",
             "type": "object",
             "description": "Information about the Frame on the page.",
@@ -194,6 +200,13 @@
             ]
         },
         {
+            "name": "setForcedAppearance",
+            "description": "Forces the given appearance for the page.",
+            "parameters": [
+                { "name": "appearance", "$ref": "Appearance", "description": "Appearance name to force. Empty string disables the override." }
+            ]
+        },
+        {
             "name": "getCompositingBordersVisible",
             "description": "Indicates the visibility of compositing borders.",
             "returns": [
@@ -293,6 +306,13 @@
             "description": "Fired when frame no longer has a scheduled navigation.",
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
+            ]
+        },
+        {
+            "name": "defaultAppearanceDidChange",
+            "description": "Fired when page's default appearance changes, even if there is a forced appearance.",
+            "parameters": [
+                { "name": "appearance", "$ref": "Appearance", "description": "Name of the appearance that is active (not considering any forced appearance.)" }
             ]
         }
     ]

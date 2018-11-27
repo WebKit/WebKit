@@ -45,6 +45,8 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._styleSheetIdentifierMap = new Map;
         this._styleSheetFrameURLMap = new Map;
         this._nodeStylesMap = {};
+        this._defaultAppearance = null;
+        this._forcedAppearance = null;
 
         // COMPATIBILITY (iOS 9): Legacy backends did not send stylesheet
         // added/removed events and must be fetched manually.
@@ -105,6 +107,56 @@ WI.CSSManager = class CSSManager extends WI.Object
     get styleSheets()
     {
         return [...this._styleSheetIdentifierMap.values()];
+    }
+
+    get defaultAppearance()
+    {
+        return this._defaultAppearance;
+    }
+
+    get forcedAppearance()
+    {
+        return this._forcedAppearance;
+    }
+
+    set forcedAppearance(name)
+    {
+        if (!this.canForceAppearance())
+            return;
+
+        let protocolName = "";
+
+        switch (name) {
+        case WI.CSSManager.Appearance.Light:
+            protocolName = PageAgent.Appearance.Light;
+            break;
+
+        case WI.CSSManager.Appearance.Dark:
+            protocolName = PageAgent.Appearance.Dark;
+            break;
+
+        case null:
+        case undefined:
+        case "":
+            protocolName = "";
+            break;
+
+        default:
+            // Abort for unknown values.
+            return;
+        }
+
+        this._forcedAppearance = name || null;
+
+        PageAgent.setForcedAppearance(protocolName).then(() => {
+            this.mediaQueryResultChanged();
+            this.dispatchEventToListeners(WI.CSSManager.Event.ForcedAppearanceDidChange, {appearance: this._forcedAppearance});
+        });
+    }
+
+    canForceAppearance()
+    {
+        return window.PageAgent && !!PageAgent.setForcedAppearance && this._defaultAppearance;
     }
 
     canForcePseudoClasses()
@@ -267,6 +319,33 @@ WI.CSSManager = class CSSManager extends WI.Object
     {
         // Act the same as if media queries changed.
         this.mediaQueryResultChanged();
+    }
+
+    defaultAppearanceDidChange(protocolName)
+    {
+        // Called from WI.PageObserver.
+
+        let appearance = null;
+
+        switch (protocolName) {
+        case PageAgent.Appearance.Light:
+            appearance = WI.CSSManager.Appearance.Light;
+            break;
+
+        case PageAgent.Appearance.Dark:
+            appearance = WI.CSSManager.Appearance.Dark;
+            break;
+
+        default:
+            console.error("Unknown default appearance name:", protocolName);
+            break;
+        }
+
+        this._defaultAppearance = appearance;
+
+        this.mediaQueryResultChanged();
+
+        this.dispatchEventToListeners(WI.CSSManager.Event.DefaultAppearanceDidChange, {appearance});
     }
 
     // Protected
@@ -561,6 +640,13 @@ WI.CSSManager = class CSSManager extends WI.Object
 WI.CSSManager.Event = {
     StyleSheetAdded: "css-manager-style-sheet-added",
     StyleSheetRemoved: "css-manager-style-sheet-removed",
+    DefaultAppearanceDidChange: "css-manager-default-appearance-did-change",
+    ForcedAppearanceDidChange: "css-manager-forced-appearance-did-change",
+};
+
+WI.CSSManager.Appearance = {
+    Light: Symbol("light"),
+    Dark: Symbol("dark"),
 };
 
 WI.CSSManager.PseudoElementNames = ["before", "after"];

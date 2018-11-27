@@ -74,12 +74,17 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         WI.domManager.addEventListener(WI.DOMManager.Event.AttributeRemoved, this._domNodeChanged, this);
         WI.domManager.addEventListener(WI.DOMManager.Event.CharacterDataModified, this._domNodeChanged, this);
 
+        WI.cssManager.addEventListener(WI.CSSManager.Event.DefaultAppearanceDidChange, this._defaultAppearanceDidChange, this);
+
         this._lastSelectedNodePathSetting = new WI.Setting("last-selected-node-path", null);
 
         this._numberOfSearchResults = null;
 
         this._breakpointGutterEnabled = false;
         this._pendingBreakpointNodeIdentifiers = new Set;
+
+        if (WI.cssManager.canForceAppearance())
+            this._defaultAppearanceDidChange();
 
         if (WI.domDebuggerManager.supported) {
             WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._breakpointsEnabledDidChange, this);
@@ -99,6 +104,9 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     get navigationItems()
     {
         let items = [this._showPrintStylesButtonNavigationItem, this._showsShadowDOMButtonNavigationItem];
+
+        if (this._forceAppearanceButtonNavigationItem)
+            items.unshift(this._forceAppearanceButtonNavigationItem);
 
         // COMPATIBILITY (iOS 11.3)
         if (window.PageAgent && PageAgent.setShowRulers)
@@ -580,6 +588,71 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
     {
         WI.printStylesEnabled = !WI.printStylesEnabled;
         this._showPrintStylesChanged();
+    }
+
+    _defaultAppearanceDidChange()
+    {
+        let defaultAppearance = WI.cssManager.defaultAppearance;
+        if (!defaultAppearance) {
+            this._lastKnownDefaultAppearance = null;
+            this._forceAppearanceButtonNavigationItem = null;
+            this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+            return;
+        }
+
+        // Don't update the navigation item if there is currently a forced appearance.
+        // The user will need to toggle it off to update it based on the new default appearance.
+        if (WI.cssManager.forcedAppearance && this._forceAppearanceButtonNavigationItem)
+            return;
+
+        this._forceAppearanceButtonNavigationItem = null;
+
+        switch (defaultAppearance) {
+        case WI.CSSManager.Appearance.Light:
+            this._forceAppearanceButtonNavigationItem = new WI.ActivateButtonNavigationItem("appearance", WI.UIString("Force Dark Appearance"), WI.UIString("Use Default Appearance"), "Images/Appearance.svg", 16, 16);
+            break;
+        case WI.CSSManager.Appearance.Dark:
+            this._forceAppearanceButtonNavigationItem = new WI.ActivateButtonNavigationItem("appearance", WI.UIString("Force Light Appearance"), WI.UIString("Use Default Appearance"), "Images/Appearance.svg", 16, 16);
+            break;
+        }
+
+        if (!this._forceAppearanceButtonNavigationItem) {
+            console.error("Unknown default appearance name:", defaultAppearance);
+            this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+            return;
+        }
+
+        this._lastKnownDefaultAppearance = defaultAppearance;
+
+        this._forceAppearanceButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleAppearance, this);
+        this._forceAppearanceButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._forceAppearanceButtonNavigationItem.activated = !!WI.cssManager.forcedAppearance;
+
+        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+    }
+
+    _toggleAppearance(event)
+    {
+        // Use the last known default appearance, since that is the appearance this navigation item was generated for.
+        let appearanceToForce = null;
+        switch (this._lastKnownDefaultAppearance) {
+        case WI.CSSManager.Appearance.Light:
+            appearanceToForce = WI.CSSManager.Appearance.Dark;
+            break;
+        case WI.CSSManager.Appearance.Dark:
+            appearanceToForce = WI.CSSManager.Appearance.Light;
+            break;
+        }
+
+        console.assert(appearanceToForce);
+        WI.cssManager.forcedAppearance = WI.cssManager.forcedAppearance == appearanceToForce ? null : appearanceToForce;
+
+        // When no longer forcing an appearance, if the last known default appearance is different than the current
+        // default appearance, then update the navigation button now. Otherwise just toggle the activated state.
+        if (!WI.cssManager.forcedAppearance && this._lastKnownDefaultAppearance !== WI.cssManager.defaultAppearance)
+            this._defaultAppearanceDidChange();
+        else
+            this._forceAppearanceButtonNavigationItem.activated = !!WI.cssManager.forcedAppearance;
     }
 
     _showRulersChanged()
