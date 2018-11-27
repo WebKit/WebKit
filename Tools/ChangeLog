@@ -1,5 +1,14 @@
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add a config file
+        https://bugs.webkit.org/show_bug.cgi?id=191933
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/config.py: Added.
+
+2018-11-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add methods to save patch to database
         https://bugs.webkit.org/show_bug.cgi?id=191928
 
