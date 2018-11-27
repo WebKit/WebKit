@@ -1,3 +1,11 @@
+2018-11-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the watchOS engineering build
+
+        Disable a newly added API test, since DDScannerResult is unavailable on watchOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataDetection.mm:
+
 2018-11-27  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) crash under WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame()

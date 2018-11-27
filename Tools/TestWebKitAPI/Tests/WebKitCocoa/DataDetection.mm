@@ -126,6 +126,8 @@ TEST(WebKit, DISABLED_DataDetectionReferenceDate)
     expectLinkCount(webView.get(), @"yesterday at 6PM", 1);
 }
 
+#if PLATFORM(IOS)
+
 TEST(WebKit, AddAndRemoveDataDetectors)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -163,5 +165,7 @@ TEST(WebKit, AddAndRemoveDataDetectors)
     [webView expectElementCount:2 querySelector:@"a[x-apple-data-detectors=true]"];
     checkDataDetectionResults([webView _dataDetectionResults]);
 }
+
+#endif // PLATFORM(IOS)
 
 #endif
