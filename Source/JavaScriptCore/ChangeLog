@@ -1,3 +1,14 @@
+2018-11-27  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] NaNs read from Wasm code needs to be be purified.
+        https://bugs.webkit.org/show_bug.cgi?id=191056
+        <rdar://problem/45660341>
+
+        Reviewed by Filip Pizlo.
+
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2018-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add support for forcing color scheme appearance in DOM tree.
