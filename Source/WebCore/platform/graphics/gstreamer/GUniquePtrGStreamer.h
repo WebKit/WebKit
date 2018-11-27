@@ -26,6 +26,7 @@
 #include <gst/gstsegment.h>
 #include <gst/gststructure.h>
 #include <gst/pbutils/install-plugins.h>
+#include <gst/video/video.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {
@@ -36,6 +37,7 @@ WTF_DEFINE_GPTR_DELETER(GstIterator, gst_iterator_free)
 WTF_DEFINE_GPTR_DELETER(GstSegment, gst_segment_free)
 WTF_DEFINE_GPTR_DELETER(GstFlowCombiner, gst_flow_combiner_free)
 WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
+WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 
 }
 

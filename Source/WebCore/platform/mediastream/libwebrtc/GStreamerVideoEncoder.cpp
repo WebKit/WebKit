@@ -278,12 +278,6 @@ setup_x264enc (GObject * encoder)
 }
 
 static void
-setup_vp8enc (GObject * encoder)
-{
-  gst_preset_load_preset (GST_PRESET (encoder), "Profile Realtime");
-}
-
-static void
 setup_openh264enc (GObject *)
 {
 }
@@ -293,13 +287,6 @@ set_bitrate_kbit_per_sec (GObject * encoder, const gchar * prop_name,
     gint bitrate)
 {
   g_object_set (encoder, prop_name, bitrate, NULL);
-}
-
-static void
-set_bitrate_bit_per_sec (GObject * encoder, const gchar * prop_name,
-    gint bitrate)
-{
-  g_object_set (encoder, prop_name, bitrate * KBIT_TO_BIT, NULL);
 }
 
 static void
@@ -344,9 +331,6 @@ gst_webrtc_video_encoder_class_init (GstWebrtcVideoEncoderClass * klass)
       "video/x-h264",
       "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
       setup_openh264enc, "bitrate", set_bitrate_kbit_per_sec, "gop-size");
-  register_known_encoder (ENCODER_VP8, "vp8enc", NULL, "video/x-vp8", NULL,
-      setup_vp8enc, "target-bitrate", set_bitrate_bit_per_sec,
-      "keyframe-max-dist");
 }
 
 static void

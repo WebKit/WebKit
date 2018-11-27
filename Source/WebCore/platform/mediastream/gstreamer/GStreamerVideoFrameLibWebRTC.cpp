@@ -21,6 +21,8 @@
 #if USE(GSTREAMER) && USE(LIBWEBRTC)
 #include "GStreamerVideoFrameLibWebRTC.h"
 
+#include <thread>
+
 namespace WebCore {
 
 const GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::VideoFrame& frame)
@@ -90,37 +92,55 @@ GRefPtr<GstSample> GStreamerVideoFrameLibWebRTC::getSample()
 
 rtc::scoped_refptr<webrtc::I420BufferInterface> GStreamerVideoFrameLibWebRTC::ToI420()
 {
-    GstVideoInfo info;
-    GstVideoFrame frame;
+    GstMappedFrame inFrame(m_sample, GST_MAP_READ);
 
-    if (!gst_video_info_from_caps(&info, gst_sample_get_caps(m_sample.get())))
-        ASSERT_NOT_REACHED();
+    if (!inFrame) {
+        GST_WARNING("Could not map frame");
 
-    if (GST_VIDEO_INFO_FORMAT(&info) != GST_VIDEO_FORMAT_I420)
         return nullptr;
+    }
 
-    gst_video_frame_map(&frame, &info, gst_sample_get_buffer(m_sample.get()), GST_MAP_READ);
-
-    auto newBuffer = m_bufferPool.CreateBuffer(GST_VIDEO_FRAME_WIDTH(&frame),
-        GST_VIDEO_FRAME_HEIGHT(&frame));
-
+    auto newBuffer = m_bufferPool.CreateBuffer(inFrame.width(), inFrame.height());
     ASSERT(newBuffer);
     if (!newBuffer) {
-        gst_video_frame_unmap(&frame);
         GST_WARNING("RealtimeOutgoingVideoSourceGStreamer::videoSampleAvailable unable to allocate buffer for conversion to YUV");
         return nullptr;
     }
 
+    if (inFrame.format() != GST_VIDEO_FORMAT_I420) {
+        GstVideoInfo outInfo;
+
+        gst_video_info_set_format(&outInfo, GST_VIDEO_FORMAT_I420, inFrame.width(),
+            inFrame.height());
+        auto info = inFrame.info();
+        outInfo.fps_n = info->fps_n;
+        outInfo.fps_d = info->fps_d;
+
+        GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_NO_SHARE, newBuffer->MutableDataY(),
+            outInfo.size, 0, outInfo.size, nullptr, nullptr));
+
+        GstMappedFrame outFrame(buffer.get(), outInfo, GST_MAP_WRITE);
+
+        GUniquePtr<GstVideoConverter> videoConverter(gst_video_converter_new(inFrame.info(),
+            &outInfo, gst_structure_new("GstVideoConvertConfig",
+            GST_VIDEO_CONVERTER_OPT_THREADS, G_TYPE_UINT, std::thread::hardware_concurrency() || 1 , nullptr)));
+
+        ASSERT(videoConverter);
+
+        gst_video_converter_frame(videoConverter.get(), inFrame.get(), outFrame.get());
+
+        return newBuffer;
+    }
+
     newBuffer->Copy(
-        GST_VIDEO_FRAME_WIDTH(&frame),
-        GST_VIDEO_FRAME_HEIGHT(&frame),
-        GST_VIDEO_FRAME_COMP_DATA(&frame, 0),
-        GST_VIDEO_FRAME_COMP_STRIDE(&frame, 0),
-        GST_VIDEO_FRAME_COMP_DATA(&frame, 1),
-        GST_VIDEO_FRAME_COMP_STRIDE(&frame, 1),
-        GST_VIDEO_FRAME_COMP_DATA(&frame, 2),
-        GST_VIDEO_FRAME_COMP_STRIDE(&frame, 2));
-    gst_video_frame_unmap(&frame);
+        inFrame.width(),
+        inFrame.height(),
+        inFrame.ComponentData(0),
+        inFrame.ComponentStride(0),
+        inFrame.ComponentData(1),
+        inFrame.ComponentStride(1),
+        inFrame.ComponentData(2),
+        inFrame.ComponentStride(2));
 
     return newBuffer;
 }

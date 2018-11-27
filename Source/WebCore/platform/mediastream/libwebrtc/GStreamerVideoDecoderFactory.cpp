@@ -29,6 +29,7 @@
 #include "webrtc/media/base/codec.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
+#include "webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
@@ -214,19 +215,26 @@ public:
         return webrtc::SdpVideoFormat(Name());
     }
 
-    bool HasGstDecoder()
+    static GRefPtr<GstElementFactory> GstDecoderFactory(const char *capsStr)
     {
-
         auto all_decoders = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER,
             GST_RANK_MARGINAL);
-        auto caps = adoptGRef(gst_caps_from_string(Caps()));
+        auto caps = adoptGRef(gst_caps_from_string(capsStr));
         auto decoders = gst_element_factory_list_filter(all_decoders,
             caps.get(), GST_PAD_SINK, FALSE);
 
         gst_plugin_feature_list_free(all_decoders);
+        GRefPtr<GstElementFactory> res;
+        if (decoders)
+            res = GST_ELEMENT_FACTORY(decoders->data);
         gst_plugin_feature_list_free(decoders);
 
-        return decoders != nullptr;
+        return res;
+    }
+
+    bool HasGstDecoder()
+    {
+        return GstDecoderFactory(Caps());
     }
 
     GstFlowReturn newSampleCallback(GstElement* sink)
@@ -343,16 +351,28 @@ public:
     const gchar* Caps() final { return "video/x-vp8"; }
     const gchar* Name() final { return cricket::kVp8CodecName; }
     webrtc::VideoCodecType CodecType() final { return webrtc::kVideoCodecVP8; }
+    static std::unique_ptr<webrtc::VideoDecoder> Create()
+    {
+        auto factory = GstDecoderFactory("video/x-vp8");
+
+        if (factory && !g_strcmp0(GST_OBJECT_NAME(GST_OBJECT(factory.get())), "vp8dec")) {
+            GST_INFO("Our best GStreamer VP8 decoder is vp8dec, better use the one from LibWebRTC");
+
+            return std::unique_ptr<webrtc::VideoDecoder>(new webrtc::LibvpxVp8Decoder());
+        }
+
+        return std::unique_ptr<webrtc::VideoDecoder>(new VP8Decoder());
+    }
 };
 
 std::unique_ptr<webrtc::VideoDecoder> GStreamerVideoDecoderFactory::CreateVideoDecoder(const webrtc::SdpVideoFormat& format)
 {
-    GStreamerVideoDecoder* dec;
+    webrtc::VideoDecoder* dec;
 
     if (format.name == cricket::kH264CodecName)
         dec = new H264Decoder();
     else if (format.name == cricket::kVp8CodecName)
-        dec = new VP8Decoder();
+        return VP8Decoder::Create();
     else {
         GST_ERROR("Could not create decoder for %s", format.name.c_str());
 

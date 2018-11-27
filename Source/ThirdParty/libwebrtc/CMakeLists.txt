@@ -1050,6 +1050,11 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/codecs/i420/i420.cc
     Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
     Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/vp8_temporal_layers.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/libvpx_interface.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers_checker.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_encoder.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.cc
     Source/webrtc/modules/video_coding/decoder_database.cc

@@ -1,3 +1,12 @@
+2018-11-27  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Use LibWebRTC provided vp8 decoders and encoders
+        https://bugs.webkit.org/show_bug.cgi?id=191861
+
+        Reviewed by Philippe Normand.
+
+        * CMakeLists.txt: Build LibVPX vp8 encoder and decoders.
+
 2018-11-14  Youenn Fablet  <youenn@apple.com>
 
         Convert libwebrtc error types to DOM exceptions

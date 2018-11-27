@@ -135,9 +135,92 @@ inline bool operator==(const GstMappedBuffer& a, const GstBuffer* b)
     return a.size() == gst_buffer_get_size(nonConstB) && !gst_buffer_memcmp(nonConstB, 0, a.data(), a.size());
 }
 
+class GstMappedFrame {
+    WTF_MAKE_NONCOPYABLE(GstMappedFrame);
+public:
+
+    GstMappedFrame(GstBuffer* buffer, GstVideoInfo info, GstMapFlags flags)
+    {
+        m_isValid = gst_video_frame_map(&m_frame, &info, buffer, flags);
+    }
+
+    GstMappedFrame(GRefPtr<GstSample> sample, GstMapFlags flags)
+    {
+        GstVideoInfo info;
+
+        if (!gst_video_info_from_caps(&info, gst_sample_get_caps(sample.get()))) {
+            m_isValid = false;
+            return;
+        }
+
+        m_isValid = gst_video_frame_map(&m_frame, &info, gst_sample_get_buffer(sample.get()), flags);
+    }
+
+    GstVideoFrame* get()
+    {
+        if (!m_isValid) {
+            GST_INFO("Invalid frame, returning NULL");
+
+            return nullptr;
+        }
+
+        return &m_frame;
+    }
+
+    uint8_t* ComponentData(int comp)
+    {
+        return GST_VIDEO_FRAME_COMP_DATA(&m_frame, comp);
+    }
+
+    int ComponentStride(int stride)
+    {
+        return GST_VIDEO_FRAME_COMP_STRIDE(&m_frame, stride);
+    }
+
+    GstVideoInfo* info()
+    {
+        if (!m_isValid) {
+            GST_INFO("Invalid frame, returning NULL");
+
+            return nullptr;
+        }
+
+        return &m_frame.info;
+    }
+
+    int width()
+    {
+        return m_isValid ? GST_VIDEO_FRAME_WIDTH(&m_frame) : -1;
+    }
+
+    int height()
+    {
+        return m_isValid ? GST_VIDEO_FRAME_HEIGHT(&m_frame) : -1;
+    }
+
+    int format()
+    {
+        return m_isValid ? GST_VIDEO_FRAME_FORMAT(&m_frame) : GST_VIDEO_FORMAT_UNKNOWN;
+    }
+
+    ~GstMappedFrame()
+    {
+        if (m_isValid)
+            gst_video_frame_unmap(&m_frame);
+        m_isValid = false;
+    }
+
+    explicit operator bool() const { return m_isValid; }
+
+private:
+    GstVideoFrame m_frame;
+    bool m_isValid { false };
+};
+
+
 bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString);
-void connectSimpleBusMessageCallback(GstElement *pipeline);
-void disconnectSimpleBusMessageCallback(GstElement *pipeline);
+void connectSimpleBusMessageCallback(GstElement* pipeline);
+void disconnectSimpleBusMessageCallback(GstElement* pipeline);
 
 }
 

@@ -1,3 +1,48 @@
+2018-11-27  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Use LibWebRTC provided vp8 decoders and encoders
+        https://bugs.webkit.org/show_bug.cgi?id=191861
+
+        The GStreamer implementations are less feature full and less tested, now that Apple
+        also use the LibWebRTC provided implementations it makes a lot of sense for us to
+        do the same.
+
+        Basically everything related to temporal scalability is not implemented in GStreamer.
+
+        We should make sure to use GStreamer elements on low powered platforms and for
+        accelerated encoders and decoders.
+
+        Reviewed by Philippe Normand.
+
+        This is mostly refactoring, no new test required.
+
+        * platform/graphics/gstreamer/GStreamerCommon.h: Added GstMappedFrame similar to GstMappedBuffer but for video frames.
+        (WebCore::GstMappedFrame::GstMappedFrame):
+        (WebCore::GstMappedFrame::get):
+        (WebCore::GstMappedFrame::ComponentData):
+        (WebCore::GstMappedFrame::ComponentStride):
+        (WebCore::GstMappedFrame::info):
+        (WebCore::GstMappedFrame::width):
+        (WebCore::GstMappedFrame::height):
+        (WebCore::GstMappedFrame::format):
+        (WebCore::GstMappedFrame::~GstMappedFrame):
+        (WebCore::GstMappedFrame::operator bool const):
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h:
+        * platform/mediastream/gstreamer/GStreamerVideoFrameLibWebRTC.cpp:
+        (WebCore::GStreamerVideoFrameLibWebRTC::ToI420): Implemented support for converting frame formats with the GstVideoConverter API
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::GStreamerVideoDecoder::GstDecoderFactory):
+        (WebCore::GStreamerVideoDecoder::HasGstDecoder):
+        (WebCore::VP8Decoder::Create): Creates a `webrtc::LibvpxVp8Decoder()` if GStreamer decoder would be the LibVPX based one.
+        (WebCore::GStreamerVideoDecoderFactory::CreateVideoDecoder):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        (gst_webrtc_video_encoder_class_init):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp: Stop using vp8enc and use LibWebRTC based implementation
+        (WebCore::GStreamerH264Encoder::GStreamerH264Encoder): Renamed H264Encoder to GStreamerH264Encoder to be more coherent with what is done in LibVPX
+        (WebCore::GStreamerVP8Encoder::GStreamerVP8Encoder): Renamed VP8Encoder to GStreamerVP8Encoder to be more coherent with what is done in LibVPX
+        (WebCore::GStreamerVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::GStreamerVideoEncoderFactory::GetSupportedFormats const):
+
 2018-11-27  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] align-self center and position sticky don't work together
