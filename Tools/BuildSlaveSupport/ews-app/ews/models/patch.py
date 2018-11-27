@@ -22,15 +22,49 @@
 
 from __future__ import unicode_literals
 
+import logging
+
 from django.db import models
+
+from ews.config import *
+
+_log = logging.getLogger(__name__)
 
 
 class Patch(models.Model):
-    patchid = models.IntegerField(primary_key=True)
-    bugid = models.IntegerField()
+    patch_id = models.IntegerField(primary_key=True)
+    bug_id = models.IntegerField()
     obsolete = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.patchid)
+        return str(self.patch_id)
+
+    @classmethod
+    def save_patch(cls, patch_id, bug_id=-1, obsolete=False):
+        if not Patch.is_valid_patch_id(patch_id):
+            return ERR_INVALID_PATCH_ID
+
+        if Patch.is_existing_patch_id(patch_id):
+            _log.info("Patch id {} already exists in database. Skipped saving.".format(patch_id))
+            return ERR_EXISTING_PATCH
+        Patch(patch_id, bug_id, obsolete).save()
+        _log.info('Saved patch in database, id: {}'.format(patch_id))
+        return SUCCESS
+
+    @classmethod
+    def save_patches(cls, patch_id_list):
+        for patch_id in patch_id_list:
+            Patch.save_patch(patch_id)
+
+    @classmethod
+    def is_valid_patch_id(cls, patch_id):
+        if not patch_id or type(patch_id) != int or patch_id < 1:
+            _log.warn('Invalid patch id: {}'.format(patch_id))
+            return False
+        return True
+
+    @classmethod
+    def is_existing_patch_id(cls, patch_id):
+        return bool(Patch.objects.filter(patch_id=patch_id))

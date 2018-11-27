@@ -1,3 +1,16 @@
+2018-11-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add methods to save patch to database
+        https://bugs.webkit.org/show_bug.cgi?id=191928
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        (Patch.save_patch): Method to save the patch to database.
+        (Patch.save_patches): Method to save multiple patches to database.
+        (Patch.is_valid_patch_id): Checks if the patch id is valid.
+        (Patch.is_existing_patch_id): Checks if the patch id already exists in database.
+
 2018-11-26  Alex Christensen  <achristensen@webkit.org>
 
         Rename WKWebView._safeBrowsingWarningForTesting to _safeBrowsingWarning to use it for more than testing
