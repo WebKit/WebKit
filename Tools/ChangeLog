@@ -1,5 +1,16 @@
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add field in Patch object to indicate if it has been sent to Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=191929
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        (Patch): Added sent_to_buildbot field.
+        (Patch.is_patch_sent_to_buildbot): Checks if the patch has been sent to Buildbot.
+
+2018-11-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add a config file
         https://bugs.webkit.org/show_bug.cgi?id=191933
 

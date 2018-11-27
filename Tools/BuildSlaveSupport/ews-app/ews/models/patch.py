@@ -35,6 +35,7 @@ class Patch(models.Model):
     patch_id = models.IntegerField(primary_key=True)
     bug_id = models.IntegerField()
     obsolete = models.BooleanField(default=False)
+    sent_to_buildbot = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -42,14 +43,14 @@ class Patch(models.Model):
         return str(self.patch_id)
 
     @classmethod
-    def save_patch(cls, patch_id, bug_id=-1, obsolete=False):
+    def save_patch(cls, patch_id, bug_id=-1, obsolete=False, sent_to_buildbot=False):
         if not Patch.is_valid_patch_id(patch_id):
             return ERR_INVALID_PATCH_ID
 
         if Patch.is_existing_patch_id(patch_id):
             _log.info("Patch id {} already exists in database. Skipped saving.".format(patch_id))
             return ERR_EXISTING_PATCH
-        Patch(patch_id, bug_id, obsolete).save()
+        Patch(patch_id, bug_id, obsolete, sent_to_buildbot).save()
         _log.info('Saved patch in database, id: {}'.format(patch_id))
         return SUCCESS
 
@@ -68,3 +69,7 @@ class Patch(models.Model):
     @classmethod
     def is_existing_patch_id(cls, patch_id):
         return bool(Patch.objects.filter(patch_id=patch_id))
+
+    @classmethod
+    def is_patch_sent_to_buildbot(cls, patch_id):
+        return Patch.is_existing_patch_id(patch_id) and Patch.objects.get(pk=patch_id).sent_to_buildbot
