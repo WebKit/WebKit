@@ -1124,6 +1124,10 @@ svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure ]
 
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll-parents.html
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll-self.html
+webkit.org/b/192045 css3/filters/blur-filter-page-scroll.html
+
 webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
 
 webkit.org/b/159840 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Timeout ]

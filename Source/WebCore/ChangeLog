@@ -1,3 +1,26 @@
+2018-11-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering compositing updates when only the root layer is composited
+        https://bugs.webkit.org/show_bug.cgi?id=191813
+
+        Reviewed by Zalan Bujtas.
+
+        If we know that the only composited layer is the root, we can avoid triggering deep
+        compositing updates sometimes, for example when layout changes size or position,
+        or when z-order lists change.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::addChild):
+        (WebCore::RenderLayer::removeChild):
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy): Consult the layer.hasCompositingDescendant()
+        flag to cut off descendants traversal when possible.
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
 2018-11-27  Eric Carlson  <eric.carlson@apple.com>
 
         Refactor duplicate code for calling into media controls

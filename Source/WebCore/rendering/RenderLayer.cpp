@@ -405,7 +405,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     if (child.isSelfPaintingLayer() || child.hasSelfPaintingLayerDescendant())
         setAncestorChainHasSelfPaintingLayerDescendant();
 
-    if (compositor().usesCompositing())
+    if (compositor().hasContentCompositingLayers())
         setDescendantsNeedCompositingRequirementsTraversal();
 
     if (child.hasDescendantNeedingCompositingRequirementsTraversal() || child.needsCompositingRequirementsTraversal())
@@ -451,7 +451,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
     if (oldChild.isSelfPaintingLayer() || oldChild.hasSelfPaintingLayerDescendant())
         dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
-    if (compositor().usesCompositing())
+    if (compositor().hasContentCompositingLayers())
         setDescendantsNeedCompositingRequirementsTraversal();
 
 #if ENABLE(CSS_COMPOSITING)
@@ -1577,7 +1577,7 @@ bool RenderLayer::updateLayerPosition()
     positionOrOffsetChanged |= location() != localPoint;
     setLocation(localPoint);
     
-    if (positionOrOffsetChanged && compositor().usesCompositing()) {
+    if (positionOrOffsetChanged && compositor().hasContentCompositingLayers()) {
         if (isComposited())
             setNeedsCompositingGeometryUpdate();
         // This layer's position can affect the location of a composited descendant (which may be a sibling in z-order),
@@ -2430,7 +2430,7 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
     frame.eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
 
     bool requiresRepaint = true;
-    if (compositor().usesCompositing() && usesCompositedScrolling()) {
+    if (usesCompositedScrolling()) {
         setNeedsCompositingGeometryUpdate();
         setDescendantsNeedUpdateBackingAndHierarchyTraversal();
         requiresRepaint = false;
@@ -2580,7 +2580,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
 
 void RenderLayer::updateCompositingLayersAfterScroll()
 {
-    if (compositor().usesCompositing()) {
+    if (compositor().hasContentCompositingLayers()) {
         // Our stacking container is guaranteed to contain all of our descendants that may need
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContext()->enclosingCompositingLayer()) {
@@ -6643,7 +6643,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited\n"
+    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Descendant needs overlap (t)raversal, Descendant needs (b)acking or hierarchy update, All descendants need (r)equirements traversal, All (s)ubsequent layers need requirements traversal, All descendants need (h)ierarchy traversal\n"
         "Needs compositing paint order update on (s)ubsequent layers, Needs compositing paint (o)rder children update, "
@@ -6670,6 +6670,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.hasFilter() ? "F" : "-");
     stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
     stream << (layer.isComposited() ? "C" : "-");
+    stream << (layer.hasCompositingDescendant() ? "c" : "-");
 
     stream << " ";
 

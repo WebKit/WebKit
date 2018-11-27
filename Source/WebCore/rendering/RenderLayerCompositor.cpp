@@ -1170,29 +1170,35 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
     // to the compositing child list of an enclosing layer.
     Vector<Ref<GraphicsLayer>> layerChildren;
     auto& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
-    // FIXME: why the !layerBacking check?
-    bool requireDescendantTraversal = !layerBacking || layer.needsCompositingLayerConnection() || layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || !updateLevel.isEmpty();
+
+    bool requireDescendantTraversal = layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal()
+        || (layer.hasCompositingDescendant() && (!layerBacking || layer.needsCompositingLayerConnection() || !updateLevel.isEmpty()));
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
 #endif
     
-    if (requireDescendantTraversal) {
-        for (auto* renderLayer : layer.negativeZOrderLayers())
-            updateBackingAndHierarchy(*renderLayer, childList, updateLevel, depth + 1);
-
-            // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
+    auto appendForegroundLayerIfNecessary = [&] () {
+        // If a negative z-order child is compositing, we get a foreground layer which needs to get parented.
         if (layer.negativeZOrderLayers().size()) {
             if (layerBacking && layerBacking->foregroundLayer())
                 childList.append(*layerBacking->foregroundLayer());
         }
+    };
+
+    if (requireDescendantTraversal) {
+        for (auto* renderLayer : layer.negativeZOrderLayers())
+            updateBackingAndHierarchy(*renderLayer, childList, updateLevel, depth + 1);
+
+        appendForegroundLayerIfNecessary();
 
         for (auto* renderLayer : layer.normalFlowLayers())
             updateBackingAndHierarchy(*renderLayer, childList, updateLevel, depth + 1);
         
         for (auto* renderLayer : layer.positiveZOrderLayers())
             updateBackingAndHierarchy(*renderLayer, childList, updateLevel, depth + 1);
-    }
+    } else
+        appendForegroundLayerIfNecessary();
 
     if (layerBacking) {
         if (requireDescendantTraversal) {
@@ -1370,7 +1376,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     if (queryData.reevaluateAfterLayout)
         layer.setNeedsPostLayoutCompositingUpdate();
 
-    if (diff >= StyleDifference::LayoutPositionedMovementOnly && usesCompositing()) {
+    if (diff >= StyleDifference::LayoutPositionedMovementOnly && hasContentCompositingLayers()) {
         layer.setNeedsPostLayoutCompositingUpdate();
         layer.setNeedsCompositingGeometryUpdate();
     }
