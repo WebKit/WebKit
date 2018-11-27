@@ -1,3 +1,75 @@
+2018-11-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table selection should be handled by a SelectionController
+        https://bugs.webkit.org/show_bug.cgi?id=191977
+        <rdar://problem/46253093>
+
+        Reviewed by Devin Rousso.
+
+        Add a SelectionController class, which manages an IndexSet of selected
+        items, and provides operations for adding and removing items from the
+        selection. Complex behaviors such as shift-clicking to select a range of
+        items, and updating the selection using the keyboard, are forwarded to
+        the controller using special-purpose methods that accept DOM Event objects.
+
+        * UserInterface/Base/Utilities.js:
+
+        * UserInterface/Controllers/SelectionController.js: Added.
+        (WI.SelectionController):
+        (WI.SelectionController.prototype.get delegate):
+        (WI.SelectionController.prototype.get lastSelectedItem):
+        (WI.SelectionController.prototype.get selectedItems):
+        (WI.SelectionController.prototype.get allowsMultipleSelection):
+        (WI.SelectionController.prototype.set allowsMultipleSelection):
+        (WI.SelectionController.prototype.get numberOfItems):
+        (WI.SelectionController.prototype.hasSelectedItem):
+        (WI.SelectionController.prototype.selectItem):
+        (WI.SelectionController.prototype.deselectItem):
+        (WI.SelectionController.prototype.selectAll):
+        (WI.SelectionController.prototype.deselectAll):
+        (WI.SelectionController.prototype.removeSelectedItems):
+        (WI.SelectionController.prototype.reset):
+        (WI.SelectionController.prototype.didRemoveItem):
+        (WI.SelectionController.prototype.handleKeyDown):
+        (WI.SelectionController.prototype.handleItemMouseDown.normalizeRange):
+        (WI.SelectionController.prototype.handleItemMouseDown):
+        (WI.SelectionController.prototype._deselectAllAndSelect):
+        (WI.SelectionController.prototype._selectItemsFromArrowKey):
+        (WI.SelectionController.prototype._nextSelectableIndex):
+        (WI.SelectionController.prototype._previousSelectableIndex):
+        (WI.SelectionController.prototype._updateSelectedItems):
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        (WI.Table.prototype.get selectedRow):
+        (WI.Table.prototype.get selectedRows):
+        (WI.Table.prototype.get allowsMultipleSelection):
+        (WI.Table.prototype.set allowsMultipleSelection):
+        (WI.Table.prototype.isRowSelected):
+        (WI.Table.prototype.reloadData):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.deselectRow):
+        (WI.Table.prototype.selectAll):
+        (WI.Table.prototype.deselectAll):
+        (WI.Table.prototype.removeRow):
+        (WI.Table.prototype.removeSelectedRows):
+        (WI.Table.prototype.selectionControllerSelectionDidChange):
+        (WI.Table.prototype.selectionControllerNumberOfItems):
+        (WI.Table.prototype.selectionControllerNextSelectableIndex):
+        (WI.Table.prototype.selectionControllerPreviousSelectableIndex):
+        (WI.Table.prototype._handleKeyDown):
+        (WI.Table.prototype._handleMouseDown):
+        (WI.Table.prototype._removeRows):
+        (WI.Table.prototype._toggleSelectedRowStyle):
+        (WI.Table.prototype._selectRowsFromArrowKey): Deleted.
+        (WI.Table.prototype._handleMouseDown.normalizeRange): Deleted.
+        (WI.Table.prototype._deselectAllAndSelect): Deleted.
+        (WI.Table.prototype._notifySelectionDidChange): Deleted.
+        (WI.Table.prototype._updateSelectedRows): Deleted.
+
 2018-11-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: "No Filter Results" in navigation sidebar should have a button to clear filters

@@ -87,10 +87,7 @@ WI.Table = class Table extends WI.View
         this._columnWidths = null; // Calculated in _resizeColumnsAndFiller.
         this._fillerHeight = 0; // Calculated in _resizeColumnsAndFiller.
 
-        this._shiftAnchorIndex = NaN;
-        this._selectedRowIndex = NaN;
-        this._allowsMultipleSelection = false;
-        this._selectedRows = new WI.IndexSet;
+        this._selectionController = new WI.SelectionController(this);
 
         this._resizers = [];
         this._currentResizer = null;
@@ -125,11 +122,15 @@ WI.Table = class Table extends WI.View
     get dataSource() { return this._dataSource; }
     get delegate() { return this._delegate; }
     get rowHeight() { return this._rowHeight; }
-    get selectedRow() { return this._selectedRowIndex; }
+
+    get selectedRow()
+    {
+        return this._selectionController.lastSelectedItem;
+    }
 
     get selectedRows()
     {
-        return Array.from(this._selectedRows);
+        return Array.from(this._selectionController.selectedItems);
     }
 
     get scrollContainer() { return this._scrollContainerElement; }
@@ -220,37 +221,24 @@ WI.Table = class Table extends WI.View
 
     get allowsMultipleSelection()
     {
-        return this._allowsMultipleSelection;
+        return this._selectionController.allowsMultipleSelection;
     }
 
     set allowsMultipleSelection(flag)
     {
-        if (this._allowsMultipleSelection === flag)
-            return;
-
-        this._allowsMultipleSelection = flag;
-        if (this._allowsMultipleSelection)
-            return;
-
-        if (this._selectedRows.size > 1) {
-            console.assert(this._selectedRowIndex >= 0);
-            this._selectedRows = new WI.IndexSet([this._selectedRowIndex]);
-            this._notifySelectionDidChange();
-        }
+        this._selectionController.allowsMultipleSelection = flag;
     }
 
     isRowSelected(rowIndex)
     {
-        return this._selectedRows.has(rowIndex);
+        return this._selectionController.hasSelectedItem(rowIndex);
     }
 
     reloadData()
     {
         this._cachedRows.clear();
 
-        this._shiftAnchorIndex = NaN;
-        this._selectedRowIndex = NaN;
-        this._selectedRows.clear();
+        this._selectionController.reset();
 
         this._cachedNumberOfRows = NaN;
         this._previousRevealedRowCount = NaN;
@@ -320,87 +308,22 @@ WI.Table = class Table extends WI.View
 
     selectRow(rowIndex, extendSelection = false)
     {
-        console.assert(!extendSelection || this._allowsMultipleSelection, "Cannot extend selection with multiple selection disabled.");
-        console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
-
-        if (this.isRowSelected(rowIndex)) {
-            if (!extendSelection)
-                this._deselectAllAndSelect(rowIndex);
-            return;
-        }
-
-        if (!extendSelection && this._selectedRows.size) {
-            this._suppressNextSelectionDidChange = true;
-            this.deselectAll();
-        }
-
-        this._shiftAnchorIndex = NaN;
-        this._selectedRowIndex = rowIndex;
-        this._selectedRows.add(rowIndex);
-
-        this._toggleSelectedRowStyle([this._selectedRowIndex], true);
-
-        this._notifySelectionDidChange();
+        this._selectionController.selectItem(rowIndex, extendSelection);
     }
 
     deselectRow(rowIndex)
     {
-        console.assert(rowIndex >= 0 && rowIndex < this.numberOfRows);
-
-        if (!this.isRowSelected(rowIndex))
-            return;
-
-        this._toggleSelectedRowStyle([rowIndex], false);
-
-        this._selectedRows.delete(rowIndex);
-
-        if (this._shiftAnchorIndex === rowIndex)
-            this._shiftAnchorIndex = NaN;
-
-        if (this._selectedRowIndex === rowIndex) {
-            this._selectedRowIndex = NaN;
-            if (this._selectedRows.size) {
-                // Find selected row closest to deselected row.
-                let preceding = this._selectedRows.indexLessThan(rowIndex);
-                let following = this._selectedRows.indexGreaterThan(rowIndex);
-
-                if (isNaN(preceding))
-                    this._selectedRowIndex = following;
-                else if (isNaN(following))
-                    this._selectedRowIndex = preceding;
-                else {
-                    if ((following - rowIndex) < (rowIndex - preceding))
-                        this._selectedRowIndex = following;
-                    else
-                        this._selectedRowIndex = preceding;
-                }
-            }
-        }
-
-        this._notifySelectionDidChange();
+        this._selectionController.deselectItem(rowIndex);
     }
 
     selectAll()
     {
-        if (!this.numberOfRows || !this._allowsMultipleSelection)
-            return;
-
-        if (this._selectedRows.size === this.numberOfRows)
-            return;
-
-        this._selectedRows.addRange(0, this.numberOfRows);
-        this._selectedRowIndex = this._selectedRows.size - 1;
-
-        for (let row of this._cachedRows.values())
-            row.classList.add("selected");
-
-        this._notifySelectionDidChange();
+        this._selectionController.selectAll();
     }
 
     deselectAll()
     {
-        const rowIndex = NaN;
-        this._deselectAllAndSelect(rowIndex);
+        this._selectionController.deselectAll();
     }
 
     removeRow(rowIndex)
@@ -411,37 +334,19 @@ WI.Table = class Table extends WI.View
             this.deselectRow(rowIndex);
 
         this._removeRows(new WI.IndexSet([rowIndex]));
+        this._selectionController.didRemoveItem(rowIndex);
     }
 
     removeSelectedRows()
     {
-        let numberOfSelectedRows = this._selectedRows.size;
-        if (!numberOfSelectedRows)
-            return;
-
-        // Try selecting the row following the selection.
-        let lastSelectedRow = this._selectedRows.lastIndex;
-        let rowToSelect = lastSelectedRow + 1;
-        if (rowToSelect === this.numberOfRows) {
-            // If no row exists after the last selected row, try selecting a
-            // deselected row (hole) within the selection.
-            let firstSelectedRow = this._selectedRows.firstIndex;
-            if (lastSelectedRow - firstSelectedRow > numberOfSelectedRows) {
-                rowToSelect = this._selectedRows.firstIndex + 1;
-                while (this._selectedRows.has(rowToSelect))
-                    rowToSelect++;
-            } else {
-                // If the selection contains no holes, try selecting the row
-                // preceding the selection.
-                rowToSelect = firstSelectedRow > 0 ? firstSelectedRow - 1 : NaN;
-            }
-        }
-
         // Change the selection before removing rows. This matches the behavior
         // of macOS Finder (in list and column modes) when removing selected items.
-        let oldSelectedRows = this._selectedRows.copy();
-        this._deselectAllAndSelect(rowToSelect);
-        this._removeRows(oldSelectedRows);
+        let oldSelectedItems = this._selectionController.selectedItems.copy();
+
+        this._selectionController.removeSelectedItems();
+
+        if (!oldSelectedItems.equals(this._selectionController.selectedItems))
+            this._removeRows(oldSelectedItems);
     }
 
     revealRow(rowIndex)
@@ -665,6 +570,44 @@ WI.Table = class Table extends WI.View
         this._previousCachedWidth = this._cachedWidth;
         this._cachedWidth = NaN;
         this._cachedHeight = NaN;
+    }
+
+    // SelectionController delegate
+
+    selectionControllerSelectionDidChange(controller, deselectedItems, selectedItems)
+    {
+        if (deselectedItems.size)
+            this._toggleSelectedRowStyle(deselectedItems, false);
+        if (selectedItems.size)
+            this._toggleSelectedRowStyle(selectedItems, true);
+
+        if (selectedItems.size === 1) {
+            let rowIndex = selectedItems.firstIndex;
+            if (!this._isRowVisible(rowIndex))
+                this.revealRow(rowIndex);
+        }
+
+        if (this._delegate.tableSelectionDidChange)
+            this._delegate.tableSelectionDidChange(this);
+    }
+
+    selectionControllerNumberOfItems(controller)
+    {
+        return this.numberOfRows;
+    }
+
+    selectionControllerNextSelectableIndex(controller, index)
+    {
+        if (index >= this.numberOfRows - 1)
+            return NaN;
+        return index + 1;
+    }
+
+    selectionControllerPreviousSelectableIndex(controller, index)
+    {
+        if (index <= 0)
+            return NaN;
+        return index - 1;
     }
 
     // Resizer delegate
@@ -1305,74 +1248,11 @@ WI.Table = class Table extends WI.View
 
     _handleKeyDown(event)
     {
-        if (!this.numberOfRows)
-            return;
-
-        if (event.key === "a" && event.commandOrControlKey) {
-            this.selectAll();
-            return;
-        }
-
-        if (event.metaKey || event.ctrlKey)
-            return;
-
-        if (event.keyIdentifier === "Up" || event.keyIdentifier === "Down") {
-            this._selectRowsFromArrowKey(event.keyIdentifier === "Up", event.shiftKey);
-
-            this.revealRow(this._selectedRowIndex);
-
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    }
-
-    _selectRowsFromArrowKey(goingUp, shiftKey)
-    {
-        if (!this._selectedRows.size) {
-            let rowIndex = goingUp ? this.numberOfRows - 1 : 0;
-            this.selectRow(rowIndex);
-            return;
-        }
-
-        let rowIncrement = goingUp ? -1 : 1;
-        let rowIndex = this._selectedRowIndex + rowIncrement;
-        if (rowIndex < 0 || rowIndex >= this.numberOfRows)
-            return;
-
-        let extendSelection = shiftKey && this._allowsMultipleSelection;
-
-        if (!extendSelection || !this.isRowSelected(rowIndex)) {
-            this.selectRow(rowIndex, extendSelection);
-            return;
-        }
-
-        // Since the row in the direction of movement is selected, we are either
-        // extending the selection into the row, or deselecting. Determine which
-        // by checking whether the row opposite the anchor row is selected.
-        let priorRowIndex = this._selectedRowIndex - rowIncrement;
-        if (!this.isRowSelected(priorRowIndex)) {
-            this.deselectRow(this._selectedRowIndex);
-            return;
-        }
-
-        // The selection is being extended into the row; make it the new
-        // anchor row then continue searching in the direction of movement
-        // for an unselected row to select.
-        for (; rowIndex >= 0 && rowIndex < this.numberOfRows; rowIndex += rowIncrement) {
-            if (!this.isRowSelected(rowIndex)) {
-                this.selectRow(rowIndex, extendSelection);
-                break;
-            }
-
-            this._selectedRowIndex = rowIndex;
-        }
+        this._selectionController.handleKeyDown(event);
     }
 
     _handleMouseDown(event)
     {
-        if (event.button !== 0 || event.ctrlKey)
-            return;
-
         let cell = event.target.enclosingNodeOrSelfWithClass("cell");
         if (!cell)
             return;
@@ -1382,69 +1262,17 @@ WI.Table = class Table extends WI.View
             return;
 
         let rowIndex = row.__index;
-        let isRowSelected = this.isRowSelected(rowIndex);
 
         // Before checking if multiple selection is allowed, check if clicking the
         // row would cause it to be selected, and whether it is allowed by the delegate.
-        if (!isRowSelected && this._delegate.tableShouldSelectRow) {
+        if (!this.isRowSelected(rowIndex) && this._delegate.tableShouldSelectRow) {
             let columnIndex = Array.from(row.children).indexOf(cell);
             let column = this._visibleColumns[columnIndex];
             if (!this._delegate.tableShouldSelectRow(this, cell, column, rowIndex))
                 return;
         }
 
-        // Command (meta) key takes precedence over shift whether or not multiple
-        // selection is enabled, so handle it first.
-        if (event.metaKey) {
-            if (isRowSelected)
-                this.deselectRow(rowIndex);
-            else
-                this.selectRow(rowIndex, this._allowsMultipleSelection);
-            return;
-        }
-
-        let shiftExtendSelection = this._allowsMultipleSelection && event.shiftKey;
-        if (!shiftExtendSelection) {
-            this.selectRow(rowIndex);
-            return;
-        }
-
-        let newSelectedRows = this._selectedRows.copy();
-
-        // Shift-clicking when nothing is selected should cause the first row
-        // through the clicked row to be selected.
-        if (!newSelectedRows.size) {
-            this._shiftAnchorIndex = 0;
-            this._selectedRowIndex = rowIndex;
-            newSelectedRows.addRange(0, rowIndex + 1);
-            this._updateSelectedRows(newSelectedRows);
-            return;
-        }
-
-        if (isNaN(this._shiftAnchorIndex))
-            this._shiftAnchorIndex = this._selectedRowIndex;
-
-        // Shift-clicking will add to or delete from the current selection, or
-        // pivot the selection around the anchor (a delete followed by an add).
-        // We could check for all three cases, and add or delete only those rows
-        // that are necessary, but it is simpler to throw out the previous shift-
-        // selected range and add the new range between the anchor and clicked row.
-
-        function normalizeRange(startIndex, endIndex) {
-            return startIndex > endIndex ? [endIndex, startIndex] : [startIndex, endIndex];
-        }
-
-        if (this._shiftAnchorIndex !== this._selectedRowIndex) {
-            let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, this._selectedRowIndex);
-            newSelectedRows.deleteRange(startIndex, endIndex - startIndex + 1);
-        }
-
-        let [startIndex, endIndex] = normalizeRange(this._shiftAnchorIndex, rowIndex);
-        newSelectedRows.addRange(startIndex, endIndex - startIndex + 1);
-
-        this._selectedRowIndex = rowIndex;
-
-        this._updateSelectedRows(newSelectedRows);
+        this._selectionController.handleItemMouseDown(rowIndex, event);
     }
 
     _handleContextMenu(event)
@@ -1523,53 +1351,18 @@ WI.Table = class Table extends WI.View
         }
     }
 
-    _deselectAllAndSelect(rowIndex)
-    {
-        if (!this._selectedRows.size)
-            return;
-
-        if (this._selectedRows.size === 1 && this._selectedRows.firstIndex === rowIndex)
-            return;
-
-        this._toggleSelectedRowStyle(this._selectedRows, false);
-
-        this._shiftAnchorIndex = NaN;
-        this._selectedRowIndex = rowIndex;
-        this._selectedRows.clear();
-
-        if (!isNaN(rowIndex)) {
-            this._selectedRows.add(rowIndex);
-            this._toggleSelectedRowStyle(this._selectedRows, true);
-        }
-
-        this._notifySelectionDidChange();
-    }
-
     _removeRows(rowIndexes)
     {
         let removed = 0;
 
         let adjustRowAtIndex = (index) => {
-            let newIndex = index - removed;
             let row = this._cachedRows.get(index);
             if (row) {
-                this._cachedRows.delete(row.__index);
-                row.__index = newIndex;
-                this._cachedRows.set(newIndex, row);
-            }
-
-            if (this.isRowSelected(index)) {
-                this._selectedRows.delete(index);
-                this._selectedRows.add(newIndex);
-                if (this._selectedRowIndex === index)
-                    this._selectedRowIndex = newIndex;
+                this._cachedRows.delete(index);
+                row.__index -= removed;
+                this._cachedRows.set(row.__index, row);
             }
         };
-
-        if (rowIndexes.has(this._shiftAnchorIndex))
-            this._shiftAnchorIndex = NaN;
-        if (rowIndexes.has(this._selectedRowIndex))
-            this._selectedRowIndex = NaN;
 
         for (let index = rowIndexes.firstIndex; index <= rowIndexes.lastIndex; ++index) {
             if (rowIndexes.has(index)) {
@@ -1601,17 +1394,6 @@ WI.Table = class Table extends WI.View
         }
     }
 
-    _notifySelectionDidChange()
-    {
-        if (this._suppressNextSelectionDidChange) {
-            this._suppressNextSelectionDidChange = false;
-            return;
-        }
-
-        if (this._delegate.tableSelectionDidChange)
-            this._delegate.tableSelectionDidChange(this);
-    }
-
     _toggleSelectedRowStyle(rowIndexes, flag)
     {
         for (let index of rowIndexes) {
@@ -1619,24 +1401,6 @@ WI.Table = class Table extends WI.View
             if (row)
                 row.classList.toggle("selected", flag);
         }
-    }
-
-    _updateSelectedRows(rowIndexes)
-    {
-        if (this._selectedRows.equals(rowIndexes))
-            return;
-
-        let deselectedRows = this._selectedRows.difference(rowIndexes);
-        if (deselectedRows.size)
-            this._toggleSelectedRowStyle(deselectedRows, false);
-
-        let selectedRows = rowIndexes.difference(this._selectedRows);
-        if (selectedRows.size)
-            this._toggleSelectedRowStyle(selectedRows, true);
-
-        this._selectedRows = rowIndexes;
-
-        this._notifySelectionDidChange();
     }
 };
 
