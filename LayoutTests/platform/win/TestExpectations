@@ -4262,3 +4262,8 @@ webkit.org/b/191584 http/wpt/css/css-animations/set-animation-play-state-to-paus
 webkit.org/b/191584 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
 webkit.org/b/191584 webanimations/accelerated-transition-by-removing-property.html [ ImageOnlyFailure ]
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Timeout ]
+
+webkit.org/b/192010 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
+webkit.org/b/192010 fast/inline/simple-inline-inflow-positioned.html [ Failure ]
+webkit.org/b/192010 fast/inline/simple-inline-with-out-of-flow-descendant.html [ Failure ]
+webkit.org/b/192010 fast/inline/simple-inline-with-out-of-flow-descendant2.html [ Failure ]
