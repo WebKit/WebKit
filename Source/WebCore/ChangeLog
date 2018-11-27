@@ -1,3 +1,26 @@
+2018-11-27  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] align-self center and position sticky don't work together
+        https://bugs.webkit.org/show_bug.cgi?id=191963
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This is a fix for a regression introduced in r515391, where we landed
+        the implementation of alignment for positioned objects in a Grid Layout
+        container.
+
+        We assumed that items with non-static positions shouldn't honor the
+        CSS Box Alignment properties. This is only true for out-of-flow items,
+        absolute or fixed positioned elements. However, sticky positioned
+        elements are treated as relative positioned items, but they indeed use
+        non-static position to define their behavior.
+
+        No new tests, this change is covered by current tests and make several cases to pass now.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::columnAxisPositionForChild const):
+        (WebCore::RenderGrid::rowAxisPositionForChild const):
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r238078): Do not draw caps lock indicator when Strong Password button is shown

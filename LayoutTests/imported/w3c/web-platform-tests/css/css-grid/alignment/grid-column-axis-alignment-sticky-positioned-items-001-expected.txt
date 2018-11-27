@@ -1,38 +1,4 @@
 
-FAIL .grid 1 assert_equals: 
-<div class="container">
-    <div style="height:30px"></div>
-    <div class="grid">
-        <div class="item1 sticky alignSelfStart" data-offset-x="0" data-offset-y="0"></div>
-        <div class="item2 sticky alignSelfCenter" data-offset-x="75" data-offset-y="140"></div>
-        <div class="item3 sticky alignSelfEnd" data-offset-x="150" data-offset-y="280"></div>
-        <div class="item4"></div>
-    </div>
-    <div class="grid scroll">
-        <div class="item1 sticky alignSelfStart" data-offset-x="0" data-offset-y="0"></div>
-        <div class="item2 sticky alignSelfCenter" data-offset-x="75" data-offset-y="140"></div>
-        <div class="item3 sticky alignSelfEnd" data-offset-x="150" data-offset-y="280"></div>
-        <div class="item4"></div>
-    </div>
-    <div style="height:2000px"></div>
-</div>
-offsetTop expected 140 but got 100
-FAIL .grid 2 assert_equals: 
-<div class="container">
-    <div style="height:30px"></div>
-    <div class="grid">
-        <div class="item1 sticky alignSelfStart" data-offset-x="0" data-offset-y="0"></div>
-        <div class="item2 sticky alignSelfCenter" data-offset-x="75" data-offset-y="140"></div>
-        <div class="item3 sticky alignSelfEnd" data-offset-x="150" data-offset-y="280"></div>
-        <div class="item4"></div>
-    </div>
-    <div class="grid scroll">
-        <div class="item1 sticky alignSelfStart" data-offset-x="0" data-offset-y="0"></div>
-        <div class="item2 sticky alignSelfCenter" data-offset-x="75" data-offset-y="140"></div>
-        <div class="item3 sticky alignSelfEnd" data-offset-x="150" data-offset-y="280"></div>
-        <div class="item4"></div>
-    </div>
-    <div style="height:2000px"></div>
-</div>
-offsetTop expected 140 but got 100
+PASS .grid 1 
+PASS .grid 2 
 

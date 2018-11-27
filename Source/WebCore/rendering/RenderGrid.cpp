@@ -1288,7 +1288,7 @@ GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) 
 {
     bool hasSameWritingMode = child.style().writingMode() == style().writingMode();
     bool childIsLTR = child.style().isLeftToRightDirection();
-    if (!hasStaticPositionForChild(child, ForRows))
+    if (child.isOutOfFlowPositioned() && !hasStaticPositionForChild(child, ForRows))
         return GridAxisStart;
 
     switch (alignSelfForChild(child).position()) {
@@ -1356,7 +1356,7 @@ GridAxisPosition RenderGrid::rowAxisPositionForChild(const RenderBox& child) con
 {
     bool hasSameDirection = child.style().direction() == style().direction();
     bool gridIsLTR = style().isLeftToRightDirection();
-    if (!hasStaticPositionForChild(child, ForColumns))
+    if (child.isOutOfFlowPositioned() && !hasStaticPositionForChild(child, ForColumns))
         return GridAxisStart;
 
     switch (justifySelfForChild(child).position()) {
