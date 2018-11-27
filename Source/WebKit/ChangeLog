@@ -1,3 +1,16 @@
+2018-11-27  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK][WPE] Remove temporary workaround in Source/WebKit/Platform*.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=192008
+
+        Reviewed by Michael Catanzaro.
+
+        Looks like it's not needed anymore as the code compiles fine without
+        it.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2018-11-27  Antti Koivisto  <antti@apple.com>
 
         Factor mask layer applying in RemoteLayerTreePropertyApplier into a shared function

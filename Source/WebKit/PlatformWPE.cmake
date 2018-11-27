@@ -24,9 +24,6 @@ if (NOT DEVELOPER_MODE AND NOT CMAKE_SYSTEM_NAME MATCHES "Darwin")
     WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/webkitglib-symbols.map")
 endif ()
 
-# Temporary workaround to allow the build to succeed.
-file(REMOVE "${FORWARDING_HEADERS_DIR}/WebCore/Settings.h")
-
 set(WebKit_USE_PREFIX_HEADER ON)
 
 add_custom_target(webkitwpe-forwarding-headers
