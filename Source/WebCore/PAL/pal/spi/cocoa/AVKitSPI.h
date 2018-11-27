@@ -91,9 +91,11 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 NS_ASSUME_NONNULL_END
 
 #elif __IPHONE_OS_VERSION_MAX_ALLOWED < 120200
+NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerViewController (AVPlayerViewController_WebKitOnly_OverrideRouteSharingPolicy)
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 @end
+NS_ASSUME_NONNULL_END
 #endif
 
 #else
