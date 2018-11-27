@@ -41,6 +41,7 @@ public:
 
 private:
     static void updateChildren(RemoteLayerTreeNode&, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    static void updateMask(RemoteLayerTreeNode&, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
 #if PLATFORM(IOS_FAMILY)
     static void applyPropertiesToUIView(UIView *, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
 #endif

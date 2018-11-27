@@ -258,25 +258,14 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    CALayer *layer = node.layer();
-
-    applyPropertiesToLayer(layer, layerTreeHost, properties, layerContentsType);
+    applyPropertiesToLayer(node.layer(), layerTreeHost, properties, layerContentsType);
     updateChildren(node, properties, relatedLayers);
+    updateMask(node, properties, relatedLayers);
 
 #if PLATFORM(IOS_FAMILY)
     applyPropertiesToUIView(node.uiView(), properties, relatedLayers);
-#else
-    if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
-        if (!properties.maskLayerID)
-            layer.mask = nullptr;
-        else {
-            CALayer *maskLayer = relatedLayers.get(properties.maskLayerID)->layer();
-            ASSERT(!maskLayer.superlayer);
-            if (!maskLayer.superlayer)
-                layer.mask = maskLayer;
-        }
-    }
 #endif
+
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -328,30 +317,39 @@ void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, c
     node.layer().sublayers = sublayers.get();
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
-    if (properties.changedProperties.contains(RemoteLayerTreeTransaction::MaskLayerChanged)) {
-        CALayer *maskOwnerLayer = view.layer;
+    if (!properties.changedProperties.contains(RemoteLayerTreeTransaction::MaskLayerChanged))
+        return;
 
+    auto maskOwnerLayer = [&] {
+        CALayer *layer = node.layer();
+#if PLATFORM(IOS_FAMILY)
         if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
             // This is a UIBackdropView, which means any mask must be applied to the CABackdropLayer rather
             // that the view's layer. The backdrop is the first layer child.
-            if (view.layer.sublayers.count && [view.layer.sublayers[0] isKindOfClass:[CABackdropLayer class]])
-                maskOwnerLayer = view.layer.sublayers[0];
+            if (layer.sublayers.count && [layer.sublayers[0] isKindOfClass:[CABackdropLayer class]])
+                layer = layer.sublayers[0];
         }
+#endif
+        return layer;
+    };
 
-        if (!properties.maskLayerID)
-            maskOwnerLayer.mask = nullptr;
-        else {
-            UIView *maskView = relatedLayers.get(properties.maskLayerID)->uiView();
-            // FIXME: need to check that the mask view is kept alive.
-            ASSERT(!maskView.layer.superlayer);
-            if (!maskView.layer.superlayer)
-                maskOwnerLayer.mask = maskView.layer;
-        }
+    if (!properties.maskLayerID) {
+        maskOwnerLayer().mask = nullptr;
+        return;
     }
 
+    CALayer *maskLayer = relatedLayers.get(properties.maskLayerID)->layer();
+    ASSERT(!maskLayer.superlayer);
+    if (maskLayer.superlayer)
+        return;
+    maskOwnerLayer().mask = maskLayer;
+}
+
+#if PLATFORM(IOS_FAMILY)
+void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+{
     if (properties.changedProperties.containsAny({ RemoteLayerTreeTransaction::ContentsHiddenChanged, RemoteLayerTreeTransaction::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
 }
