@@ -68,8 +68,10 @@ webkit.org/b/187773 http/tests/webAPIStatistics [ Pass ]
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 [ Mojave+ ] fast/events/detect-caps-lock.html [ Pass ]
-[ Mojave+ ] fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
+[ Mojave+ ] fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass ]
+[ Mojave+ ] fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
 [ Mojave+ ] fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
+[ Mojave+ ] fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 

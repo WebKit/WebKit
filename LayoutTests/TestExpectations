@@ -399,8 +399,10 @@ fast/canvas/webgl/context-update-on-display-configuration.html [ Skip ]
 fast/misc/valid-primary-screen-displayID.html [ Skip ]
 
 fast/events/detect-caps-lock.html [ Skip ]
-fast/repaint/placeholder-after-caps-lock-hidden.html [ Skip ]
+fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Skip ]
+fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Skip ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Skip ]
+fast/repaint/placeholder-after-caps-lock-hidden.html [ Skip ]
 
 # This test currently only works for mac-wk2
 fast/events/inactive-window-no-mouse-event.html [ Skip ]
