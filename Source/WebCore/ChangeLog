@@ -1,3 +1,14 @@
+2018-11-27  Jer Noble  <jer.noble@apple.com>
+
+        Unregister CDMSessionMediaSourceAVFObjC for error notifications during destruction.
+        https://bugs.webkit.org/show_bug.cgi?id=191985
+        <rdar://problem/45972018>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC):
+
 2018-11-27  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Use LibWebRTC provided vp8 decoders and encoders
