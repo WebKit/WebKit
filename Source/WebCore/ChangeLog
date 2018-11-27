@@ -1,3 +1,24 @@
+2018-11-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Refactor duplicate code for calling into media controls
+        https://bugs.webkit.org/show_bug.cgi?id=192040
+        <rdar://problem/46278931>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no functional change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setupAndCallJS):
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::setControllerJSProperty):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+        * html/HTMLMediaElement.h:
+
 2018-11-27  Simon Fraser  <simon.fraser@apple.com>
 
         Momentum scrolling ends at the wrong place when a scrolling overflow element has a non-zero border
