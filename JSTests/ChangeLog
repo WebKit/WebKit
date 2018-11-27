@@ -1,3 +1,63 @@
+2018-11-26  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r238326. rdar://problem/46259210
+
+    All users of ArrayBuffer should agree on the same max size
+    https://bugs.webkit.org/show_bug.cgi?id=191771
+    
+    Reviewed by Mark Lam.
+    
+    JSTests:
+    
+    * stress/big-wasm-memory-grow-no-max.js: Added.
+    (foo):
+    (catch):
+    * stress/big-wasm-memory-grow.js: Added.
+    (foo):
+    (catch):
+    * stress/big-wasm-memory.js: Added.
+    (foo):
+    (catch):
+    
+    Source/JavaScriptCore:
+    
+    Array buffers cannot be larger than 0x7fffffff, because otherwise loading typedArray.length in the DFG/FTL would produce
+    a uint32 or would require a signedness check, neither of which sounds reasonable. It's better to just bound their max size
+    instead.
+    
+    * runtime/ArrayBuffer.cpp:
+    (JSC::ArrayBufferContents::ArrayBufferContents):
+    (JSC::ArrayBufferContents::tryAllocate):
+    (JSC::ArrayBufferContents::transferTo):
+    (JSC::ArrayBufferContents::copyTo):
+    (JSC::ArrayBufferContents::shareWith):
+    * runtime/ArrayBuffer.h:
+    * wasm/WasmMemory.cpp:
+    (JSC::Wasm::Memory::tryCreate):
+    (JSC::Wasm::Memory::grow):
+    * wasm/WasmPageCount.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@238326 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+            All users of ArrayBuffer should agree on the same max size
+            https://bugs.webkit.org/show_bug.cgi?id=191771
+
+            Reviewed by Mark Lam.
+
+            * stress/big-wasm-memory-grow-no-max.js: Added.
+            (foo):
+            (catch):
+            * stress/big-wasm-memory-grow.js: Added.
+            (foo):
+            (catch):
+            * stress/big-wasm-memory.js: Added.
+            (foo):
+            (catch):
+
 2018-11-15  Mark Lam  <mark.lam@apple.com>
 
         Cherry-pick r238270. rdar://problem/46085279
