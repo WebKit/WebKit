@@ -2804,8 +2804,8 @@ IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScroll
     if (showsOverflowControls() && scrollbarInclusion == IncludeScrollbars)
         scrollbarSpace = scrollbarIntrusion();
     
-    // FIXME: This seems wrong: m_layerSize includes borders. Can we just use the ScrollableArea implementation?
-    return IntRect(scrollPosition(), IntSize(std::max(0, m_layerSize.width() - scrollbarSpace.width()), std::max(0, m_layerSize.height() - scrollbarSpace.height())));
+    auto visibleSize = this->visibleSize();
+    return { scrollPosition(), { std::max(0, visibleSize.width() - scrollbarSpace.width()), std::max(0, visibleSize.height() - scrollbarSpace.height()) } };
 }
 
 IntSize RenderLayer::overhangAmount() const

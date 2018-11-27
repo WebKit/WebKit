@@ -1,5 +1,16 @@
 2018-11-27  Simon Fraser  <simon.fraser@apple.com>
 
+        Momentum scrolling ends at the wrong place when a scrolling overflow element has a non-zero border
+        https://bugs.webkit.org/show_bug.cgi?id=191322
+
+        Reviewed by Dean Jackson.
+
+        * fast/scrolling/momentum-scroll-with-borders-expected.txt: Added.
+        * fast/scrolling/momentum-scroll-with-borders.html: Added.
+        * platform/ios/TestExpectations:
+
+2018-11-27  Simon Fraser  <simon.fraser@apple.com>
+
         Composited and tiled layers fail to update on scrolling in WebView
         https://bugs.webkit.org/show_bug.cgi?id=191821
         rdar://problem/46009272

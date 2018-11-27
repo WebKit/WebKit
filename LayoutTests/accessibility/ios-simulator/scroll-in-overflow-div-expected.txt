@@ -3,41 +3,41 @@ This makes sure that we can perform accessibility scroll actions inside overflow
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-AXScrollByPage received: data: AXScroll [position: 0.00 224.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 220.00]
 scroll down 0 : success true
-AXScrollByPage received: data: AXScroll [position: 0.00 448.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 440.00]
 scroll down 1 : success true
-AXScrollByPage received: data: AXScroll [position: 0.00 672.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 660.00]
 scroll down 2 : success true
-AXScrollByPage received: data: AXScroll [position: 0.00 712.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 716.00]
 scroll down 3 : success true
 scroll down 4 : success false
-AXScrollByPage received: data: AXScroll [position: 0.00 488.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 496.00]
 scroll up 0 : success true
-AXScrollByPage received: data: AXScroll [position: 0.00 264.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 276.00]
 scroll up 1 : success true
-AXScrollByPage received: data: AXScroll [position: 0.00 40.00]
+AXScrollByPage received: data: AXScroll [position: 0.00 56.00]
 scroll up 2 : success true
 AXScrollByPage received: data: AXScroll [position: 0.00 0.00]
 scroll up 3 : success true
 scroll up 4 : success false
-AXScrollByPage received: data: AXScroll [position: 424.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 420.00 0.00]
 scroll left 0 : success true
-AXScrollByPage received: data: AXScroll [position: 848.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 840.00 0.00]
 scroll left 1 : success true
-AXScrollByPage received: data: AXScroll [position: 1272.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 1260.00 0.00]
 scroll left 2 : success true
-AXScrollByPage received: data: AXScroll [position: 1696.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 1680.00 0.00]
 scroll left 3 : success true
-AXScrollByPage received: data: AXScroll [position: 2120.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 2100.00 0.00]
 scroll left 4 : success true
-AXScrollByPage received: data: AXScroll [position: 1696.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 1680.00 0.00]
 scroll right 0 : success true
-AXScrollByPage received: data: AXScroll [position: 1272.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 1260.00 0.00]
 scroll right 1 : success true
-AXScrollByPage received: data: AXScroll [position: 848.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 840.00 0.00]
 scroll right 2 : success true
-AXScrollByPage received: data: AXScroll [position: 424.00 0.00]
+AXScrollByPage received: data: AXScroll [position: 420.00 0.00]
 scroll right 3 : success true
 AXScrollByPage received: data: AXScroll [position: 0.00 0.00]
 scroll right 4 : success true
