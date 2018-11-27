@@ -217,6 +217,7 @@ typedef HWND PlatformWidget;
 
 namespace WebKit {
 class DrawingAreaProxy;
+class EditableImageController;
 class NativeWebGestureEvent;
 class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
@@ -1368,6 +1369,7 @@ public:
     void insertAttachment(Ref<API::Attachment>&&, Function<void(CallbackBase::Error)>&&);
     void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
     void serializedAttachmentDataForIdentifiers(const Vector<String>&, Vector<WebCore::SerializedAttachmentData>&);
+    void registerAttachmentIdentifier(const String&);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -1388,6 +1390,10 @@ public:
 #endif
 
     void updateCurrentModifierState();
+
+#if HAVE(PENCILKIT)
+    EditableImageController& editableImageController() { return *m_editableImageController; }
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
@@ -1853,7 +1859,6 @@ private:
     void registerAttachmentIdentifierFromData(const String&, const String& contentType, const String& preferredFileName, const IPC::DataReference&);
     void registerAttachmentIdentifierFromFilePath(const String&, const String& contentType, const String& filePath);
     void registerAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData>&&);
-    void registerAttachmentIdentifier(const String&);
     void cloneAttachmentData(const String& fromIdentifier, const String& toIdentifier);
 
     void platformRegisterAttachment(Ref<API::Attachment>&&, const String& preferredFileName, const IPC::DataReference&);
@@ -2280,6 +2285,10 @@ private:
     unsigned m_recentCrashCount { 0 };
 
     bool m_needsFontAttributes { false };
+
+#if HAVE(PENCILKIT)
+    std::unique_ptr<EditableImageController> m_editableImageController;
+#endif
 };
 
 } // namespace WebKit

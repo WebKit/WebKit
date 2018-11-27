@@ -454,4 +454,18 @@ window.UIHelper = class UIHelper {
             })()`, numberAsString => resolve(parseInt(numberAsString, 10)))
         });
     }
+
+    static attachmentInfo(attachmentIdentifier)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(JSON.stringify(uiController.attachmentInfo('${attachmentIdentifier}')));
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            })
+        });
+    }
 }

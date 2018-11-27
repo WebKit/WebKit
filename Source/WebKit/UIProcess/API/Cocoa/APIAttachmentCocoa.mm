@@ -53,6 +53,19 @@ static BOOL isDeclaredOrDynamicTypeIdentifier(NSString *type)
     return UTTypeIsDeclared((__bridge CFStringRef)type) || UTTypeIsDynamic((__bridge CFStringRef)type);
 }
 
+NSFileWrapper *Attachment::fileWrapper() const
+{
+    if (m_fileWrapperGenerator && !m_fileWrapper)
+        m_fileWrapper = m_fileWrapperGenerator();
+    return m_fileWrapper.get();
+}
+
+void Attachment::invalidateGeneratedFileWrapper()
+{
+    ASSERT(m_fileWrapperGenerator);
+    m_fileWrapper = nil;
+}
+
 WTF::String Attachment::mimeType() const
 {
     NSString *contentType = m_contentType.isEmpty() ? mimeTypeInferredFromFileExtension(*this) : m_contentType;
@@ -73,10 +86,12 @@ WTF::String Attachment::utiType() const
 
 WTF::String Attachment::fileName() const
 {
-    if ([m_fileWrapper filename].length)
-        return [m_fileWrapper filename];
+    auto fileWrapper = this->fileWrapper();
 
-    return [m_fileWrapper preferredFilename];
+    if ([fileWrapper filename].length)
+        return [fileWrapper filename];
+
+    return [fileWrapper preferredFilename];
 }
 
 void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, NSString *contentType)
@@ -98,15 +113,17 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
 
 std::optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
-    if (![m_fileWrapper isRegularFile]) {
+    auto fileWrapper = this->fileWrapper();
+
+    if (![fileWrapper isRegularFile]) {
         // FIXME: We should display a size estimate for directory-type file wrappers.
         return std::nullopt;
     }
 
-    if (auto fileSize = [[m_fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
+    if (auto fileSize = [[fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
         return fileSize;
 
-    return [m_fileWrapper regularFileContents].length;
+    return [fileWrapper regularFileContents].length;
 }
 
 RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
@@ -114,10 +131,12 @@ RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
     if (!m_hasEnclosingImage)
         return nullptr;
 
-    if (![m_fileWrapper isRegularFile])
+    auto fileWrapper = this->fileWrapper();
+
+    if (![fileWrapper isRegularFile])
         return nullptr;
 
-    NSData *data = [m_fileWrapper regularFileContents];
+    NSData *data = [fileWrapper regularFileContents];
     if (!data)
         return nullptr;
 
@@ -126,18 +145,20 @@ RefPtr<WebCore::SharedBuffer> Attachment::enclosingImageData() const
 
 bool Attachment::isEmpty() const
 {
-    return !m_fileWrapper;
+    return !m_fileWrapper && !m_fileWrapperGenerator;
 }
 
 RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
 {
-    if (!m_fileWrapper || !m_webPage)
+    auto fileWrapper = this->fileWrapper();
+
+    if (!fileWrapper || !m_webPage)
         return nullptr;
 
 #if CAN_SECURELY_ARCHIVE_FILE_WRAPPER
-    NSData *serializedData = securelyArchivedDataWithRootObject(m_fileWrapper.get());
+    NSData *serializedData = securelyArchivedDataWithRootObject(fileWrapper);
 #else
-    NSData *serializedData = insecurelyArchivedDataWithRootObject(m_fileWrapper.get());
+    NSData *serializedData = insecurelyArchivedDataWithRootObject(fileWrapper);
 #endif
 
     if (!serializedData)
@@ -166,6 +187,12 @@ void Attachment::updateFromSerializedRepresentation(Ref<WebCore::SharedBuffer>&&
 
     setFileWrapperAndUpdateContentType(fileWrapper, contentType);
     m_webPage->updateAttachmentAttributes(*this, [] (auto) { });
+}
+
+void Attachment::setFileWrapperGenerator(Function<RetainPtr<NSFileWrapper>(void)>&& fileWrapperGenerator)
+{
+    m_fileWrapperGenerator = WTFMove(fileWrapperGenerator);
+    m_fileWrapper = nil;
 }
 
 } // namespace API

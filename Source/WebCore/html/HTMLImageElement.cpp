@@ -26,6 +26,10 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "EditableImageReference.h"
+#include "Editor.h"
 #include "ElementIterator.h"
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
@@ -238,7 +242,9 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_experimentalImageMenuEnabled = !value.isNull();
         updateImageControls();
 #endif
-    } else {
+    } else if (name == x_apple_editable_imageAttr)
+        updateEditableImage(isConnected() ? IsConnectedToDocument::Yes : IsConnectedToDocument::No);
+    else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
             if (m_hadNameBeforeAttributeChanged != willHaveName && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
@@ -326,6 +332,10 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
         if (m_form)
             m_form->registerImgElement(this);
     }
+
+    if (insertionType.connectedToDocument)
+        updateEditableImage(IsConnectedToDocument::Yes);
+
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
     Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
@@ -357,8 +367,60 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
     if (is<HTMLPictureElement>(parentNode()))
         setPictureElement(nullptr);
 
+    if (removalType.disconnectedFromDocument)
+        updateEditableImage(IsConnectedToDocument::No);
+
     m_form = nullptr;
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
+GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
+{
+    if (!m_editableImage)
+        return 0;
+    return m_editableImage->embeddedViewID();
+}
+
+void HTMLImageElement::updateEditableImage(IsConnectedToDocument connected)
+{
+    if (!document().settings().editableImagesEnabled())
+        return;
+
+    auto* page = document().page();
+    if (!page)
+        return;
+
+    bool hasEditableAttribute = hasAttributeWithoutSynchronization(x_apple_editable_imageAttr);
+    bool isCurrentlyEditable = !!m_editableImage;
+    bool shouldBeEditable = (connected == IsConnectedToDocument::Yes) && hasEditableAttribute;
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    // Create the inner attachment for editable images, or non-editable
+    // images that were cloned from editable image sources.
+    if (!attachmentElement() && (shouldBeEditable || !m_pendingClonedAttachmentID.isEmpty())) {
+        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document());
+        if (!m_pendingClonedAttachmentID.isEmpty())
+            attachment->setUniqueIdentifier(WTFMove(m_pendingClonedAttachmentID));
+        else
+            attachment->ensureUniqueIdentifier();
+        setAttachmentElement(WTFMove(attachment));
+    }
+#endif
+
+    if (shouldBeEditable == isCurrentlyEditable)
+        return;
+
+    if (!hasEditableAttribute) {
+        m_editableImage = nullptr;
+        return;
+    }
+
+    if (!m_editableImage)
+        m_editableImage = EditableImageReference::create(document());
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    m_editableImage->associateWithAttachment(attachmentElement()->uniqueIdentifier());
+#endif
 }
 
 HTMLPictureElement* HTMLImageElement::pictureElement() const
@@ -633,6 +695,9 @@ RefPtr<HTMLAttachmentElement> HTMLImageElement::attachmentElement() const
 
 const String& HTMLImageElement::attachmentIdentifier() const
 {
+    if (!m_pendingClonedAttachmentID.isEmpty())
+        return m_pendingClonedAttachmentID;
+
     if (auto attachment = attachmentElement())
         return attachment->uniqueIdentifier();
 
@@ -737,11 +802,14 @@ bool HTMLImageElement::isSystemPreviewImage() const
 }
 #endif
 
-GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
+void HTMLImageElement::copyNonAttributePropertiesFromElement(const Element& source)
 {
-    if (!m_editableImageViewID)
-        m_editableImageViewID = GraphicsLayer::nextEmbeddedViewID();
-    return m_editableImageViewID;
+    auto& sourceImage = static_cast<const HTMLImageElement&>(source);
+#if ENABLE(ATTACHMENT_ELEMENT)
+    m_pendingClonedAttachmentID = !sourceImage.m_pendingClonedAttachmentID.isEmpty() ? sourceImage.m_pendingClonedAttachmentID : sourceImage.attachmentIdentifier();
+#endif
+    m_editableImage = sourceImage.m_editableImage;
+    Element::copyNonAttributePropertiesFromElement(source);
 }
 
 }

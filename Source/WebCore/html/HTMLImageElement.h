@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class EditableImageReference;
 class HTMLAttachmentElement;
 class HTMLFormElement;
 class HTMLMapElement;
@@ -152,6 +153,11 @@ private:
 
     ImageCandidate bestFitSourceFromPictureElement();
 
+    enum class IsConnectedToDocument : bool { No, Yes };
+    void updateEditableImage(IsConnectedToDocument);
+
+    void copyNonAttributePropertiesFromElement(const Element&) final;
+
 #if ENABLE(SERVICE_CONTROLS)
     void updateImageControls();
     void tryCreateImageControls();
@@ -172,7 +178,10 @@ private:
     bool m_experimentalImageMenuEnabled;
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
 
-    mutable GraphicsLayer::EmbeddedViewID m_editableImageViewID { 0 };
+    RefPtr<EditableImageReference> m_editableImage;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    String m_pendingClonedAttachmentID;
+#endif
 
     friend class HTMLPictureElement;
 };

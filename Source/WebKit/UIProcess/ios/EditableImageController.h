@@ -23,18 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if HAVE(PENCILKIT)
 
-#import "RemoteLayerTreeHost.h"
-#import "RemoteLayerTreeViews.h"
+#include "MessageReceiver.h"
+#include <WebCore/GraphicsLayer.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakObjCPtr.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
-@interface WKDrawingView : WKEmbeddedView <WKNativelyInteractible>
+OBJC_CLASS WKDrawingView;
 
-- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy;
+namespace WebKit {
 
-- (NSData *)PNGRepresentation;
+class WebPageProxy;
 
-@end
+struct EditableImage {
+    RetainPtr<WKDrawingView> drawingView;
+    String attachmentID;
+};
 
+class EditableImageController : private IPC::MessageReceiver {
+    WTF_MAKE_NONCOPYABLE(EditableImageController);
+public:
+    explicit EditableImageController(WebPageProxy&);
+    ~EditableImageController();
+
+    // IPC::MessageReceiver.
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+
+    EditableImage* editableImage(WebCore::GraphicsLayer::EmbeddedViewID);
+    EditableImage& ensureEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
+
+    void invalidateAttachmentForEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
+
+private:
+    void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
+    void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
+
+    void associateWithAttachment(WebCore::GraphicsLayer::EmbeddedViewID, const String& attachmentID);
+
+    WeakPtr<WebPageProxy> m_webPageProxy;
+
+    HashMap<WebCore::GraphicsLayer::EmbeddedViewID, std::unique_ptr<EditableImage>> m_editableImages;
+};
+
+} // namespace WebKit
 
 #endif // HAVE(PENCILKIT)

@@ -1,3 +1,22 @@
+2018-11-26  Tim Horton  <timothy_horton@apple.com>
+
+        Insert <attachment> elements under editable images to make their backing data accessible
+        https://bugs.webkit.org/show_bug.cgi?id=191844
+        <rdar://problem/30900149>
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::attachmentInfo):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::attachmentInfo):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::attachmentInfo):
+        Add a UIScriptController mechanism to retrieve information about
+        a given attachment.
+
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add support to communicate with Buildbot

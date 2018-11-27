@@ -202,6 +202,18 @@
 @end
 
 @implementation WKEmbeddedView
+
+- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _embeddedViewID = embeddedViewID;
+
+    return self;
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

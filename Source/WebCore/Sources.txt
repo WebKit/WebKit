@@ -1419,6 +1419,7 @@ page/DeviceController.cpp
 page/DiagnosticLoggingKeys.cpp
 page/DisabledAdaptations.cpp
 page/DragController.cpp
+page/EditableImageReference.cpp
 page/EventHandler.cpp
 page/EventSource.cpp
 page/FocusController.cpp

@@ -200,6 +200,8 @@ public:
     void drawSquareInEditableImage();
     long numberOfStrokesInEditableImage();
 
+    JSObjectRef attachmentInfo(JSStringRef attachmentIdentifier);
+
 private:
     UIScriptController(UIScriptContext&);
     

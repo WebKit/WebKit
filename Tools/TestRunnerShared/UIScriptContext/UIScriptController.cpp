@@ -501,6 +501,11 @@ long UIScriptController::numberOfStrokesInEditableImage()
     return 0;
 }
 
+JSObjectRef UIScriptController::attachmentInfo(JSStringRef)
+{
+    return nullptr;
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

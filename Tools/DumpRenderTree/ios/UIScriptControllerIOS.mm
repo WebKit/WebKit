@@ -427,6 +427,11 @@ void UIScriptController::toggleCapsLock(JSValueRef callback)
     doAsyncTask(callback);
 }
 
+JSObjectRef UIScriptController::attachmentInfo(JSStringRef)
+{
+    return nullptr;
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

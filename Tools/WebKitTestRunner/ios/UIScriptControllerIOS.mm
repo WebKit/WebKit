@@ -931,6 +931,25 @@ void UIScriptController::toggleCapsLock(JSValueRef callback)
     doAsyncTask(callback);
 }
 
+JSObjectRef UIScriptController::attachmentInfo(JSStringRef jsAttachmentIdentifier)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+
+    auto attachmentIdentifier = toWTFString(toWK(jsAttachmentIdentifier));
+    _WKAttachment *attachment = [webView _attachmentForIdentifier:attachmentIdentifier];
+    _WKAttachmentInfo *attachmentInfo = attachment.info;
+
+    NSDictionary *attachmentInfoDictionary = @{
+        @"id": attachmentIdentifier,
+        @"name": attachmentInfo.name,
+        @"contentType": attachmentInfo.contentType,
+        @"filePath": attachmentInfo.filePath,
+        @"size": @(attachmentInfo.data.length),
+    };
+
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:attachmentInfoDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

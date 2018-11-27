@@ -1,0 +1,3 @@
+Has attachment inside editable image: true.
+Attachment type after drawing on editable image: image/png.
+

@@ -233,6 +233,10 @@
 #include "SecKeyProxyStore.h"
 #endif
 
+#if HAVE(PENCILKIT)
+#include "EditableImageController.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -436,6 +440,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_inspectorDebuggable(std::make_unique<WebPageDebuggable>(*this))
 #endif
     , m_resetRecentCrashCountTimer(RunLoop::main(), this, &WebPageProxy::resetRecentCrashCount)
+#if HAVE(PENCILKIT)
+    , m_editableImageController(std::make_unique<EditableImageController>(*this))
+#endif
 {
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);

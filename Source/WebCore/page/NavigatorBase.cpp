@@ -27,6 +27,7 @@
 #include "config.h"
 #include "NavigatorBase.h"
 
+#include "Document.h"
 #include "ServiceWorkerContainer.h"
 #include <mutex>
 #include <wtf/Language.h>

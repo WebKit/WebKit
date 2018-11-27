@@ -733,6 +733,7 @@
 		2D29ECC6192ECC8300984B78 /* DisplayRefreshMonitorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECC2192ECC8300984B78 /* DisplayRefreshMonitorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D29ECC8192ECC8300984B78 /* DisplayRefreshMonitorManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECC4192ECC8300984B78 /* DisplayRefreshMonitorManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D29ECCA192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */; };
+		2D2E34AC21A4E192004598B5 /* EditableImageReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2E34A921A4E191004598B5 /* EditableImageReference.h */; };
 		2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4441917915C00034184 /* WebActionDisablingCALayerDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3EF4461917915C00034184 /* WebCoreCALayerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6612,6 +6613,8 @@
 		2D29ECC3192ECC8300984B78 /* DisplayRefreshMonitorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorManager.cpp; sourceTree = "<group>"; };
 		2D29ECC4192ECC8300984B78 /* DisplayRefreshMonitorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorManager.h; sourceTree = "<group>"; };
 		2D29ECC9192F1F1D00984B78 /* DisplayRefreshMonitorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorIOS.h; sourceTree = "<group>"; };
+		2D2E34A921A4E191004598B5 /* EditableImageReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditableImageReference.h; sourceTree = "<group>"; };
+		2D2E34AB21A4E192004598B5 /* EditableImageReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditableImageReference.cpp; sourceTree = "<group>"; };
 		2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossfadeGeneratedImage.cpp; sourceTree = "<group>"; };
 		2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossfadeGeneratedImage.h; sourceTree = "<group>"; };
 		2D2FC0561460CD6F00263633 /* GradientImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GradientImage.cpp; sourceTree = "<group>"; };
@@ -19988,6 +19991,8 @@
 				A7CA595C0B27BD9E00FA021D /* DragController.cpp */,
 				A7CA595B0B27BD9E00FA021D /* DragController.h */,
 				81F65FF513788FAA00FF6F2D /* DragState.h */,
+				2D2E34AB21A4E192004598B5 /* EditableImageReference.cpp */,
+				2D2E34A921A4E191004598B5 /* EditableImageReference.h */,
 				1AF326770D78B9440068F0C4 /* EditorClient.h */,
 				93C09A800B064F00005ABD4D /* EventHandler.cpp */,
 				93C09A520B064DB3005ABD4D /* EventHandler.h */,
@@ -28643,6 +28648,7 @@
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,
+				2D2E34AC21A4E192004598B5 /* EditableImageReference.h in Headers */,
 				93309DE2099E64920056E581 /* EditAction.h in Headers */,
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
 				93309DE8099E64920056E581 /* Editing.h in Headers */,

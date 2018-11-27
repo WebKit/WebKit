@@ -104,6 +104,7 @@ MESSAGE_RECEIVERS = \
     DownloadProxy \
     DrawingArea \
     DrawingAreaProxy \
+    EditableImageController \
     EventDispatcher \
     LegacyCustomProtocolManager \
     LegacyCustomProtocolManagerProxy \

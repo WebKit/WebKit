@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableEditableImages=true enableAttachmentElement=true ] -->
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("load", async () => {
+    const attachmentIdentifier = HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector("img"));
+    const hasAttachment = !!attachmentIdentifier.length;
+    await UIHelper.drawSquareInEditableImage();
+    const attachmentInfo = (await UIHelper.attachmentInfo(attachmentIdentifier));
+    const attachmentType = attachmentInfo.contentType;
+    document.getElementById("log").innerHTML = `Has attachment inside editable image: ${hasAttachment}.<br/>Attachment type after drawing on editable image: ${attachmentType}.`;
+    testRunner.notifyDone();
+});
+</script>
+</head>
+<body>
+<div id="log"></div>
+<img x-apple-editable-image width="300" height="300">
+</body>

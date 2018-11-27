@@ -30,6 +30,10 @@
 #import "UIKitSPI.h"
 #import <WebCore/GraphicsLayer.h>
 
+namespace WebKit {
+class WebPageProxy;
+}
+
 @protocol WKNativelyInteractible <NSObject>
 @end
 
@@ -62,8 +66,9 @@
 
 @interface WKEmbeddedView : UIView
 
-@property (nonatomic, assign) WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID;
-@property (nonatomic, assign) WebCore::GraphicsLayer::PlatformLayerID layerID;
+- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID;
+
+@property (nonatomic, readonly, assign) WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID;
 
 @end
 

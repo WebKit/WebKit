@@ -604,6 +604,7 @@
 		2D54C319212F3B330049C174 /* UnifiedSource62-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D54C305212F3B330049C174 /* UnifiedSource62-mm.mm */; };
 		2D54C31A212F3B330049C174 /* UnifiedSource61-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */; };
 		2D54C31B212F4DA60049C174 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
+		2D5875BF219B53150070B9AA /* EditableImageController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5875BD219B53150070B9AA /* EditableImageController.h */; };
 		2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */; };
 		2D6AB541192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */; };
 		2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2537,6 +2538,9 @@
 		2D54C304212F3B330049C174 /* UnifiedSource71-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource71-mm.mm"; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource71-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D54C305212F3B330049C174 /* UnifiedSource62-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource62-mm.mm"; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource62-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D54C306212F3B330049C174 /* UnifiedSource61-mm.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "UnifiedSource61-mm.mm"; path = "DerivedSources/WebKit2/unified-sources/UnifiedSource61-mm.mm"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D5875BB219B28A50070B9AA /* EditableImageController.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EditableImageController.messages.in; path = ios/EditableImageController.messages.in; sourceTree = "<group>"; };
+		2D5875BD219B53150070B9AA /* EditableImageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditableImageController.h; path = ios/EditableImageController.h; sourceTree = "<group>"; };
+		2D5875BE219B53150070B9AA /* EditableImageController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EditableImageController.mm; path = ios/EditableImageController.mm; sourceTree = "<group>"; };
 		2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageOverlay.cpp; sourceTree = "<group>"; };
 		2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageOverlay.h; sourceTree = "<group>"; };
 		2D6AB53F192B1C4A003A9FD1 /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPDFPageNumberIndicator.h; path = ios/WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
@@ -5789,6 +5793,9 @@
 				1AD4C1901B39F33200ABC28E /* ApplicationStateTracker.mm */,
 				F496A42F1F58A272004C1757 /* DragDropInteractionState.h */,
 				F496A4301F58A272004C1757 /* DragDropInteractionState.mm */,
+				2D5875BD219B53150070B9AA /* EditableImageController.h */,
+				2D5875BB219B28A50070B9AA /* EditableImageController.messages.in */,
+				2D5875BE219B53150070B9AA /* EditableImageController.mm */,
 				2DD45ADC1E5F8972006C355F /* InputViewUpdateDeferrer.h */,
 				2DD45ADD1E5F8972006C355F /* InputViewUpdateDeferrer.mm */,
 				0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */,
@@ -8990,6 +8997,7 @@
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
 				2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */,
+				2D5875BF219B53150070B9AA /* EditableImageController.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
 				BC032DA810F437D10058C15A /* Encoder.h in Headers */,

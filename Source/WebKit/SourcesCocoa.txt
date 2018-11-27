@@ -368,6 +368,7 @@ UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
 UIProcess/ios/DragDropInteractionState.mm
+UIProcess/ios/EditableImageController.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/PageClientImplIOS.mm
 UIProcess/ios/ProcessAssertionIOS.mm
@@ -556,3 +557,7 @@ WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @no-unify
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
+
+// Derived Sources
+
+EditableImageControllerMessageReceiver.cpp

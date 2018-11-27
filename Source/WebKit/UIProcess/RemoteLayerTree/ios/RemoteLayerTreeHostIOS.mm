@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "EditableImageController.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
@@ -123,28 +124,24 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 RetainPtr<WKEmbeddedView> RemoteLayerTreeHost::createEmbeddedView(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
-    Class embeddedViewClass = nil;
-    switch (properties.type) {
-    case PlatformCALayer::LayerTypeEditableImageLayer:
-#if HAVE(PENCILKIT)
-        embeddedViewClass = [WKDrawingView class];
-#endif
-        break;
-    default:
-        break;
-    }
-
-    if (!embeddedViewClass || m_isDebugLayerTreeHost)
+    if (m_isDebugLayerTreeHost)
         return adoptNS([[UIView alloc] init]);
 
-    auto result = m_embeddedViews.ensure(properties.embeddedViewID, [&] {
-        return adoptNS([[embeddedViewClass alloc] init]);
+    auto result = m_embeddedViews.ensure(properties.embeddedViewID, [&]() -> RetainPtr<UIView *> {
+        switch (properties.type) {
+#if HAVE(PENCILKIT)
+        case PlatformCALayer::LayerTypeEditableImageLayer: {
+            auto editableImage = m_drawingArea->page().editableImageController().editableImage(properties.embeddedViewID);
+            return editableImage ? editableImage->drawingView : nil;
+        }
+#endif
+        default:
+            return adoptNS([[UIView alloc] init]);
+        }
     });
     auto view = result.iterator->value;
     if (!result.isNewEntry)
-        m_layerToEmbeddedViewMap.remove([view layerID]);
-    [view setLayerID:properties.layerID];
-    m_embeddedViews.set(properties.embeddedViewID, view);
+        m_layerToEmbeddedViewMap.remove(RemoteLayerTreeNode::layerID([view layer]));
     m_layerToEmbeddedViewMap.set(properties.layerID, properties.embeddedViewID);
     return view;
 }

@@ -1,3 +1,63 @@
+2018-11-26  Tim Horton  <timothy_horton@apple.com>
+
+        Insert <attachment> elements under editable images to make their backing data accessible
+        https://bugs.webkit.org/show_bug.cgi?id=191844
+        <rdar://problem/30900149>
+
+        Reviewed by Simon Fraser.
+
+        Test: editing/images/editable-image-creates-attachment.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::insertedIntoAncestor):
+        (WebCore::HTMLImageElement::removedFromAncestor):
+        When the x-apple-editable-image attribute changes, or the element is
+        moved into or out of a document, call updateEditableImage.
+
+        (WebCore::HTMLImageElement::editableImageViewID const):
+        Adopt EditableImageReference.
+
+        (WebCore::HTMLImageElement::updateEditableImage):
+        When the image element moves into a document, the setting is on, and
+        the appropriate attribute is applied, add an <attachment> into the
+        shadow DOM, and inform the UI process both of the editable image's
+        creation and that it should be associated with the new attachment.
+
+        Use an EditableImageReference to extend the lifetime of the
+        corresponding editable image in the UI process, and to communicate
+        the attachment association.
+
+        If the element was cloned from another editable image element, use the
+        EditableImageReference and attachmentID from the original; the embedded
+        view will be re-parented under this element's layer, and the attachment
+        will be cloned (with a new ID) by editing code if the element is parented.
+
+        (WebCore::HTMLImageElement::attachmentIdentifier const):
+        (WebCore::HTMLImageElement::copyNonAttributePropertiesFromElement):
+        Store the aforementioned bits of information when cloned so that we can
+        reconstitute the appropriate attachment data and embedded view.
+
+        * html/HTMLImageElement.h:
+        * page/ChromeClient.h:
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/EditableImageReference.cpp: Added.
+        (WebCore::EditableImageReference::EditableImageReference):
+        (WebCore::EditableImageReference::~EditableImageReference):
+        (WebCore::EditableImageReference::associateWithAttachment):
+        * page/EditableImageReference.h: Added.
+        (WebCore::EditableImageReference::create):
+        (WebCore::EditableImageReference::embeddedViewID const):
+        Add EditableImageReference, which manages the lifetime of the UI-side
+        EditableImage and helps clients communicate about it. It is refcounted
+        so that cloned <img> elements can potentially borrow the UI-side state
+        (in the case where they end up getting parented).
+
+        * page/NavigatorBase.cpp:
+        Fix an unrelated unified build failure that I exposed.
+
 2018-11-26  Jer Noble  <jer.noble@apple.com>
 
         Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI

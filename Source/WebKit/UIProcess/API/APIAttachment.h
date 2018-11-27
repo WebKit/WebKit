@@ -60,9 +60,11 @@ public:
     bool isValid() const { return !!m_webPage; }
 
 #if PLATFORM(COCOA)
-    NSFileWrapper *fileWrapper() const { return m_fileWrapper.get(); }
+    NSFileWrapper *fileWrapper() const;
     void setFileWrapper(NSFileWrapper *fileWrapper) { m_fileWrapper = fileWrapper; }
     void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
+    void setFileWrapperGenerator(Function<RetainPtr<NSFileWrapper>(void)>&&);
+    void invalidateGeneratedFileWrapper();
     WTF::String utiType() const;
 #endif
     WTF::String mimeType() const;
@@ -92,7 +94,8 @@ private:
     explicit Attachment(const WTF::String& identifier, WebKit::WebPageProxy&);
 
 #if PLATFORM(COCOA)
-    RetainPtr<NSFileWrapper> m_fileWrapper;
+    mutable RetainPtr<NSFileWrapper> m_fileWrapper;
+    Function<RetainPtr<NSFileWrapper>(void)> m_fileWrapperGenerator;
 #endif
     WTF::String m_identifier;
     WTF::String m_filePath;

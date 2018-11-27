@@ -178,6 +178,10 @@ private:
     void showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&) final;
 
     Seconds eventThrottlingDelay() final;
+
+    void associateEditableImageWithAttachment(WebCore::GraphicsLayer::EmbeddedViewID, const String& attachmentID) final;
+    void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
+    void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID) final;
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

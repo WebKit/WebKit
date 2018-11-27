@@ -1,3 +1,17 @@
+2018-11-26  Tim Horton  <timothy_horton@apple.com>
+
+        Insert <attachment> elements under editable images to make their backing data accessible
+        https://bugs.webkit.org/show_bug.cgi?id=191844
+        <rdar://problem/30900149>
+
+        Reviewed by Simon Fraser.
+
+        * editing/images/editable-image-creates-attachment-expected.txt: Added.
+        * editing/images/editable-image-creates-attachment.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.attachmentInfo):
+        (window.UIHelper):
+
 2018-11-26  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r237738): Command Down Arrow doesn't scroll to the end of a page anymore

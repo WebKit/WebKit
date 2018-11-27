@@ -28,27 +28,41 @@
 
 #if HAVE(PENCILKIT)
 
+#import "EditableImageController.h"
 #import "PencilKitSPI.h"
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit);
 SOFT_LINK_CLASS(PencilKit, PKCanvasView);
+SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
+
+@interface WKDrawingView () <PKCanvasViewDelegate>
+@end
 
 @implementation WKDrawingView {
     RetainPtr<PKCanvasView> _pencilView;
+
+    OSObjectPtr<dispatch_queue_t> _renderQueue;
+    RetainPtr<PKImageRenderer> _renderer;
+
+    WeakPtr<WebKit::WebPageProxy> _webPageProxy;
 }
 
-- (id)init
+- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy
 {
-    self = [super init];
+    self = [super initWithEmbeddedViewID:embeddedViewID];
     if (!self)
         return nil;
+
+    _webPageProxy = makeWeakPtr(webPageProxy);
 
     _pencilView = adoptNS([allocPKCanvasViewInstance() initWithFrame:CGRectZero]);
 
     [_pencilView setFingerDrawingEnabled:NO];
     [_pencilView setUserInteractionEnabled:YES];
     [_pencilView setOpaque:NO];
+    [_pencilView setDrawingDelegate:self];
 
     [self addSubview:_pencilView.get()];
 
@@ -57,7 +71,43 @@ SOFT_LINK_CLASS(PencilKit, PKCanvasView);
 
 - (void)layoutSubviews
 {
-    [_pencilView setFrame:self.bounds];
+    if (!CGRectEqualToRect([_pencilView frame], self.bounds)) {
+        [_pencilView setFrame:self.bounds];
+
+        // The renderer is instantiated for a particular size output; if
+        // the size changes, we need to re-create the renderer.
+        _renderer = nil;
+    }
+}
+
+- (NSData *)PNGRepresentation
+{
+    if (!_renderQueue)
+        _renderQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKDrawingView.Rendering", DISPATCH_QUEUE_SERIAL));
+
+    if (!_renderer)
+        _renderer = adoptNS([allocPKImageRendererInstance() initWithSize:self.bounds.size scale:self.window.screen.scale renderQueue:_renderQueue.get()]);
+
+    __block RetainPtr<UIImage> resultImage;
+    [_renderer renderDrawing:[_pencilView drawing] completion:^(UIImage *image) {
+        resultImage = image;
+    }];
+
+    // FIXME: Ideally we would not synchronously wait for this rendering,
+    // but NSFileWrapper requires data synchronously, and our clients expect
+    // an NSFileWrapper to be available synchronously.
+    dispatch_sync(_renderQueue.get(), ^{ });
+
+    return UIImagePNGRepresentation(resultImage.get());
+}
+
+- (void)drawingDidChange:(PKCanvasView *)canvasView
+{
+    if (!_webPageProxy)
+        return;
+    auto& page = *_webPageProxy;
+
+    page.editableImageController().invalidateAttachmentForEditableImage(self.embeddedViewID);
 }
 
 @end

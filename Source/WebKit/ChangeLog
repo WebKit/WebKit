@@ -1,3 +1,92 @@
+2018-11-26  Tim Horton  <timothy_horton@apple.com>
+
+        Insert <attachment> elements under editable images to make their backing data accessible
+        https://bugs.webkit.org/show_bug.cgi?id=191844
+        <rdar://problem/30900149>
+
+        Reviewed by Simon Fraser.
+
+        * DerivedSources.make:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIAttachment.h:
+        fileWrapper() is no longer a trivial getter; it can now construct
+        the file wrapper from a file wrapper generator if necessary.
+
+        Add setFileWrapperGenerator() and invalidateGeneratedFileWrapper().
+
+        Make m_fileWrapper mutable so it can be adjusted inside its own getter.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::fileWrapper const):
+        If we have a fileWrapperGenerator and don't have a cached file wrapper,
+        create one before returning it.
+
+        (API::Attachment::invalidateGeneratedFileWrapper):
+        Invalidate the currently-cached file wrapper. The next time a client
+        requests the file wrapper it will be regenerated.
+
+        (API::Attachment::fileName const):
+        (API::Attachment::fileSizeForDisplay const):
+        (API::Attachment::enclosingImageData const):
+        (API::Attachment::isEmpty const):
+        (API::Attachment::createSerializedRepresentation const):
+        Make use of fileWrapper() instead of m_fileWrapper directly, to ensure
+        that it is created lazily if necessary.
+
+        (API::Attachment::setFileWrapperGenerator):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::createEmbeddedView):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKEmbeddedView initWithEmbeddedViewID:]):
+        Defer to EditableImageController for creating WKDrawingViews for
+        editable images. This is done primarily so we don't have to pollute
+        Remote Layer Tree and DrawingArea interfaces with editable-image-specific messages.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_editableImageController):
+        (WebKit::m_resetRecentCrashCountTimer): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::editableImageController):
+        Keep an EditableImageController on the WebPageProxy.
+
+        * UIProcess/ios/EditableImageController.h: Added.
+        * UIProcess/ios/EditableImageController.messages.in: Added.
+        * UIProcess/ios/EditableImageController.mm: Added.
+        (WebKit::EditableImageController::EditableImageController):
+        (WebKit::EditableImageController::~EditableImageController):
+        (WebKit::EditableImageController::ensureEditableImage):
+        (WebKit::EditableImageController::editableImage):
+        (WebKit::EditableImageController::didCreateEditableImage):
+        (WebKit::EditableImageController::didDestroyEditableImage):
+        (WebKit::EditableImageController::associateWithAttachment):
+        (WebKit::EditableImageController::invalidateAttachmentForEditableImage):
+        Add EditableImageController, which keeps track of EditableImages.
+        It can be messaged directly to create or destroy the UI-side state
+        of an editable image, and also to associate a WKDrawingView with
+        a particular attachment.
+
+        * UIProcess/ios/WKDrawingView.h:
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView initWithEmbeddedViewID:webPageProxy:]):
+        Store the WebPageProxy (weakly) so that we can get to the EditableImageController.
+
+        (-[WKDrawingView layoutSubviews]):
+        (-[WKDrawingView PNGRepresentation]):
+        Synchronously render the PKCanvasView to PNG.
+
+        (-[WKDrawingView drawingDidChange:]):
+        If the drawing changes, inform the APIAttachment that it needs
+        to discard its NSFileWrapper; a new one will be generated lazily.
+
+        (-[WKDrawingView init]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::associateEditableImageWithAttachment):
+        (WebKit::WebChromeClient::didCreateEditableImage):
+        (WebKit::WebChromeClient::didDestroyEditableImage):
+
 2018-11-26  Jer Noble  <jer.noble@apple.com>
 
         Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI

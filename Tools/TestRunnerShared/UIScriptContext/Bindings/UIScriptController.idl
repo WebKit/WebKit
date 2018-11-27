@@ -286,4 +286,6 @@ interface UIScriptController {
 
     void drawSquareInEditableImage();
     readonly attribute long numberOfStrokesInEditableImage;
+
+    object attachmentInfo(DOMString attachmentIdentifier);
 };
