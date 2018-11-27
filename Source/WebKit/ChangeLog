@@ -1,3 +1,19 @@
+2018-11-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        (r238246) [ MacOS Debug ] Layout Test http/wpt/webauthn/ctap-hid-failure.https.html is Crashing
+        https://bugs.webkit.org/show_bug.cgi?id=191757
+
+        Reviewed by Chris Dumez.
+
+        Wrong nonce error causes retransmission, which then trigger wrong nonce error. This is expected
+        behavior for mock testing. However, the main thread could time out when MockHidConnection::send
+        is excuting the block on another thread. The block will then return without invoking the callback,
+        which triggers this WTFCrash. The solution is always invoking the callback before return in the
+        block.
+
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::send):
+
 2018-11-27  Keith Rollin  <krollin@apple.com>
 
         Better parsing of comments in generate-message*.py

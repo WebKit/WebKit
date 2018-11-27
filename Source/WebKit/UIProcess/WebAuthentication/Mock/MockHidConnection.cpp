@@ -73,8 +73,10 @@ void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback
     auto task = BlockPtr<void()>::fromCallable([weakThis = makeWeakPtr(*this), data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
         RunLoop::main().dispatch([weakThis, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
-            if (!weakThis)
+            if (!weakThis) {
+                callback(DataSent::No);
                 return;
+            }
 
             weakThis->assembleRequest(WTFMove(data));
 
