@@ -229,6 +229,11 @@ WI.Table = class Table extends WI.View
         this._selectionController.allowsMultipleSelection = flag;
     }
 
+    get columns()
+    {
+        return Array.from(this._columnSpecs.values());
+    }
+
     isRowSelected(rowIndex)
     {
         return this._selectionController.hasSelectedItem(rowIndex);

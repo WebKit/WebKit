@@ -1,5 +1,31 @@
 2018-11-27  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Cookies table needs copy keyboard shortcut and context menu support
+        https://bugs.webkit.org/show_bug.cgi?id=191482
+        <rdar://problem/45953002>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype.handleCopyEvent):
+        (WI.CookieStorageContentView.prototype.tableCellContextMenuClicked):
+        As with Delete, if the target row is selected, all selected rows are copied.
+        Otherwise only the target row is copied. This distinction will be surfaced
+        in the UI in https://webkit.org/b/191095.
+
+        (WI.CookieStorageContentView.prototype.tablePopulateCell):
+        (WI.CookieStorageContentView.prototype._cookiesAtIndexes):
+        (WI.CookieStorageContentView.prototype._formatCookiesAsText):
+        (WI.CookieStorageContentView.prototype._formatCookiePropertyForColumn):
+        (WI.CookieStorageContentView):
+        Break Cookie property formatting into a helper method, which is used for
+        formatting Table cells and creating plain text for the clipboard.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.get columns):
+
+2018-11-27  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Table selection should be handled by a SelectionController
         https://bugs.webkit.org/show_bug.cgi?id=191977
         <rdar://problem/46253093>

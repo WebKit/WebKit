@@ -59,6 +59,20 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         return [this._table.scrollContainer];
     }
 
+    handleCopyEvent(event)
+    {
+        if (!this._table || !this._table.selectedRows.length)
+            return;
+
+        let cookies = this._cookiesAtIndexes(this._table.selectedRows);
+        if (!cookies.length)
+            return;
+
+        event.clipboardData.setData("text/plain", this._formatCookiesAsText(cookies));
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     // Table dataSource
 
     tableNumberOfRows(table)
@@ -84,6 +98,17 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         contextMenu.appendSeparator();
+        contextMenu.appendItem(WI.UIString("Copy"), () => {
+            let rowIndexes;
+            if (table.isRowSelected(rowIndex))
+                rowIndexes = table.selectedRows;
+            else
+                rowIndexes = [rowIndex];
+
+            let cookies = this._cookiesAtIndexes(rowIndexes);
+            InspectorFrontendHost.copyText(this._formatCookiesAsText(cookies));
+        });
+
         contextMenu.appendItem(WI.UIString("Delete"), () => {
             if (table.isRowSelected(rowIndex))
                 table.removeSelectedRows();
@@ -117,39 +142,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     tablePopulateCell(table, cell, column, rowIndex)
     {
         let cookie = this._cookies[rowIndex];
-
-        const checkmark = "\u2713";
-
-        switch (column.identifier) {
-        case "name":
-            cell.textContent = cookie.name;
-            break;
-        case "value":
-            cell.textContent = cookie.value;
-            break;
-        case "domain":
-            cell.textContent = cookie.domain || emDash;
-            break;
-        case "path":
-            cell.textContent = cookie.path || emDash;
-            break;
-        case "expires":
-            cell.textContent = cookie.expires ? new Date(cookie.expires).toLocaleString() : WI.UIString("Session");
-            break;
-        case "size":
-            cell.textContent = Number.bytesToString(cookie.size);
-            break;
-        case "secure":
-            cell.textContent = cookie.secure ? checkmark : zeroWidthSpace;
-            break;
-        case "httpOnly":
-            cell.textContent = cookie.httpOnly ? checkmark : zeroWidthSpace;
-            break;
-        case "sameSite":
-            cell.textContent = cookie.sameSite === WI.Cookie.SameSiteType.None ? emDash : WI.Cookie.displayNameForSameSiteType(cookie.sameSite);
-            break;
-        }
-
+        cell.textContent = this._formatCookiePropertyForColumn(cookie, column);
         return cell;
     }
 
@@ -339,6 +332,59 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     {
         if (event.keyCode === WI.KeyboardShortcut.Key.Backspace.keyCode || event.keyCode === WI.KeyboardShortcut.Key.Delete.keyCode)
             this._table.removeSelectedRows();
+    }
+
+    _cookiesAtIndexes(indexes)
+    {
+        if (!this._cookies.length)
+            return [];
+        return indexes.map((index) => this._cookies[index]);
+    }
+
+    _formatCookiesAsText(cookies)
+    {
+        let visibleColumns = this._table.columns.filter((column) => !column.hidden);
+        if (!visibleColumns.length)
+            return "";
+
+        let lines = cookies.map((cookie) => {
+            const usePunctuation = false;
+            let values = visibleColumns.map((column) => this._formatCookiePropertyForColumn(cookie, column, usePunctuation));
+            return values.join("\t");
+        });
+
+        return lines.join("\n");
+    }
+
+    _formatCookiePropertyForColumn(cookie, column, usePunctuation = true)
+    {
+        const checkmark = "\u2713";
+        const missingValue = usePunctuation ? emDash : "";
+        const missingCheckmark = usePunctuation ? zeroWidthSpace : "";
+
+        switch (column.identifier) {
+        case "name":
+            return cookie.name;
+        case "value":
+            return cookie.value;
+        case "domain":
+            return cookie.domain || missingValue;
+        case "path":
+            return cookie.path || missingValue;
+        case "expires":
+            return cookie.expires ? new Date(cookie.expires).toLocaleString() : WI.UIString("Session");
+        case "size":
+            return Number.bytesToString(cookie.size);
+        case "secure":
+            return cookie.secure ? checkmark : missingCheckmark;
+        case "httpOnly":
+            return cookie.httpOnly ? checkmark : missingCheckmark;
+        case "sameSite":
+            return cookie.sameSite === WI.Cookie.SameSiteType.None ? missingValue : WI.Cookie.displayNameForSameSiteType(cookie.sameSite);
+        }
+
+        console.assert("Unexpected table column " + column.identifier);
+        return "";
     }
 };
 
