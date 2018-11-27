@@ -1,3 +1,21 @@
+2018-11-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebKit.AddAndRemoveDataDetectors hits a debug assertion after r238515
+        https://bugs.webkit.org/show_bug.cgi?id=191996
+
+        Reviewed by Tim Horton.
+
+        This assertion is hit because `decode(Decoder& decoder, NSArray<Class> *allowedClasses)` expects the decoded
+        object (of class `_NSArrayM`) to be equal to `NSArray.class`.
+
+        We fix the crash by relaxing the debug assertion when decoding securely-codable objects over IPC. Instead of
+        checking that the class of the decoded object is equal to one of the allowed classes, check that the object is a
+        kind of any of the allowed classes.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.h:
+        (IPC::isObjectClassAllowed):
+        (IPC::decode):
+
 2018-11-27  Tomas Popela  <tpopela@redhat.com>
 
         [GTK][WPE] Remove temporary workaround in Source/WebKit/Platform*.cmake

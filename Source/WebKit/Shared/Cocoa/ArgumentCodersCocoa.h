@@ -43,6 +43,19 @@ std::optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
     return decode<T>(decoder, @[ allowedClass ]);
 }
 
+#ifndef NDEBUG
+
+static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasses)
+{
+    for (Class allowedClass in allowedClasses) {
+        if ([object isKindOfClass:allowedClass])
+            return true;
+    }
+    return false;
+}
+
+#endif
+
 template<typename T>
 std::optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
@@ -54,7 +67,7 @@ std::optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClas
         return { nullptr };
 
     id object = result->leakRef();
-    ASSERT([allowedClasses containsObject:[object class]]);
+    ASSERT(isObjectClassAllowed(object, allowedClasses));
     return { adoptNS(static_cast<T *>(object)) };
 }
 
