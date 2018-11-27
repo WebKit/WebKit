@@ -62,7 +62,7 @@ public:
     static CFDictionaryValueCallBacks kIUnknownDictionaryValueCallBacks;
 
 private:
-    static CFAbsoluteTime MarshallingHelpers::windowsEpochAbsoluteTime();
+    static CFAbsoluteTime windowsEpochAbsoluteTime();
 
 private:
     MarshallingHelpers();

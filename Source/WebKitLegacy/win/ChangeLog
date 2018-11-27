@@ -1,3 +1,12 @@
+2018-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Clang][WebKitLegacy][Win] MarshallingHelpers.h(65,47): warning: extra qualification on member 'windowsEpochAbsoluteTime' [-Wmicrosoft-extra-qualification]
+        https://bugs.webkit.org/show_bug.cgi?id=191959
+
+        Reviewed by Alex Christensen.
+
+        * MarshallingHelpers.h: Removed extra "MarshallingHelpers::" of windowsEpochAbsoluteTime declaration.
+
 2018-11-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: CoreAnimation
