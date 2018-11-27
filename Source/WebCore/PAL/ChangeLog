@@ -1,3 +1,13 @@
+2018-11-27  Jer Noble  <jer.noble@apple.com>
+
+        Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
+        https://bugs.webkit.org/show_bug.cgi?id=190951
+        <rdar://problem/45213065>
+
+        Follow-up build fix when building against older SDKs.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2018-11-26  Jer Noble  <jer.noble@apple.com>
 
         Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
