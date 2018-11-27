@@ -1,3 +1,14 @@
+2018-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] SOFT_LINK reports warning: implicit conversion between pointer-to-function and pointer-to-object is a Microsoft extension [-Wmicrosoft-cast]
+        https://bugs.webkit.org/show_bug.cgi?id=191960
+
+        Reviewed by Alex Christensen.
+
+        * wtf/win/SoftLinking.h: Do reinterpret_cast<void*> a function
+        pointer argument of EncodePointer. Changed the type of stored
+        function pointer returned by EncodePointer.
+
 2018-11-26  Sam Weinig  <sam@webkit.org>
 
         Streamline ListHashSet use in floating object code
