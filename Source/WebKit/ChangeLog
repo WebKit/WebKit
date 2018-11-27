@@ -1,3 +1,64 @@
+2018-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        Serialize and deserialize editable image strokes
+        https://bugs.webkit.org/show_bug.cgi?id=192002
+        <rdar://problem/30900149>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::updateAttributes):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willUpdateAttachmentAttributes):
+        * UIProcess/WebPageProxy.h:
+        When an attachment would update its DOM attributes, plumb a notification
+        to EditableImageController, and allow it to block the update (because
+        we don't really want to set src for editable image attachments,
+        we just want the UI process to fully own the data).
+
+        * Platform/spi/ios/PencilKitSPI.h:
+        Add some SPI.
+
+        * UIProcess/ios/EditableImageController.h:
+        * UIProcess/ios/EditableImageController.mm:
+        (WebKit::EditableImageController::loadStrokesFromAttachment):
+        Add a helper to load strokes from an attachment.
+
+        (WebKit::EditableImageController::associateWithAttachment):
+        Try to load strokes from the attachment when initially associated.
+        Don't create a file wrapper around a null image, so it will be regenerated later.
+
+        (WebKit::EditableImageController::willUpdateAttachmentAttributes):
+        The aforementioned plumbing at update time.
+
+        * UIProcess/ios/WKDrawingView.h:
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView layoutSubviews]):
+        Invalidate the attachment (so it will be regenerated upon request) if the
+        canvas size changes.
+
+        (-[WKDrawingView PNGRepresentation]):
+        Serialize strokes into the EXIF User Comment field.
+        We will find a different field to use (ideally a custom vendor-specific
+        field that nobody else will use for anything), but this works for now.
+
+        Don't try to render an image if we don't have a size or scale;
+        PKImageRenderer will just fail anyway, so bail early.
+
+        In the iOS Simulator, PKImageRenderer currently returns an unusable image.
+        Instead, so that we have a image on which to serialize the strokes,
+        create a transparent 1x1 image. This makes it possible to serialize strokes
+        even though we don't have a usable rendered image, so that we can still test
+        this change (and future changes).
+
+        (-[WKDrawingView loadDrawingFromPNGRepresentation:]):
+        If available, deserialize strokes from the EXIF User Comment field.
+
+        (-[WKDrawingView drawingDidChange:]):
+        (-[WKDrawingView invalidateAttachment]):
+        Factor invalidateAttachment out of drawingDidChange so we can call
+        it from layoutSubviews too!
+
 2018-11-27  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) crash under WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame()

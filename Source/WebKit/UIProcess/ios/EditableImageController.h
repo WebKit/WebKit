@@ -27,7 +27,9 @@
 
 #if HAVE(PENCILKIT)
 
+#include "APIAttachment.h"
 #include "MessageReceiver.h"
+#include "WebPageProxy.h"
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakObjCPtr.h>
@@ -37,8 +39,6 @@
 OBJC_CLASS WKDrawingView;
 
 namespace WebKit {
-
-class WebPageProxy;
 
 struct EditableImage {
     RetainPtr<WKDrawingView> drawingView;
@@ -59,11 +59,15 @@ public:
 
     void invalidateAttachmentForEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
 
+    WebPageProxy::ShouldUpdateAttachmentAttributes willUpdateAttachmentAttributes(const API::Attachment&);
+
 private:
     void didCreateEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
     void didDestroyEditableImage(WebCore::GraphicsLayer::EmbeddedViewID);
 
     void associateWithAttachment(WebCore::GraphicsLayer::EmbeddedViewID, const String& attachmentID);
+
+    void loadStrokesFromAttachment(EditableImage&, const API::Attachment&);
 
     WeakPtr<WebPageProxy> m_webPageProxy;
 

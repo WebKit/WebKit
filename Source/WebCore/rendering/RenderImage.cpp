@@ -214,13 +214,9 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
 
 bool RenderImage::isEditableImage() const
 {
-    if (!settings().editableImagesEnabled())
+    if (!element() || !is<HTMLImageElement>(element()))
         return false;
-
-    if (!element())
-        return false;
-
-    return element()->hasAttributeWithoutSynchronization(x_apple_editable_imageAttr);
+    return downcast<HTMLImageElement>(element())->hasEditableImageAttribute();
 }
     
 bool RenderImage::requiresLayer() const

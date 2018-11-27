@@ -92,14 +92,29 @@ void EditableImageController::associateWithAttachment(WebCore::GraphicsLayer::Em
     auto& editableImage = ensureEditableImage(embeddedViewID);
     WeakObjCPtr<WKDrawingView> drawingView = editableImage.drawingView.get();
     editableImage.attachmentID = attachmentID;
+
+    loadStrokesFromAttachment(editableImage, attachment);
+
     attachment.setFileWrapperGenerator([drawingView]() -> RetainPtr<NSFileWrapper> {
         if (!drawingView)
             return nil;
-        RetainPtr<NSFileWrapper> fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:[drawingView PNGRepresentation]]);
+        NSData *data = [drawingView PNGRepresentation];
+        if (!data)
+            return nil;
+        RetainPtr<NSFileWrapper> fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:data]);
         [fileWrapper setPreferredFilename:@"drawing.png"];
         return fileWrapper;
     });
     attachment.setContentType("public.png");
+}
+
+void EditableImageController::loadStrokesFromAttachment(EditableImage& editableImage, const API::Attachment& attachment)
+{
+    ASSERT(attachment.identifier() == editableImage.attachmentID);
+    NSFileWrapper *fileWrapper = attachment.fileWrapper();
+    if (!fileWrapper.isRegularFile)
+        return;
+    [editableImage.drawingView loadDrawingFromPNGRepresentation:fileWrapper.regularFileContents];
 }
 
 void EditableImageController::invalidateAttachmentForEditableImage(WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID)
@@ -117,6 +132,19 @@ void EditableImageController::invalidateAttachmentForEditableImage(WebCore::Grap
         return;
 
     attachment->invalidateGeneratedFileWrapper();
+}
+
+WebPageProxy::ShouldUpdateAttachmentAttributes EditableImageController::willUpdateAttachmentAttributes(const API::Attachment& attachment)
+{
+    for (auto& editableImage : m_editableImages.values()) {
+        if (editableImage->attachmentID != attachment.identifier())
+            continue;
+
+        loadStrokesFromAttachment(*editableImage, attachment);
+        return WebPageProxy::ShouldUpdateAttachmentAttributes::No;
+    }
+
+    return WebPageProxy::ShouldUpdateAttachmentAttributes::Yes;
 }
 
 } // namespace WebKit

@@ -1370,6 +1370,9 @@ public:
     void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
     void serializedAttachmentDataForIdentifiers(const Vector<String>&, Vector<WebCore::SerializedAttachmentData>&);
     void registerAttachmentIdentifier(const String&);
+
+    enum class ShouldUpdateAttachmentAttributes : bool { No, Yes };
+    ShouldUpdateAttachmentAttributes willUpdateAttachmentAttributes(const API::Attachment&);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

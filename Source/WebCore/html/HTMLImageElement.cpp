@@ -243,7 +243,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         updateImageControls();
 #endif
     } else if (name == x_apple_editable_imageAttr)
-        updateEditableImage(isConnected() ? IsConnectedToDocument::Yes : IsConnectedToDocument::No);
+        updateEditableImage();
     else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
@@ -333,12 +333,12 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
             m_form->registerImgElement(this);
     }
 
-    if (insertionType.connectedToDocument)
-        updateEditableImage(IsConnectedToDocument::Yes);
-
     // Insert needs to complete first, before we start updating the loader. Loader dispatches events which could result
     // in callbacks back to this node.
     Node::InsertedIntoAncestorResult insertNotificationRequest = HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+
+    if (insertionType.connectedToDocument && hasEditableImageAttribute())
+        insertNotificationRequest = InsertedIntoAncestorResult::NeedsPostInsertionCallback;
 
     if (insertionType.connectedToDocument && !m_parsedUsemap.isNull())
         treeScope().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
@@ -356,6 +356,12 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
     return insertNotificationRequest;
 }
 
+void HTMLImageElement::didFinishInsertingNode()
+{
+    if (hasEditableImageAttribute())
+        updateEditableImage();
+}
+
 void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (m_form)
@@ -368,10 +374,17 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
         setPictureElement(nullptr);
 
     if (removalType.disconnectedFromDocument)
-        updateEditableImage(IsConnectedToDocument::No);
+        updateEditableImage();
 
     m_form = nullptr;
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
+}
+
+bool HTMLImageElement::hasEditableImageAttribute() const
+{
+    if (!document().settings().editableImagesEnabled())
+        return false;
+    return hasAttributeWithoutSynchronization(x_apple_editable_imageAttr);
 }
 
 GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
@@ -381,7 +394,7 @@ GraphicsLayer::EmbeddedViewID HTMLImageElement::editableImageViewID() const
     return m_editableImage->embeddedViewID();
 }
 
-void HTMLImageElement::updateEditableImage(IsConnectedToDocument connected)
+void HTMLImageElement::updateEditableImage()
 {
     if (!document().settings().editableImagesEnabled())
         return;
@@ -390,9 +403,9 @@ void HTMLImageElement::updateEditableImage(IsConnectedToDocument connected)
     if (!page)
         return;
 
-    bool hasEditableAttribute = hasAttributeWithoutSynchronization(x_apple_editable_imageAttr);
+    bool hasEditableAttribute = hasEditableImageAttribute();
     bool isCurrentlyEditable = !!m_editableImage;
-    bool shouldBeEditable = (connected == IsConnectedToDocument::Yes) && hasEditableAttribute;
+    bool shouldBeEditable = isConnected() && hasEditableAttribute;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     // Create the inner attachment for editable images, or non-editable

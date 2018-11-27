@@ -8108,6 +8108,15 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
     }
 }
 
+WebPageProxy::ShouldUpdateAttachmentAttributes WebPageProxy::willUpdateAttachmentAttributes(const API::Attachment& attachment)
+{
+#if HAVE(PENCILKIT)
+    return m_editableImageController->willUpdateAttachmentAttributes(attachment);
+#else
+    return ShouldUpdateAttachmentAttributes::Yes;
+#endif
+}
+
 #if !PLATFORM(COCOA)
 
 void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&&, const String&, const IPC::DataReference&)

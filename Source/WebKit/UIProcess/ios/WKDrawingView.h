@@ -33,6 +33,7 @@
 - (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy;
 
 - (NSData *)PNGRepresentation;
+- (void)loadDrawingFromPNGRepresentation:(NSData *)PNGData;
 
 @end
 

@@ -116,6 +116,7 @@ public:
 #endif
 
     GraphicsLayer::EmbeddedViewID editableImageViewID() const;
+    bool hasEditableImageAttribute() const;
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);
@@ -142,6 +143,7 @@ private:
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
+    void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;
 
     bool isFormAssociatedElement() const final { return false; }
@@ -153,8 +155,7 @@ private:
 
     ImageCandidate bestFitSourceFromPictureElement();
 
-    enum class IsConnectedToDocument : bool { No, Yes };
-    void updateEditableImage(IsConnectedToDocument);
+    void updateEditableImage();
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 

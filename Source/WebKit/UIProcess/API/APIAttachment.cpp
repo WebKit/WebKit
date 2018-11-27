@@ -55,6 +55,11 @@ void Attachment::updateAttributes(Function<void(WebKit::CallbackBase::Error)>&& 
         return;
     }
 
+    if (m_webPage->willUpdateAttachmentAttributes(*this) == WebKit::WebPageProxy::ShouldUpdateAttachmentAttributes::No) {
+        callback(WebKit::CallbackBase::Error::None);
+        return;
+    }
+
     m_webPage->updateAttachmentAttributes(*this, WTFMove(callback));
 }
 

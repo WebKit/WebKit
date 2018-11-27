@@ -1,3 +1,16 @@
+2018-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        Serialize and deserialize editable image strokes
+        https://bugs.webkit.org/show_bug.cgi?id=192002
+        <rdar://problem/30900149>
+
+        Reviewed by Dean Jackson.
+
+        * editing/images/paste-editable-image-expected.txt: Added.
+        * editing/images/paste-editable-image.html: Added.
+        Add a test that we can copy and paste and editable image and
+        continue to edit it, and are affecting a different attachment than the original.
+
 2018-11-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Disallow loading webarchives as iframes

@@ -1,0 +1,6 @@
+Had 1 stroke in editable image after drawing.
+Had 1 stroke in editable image after copying and pasting.
+Had 2 strokes in editable image after drawing on pasted image.
+Pasted image got a new attachment ID: yes.
+
+
