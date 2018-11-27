@@ -1,3 +1,18 @@
+2018-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake] Remove ENABLE_ACCESSIBILITY CMake variable
+        https://bugs.webkit.org/show_bug.cgi?id=191831
+
+        Reviewed by Michael Catanzaro.
+
+        ENABLE_ACCESSIBILITY is a bit confusing name because there is no
+        such ENABLE_ACCESSIBILITY macros in C++ source files.
+
+        * Source/cmake/OptionsGTK.cmake: Removed ENABLE_ACCESSIBILITY.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+        * Source/cmake/OptionsWin.cmake: Ditto.
+        * Source/cmake/WebKitFeatures.cmake: Ditto.
+
 2018-11-26  Alberto Garcia  <berto@igalia.com>
 
         [GTK] [2.22.0] Fails to build in armel
