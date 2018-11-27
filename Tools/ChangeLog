@@ -1,3 +1,13 @@
+2018-11-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add support to communicate with Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=191935
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/common/__init__.py: Added.
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py: Added.
+
 2018-11-26  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Race condition in ServerProcess tests
