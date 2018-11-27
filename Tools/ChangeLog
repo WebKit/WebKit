@@ -1,3 +1,23 @@
+2018-11-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Race condition in ServerProcess tests
+        https://bugs.webkit.org/show_bug.cgi?id=191989
+        <rdar://problem/45536844>
+
+        Reviewed by Lucas Forschler.
+
+        Serializing these tests to prevent the race conditions.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess.serial_test_basic):
+        (TestServerProcess.serial_test_read_after_process_exits):
+        (TestServerProcess.serial_test_process_crashing):
+        (TestServerProcess.serial_test_process_crashing_no_data):
+        (TestServerProcess.test_basic): Deleted.
+        (TestServerProcess.test_read_after_process_exits): Deleted.
+        (TestServerProcess.test_process_crashing): Deleted.
+        (TestServerProcess.test_process_crashing_no_data): Deleted.
+
 2018-11-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add field in Patch object to indicate if it has been sent to Buildbot
