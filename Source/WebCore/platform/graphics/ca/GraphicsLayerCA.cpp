@@ -2400,7 +2400,8 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
                 return "has transform animation with unknown extent";
             };
             LOG_WITH_STREAM(Compositing, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking << " (" << reasonForBacking() << ")");
-        }
+        } else
+            LOG_WITH_STREAM(Compositing, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " setBackingStoreAttached: " << requiresBacking);
 #endif
 
         m_layer->setBackingStoreAttached(requiresBacking);

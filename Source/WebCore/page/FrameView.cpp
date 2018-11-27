@@ -2464,6 +2464,11 @@ void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& old
     updateCompositingLayersAfterScrolling();
     repaintSlowRepaintObjects();
     scrollPositionChanged(scrollPositionFromOffset(oldOffset), scrollPositionFromOffset(newOffset));
+    
+    if (auto* renderView = this->renderView()) {
+        if (renderView->usesCompositing())
+            renderView->compositor().didChangeVisibleRect();
+    }
 }
 
 // These scroll positions are affected by zooming.

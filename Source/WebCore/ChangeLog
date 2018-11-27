@@ -1,3 +1,25 @@
+2018-11-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Composited and tiled layers fail to update on scrolling in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=191821
+        rdar://problem/46009272
+
+        Reviewed by Zalan Bujtas.
+        
+        We relied on AppKit calling -[NSView viewWillDraw] on scrolling to trigger compositing
+        layer flushes which are necessary to update backing store attachment, and tile coverage
+        for tiled layers. However, we no longer get these reliably in WebView, so explicitly trigger
+        flushes if necessary from FrameView::scrollOffsetChangedViaPlatformWidgetImpl().
+        didChangeVisibleRect() is the same code path used by iOS UIWebView for the same purpose.
+
+        Tests: compositing/backing/backing-store-attachment-scroll.html
+               compositing/tiling/tile-coverage-on-scroll.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollOffsetChangedViaPlatformWidgetImpl):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateCoverage):
+
 2018-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add support for forcing color scheme appearance in DOM tree.
