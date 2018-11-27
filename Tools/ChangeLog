@@ -1,3 +1,14 @@
+2018-11-27  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add support to communicate with Buildbot (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=191935
+        <rdar://problem/46262314>
+
+        Unreviewed infrastructure fix.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot.send_patch_to_buildbot):
+
 2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] No way for clients to tell whether the content view is in the responder chain when the web view is

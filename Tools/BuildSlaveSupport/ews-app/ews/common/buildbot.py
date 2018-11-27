@@ -34,7 +34,7 @@ class Buildbot():
     def send_patch_to_buildbot(cls, patch_path, properties=[]):
         command = ['buildbot', 'try',
                    '--connect=pb',
-                   '--master={}:{}'.format(config.BUG_SERVER_HOST, config.BUILDBOT_SERVER_PORT),
+                   '--master={}:{}'.format(config.BUILDBOT_SERVER_HOST, config.BUILDBOT_SERVER_PORT),
                    '--username={}'.format(config.BUILDBOT_PB_USERNAME),
                    '--passwd={}'.format(config.BUILDBOT_PB_PASSWORD),
                    '--diff={}'.format(patch_path),
