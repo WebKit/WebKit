@@ -1,3 +1,27 @@
+2018-11-27  Mark Lam  <mark.lam@apple.com>
+
+        Introducing a ENABLE_SEPARATED_WX_HEAP macro.
+        https://bugs.webkit.org/show_bug.cgi?id=192013
+        <rdar://problem/45494310>
+
+        Reviewed by Keith Miller.
+
+        This makes the code a little more readable.
+
+        I put the definition of ENABLE_SEPARATED_WX_HEAP in JSC's config.h instead of
+        Platform.h because ENABLE_SEPARATED_WX_HEAP is only needed inside JSC.  Also,
+        ENABLE_SEPARATED_WX_HEAP depends on ENABLE(FAST_JIT_PERMISSIONS), which is only
+        defined for JSC.
+
+        * config.h:
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        (JSC::FixedVMPoolExecutableAllocator::initializeSeparatedWXHeaps):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2018-11-26  Caio Lima  <ticaiolima@gmail.com>
 
         Re-introduce op_bitnot

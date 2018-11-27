@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -37,3 +37,11 @@
 #endif
 
 #include <wtf/DisallowCType.h>
+
+#if !defined(ENABLE_SEPARATED_WX_HEAP)
+#if (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)) && PLATFORM(IOS_FAMILY) && CPU(ARM64)
+#define ENABLE_SEPARATED_WX_HEAP 1
+#else
+#define ENABLE_SEPARATED_WX_HEAP 0
+#endif
+#endif // !defined(ENABLE_SEPARATED_WX_HEAP)
