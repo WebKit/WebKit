@@ -35,5 +35,6 @@ messages -> VideoFullscreenManager {
     SetVideoLayerGravityEnum(uint64_t contextId, unsigned gravity)
     FullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)
     FullscreenMayReturnToInline(uint64_t contextId, bool isPageVisible)
+    RequestRouteSharingPolicyAndContextUID(uint64_t contextId) -> (enum:uint8_t WebCore::RouteSharingPolicy routeSharingPolicy, String routingContextUID) Async
 }
 #endif

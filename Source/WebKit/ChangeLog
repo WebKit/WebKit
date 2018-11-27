@@ -1,3 +1,23 @@
+2018-11-26  Jer Noble  <jer.noble@apple.com>
+
+        Adopt -setOverrideRouteSharingPolicy:routingContextUID: SPI
+        https://bugs.webkit.org/show_bug.cgi?id=190951
+        <rdar://problem/45213065>
+
+        Reviewed by Alex Christensen.
+
+        Add an asyncronous reply request to VideoFullscreenManager.
+
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendWithAsyncReply):
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID):
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::requestRouteSharingPolicyAndContextUID):
+
 2018-11-26  Alex Christensen  <achristensen@webkit.org>
 
         Rename WKWebView._safeBrowsingWarningForTesting to _safeBrowsingWarning to use it for more than testing

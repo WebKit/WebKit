@@ -187,6 +187,12 @@ void VideoFullscreenModelVideoElement::fullscreenModeChanged(HTMLMediaElementEnu
         m_videoElement->fullscreenModeChanged(videoFullscreenMode);
 }
 
+void VideoFullscreenModelVideoElement::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&& completionHandler)
+{
+    auto& session = AudioSession::sharedSession();
+    completionHandler(session.routeSharingPolicy(), session.routingContextUID());
+}
+
 void VideoFullscreenModelVideoElement::addClient(VideoFullscreenModelClient& client)
 {
     ASSERT(!m_clients.contains(&client));
