@@ -30,7 +30,6 @@
 #include "WKBundleAPICast.h"
 #include "WebInspector.h"
 
-using namespace WebCore;
 using namespace WebKit;
 
 WKTypeID WKBundleInspectorGetTypeID()

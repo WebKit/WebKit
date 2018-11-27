@@ -48,7 +48,6 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ServiceWorkerThreadProxy.h>
 
-using namespace WebCore;
 using namespace WebKit;
 
 WKTypeID WKBundleGetTypeID()
@@ -250,13 +249,13 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
 
 void WKBundleClearAllDatabases(WKBundleRef)
 {
-    DatabaseTracker::singleton().deleteAllDatabasesImmediately();
+    WebCore::DatabaseTracker::singleton().deleteAllDatabasesImmediately();
 }
 
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
     // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
-    DatabaseTracker::singleton().setQuota(*SecurityOriginData::fromDatabaseIdentifier("file__0"), quota);
+    WebCore::DatabaseTracker::singleton().setQuota(*SecurityOriginData::fromDatabaseIdentifier("file__0"), quota);
 }
 
 void WKBundleReleaseMemory(WKBundleRef)
@@ -321,12 +320,12 @@ void WKBundleSetTabKeyCyclesThroughElements(WKBundleRef bundleRef, WKBundlePageR
 
 void WKBundleClearResourceLoadStatistics(WKBundleRef)
 {
-    ResourceLoadObserver::shared().clearState();
+    WebCore::ResourceLoadObserver::shared().clearState();
 }
 
 void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
 {
-    ResourceLoadObserver::shared().notifyObserver();
+    WebCore::ResourceLoadObserver::shared().notifyObserver();
 }
 
 

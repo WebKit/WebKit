@@ -1,3 +1,35 @@
+2018-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove "using namespace WebCore" under Source/WebKit/WebProcess/InjectedBundle/API
+        https://bugs.webkit.org/show_bug.cgi?id=191995
+
+        Reviewed by Alex Christensen.
+
+        The statement "using namespace WebCore" should be placed inside
+        namespace WebKit for unified source builds. But, source files
+        defining WebKit API can't be enclosed by namespace WebKit { }
+        becuase they are defined in the global scope.
+
+        "using namespace WebCore" in global scope and unified source
+        builds may cause build breaks (Bug 191853).
+
+        Remove "using namespace WebCore" in the global scope. Use
+        "WebCore::" prefix instead.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleClearAllDatabases):
+        (WKBundleSetDatabaseQuota):
+        (WKBundleClearResourceLoadStatistics):
+        (WKBundleResourceLoadStatisticsNotifyObserver):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetFrameLoadState):
+        (WKBundleFrameClearOpener):
+        (WKBundleFrameCallShouldCloseOnWebView):
+        (WKBundleFrameCopySecurityOrigin):
+        (WKBundleFrameFocus):
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+
 2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] No way for clients to tell whether the content view is in the responder chain when the web view is

@@ -53,7 +53,6 @@ template<> struct ClientTraits<WKBundlePageOverlayAccessibilityClientBase> {
 
 }
 
-using namespace WebCore;
 using namespace WebKit;
 
 class PageOverlayClientImpl : API::Client<WKBundlePageOverlayClientBase>, public WebPageOverlay::Client {
@@ -86,7 +85,7 @@ private:
         m_client.didMoveToPage(toAPI(&pageOverlay), toAPI(page), m_client.base.clientInfo);
     }
 
-    void drawRect(WebPageOverlay& pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect) override
+    void drawRect(WebPageOverlay& pageOverlay, WebCore::GraphicsContext& graphicsContext, const WebCore::IntRect& dirtyRect) override
     {
         if (!m_client.drawRect)
             return;
@@ -94,23 +93,23 @@ private:
         m_client.drawRect(toAPI(&pageOverlay), graphicsContext.platformContext(), toAPI(dirtyRect), m_client.base.clientInfo);
     }
     
-    bool mouseEvent(WebPageOverlay& pageOverlay, const PlatformMouseEvent& event) override
+    bool mouseEvent(WebPageOverlay& pageOverlay, const WebCore::PlatformMouseEvent& event) override
     {
         switch (event.type()) {
-        case PlatformMouseEvent::Type::MousePressed: {
+        case WebCore::PlatformMouseEvent::Type::MousePressed: {
             if (!m_client.mouseDown)
                 return false;
 
             return m_client.mouseDown(toAPI(&pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.base.clientInfo);
         }
-        case PlatformMouseEvent::Type::MouseReleased: {
+        case WebCore::PlatformMouseEvent::Type::MouseReleased: {
             if (!m_client.mouseUp)
                 return false;
 
             return m_client.mouseUp(toAPI(&pageOverlay), toAPI(event.position()), toAPI(event.button()), m_client.base.clientInfo);
         }
-        case PlatformMouseEvent::Type::MouseMoved: {
-            if (event.button() == MouseButton::NoButton) {
+        case WebCore::PlatformMouseEvent::Type::MouseMoved: {
+            if (event.button() == WebCore::MouseButton::NoButton) {
                 if (!m_client.mouseMoved)
                     return false;
 

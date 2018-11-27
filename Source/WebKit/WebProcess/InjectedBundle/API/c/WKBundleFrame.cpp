@@ -45,7 +45,6 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/Page.h>
 
-using namespace WebCore;
 using namespace WebKit;
 
 WKTypeID WKBundleFrameGetTypeID()
@@ -75,16 +74,16 @@ WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
 
 WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
 {
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    WebCore::Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
     switch (coreFrame->loader().state()) {
-    case FrameStateProvisional:
+    case WebCore::FrameStateProvisional:
         return kWKFrameLoadStateProvisional;
-    case FrameStateCommittedPage:
+    case WebCore::FrameStateCommittedPage:
         return kWKFrameLoadStateCommitted;
-    case FrameStateComplete:
+    case WebCore::FrameStateComplete:
         return kWKFrameLoadStateFinished;
     }
 
@@ -149,7 +148,7 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 
 void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    WebCore::Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (coreFrame)
         coreFrame->loader().setOpener(0);
 }
@@ -261,7 +260,7 @@ WKDataRef WKBundleFrameCopyWebArchiveFilteringSubframes(WKBundleFrameRef frameRe
 
 bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 {
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    WebCore::Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return true;
 
@@ -275,7 +274,7 @@ WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame
 
 WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 {
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    WebCore::Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return 0;
 
@@ -284,7 +283,7 @@ WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
 
 void WKBundleFrameFocus(WKBundleFrameRef frameRef)
 {
-    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    WebCore::Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (!coreFrame)
         return;
 
