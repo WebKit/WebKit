@@ -178,6 +178,9 @@ static void webKitSettingsConstructed(GObject* object)
     WebPreferences* prefs = settings->priv->preferences.get();
     prefs->setShouldRespectImageOrientation(true);
 
+    if (g_getenv("WEBKIT_WEBRTC_DISABLE_UNIFIED_PLAN"))
+        prefs->setWebRTCUnifiedPlanEnabled(FALSE);
+
     bool mediaStreamEnabled = prefs->mediaStreamEnabled();
     prefs->setMediaDevicesEnabled(mediaStreamEnabled);
     prefs->setPeerConnectionEnabled(mediaStreamEnabled);
