@@ -724,9 +724,6 @@ bool TextFieldInputType::shouldDrawCapsLockIndicator() const
     if (element()->isDisabledOrReadOnly())
         return false;
 
-    if (element()->hasAutoFillStrongPasswordButton())
-        return false;
-
     RefPtr<Frame> frame = element()->document().frame();
     if (!frame)
         return false;
@@ -795,8 +792,6 @@ void TextFieldInputType::createAutoFillButton(AutoFillButtonType autoFillButtonT
 
 void TextFieldInputType::updateAutoFillButton()
 {
-    capsLockStateMayHaveChanged();
-
     if (shouldDrawAutoFillButton()) {
         if (!m_container)
             createContainer();
