@@ -473,6 +473,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_accessibilityClearSelection WK_API_AVAILABLE(ios(11.3));
 - (UIView *)_fullScreenPlaceholderView WK_API_AVAILABLE(ios(12.0));
 
+@property (nonatomic, readonly) BOOL _contentViewIsFirstResponder WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 - (void)_dismissContentRelativeChildWindows WK_API_AVAILABLE(macosx(10.13.4));
 - (void)_setFrame:(NSRect)rect andScrollBy:(NSSize)offset WK_API_AVAILABLE(macosx(10.13.4));

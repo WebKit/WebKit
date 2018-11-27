@@ -1319,6 +1319,11 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 #if PLATFORM(IOS_FAMILY)
 
+- (BOOL)_contentViewIsFirstResponder
+{
+    return self._currentContentView.isFirstResponder;
+}
+
 - (_WKDragInteractionPolicy)_dragInteractionPolicy
 {
     return _dragInteractionPolicy;

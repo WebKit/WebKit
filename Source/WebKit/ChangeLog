@@ -1,3 +1,19 @@
+2018-11-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] No way for clients to tell whether the content view is in the responder chain when the web view is
+        https://bugs.webkit.org/show_bug.cgi?id=169212
+        <rdar://problem/30899656>
+
+        Reviewed by Tim Horton.
+
+        Add an SPI hook to allow internal WKWebView clients to determine whether the WKWebView's content view is the
+        first responder. Intended for use by clients, such as Mail, that embed native text input views and other views
+        that may become first responder within the view hierarchy of the WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _contentViewIsFirstResponder]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-11-26  Tim Horton  <timothy_horton@apple.com>
 
         Insert <attachment> elements under editable images to make their backing data accessible
