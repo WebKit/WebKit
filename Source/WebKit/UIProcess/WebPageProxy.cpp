@@ -2704,8 +2704,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
             loadRequestWithNavigation(navigation, ResourceRequest { navigation->currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes);
 
         ASSERT(!m_mainFrame);
-        m_mainFrameCreationHandler = [this, protectedThis = WTFMove(protectedThis), navigation = navigation.copyRef(), request =  navigation->currentRequest(), mainFrameURL, isServerRedirect = navigation->currentRequestIsRedirect()]() mutable {
+        m_mainFrameCreationHandler = [this, protectedThis = WTFMove(protectedThis), navigationID = navigation->navigationID(), request =  navigation->currentRequest(), mainFrameURL, isServerRedirect = navigation->currentRequestIsRedirect()]() mutable {
             ASSERT(m_mainFrame);
+            // This navigation was destroyed so no need to notify of redirect.
+            if (!navigationState().navigation(navigationID))
+                return;
+
             // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
             m_mainFrame->frameLoadState().setURL(mainFrameURL);
 
@@ -2714,7 +2718,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
             // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
             if (isServerRedirect) {
                 m_mainFrame->frameLoadState().didStartProvisionalLoad(request.url());
-                didReceiveServerRedirectForProvisionalLoadForFrame(m_mainFrame->frameID(), navigation->navigationID(), WTFMove(request), { });
+                didReceiveServerRedirectForProvisionalLoadForFrame(m_mainFrame->frameID(), navigationID, WTFMove(request), { });
             }
         };
 
@@ -6264,6 +6268,9 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
+    m_mainFrameCreationHandler = nullptr;
+    m_mainFrameWindowCreationHandler = nullptr;
+
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
 #endif

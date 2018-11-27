@@ -1,3 +1,21 @@
+2018-11-27  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON) crash under WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=191983
+        <rdar://problem/46246863>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        Make sure the navigation still exists in m_mainFrameCreationHandler and return early if it
+        does not.
+
+        (WebKit::WebPageProxy::resetState):
+        Clear out m_mainFrameCreationHandler / m_mainFrameWindowCreationHandler if we resetting the state
+        after a crash. At this point, there is no chance the WebProcess will send us the IPC that will
+        cause these to get called and we do not want old state to remain for future navigations.
+
 2018-11-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Disallow loading webarchives as iframes
