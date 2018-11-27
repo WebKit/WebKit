@@ -225,6 +225,8 @@ public:
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
 
+    void isJITEnabled(CompletionHandler<void(bool)>&&);
+
     WebCore::ApplicationCacheStorage& applicationCacheStorage() { return *m_applicationCacheStorage; }
 
     void prefetchDNS(const String&);

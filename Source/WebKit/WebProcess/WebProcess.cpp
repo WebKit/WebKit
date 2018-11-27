@@ -906,6 +906,11 @@ void WebProcess::resetPluginLoadClientPolicies(const HashMap<WTF::String, HashMa
 #endif
 }
 
+void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(JSC::VM::canUseJIT());
+}
+
 void WebProcess::clearPluginClientPolicies()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(MAC)

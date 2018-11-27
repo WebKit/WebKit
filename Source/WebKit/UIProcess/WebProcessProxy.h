@@ -107,7 +107,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    WebProcessPool& processPool() { return m_processPool; }
+    WebProcessPool& processPool() const { return m_processPool; }
 
     // FIXME: WebsiteDataStores should be made per-WebPageProxy throughout WebKit2
     WebsiteDataStore& websiteDataStore() const { return m_websiteDataStore.get(); }
@@ -241,6 +241,8 @@ protected:
 #if PLATFORM(COCOA)
     void cacheMediaMIMETypesInternal(const Vector<String>&);
 #endif
+
+    bool isJITEnabled() const final;
 
 private:
     // Called when the web process has crashed or we know that it will terminate soon.

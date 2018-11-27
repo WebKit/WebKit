@@ -129,6 +129,8 @@ messages -> WebProcess LegacyReceiver {
 
     UpdateActivePages()
 
+    IsJITEnabled() -> (bool enabled) Delayed
+
 #if PLATFORM(MAC)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)

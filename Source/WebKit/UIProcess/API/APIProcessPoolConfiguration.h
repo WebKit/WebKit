@@ -154,6 +154,9 @@ public:
     void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
 #endif
 
+    bool isJITEnabled() const { return m_isJITEnabled; }
+    void setJITEnabled(bool enabled) { m_isJITEnabled = enabled; }
+
 private:
     bool m_shouldHaveLegacyDataStore { false };
 
@@ -188,6 +191,7 @@ private:
     bool m_processSwapsOnNavigation { false };
     bool m_alwaysKeepAndReuseSwappedProcesses { false };
     bool m_processSwapsOnWindowOpenWithOpener { false };
+    bool m_isJITEnabled { true };
 
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;

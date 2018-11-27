@@ -825,6 +825,7 @@ public:
     void setPaginationLineGridEnabled(bool);
     bool paginationLineGridEnabled() const { return m_paginationLineGridEnabled; }
     unsigned pageCount() const { return m_pageCount; }
+    bool isJITEnabled();
         
 #if PLATFORM(MAC)
     void setUseSystemAppearance(bool);

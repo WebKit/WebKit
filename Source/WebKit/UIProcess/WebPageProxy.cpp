@@ -6283,6 +6283,13 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     return parameters;
 }
 
+bool WebPageProxy::isJITEnabled()
+{
+    bool enabled = false;
+    m_process->connection()->sendSync(Messages::WebProcess::IsJITEnabled(), Messages::WebProcess::IsJITEnabled::Reply(enabled), 0);
+    return enabled;
+}
+
 void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     m_pageClient.enterAcceleratedCompositingMode(layerTreeContext);

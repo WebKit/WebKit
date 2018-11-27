@@ -4485,6 +4485,11 @@ WEBCORE_COMMAND(yankAndSelect)
 #endif
 }
 
+- (BOOL)_isJITEnabled
+{
+    return _page->isJITEnabled();
+}
+
 - (void)_evaluateJavaScriptWithoutUserGesture:(NSString *)javaScriptString completionHandler:(void (^)(id, NSError *))completionHandler
 {
     [self _evaluateJavaScript:javaScriptString forceUserGesture:NO completionHandler:completionHandler];

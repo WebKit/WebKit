@@ -130,6 +130,8 @@ public:
     static void dumpProfile() { }
 #endif
 
+    JS_EXPORT_PRIVATE static void setJITEnabled(bool);
+
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort);
 
     bool isValidExecutableMemory(const AbstractLocker&, void* address);
