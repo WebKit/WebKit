@@ -1,5 +1,22 @@
 2018-11-27  Antti Koivisto  <antti@apple.com>
 
+        Stop collecting related layers in RemoteLayerTreeHost::updateLayerTree
+        https://bugs.webkit.org/show_bug.cgi?id=192003
+
+        Reviewed by Tim Horton.
+
+        We can pass the node hash directly to RemoteLayerTreePropertyApplier. The collection step doesn't seem
+        to add anything except an extra hash lookup.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+
+        Pass m_nodes directly.
+        Some random cleanups.
+
+2018-11-27  Antti Koivisto  <antti@apple.com>
+
         Remote tile layers shouldn't be UIViews
         https://bugs.webkit.org/show_bug.cgi?id=191953
 

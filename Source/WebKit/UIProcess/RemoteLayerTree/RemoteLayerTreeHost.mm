@@ -82,8 +82,11 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         rootLayerChanged = true;
     }
 
-    typedef std::pair<GraphicsLayer::PlatformLayerID, GraphicsLayer::PlatformLayerID> LayerIDPair;
-    Vector<LayerIDPair> clonesToUpdate;
+    struct LayerAndClone {
+        GraphicsLayer::PlatformLayerID layerID;
+        GraphicsLayer::PlatformLayerID cloneLayerID;
+    };
+    Vector<LayerAndClone> clonesToUpdate;
 
 #if PLATFORM(MAC) || PLATFORM(IOSMAC)
     // Can't use the iOS code on macOS yet: rdar://problem/31247730
@@ -99,33 +102,20 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         auto* node = nodeForID(layerID);
         ASSERT(node);
 
-        RemoteLayerTreePropertyApplier::RelatedLayerMap relatedLayers;
-        if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-            for (auto& child : properties.children)
-                relatedLayers.set(child, nodeForID(child));
-        }
+        if (properties.changedProperties.contains(RemoteLayerTreeTransaction::ClonedContentsChanged) && properties.clonedLayerID)
+            clonesToUpdate.append({ layerID, properties.clonedLayerID });
 
-        if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged && properties.maskLayerID)
-            relatedLayers.set(properties.maskLayerID, nodeForID(properties.maskLayerID));
-
-        if (properties.changedProperties & RemoteLayerTreeTransaction::ClonedContentsChanged && properties.clonedLayerID)
-            clonesToUpdate.append(LayerIDPair(layerID, properties.clonedLayerID));
+        RemoteLayerTreePropertyApplier::applyProperties(*node, this, properties, m_nodes, layerContentsType);
 
         if (m_isDebugLayerTreeHost) {
-            RemoteLayerTreePropertyApplier::applyProperties(*node, this, properties, relatedLayers, layerContentsType);
-
-            if (properties.changedProperties & RemoteLayerTreeTransaction::BorderWidthChanged)
+            if (properties.changedProperties.contains(RemoteLayerTreeTransaction::BorderWidthChanged))
                 node->layer().borderWidth = properties.borderWidth / indicatorScaleFactor;
             node->layer().masksToBounds = false;
-        } else
-            RemoteLayerTreePropertyApplier::applyProperties(*node, this, properties, relatedLayers, layerContentsType);
+        }
     }
     
-    for (const auto& layerPair : clonesToUpdate) {
-        auto* layer = layerForID(layerPair.first);
-        auto* clonedLayer = layerForID(layerPair.second);
-        layer.contents = clonedLayer.contents;
-    }
+    for (const auto& layerAndClone : clonesToUpdate)
+        layerForID(layerAndClone.layerID).contents = layerForID(layerAndClone.cloneLayerID).contents;
 
     for (auto& destroyedLayer : transaction.destroyedLayers())
         layerWillBeRemoved(destroyedLayer);
