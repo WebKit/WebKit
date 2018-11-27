@@ -1,3 +1,20 @@
+2018-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        WKNavigation.AutomaticViewReloadAfterWebProcessCrash asserts after r238538
+        https://bugs.webkit.org/show_bug.cgi?id=192038
+        <rdar://problem/46288457>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_resetRecentCrashCountTimer):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::m_editableImageController): Deleted.
+        Properly invalidate m_editableImageController when resetting WebPageProxy.
+        Otherwise, the MessageReceiverMaps get invalidated, then later when
+        EditableImageController goes away we assert trying to remove the receiver.
+
 2018-11-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         (r238246) [ MacOS Debug ] Layout Test http/wpt/webauthn/ctap-hid-failure.https.html is Crashing

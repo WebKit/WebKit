@@ -837,6 +837,10 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
     m_credentialsMessenger = std::make_unique<WebAuthenticatorCoordinatorProxy>(*this);
 #endif
 
+#if HAVE(PENCILKIT)
+    m_editableImageController = std::make_unique<EditableImageController>(*this);
+#endif
+
     initializeWebPage(shouldDelayAttachingDrawingArea);
 
     m_inspector->updateForNewPageProcess(this);
@@ -6359,6 +6363,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(WEB_AUTHN)
     m_credentialsMessenger = nullptr;
+#endif
+
+#if HAVE(PENCILKIT)
+    m_editableImageController = nullptr;
 #endif
 
     CallbackBase::Error error;
