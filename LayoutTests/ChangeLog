@@ -1,3 +1,12 @@
+2018-11-27  Daniel Bates  <dabates@apple.com>
+
+        Fix test timeout following  <https://trac.webkit.org/changeset/238545>
+        (https://bugs.webkit.org/show_bug.cgi?id=191969)
+
+        Actually call HTMLInputElement.setSelectionRange().
+
+        * fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button-expected.html:
+
 2018-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add support for forcing color scheme appearance in DOM tree.
