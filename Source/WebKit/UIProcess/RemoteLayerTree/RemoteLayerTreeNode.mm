@@ -23,10 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteLayerTreeNode.h"
+#import "config.h"
+#import "RemoteLayerTreeNode.h"
 
+#import <QuartzCore/CALayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIView.h>
+#endif
+
+@interface WKPlainRemoteLayer : CALayer
+@end
+
+@implementation WKPlainRemoteLayer
+- (NSString *)description
+{
+    return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self);
+}
+@end
 
 namespace WebKit {
 
@@ -48,25 +63,39 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID
 
 RemoteLayerTreeNode::~RemoteLayerTreeNode() = default;
 
+std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
+{
+    RetainPtr<CALayer> layer = adoptNS([[WKPlainRemoteLayer alloc] init]);
+    return std::make_unique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
+}
+
 void RemoteLayerTreeNode::detachFromParent()
 {
 #if PLATFORM(IOS_FAMILY)
-    [uiView() removeFromSuperview];
-#else
-    [layer() removeFromSuperlayer];
+    if (auto view = uiView()) {
+        [view removeFromSuperview];
+        return;
+    }
 #endif
+    [layer() removeFromSuperlayer];
 }
 
-static NSString* const WKLayerIDPropertyKey = @"WKLayerID";
+static NSString *const WKLayerIDPropertyKey = @"WKLayerID";
 
 void RemoteLayerTreeNode::setLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
     [layer() setValue:@(layerID) forKey:WKLayerIDPropertyKey];
 }
 
-WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer* layer)
+WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer *layer)
 {
     return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
+}
+
+NSString *RemoteLayerTreeNode::appendLayerDescription(NSString *description, CALayer *layer)
+{
+    NSString *layerDescription = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(layer), layer.name ? layer.name : @""];
+    return [description stringByAppendingString:layerDescription];
 }
 
 }

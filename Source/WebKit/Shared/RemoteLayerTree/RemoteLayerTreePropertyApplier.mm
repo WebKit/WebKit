@@ -261,20 +261,11 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     CALayer *layer = node.layer();
 
     applyPropertiesToLayer(layer, layerTreeHost, properties, layerContentsType);
+    updateChildren(node, properties, relatedLayers);
 
 #if PLATFORM(IOS_FAMILY)
     applyPropertiesToUIView(node.uiView(), properties, relatedLayers);
 #else
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-        RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children) {
-            ASSERT(relatedLayers.contains(child));
-            [children addObject:relatedLayers.get(child)->layer()];
-        }
-
-        layer.sublayers = children.get();
-    }
-
     if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
         if (!properties.maskLayerID)
             layer.mask = nullptr;
@@ -289,25 +280,58 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-#if PLATFORM(IOS_FAMILY)
-void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::updateChildren(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
-    if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
-        RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
-        for (auto& child : properties.children) {
-            ASSERT(relatedLayers.contains(child));
-            [children addObject:relatedLayers.get(child)->uiView()];
-        }
+    if (!properties.changedProperties.contains(RemoteLayerTreeTransaction::ChildrenChanged))
+        return;
 
+#if PLATFORM(IOS_FAMILY)
+    auto hasViewChildren = [&] {
+        if (node.uiView() && [[node.uiView() subviews] count])
+            return true;
+        return !properties.children.isEmpty() && relatedLayers.get(properties.children.first())->uiView();
+    };
+
+    auto contentView = [&] {
         if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
             // This is a UIBackdropView, which should have children attached to
             // its content view, not directly on its layers.
-            [[(_UIBackdropView*)view contentView] _web_setSubviews:children.get()];
-        } else
-            [view _web_setSubviews:children.get()];
+            return [(_UIBackdropView *)node.uiView() contentView];
+        }
+        return node.uiView();
+    };
+
+    if (hasViewChildren()) {
+        ASSERT(node.uiView());
+
+        RetainPtr<NSMutableArray> subviews = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
+        for (auto& child : properties.children) {
+            auto* childNode = relatedLayers.get(child);
+            ASSERT(childNode->uiView());
+            [subviews addObject:childNode->uiView()];
+        }
+
+        [contentView() _web_setSubviews:subviews.get()];
+        return;
+    }
+#endif
+
+    RetainPtr<NSMutableArray> sublayers = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
+    for (auto& child : properties.children) {
+        auto* childNode = relatedLayers.get(child);
+#if PLATFORM(IOS_FAMILY)
+        ASSERT(!childNode->uiView());
+#endif
+        [sublayers addObject:childNode->layer()];
     }
 
-    if (properties.changedProperties & RemoteLayerTreeTransaction::MaskLayerChanged) {
+    node.layer().sublayers = sublayers.get();
+}
+
+#if PLATFORM(IOS_FAMILY)
+void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+{
+    if (properties.changedProperties.contains(RemoteLayerTreeTransaction::MaskLayerChanged)) {
         CALayer *maskOwnerLayer = view.layer;
 
         if (properties.customAppearance == GraphicsLayer::CustomAppearance::LightBackdrop || properties.customAppearance == GraphicsLayer::CustomAppearance::DarkBackdrop) {
@@ -330,7 +354,6 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const
 
     if (properties.changedProperties.containsAny({ RemoteLayerTreeTransaction::ContentsHiddenChanged, RemoteLayerTreeTransaction::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
-
 }
 #endif
 

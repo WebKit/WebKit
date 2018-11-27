@@ -42,8 +42,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<UIView>);
 #endif
-
     ~RemoteLayerTreeNode();
+
+    static std::unique_ptr<RemoteLayerTreeNode> createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID);
 
     CALayer *layer() const { return m_layer.get(); }
 #if PLATFORM(IOS_FAMILY)
@@ -52,7 +53,8 @@ public:
 
     void detachFromParent();
 
-    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer*);
+    static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
+    static NSString *appendLayerDescription(NSString *description, CALayer *);
 
 private:
     void setLayerID(WebCore::GraphicsLayer::PlatformLayerID);

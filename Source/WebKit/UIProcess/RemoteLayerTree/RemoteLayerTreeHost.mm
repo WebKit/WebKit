@@ -272,7 +272,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
     case PlatformCALayer::LayerTypeScrollingLayer:
     case PlatformCALayer::LayerTypeEditableImageLayer:
-        return makeAdoptingLayer([[CALayer alloc] init]);
+        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeTransformLayer:
         return makeAdoptingLayer([[CATransformLayer alloc] init]);
@@ -284,13 +284,13 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeAdoptingLayer([[CABackdropLayer alloc] init]);
 #else
         ASSERT_NOT_REACHED();
-        return makeAdoptingLayer([[CALayer alloc] init]);
+        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 #endif
     case PlatformCALayer::LayerTypeCustom:
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (m_isDebugLayerTreeHost)
-            return makeAdoptingLayer([[CALayer alloc] init]);
+            return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
         return makeWithLayer([CALayer _web_renderLayerWithContextID:properties.hostingContextID]);
 
     case PlatformCALayer::LayerTypeShapeLayer:

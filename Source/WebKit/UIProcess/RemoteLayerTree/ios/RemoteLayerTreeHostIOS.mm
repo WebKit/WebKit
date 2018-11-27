@@ -75,8 +75,10 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingLayer:
     case PlatformCALayer::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
         return makeAdoptingView([[WKCompositingView alloc] init]);
+
+    case PlatformCALayer::LayerTypeTiledBackingTileLayer:
+        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeBackdropLayer:
         return makeAdoptingView([[WKSimpleBackdropView alloc] init]);

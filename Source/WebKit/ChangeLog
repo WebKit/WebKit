@@ -1,3 +1,53 @@
+2018-11-27  Antti Koivisto  <antti@apple.com>
+
+        Remote tile layers shouldn't be UIViews
+        https://bugs.webkit.org/show_bug.cgi?id=191953
+
+        Reviewed by Tim Horton.
+
+        They don't need any UIView functionality, nor do they ever have UIView descendants.
+        We can use lighter weight objects.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        (WebKit::RemoteLayerTreePropertyApplier::updateChildren):
+
+        Factor to a function shared between platforms.
+        Support having both views and plain layers in the same tree.
+        Assert that all siblings are of the same type and that we don't attempt to add views to layers.
+
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToUIView):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
+        Use new plain layer on Mac too.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (-[WKPlainRemoteLayer description]):
+
+        Add a CALayer subclass so we can have a description, similar to WKCompositingView and pals.
+
+        (WebKit::RemoteLayerTreeNode::createWithPlainLayer):
+        (WebKit::RemoteLayerTreeNode::detachFromParent):
+
+        Support having null view.
+
+        (WebKit::RemoteLayerTreeNode::appendLayerDescription):
+
+        Helper for layer descriptions.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+
+        Construct plain layers for tiles.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (-[WKCompositingView description]):
+        (-[WKUIRemoteView description]):
+        (-[WKBackdropView description]):
+
 2018-11-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove "using namespace WebCore" under Source/WebKit/WebProcess/InjectedBundle/API
