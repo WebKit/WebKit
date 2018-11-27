@@ -23,6 +23,13 @@
 #if ENABLE(WEBKIT2)
 #if NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND
 
+
+# The parser should treat all of these as comments
+#FakeLoadURLA(String url)
+# FakeLoadURLB(String url)
+    #FakeLoadURLC(String url)
+    # FakeLoadURLD(String url)
+
 messages -> WebPage {
     LoadURL(String url)
 #if ENABLE(TOUCH_EVENTS)

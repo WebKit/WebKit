@@ -1,3 +1,23 @@
+2018-11-27  Keith Rollin  <krollin@apple.com>
+
+        Better parsing of comments in generate-message*.py
+        https://bugs.webkit.org/show_bug.cgi?id=191866
+        <rdar://problem/46189563>
+
+        Reviewed by Chris Dumez.
+
+        The script parsing the *.messages.in files would treat a line starting
+        with '#' as a comment, but not a line starting with '<whitespace>#'.
+        This means that jamming a '#' right in front of the first character of
+        a message definition (as opposed to the beginning of a line) will have
+        no effect and the line will get treated just the same as a
+        non-commented line. Fix this by trimming all white space from the
+        beginning and ending of the line before processing it.
+
+        * Scripts/webkit/parser.py:
+        (parse):
+        * Scripts/webkit/test-messages.in:
+
 2018-11-27  Thibault Saunier  <tsaunier@igalia.com>
 
         [GTK|WPE] Allow disabling WebRTC unified plan SDP through an env var
