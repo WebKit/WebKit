@@ -653,6 +653,9 @@ private:
         case ArithUnary:
             compileArithUnary();
             break;
+        case ArithBitNot:
+            compileArithBitNot();
+            break;
         case ValueBitAnd:
             compileValueBitAnd();
             break;
@@ -2845,6 +2848,18 @@ private:
         }
     }
     
+    void compileArithBitNot()
+    {
+        if (m_node->child1().useKind() == UntypedUse) {
+            LValue operand = lowJSValue(m_node->child1());
+            LValue result = vmCall(pointerType(), m_out.operation(operationValueBitNot), m_callFrame, operand);
+            setJSValue(result);
+            return;
+        }
+
+        setInt32(m_out.bitNot(lowInt32(m_node->child1())));
+    }
+
     void compileValueBitAnd()
     {
         if (m_node->isBinaryUseKind(BigIntUse)) {

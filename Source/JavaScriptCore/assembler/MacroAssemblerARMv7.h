@@ -578,6 +578,10 @@ public:
             xor32(imm, dest, dest);
     }
     
+    void not32(RegisterID srcDest)
+    {
+        m_assembler.mvn(srcDest, srcDest);
+    }
 
     // Memory access operations:
     //

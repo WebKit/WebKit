@@ -1045,6 +1045,11 @@ public:
         xor64(dataTempRegister, dest);
     }
 
+    void not32(RegisterID srcDest)
+    {
+        m_assembler.mvn<32>(srcDest, srcDest);
+    }
+
     void not32(RegisterID src, RegisterID dest)
     {
         m_assembler.mvn<32>(dest, src);

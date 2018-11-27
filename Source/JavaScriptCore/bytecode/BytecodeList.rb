@@ -269,6 +269,15 @@ op_group :ValueProfiledBinaryOp,
         profile: ValueProfile
     }
 
+op :bitnot,
+    args: {
+        dst: VirtualRegister,
+        operand: VirtualRegister,
+    },
+    metadata: {
+        profile: ValueProfile
+    }
+
 op_group :UnaryOp,
     [
         :eq_null,

@@ -1990,6 +1990,10 @@ void SpeculativeJIT::compile(Node* node)
         compileBitwiseOp(node);
         break;
 
+    case ArithBitNot:
+        compileBitwiseNot(node);
+        break;
+
     case BitRShift:
     case BitLShift:
     case BitURShift:

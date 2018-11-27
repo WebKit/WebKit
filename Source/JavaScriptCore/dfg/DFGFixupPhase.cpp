@@ -143,6 +143,17 @@ private:
             break;
         }
     
+        case ArithBitNot: {
+            if (node->child1().node()->shouldSpeculateUntypedForBitOps()) {
+                fixEdge<UntypedUse>(node->child1());
+                break;
+            }
+
+            fixIntConvertingEdge(node->child1());
+            node->clearFlags(NodeMustGenerate);
+            break;
+        }
+
         case ArithBitOr:
         case ArithBitAnd: {
             if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {

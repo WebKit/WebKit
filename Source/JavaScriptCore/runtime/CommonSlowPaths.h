@@ -324,6 +324,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_lshift);
 SLOW_PATH_HIDDEN_DECL(slow_path_rshift);
 SLOW_PATH_HIDDEN_DECL(slow_path_urshift);
 SLOW_PATH_HIDDEN_DECL(slow_path_unsigned);
+SLOW_PATH_HIDDEN_DECL(slow_path_bitnot);
 SLOW_PATH_HIDDEN_DECL(slow_path_bitand);
 SLOW_PATH_HIDDEN_DECL(slow_path_bitor);
 SLOW_PATH_HIDDEN_DECL(slow_path_bitxor);

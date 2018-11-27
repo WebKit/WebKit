@@ -136,6 +136,11 @@ namespace JSC {
             return ResultType(TypeMaybeBigInt);
         }
         
+        static constexpr ResultType bigIntOrInt32Type()
+        {
+            return ResultType(TypeMaybeBigInt | TypeInt32);
+        }
+
         static constexpr ResultType unknownType()
         {
             return ResultType(TypeBits);
@@ -169,7 +174,7 @@ namespace JSC {
 
         static constexpr ResultType forBitOp()
         {
-            return numberTypeIsInt32();
+            return bigIntOrInt32Type();
         }
 
         constexpr Type bits() const { return m_bits; }

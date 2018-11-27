@@ -1889,15 +1889,6 @@ RegisterID* UnaryPlusNode::emitBytecode(BytecodeGenerator& generator, RegisterID
     generator.emitExpressionInfo(position(), position(), position());
     return generator.emitToNumber(generator.finalDestination(dst), src.get());
 }
-
-// ------------------------------ BitwiseNotNode -----------------------------------
- 
-RegisterID* BitwiseNotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src2 = generator.emitLoad(nullptr, jsNumber(-1));
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr);
-    return generator.emitBinaryOp<OpBitxor>(generator.finalDestination(dst, src1.get()), src1.get(), src2.get(), OperandTypes(m_expr->resultDescriptor(), ResultType::numberTypeIsInt32()));
-}
  
 // ------------------------------ LogicalNotNode -----------------------------------
 

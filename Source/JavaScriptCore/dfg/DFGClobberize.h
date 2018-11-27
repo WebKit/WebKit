@@ -262,6 +262,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node, node->queriedType()));
         return;
 
+    case ArithBitNot:
+        if (node->child1().useKind() == UntypedUse) {
+            read(World);
+            write(Heap);
+            return;
+        }
+        def(PureValue(node));
+        return;
+
     case ArithBitAnd:
     case ArithBitOr:
     case BitXor:

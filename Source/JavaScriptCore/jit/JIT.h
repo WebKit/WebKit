@@ -505,6 +505,7 @@ namespace JSC {
         void emit_op_bitand(const Instruction*);
         void emit_op_bitor(const Instruction*);
         void emit_op_bitxor(const Instruction*);
+        void emit_op_bitnot(const Instruction*);
         void emit_op_call(const Instruction*);
         void emit_op_tail_call(const Instruction*);
         void emit_op_call_eval(const Instruction*);

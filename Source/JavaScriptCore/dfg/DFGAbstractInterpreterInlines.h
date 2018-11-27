@@ -375,6 +375,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
             
+    case ArithBitNot: {
+        if (node->child1().useKind() == UntypedUse) {
+            clobberWorld();
+            setNonCellTypeForNode(node, SpecInt32Only);
+            break;
+        }
+
+        JSValue operand = forNode(node->child1()).value();
+        if (operand && operand.isInt32()) {
+            int32_t a = operand.asInt32();
+            setConstant(node, JSValue(~a));
+            break;
+        }
+
+        setNonCellTypeForNode(node, SpecInt32Only);
+        break;
+    }
+
     case ValueBitOr:
     case ValueBitAnd:
         clobberWorld();

@@ -737,6 +737,7 @@ private:
             break;
         }
 
+        case ArithBitNot:
         case ArithBitAnd:
         case ArithBitOr:
         case BitXor:

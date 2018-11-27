@@ -3510,6 +3510,35 @@ void SpeculativeJIT::compileInstanceOf(Node* node)
     return;
 }
 
+void SpeculativeJIT::compileBitwiseNot(Node* node)
+{
+    Edge& child1 = node->child1();
+
+    if (child1.useKind() == UntypedUse) {
+        JSValueOperand operand(this, child1);
+        JSValueRegs operandRegs = operand.jsValueRegs();
+
+        flushRegisters();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(operationValueBitNot, resultRegs, operandRegs);
+        m_jit.exceptionCheck();
+
+        jsValueResult(resultRegs, node);
+        return;
+    }
+
+    SpeculateInt32Operand operand(this, child1);
+    GPRTemporary result(this);
+    GPRReg resultGPR = result.gpr();
+
+    m_jit.move(operand.gpr(), resultGPR);
+
+    m_jit.not32(resultGPR);
+
+    int32Result(resultGPR, node);
+}
+
 template<typename SnippetGenerator, J_JITOperation_EJJ snippetSlowPathFunction>
 void SpeculativeJIT::emitUntypedBitOp(Node* node)
 {

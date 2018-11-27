@@ -818,6 +818,11 @@ public:
         m_assembler.xorInsn(dest, src, immTempRegister);
     }
 
+    void not32(RegisterID srcDest)
+    {
+        m_assembler.nor(srcDest, srcDest, MIPSRegisters::zero);
+    }
+
     void sqrtDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.sqrtd(dst, src);

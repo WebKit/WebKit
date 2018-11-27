@@ -594,7 +594,7 @@ class Instruction
             cloopEmitUnaryOperation(operands, :int, "-")
 
         when "noti"
-            cloopEmitUnaryOperation(operands, :int32, "!")
+            cloopEmitUnaryOperation(operands, :int32, "~")
 
         when "loadi"
             $asm.putc "#{operands[1].clValue(:uint)} = #{operands[0].uint32MemRef};"

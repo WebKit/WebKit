@@ -513,8 +513,7 @@ namespace JSC {
     }
 
     inline BitwiseNotNode::BitwiseNotNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location, ResultType::forBitOp())
-        , m_expr(expr)
+        : UnaryOpNode(location, ResultType::forBitOp(), expr, op_bitnot)
     {
     }
 

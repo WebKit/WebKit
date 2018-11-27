@@ -513,6 +513,31 @@ void JIT::emitBitBinaryOpFastPath(const Instruction* currentInstruction, Profili
     addSlowCase(gen.slowPathJumpList());
 }
 
+void JIT::emit_op_bitnot(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpBitnot>();
+    int result = bytecode.dst.offset();
+    int op1 = bytecode.operand.offset();
+
+#if USE(JSVALUE64)
+    JSValueRegs leftRegs = JSValueRegs(regT0);
+#else
+    JSValueRegs leftRegs = JSValueRegs(regT1, regT0);
+#endif
+
+    emitGetVirtualRegister(op1, leftRegs);
+
+    addSlowCase(branchIfNotInt32(leftRegs));
+    not32(leftRegs.payloadGPR());
+#if USE(JSVALUE64)
+    boxInt32(leftRegs.payloadGPR(), leftRegs);
+#endif
+
+    emitValueProfilingSiteIfProfiledOpcode(bytecode);
+
+    emitPutVirtualRegister(result, leftRegs);
+}
+
 void JIT::emit_op_bitand(const Instruction* currentInstruction)
 {
     emitBitBinaryOpFastPath<OpBitand, JITBitAndGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);

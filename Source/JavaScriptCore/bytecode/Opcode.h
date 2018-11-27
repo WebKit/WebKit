@@ -109,6 +109,7 @@ IGNORE_WARNINGS_END
     macro(OpGetFromScope) \
     macro(OpBitand) \
     macro(OpBitor) \
+    macro(OpBitnot) \
 
 #define FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(macro) \
     macro(OpHasIndexedProperty) \

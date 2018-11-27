@@ -690,6 +690,15 @@ SLOW_PATH_DECL(slow_path_unsigned)
     RETURN(jsNumber(a));
 }
 
+SLOW_PATH_DECL(slow_path_bitnot)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpBitnot>();
+    int32_t operand = GET_C(bytecode.operand).jsValue().toInt32(exec);
+    CHECK_EXCEPTION();
+    RETURN_PROFILED(jsNumber(~operand));
+}
+
 SLOW_PATH_DECL(slow_path_bitand)
 {
     BEGIN();

@@ -1,3 +1,88 @@
+2018-11-26  Caio Lima  <ticaiolima@gmail.com>
+
+        Re-introduce op_bitnot
+        https://bugs.webkit.org/show_bug.cgi?id=190923
+
+        Reviewed by Yusuke Suzuki.
+
+        With the introduction of BigInt as a new type, we can't emit bitwise
+        not as `x ^ -1` anymore, because this is incompatible with the new type.
+        Based on that, this Patch is adding `op_bitnot` as a new operation
+        into LLInt, as well as introducing ArithBitNot node into DFG to support
+        JIT compilation of such opcode. We will use the ValueProfile of this
+        intruction in the future to generate better code when its operand
+        is not Int32.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::not32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::not32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::not32):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitUnaryOp):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::UnaryPlusNode::emitBytecode):
+        (JSC::BitwiseNotNode::emitBytecode): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileBitwiseNot):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitNot):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_bitnot):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/cloop.rb:
+        * parser/NodeConstructors.h:
+        (JSC::BitwiseNotNode::BitwiseNotNode):
+        * parser/Nodes.h:
+        * parser/ResultType.h:
+        (JSC::ResultType::bigIntOrInt32Type):
+        (JSC::ResultType::forBitOp):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+
 2018-11-26  Saam barati  <sbarati@apple.com>
 
         InPlaceAbstractState::endBasicBlock rule for SetLocal should filter the value based on the flush format

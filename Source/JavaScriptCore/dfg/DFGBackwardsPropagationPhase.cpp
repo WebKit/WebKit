@@ -207,6 +207,14 @@ private:
         case CheckVarargs:
             break;
             
+        case ArithBitNot: {
+            flags |= NodeBytecodeUsesAsInt;
+            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
+            flags &= ~NodeBytecodeUsesAsArrayIndex;
+            node->child1()->mergeFlags(flags);
+            break;
+        }
+
         case ArithBitAnd:
         case ArithBitOr:
         case BitXor:

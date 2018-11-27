@@ -48,6 +48,7 @@ JSCell* JIT_OPERATION operationObjectCreateObject(ExecState*, JSObject*) WTF_INT
 JSCell* JIT_OPERATION operationCreateThis(ExecState*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToThis(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToThisStrict(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState*, EncodedJSValue encodedOp1) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitOr(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueBitXor(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;

@@ -1111,17 +1111,25 @@ bitOp(rshift, OpRshift,
 bitOp(urshift, OpUrshift,
     macro (left, right) urshifti left, right end)
 
+bitOpProfiled(bitand, OpBitand,
+    macro (left, right) andi left, right end)
+
+bitOpProfiled(bitor, OpBitor,
+    macro (left, right) ori left, right end)
 
 bitOp(bitxor, OpBitxor,
     macro (left, right) xori left, right end)
 
-
-bitOpProfiled(bitand, OpBitand,
-    macro (left, right) andi left, right end)
-
-
-bitOpProfiled(bitor, OpBitor,
-    macro (left, right) ori left, right end)
+llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
+    get(operand, t0)
+    loadConstantOrVariableInt32(size, t0, t3, .opBitNotSlow)
+    noti t3
+    orq tagTypeNumber, t3
+    return(t3)
+.opBitNotSlow:
+    callSlowPath(_slow_path_bitnot)
+    dispatch()
+end)
 
 
 llintOp(op_overrides_has_instance, OpOverridesHasInstance, macro (size, get, dispatch)

@@ -333,6 +333,20 @@ JSCell* JIT_OPERATION operationToObject(ExecState* exec, JSGlobalObject* globalO
     RELEASE_AND_RETURN(scope, value.toObject(exec, globalObject));
 }
 
+EncodedJSValue JIT_OPERATION operationValueBitNot(ExecState* exec, EncodedJSValue encodedOp1)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(*vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+
+    int32_t operandValue = op1.toInt32(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    return JSValue::encode(jsNumber(~operandValue));
+}
+
 EncodedJSValue JIT_OPERATION operationValueBitAnd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     VM* vm = &exec->vm();

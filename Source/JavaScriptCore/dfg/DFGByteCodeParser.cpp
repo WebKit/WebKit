@@ -4892,6 +4892,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             
         // === Bitwise operations ===
 
+        case op_bitnot: {
+            auto bytecode = currentInstruction->as<OpBitnot>();
+            Node* op1 = get(bytecode.operand);
+            set(bytecode.dst, addToGraph(ArithBitNot, op1));
+            NEXT_OPCODE(op_bitnot);
+        }
+
         case op_bitand: {
             auto bytecode = currentInstruction->as<OpBitand>();
             Node* op1 = get(bytecode.lhs);

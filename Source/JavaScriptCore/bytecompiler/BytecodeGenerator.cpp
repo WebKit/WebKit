@@ -1608,6 +1608,9 @@ RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, R
     case op_negate:
         OpNegate::emit(this, dst, src, types);
         break;
+    case op_bitnot:
+        emitUnaryOp<OpBitnot>(dst, src);
+        break;
     case op_to_number:
         emitUnaryOp<OpToNumber>(dst, src);
         break;

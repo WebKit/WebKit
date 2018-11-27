@@ -116,6 +116,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
     case op_argument_count:
     case op_check_tdz:
     case op_create_this:
+    case op_bitnot:
     case op_bitand:
     case op_bitor:
     case op_bitxor:

@@ -1329,6 +1329,8 @@ public:
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
 
+    void compileBitwiseNot(Node*);
+
     template<typename SnippetGenerator, J_JITOperation_EJJ slowPathFunction>
     void emitUntypedBitOp(Node*);
     void compileBitwiseOp(Node*);

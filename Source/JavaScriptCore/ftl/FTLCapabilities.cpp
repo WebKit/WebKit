@@ -58,6 +58,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomLocal:
     case SetArgument:
     case Return:
+    case ArithBitNot:
     case ArithBitAnd:
     case ArithBitOr:
     case BitXor:

@@ -566,6 +566,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpToThis, profile)
         LINK(OpBitand, profile)
         LINK(OpBitor, profile)
+        LINK(OpBitnot, profile)
 
         LINK(OpGetById, profile, hitCountForLLIntCaching)
 
