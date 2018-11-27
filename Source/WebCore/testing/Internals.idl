@@ -723,4 +723,6 @@ enum CompositingPolicy {
     HEVCParameterSet? parseHEVCCodecParameters(DOMString codecParameters);
 
     sequence<CookieData> getCookies();
+
+    void setAlwaysAllowLocalWebarchive();
 };

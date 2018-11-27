@@ -414,6 +414,8 @@ private:
     WEBCORE_EXPORT void sendCSPViolationReport(URL&&, Ref<FormData>&&) final;
     WEBCORE_EXPORT void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEvent::Init&&) final;
 
+    bool disallowWebArchive() const;
+
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
     CachedResourceHandle<CachedRawResource> m_mainResource;

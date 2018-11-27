@@ -1,3 +1,15 @@
+2018-11-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Disallow loading webarchives as iframes
+        https://bugs.webkit.org/show_bug.cgi?id=191728
+        <rdar://problem/45524528>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        Add a check to prevent null pointer dereference.
+
 2018-11-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebKit.AddAndRemoveDataDetectors hits a debug assertion after r238515

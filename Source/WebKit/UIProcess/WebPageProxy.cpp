@@ -4414,6 +4414,8 @@ void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    if (!m_policyClient)
+        return;
     m_policyClient->unableToImplementPolicy(*this, *frame, error, m_process->transformHandlesToObjects(userData.object()).get());
 }
 

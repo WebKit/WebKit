@@ -4,6 +4,8 @@
         testRunner.dumpResourceLoadCallbacks();
         testRunner.waitUntilDone();
     }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive();
     
     function frameLoaded() {
         if (window.testRunner)

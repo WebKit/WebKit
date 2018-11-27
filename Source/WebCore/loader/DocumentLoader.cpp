@@ -841,7 +841,9 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     });
 }
 
-static bool isRemoteWebArchive(const DocumentLoader& documentLoader)
+// Prevent web archives from loading if it is remote or it is not the main frame because they
+// can claim to be from any domain and thus avoid cross-domain security checks (4120255, 45524528).
+bool DocumentLoader::disallowWebArchive() const
 {
     using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static NeverDestroyed<MIMETypeHashSet> webArchiveMIMETypes {
@@ -855,17 +857,28 @@ static bool isRemoteWebArchive(const DocumentLoader& documentLoader)
         }
     };
 
-    const ResourceResponse& response = documentLoader.response();
-    String mimeType = response.mimeType();
+    String mimeType = m_response.mimeType();
     if (mimeType.isNull() || !webArchiveMIMETypes.get().contains(mimeType))
         return false;
 
 #if USE(QUICK_LOOK)
-    if (isQuickLookPreviewURL(response.url()))
+    if (isQuickLookPreviewURL(m_response.url()))
         return false;
 #endif
 
-    return !documentLoader.substituteData().isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(documentLoader.request().url().protocol().toStringWithoutCopying());
+    if (m_substituteData.isValid())
+        return false;
+
+    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_request.url().protocol().toStringWithoutCopying()))
+        return true;
+
+    if (!frame() || frame()->isMainFrame())
+        return false;
+
+    // On purpose of maintaining existing tests.
+    if (!frame()->document() || frame()->document()->topDocument().alwaysAllowLocalWebarchive())
+        return false;
+    return true;
 }
 
 void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
@@ -877,8 +890,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     switch (policy) {
     case PolicyAction::Use: {
-        // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
-        if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || isRemoteWebArchive(*this)) {
+        if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || disallowWebArchive()) {
             frameLoader()->policyChecker().cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();

@@ -1530,6 +1530,10 @@ public:
 
     void frameWasDisconnectedFromOwner();
 
+    // Used in webarchive loading tests.
+    void setAlwaysAllowLocalWebarchive() { m_alwaysAllowLocalWebarchive = true; }
+    bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -2069,6 +2073,8 @@ private:
 #endif
 
     bool m_isRunningUserScripts { false };
+
+    bool m_alwaysAllowLocalWebarchive { false };
 };
 
 Element* eventTargetElementForDocument(Document*);

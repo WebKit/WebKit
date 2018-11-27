@@ -4824,4 +4824,12 @@ auto Internals::getCookies() const -> Vector<CookieData>
     });
 }
 
+void Internals::setAlwaysAllowLocalWebarchive() const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+    document->setAlwaysAllowLocalWebarchive();
+}
+
 } // namespace WebCore
