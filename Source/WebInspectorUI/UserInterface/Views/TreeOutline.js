@@ -81,6 +81,16 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     // Public
 
+    get allowsEmptySelection()
+    {
+        return this._selectionController.allowsEmptySelection;
+    }
+
+    set allowsEmptySelection(flag)
+    {
+        this._selectionController.allowsEmptySelection = flag;
+    }
+
     get allowsMultipleSelection()
     {
         return this._selectionController.allowsMultipleSelection;
@@ -99,8 +109,27 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     set selectedTreeElement(treeElement)
     {
-        let index = this._indexOfTreeElement(treeElement);
-        this._selectionController.selectItem(index);
+        if (treeElement) {
+            let index = this._indexOfTreeElement(treeElement);
+            this._selectionController.selectItem(index);
+        } else
+            this._selectionController.deselectAll();
+    }
+
+    get selectedTreeElements()
+    {
+        if (this.allowsMultipleSelection) {
+            let treeElements = [];
+            for (let index of this._selectionController.selectedItems)
+                treeElements.push(this._treeElementAtIndex(index));
+            return treeElements;
+        }
+
+        let selectedTreeElement = this.selectedTreeElement;
+        if (selectedTreeElement)
+            return [selectedTreeElement];
+
+        return [];
     }
 
     get hidden()
@@ -607,8 +636,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 }
             }
         } else if (event.keyCode === 8 /* Backspace */ || event.keyCode === 46 /* Delete */) {
-            if (this.selectedTreeElement.ondelete)
-                handled = this.selectedTreeElement.ondelete();
+            for (let treeElement of this.selectedTreeElements) {
+                if (treeElement.ondelete && treeElement.ondelete())
+                    handled = true;
+            }
             if (!handled && this.treeOutline.ondelete)
                 handled = this.treeOutline.ondelete(this.selectedTreeElement);
         } else if (isEnterKey(event)) {

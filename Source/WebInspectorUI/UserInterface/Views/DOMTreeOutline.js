@@ -191,8 +191,9 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         // and those used to show forced pseudo class indicators, but this should be okay.
         // The hovered element will update when user moves the mouse, and indicators don't need the
         // selection area height to be accurate since they use ::before to place the indicator.
-        if (this.selectedTreeElement)
-            this.selectedTreeElement.updateSelectionArea();
+        let selectedTreeElements = this.selectedTreeElements;
+        for (let treeElement of selectedTreeElements)
+            treeElement.updateSelectionArea();
     }
 
     _selectedNodeChanged()

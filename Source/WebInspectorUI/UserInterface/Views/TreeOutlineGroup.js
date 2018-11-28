@@ -87,8 +87,7 @@ WI.TreeOutlineGroup = class TreeOutlineGroup extends WI.Collection
             if (selectedTreeOutline === treeOutline)
                 continue;
 
-            if (treeOutline.selectedTreeElement)
-                treeOutline.selectedTreeElement.deselect();
+            treeOutline.selectedTreeElement = null;
         }
     }
 };

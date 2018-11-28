@@ -1,5 +1,49 @@
 2018-11-27  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Elements tab should allow selecting/deleting multiple DOM nodes
+        https://bugs.webkit.org/show_bug.cgi?id=192059
+        <rdar://problem/46294827>
+
+        Reviewed by Devin Rousso.
+
+        Enable multiple DOM node selection in the DOMTreeContentView.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController):
+        (WI.SelectionController.prototype.get allowsEmptySelection):
+        (WI.SelectionController.prototype.set allowsEmptySelection):
+        Allow clients to control whether the last selected item can be deselected.
+        (WI.SelectionController.prototype.deselectItem):
+        (WI.SelectionController.prototype.didInsertItem):
+        Rewritten to prevent infinite loop.
+        (WI.SelectionController.prototype.didRemoveItem):
+        (WI.SelectionController.prototype._updateSelectedItems):
+        (WI.SelectionController.prototype._adjustIndexesAfter): Deleted.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.updateSelectionArea):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.updateSelection):
+        Updating the selection area DOM element should not assume that only one
+        TreeElement is selected at a time.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.get allowsEmptySelection):
+        (WI.TreeOutline.prototype.set allowsEmptySelection):
+        (WI.TreeOutline.prototype.set selectedTreeElement):
+        (WI.TreeOutline.prototype.get selectedTreeElements):
+        (WI.TreeOutline.prototype._treeKeyDown):
+
+        * UserInterface/Views/TreeOutlineGroup.js:
+        (WI.TreeOutlineGroup):
+        (WI.TreeOutlineGroup.prototype._removeConflictingTreeSelections):
+        Eliminate use of `TreeElement.prototype.deselect`.
+
+2018-11-27  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: TreeOutline should re-use multiple-selection logic from Table
         https://bugs.webkit.org/show_bug.cgi?id=191483
         <rdar://problem/45953305>

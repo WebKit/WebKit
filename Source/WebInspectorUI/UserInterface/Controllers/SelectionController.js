@@ -32,6 +32,7 @@ WI.SelectionController = class SelectionController extends WI.Object
         console.assert(delegate);
         this._delegate = delegate;
 
+        this._allowsEmptySelection = true;
         this._allowsMultipleSelection = false;
         this._lastSelectedIndex = NaN;
         this._shiftAnchorIndex = NaN;
@@ -47,6 +48,9 @@ WI.SelectionController = class SelectionController extends WI.Object
     get delegate() { return this._delegate; }
     get lastSelectedItem() { return this._lastSelectedIndex; }
     get selectedItems() { return this._selectedIndexes; }
+
+    get allowsEmptySelection() { return this._allowsEmptySelection; }
+    set allowsEmptySelection(flag) { this._allowsEmptySelection = flag; }
 
     get allowsMultipleSelection()
     {
@@ -103,6 +107,9 @@ WI.SelectionController = class SelectionController extends WI.Object
         console.assert(index >= 0 && index < this.numberOfItems);
 
         if (!this.hasSelectedItem(index))
+            return;
+
+        if (!this._allowsEmptySelection && this._selectedIndexes.size === 1)
             return;
 
         let newSelectedItems = this._selectedIndexes.copy();
@@ -194,7 +201,13 @@ WI.SelectionController = class SelectionController extends WI.Object
 
     didInsertItem(index)
     {
-        this._adjustIndexesAfter(index - 1, 1);
+        let current = this._selectedIndexes.lastIndex;
+        while (current >= index) {
+            this._selectedIndexes.delete(index);
+            this._selectedIndexes.add(index + 1);
+
+            current = this._selectedIndexes.indexLessThan(current);
+        }
     }
 
     didRemoveItem(index)
@@ -202,7 +215,10 @@ WI.SelectionController = class SelectionController extends WI.Object
         if (this.hasSelectedItem(index))
             this.deselectItem(index);
 
-        this._adjustIndexesAfter(index, -1);
+        while (index = this._selectedIndexes.indexGreaterThan(index)) {
+            this._selectedIndexes.delete(index);
+            this._selectedIndexes.add(index - 1);
+        }
     }
 
     handleKeyDown(event)
@@ -373,13 +389,5 @@ WI.SelectionController = class SelectionController extends WI.Object
         let deselectedItems = oldSelectedIndexes.difference(indexes);
         let selectedItems = indexes.difference(oldSelectedIndexes);
         this._delegate.selectionControllerSelectionDidChange(this, deselectedItems, selectedItems);
-    }
-
-    _adjustIndexesAfter(index, delta)
-    {
-        while (index = this._selectedIndexes.indexGreaterThan(index)) {
-            this._selectedIndexes.delete(index);
-            this._selectedIndexes.add(index + delta);
-        }
     }
 };
