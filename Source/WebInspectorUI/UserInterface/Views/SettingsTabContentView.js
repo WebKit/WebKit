@@ -243,7 +243,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
         if (window.CSSAgent) {
-            experimentalSettingsView.addSetting(WI.UIString("Styles Sidebar:"), WI.settings.experimentalEnableMultiplePropertiesSelection, WI.UIString("Enable Selection of Multiple Properties"));
+            let group = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
+            group.addSetting(WI.settings.experimentalEnableMultiplePropertiesSelection, WI.UIString("Enable Selection of Multiple Properties"));
+            group.addSetting(WI.settings.experimentalEnableComputedStyleCascades, WI.UIString("Enable Computed Style Cascades"));
             experimentalSettingsView.addSeparator();
         }
 
@@ -285,6 +287,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         listenForChange(WI.settings.experimentalEnableMultiplePropertiesSelection);
+        listenForChange(WI.settings.experimentalEnableComputedStyleCascades);
         listenForChange(WI.settings.experimentalEnableLayersTab);
         listenForChange(WI.settings.experimentalEnableAuditTab);
         listenForChange(WI.settings.experimentalEnableNewTabBar);

@@ -215,30 +215,6 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._headerMap.clear();
         this._sections = [];
 
-        let uniqueOrderedStyles = (orderedStyles) => {
-            let uniqueStyles = [];
-
-            for (let style of orderedStyles) {
-                let rule = style.ownerRule;
-                if (!rule) {
-                    uniqueStyles.push(style);
-                    continue;
-                }
-
-                let found = false;
-                for (let existingStyle of uniqueStyles) {
-                    if (rule.isEqualTo(existingStyle.ownerRule)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    uniqueStyles.push(style);
-            }
-
-            return uniqueStyles;
-        };
-
         let createHeader = (text, node) => {
             let header = this.element.appendChild(document.createElement("h2"));
             header.classList.add("section-header");
@@ -270,7 +246,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             previousStyle = style;
         };
 
-        for (let style of uniqueOrderedStyles(this.nodeStyles.orderedStyles)) {
+        for (let style of this.nodeStyles.uniqueOrderedStyles) {
             if (style.inherited && (!previousStyle || previousStyle.node !== style.node))
                 createHeader(WI.UIString("Inherited From"), style.node);
 
@@ -283,7 +259,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             for (let pseudoNodeStyle of pseudoNodeStyles) {
                 createHeader(WI.UIString("Pseudo Element"), pseudoNodeStyle.node);
 
-                for (let style of uniqueOrderedStyles(pseudoNodeStyle.orderedStyles))
+                for (let style of pseudoNodeStyle.uniqueOrderedStyles)
                     createSection(style);
             }
         });

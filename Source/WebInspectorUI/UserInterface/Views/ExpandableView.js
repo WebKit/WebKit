@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Adobe Systems Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.details-section:matches(.computed-style-properties, .computed-style-box-model):not(.collapsed) > :matches(.header, .content) {
-    background-color: var(--background-color);
-}
+WI.ExpandableView = class ExpandableView
+{
+    constructor(key, titleElement, childElement)
+    {
+        this._element = document.createElement("div");
 
-.computed-style-properties .property .go-to-arrow {
-    display: none;
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    vertical-align: text-bottom;
-}
+        if (childElement) {
+            let disclosureButton = document.createElement("button");
+            disclosureButton.classList.add("disclosure-button");
+            disclosureButton.addEventListener("click", this._onDisclosureButtonClick.bind(this));
+            this._element.append(disclosureButton);
+        }
 
-.computed-style-properties .property:hover .go-to-arrow {
-    display: initial;
-}
+        this._element.append(titleElement);
+        this._expandedSetting = new WI.Setting("expanded-" + key, false);
 
-.computed-with-traces .computed-style-properties {
-    --disclosure-button-size: 15px;
-}
+        if (childElement) {
+            this._element.append(childElement);
+            this._element.classList.toggle("expanded", this._expandedSetting.value);
+        }
+    }
 
-.computed-with-traces .details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content) {
-    background-color: hsl(0, 0%, 97%);
-}
+    // Public
 
-.computed-with-traces .details-section.computed-style-properties > .content {
-    font: 12px -webkit-system-font, sans-serif;
-}
+    get element()
+    {
+        return this._element;
+    }
 
-.computed-with-traces .computed-style-properties .property .go-to-arrow {
-    width: var(--disclosure-button-size);
-    height: var(--disclosure-button-size);
-}
+    // Private
+
+    _onDisclosureButtonClick(event)
+    {
+        let shouldExpand = !this._expandedSetting.value;
+        this._update(shouldExpand);
+    }
+
+    _update(shouldExpand)
+    {
+        this._element.classList.toggle("expanded", shouldExpand);
+        this._expandedSetting.value = shouldExpand;
+    }
+};

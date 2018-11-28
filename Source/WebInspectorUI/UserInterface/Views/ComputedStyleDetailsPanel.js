@@ -45,8 +45,10 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             return;
         }
 
-        this._propertiesTextEditor.style = this.nodeStyles.computedStyle;
-        this._propertiesSection.element.classList.toggle("hidden", !this._propertiesTextEditor.propertiesToRender.length);
+        if (WI.settings.experimentalEnableComputedStyleCascades.value)
+            this._computedStyleSection.styleTraces = this._computePropertyTraces(this.nodeStyles.uniqueOrderedStyles);
+
+        this._computedStyleSection.style = this.nodeStyles.computedStyle;
 
         this._variablesTextEditor.style = this.nodeStyles.computedStyle;
         this._variablesSection.element.classList.toggle("hidden", !this._variablesTextEditor.propertiesToRender.length);
@@ -66,7 +68,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         if (!this.didInitialLayout)
             return;
 
-        this._propertiesTextEditor.applyFilter(filterText);
+        this._computedStyleSection.applyFilter(filterText);
         this._variablesTextEditor.applyFilter(filterText);
     }
 
@@ -80,7 +82,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     focusFirstSection()
     {
-        this._propertiesTextEditor.focus();
+        this._computedStyleSection.focus();
     }
 
     focusLastSection()
@@ -101,22 +103,29 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         this._computedStyleShowAllCheckbox.addEventListener("change", this._computedStyleShowAllCheckboxValueChanged.bind(this));
         computedStyleShowAllLabel.appendChild(this._computedStyleShowAllCheckbox);
 
-        this._propertiesTextEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
-        this._propertiesTextEditor.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables;
-        this._propertiesTextEditor.showsImplicitProperties = this._computedStyleShowAllSetting.value;
-        this._propertiesTextEditor.alwaysShowPropertyNames = ["display", "width", "height"];
-        this._propertiesTextEditor.hideFilterNonMatchingProperties = true;
-        this._propertiesTextEditor.sortPropertiesByName = true;
-        this._propertiesTextEditor.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
+        if (WI.settings.experimentalEnableComputedStyleCascades.value) {
+            this._computedStyleSection = new WI.ComputedStyleSection(this);
+            this._computedStyleSection.propertyVisibilityMode = WI.ComputedStyleSection.PropertyVisibilityMode.HideVariables;
+            this._computedStyleSection.addEventListener(WI.ComputedStyleSection.Event.FilterApplied, this._handleEditorFilterApplied, this);
+        } else {
+            this._computedStyleSection = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
+            this._computedStyleSection.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideVariables;
+            this._computedStyleSection.sortPropertiesByName = true;
+            this._computedStyleSection.addEventListener(WI.SpreadsheetCSSStyleDeclarationEditor.Event.FilterApplied, this._handleEditorFilterApplied, this);
+        }
+
+        this._computedStyleSection.showsImplicitProperties = this._computedStyleShowAllSetting.value;
+        this._computedStyleSection.alwaysShowPropertyNames = ["display", "width", "height"];
+        this._computedStyleSection.hideFilterNonMatchingProperties = true;
 
         let propertiesRow = new WI.DetailsSectionRow;
         let propertiesGroup = new WI.DetailsSectionGroup([propertiesRow]);
         this._propertiesSection = new WI.DetailsSection("computed-style-properties", WI.UIString("Properties"), [propertiesGroup], computedStyleShowAllLabel);
         this._propertiesSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handlePropertiesSectionCollapsedStateChanged, this);
 
-        this.addSubview(this._propertiesTextEditor);
+        this.addSubview(this._computedStyleSection);
 
-        propertiesRow.element.appendChild(this._propertiesTextEditor.element);
+        propertiesRow.element.appendChild(this._computedStyleSection.element);
 
         this._variablesTextEditor = new WI.SpreadsheetCSSStyleDeclarationEditor(this);
         this._variablesTextEditor.propertyVisibilityMode = WI.SpreadsheetCSSStyleDeclarationEditor.PropertyVisibilityMode.HideNonVariables;
@@ -153,17 +162,34 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     // Private
 
+    _computePropertyTraces(orderedDeclarations)
+    {
+        let result = new Map();
+        for (let rule of orderedDeclarations) {
+            for (let property of rule.allProperties) {
+                let properties = result.get(property.name);
+                if (!properties) {
+                    properties = [];
+                    result.set(property.name, properties);
+                }
+                properties.push(property);
+            }
+        }
+
+        return result;
+    }
+
     _computedStyleShowAllCheckboxValueChanged(event)
     {
         let checked = this._computedStyleShowAllCheckbox.checked;
         this._computedStyleShowAllSetting.value = checked;
-        this._propertiesTextEditor.showsImplicitProperties = checked;
+        this._computedStyleSection.showsImplicitProperties = checked;
     }
 
     _handlePropertiesSectionCollapsedStateChanged(event)
     {
         if (event && event.data && !event.data.collapsed)
-            this._propertiesTextEditor.needsLayout();
+            this._computedStyleSection.needsLayout();
     }
 
     _handleVariablesSectionCollapsedStateChanged(event)
@@ -175,7 +201,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     _handleEditorFilterApplied(event)
     {
         let section = null;
-        if (event.target === this._propertiesTextEditor)
+        if (event.target === this._computedStyleSection)
             section = this._propertiesSection;
         else if (event.target === this._variablesTextEditor)
             section = this._variablesSection;

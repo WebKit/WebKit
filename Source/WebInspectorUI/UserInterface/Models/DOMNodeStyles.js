@@ -368,6 +368,31 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         return this._orderedStyles;
     }
 
+    get uniqueOrderedStyles()
+    {
+        let uniqueStyles = [];
+
+        for (let style of this._orderedStyles) {
+            let rule = style.ownerRule;
+            if (!rule) {
+                uniqueStyles.push(style);
+                continue;
+            }
+
+            let found = false;
+            for (let existingStyle of uniqueStyles) {
+                if (rule.isEqualTo(existingStyle.ownerRule)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                uniqueStyles.push(style);
+        }
+
+        return uniqueStyles;
+    }
+
     effectivePropertyForName(name)
     {
         let property = this._propertyNameToEffectivePropertyMap[name];

@@ -25,7 +25,7 @@
 
 WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 {
-    constructor(delegate, property)
+    constructor(delegate, property, options = {})
     {
         super();
 
@@ -33,6 +33,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._delegate = delegate || null;
         this._property = property;
+        this._readOnly = options.readOnly || false;
         this._element = document.createElement("div");
 
         this._contentElement = null;
@@ -42,7 +43,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._nameTextField = null;
         this._valueTextField = null;
 
-        this._property.__propertyView = this;
+        if (!this._readOnly) {
+            // This is only needed to navigate from Computed to the corresponding property in the Styles panel.
+            this._property.__propertyView = this;
+        }
 
         this._selected = false;
         this._hasInvalidVariableValue = false;
@@ -51,7 +55,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
 
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value && this._property.editable) {
+        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value && this._isEditable()) {
             this._element.tabIndex = -1;
 
             this._element.addEventListener("blur", (event) => {
@@ -136,7 +140,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     {
         this.element.removeChildren();
 
-        if (this._property.editable) {
+        if (this._isEditable()) {
             this._checkboxElement = this.element.appendChild(document.createElement("input"));
             this._checkboxElement.classList.add("property-toggle");
             this._checkboxElement.type = "checkbox";
@@ -167,7 +171,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._valueElement.classList.add("value");
         this._renderValue(this._property.rawValue);
 
-        if (this._property.editable && this._property.enabled) {
+        if (this._isEditable() && this._property.enabled) {
             this._nameElement.tabIndex = 0;
             this._nameElement.addEventListener("beforeinput", this._handleNameBeforeInput.bind(this));
             this._nameElement.addEventListener("paste", this._handleNamePaste.bind(this));
@@ -180,7 +184,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._valueTextField = new WI.SpreadsheetTextField(this, this._valueElement, this._valueCompletionDataProvider.bind(this));
         }
 
-        if (this._property.editable) {
+        if (this._isEditable()) {
             this._setupJumpToSymbol(this._nameElement);
             this._setupJumpToSymbol(this._valueElement);
         }
@@ -379,6 +383,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     // Private
 
+    _isEditable()
+    {
+        return !this._readOnly && this._property.editable;
+    }
+
     _renderValue(value)
     {
         this._hasInvalidVariableValue = false;
@@ -434,7 +443,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         let innerElement = document.createElement("span");
         innerElement.textContent = text;
 
-        let readOnly = !this._property.editable;
+        let readOnly = !this._isEditable();
         let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
 
         swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {

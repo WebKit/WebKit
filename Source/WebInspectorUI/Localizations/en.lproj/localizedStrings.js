@@ -351,6 +351,7 @@ localizedStrings["Elements"] = "Elements";
 localizedStrings["Enable Audit Tab"] = "Enable Audit Tab";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable Breakpoints"] = "Enable Breakpoints";
+localizedStrings["Enable Computed Style Cascades"] = "Enable Computed Style Cascades";
 localizedStrings["Enable Event Listener"] = "Enable Event Listener";
 localizedStrings["Enable Layers Tab"] = "Enable Layers Tab";
 localizedStrings["Enable New Tab Bar"] = "Enable New Tab Bar";

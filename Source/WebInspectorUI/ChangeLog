@@ -1,3 +1,113 @@
+2018-11-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Computed panel: allow to expand properties to show list of overridden values
+        https://bugs.webkit.org/show_bug.cgi?id=191984
+
+        Reviewed by Devin Rousso.
+
+        Introduce the new experimental Computed Style Cascades.
+
+        Each property now can expand to show a list of overridden values, their corresponding
+        selectors, and source locations.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype.get uniqueOrderedStyles):
+        Move `uniqueOrderedStyles` function unmodified from SpreadsheetRulesStyleDetailsPanel so it can be used by ComputedStyleDetailsPanel, too.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.computed-with-traces .computed-style-properties):
+        (.computed-with-traces .details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content)):
+        (.computed-with-traces .details-section.computed-style-properties > .content):
+        (.computed-with-traces .computed-style-properties .property .go-to-arrow):
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        (WI.ComputedStyleDetailsPanel.prototype.applyFilter):
+        (WI.ComputedStyleDetailsPanel.prototype.focusFirstSection):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WI.ComputedStyleDetailsPanel.prototype._computePropertyTraces):
+        (WI.ComputedStyleDetailsPanel.prototype._computedStyleShowAllCheckboxValueChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handlePropertiesSectionCollapsedStateChanged):
+        (WI.ComputedStyleDetailsPanel.prototype._handleEditorFilterApplied):
+        (WI.ComputedStyleDetailsPanel):
+        Use the new Computed section (WI.ComputedStyleSection) only when it's enabled in the experimental settings.
+        Otherwise, use the current Computed section.
+
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel):
+
+        * UserInterface/Views/ComputedStyleSection.css: Added.
+        (.computed-style-section):
+        (.computed-style-section .computed-property-item):
+        (.computed-style-section .computed-property-item.expanded):
+        (.computed-style-section .computed-property-item.expanded + .computed-property-item):
+        (.computed-style-section .computed-property-item .disclosure-button):
+        (.computed-style-section .computed-property-item .property-traces):
+        (.computed-style-section .computed-property-item.expanded .property-traces):
+        (.computed-style-section .computed-property-item.expanded .disclosure-button):
+        (.computed-style-section .computed-property-item .property-trace-item):
+        (.computed-style-section .computed-property-item .property-trace-item .property.overridden .value):
+        (.computed-style-section .property-trace-item-left,):
+        (.computed-style-section .property-trace-item-right):
+        (.computed-style-section .computed-property-item .property-trace-item .value):
+        (.computed-style-section .property .value):
+        (.computed-style-section .computed-property-item .property):
+        (.computed-style-section .computed-property-item .property .name):
+        (.computed-style-section .computed-property-item .property-trace-item .selector):
+        (.computed-style-section .computed-property-item .origin):
+        (.computed-style-section .computed-property-item .go-to-link):
+        (.computed-style-section .property-trace-item .property .name,):
+        (.computed-style-section .property-trace-item .property .value + span):
+        (.computed-style-properties.details-section > .content,):
+
+        * UserInterface/Views/ComputedStyleSection.js: Added.
+        (WI.ComputedStyleSection):
+        (WI.ComputedStyleSection.prototype.get style):
+        (WI.ComputedStyleSection.prototype.set style):
+        (WI.ComputedStyleSection.prototype.get styleTraces):
+        (WI.ComputedStyleSection.prototype.set styleTraces):
+        (WI.ComputedStyleSection.prototype.set showsImplicitProperties):
+        (WI.ComputedStyleSection.prototype.set alwaysShowPropertyNames):
+        (WI.ComputedStyleSection.prototype.set propertyVisibilityMode):
+        (WI.ComputedStyleSection.prototype.set hideFilterNonMatchingProperties):
+        (WI.ComputedStyleSection.prototype.get propertiesToRender):
+        (WI.ComputedStyleSection.prototype.layout):
+        (WI.ComputedStyleSection.prototype.detached):
+        (WI.ComputedStyleSection.prototype.hidden):
+        (WI.ComputedStyleSection.prototype.applyFilter):
+        (WI.ComputedStyleSection.prototype.spreadsheetStylePropertyShowProperty):
+        (WI.ComputedStyleSection.prototype._createTrace):
+        (WI.ComputedStyleSection.prototype._handlePropertiesChanged):
+
+        * UserInterface/Views/ExpandableView.js: Added.
+        (WI.ExpandableView):
+        (WI.ExpandableView.prototype.get element):
+        (WI.ExpandableView.prototype._onDisclosureButtonClick):
+        (WI.ExpandableView.prototype._update):
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.layout):
+        Replace `_renderOrigin` with WI.StyleOriginView so it could be used by WI.ComputedStyleSection.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.update):
+        (WI.SpreadsheetStyleProperty.prototype._isEditable):
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        Introduce `readOnly` option so WI.SpreadsheetStyleProperty could be used by WI.ComputedStyleSection.
+
+        * UserInterface/Views/StyleOriginView.js: Added.
+        (WI.StyleOriginView):
+
 2018-11-27  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add support for forcing color scheme appearance in DOM tree.
