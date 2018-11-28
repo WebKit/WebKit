@@ -251,6 +251,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         TestRunnerWKWebView *platformView = webView->platformView();
         [platformView.configuration.userContentController _removeAllUserContentFilters];
         platformView._viewScale = 1;
+        platformView._minimumEffectiveDeviceWidth = 0;
 
         // Toggle on before the test, and toggle off after the test.
         if (options.shouldShowSpellCheckingDots)

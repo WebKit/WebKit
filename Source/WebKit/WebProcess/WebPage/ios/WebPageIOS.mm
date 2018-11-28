@@ -2562,15 +2562,15 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     return WTF::areEssentiallyEqual(a, b);
 }
 
-void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor)
+void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
 {
-    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor);
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_pageID << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
     ZoomToInitialScale shouldZoomToInitialScale = ZoomToInitialScale::No;
     if (m_viewportConfiguration.layoutSizeScaleFactor() != scaleFactor && areEssentiallyEqualAsFloat(m_viewportConfiguration.initialScale(), pageScaleFactor()))
         shouldZoomToInitialScale = ZoomToInitialScale::Yes;
 
-    if (m_viewportConfiguration.setViewLayoutSize(size, scaleFactor))
+    if (m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth))
         viewportConfigurationChanged(shouldZoomToInitialScale);
 }
 

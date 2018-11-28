@@ -383,6 +383,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
+    CGFloat _minimumEffectiveDeviceWidth;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -2686,7 +2687,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _dispatchSetViewLayoutSize:] " << viewLayoutSize << " contentZoomScale " << contentZoomScale(self));
-    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor());
+    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), _minimumEffectiveDeviceWidth);
     _lastSentViewLayoutSize = viewLayoutSize;
 }
 
@@ -5347,8 +5348,24 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_page->layoutSizeScaleFactor() == viewScale)
         return;
 
-    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], viewScale);
+    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], viewScale, _minimumEffectiveDeviceWidth);
 #endif
+}
+
+- (void)_setMinimumEffectiveDeviceWidth:(CGFloat)minimumEffectiveDeviceWidth
+{
+    if (_minimumEffectiveDeviceWidth == minimumEffectiveDeviceWidth)
+        return;
+
+    _minimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth;
+#if PLATFORM(IOS_FAMILY)
+    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], _page->layoutSizeScaleFactor(), _minimumEffectiveDeviceWidth);
+#endif
+}
+
+- (CGFloat)_minimumEffectiveDeviceWidth
+{
+    return _minimumEffectiveDeviceWidth;
 }
 
 #pragma mark scrollperf methods

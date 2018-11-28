@@ -318,13 +318,13 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, co
         targetScale, deviceOrientation, dynamicViewportSizeUpdateID), m_pageID);
 }
 
-void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double scaleFactor)
+void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSize& size, double scaleFactor, double minimumEffectiveDeviceWidth)
 {
     m_viewportConfigurationViewLayoutSize = size;
     m_viewportConfigurationLayoutSizeScaleFactor = scaleFactor;
 
     if (isValid())
-        m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor), m_pageID);
+        m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), m_pageID);
 }
 
 void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)

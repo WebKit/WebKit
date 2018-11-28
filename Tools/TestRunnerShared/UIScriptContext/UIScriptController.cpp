@@ -215,6 +215,10 @@ void UIScriptController::setViewScale(double)
 {
 }
 
+void UIScriptController::setMinimumEffectiveWidth(double)
+{
+}
+
 void UIScriptController::resignFirstResponder()
 {
 }

@@ -1,3 +1,32 @@
+2018-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Allow WebKit clients to specify a minimum effective width for layout.
+        https://bugs.webkit.org/show_bug.cgi?id=191499
+        <rdar://problem/45362678>
+
+        Reviewed by Wenson Hsieh.
+
+        If we ignore the meta viewport (_shouldIgnoreMetaViewport is true), the default layout width will be device
+        width. For clients that wish to lay out the content with a different width value, we would need to add a way
+        to specify the effective width for layout.
+
+        * UIProcess/API/Cocoa/WKWebView.mm: Add an iVar _minimumEffectiveDeviceWidth.
+        (-[WKWebView _dispatchSetViewLayoutSize:]): Call the new setViewportConfigurationViewLayoutSize method.
+        (-[WKWebView _setViewScale:]): Ditto.
+        (-[WKWebView _setMinimumEffectiveWidth:]): The setter for _minimumEffectiveDeviceWidth.
+        (-[WKWebView _minimumEffectiveWidth]): Getter for _minimumEffectiveDeviceWidth
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Add a property _minimumEffectiveDeviceWidth to WKWebView.
+        * UIProcess/WebPageProxy.h: Change setViewportConfigurationViewLayoutSize to take another argument minimumEffectiveDeviceWidth.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setViewportConfigurationViewLayoutSize): Also send effectiveWidth to WebContent process.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Set the initial effective width to 0 when creating a web page, this tells ViewportConfiguration
+             to ignore the minimum effective width value.
+        * WebProcess/WebPage/WebPage.h: Change setViewportConfigurationViewLayoutSize to take another argument effectiveWidth.
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setViewportConfigurationViewLayoutSize): Also pass effectiveWidth value to ViewportConfiguration.
+
 2018-11-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Remove @no-unify of InjectedBundleRangeHandle.cpp and InjectedBundleNodeHandle.cpp

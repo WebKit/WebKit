@@ -914,7 +914,7 @@ public:
     void updateVisibilityState(bool isInitialState = false);
 
 #if PLATFORM(IOS_FAMILY)
-    void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor);
+    void setViewportConfigurationViewLayoutSize(const WebCore::FloatSize&, double scaleFactor, double minimumEffectiveDeviceWidth);
     void setMaximumUnobscuredSize(const WebCore::FloatSize&);
     void setDeviceOrientation(int32_t);
     void setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>&);

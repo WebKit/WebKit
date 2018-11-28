@@ -77,7 +77,7 @@ public:
     const FloatSize& viewLayoutSize() const { return m_viewLayoutSize; }
 
     const FloatSize& minimumLayoutSize() const { return m_minimumLayoutSize; }
-    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, std::optional<double>&& scaleFactor = std::nullopt);
+    WEBCORE_EXPORT bool setViewLayoutSize(const FloatSize&, std::optional<double>&& scaleFactor = std::nullopt, std::optional<double>&& effectiveWidth = std::nullopt);
 
     const OptionSet<DisabledAdaptations>& disabledAdaptations() const { return m_disabledAdaptations; }
     WEBCORE_EXPORT bool setDisabledAdaptations(const OptionSet<DisabledAdaptations>&);
@@ -130,13 +130,20 @@ private:
     constexpr double forceAlwaysUserScalableMaximumScale() const
     {
         const double forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor = 5;
-        return forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor * m_layoutSizeScaleFactor;
+        return forceAlwaysUserScalableMaximumScaleIgnoringLayoutScaleFactor * effectiveLayoutSizeScaleFactor();
     }
 
     constexpr double forceAlwaysUserScalableMinimumScale() const
     {
         const double forceAlwaysUserScalableMinimumScaleIgnoringLayoutScaleFactor = 1;
-        return forceAlwaysUserScalableMinimumScaleIgnoringLayoutScaleFactor * m_layoutSizeScaleFactor;
+        return forceAlwaysUserScalableMinimumScaleIgnoringLayoutScaleFactor * effectiveLayoutSizeScaleFactor();
+    }
+
+    constexpr double effectiveLayoutSizeScaleFactor() const
+    {
+        if (!m_viewLayoutSize.width() || !m_minimumEffectiveDeviceWidth)
+            return m_layoutSizeScaleFactor;
+        return m_layoutSizeScaleFactor * m_viewLayoutSize.width() / std::max<double>(m_minimumEffectiveDeviceWidth, m_viewLayoutSize.width());
     }
 
     void updateMinimumLayoutSize();
@@ -150,6 +157,7 @@ private:
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
     double m_layoutSizeScaleFactor { 1 };
+    double m_minimumEffectiveDeviceWidth { 0 };
     bool m_canIgnoreScalingConstraints;
     bool m_forceAlwaysUserScalable;
 };

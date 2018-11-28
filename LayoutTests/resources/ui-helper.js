@@ -468,4 +468,12 @@ window.UIHelper = class UIHelper {
             })
         });
     }
+
+    static setMinimumEffectiveWidth(effectiveWidth)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setMinimumEffectiveWidth(${effectiveWidth})`, resolve));
+    }
 }

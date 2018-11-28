@@ -1,3 +1,31 @@
+2018-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Allow WebKit clients to specify a minimum effective width for layout.
+        https://bugs.webkit.org/show_bug.cgi?id=191499
+        <rdar://problem/45362678>
+
+        Reviewed by Wenson Hsieh.
+
+        If we ignore the meta viewport (_shouldIgnoreMetaViewport is true), the default layout width will be device
+        width. For clients that wish to lay out the content with a different width value, we would need to add a way
+        to specify the effective width for layout.
+
+        Tests: fast/viewport/ios/ipad/viewport-overriden-by-minimum-effective-width-if-ignore-meta-viewport.html
+               fast/viewport/ios/ipad/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::setViewLayoutSize): Add a new argument effectiveWidth.
+        (WebCore::ViewportConfiguration::nativeWebpageParameters): Make sure minimumScale for nativeWebpageParameters
+            is small enough so that it won't clamp out the initial scale. If content is wider than the viewport, this
+            ensures we can still zoom out the page.
+        (WebCore::ViewportConfiguration::updateConfiguration): update _minimumEffectiveDeviceWidth and apply that to
+            the layout size scale computation.
+        (WebCore::ViewportConfiguration::effectiveLayoutSizeScaleFactor): A helper method to return the effective
+            layout scale factor which is also effected by _minimumEffectiveDeviceWidth.
+        (WebCore::ViewportConfiguration::updateMinimumLayoutSize): Update m_minimumLayoutSize based on effectiveLayoutSizeScaleFactor().
+        (WebCore::ViewportConfiguration::description const): Also dump m_minimumEffectiveDeviceWidth.
+        * page/ViewportConfiguration.h: Add a member variable m_minimumEffectiveDeviceWidth.
+
 2018-11-28  Stephan Szabo  <stephan.szabo@sony.com>
 
         Make generic EventHandler methods

@@ -45,6 +45,15 @@ void UIScriptController::setViewScale(double scale)
 #endif
 }
 
+void UIScriptController::setMinimumEffectiveWidth(double effectiveWidth)
+{
+#if WK_API_ENABLED
+    TestController::singleton().mainWebView()->platformView()._minimumEffectiveDeviceWidth = effectiveWidth;
+#else
+    UNUSED_PARAM(effectiveWidth);
+#endif
+}
+
 void UIScriptController::resignFirstResponder()
 {
 #if WK_API_ENABLED

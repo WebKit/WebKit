@@ -114,14 +114,16 @@ bool ViewportConfiguration::setContentsSize(const IntSize& contentSize)
     return true;
 }
 
-bool ViewportConfiguration::setViewLayoutSize(const FloatSize& viewLayoutSize, std::optional<double>&& scaleFactor)
+bool ViewportConfiguration::setViewLayoutSize(const FloatSize& viewLayoutSize, std::optional<double>&& scaleFactor, std::optional<double>&& minimumEffectiveDeviceWidth)
 {
     double newScaleFactor = scaleFactor.value_or(m_layoutSizeScaleFactor);
-    if (m_viewLayoutSize == viewLayoutSize && m_layoutSizeScaleFactor == newScaleFactor)
+    double newEffectiveWidth = minimumEffectiveDeviceWidth.value_or(m_minimumEffectiveDeviceWidth);
+    if (m_viewLayoutSize == viewLayoutSize && m_layoutSizeScaleFactor == newScaleFactor && newEffectiveWidth == m_minimumEffectiveDeviceWidth)
         return false;
 
     m_layoutSizeScaleFactor = newScaleFactor;
     m_viewLayoutSize = viewLayoutSize;
+    m_minimumEffectiveDeviceWidth = newEffectiveWidth;
 
     updateMinimumLayoutSize();
     updateConfiguration();
@@ -448,16 +450,17 @@ void ViewportConfiguration::updateConfiguration()
 
     m_configuration.avoidsUnsafeArea = m_viewportArguments.viewportFit != ViewportFit::Cover;
     m_configuration.initialScaleIgnoringLayoutScaleFactor = m_configuration.initialScale;
-    m_configuration.initialScale *= m_layoutSizeScaleFactor;
-    m_configuration.minimumScale *= m_layoutSizeScaleFactor;
-    m_configuration.maximumScale *= m_layoutSizeScaleFactor;
+    float effectiveLayoutScale = effectiveLayoutSizeScaleFactor();
+    m_configuration.initialScale *= effectiveLayoutScale;
+    m_configuration.minimumScale *= effectiveLayoutScale;
+    m_configuration.maximumScale *= effectiveLayoutScale;
 
     LOG_WITH_STREAM(Viewports, stream << "ViewportConfiguration " << this << " updateConfiguration " << *this << " gives initial scale " << initialScale() << " based on contentSize " << m_contentSize << " and layout size " << layoutWidth() << "x" << layoutHeight());
 }
 
 void ViewportConfiguration::updateMinimumLayoutSize()
 {
-    m_minimumLayoutSize = m_viewLayoutSize / m_layoutSizeScaleFactor;
+    m_minimumLayoutSize = m_viewLayoutSize / effectiveLayoutSizeScaleFactor();
 
     if (!shouldOverrideDeviceWidthAndShrinkToFit())
         return;
@@ -609,6 +612,7 @@ String ViewportConfiguration::description() const
     ts.dumpProperty("ignoring horizontal scaling constraints", shouldIgnoreHorizontalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("ignoring vertical scaling constraints", shouldIgnoreVerticalScalingConstraints() ? "true" : "false");
     ts.dumpProperty("avoids unsafe area", avoidsUnsafeArea() ? "true" : "false");
+    ts.dumpProperty("minimum effective device width", m_minimumEffectiveDeviceWidth);
     
     ts.endGroup();
 
