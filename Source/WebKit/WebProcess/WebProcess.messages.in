@@ -130,7 +130,7 @@ messages -> WebProcess LegacyReceiver {
 
     MarkIsNoLongerPrewarmed()
     UpdateActivePages()
-    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) LegacySync
+    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) Async
 
 #if PLATFORM(MAC)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)

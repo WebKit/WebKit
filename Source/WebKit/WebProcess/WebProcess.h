@@ -192,7 +192,7 @@ public:
 #endif
 
     void updateActivePages();
-    void getActivePagesOriginsForTesting(Vector<String>&);
+    void getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&&);
     void pageActivityStateDidChange(uint64_t pageID, OptionSet<WebCore::ActivityState::Flag> changed);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds);

@@ -514,15 +514,17 @@ void WebProcess::updateActivePages()
 #endif
 }
 
-void WebProcess::getActivePagesOriginsForTesting(Vector<String>& activeOrigins)
+void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
     auto activeOriginsAsNSStrings = activePagesOrigins(m_pageMap);
-    activeOrigins.reserveCapacity([activeOriginsAsNSStrings count]);
+    Vector<String> activeOrigins;
+    activeOrigins.reserveInitialCapacity([activeOriginsAsNSStrings count]);
     for (NSString* activeOrigin in activeOriginsAsNSStrings.get())
         activeOrigins.uncheckedAppend(activeOrigin);
+    completionHandler(WTFMove(activeOrigins));
 #else
-    UNUSED_PARAM(activeOrigins);
+    completionHandler({ });
 #endif
 }
 

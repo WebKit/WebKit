@@ -125,7 +125,7 @@ public:
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
 
-    Vector<String> activePagesDomainsForTesting(); // This is what is reported to ActivityMonitor.
+    void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
 
     virtual bool isServiceWorkerProcess() const { return false; }
 

@@ -1343,8 +1343,9 @@ void WebProcess::updateActivePages()
 {
 }
 
-void WebProcess::getActivePagesOriginsForTesting(Vector<String>&)
+void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    completionHandler({ });
 }
 
 void WebProcess::updateCPULimit()

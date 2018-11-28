@@ -215,7 +215,7 @@ public:
     void clearSupportedPlugins();
 
     ProcessID networkProcessIdentifier();
-    Vector<String> activePagesOriginsInWebProcessForTesting(ProcessID);
+    void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
     bool networkProcessHasEntitlementForTesting(const String&);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }

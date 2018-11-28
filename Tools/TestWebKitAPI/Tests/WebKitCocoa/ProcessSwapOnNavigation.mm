@@ -764,9 +764,13 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
     done = false;
 
     auto webkitPID = [webView _webProcessIdentifier];
-    auto* activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
-    EXPECT_EQ(1u, activeDomains.count);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+    [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID completionHandler:^(NSArray<NSString *> *activeDomains) {
+        EXPECT_EQ(1u, activeDomains.count);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
     [webView loadRequest:request];
@@ -777,13 +781,21 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
     auto googlePID = [webView _webProcessIdentifier];
     EXPECT_NE(webkitPID, googlePID);
 
-    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID];
-    EXPECT_EQ(1u, activeDomains.count);
-    EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+    [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID completionHandler:^(NSArray<NSString *> *activeDomains) {
+        EXPECT_EQ(1u, activeDomains.count);
+        EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
-    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
-    EXPECT_EQ(1u, activeDomains.count);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+    [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID completionHandler:^(NSArray<NSString *> *activeDomains) {
+        EXPECT_EQ(1u, activeDomains.count);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
     [webView goBack]; // Back to webkit.org.
 
@@ -795,14 +807,23 @@ TEST(ProcessSwap, SuspendedPagesInActivityMonitor)
     auto pidAfterBackNavigation = [webView _webProcessIdentifier];
     EXPECT_EQ(webkitPID, pidAfterBackNavigation);
 
-    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID];
-    EXPECT_EQ(1u, activeDomains.count);
-    EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+    [processPool _getActivePagesOriginsInWebProcessForTesting:googlePID completionHandler:^(NSArray<NSString *> *activeDomains) {
+        EXPECT_EQ(1u, activeDomains.count);
+        EXPECT_WK_STREQ(@"pson://www.google.com", activeDomains[0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
-    activeDomains = [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID];
-    EXPECT_EQ(1u, activeDomains.count);
-    EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+    [processPool _getActivePagesOriginsInWebProcessForTesting:webkitPID completionHandler:^(NSArray<NSString *> *activeDomains) {
+        EXPECT_EQ(1u, activeDomains.count);
+        EXPECT_WK_STREQ(@"pson://www.webkit.org", activeDomains[0]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 }
+
 #endif // PLATFORM(MAC)
 
 TEST(ProcessSwap, BackWithoutSuspendedPage)

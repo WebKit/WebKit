@@ -49,6 +49,7 @@
 #import <WebCore/PluginData.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -579,14 +580,14 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return wrapper(_processPool->resumeDownload(API::Data::createWithoutCopying(resumeData).ptr(), path));
 }
 
-- (NSArray<NSString *> *)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid
+- (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler
 {
-    auto activePagesOrigins = _processPool->activePagesOriginsInWebProcessForTesting(pid);
-
-    NSMutableArray<NSString *> *array = [[NSMutableArray alloc] initWithCapacity:activePagesOrigins.size()];
-    for (auto& origin : activePagesOrigins)
-        [array addObject:(NSString *)origin];
-    return [array autorelease];
+    _processPool->activePagesOriginsInWebProcessForTesting(pid, [completionHandler = makeBlockPtr(completionHandler)] (Vector<String>&& activePagesOrigins) {
+        NSMutableArray<NSString *> *array = [[[NSMutableArray alloc] initWithCapacity:activePagesOrigins.size()] autorelease];
+        for (auto& origin : activePagesOrigins)
+            [array addObject:origin];
+        completionHandler(array);
+    });
 }
 
 - (BOOL)_networkProcessHasEntitlementForTesting:(NSString *)entitlement

@@ -1343,13 +1343,13 @@ ProcessID WebProcessPool::networkProcessIdentifier()
     return m_networkProcess->processIdentifier();
 }
 
-Vector<String> WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid)
+void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     for (auto& process : m_processes) {
         if (process->processIdentifier() == pid)
-            return process->activePagesDomainsForTesting();
+            return process->activePagesDomainsForTesting(WTFMove(completionHandler));
     }
-    return { };
+    completionHandler({ });
 }
 
 void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)

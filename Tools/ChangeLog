@@ -1,3 +1,12 @@
+2018-11-27  Alex Christensen  <achristensen@webkit.org>
+
+        Make synchronous IPC introduced in r237267 asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=190757
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-11-27  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Add watchOS ports

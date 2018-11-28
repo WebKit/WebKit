@@ -1,5 +1,28 @@
 2018-11-27  Alex Christensen  <achristensen@webkit.org>
 
+        Make synchronous IPC introduced in r237267 asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=190757
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _getActivePagesOriginsInWebProcessForTesting:completionHandler:]):
+        (-[WKProcessPool _getActivePagesOriginsInWebProcessForTesting:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::activePagesOriginsInWebProcessForTesting):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::activePagesDomainsForTesting):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getActivePagesOriginsForTesting):
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::getActivePagesOriginsForTesting):
+
+2018-11-27  Alex Christensen  <achristensen@webkit.org>
+
         Safe browsing warning text needs to be visible on High Sierra
         https://bugs.webkit.org/show_bug.cgi?id=192022
 

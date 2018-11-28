@@ -1414,11 +1414,9 @@ void WebProcessProxy::didCollectPrewarmInformation(const String& domain, const W
     processPool().didCollectPrewarmInformation(domain, prewarmInformation);
 }
 
-Vector<String> WebProcessProxy::activePagesDomainsForTesting()
+void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    Vector<String> activeDomains;
-    sendSync(Messages::WebProcess::GetActivePagesOriginsForTesting(), Messages::WebProcess::GetActivePagesOriginsForTesting::Reply(activeDomains), 0);
-    return activeDomains;
+    connection()->sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTFMove(completionHandler));
 }
 
 #if PLATFORM(WATCHOS)
