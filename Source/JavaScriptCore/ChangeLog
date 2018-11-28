@@ -1,3 +1,26 @@
+2018-11-28  Keith Rollin  <krollin@apple.com>
+
+        Remove Postprocess Headers dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=192023
+        <rdar://problem/46283377>
+
+        Reviewed by Mark Lam.
+
+        JavaScriptCore's Xcode Postprocess Headers build phase used to have a
+        dependency on a specific handful of files. In r234227, the script used
+        in this phase (postprocess-headers.sh) was completely rewritten to
+        operate on *all* files in JSC's Public and Private headers directories
+        instead of just this handful. This rewrite makes the previous
+        dependency specification insufficient, leading to incorrect
+        incremental builds if the right files weren't touched. Address this by
+        removing the dependencies completely. This will cause
+        postprocess-headers.sh to always be executed, even when none of its
+        files are touch. Running this script all the time is OK, since it has
+        built-in protections against unnecessarily touching files that haven't
+        changed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.
