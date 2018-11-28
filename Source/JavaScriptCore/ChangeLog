@@ -1,5 +1,21 @@
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
+        ASSERTION FAILED: capacity && isPageAligned(capacity) in JSC::CLoopStack::CLoopStack(JSC::VM&).
+        https://bugs.webkit.org/show_bug.cgi?id=192018
+
+        Reviewed by Saam Barati.
+
+        This assertion failed because the regress-191579.js test was specifying
+        --maxPerThreadStackUsage=400000 i.e. it was running with a stack size that is not
+        page aligned.  Given that the user can specify any arbitrary stack size, and the
+        CLoop stack expects to be page aligned, we'll just round up the requested capacity
+        to the next page alignment.
+
+        * interpreter/CLoopStack.cpp:
+        (JSC::CLoopStack::CLoopStack):
+
+2018-11-27  Mark Lam  <mark.lam@apple.com>
+
         [Re-landing] NaNs read from Wasm code needs to be be purified.
         https://bugs.webkit.org/show_bug.cgi?id=191056
         <rdar://problem/45660341>

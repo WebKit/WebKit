@@ -56,6 +56,7 @@ CLoopStack::CLoopStack(VM& vm)
     , m_softReservedZoneSizeInRegisters(0)
 {
     size_t capacity = Options::maxPerThreadStackUsage();
+    capacity = WTF::roundUpToMultipleOf(pageSize(), capacity);
     ASSERT(capacity && isPageAligned(capacity));
 
     m_reservation = PageReservation::reserve(WTF::roundUpToMultipleOf(commitSize(), capacity), OSAllocator::JSVMStackPages);
