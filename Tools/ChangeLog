@@ -1,3 +1,13 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS API test after r238585
+        https://bugs.webkit.org/show_bug.cgi?id=192022
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        On iOS, a safe browsing warning over a WKWebView with frame of {0, 0, 0, 0} has a size of {0, 0}, which is fine.
+        The test was added to catch a bug on Mac platforms, so testing it only on Mac will catch any regression.
+
 2018-11-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Configure python logging

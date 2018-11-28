@@ -212,7 +212,9 @@ TEST(SafeBrowsing, VisitUnsafeWebsite)
     auto webView = safeBrowsingView();
     auto warning = [webView _safeBrowsingWarning];
     EXPECT_EQ(warning.subviews.count, 1ull);
+#if PLATFORM(MAC)
     EXPECT_GT(warning.subviews.firstObject.subviews[2].frame.size.height, 0);
+#endif
     checkTitleAndClick(warning.subviews.firstObject.subviews[4], "Show Details");
     EXPECT_EQ(warning.subviews.count, 2ull);
     EXPECT_FALSE(committedNavigation);
