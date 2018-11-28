@@ -1,3 +1,23 @@
+2018-11-27  Alex Christensen  <achristensen@webkit.org>
+
+        Safe browsing warning text needs to be visible on High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=192022
+
+        Reviewed by Tim Horton.
+
+        Something about AppKit, autolayout, view insertion order, and NSTextView makes the text lay
+        out with initial size of {0, 0} on High Sierra. Using an NSTextField instead makes the details visible.
+
+        Covered by an API test.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (makeLabel):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingWarning layoutText]):
+        (makeTitleLabel): Deleted.
+
 2018-11-27  Tim Horton  <timothy_horton@apple.com>
 
         WKNavigation.AutomaticViewReloadAfterWebProcessCrash asserts after r238538

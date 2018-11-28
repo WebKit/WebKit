@@ -57,7 +57,7 @@ using RectType = CGRect;
 @package
     CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
-    RetainPtr<NSMutableArray<WKSafeBrowsingTextView *>> _textViews;
+    WeakObjCPtr<WKSafeBrowsingTextView> _details;
 }
 
 - (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;

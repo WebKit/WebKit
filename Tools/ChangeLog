@@ -1,3 +1,13 @@
+2018-11-27  Alex Christensen  <achristensen@webkit.org>
+
+        Safe browsing warning text needs to be visible on High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=192022
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+
 2018-11-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the watchOS engineering build

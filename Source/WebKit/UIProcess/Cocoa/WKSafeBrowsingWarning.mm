@@ -197,12 +197,8 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
 #endif
 }
 
-static ViewType *makeTitleLabel(NSString *title, ViewType *warning)
+static ViewType *makeLabel(NSAttributedString *attributedString)
 {
-    auto attributedString = [[[NSAttributedString alloc] initWithString:title attributes:@{
-        NSFontAttributeName:[FontType boldSystemFontOfSize:titleSize],
-        NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, warning)
-    }] autorelease];
 #if PLATFORM(MAC)
     return [NSTextField labelWithAttributedString:attributedString];
 #else
@@ -251,15 +247,19 @@ static void setBackground(ViewType *view, ColorType *color)
 - (void)addContent
 {
     auto exclamationPoint = [[WKSafeBrowsingExclamationPoint new] autorelease];
-    auto title = makeTitleLabel(_warning->title(), self);
-    auto warning = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:[[[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] }] autorelease] forWarning:self] autorelease];
+    auto title = makeLabel([[[NSAttributedString alloc] initWithString:_warning->title() attributes:@{
+        NSFontAttributeName:[FontType boldSystemFontOfSize:titleSize],
+        NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, self)
+    }] autorelease]);
+    auto warning = makeLabel([[[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{
+        NSFontAttributeName:[FontType systemFontOfSize:textSize],
+        NSForegroundColorAttributeName:colorForItem(WarningItem::MessageText, self)
+    }] autorelease]);
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
     auto box = [[ViewType new] autorelease];
     setBackground(box, colorForItem(WarningItem::BoxBackground, self));
     box.layer.cornerRadius = boxCornerRadius;
-    _textViews = adoptNS([NSMutableArray new]);
-    [_textViews addObject:warning];
 
     for (ViewType *view in @[exclamationPoint, title, warning, goBack, showDetails]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -306,7 +306,7 @@ static void setBackground(ViewType *view, ColorType *color)
     NSMutableAttributedString *text = [[_warning->details() mutableCopy] autorelease];
     [text addAttributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] } range:NSMakeRange(0, text.length)];
     WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
-    [_textViews addObject:details];
+    _details = details;
     ViewType *bottom = [[ViewType new] autorelease];
     setBackground(bottom, colorForItem(WarningItem::BoxBackground, self));
     bottom.layer.cornerRadius = boxCornerRadius;
@@ -358,8 +358,7 @@ static void setBackground(ViewType *view, ColorType *color)
 
 - (void)layoutText
 {
-    for (WKSafeBrowsingTextView *view in _textViews.get())
-        [view invalidateIntrinsicContentSize];
+    [_details invalidateIntrinsicContentSize];
 }
 
 #if PLATFORM(MAC)
