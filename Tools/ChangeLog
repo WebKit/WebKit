@@ -1,3 +1,12 @@
+2018-11-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for quirk container's collapsing top margin in quirks mode.
+        https://bugs.webkit.org/show_bug.cgi?id=192070
+
+        Reviewed by Antti Koivisto.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2018-11-28  Thibault Saunier  <tsaunier@igalia.com>
 
         [WebRTC][GStreamer] Make sure to have the default microphone on the top of the list

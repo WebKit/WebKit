@@ -45,6 +45,7 @@ public:
     enum class ElementType {
         Document,
         Body,
+        TableCell,
         TableColumn,
         TableRow,
         TableColumnGroup,
@@ -107,6 +108,7 @@ public:
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
+    bool isTableCell() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableCell; }
 
     const Container* parent() const { return m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }

@@ -36,6 +36,23 @@
 namespace WebCore {
 namespace Layout {
 
+static bool isQuirkContainer(const Box& layoutBox)
+{
+    return layoutBox.isBodyBox() || layoutBox.isDocumentBox() || layoutBox.isTableCell();
+}
+
+static bool hasMarginTopQuirkValue(const Box& layoutBox)
+{
+    return layoutBox.style().hasMarginBeforeQuirk();
+}
+
+static bool shouldIgnoreMarginTopInQuirkContext(const LayoutState& layoutState, const Box& layoutBox)
+{
+    if (!layoutBox.parent())
+        return false;
+    return layoutState.inQuirksMode() && isQuirkContainer(*layoutBox.parent()) && hasMarginTopQuirkValue(layoutBox);
+}
+
 static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidateMarginValue)
 {
     if (!candidateMarginValue)
@@ -113,6 +130,9 @@ static bool isMarginTopCollapsedWithParent(const LayoutState& layoutState, const
         return false;
 
     if (parentDisplayBox.paddingTop().value_or(0))
+        return false;
+
+    if (shouldIgnoreMarginTopInQuirkContext(layoutState, layoutBox))
         return false;
 
     return true;
@@ -209,6 +229,10 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginTop(const Lay
 
     // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
     if (isMarginTopCollapsedWithParent(layoutState, layoutBox))
+        return 0;
+
+    // FIXME: Find out the logic behind this.
+    if (shouldIgnoreMarginTopInQuirkContext(layoutState, layoutBox))
         return 0;
 
     if (!isMarginTopCollapsedWithSibling(layoutBox)) {

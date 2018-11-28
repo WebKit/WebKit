@@ -1,3 +1,22 @@
+2018-11-28  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Add support for quirk container's collapsing top margin in quirks mode.
+        https://bugs.webkit.org/show_bug.cgi?id=192070
+
+        Reviewed by Antti Koivisto.
+
+        In quirk mode when the top margin collapsing is computed for a quirk container (body, table cell) and the canditate margin value is
+        also a quirk value, we just ignore it.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isQuirkContainer):
+        (WebCore::Layout::hasMarginTopQuirkValue):
+        (WebCore::Layout::shouldIgnoreMarginTopInQuirkContext):
+        (WebCore::Layout::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginTop):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isTableCell const):
+
 2018-11-28  Ali Juma  <ajuma@chromium.org>
 
         Intersection Observer: rootMargin: '' gives weird results
