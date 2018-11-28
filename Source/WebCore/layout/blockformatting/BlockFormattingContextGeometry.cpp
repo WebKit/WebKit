@@ -58,12 +58,16 @@ static bool isStretchedToInitialContainingBlock(const LayoutState& layoutState, 
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-static HeightAndMargin stretchHeightToInitialContainingBlock(HeightAndMargin heightAndMargin, LayoutUnit initialContainingBlockHeight)
+static HeightAndMargin stretchHeightToInitialContainingBlockQuirk(HeightAndMargin heightAndMargin, LayoutUnit initialContainingBlockHeight)
 {
-    auto verticalMargins = heightAndMargin.margin.top + heightAndMargin.margin.bottom;
+    // This quirk happens when the body height is 0 which means its vertical margins collapse through (top and bottom margins are adjoining).
+    // However now that we stretch the body they don't collapse through anymore, so we need to use the non-collapsed values instead.
+    ASSERT(initialContainingBlockHeight);
+    auto verticalMargins = heightAndMargin.height ? heightAndMargin.usedMarginValues() : heightAndMargin.margin;
+    auto totalVerticalMargins = verticalMargins.top + verticalMargins.bottom;
     // Stretch but never overstretch with the margins.
-    if (heightAndMargin.height + verticalMargins < initialContainingBlockHeight)
-        heightAndMargin.height = initialContainingBlockHeight - verticalMargins;
+    if (heightAndMargin.height + totalVerticalMargins < initialContainingBlockHeight)
+        heightAndMargin.height = initialContainingBlockHeight - totalVerticalMargins;
 
     return heightAndMargin;
 }
@@ -310,7 +314,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
         return heightAndMargin;
 
     auto initialContainingBlockHeight = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox)).contentBoxHeight();
-    heightAndMargin = stretchHeightToInitialContainingBlock(heightAndMargin, initialContainingBlockHeight);
+    heightAndMargin = stretchHeightToInitialContainingBlockQuirk(heightAndMargin, initialContainingBlockHeight);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> inflow non-replaced -> streched to viewport -> height(" << heightAndMargin.height << "px) margin(" << heightAndMargin.margin.top << "px, " << heightAndMargin.margin.bottom << "px) -> layoutBox(" << &layoutBox << ")");
     return heightAndMargin;

@@ -1,5 +1,20 @@
 2018-11-28  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][Quirk] Use non-collapsed vertical margin values when the container is stretched to the size of the ICB.
+        https://bugs.webkit.org/show_bug.cgi?id=192078
+
+        Reviewed by Antti Koivisto.
+
+        This quirk happens when the body height is 0 which means its vertical margins collapse through (top and bottom margins are adjoining).
+        However now that we stretch the body they don't collapse through anymore, so we need to use the non-collapsed values instead.
+
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::HeightAndMargin::usedMarginValues const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::stretchHeightToInitialContainingBlock):
+
+2018-11-28  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Add support for quirk container's collapsing top margin in quirks mode.
         https://bugs.webkit.org/show_bug.cgi?id=192070
 

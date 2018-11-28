@@ -106,6 +106,8 @@ struct WidthAndMargin {
 };
 
 struct HeightAndMargin {
+    VerticalEdges usedMarginValues() const { return collapsedMargin.value_or(margin); }
+
     LayoutUnit height;
     VerticalEdges margin;
     std::optional<VerticalEdges> collapsedMargin;
