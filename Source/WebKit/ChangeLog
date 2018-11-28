@@ -1,5 +1,15 @@
 2018-11-28  Alexey Proskuryakov  <ap@apple.com>
 
+        Remove another OS version check from NetworkDataTaskCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=192046
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::statelessCookieStorage):
+
+2018-11-28  Alexey Proskuryakov  <ap@apple.com>
+
         Modernize version checks for same site cookie support
         https://bugs.webkit.org/show_bug.cgi?id=192054
 
