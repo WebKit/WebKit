@@ -669,16 +669,16 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         return true;
     }
 
-    selectOnMouseDown(event)
+    canSelectOnMouseDown(event)
     {
-        super.selectOnMouseDown(event);
-
         if (this._editing)
-            return;
+            return false;
 
         // Prevent selecting the nearest word on double click.
         if (event.detail >= 2)
-            event.preventDefault();
+            return false;
+
+        return true;
     }
 
     ondblclick(event)

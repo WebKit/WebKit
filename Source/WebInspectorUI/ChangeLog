@@ -1,3 +1,68 @@
+2018-11-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TreeOutline should re-use multiple-selection logic from Table
+        https://bugs.webkit.org/show_bug.cgi?id=191483
+        <rdar://problem/45953305>
+
+        Reviewed by Devin Rousso.
+
+        Update TreeOutline to use SelectionController. Adopting SelectionController
+        in TreeOutline is not as straightforward as it was in Table. Selected items
+        are tracked by index, and TreeElement lacks an explicit index. As a consequence
+        TreeElement indexes are calcualted as needed and cached. The cache is cleared
+        whenever an element is added or removed.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.prototype.didInsertItem):
+        (WI.SelectionController.prototype.didRemoveItem):
+        (WI.SelectionController.prototype.handleKeyDown):
+        Drive-by syntax error fix.
+        (WI.SelectionController.prototype._adjustIndexesAfter):
+        (WI.SelectionController):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.canSelectOnMouseDown):
+        (WI.DOMTreeElement.prototype.selectOnMouseDown): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype._onmousedown):
+        Item selection is now handled by SelectionController.
+
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement.prototype.canSelectOnMouseDown):
+        (WI.ShaderProgramTreeElement.prototype.selectOnMouseDown): Deleted.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.canSelectOnMouseDown):
+        (WI.TreeElement.prototype._attach):
+        (WI.TreeElement.prototype.select):
+        (WI.TreeElement.prototype.deselect):
+        Route item selection through the parent TreeOutline, in order to go though
+        the TreeOutline's SelectionController.
+
+        (WI.TreeElement.treeElementMouseDown): Deleted.
+        Moved handler to TreeOutline, which owns the SelectionController that
+        needs to respond to mouse events.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.get allowsMultipleSelection):
+        (WI.TreeOutline.prototype.set allowsMultipleSelection):
+        (WI.TreeOutline.prototype.get selectedTreeElement):
+        (WI.TreeOutline.prototype.set selectedTreeElement):
+        (WI.TreeOutline.prototype.insertChild):
+        (WI.TreeOutline.prototype.removeChildAtIndex):
+        (WI.TreeOutline.prototype._rememberTreeElement):
+        (WI.TreeOutline.prototype._forgetTreeElement):
+        (WI.TreeOutline.prototype._treeKeyDown):
+        (WI.TreeOutline.prototype.selectionControllerNumberOfItems):
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+        (WI.TreeOutline.prototype.selectionControllerNextSelectableIndex):
+        (WI.TreeOutline.prototype.selectionControllerPreviousSelectableIndex):
+        (WI.TreeOutline.prototype.selectTreeElementInternal):
+        (WI.TreeOutline._generateStyleRulesIfNeeded._indexOfTreeElement.previousElement):
+        (WI.TreeOutline._generateStyleRulesIfNeeded):
+
 2018-11-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Experimental Computed panel is unreadable in Dark Mode

@@ -48,12 +48,9 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
     }
 
-    selectOnMouseDown(event)
+    canSelectOnMouseDown(event)
     {
-        if (this._statusElement.contains(event.target))
-            return;
-
-        super.selectOnMouseDown(event);
+        return !this._statusElement.contains(event.target);
     }
 
     // Private

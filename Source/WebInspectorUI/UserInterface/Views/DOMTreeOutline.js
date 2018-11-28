@@ -298,8 +298,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             event.preventDefault();
             return;
         }
-
-        element.select();
     }
 
     _onmousemove(event)

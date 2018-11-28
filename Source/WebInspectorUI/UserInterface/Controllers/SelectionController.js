@@ -192,15 +192,17 @@ WI.SelectionController = class SelectionController extends WI.Object
         this._selectedIndexes.clear();
     }
 
+    didInsertItem(index)
+    {
+        this._adjustIndexesAfter(index - 1, 1);
+    }
+
     didRemoveItem(index)
     {
         if (this.hasSelectedItem(index))
             this.deselectItem(index);
 
-        while (index = this._selectedIndexes.indexGreaterThan(index)) {
-            this._selectedIndexes.delete(index);
-            this._selectedIndexes.add(index - 1);
-        }
+        this._adjustIndexesAfter(index, -1);
     }
 
     handleKeyDown(event)
@@ -208,7 +210,7 @@ WI.SelectionController = class SelectionController extends WI.Object
         if (!this.numberOfItems)
             return false;
 
-        if (event.key === "a" && event.commandOrControlKey()) {
+        if (event.key === "a" && event.commandOrControlKey) {
             this.selectAll();
             return true;
         }
@@ -371,5 +373,13 @@ WI.SelectionController = class SelectionController extends WI.Object
         let deselectedItems = oldSelectedIndexes.difference(indexes);
         let selectedItems = indexes.difference(oldSelectedIndexes);
         this._delegate.selectionControllerSelectionDidChange(this, deselectedItems, selectedItems);
+    }
+
+    _adjustIndexesAfter(index, delta)
+    {
+        while (index = this._selectedIndexes.indexGreaterThan(index)) {
+            this._selectedIndexes.delete(index);
+            this._selectedIndexes.add(index + delta);
+        }
     }
 };

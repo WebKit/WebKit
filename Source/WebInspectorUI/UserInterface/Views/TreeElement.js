@@ -187,6 +187,12 @@ WI.TreeElement = class TreeElement extends WI.Object
             this.expand();
     }
 
+    canSelectOnMouseDown(event)
+    {
+        // Overridden by subclasses if needed.
+        return true;
+    }
+
     _fireDidChange()
     {
         if (this.treeOutline)
@@ -239,7 +245,6 @@ WI.TreeElement = class TreeElement extends WI.Object
             if (this.selected)
                 this._listItemNode.classList.add("selected");
 
-            this._listItemNode.addEventListener("mousedown", WI.TreeElement.treeElementMouseDown);
             this._listItemNode.addEventListener("click", WI.TreeElement.treeElementToggled);
             this._listItemNode.addEventListener("dblclick", WI.TreeElement.treeElementDoubleClicked);
 
@@ -277,20 +282,6 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         if (this.treeOutline)
             this.treeOutline.soon.updateVirtualizedElements();
-    }
-
-    static treeElementMouseDown(event)
-    {
-        var element = event.currentTarget;
-        if (!element || !element.treeElement || !element.treeElement.selectable)
-            return;
-
-        if (element.treeElement.isEventWithinDisclosureTriangle(event)) {
-            event.preventDefault();
-            return;
-        }
-
-        element.treeElement.selectOnMouseDown(event);
     }
 
     static treeElementToggled(event)
@@ -526,29 +517,11 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         treeOutline.processingSelectionChange = true;
 
-        // Prevent dispatching a SelectionDidChange event for the deselected element if
-        // it will be dispatched for the selected element.
-        if (!suppressOnSelect)
-            suppressOnDeselect = true;
+        this.selected = true;
+        treeOutline.selectTreeElementInternal(this, suppressOnSelect, selectedByUser);
 
-        let deselectedElement = treeOutline.selectedTreeElement;
-        if (!this.selected) {
-            if (treeOutline.selectedTreeElement)
-                treeOutline.selectedTreeElement.deselect(suppressOnDeselect);
-
-            this.selected = true;
-            treeOutline.selectedTreeElement = this;
-
-            if (this._listItemNode)
-                this._listItemNode.classList.add("selected");
-        }
-
-        if (!suppressOnSelect) {
-            if (this.onselect)
-                this.onselect(this, selectedByUser);
-
-            treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange, {selectedByUser});
-        }
+        if (!suppressOnSelect && this.onselect)
+            this.onselect(this, selectedByUser);
 
         treeOutline.processingSelectionChange = false;
 
@@ -571,17 +544,10 @@ WI.TreeElement = class TreeElement extends WI.Object
             return false;
 
         this.selected = false;
-        this.treeOutline.selectedTreeElement = null;
+        this.treeOutline.selectTreeElementInternal(null, suppressOnDeselect);
 
-        if (this._listItemNode)
-            this._listItemNode.classList.remove("selected");
-
-        if (!suppressOnDeselect) {
-            if (this.ondeselect)
-                this.ondeselect(this);
-
-            this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.SelectionDidChange);
-        }
+        if (!suppressOnDeselect && this.ondeselect)
+            this.ondeselect(this);
 
         return true;
     }
