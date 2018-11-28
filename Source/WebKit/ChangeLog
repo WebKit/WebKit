@@ -1,3 +1,26 @@
+2018-11-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Page not defocused when Find-in-page becomes first responder
+        https://bugs.webkit.org/show_bug.cgi?id=192084
+        <rdar://problem/46146777>
+
+        Reviewed by Tim Horton.
+
+        When -becomeFirstResponder and -resignFirstResponder is called the page should become focused
+        and defocused, respectively. WebKit adjusts it behavior depending on whether it knows it has
+        focus. This includes decisions about whether to allow an element to be focused. We need to
+        ensure that WebKit knows whether the web view is focused for it to make good decisions.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewFocused): Check if the content view is the first responder and
+        hence is accepting keyboard input. Note that picture-in-picture views do not accept keyboard
+        input.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]): Update activity state when the view
+        becomes focused.
+        (-[WKContentView resignFirstResponderForWebView]): Update activity state when the view
+        becomes defocused.
+
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead code from an earlier attempt at implementing safe browsing

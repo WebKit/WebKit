@@ -779,6 +779,7 @@
 		CE3524F81B1431F60028A7C5 /* TextFieldDidBeginAndEndEditing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3524F21B142B8D0028A7C5 /* TextFieldDidBeginAndEndEditing_Bundle.cpp */; };
 		CE3524F91B1441C40028A7C5 /* TextFieldDidBeginAndEndEditing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3524F11B142B8D0028A7C5 /* TextFieldDidBeginAndEndEditing.cpp */; };
 		CE3524FA1B1443890028A7C5 /* input-focus-blur.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */; };
+		CE449E1121AE0F7200E7ADA1 /* WKWebViewFindString.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE449E1021AE0F7200E7ADA1 /* WKWebViewFindString.mm */; };
 		CE4D5DE71F6743BA0072CFC6 /* StringWithDirection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */; };
 		CE6E81A020A6935F00E2C80F /* SetTimeoutFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */; };
 		CE6E81A420A933D500E2C80F /* set-timeout-function.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CE6E81A320A933B800E2C80F /* set-timeout-function.html */; };
@@ -2053,6 +2054,7 @@
 		CE3524F11B142B8D0028A7C5 /* TextFieldDidBeginAndEndEditing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextFieldDidBeginAndEndEditing.cpp; sourceTree = "<group>"; };
 		CE3524F21B142B8D0028A7C5 /* TextFieldDidBeginAndEndEditing_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextFieldDidBeginAndEndEditing_Bundle.cpp; sourceTree = "<group>"; };
 		CE3524F51B142BBB0028A7C5 /* input-focus-blur.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "input-focus-blur.html"; sourceTree = "<group>"; };
+		CE449E1021AE0F7200E7ADA1 /* WKWebViewFindString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewFindString.mm; sourceTree = "<group>"; };
 		CE4D5DE51F6743BA0072CFC6 /* StringWithDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StringWithDirection.cpp; sourceTree = "<group>"; };
 		CE50D8C81C8665CE0072EA5A /* OptionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionSet.cpp; sourceTree = "<group>"; };
 		CE6E819F20A6935F00E2C80F /* SetTimeoutFunction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SetTimeoutFunction.mm; sourceTree = "<group>"; };
@@ -2544,6 +2546,7 @@
 				2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */,
 				F4811E5821940B4400A5E0FD /* WKWebViewEditActions.mm */,
 				0F3B94A51A77266C00DE3272 /* WKWebViewEvaluateJavaScript.mm */,
+				CE449E1021AE0F7200E7ADA1 /* WKWebViewFindString.mm */,
 				D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */,
 				37A9DBE7213B4C9300D261A2 /* WKWebViewServerTrustKVC.mm */,
 				93F56DA81E5F9181003EDE84 /* WKWebViewSnapshot.mm */,
@@ -4212,6 +4215,7 @@
 				2DB647881F4163D60051A89E /* WKWebViewDoesNotLogDuringInitialization.mm in Sources */,
 				F4811E5921940BDE00A5E0FD /* WKWebViewEditActions.mm in Sources */,
 				0F3B94A71A77267400DE3272 /* WKWebViewEvaluateJavaScript.mm in Sources */,
+				CE449E1121AE0F7200E7ADA1 /* WKWebViewFindString.mm in Sources */,
 				F4106C6921ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm in Sources */,
 				D34E08761E4E42E1005FF14A /* WKWebViewGetContents.mm in Sources */,
 				F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */,

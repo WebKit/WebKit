@@ -166,8 +166,9 @@ bool PageClientImpl::isViewWindowActive()
 
 bool PageClientImpl::isViewFocused()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=133098
-    return isViewWindowActive() || [m_webView _isRetainingActiveFocusedState];
+    if (isViewInWindow() && ![m_webView _isBackground])
+        return [m_webView _contentViewIsFirstResponder];
+    return [m_webView _isRetainingActiveFocusedState];
 }
 
 bool PageClientImpl::isViewVisible()

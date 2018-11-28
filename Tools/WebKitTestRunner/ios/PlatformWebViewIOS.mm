@@ -181,8 +181,8 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
 
     [m_window.rootViewController.view addSubview:m_view];
-    [m_window makeKeyAndVisible];
     [m_view becomeFirstResponder];
+    [m_window makeKeyAndVisible];
 }
 
 PlatformWebView::~PlatformWebView()

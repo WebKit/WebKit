@@ -1,3 +1,30 @@
+2018-11-28  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Page not defocused when Find-in-page becomes first responder
+        https://bugs.webkit.org/show_bug.cgi?id=192084
+        <rdar://problem/46146777>
+
+        Reviewed by Tim Horton.
+
+        Add tests for both Mac and iOS to ensure that when finding a string on the page
+        that we do not start an input session if a match is found in an <input> and the
+        WKWebView is not the first responder.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewFindString.mm: Added.
+        (-[WKWebViewFindStringInputDelegate _webView:didStartInputSession:]):
+        (-[WKWebViewFindStringFindDelegate findString]):
+        (-[WKWebViewFindStringFindDelegate _webView:didCountMatches:forString:]):
+        (-[WKWebViewFindStringFindDelegate _webView:didFindMatches:forString:withMatchIndex:]):
+        (-[WKWebViewFindStringFindDelegate _webView:didFailToFindString:]):
+        (returnNo):
+        (returnYes):
+        (viewIsFirstResponder):
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::PlatformWebView): Make the view the first responder before the
+        window key. This matches the ordering used in PlatformWebView::focus(). No behavior change.
+
 2018-11-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Add BeautifulSoup

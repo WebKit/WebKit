@@ -1034,6 +1034,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
         didBecomeFirstResponder = [super becomeFirstResponder];
     }
 
+    if (didBecomeFirstResponder)
+        _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
+
     if (didBecomeFirstResponder && [self canShowNonEmptySelectionView])
         [_textSelectionAssistant activateSelection];
 
@@ -1063,6 +1066,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _inputViewUpdateDeferrer = nullptr;
 
     bool superDidResign = [super resignFirstResponder];
+
+    if (superDidResign)
+        _page->activityStateDidChange(WebCore::ActivityState::IsFocused);
 
     _resigningFirstResponder = NO;
 
