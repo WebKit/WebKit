@@ -48,7 +48,7 @@ private:
 
     void pullAudioData() final;
 
-    GstAudioConverter* m_sampleConverter;
+    GUniquePtr<GstAudioConverter> m_sampleConverter;
     std::unique_ptr<GStreamerAudioStreamDescription> m_inputStreamDescription;
     std::unique_ptr<GStreamerAudioStreamDescription> m_outputStreamDescription;
 

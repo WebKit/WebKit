@@ -21,6 +21,7 @@
 #define GUniquePtrGStreamer_h
 #if USE(GSTREAMER)
 
+#include <gst/audio/audio.h>
 #include <gst/base/gstbytereader.h>
 #include <gst/base/gstflowcombiner.h>
 #include <gst/gstsegment.h>
@@ -38,6 +39,7 @@ WTF_DEFINE_GPTR_DELETER(GstSegment, gst_segment_free)
 WTF_DEFINE_GPTR_DELETER(GstFlowCombiner, gst_flow_combiner_free)
 WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
+WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
 
 }
 

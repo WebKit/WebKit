@@ -39,8 +39,7 @@ RealtimeOutgoingAudioSourceLibWebRTC::RealtimeOutgoingAudioSourceLibWebRTC(Ref<M
 RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC()
 {
     unobserveSource();
-    if (m_sampleConverter)
-        g_clear_pointer(&m_sampleConverter, gst_audio_converter_free);
+    m_sampleConverter = nullptr;
 }
 
 Ref<RealtimeOutgoingAudioSource> RealtimeOutgoingAudioSource::create(Ref<MediaStreamTrackPrivate>&& audioSource)
@@ -74,17 +73,16 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
 
     if (m_sampleConverter && !gst_audio_info_is_equal(m_inputStreamDescription->getInfo(), desc.getInfo())) {
         GST_ERROR_OBJECT(this, "FIXME - Audio format renegotiation is not possible yet!");
-        g_clear_pointer(&m_sampleConverter, gst_audio_converter_free);
+        m_sampleConverter = nullptr;
     }
 
     if (!m_sampleConverter) {
         m_inputStreamDescription = std::unique_ptr<GStreamerAudioStreamDescription>(new GStreamerAudioStreamDescription(desc.getInfo()));
         m_outputStreamDescription = libwebrtcAudioFormat(LibWebRTCAudioFormat::sampleRate, streamDescription.numberOfChannels());
-
-        m_sampleConverter = gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE,
+        m_sampleConverter.reset(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE,
             m_inputStreamDescription->getInfo(),
             m_outputStreamDescription->getInfo(),
-            nullptr);
+            nullptr));
     }
 
     LockHolder locker(m_adapterMutex);
@@ -107,7 +105,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
     size_t outBufferSize = outChunkSampleCount * m_outputStreamDescription->getInfo()->bpf;
 
     LockHolder locker(m_adapterMutex);
-    size_t inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter, outChunkSampleCount);
+    size_t inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter.get(), outChunkSampleCount);
     size_t inBufferSize = inChunkSampleCount * m_inputStreamDescription->getInfo()->bpf;
 
     auto available = gst_adapter_available(m_adapter.get());
@@ -128,7 +126,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
 
         gpointer in[1] = { inMap.data() };
         gpointer out[1] = { outMap.data() };
-        if (!gst_audio_converter_samples(m_sampleConverter, static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
+        if (!gst_audio_converter_samples(m_sampleConverter.get(), static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
             GST_ERROR("Could not convert samples.");
 
             return;

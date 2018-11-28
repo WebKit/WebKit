@@ -1,5 +1,23 @@
 2018-11-28  Thibault Saunier  <tsaunier@igalia.com>
 
+        [WebRTC][GStreamer] Use a GUniquePtr to hold the GstAudioConverter in our OutgoingAudioSource
+        https://bugs.webkit.org/show_bug.cgi?id=192027
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Cleaning up a bit the code.
+
+        It is a minor refactoring, no new test required.
+
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h:
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::~RealtimeOutgoingAudioSourceLibWebRTC):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.h:
+
+2018-11-28  Thibault Saunier  <tsaunier@igalia.com>
+
         [GStreamer][WebRTC] Do not run device monitor for device type we do not handle
         https://bugs.webkit.org/show_bug.cgi?id=191904
 
