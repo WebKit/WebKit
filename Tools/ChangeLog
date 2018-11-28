@@ -1,5 +1,16 @@
 2018-11-28  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add BeautifulSoup
+        https://bugs.webkit.org/show_bug.cgi?id=191994
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/thirdparty: Added.
+        * BuildSlaveSupport/ews-app/ews/thirdparty/BeautifulSoup.py: Added.
+        * BuildSlaveSupport/ews-app/ews/thirdparty/__init__.py: Added.
+
+2018-11-28  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add support to download Patch from Bugzilla
         https://bugs.webkit.org/show_bug.cgi?id=191943
 
