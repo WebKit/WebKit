@@ -60,7 +60,7 @@ static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
     switch (margins.size()) {
     case 0:
         for (unsigned i = 0; i < 4; ++i)
-            margins.append(Length());
+            margins.append(Length(0, Fixed));
         break;
     case 1:
         for (unsigned i = 0; i < 3; ++i)

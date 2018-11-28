@@ -1,3 +1,15 @@
+2018-11-28  Ali Juma  <ajuma@chromium.org>
+
+        Intersection Observer: rootMargin: '' gives weird results
+        https://bugs.webkit.org/show_bug.cgi?id=191975
+
+        Reviewed by Simon Fraser.
+
+        Add test coverage.
+
+        * web-platform-tests/intersection-observer/empty-root-margin-expected.txt: Added.
+        * web-platform-tests/intersection-observer/empty-root-margin.html: Added.
+
 2018-11-27  Rob Buis  <rbuis@igalia.com>
 
         Block more ports (427, 548, 6697)
