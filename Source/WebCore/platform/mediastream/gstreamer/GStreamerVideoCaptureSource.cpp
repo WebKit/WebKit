@@ -186,6 +186,8 @@ const RealtimeMediaSourceCapabilities& GStreamerVideoCaptureSource::capabilities
     capabilities.setDeviceId(hashedId());
     updateCapabilities(capabilities);
 
+    capabilities.addFacingMode(RealtimeMediaSourceSettings::Unknown);
+
     m_capabilities = WTFMove(capabilities);
 
     return m_capabilities.value();
