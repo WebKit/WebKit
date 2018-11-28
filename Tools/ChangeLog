@@ -1,3 +1,24 @@
+2018-11-27  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Add watchOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=191974
+        <rdar://problem/46251051>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory): Add WatchDevice and WatchSimulator ports.
+        * Scripts/webkitpy/port/watch.py: Added.
+        (WatchPort): Base class for watchOS ports.
+        * Scripts/webkitpy/port/watch_device.py: Added.
+        (WatchDevicePort): Class for running layout tests on a watchOS device.
+        * Scripts/webkitpy/port/watch_simulator.py: Added.
+        (WatchSimulatorPort): Class for running layout tests on a watchOS simulator.
+        * Scripts/webkitpy/port/watch_simulator_unittest.py: Added.
+        (WatchSimulatorTest):
+        * Scripts/webkitpy/port/watch_testcase.py: Added.
+        (WatchTest):
+
 2018-11-27  Alex Christensen  <achristensen@webkit.org>
 
         Safe browsing warning text needs to be visible on High Sierra

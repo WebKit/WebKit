@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2018 Apple Inc. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 #
 # Redistribution and use in source and binary forms, with or without
@@ -91,6 +91,8 @@ class PortFactory(object):
         'gtk.GtkPort',
         'ios_simulator.IOSSimulatorPort',
         'ios_device.IOSDevicePort',
+        'watch_simulator.WatchSimulatorPort',
+        'watch_device.WatchDevicePort',
         'jsc_only.JscOnlyPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
