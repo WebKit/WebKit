@@ -42,6 +42,8 @@ class GPUTexture : public RefCounted<GPUTexture> {
 public:
     static Ref<GPUTexture> create(PlatformTextureSmartPtr&&);
 
+    PlatformTexture *platformTexture() const { return m_platformTexture.get(); }
+
     RefPtr<GPUTexture> createDefaultTextureView();
 
 private:

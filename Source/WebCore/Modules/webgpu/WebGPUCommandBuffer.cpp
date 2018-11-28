@@ -29,6 +29,11 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandBuffer.h"
+#include "GPURenderPassDescriptor.h"
+#include "GPURenderPassEncoder.h"
+#include "Logging.h"
+#include "WebGPURenderPassDescriptor.h"
+#include "WebGPURenderPassEncoder.h"
 
 namespace WebCore {
 
@@ -43,8 +48,24 @@ RefPtr<WebGPUCommandBuffer> WebGPUCommandBuffer::create(RefPtr<GPUCommandBuffer>
 WebGPUCommandBuffer::WebGPUCommandBuffer(Ref<GPUCommandBuffer>&& buffer)
     : m_commandBuffer(WTFMove(buffer))
 {
-    UNUSED_PARAM(m_commandBuffer);
 }
+
+RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURenderPassDescriptor&& descriptor)
+{
+    // FIXME: Improve error checking as WebGPURenderPassDescriptor is implemented.
+    if (!descriptor.attachment) {
+        LOG(WebGPU, "WebGPUCommandBuffer::create(): No attachment specified for WebGPURenderPassDescriptor!");
+        return nullptr;
+    }
+    
+    auto encoder = GPURenderPassEncoder::create(m_commandBuffer.get(), GPURenderPassDescriptor { descriptor.attachment->texture() });
+
+    if (!encoder)
+        return nullptr;
+
+    return WebGPURenderPassEncoder::create(encoder.releaseNonNull());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)

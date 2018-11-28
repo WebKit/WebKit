@@ -1,3 +1,56 @@
+2018-11-28  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Begin implementation of WebGPURenderPassEncoder and barebones WebGPURenderPassDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=191990
+
+        Reviewed by Dean Jackson.
+
+        Begin implementation of WebGPURenderPassEncoder and its parent interface, WebGPUProgrammablePassEncoder.
+        Also add code to allow creation of a primitive WebGPURenderPassDescriptor with the sole purpose of providing 
+        a WebGPUTextureView reference to the render pass creation function, WebGPUCommandBuffer::beginRenderPass().
+
+        Test: webgpu/render-passes.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::WebGPUCommandBuffer):
+        (WebCore::WebGPUCommandBuffer::beginRenderPass): Added. Returns a WebGPURenderPassEncoder upon success.
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        * Modules/webgpu/WebGPUCommandBuffer.idl:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp: Added.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h: Added.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl: Added. Empty (for now) interface parenting WebGPURenderPassEncoder.
+        * Modules/webgpu/WebGPURenderPassDescriptor.h:
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl: Added. Directly handles a WebGPUTextureView attachment; all other color attachment properties set by implementation for now.
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp: Added.
+        (WebCore::WebGPURenderPassEncoder::create):
+        (WebCore::WebGPURenderPassEncoder::WebGPURenderPassEncoder):
+        (WebCore::WebGPURenderPassEncoder::passEncoder const):
+        * Modules/webgpu/WebGPURenderPassEncoder.h: Added. Interface to GPURenderPassEncoder.
+        * Modules/webgpu/WebGPURenderPassEncoder.idl: Added. Allows WebGPU developer to encode commands for the WebGPUCommandBuffer.
+        * Modules/webgpu/WebGPUTextureView.cpp:
+        (WebCore::WebGPUTextureView::WebGPUTextureView):
+        * Modules/webgpu/WebGPUTextureView.h:
+        (WebCore::WebGPUTextureView::texture):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        (WebCore::GPUCommandBuffer::platformCommandBuffer const):
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h: Added. Base class for GPURenderPassEncoder.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Added.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Added. Wrapper class for MTLRenderCommandEncoder.
+        * platform/graphics/gpu/GPUTexture.h:
+        (WebCore::GPUTexture::platformTexture const):
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Added.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm: Added.
+        (WebCore::GPURenderPassEncoder::create): Creates the backing MTLRenderCommandEncoder; returns null if this fails. 
+        (WebCore::GPURenderPassEncoder::GPURenderPassEncoder):
+        (WebCore::GPURenderPassEncoder::~GPURenderPassEncoder): End encoding before destroying the MTLCommandEncoder to prevent an exception.
+        (WebCore::GPURenderPassEncoder::platformPassEncoder const):
+
 2018-11-28  Rob Buis  <rbuis@igalia.com>
 
         [XHR] Document.lastModified doesn't work for non-rendered documents

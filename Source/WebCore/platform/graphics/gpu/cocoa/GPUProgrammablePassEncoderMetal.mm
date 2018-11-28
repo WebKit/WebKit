@@ -22,42 +22,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+#import "config.h"
+#import "GPUProgrammablePassEncoder.h"
 
-/* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
+#if ENABLE(WEBGPU)
 
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+namespace WebCore {
 
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+} // namespace WebCore
 
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
-
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
-
-    // TODO figure which other commands are needed
-    void blit();
-*/
-};
+#endif // ENABLE(WEBGPU)

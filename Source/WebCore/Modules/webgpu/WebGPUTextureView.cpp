@@ -36,9 +36,8 @@ Ref<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
 }
 
 WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_textureView(WTFMove(view))
+    : m_texture(WTFMove(view))
 {
-    UNUSED_PARAM(m_textureView);
 }
 
 } // namespace WebCore

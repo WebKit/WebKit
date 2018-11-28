@@ -22,42 +22,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+#pragma once
 
-/* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
+#if ENABLE(WEBGPU)
 
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+#include "GPUProgrammablePassEncoder.h"
 
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
+OBJC_PROTOCOL(MTLRenderCommandEncoder);
 
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+namespace WebCore {
 
-    // TODO figure which other commands are needed
-    void blit();
-*/
+class GPUCommandBuffer;
+
+struct GPURenderPassDescriptor;
+
+using PlatformRenderPassEncoder = MTLRenderCommandEncoder;
+using PlatformRenderPassEncoderSmartPtr = RetainPtr<MTLRenderCommandEncoder>;
+
+class GPURenderPassEncoder : public GPUProgrammablePassEncoder {
+public:
+    static RefPtr<GPURenderPassEncoder> create(const GPUCommandBuffer&, GPURenderPassDescriptor&&);
+
+private:
+    GPURenderPassEncoder(PlatformRenderPassEncoderSmartPtr&&);
+    ~GPURenderPassEncoder();
+
+    PlatformProgrammablePassEncoder *platformPassEncoder() const final;
+
+    PlatformRenderPassEncoderSmartPtr m_platformRenderPassEncoder;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

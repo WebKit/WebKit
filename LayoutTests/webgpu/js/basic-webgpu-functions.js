@@ -137,5 +137,17 @@ function render() {
         return;
     }
 
+    // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
+    // Default a loadOp, storeOp, and clearColor in the implementation for now.
+    let renderPassDescriptor = {
+        attachment : textureView
+    }
+
+    let renderPassEncoder = commandBuffer.beginRenderPass(renderPassDescriptor);
+    if (!renderPassEncoder) {
+        testFailed("Could not create WebGPURenderPassEncoder!");
+        return;
+    }
+
     // FIXME: Rest of rendering commands to follow.
 }

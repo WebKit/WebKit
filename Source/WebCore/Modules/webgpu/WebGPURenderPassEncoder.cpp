@@ -22,42 +22,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+#include "config.h"
+#include "WebGPURenderPassEncoder.h"
 
-/* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
+#if ENABLE(WEBGPU)
 
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+#include "GPUProgrammablePassEncoder.h"
 
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+namespace WebCore {
 
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
+Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<GPURenderPassEncoder>&& encoder)
+{
+    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(encoder)));
+}
 
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<GPURenderPassEncoder>&& encoder)
+    : m_passEncoder(WTFMove(encoder))
+{
+}
 
-    // TODO figure which other commands are needed
-    void blit();
-*/
-};
+GPUProgrammablePassEncoder& WebGPURenderPassEncoder::passEncoder() const
+{
+    return m_passEncoder.get();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

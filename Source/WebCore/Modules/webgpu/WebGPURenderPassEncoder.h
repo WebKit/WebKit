@@ -22,42 +22,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+#pragma once
 
-/* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
+#if ENABLE(WEBGPU)
 
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+#include "GPURenderPassEncoder.h"
+#include "WebGPUProgrammablePassEncoder.h"
 
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+#include <wtf/RefPtr.h>
 
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
+namespace WebCore {
 
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+class GPUProgrammablePassEncoder;
 
-    // TODO figure which other commands are needed
-    void blit();
-*/
+class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
+public:
+    static Ref<WebGPURenderPassEncoder> create(Ref<GPURenderPassEncoder>&&);
+
+private:
+    WebGPURenderPassEncoder(Ref<GPURenderPassEncoder>&&);
+
+    GPUProgrammablePassEncoder& passEncoder() const final;
+
+    Ref<GPURenderPassEncoder> m_passEncoder;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

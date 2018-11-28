@@ -44,6 +44,8 @@ class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
 public:
     static RefPtr<GPUCommandBuffer> create(GPUDevice&);
 
+    PlatformCommandBuffer* platformCommandBuffer() const { return m_platformCommandBuffer.get(); }
+
 private:
     GPUCommandBuffer(PlatformCommandBufferSmartPtr&&);
 

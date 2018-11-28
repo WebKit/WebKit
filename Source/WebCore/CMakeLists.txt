@@ -462,7 +462,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineStageDescriptor.idl
+    Modules/webgpu/WebGPUProgrammablePassEncoder.idl
     Modules/webgpu/WebGPUQueue.idl
+    Modules/webgpu/WebGPURenderPassDescriptor.idl
+    Modules/webgpu/WebGPURenderPassEncoder.idl
     Modules/webgpu/WebGPURenderPipeline.idl
     Modules/webgpu/WebGPURenderPipelineDescriptor.idl
     Modules/webgpu/WebGPURenderingContext.idl

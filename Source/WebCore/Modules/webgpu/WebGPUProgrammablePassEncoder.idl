@@ -27,37 +27,13 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
-
+    SkipVTableValidation
+] interface WebGPUProgrammablePassEncoder {
 /* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
-
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
-
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
-
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
-
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
-
-    // TODO figure which other commands are needed
-    void blit();
+    WebGPUCommandBuffer endPass();
+    // Allowed in both compute and render passes
+    // TODO: setPushConstants() ?
+    void setBindGroup(u32 index, WebGPUBindGroup bindGroup);
+    void setPipeline((WebGPUComputePipeline or WebGPURenderPipeline) pipeline);
 */
 };

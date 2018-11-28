@@ -34,12 +34,16 @@
 namespace WebCore {
 
 class GPUCommandBuffer;
+class WebGPURenderPassEncoder;
+
+struct WebGPURenderPassDescriptor;
 
 class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
     static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
 
     const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+    RefPtr<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
 
 private:
     WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);

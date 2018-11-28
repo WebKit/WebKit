@@ -22,42 +22,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUCommandBuffer {
-    WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+#pragma once
 
-/* Not Yet Implemented
-    WebGPUComputePassEncoder beginComputePass();
+#if ENABLE(WEBGPU)
 
-    // Commands allowed outside of "passes"
-        void copyBufferToBuffer(
-        WebGPUBuffer src,
-        u32 srcOffset,
-        WebGPUBuffer dst,
-        u32 dstOffset,
-        u32 size);
+#include "WebGPUTextureView.h"
 
-    void copyBufferToTexture(
-        WebGPUBufferCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
+namespace WebCore {
 
-    void copyTextureToBuffer(
-        WebGPUTextureCopyView source,
-        WebGPUBufferCopyView destination,
-        WebGPUExtent3D copySize);
-
-    void copyTextureToTexture(
-        WebGPUTextureCopyView source,
-        WebGPUTextureCopyView destination,
-        WebGPUExtent3D copySize);
-
-    // TODO figure which other commands are needed
-    void blit();
-*/
+struct WebGPURenderPassDescriptor {
+    // FIXME: Temporary shortcut implementation for prototyping.
+    RefPtr<WebGPUTextureView> attachment;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

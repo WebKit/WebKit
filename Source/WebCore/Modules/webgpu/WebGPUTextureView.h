@@ -37,10 +37,11 @@ class WebGPUTextureView : public RefCounted<WebGPUTextureView> {
 public:
     static Ref<WebGPUTextureView> create(Ref<GPUTexture>&&);
 
+    Ref<GPUTexture> texture() { return m_texture.copyRef(); }
 private:
     explicit WebGPUTextureView(Ref<GPUTexture>&&);
     
-    Ref<GPUTexture> m_textureView;
+    Ref<GPUTexture> m_texture;
 };
 
 } // namespace WebCore

@@ -320,7 +320,9 @@ platform/graphics/cv/VideoTextureCopierCV.cpp
 
 platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm
 platform/graphics/gpu/cocoa/GPUDeviceMetal.mm
+platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm
 platform/graphics/gpu/cocoa/GPUQueueMetal.mm
+platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm
 platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm
 platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm
 platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm
