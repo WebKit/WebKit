@@ -343,7 +343,7 @@ static JSValue deserializeIDBValueToJSValue(ExecState& state, JSC::JSGlobalObjec
 
     state.vm().apiLock().lock();
     Vector<RefPtr<MessagePort>> messagePorts;
-    JSValue result = serializedValue->deserialize(state, &globalObject, messagePorts, value.blobURLs(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
+    JSValue result = serializedValue->deserialize(state, &globalObject, messagePorts, value.blobURLs(), value.sessionID(), value.blobFilePaths(), SerializationErrorMode::NonThrowing);
     state.vm().apiLock().unlock();
 
     return result;

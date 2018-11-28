@@ -54,7 +54,7 @@
 #include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
-
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -1223,7 +1223,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     // stop future requests from going to the server ahead of it.
     operation.setNextRequestCanGoToServer(false);
 
-    value->writeBlobsToDiskForIndexedDB([protectedThis = makeRef(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](const IDBValue& idbValue) mutable {
+    value->writeBlobsToDiskForIndexedDB([protectedThis = makeRef(*this), this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), keyData = IDBKeyData(key.get()).isolatedCopy(), overwriteMode](IDBValue&& idbValue) mutable {
         ASSERT(&originThread() == &Thread::current());
         ASSERT(isMainThread());
         if (idbValue.data().data()) {

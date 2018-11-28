@@ -35,8 +35,9 @@
 
 namespace WebCore {
 
-IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin)
+IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, const PAL::SessionID& sessionID, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin)
     : m_databaseName(databaseName)
+    , m_sessionID(sessionID)
     , m_openingOrigin(WTFMove(openingOrigin))
     , m_mainFrameOrigin(WTFMove(mainFrameOrigin))
 
@@ -50,6 +51,7 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
     IDBDatabaseIdentifier identifier;
 
     identifier.m_databaseName = m_databaseName.isolatedCopy();
+    identifier.m_sessionID = m_sessionID.isolatedCopy();
     identifier.m_openingOrigin = m_openingOrigin.isolatedCopy();
     identifier.m_mainFrameOrigin = m_mainFrameOrigin.isolatedCopy();
 

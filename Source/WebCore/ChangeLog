@@ -1,3 +1,62 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add SessionIDs wherever BlobURLs are used in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=192062
+
+        Reviewed by Dean Jackson.
+
+        Just adding infrastructure for fixing "the blob bug"
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy const):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::hash const):
+        (WebCore::IDBDatabaseIdentifier::sessionID const):
+        (WebCore::IDBDatabaseIdentifier::encode const):
+        (WebCore::IDBDatabaseIdentifier::decode):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        (WebCore::IDBValue::setAsIsolatedCopy):
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::sessionID const):
+        (WebCore::IDBValue::encode const):
+        (WebCore::IDBValue::decode):
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::currentData):
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::currentData):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueToJSValue):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDBSynchronously):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::sessionID const):
+
 2018-11-28  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Begin implementation of WebGPURenderPassEncoder and barebones WebGPURenderPassDescriptor

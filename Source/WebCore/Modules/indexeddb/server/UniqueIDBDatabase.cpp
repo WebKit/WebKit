@@ -1039,7 +1039,7 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
     }
 
     if (injectedRecordValue.data())
-        error = m_backingStore->addRecord(transactionIdentifier, *objectStoreInfo, usedKey, { injectedRecordValue, originalRecordValue.blobURLs(), originalRecordValue.blobFilePaths() });
+        error = m_backingStore->addRecord(transactionIdentifier, *objectStoreInfo, usedKey, { injectedRecordValue, originalRecordValue.blobURLs(), originalRecordValue.sessionID(), originalRecordValue.blobFilePaths() });
     else
         error = m_backingStore->addRecord(transactionIdentifier, *objectStoreInfo, usedKey, originalRecordValue);
 

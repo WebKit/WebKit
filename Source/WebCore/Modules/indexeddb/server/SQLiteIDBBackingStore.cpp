@@ -1866,7 +1866,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
     return error;
 }
 
-IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths)
+IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, PAL::SessionID& sessionID, Vector<String>& blobFilePaths)
 {
     ASSERT(objectStoreRecord);
 
@@ -1916,6 +1916,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
         String fileName = sql->getColumnText(0);
         blobFilePaths.append(FileSystem::pathByAppendingComponent(databaseDirectory, fileName));
     }
+    sessionID = m_identifier.sessionID();
 
     return IDBError { };
 }
@@ -2041,13 +2042,14 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
 
     ASSERT(recordID);
     Vector<String> blobURLs, blobFilePaths;
-    auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
+    PAL::SessionID sessionID;
+    auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, sessionID, blobFilePaths);
     ASSERT(blobURLs.size() == blobFilePaths.size());
 
     if (!error.isNull())
         return error;
 
-    resultValue = { { resultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) } };
+    resultValue = { { resultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) } };
     return IDBError { };
 }
 
@@ -2151,13 +2153,14 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
 
             ASSERT(recordID);
             Vector<String> blobURLs, blobFilePaths;
-            auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
+            PAL::SessionID sessionID;
+            auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, sessionID, blobFilePaths);
             ASSERT(blobURLs.size() == blobFilePaths.size());
 
             if (!error.isNull())
                 return error;
 
-            result.addValue({ resultBuffer, WTFMove(blobURLs), WTFMove(blobFilePaths) });
+            result.addValue({ resultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) });
         } else {
             Vector<uint8_t> keyData;
             IDBKeyData key;
@@ -2321,13 +2324,14 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
 
     int64_t recordID = sql->getColumnInt64(2);
     Vector<String> blobURLs, blobFilePaths;
-    auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
+    PAL::SessionID sessionID;
+    auto error = getBlobRecordsForObjectStoreRecord(recordID, blobURLs, sessionID, blobFilePaths);
     ASSERT(blobURLs.size() == blobFilePaths.size());
 
     if (!error.isNull())
         return error;
 
-    getResult = { { ThreadSafeDataBuffer::create(WTFMove(keyVector)), WTFMove(blobURLs), WTFMove(blobFilePaths) }, objectStoreKey };
+    getResult = { { ThreadSafeDataBuffer::create(WTFMove(keyVector)), WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) }, objectStoreKey };
     return IDBError { };
 }
 

@@ -456,7 +456,8 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         record.record.primaryKey = record.record.key;
 
         Vector<String> blobURLs, blobFilePaths;
-        auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(record.rowID, blobURLs, blobFilePaths);
+        PAL::SessionID sessionID;
+        auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(record.rowID, blobURLs, sessionID, blobFilePaths);
         if (!error.isNull()) {
             LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
             markAsErrored(record);
@@ -464,7 +465,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
-            record.record.value = std::make_unique<IDBValue>(ThreadSafeDataBuffer::create(WTFMove(keyData)), blobURLs, blobFilePaths);
+            record.record.value = std::make_unique<IDBValue>(ThreadSafeDataBuffer::create(WTFMove(keyData)), blobURLs, sessionID, blobFilePaths);
     } else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");

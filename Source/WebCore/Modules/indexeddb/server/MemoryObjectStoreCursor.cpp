@@ -193,7 +193,7 @@ void MemoryObjectStoreCursor::currentData(IDBGetResult& data)
     if (m_info.cursorType() == IndexedDB::CursorType::KeyOnly)
         data = { m_currentPositionKey, m_currentPositionKey };
     else {
-        IDBValue value = { m_objectStore.valueForKeyRange(m_currentPositionKey), { }, { } };
+        IDBValue value = { m_objectStore.valueForKeyRange(m_currentPositionKey), { }, { }, { } };
         data = { m_currentPositionKey, m_currentPositionKey, WTFMove(value) };
     }
 }

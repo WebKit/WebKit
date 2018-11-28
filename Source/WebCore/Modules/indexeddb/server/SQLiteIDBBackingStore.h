@@ -91,7 +91,7 @@ public:
 
     IDBBackingStoreTemporaryFileHandler& temporaryFileHandler() const { return m_temporaryFileHandler; }
 
-    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
+    IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, PAL::SessionID&, Vector<String>& blobFilePaths);
 
     static String databaseNameFromEncodedFilename(const String&);
 
