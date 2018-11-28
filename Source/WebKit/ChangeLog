@@ -1,3 +1,13 @@
+2018-11-27  Alex Christensen  <achristensen@webkit.org>
+
+        Build fix after r238572
+        <rdar://problem/46259202>
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        JSC::ExecutableAllocator is protected by ENABLE(ASSEMBLER).
+        When there is no assembler, there is no JIT to disable.
+
 2018-11-13  Alan Coon  <alancoon@apple.com>
 
         Apply patch. rdar://problem/45996792

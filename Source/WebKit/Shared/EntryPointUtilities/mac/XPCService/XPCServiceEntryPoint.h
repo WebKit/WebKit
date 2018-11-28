@@ -71,8 +71,10 @@ protected:
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
+#if ENABLE(ASSEMBLER)
     if (initializerMessage && xpc_dictionary_get_bool(initializerMessage, "disable-jit"))
         JSC::ExecutableAllocator::setJITEnabled(false);
+#endif
 
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 
