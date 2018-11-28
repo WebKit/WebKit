@@ -664,3 +664,6 @@ webkit.org/b/190833 [ Debug ] inspector/codemirror/prettyprinting-css.html [ Slo
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
 
 webkit.org/b/186406 [ Mojave+ ] compositing/iframes/display-none-subframe.html [ Pass Failure ]
+
+webkit.org/b/190383 fast/images/animated-image-loop-count.html [ Pass ImageOnlyFailure ]
+webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
