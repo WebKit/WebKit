@@ -1,3 +1,14 @@
+2018-11-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, test gardening
+
+        Add a time out parameter to the following test cases such that WebAuthN requests will timeout
+        themselves instead of letting the wpt wrapper or test runner kill them.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * platform/mac-wk2/TestExpectations:
+
 2018-11-27  Chris Dumez  <cdumez@apple.com>
 
         Resync service-workers web platform tests from upstream
