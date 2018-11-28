@@ -1,3 +1,15 @@
+2018-11-28  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Silence compilation warnings in glib unittests
+        https://bugs.webkit.org/show_bug.cgi?id=192009
+
+        Reviewed by Michael Catanzaro.
+
+        Mark the destructor as virtual.
+
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::~Test):
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.
