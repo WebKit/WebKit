@@ -456,8 +456,8 @@ WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp
 WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp
 
 WebProcess/InjectedBundle/DOM/InjectedBundleCSSStyleDeclarationHandle.cpp
-WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp @no-unify
-WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp @no-unify
+WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
+WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 
 WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
