@@ -1,3 +1,13 @@
+2018-11-28  Lucas Forschler  <lforschler@apple.com>
+
+        Fix webkitbot hi command.
+        https://bugs.webkit.org/show_bug.cgi?id=192080
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi.execute):
+
 2018-11-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Quirk] Use non-collapsed vertical margin values when the container is stretched to the size of the ICB.
