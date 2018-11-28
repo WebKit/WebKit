@@ -29,6 +29,7 @@ messages -> WebInspectorProxy {
     FrontendLoaded()
     DidClose()
     BringToFront()
+    Reopen()
 
     InspectedURLChanged(String urlString)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)

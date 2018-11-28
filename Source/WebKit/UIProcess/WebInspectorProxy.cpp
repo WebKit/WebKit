@@ -171,6 +171,15 @@ void WebInspectorProxy::closeForCrash()
     platformDidCloseForCrash();
 }
 
+void WebInspectorProxy::reopen()
+{
+    if (!m_inspectedPage)
+        return;
+
+    close();
+    show();
+}
+
 void WebInspectorProxy::reset()
 {
     if (m_inspectedPage) {
@@ -398,6 +407,8 @@ void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTes
 
     m_inspectorPage->process().send(Messages::WebInspectorUI::EstablishConnection(m_inspectedPage->pageID(), m_underTest, inspectionLevel()), m_inspectorPage->pageID());
 
+    ASSERT(!m_isActiveFrontend);
+    m_isActiveFrontend = true;
     m_inspectedPage->inspectorController().connectFrontend(*this);
 
     if (!m_underTest) {
@@ -470,7 +481,10 @@ void WebInspectorProxy::closeFrontendPageAndWindow()
     m_inspectorPage->process().send(Messages::WebInspectorUI::SetIsVisible(m_isVisible), m_inspectorPage->pageID());
     m_inspectorPage->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID());
 
-    m_inspectedPage->inspectorController().disconnectFrontend(*this);
+    if (m_isActiveFrontend) {
+        m_isActiveFrontend = false;
+        m_inspectedPage->inspectorController().disconnectFrontend(*this);
+    }
 
     if (m_isAttached)
         platformDetach();

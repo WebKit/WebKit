@@ -100,6 +100,7 @@ public:
     void hide();
     void close();
     void closeForCrash();
+    void reopen();
 
     void reset();
     void updateForNewPageProcess(WebPageProxy*);
@@ -254,6 +255,7 @@ private:
     bool m_elementSelectionActive { false };
     bool m_ignoreElementSelectionChange { false };
     bool m_isOpening { false };
+    bool m_isActiveFrontend { false };
 
     AttachmentSide m_attachmentSide {AttachmentSide::Bottom};
 

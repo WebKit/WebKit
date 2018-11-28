@@ -1,3 +1,27 @@
+2018-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(r238378): reloading WebInspector after a settings change doesn't re-show WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=191971
+
+        Reviewed by Matt Baker.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::reopen): Deleted.
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        Move reopen out of the WebProcess...
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::reopen):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        And into the UIProcess where the order of messages won't
+        be as problematic.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::reopen):
+        Send a message to the WebInspectorProxy instead.
+
 2018-11-28  Alexey Proskuryakov  <ap@apple.com>
 
         Remove another OS version check from NetworkDataTaskCocoa.mm

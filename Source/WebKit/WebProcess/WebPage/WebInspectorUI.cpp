@@ -169,8 +169,7 @@ void WebInspectorUI::closeWindow()
 
 void WebInspectorUI::reopen()
 {
-    if (m_backendConnection)
-        m_backendConnection->send(Messages::WebInspector::Reopen(), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::Reopen(), m_inspectedPageIdentifier);
 }
 
 WebCore::UserInterfaceLayoutDirection WebInspectorUI::userInterfaceLayoutDirection() const

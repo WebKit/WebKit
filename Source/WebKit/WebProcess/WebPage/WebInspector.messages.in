@@ -23,7 +23,6 @@
 messages -> WebInspector {
     Show()
     Close()
-    Reopen()
 
     SetAttached(bool attached)
 
