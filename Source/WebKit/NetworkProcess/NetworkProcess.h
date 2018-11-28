@@ -176,10 +176,6 @@ public:
 
     void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    bool shouldLogCookieInformation() const { return m_logCookieInformation; }
-#endif
-
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
 
@@ -362,9 +358,6 @@ private:
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
     Seconds m_loadThrottleLatency;
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    bool m_logCookieInformation { false };
-#endif
 
     RefPtr<NetworkCache::Cache> m_cache;
 

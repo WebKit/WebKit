@@ -550,7 +550,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
     }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (shouldLogCookieInformation())
+    if (shouldLogCookieInformation(sessionID()))
         logCookieInformation();
 #endif
 
@@ -885,7 +885,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (shouldLogCookieInformation())
+    if (shouldLogCookieInformation(sessionID()))
         logCookieInformation();
 #endif
 
@@ -984,9 +984,11 @@ bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-bool NetworkResourceLoader::shouldLogCookieInformation()
+bool NetworkResourceLoader::shouldLogCookieInformation(const PAL::SessionID& sessionID)
 {
-    return NetworkProcess::singleton().shouldLogCookieInformation();
+    if (auto session = SessionTracker::networkSession(sessionID))
+        return session->shouldLogCookieInformation();
+    return false;
 }
 
 static String escapeForJSON(String s)
@@ -1001,7 +1003,7 @@ static String escapeIDForJSON(const std::optional<uint64_t>& value)
 
 void NetworkResourceLoader::logCookieInformation() const
 {
-    ASSERT(shouldLogCookieInformation());
+    ASSERT(shouldLogCookieInformation(sessionID()));
 
     auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
     ASSERT(networkStorageSession);
@@ -1011,7 +1013,7 @@ void NetworkResourceLoader::logCookieInformation() const
 
 static void logBlockedCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
-    ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(networkStorageSession.sessionID()));
 
     auto escapedURL = escapeForJSON(url.string());
     auto escapedFirstParty = escapeForJSON(firstParty.string());
@@ -1038,7 +1040,7 @@ static void logBlockedCookieInformation(const String& label, const void* loggedO
 
 static void logCookieInformationInternal(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
-    ASSERT(NetworkResourceLoader::shouldLogCookieInformation());
+    ASSERT(NetworkResourceLoader::shouldLogCookieInformation(networkStorageSession.sessionID()));
 
     Vector<WebCore::Cookie> cookies;
     if (!networkStorageSession.getRawCookies(firstParty, sameSiteInfo, url, frameID, pageID, cookies))
@@ -1099,7 +1101,7 @@ static void logCookieInformationInternal(const String& label, const void* logged
 
 void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const NetworkStorageSession& networkStorageSession, const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
 {
-    ASSERT(shouldLogCookieInformation());
+    ASSERT(shouldLogCookieInformation(networkStorageSession.sessionID()));
 
     if (networkStorageSession.shouldBlockCookies(firstParty, url, frameID, pageID))
         logBlockedCookieInformation(label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);

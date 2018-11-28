@@ -55,6 +55,7 @@ struct NetworkSessionCreationParameters {
     RetainPtr<CFDictionaryRef> proxyConfiguration;
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
+    bool shouldLogCookieInformation { false };
 #endif
 #if USE(CURL)
     WebCore::CurlProxySettings proxySettings;
@@ -70,6 +71,7 @@ inline void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) cons
     IPC::encode(encoder, proxyConfiguration.get());
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
+    encoder << shouldLogCookieInformation;
 #endif
 #if USE(CURL)
     encoder << proxySettings;
@@ -106,6 +108,11 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
         return std::nullopt;
+    
+    std::optional<bool> shouldLogCookieInformation;
+    decoder >> shouldLogCookieInformation;
+    if (!shouldLogCookieInformation)
+        return std::nullopt;
 #endif
 
 #if USE(CURL)
@@ -123,6 +130,7 @@ inline std::optional<NetworkSessionCreationParameters> NetworkSessionCreationPar
         , WTFMove(proxyConfiguration)
         , WTFMove(*sourceApplicationBundleIdentifier)
         , WTFMove(*sourceApplicationSecondaryIdentifier)
+        , WTFMove(*shouldLogCookieInformation)
 #endif
 #if USE(CURL)
         , WTFMove(*proxySettings)

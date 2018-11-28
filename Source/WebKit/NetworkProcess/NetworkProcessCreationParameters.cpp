@@ -92,9 +92,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #elif USE(CURL)
     encoder << cookiePersistentStorageFile;
 #endif
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    encoder << logCookieInformation;
-#endif
 #if ENABLE(NETWORK_CAPTURE)
     encoder << recordReplayMode;
     encoder << recordReplayCacheLocation;
@@ -230,11 +227,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #elif USE(CURL)
     if (!decoder.decode(result.cookiePersistentStorageFile))
-        return false;
-#endif
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    if (!decoder.decode(result.logCookieInformation))
         return false;
 #endif
 

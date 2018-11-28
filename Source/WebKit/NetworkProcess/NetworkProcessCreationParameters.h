@@ -107,10 +107,6 @@ struct NetworkProcessCreationParameters {
     String cookiePersistentStorageFile;
 #endif
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    bool logCookieInformation { false };
-#endif
-
 #if ENABLE(NETWORK_CAPTURE)
     String recordReplayMode;
     String recordReplayCacheLocation;

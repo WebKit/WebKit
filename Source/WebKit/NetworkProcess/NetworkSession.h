@@ -47,6 +47,7 @@ public:
 
     virtual void invalidateAndCancel();
     virtual void clearCredentials() { };
+    virtual bool shouldLogCookieInformation() const { return false; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     WebCore::NetworkStorageSession& networkStorageSession() const;

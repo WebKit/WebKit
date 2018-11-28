@@ -57,6 +57,13 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     resolveDirectoriesIfNecessary();
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
+    static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
+    bool shouldLogCookieInformation = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitLogCookieInformationDefaultsKey];
+#else
+    bool shouldLogCookieInformation = false;
+#endif
+
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
@@ -65,6 +72,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_proxyConfiguration,
         m_configuration.sourceApplicationBundleIdentifier,
         m_configuration.sourceApplicationSecondaryIdentifier,
+        shouldLogCookieInformation,
     };
 
     auto cookieFile = resolvedCookieStorageFile();
