@@ -919,6 +919,7 @@ bool portAllowed(const URL& url)
         143,  // IMAP2
         179,  // BGP
         389,  // LDAP
+        427,  // SLP (Also used by Apple Filing Protocol)
         465,  // SMTP+SSL
         512,  // print / exec
         513,  // login

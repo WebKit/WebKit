@@ -1,3 +1,15 @@
+2018-11-27  Rob Buis  <rbuis@igalia.com>
+
+        Block more ports (427, 548, 6697)
+        https://bugs.webkit.org/show_bug.cgi?id=186092
+
+        Reviewed by Frédéric Wang.
+
+        Update request-bad-port.html to latest version.
+
+        * web-platform-tests/fetch/api/request/request-bad-port-expected.txt:
+        * web-platform-tests/fetch/api/request/request-bad-port.html:
+
 2018-11-27  Chris Dumez  <cdumez@apple.com>
 
         Resync service-workers web platform tests from upstream

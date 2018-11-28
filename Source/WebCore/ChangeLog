@@ -1,3 +1,20 @@
+2018-11-27  Rob Buis  <rbuis@igalia.com>
+
+        Block more ports (427, 548, 6697)
+        https://bugs.webkit.org/show_bug.cgi?id=186092
+
+        Reviewed by Frédéric Wang.
+
+        Block port 427, ports 548 and 6697 are aleady blocked and
+        are tested by the updated request-bad-port.html wpt test.
+
+        Behavior matches Firefox and Chrome.
+
+        Test: web-platform-tests/fetch/api/request/request-bad-port.html
+
+        * platform/URL.cpp:
+        (WebCore::portAllowed):
+
 2018-11-27  Youenn Fablet  <youenn@apple.com>
 
         Log WebRTC stats in inspector console only when setting is verbose
