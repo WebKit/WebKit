@@ -136,7 +136,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._sections.push(this._cssCanvasSection);
 
         const selectable = false;
-        let backtraceTreeOutline = new WI.TreeOutline(null, selectable);
+        let backtraceTreeOutline = new WI.TreeOutline(selectable);
         backtraceTreeOutline.disclosureButtons = false;
         this._backtraceTreeController = new WI.CallFrameTreeController(backtraceTreeOutline);
 

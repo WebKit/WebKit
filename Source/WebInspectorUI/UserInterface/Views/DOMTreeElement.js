@@ -423,7 +423,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     insertChildElement(child, index, closingTag)
     {
         var newElement = new WI.DOMTreeElement(child, closingTag);
-        newElement.selectable = this.treeOutline._selectEnabled;
+        newElement.selectable = this.treeOutline.selectable;
         this.insertChild(newElement, index);
         return newElement;
     }

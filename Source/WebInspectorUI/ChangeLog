@@ -1,3 +1,53 @@
+2018-11-28  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Remove unused DataGrid and TreeOutline code
+        https://bugs.webkit.org/show_bug.cgi?id=191622
+        <rdar://problem/46052014>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.initialLayout):
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.insertChildElement):
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline):
+        (WI.DOMTreeOutline.prototype.update):
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.removeChildrenRecursive): Deleted.
+
+        * UserInterface/Views/DataGridNode.js:
+        (WI.DataGridNode.prototype.removeChildren):
+        (WI.DataGridNode.prototype.removeChildrenRecursive): Deleted.
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object:not(.expanded) .content):
+        (.error-object .content):
+        (.error-object:not(.expanded) .tree-outline): Deleted.
+        (.error-object .tree-outline): Deleted.
+
+        * UserInterface/Views/ErrorObjectView.js:
+        (WI.ErrorObjectView):
+        (WI.ErrorObjectView.prototype.get treeOutline): Deleted.
+        Use a simple container since TreeOutline features aren't used,
+        and remove unused property `treeOutline`.
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel):
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.removeChildren):
+        (WI.TreeElement.prototype.removeChildrenRecursive): Deleted.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.removeChildrenRecursive): Deleted.
+        (WI.TreeOutline.prototype.reattachIfIndexChanged): Deleted.
+        Removed `element` parameter now that the only use case has been removed.
+
 2018-11-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements tab should allow selecting/deleting multiple DOM nodes

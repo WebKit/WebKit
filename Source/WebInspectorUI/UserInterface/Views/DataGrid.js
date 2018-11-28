@@ -1239,32 +1239,6 @@ WI.DataGrid = class DataGrid extends WI.View
         this.hasChildren = false;
     }
 
-    removeChildrenRecursive()
-    {
-        var childrenToRemove = this.children;
-
-        var child = this.children[0];
-        while (child) {
-            if (child.children.length)
-                childrenToRemove = childrenToRemove.concat(child.children);
-            child = child.traverseNextNode(false, this, true);
-        }
-
-        for (var i = 0; i < childrenToRemove.length; ++i) {
-            child = childrenToRemove[i];
-            child.deselect();
-            child._detach();
-
-            child.children = [];
-            child.dataGrid = null;
-            child.parent = null;
-            child.nextSibling = null;
-            child.previousSibling = null;
-        }
-
-        this.children = [];
-    }
-
     findNode(comparator, skipHidden, stayWithin, dontPopulate)
     {
         console.assert(typeof comparator === "function");

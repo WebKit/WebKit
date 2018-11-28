@@ -28,11 +28,11 @@
 
 WI.TreeOutline = class TreeOutline extends WI.Object
 {
-    constructor(element, selectable = true)
+    constructor(selectable = true)
     {
         super();
 
-        this.element = element || document.createElement("ol");
+        this.element = document.createElement("ol");
         this.element.classList.add(WI.TreeOutline.ElementStyleClassName);
         this.element.addEventListener("contextmenu", this._handleContextmenu.bind(this));
 
@@ -389,54 +389,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         }
 
         this.children = [];
-    }
-
-    removeChildrenRecursive(suppressOnDeselect)
-    {
-        let childrenToRemove = this.children;
-        let child = this.children[0];
-        while (child) {
-            if (child.children.length)
-                childrenToRemove = childrenToRemove.concat(child.children);
-            child = child.traverseNextTreeElement(false, this, true);
-        }
-
-        for (let child of childrenToRemove) {
-            child.deselect(suppressOnDeselect);
-
-            let treeOutline = child.treeOutline;
-            if (treeOutline)
-                treeOutline._forgetTreeElement(child);
-
-            child._detach();
-            child.children = [];
-            child.treeOutline = null;
-            child.parent = null;
-            child.nextSibling = null;
-            child.previousSibling = null;
-
-            if (treeOutline)
-                treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
-        }
-
-        this.children = [];
-    }
-
-    reattachIfIndexChanged(treeElement, insertionIndex)
-    {
-        if (this.children[insertionIndex] === treeElement)
-            return;
-
-        let wasSelected = treeElement.selected;
-
-        console.assert(!treeElement.parent || treeElement.parent === this);
-        if (treeElement.parent === this)
-            this.removeChild(treeElement);
-
-        this.insertChild(treeElement, insertionIndex);
-
-        if (wasSelected)
-            treeElement.select();
     }
 
     _rememberTreeElement(element)

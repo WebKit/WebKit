@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,10 +53,10 @@
     display: none;
 }
 
-.error-object:not(.expanded) .tree-outline {
+.error-object:not(.expanded) .content {
     display: none;
 }
 
-.error-object .tree-outline {
+.error-object .content {
     padding-left: 16px
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
         previewElement.addEventListener("click", this._handlePreviewOrTitleElementClick.bind(this));
 
         this._outlineElement = this._element.appendChild(document.createElement("div"));
-        this._outline = new WI.TreeOutline(this._outlineElement);
+        this._outlineElement.className = "content";
     }
 
     // Static
@@ -78,11 +78,6 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
     get element()
     {
         return this._element;
-    }
-
-    get treeOutline()
-    {
-        return this._outline;
     }
 
     get expanded()

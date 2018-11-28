@@ -30,9 +30,9 @@
 
 WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 {
-    constructor(omitRootDOMNode, selectEnabled, excludeRevealElementContextMenu)
+    constructor(omitRootDOMNode, selectable, excludeRevealElementContextMenu)
     {
-        super();
+        super(selectable);
 
         this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
         this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
@@ -46,7 +46,6 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
 
         this._includeRootDOMNode = !omitRootDOMNode;
-        this._selectEnabled = selectEnabled;
         this._excludeRevealElementContextMenu = excludeRevealElementContextMenu;
         this._rootDOMNode = null;
         this._selectedDOMNode = null;
@@ -165,14 +164,14 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         var treeElement;
         if (this._includeRootDOMNode) {
             treeElement = new WI.DOMTreeElement(this.rootDOMNode);
-            treeElement.selectable = this._selectEnabled;
+            treeElement.selectable = this.selectable;
             this.appendChild(treeElement);
         } else {
             // FIXME: this could use findTreeElement to reuse a tree element if it already exists
             var node = this.rootDOMNode.firstChild;
             while (node) {
                 treeElement = new WI.DOMTreeElement(node);
-                treeElement.selectable = this._selectEnabled;
+                treeElement.selectable = this.selectable;
                 this.appendChild(treeElement);
                 node = node.nextSibling;
 
