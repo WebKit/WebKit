@@ -1,3 +1,15 @@
+2018-11-27  Mark Lam  <mark.lam@apple.com>
+
+        ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.
+        https://bugs.webkit.org/show_bug.cgi?id=192055
+        <rdar://problem/46288783>
+
+        Reviewed by Saam Barati.
+
+        No new tests needed.  Removing an invalid configuration that is not used in WebCore.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-11-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         Remove kCCNotVerified
