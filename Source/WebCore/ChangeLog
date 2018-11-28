@@ -1,5 +1,35 @@
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
+        Remove dead code from an earlier attempt at implementing safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=192067
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::setShouldSkipSafeBrowsingCheck): Deleted.
+        (WebCore::FrameLoadRequest::shouldSkipSafeBrowsingCheck): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadArchive):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadPostRequest):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+        * loader/ShouldSkipSafeBrowsingCheck.h: Removed.
+
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
         Add SessionIDs wherever BlobURLs are used in SerializedScriptValue
         https://bugs.webkit.org/show_bug.cgi?id=192062
 

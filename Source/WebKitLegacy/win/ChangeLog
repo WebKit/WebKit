@@ -1,3 +1,14 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead code from an earlier attempt at implementing safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=192067
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-11-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Clang][WebKitLegacy][Win] MarshallingHelpers.h(65,47): warning: extra qualification on member 'windowsEpochAbsoluteTime' [-Wmicrosoft-extra-qualification]

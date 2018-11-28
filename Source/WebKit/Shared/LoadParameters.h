@@ -63,7 +63,6 @@ struct LoadParameters {
     uint64_t shouldOpenExternalURLsPolicy;
     bool shouldTreatAsContinuingLoad { false };
     UserData userData;
-    bool forSafeBrowsing { false };
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     String clientRedirectSourceForHistory;

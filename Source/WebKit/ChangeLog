@@ -1,5 +1,27 @@
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
+        Remove dead code from an earlier attempt at implementing safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=192067
+
+        Reviewed by Chris Dumez.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
         Move logCookieInformation bool from NetworkProcess to NetworkSession
         https://bugs.webkit.org/show_bug.cgi?id=192049
 

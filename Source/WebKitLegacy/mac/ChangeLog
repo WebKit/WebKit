@@ -1,3 +1,14 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead code from an earlier attempt at implementing safe browsing
+        https://bugs.webkit.org/show_bug.cgi?id=192067
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.

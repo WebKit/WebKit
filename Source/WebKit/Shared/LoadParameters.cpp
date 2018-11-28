@@ -52,7 +52,6 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldOpenExternalURLsPolicy;
     encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
-    encoder << forSafeBrowsing;
     encoder.encodeEnum(lockHistory);
     encoder.encodeEnum(lockBackForwardList);
     encoder << clientRedirectSourceForHistory;
@@ -113,9 +112,6 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
         return false;
 
     if (!decoder.decode(data.userData))
-        return false;
-
-    if (!decoder.decode(data.forSafeBrowsing))
         return false;
 
     if (!decoder.decodeEnum(data.lockHistory))
