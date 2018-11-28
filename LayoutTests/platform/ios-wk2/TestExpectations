@@ -907,6 +907,8 @@ editing/selection/select-out-of-floated-non-editable-10.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-11.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
 
+webkit.org/b/192088 media/no-fullscreen-when-hidden.html [ Failure Pass ]
+
 # Flaky as of 06/08/2015
 fast/loader/fragment-navigation-base-blank.html [ Failure Pass ]
 fast/loader/iframe-meta-refresh-base-blank.html [ Failure Pass ]

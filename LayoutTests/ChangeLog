@@ -1,3 +1,12 @@
+2018-11-28  Frederic Wang  <fwang@igalia.com>
+
+        [iOS Simulator Release WK2] media/no-fullscreen-when-hidden.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192088
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Mark media/no-fullscreen-when-hidden.html as flaky.
+
 2018-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Allow WebKit clients to specify a minimum effective width for layout.
