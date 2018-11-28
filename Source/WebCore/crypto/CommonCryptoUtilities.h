@@ -71,10 +71,6 @@ enum {
     ccRSAPSSPadding = 1005
 };
 typedef uint32_t CCAsymmetricPadding;
-
-enum {
-    kCCNotVerified = -4306
-};
 #endif
 
 typedef struct _CCBigNumRef *CCBigNumRef;

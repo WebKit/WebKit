@@ -1,3 +1,17 @@
+2018-11-27  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Remove kCCNotVerified
+        https://bugs.webkit.org/show_bug.cgi?id=192034
+        <rdar://problem/46235863>
+
+        Reviewed by Alexey Proskuryakov.
+
+        No change of behaviours.
+
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        (WebCore::verifyRSASSA_PKCS1_v1_5):
+
 2018-11-27  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid triggering compositing updates when only the root layer is composited
