@@ -285,13 +285,19 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
 
 void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise, WTF::Function<void(rtc::scoped_refptr<LibWebRTCStatsCollector>&&)>&& getStatsFunction)
 {
-    auto collector = LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)](auto&& report) mutable {
+    auto collector = LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)]() mutable -> RefPtr<RTCStatsReport> {
         ASSERT(isMainThread());
-        if (protectedThis->isStopped() || !report)
-            return false;
+        if (protectedThis->isStopped())
+            return nullptr;
 
-        promise->resolve<IDLInterface<RTCStatsReport>>(report.releaseNonNull());
-        return true;
+        auto report = RTCStatsReport::create();
+
+        promise->resolve<IDLInterface<RTCStatsReport>>(report.copyRef());
+
+        // The promise resolution might fail in which case no backing map will be created.
+        if (!report->backingMap())
+            return nullptr;
+        return WTFMove(report);
     });
     LibWebRTCProvider::callOnWebRTCSignalingThread([getStatsFunction = WTFMove(getStatsFunction), collector = WTFMove(collector)]() mutable {
         getStatsFunction(WTFMove(collector));

@@ -1,3 +1,23 @@
+2018-11-28  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html is flaky on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=192037
+
+        Reviewed by Eric Carlson.
+
+        The stats report JS map should be created when resolving the stats promise with WebCore RTCStatsReport.
+        But resolving the promise might fail in case of a page being suspended.
+        In that case, no JSRTCStatsReport is created and there is no backing map.
+        Update the code to reflect that.
+        Covered by existing test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::getStats):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::LibWebRTCStatsCollector::~LibWebRTCStatsCollector):
+        (WebCore::LibWebRTCStatsCollector::OnStatsDelivered):
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.h:
+
 2018-11-28  Keith Rollin  <krollin@apple.com>
 
         Update generate-{derived,unified}-sources scripts to support generating .xcfilelist files
