@@ -1,3 +1,21 @@
+2018-11-28  Keith Rollin  <krollin@apple.com>
+
+        Update generate-unified-source-bundles.rb to generate .xcfilelist files
+        https://bugs.webkit.org/show_bug.cgi?id=192029
+        <rdar://problem/46285918>
+
+        Reviewed by Alex Christensen.
+
+        Update generate-unified-source-bundles.rb to generate output for
+        .xcfilelist files. These files are used to indicate the sets of input
+        and output files to Run Script build phases in Xcode. By invoking
+        generate-unified-source-bundles.rb with -generate-xcfilelists, the
+        script generates these .xcfilelist files. These .xcfilelist files can
+        then be used to specify the inputs and outputs of the Generate Unified
+        Sources build phases.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2018-11-28  Alexey Proskuryakov  <ap@apple.com>
 
         Remove another OS version check from NetworkDataTaskCocoa.mm
