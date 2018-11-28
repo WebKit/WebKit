@@ -1,3 +1,15 @@
+2018-11-28  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Do not run device monitor for device type we do not handle
+        https://bugs.webkit.org/show_bug.cgi?id=191904
+
+        This is useless work and it throws warning about use GstDeviceMonitor without filters.
+
+        Reviewed by Philippe Normand.
+
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        (WebCore::GStreamerCaptureDeviceManager::refreshCaptureDevices):
+
 2018-11-27  Rob Buis  <rbuis@igalia.com>
 
         Block more ports (427, 548, 6697)

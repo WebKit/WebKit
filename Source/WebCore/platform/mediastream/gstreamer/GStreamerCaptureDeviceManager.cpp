@@ -108,10 +108,11 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
         } else if (type == CaptureDevice::DeviceType::Microphone) {
             GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
             gst_device_monitor_add_filter(m_deviceMonitor.get(), "Audio/Source", caps.get());
-        }
-        // FIXME: Add monitor for added/removed messages on the bus.
+        } else
+            return;
     }
 
+    // FIXME: Add monitor for added/removed messages on the bus.
     if (!gst_device_monitor_start(m_deviceMonitor.get())) {
         GST_WARNING_OBJECT(m_deviceMonitor.get(), "Could not start device monitor");
         m_deviceMonitor = nullptr;
