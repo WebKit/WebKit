@@ -1,3 +1,15 @@
+2018-11-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add methods to update Patch fields
+        https://bugs.webkit.org/show_bug.cgi?id=191931
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/patch.py:
+        (Patch.set_sent_to_buildbot):
+        (Patch.set_bug_id):
+        (Patch.set_obsolete):
+
 2018-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Allow WebKit clients to specify a minimum effective width for layout.
