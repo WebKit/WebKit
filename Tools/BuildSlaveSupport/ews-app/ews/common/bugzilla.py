@@ -23,8 +23,13 @@
 import base64
 import logging
 import os
+import re
+import socket
+
+from datetime import datetime, timedelta
 
 from ews.models.patch import Patch
+from ews.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 import ews.common.util as util
 import ews.config as config
 
@@ -69,3 +74,68 @@ class Bugzilla():
         if not os.path.exists(config.PATCH_FOLDER):
             os.mkdir(config.PATCH_FOLDER)
         return config.PATCH_FOLDER + '{}.patch'.format(patch_id)
+
+    @classmethod
+    def get_list_of_patches_needing_reviews(cls):
+        current_time = datetime.today()
+        ids_needing_review = set(BugzillaBeautifulSoup().fetch_attachment_ids_from_review_queue(current_time - timedelta(7)))
+        #TODO: add security bugs support here.
+        return ids_needing_review
+
+
+class BugzillaBeautifulSoup():
+    # FIXME: Deprecate this class when https://bugzilla.mozilla.org/show_bug.cgi?id=1508531 is fixed.
+    def __init__(self):
+        self._browser = None
+
+    def _get_browser(self):
+        if not self._browser:
+            socket.setdefaulttimeout(600)
+            from mechanize import Browser
+            self._browser = Browser()
+            self._browser.set_handle_robots(False)
+        return self._browser
+
+    def _set_browser(self, value):
+        self._browser = value
+
+    browser = property(_get_browser, _set_browser)
+
+    def fetch_attachment_ids_from_review_queue(self, since=None, only_security_bugs=False):
+        review_queue_url = 'request.cgi?action=queue&type=review&group=type'
+        if only_security_bugs:
+            review_queue_url += '&product=Security'
+        return self._parse_attachment_ids_request_query(self._load_query(review_queue_url), since)
+
+    def _load_query(self, query):
+        # TODO: check if we need to authenticate.
+        full_url = '{}{}'.format(config.BUG_SERVER_URL, query)
+        _log.info('Getting list of patches needing review, URL: {}'.format(full_url))
+        return self.browser.open(full_url)
+
+    def _parse_attachment_ids_request_query(self, page, since=None):
+        # Formats
+        digits = re.compile("\d+")
+        attachment_href = re.compile("attachment.cgi\?id=\d+&action=review")
+        # if no date is given, return all ids
+        if not since:
+            attachment_links = SoupStrainer("a", href=attachment_href)
+            return [int(digits.search(tag["href"]).group(0))
+                for tag in BeautifulSoup(page, parseOnlyThese=attachment_links)]
+
+        # Parse the main table only
+        date_format = re.compile("\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
+        mtab = SoupStrainer("table", {"class": "requests"})
+        soup = BeautifulSoup(page, parseOnlyThese=mtab)
+        patch_ids = []
+
+        for row in soup.findAll("tr"):
+            patch_tag = row.find("a", {"href": attachment_href})
+            if not patch_tag:
+                continue
+            patch_id = int(digits.search(patch_tag["href"]).group(0))
+            date_tag = row.find("td", text=date_format)
+            if date_tag and datetime.strptime(date_format.search(date_tag).group(0), "%Y-%m-%d %H:%M") < since:
+                continue
+            patch_ids.append(patch_id)
+        return patch_ids

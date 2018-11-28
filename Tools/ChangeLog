@@ -1,3 +1,16 @@
+2018-11-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Add support to get list of Bugzilla patches needing review
+        https://bugs.webkit.org/show_bug.cgi?id=191942
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (Bugzilla.get_list_of_patches_needing_reviews): Get list of patches needing review.
+        (BugzillaBeautifulSoup.fetch_attachment_ids_from_review_queue): Copied from Tools/Scripts/webkitpy/common/net/bugzilla/bugzilla.py
+        (BugzillaBeautifulSoup._load_query): Ditto.
+        (BugzillaBeautifulSoup._parse_attachment_ids_request_query): Ditto.
+
 2018-11-28  Daniel Bates  <dabates@apple.com>
 
         [iOS] Page not defocused when Find-in-page becomes first responder
