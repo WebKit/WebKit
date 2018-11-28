@@ -45,11 +45,15 @@ promise_test(function(test) {
               assert_greater_than(entry.responseEnd, entry.startTime);
           }
           return new Promise(function(resolve) {
-              performance.onresourcetimingbufferfull = resolve;
+              performance.onresourcetimingbufferfull = _ => {
+                resolve('bufferfull');
+              }
               performance.setResourceTimingBufferSize(expectedResources.length);
-            });
+              fetch('dummy.txt');
+          });
         })
-      .then(function() {
+      .then(function(result) {
+          assert_equals(result, 'bufferfull');
           performance.clearResourceTimings();
           assert_equals(performance.getEntriesByType('resource').length, 0);
         })

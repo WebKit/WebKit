@@ -1,3 +1,4 @@
 
 PASS installing is set 
+PASS The ServiceWorker objects returned from installing attribute getter that represent the same service worker are the same objects 
 

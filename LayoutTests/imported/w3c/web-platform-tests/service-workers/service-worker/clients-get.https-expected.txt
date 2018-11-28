@@ -1,3 +1,5 @@
 
 FAIL Test Clients.get() assert_array_equals: property 1, expected false but got true
+FAIL Test successful Clients.get(FetchEvent.resultingClientId) assert_false: Clients.get(FetchEvent.resultingClientId) resolved with a Client expected false got true
+PASS Test unsuccessful Clients.get(FetchEvent.resultingClientId) 
 

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 27: ReferenceError: Can't find variable: testCases
+
+FAIL Tests for module import: ServiceWorker ReferenceError: Can't find variable: testCases
+

@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&reject.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Blocked https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&Auth&ignore from asking for credentials because it is a cross-origin request.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FVIDEO%26ACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FVIDEO%26ACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FVIDEO%26ACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: Cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?VIDEO&mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FVIDEO%26ACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
+#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 56823)
+FAIL: Timed out waiting for notifyDone to be called
+
+#EOF
+#EOF

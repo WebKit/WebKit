@@ -1,0 +1,8 @@
+
+PASS initialize global state 
+FAIL request to sw1 scope gets network redirect to sw2 scope promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker(worker_request_url)')"
+FAIL request to sw1 scope gets network redirect to out-of-scope promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker(worker_request_url)')"
+FAIL request to sw1 scope gets service-worker redirect to sw2 scope promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker(worker_request_url)')"
+FAIL request to sw1 scope gets service-worker redirect to out-of-scope promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new frame.contentWindow.SharedWorker(worker_request_url)')"
+PASS cleanup global state 
+

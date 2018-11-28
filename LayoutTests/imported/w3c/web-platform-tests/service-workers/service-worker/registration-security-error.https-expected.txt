@@ -3,8 +3,8 @@ PASS Registering same scope as the script directory without the last slash
 PASS Registration scope outside the script directory 
 PASS Registering scope outside domain 
 PASS Registering script outside domain 
-FAIL Registering redirected script assert_throws: Registration of redirected script should fail. function "function () { throw e }" threw object "TypeError: Script URL https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fregistration-worker.js fetch resulted in error: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fregistration-worker.js" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Registering redirected script assert_throws: Registration of redirected script should fail. function "function () { throw e }" threw object "TypeError: Script URL https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fresources%2Fregistration-worker.js fetch resulted in error: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fresources%2Fregistration-worker.js" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
 PASS Scope including parent-reference and not under the script directory 
 PASS Script URL including consecutive slashes 
-FAIL Script URL is same-origin filesystem: URL assert_throws: Registering a script which has same-origin filesystem: URL should fail with SecurityError. function "function () { throw e }" threw object "TypeError: serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+PASS Script URL is same-origin filesystem: URL 
 

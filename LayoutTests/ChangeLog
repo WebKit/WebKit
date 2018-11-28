@@ -1,3 +1,13 @@
+2018-11-27  Chris Dumez  <cdumez@apple.com>
+
+        Resync service-workers web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=192035
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2018-11-27  Simon Fraser  <simon.fraser@apple.com>
 
         Momentum scrolling ends at the wrong place when a scrolling overflow element has a non-zero border

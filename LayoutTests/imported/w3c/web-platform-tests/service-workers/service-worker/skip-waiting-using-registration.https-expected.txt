@@ -1,4 +1,5 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Test skipWaiting while a client is using the registration 
-PASS skipWaiting 
 

@@ -1,5 +1,5 @@
 
 PASS Registering a new script URL while an unregistered registration is in use 
-PASS Registering a new script URL that 404s does not resurrect an unregistered registration 
-PASS Registering a new script URL that fails to install does not resurrect an unregistered registration 
+PASS Registering a new script URL that 404s does resurrect an unregistered registration 
+PASS Registering a new script URL that fails to install does resurrect an unregistered registration 
 

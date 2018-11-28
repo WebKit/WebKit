@@ -20,7 +20,6 @@ function load_image(url) {
       img.onload = resolve;
       img.onerror = reject;
       img.src = url;
-      setTimeout(() => { reject("image load timed out") }, 5000);
     });
 }
 
@@ -31,7 +30,6 @@ function load_audio(url) {
       audio.oncanplay = resolve;
       audio.onerror = reject;
       audio.src = url;
-      setTimeout(() => { reject("audio load timed out") }, 5000);
     });
 }
 </script>

@@ -3,6 +3,41 @@ PASS Interfaces and attributes in ServiceWorkerGlobalScope
 PASS test setup (cache creation) 
 PASS Event constructors 
 PASS xhr is not exposed 
+FAIL URL.createObjectURL is not exposed assert_false: expected false got true
+PASS ServiceWorker interface: existence and properties of interface object 
+PASS ServiceWorker interface object length 
+PASS ServiceWorker interface object name 
+PASS ServiceWorker interface: existence and properties of interface prototype object 
+PASS ServiceWorker interface: existence and properties of interface prototype object's "constructor" property 
+PASS ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property 
+PASS ServiceWorker interface: attribute scriptURL 
+PASS ServiceWorker interface: attribute state 
+PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
+PASS ServiceWorker interface: attribute onstatechange 
+PASS ServiceWorkerRegistration interface: existence and properties of interface object 
+PASS ServiceWorkerRegistration interface object length 
+PASS ServiceWorkerRegistration interface object name 
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object 
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's "constructor" property 
+PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's @@unscopables property 
+PASS ServiceWorkerRegistration interface: attribute installing 
+PASS ServiceWorkerRegistration interface: attribute waiting 
+PASS ServiceWorkerRegistration interface: attribute active 
+PASS ServiceWorkerRegistration interface: attribute scope 
+PASS ServiceWorkerRegistration interface: attribute updateViaCache 
+PASS ServiceWorkerRegistration interface: operation update() 
+PASS ServiceWorkerRegistration interface: operation unregister() 
+PASS ServiceWorkerRegistration interface: attribute onupdatefound 
+PASS ServiceWorkerRegistration must be primary interface of self.registration 
+PASS Stringification of self.registration 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "installing" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "waiting" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "active" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "scope" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "updateViaCache" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "update()" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "unregister()" with the proper type 
+PASS ServiceWorkerRegistration interface: self.registration must inherit property "onupdatefound" with the proper type 
 PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
 PASS ServiceWorkerGlobalScope interface object length 
 PASS ServiceWorkerGlobalScope interface object name 
@@ -46,9 +81,9 @@ PASS Client interface: existence and properties of interface prototype object
 PASS Client interface: existence and properties of interface prototype object's "constructor" property 
 PASS Client interface: existence and properties of interface prototype object's @@unscopables property 
 PASS Client interface: attribute url 
+PASS Client interface: attribute frameType 
 PASS Client interface: attribute id 
 PASS Client interface: attribute type 
-FAIL Client interface: attribute reserved assert_true: The prototype object must have a property "reserved" expected true got false
 PASS Client interface: operation postMessage(any, [object Object]) 
 PASS WindowClient interface: existence and properties of interface object 
 PASS WindowClient interface object length 
@@ -80,67 +115,6 @@ PASS Clients interface: calling matchAll(ClientQueryOptions) on self.clients wit
 PASS Clients interface: self.clients must inherit property "openWindow(USVString)" with the proper type 
 PASS Clients interface: calling openWindow(USVString) on self.clients with too few arguments must throw TypeError 
 PASS Clients interface: self.clients must inherit property "claim()" with the proper type 
-PASS ServiceWorker interface: existence and properties of interface object 
-PASS ServiceWorker interface object length 
-PASS ServiceWorker interface object name 
-PASS ServiceWorker interface: existence and properties of interface prototype object 
-PASS ServiceWorker interface: existence and properties of interface prototype object's "constructor" property 
-PASS ServiceWorker interface: existence and properties of interface prototype object's @@unscopables property 
-PASS ServiceWorker interface: attribute scriptURL 
-PASS ServiceWorker interface: attribute state 
-PASS ServiceWorker interface: operation postMessage(any, [object Object]) 
-PASS ServiceWorker interface: attribute onstatechange 
-PASS ServiceWorkerRegistration interface: existence and properties of interface object 
-PASS ServiceWorkerRegistration interface object length 
-PASS ServiceWorkerRegistration interface object name 
-PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object 
-PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's "constructor" property 
-PASS ServiceWorkerRegistration interface: existence and properties of interface prototype object's @@unscopables property 
-PASS ServiceWorkerRegistration interface: attribute installing 
-PASS ServiceWorkerRegistration interface: attribute waiting 
-PASS ServiceWorkerRegistration interface: attribute active 
-FAIL ServiceWorkerRegistration interface: attribute navigationPreload assert_true: The prototype object must have a property "navigationPreload" expected true got false
-PASS ServiceWorkerRegistration interface: attribute scope 
-PASS ServiceWorkerRegistration interface: attribute updateViaCache 
-PASS ServiceWorkerRegistration interface: operation update() 
-PASS ServiceWorkerRegistration interface: operation unregister() 
-PASS ServiceWorkerRegistration interface: attribute onupdatefound 
-PASS ServiceWorkerRegistration must be primary interface of self.registration 
-PASS Stringification of self.registration 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "installing" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "waiting" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "active" with the proper type 
-FAIL ServiceWorkerRegistration interface: self.registration must inherit property "navigationPreload" with the proper type assert_inherits: property "navigationPreload" not found in prototype chain
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "scope" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "updateViaCache" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "update()" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "unregister()" with the proper type 
-PASS ServiceWorkerRegistration interface: self.registration must inherit property "onupdatefound" with the proper type 
-PASS EventTarget interface: self.registration must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on self.registration with too few arguments must throw TypeError 
-PASS EventTarget interface: self.registration must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on self.registration with too few arguments must throw TypeError 
-PASS EventTarget interface: self.registration must inherit property "dispatchEvent(Event)" with the proper type 
-PASS EventTarget interface: calling dispatchEvent(Event) on self.registration with too few arguments must throw TypeError 
-PASS EventTarget interface: existence and properties of interface object 
-PASS EventTarget interface object length 
-PASS EventTarget interface object name 
-PASS EventTarget interface: existence and properties of interface prototype object 
-PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
-PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS EventTarget interface: operation dispatchEvent(Event) 
-FAIL NavigationPreloadManager interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface object length assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface object name assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation enable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation disable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation setHeaderValue(ByteString) assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation getState() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
 PASS Cache interface: existence and properties of interface object 
 PASS Cache interface object length 
 PASS Cache interface object name 
@@ -176,15 +150,15 @@ PASS CacheStorage interface object name
 PASS CacheStorage interface: existence and properties of interface prototype object 
 PASS CacheStorage interface: existence and properties of interface prototype object's "constructor" property 
 PASS CacheStorage interface: existence and properties of interface prototype object's @@unscopables property 
-PASS CacheStorage interface: operation match(RequestInfo, CacheQueryOptions) 
+PASS CacheStorage interface: operation match(RequestInfo, MultiCacheQueryOptions) 
 PASS CacheStorage interface: operation has(DOMString) 
 PASS CacheStorage interface: operation open(DOMString) 
 PASS CacheStorage interface: operation delete(DOMString) 
 PASS CacheStorage interface: operation keys() 
 PASS CacheStorage must be primary interface of self.caches 
 PASS Stringification of self.caches 
-PASS CacheStorage interface: self.caches must inherit property "match(RequestInfo, CacheQueryOptions)" with the proper type 
-PASS CacheStorage interface: calling match(RequestInfo, CacheQueryOptions) on self.caches with too few arguments must throw TypeError 
+PASS CacheStorage interface: self.caches must inherit property "match(RequestInfo, MultiCacheQueryOptions)" with the proper type 
+PASS CacheStorage interface: calling match(RequestInfo, MultiCacheQueryOptions) on self.caches with too few arguments must throw TypeError 
 PASS CacheStorage interface: self.caches must inherit property "has(DOMString)" with the proper type 
 PASS CacheStorage interface: calling has(DOMString) on self.caches with too few arguments must throw TypeError 
 PASS CacheStorage interface: self.caches must inherit property "open(DOMString)" with the proper type 

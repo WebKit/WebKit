@@ -16,7 +16,7 @@ self.addEventListener('fetch', function(event) {
                   credentials: event.request.credentials,
                   headers: headers,
                   body: result
-                }), { headers : [["Cache-Control", "no-cache"]] } ));
+                })));
             });
       }));
   });

@@ -1,13 +1,13 @@
 
 
 PASS Test calling waitUntil in a different task without an existing extension throws 
-FAIL Test calling waitUntil in a different microtask without an existing extension throws assert_unreached: unexpected rejection: assert_equals: expected "InvalidStateError" but got "OK" Reached unreachable code
+FAIL Test calling waitUntil in a different microtask without an existing extension throws assert_equals: expected "InvalidStateError" but got "OK"
 PASS Test calling waitUntil in a different task with an existing extension succeeds 
 PASS Test calling waitUntil with an existing extension promise handler succeeds 
-FAIL Test calling waitUntil at the end of the microtask turn throws assert_unreached: unexpected rejection: assert_equals: expected "InvalidStateError" but got "OK" Reached unreachable code
+FAIL Test calling waitUntil at the end of the microtask turn throws assert_equals: expected "InvalidStateError" but got "OK"
 PASS Test calling waitUntil after the current extension expired in a different task fails 
 PASS Test calling waitUntil on a script constructed ExtendableEvent throws exception 
 PASS Test calling waitUntil asynchronously with pending respondWith promise. 
 PASS Test calling waitUntil synchronously inside microtask of respondWith promise. 
-FAIL Test calling waitUntil asynchronously inside microtask of respondWith promise. assert_unreached: unexpected rejection: assert_equals: expected "InvalidStateError" but got "OK" Reached unreachable code
+FAIL Test calling waitUntil asynchronously inside microtask of respondWith promise. assert_equals: expected "InvalidStateError" but got "OK"
 

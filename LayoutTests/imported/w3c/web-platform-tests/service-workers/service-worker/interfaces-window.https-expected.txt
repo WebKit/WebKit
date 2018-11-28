@@ -1,11 +1,7 @@
-CONSOLE MESSAGE: line 482: callback not yet supported
+
 
 PASS test setup (worker registration) 
-PASS WorkerGlobalScope interface: existence and properties of interface object 
-PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
-PASS Client interface: existence and properties of interface object 
-PASS WindowClient interface: existence and properties of interface object 
-PASS Clients interface: existence and properties of interface object 
+FAIL navigator.serviceWorker is not available in a data: iframe assert_false: navigator.serviceWorker should not be defined in iframe expected false got true
 PASS ServiceWorker interface: existence and properties of interface object 
 PASS ServiceWorker interface object length 
 PASS ServiceWorker interface object name 
@@ -23,12 +19,6 @@ PASS ServiceWorker interface: window.registrationInstance.installing must inheri
 PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "postMessage(any, [object Object])" with the proper type 
 PASS ServiceWorker interface: calling postMessage(any, [object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
 PASS ServiceWorker interface: window.registrationInstance.installing must inherit property "onstatechange" with the proper type 
-PASS EventTarget interface: window.registrationInstance.installing must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
-PASS EventTarget interface: window.registrationInstance.installing must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance.installing with too few arguments must throw TypeError 
-PASS EventTarget interface: window.registrationInstance.installing must inherit property "dispatchEvent(Event)" with the proper type 
-PASS EventTarget interface: calling dispatchEvent(Event) on window.registrationInstance.installing with too few arguments must throw TypeError 
 PASS ServiceWorkerRegistration interface: existence and properties of interface object 
 PASS ServiceWorkerRegistration interface object length 
 PASS ServiceWorkerRegistration interface object name 
@@ -38,7 +28,6 @@ PASS ServiceWorkerRegistration interface: existence and properties of interface 
 PASS ServiceWorkerRegistration interface: attribute installing 
 PASS ServiceWorkerRegistration interface: attribute waiting 
 PASS ServiceWorkerRegistration interface: attribute active 
-FAIL ServiceWorkerRegistration interface: attribute navigationPreload assert_true: The prototype object must have a property "navigationPreload" expected true got false
 PASS ServiceWorkerRegistration interface: attribute scope 
 PASS ServiceWorkerRegistration interface: attribute updateViaCache 
 PASS ServiceWorkerRegistration interface: operation update() 
@@ -49,37 +38,15 @@ PASS Stringification of window.registrationInstance
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "installing" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "waiting" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "active" with the proper type 
-FAIL ServiceWorkerRegistration interface: window.registrationInstance must inherit property "navigationPreload" with the proper type assert_inherits: property "navigationPreload" not found in prototype chain
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "scope" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "updateViaCache" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "update()" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "unregister()" with the proper type 
 PASS ServiceWorkerRegistration interface: window.registrationInstance must inherit property "onupdatefound" with the proper type 
-PASS EventTarget interface: window.registrationInstance must inherit property "addEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling addEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance with too few arguments must throw TypeError 
-PASS EventTarget interface: window.registrationInstance must inherit property "removeEventListener(DOMString, EventListener, [object Object],[object Object])" with the proper type 
-PASS EventTarget interface: calling removeEventListener(DOMString, EventListener, [object Object],[object Object]) on window.registrationInstance with too few arguments must throw TypeError 
-PASS EventTarget interface: window.registrationInstance must inherit property "dispatchEvent(Event)" with the proper type 
-PASS EventTarget interface: calling dispatchEvent(Event) on window.registrationInstance with too few arguments must throw TypeError 
-PASS EventTarget interface: existence and properties of interface object 
-PASS EventTarget interface object length 
-PASS EventTarget interface object name 
-PASS EventTarget interface: existence and properties of interface prototype object 
-PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property 
-PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property 
-PASS EventTarget interface: operation addEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS EventTarget interface: operation removeEventListener(DOMString, EventListener, [object Object],[object Object]) 
-PASS EventTarget interface: operation dispatchEvent(Event) 
-FAIL NavigationPreloadManager interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface object length assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface object name assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation enable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation disable() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation setHeaderValue(ByteString) assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
-FAIL NavigationPreloadManager interface: operation getState() assert_own_property: self does not have own property "NavigationPreloadManager" expected property "NavigationPreloadManager" missing
+PASS ServiceWorkerGlobalScope interface: existence and properties of interface object 
+PASS Client interface: existence and properties of interface object 
+PASS WindowClient interface: existence and properties of interface object 
+PASS Clients interface: existence and properties of interface object 
 PASS Cache interface: existence and properties of interface object 
 PASS Cache interface object length 
 PASS Cache interface object name 
@@ -99,9 +66,10 @@ PASS CacheStorage interface object name
 PASS CacheStorage interface: existence and properties of interface prototype object 
 PASS CacheStorage interface: existence and properties of interface prototype object's "constructor" property 
 PASS CacheStorage interface: existence and properties of interface prototype object's @@unscopables property 
-PASS CacheStorage interface: operation match(RequestInfo, CacheQueryOptions) 
+PASS CacheStorage interface: operation match(RequestInfo, MultiCacheQueryOptions) 
 PASS CacheStorage interface: operation has(DOMString) 
 PASS CacheStorage interface: operation open(DOMString) 
 PASS CacheStorage interface: operation delete(DOMString) 
 PASS CacheStorage interface: operation keys() 
+PASS WorkerGlobalScope interface: existence and properties of interface object 
 

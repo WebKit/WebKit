@@ -1628,7 +1628,13 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-order.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-redirect.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html": [
@@ -1652,7 +1658,16 @@
     "imported/w3c/web-platform-tests/service-workers/service-worker/local-url-inherit-controller.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [

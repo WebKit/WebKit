@@ -11,9 +11,8 @@ var expected_results = {};
 function add_promise_to_test(url)
 {
   var expected = expected_results[url];
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     expected.resolve = resolve;
-    setTimeout(() => reject("test time out"), 5000);
   });
 }
 

@@ -19,4 +19,8 @@ PASS register-with-updateViaCache-none-then-undefined
 PASS register-with-updateViaCache-none-then-imports 
 PASS register-with-updateViaCache-none-then-all 
 PASS register-with-updateViaCache-none-then-none 
+PASS access-updateViaCache-after-unregister-undefined 
+PASS access-updateViaCache-after-unregister-imports 
+PASS access-updateViaCache-after-unregister-all 
+PASS access-updateViaCache-after-unregister-none 
 

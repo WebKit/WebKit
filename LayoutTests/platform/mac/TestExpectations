@@ -958,8 +958,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [
 
 ## --- End W3C Imported Media Source Tests
 
-webkit.org/b/187484 imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Pass Failure ]
-
 # This test times out.
 media/media-source/media-source-seek-complete.html [ Timeout ]
 

@@ -2,4 +2,5 @@
 PASS postMessage to a ServiceWorker (and back via MessagePort) 
 PASS postMessage a transferable ArrayBuffer between ServiceWorker and Client 
 PASS postMessage a transferable ArrayBuffer between ServiceWorker and Client over MessagePort 
+FAIL postMessage with dictionary a transferable ArrayBuffer between ServiceWorker and Client promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

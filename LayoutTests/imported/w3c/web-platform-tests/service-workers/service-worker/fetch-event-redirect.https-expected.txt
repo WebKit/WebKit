@@ -1,6 +1,21 @@
-CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
-CONSOLE MESSAGE: line 51: Not allowed to request resource
-CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-nocors-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-cors-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py%253FACAOrigin%253Dhttps%25253A%25252F%25252Flocalhost%25253A9443&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-sameorigin-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540localhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-nocors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py&expected_type=opaqueredirect due to access control checks.
+CONSOLE MESSAGE: line 55: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 55: Not allowed to request resource
+CONSOLE MESSAGE: line 55: Fetch API cannot load https://localhost:9443/nonav-manual-nocors-redirects-to-cors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py%253FACAOrigin%253Dhttps%25253A%25252F%25252Flocalhost%25253A9443&expected_type=opaqueredirect due to access control checks.
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/nonav-follow-cors-redirects-to-nocors-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py.
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Unsafe attempt to load URL https://127.0.0.1:9443/service-workers/service-worker/resources/success.py from origin https://localhost:9443. Domains, protocols and ports must match.
@@ -32,6 +47,12 @@ CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/nonav-error-sameor
 CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
 CONSOLE MESSAGE: line 51: Not allowed to request resource
 CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-sameorigin-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Flocalhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py due to access control checks.
+CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-nocors-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py due to access control checks.
+CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-cors-nocreds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252F127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py%253FACAOrigin%253Dhttps%25253A%25252F%25252Flocalhost%25253A9443 due to access control checks.
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Ffoo%3Abar%40localhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsuccess.py
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/nonav-error-cors-redirects-to-sameorigin-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540localhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py.
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Ffoo%3Abar%40127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsuccess.py
@@ -44,6 +65,15 @@ CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowe
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/nonav-error-sameorigin-redirects-to-nocors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py.
 CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Not allowed to follow a redirection while loading https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=https%3A%2F%2Ffoo%3Abar%40127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Fsuccess.py%3FACAOrigin%3Dhttps%253A%252F%252Flocalhost%253A9443
 CONSOLE MESSAGE: Fetch API cannot load https://localhost:9443/nonav-error-sameorigin-redirects-to-cors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py%253FACAOrigin%253Dhttps%25253A%25252F%25252Flocalhost%25253A9443.
+CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-sameorigin-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540localhost%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py due to access control checks.
+CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-nocors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py due to access control checks.
+CONSOLE MESSAGE: line 51: No-Cors mode requires follow redirect mode
+CONSOLE MESSAGE: line 51: Not allowed to request resource
+CONSOLE MESSAGE: line 51: Fetch API cannot load https://localhost:9443/nonav-error-nocors-redirects-to-cors-creds?url=redirect.py%3FRedirect%3Dhttps%253A%252F%252Ffoo%253Abar%2540127.0.0.1%253A9443%252Fservice-workers%252Fservice-worker%252Fresources%252Fsuccess.py%253FACAOrigin%253Dhttps%25253A%25252F%25252Flocalhost%25253A9443 due to access control checks.
 
 PASS initialize global state 
 PASS Non-navigation, manual redirect, cors mode Request redirected to same-origin without credentials should succeed opaqueredirect interception and response should not be redirected 
@@ -52,13 +82,18 @@ PASS Non-navigation, manual redirect, cors mode Request redirected to cors witho
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to same-origin without credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to no-cors without credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to cors without credentials should succeed opaqueredirect interception and response should not be redirected 
-PASS Non-navigation, manual redirect, no-cors mode Request should fail 
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to same-origin without credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to no-cors without credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to cors without credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
 PASS Non-navigation, manual redirect, cors mode Request redirected to same-origin with credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, cors mode Request redirected to no-cors with credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, cors mode Request redirected to cors with credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to same-origin with credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to no-cors with credentials should succeed opaqueredirect interception and response should not be redirected 
 PASS Non-navigation, manual redirect, same-origin mode Request redirected to cors with credentials should succeed opaqueredirect interception and response should not be redirected 
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to same-origin with credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to no-cors with credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
+FAIL Non-navigation, manual redirect, no-cors mode Request redirected to cors with credentials should succeed opaqueredirect interception and response should not be redirected promise_test: Unhandled rejection with value: object "TypeError: Not allowed to request resource"
 PASS Non-navigation, follow redirect, cors mode Request redirected to same-origin without credentials should succeed interception and response should be redirected 
 PASS Non-navigation, follow redirect, cors mode Request redirected to no-cors without credentials should fail interception and response should not be redirected 
 PASS Non-navigation, follow redirect, cors mode Request redirected to cors without credentials should succeed interception and response should be redirected 
@@ -83,12 +118,17 @@ PASS Non-navigation, error redirect, cors mode Request redirected to cors withou
 PASS Non-navigation, error redirect, same-origin mode Request redirected to same-origin without credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, same-origin mode Request redirected to no-cors without credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, same-origin mode Request redirected to cors without credentials should fail interception and response should not be redirected 
-PASS Non-navigation, error redirect, no-cors mode Request should fail 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to same-origin without credentials should fail interception and response should not be redirected 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to no-cors without credentials should fail interception and response should not be redirected 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to cors without credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, cors mode Request redirected to same-origin with credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, cors mode Request redirected to no-cors with credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, cors mode Request redirected to cors with credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, same-origin mode Request redirected to same-origin with credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, same-origin mode Request redirected to no-cors with credentials should fail interception and response should not be redirected 
 PASS Non-navigation, error redirect, same-origin mode Request redirected to cors with credentials should fail interception and response should not be redirected 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to same-origin with credentials should fail interception and response should not be redirected 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to no-cors with credentials should fail interception and response should not be redirected 
+PASS Non-navigation, error redirect, no-cors mode Request redirected to cors with credentials should fail interception and response should not be redirected 
 PASS restore global state 
 

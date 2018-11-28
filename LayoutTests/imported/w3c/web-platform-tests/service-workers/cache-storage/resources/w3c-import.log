@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/cache-keys-attributes-for-service-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/common-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/credentials-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/credentials-worker.js
@@ -22,3 +23,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/simple.txt
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/test-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/cache-storage/resources/vary.py

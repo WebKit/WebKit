@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS ServiceWorkerRegistration.update() from client throws while installing service worker. 
+TIMEOUT ServiceWorkerRegistration.update() from installing service worker throws. Test timed out
+

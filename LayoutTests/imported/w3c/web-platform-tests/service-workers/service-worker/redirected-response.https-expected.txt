@@ -28,6 +28,7 @@ PASS mode: "error", generated redirect response
 PASS mode: "manual", generated redirect response 
 PASS Fetch should follow the redirect response 20 times 
 PASS Fetch should not follow the redirect response 21 times. 
+PASS The URL for the service worker redirected request should be propagated to response. 
 PASS restore global state (service worker registration) 
 PASS restore global state (caches) 
 

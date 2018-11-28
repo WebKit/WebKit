@@ -1,0 +1,10 @@
+
+PASS Registering within Service-Worker-Allowed path 
+PASS Registering within Service-Worker-Allowed path (absolute URL) 
+PASS Registering within Service-Worker-Allowed path with parent reference 
+PASS Registering outside Service-Worker-Allowed path 
+PASS Registering outside Service-Worker-Allowed path with parent reference 
+PASS Service-Worker-Allowed is cross-origin to script, registering on a normally allowed scope 
+PASS Service-Worker-Allowed is cross-origin to script, registering on a normally disallowed scope 
+PASS Service-Worker-Allowed is cross-origin to page, same-origin to script 
+

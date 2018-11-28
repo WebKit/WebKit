@@ -1,3 +1,3 @@
 
-FAIL Verify the FetchEvent for HTMLImports assert_unreached: unexpected rejection: undefined is not an object (evaluating 'same.getElementById') Reached unreachable code
+FAIL Verify the FetchEvent for HTMLImports promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'same.getElementById')"
 

@@ -37,6 +37,16 @@ function handleClientId(event) {
   event.respondWith(new Response(body));
 }
 
+function handleResultingClientId(event) {
+  var body;
+  if (event.resultingClientId !== "") {
+    body = 'Resulting Client ID Found: ' + event.resultingClientId;
+  } else {
+    body = 'Resulting Client ID Not Found';
+  }
+  event.respondWith(new Response(body));
+}
+
 function handleNullBody(event) {
   event.respondWith(new Response());
 }
@@ -129,6 +139,22 @@ function handleKeepalive(event) {
   event.respondWith(new Response(event.request.keepalive));
 }
 
+function handleIsReloadNavigation(event) {
+  const request = event.request;
+  const body =
+    `method = ${request.method}, ` +
+    `isReloadNavigation = ${request.isReloadNavigation}`;
+  event.respondWith(new Response(body));
+}
+
+function handleIsHistoryNavigation(event) {
+  const request = event.request;
+  const body =
+    `method = ${request.method}, ` +
+    `isHistoryNavigation = ${request.isHistoryNavigation}`;
+  event.respondWith(new Response(body));
+}
+
 self.addEventListener('fetch', function(event) {
     var url = event.request.url;
     var handlers = [
@@ -139,6 +165,7 @@ self.addEventListener('fetch', function(event) {
       { pattern: '?referrerPolicy', fn: handleReferrerPolicy },
       { pattern: '?referrer', fn: handleReferrer },
       { pattern: '?clientId', fn: handleClientId },
+      { pattern: '?resultingClientId', fn: handleResultingClientId },
       { pattern: '?ignore', fn: function() {} },
       { pattern: '?null', fn: handleNullBody },
       { pattern: '?fetch', fn: handleFetch },
@@ -151,6 +178,8 @@ self.addEventListener('fetch', function(event) {
       { pattern: '?integrity', fn: handleIntegrity },
       { pattern: '?request-body', fn: handleRequestBody },
       { pattern: '?keepalive', fn: handleKeepalive },
+      { pattern: '?isReloadNavigation', fn: handleIsReloadNavigation },
+      { pattern: '?isHistoryNavigation', fn: handleIsHistoryNavigation },
     ];
 
     var handler = null;

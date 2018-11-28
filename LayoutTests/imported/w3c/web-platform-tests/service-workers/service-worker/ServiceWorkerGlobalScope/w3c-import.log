@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/close.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.https.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/isSecureContext.serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/service-worker-error-event.https.html

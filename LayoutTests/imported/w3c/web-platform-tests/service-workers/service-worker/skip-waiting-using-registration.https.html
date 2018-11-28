@@ -50,6 +50,9 @@ promise_test(function(t) {
         })
       .then(function(registration) {
           sw_registration = registration;
+          t.add_cleanup(function() {
+              return registration.unregister();
+            });
           return saw_controllerchanged;
         })
       .then(function() {

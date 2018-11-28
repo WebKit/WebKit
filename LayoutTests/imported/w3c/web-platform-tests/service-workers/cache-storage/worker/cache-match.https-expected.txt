@@ -19,4 +19,5 @@ PASS Cache.match with POST Request
 PASS Cache.match with a non-2xx Response 
 PASS Cache.match with a network error Response 
 PASS Cache produces large Responses that can be cloned and read correctly. 
+FAIL cors-exposed header should be stored correctly. assert_equals: expected (string) "bar" but got (object) null
 

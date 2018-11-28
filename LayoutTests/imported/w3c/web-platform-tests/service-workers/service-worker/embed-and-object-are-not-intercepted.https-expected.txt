@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: network error to show interception occurred
+CONSOLE MESSAGE: Cannot load https://localhost:9443/images/green.png.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: network error to show interception occurred
+CONSOLE MESSAGE: Cannot load https://localhost:9443/images/green.png.
+#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 56390)
+FAIL: Timed out waiting for notifyDone to be called
+
+#EOF
+#EOF

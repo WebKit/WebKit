@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 27: [blocked] The page at https://localhost:9443/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html was not allowed to display insecure content from blob:null/6be18dba-d7cd-47b7-bab5-dbb6298f7a6f.
+
+CONSOLE MESSAGE: line 27: Not allowed to request resource
+CONSOLE MESSAGE: line 27: Cannot load blob:null/6be18dba-d7cd-47b7-bab5-dbb6298f7a6f due to access control checks.
+
+Harness Error (TIMEOUT), message = null
+
+PASS Prepare a service worker. 
+FAIL Prepare an iframe sandboxed by CSP HTTP header with allow-scripts. assert_false: Service worker should NOT control the sandboxed page expected false got true
+PASS Prepare an iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin. 
+TIMEOUT Fetch request from a worker in iframe sandboxed by CSP HTTP header allow-scripts flag Test timed out
+NOTRUN Fetch request from a worker in iframe sandboxed by CSP HTTP header with allow-scripts and allow-same-origin flag 
+

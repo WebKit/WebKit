@@ -1,8 +1,8 @@
 
 PASS Registering script with no MIME type 
 PASS Registering script with bad MIME type 
-FAIL Registering script that imports script with no MIME type assert_throws: Registration of no MIME type imported script should fail. function "function () { throw e }" threw object "TypeError: NetworkError: mime type is not a supported JavaScript mime type" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
-FAIL Registering script that imports script with bad MIME type assert_throws: Registration of plain text imported script should fail. function "function () { throw e }" threw object "TypeError: NetworkError: mime type is not a supported JavaScript mime type" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+PASS Registering script that imports script with no MIME type 
+PASS Registering script that imports script with bad MIME type 
 PASS Registering script with good MIME type application/ecmascript 
 PASS Registering script that imports script with good MIME type application/ecmascript 
 PASS Registering script with good MIME type application/javascript 

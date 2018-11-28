@@ -1,3 +1,8 @@
 
-PASS Respond with a Response built from a ReadableStream 
+PASS Subresource built from a ReadableStream 
+PASS Main resource built from a ReadableStream 
+PASS Subresource built from a ReadableStream - delayed 
+PASS Main resource built from a ReadableStream - delayed 
+PASS Subresource built from a ReadableStream - fetch stream 
+PASS Main resource built from a ReadableStream - fetch stream 
 

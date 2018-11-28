@@ -180,6 +180,31 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https
 # Per specification, if the scripts are identical, we do not install the new script and return the existing registration.
 imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-redirect.https.html [ Skip ]
 
+# Newly imported service worker tests that are timing out.
+imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-abort.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/embed-and-object-are-not-intercepted.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
+
+# Newly imported service worker tests that are flaky.
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
+
 # This test is timing out because it relies on http://www1.localhost:8800 host for cross origin checks.
 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Skip ]
 
@@ -239,8 +264,6 @@ imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ D
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
-webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr ]
-webkit.org/b/181900 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-security-error.https.html [ DumpJSConsoleLogInStdErr ]

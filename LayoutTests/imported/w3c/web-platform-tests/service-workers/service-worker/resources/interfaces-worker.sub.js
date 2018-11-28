@@ -1,14 +1,33 @@
 'use strict';
 
-importScripts('interfaces-idls.js');
 importScripts('worker-testharness.js');
 importScripts('/resources/WebIDLParser.js');
 importScripts('/resources/idlharness.js');
 
-var idlArray = new IdlArray();
-idlArray.add_untested_idls(idls.untested);
-idlArray.add_idls(idls.tested);
-idlArray.add_objects({
+promise_test(async (t) => {
+  const srcs = ['dom', 'html', 'service-workers', 'dedicated-workers'];
+  const [dom, html, serviceWorkerIdl, dedicated] = await Promise.all(
+    srcs.map(i => fetch(`/interfaces/${i}.idl`).then(r => r.text())));
+
+  var idlArray = new IdlArray();
+  idlArray.add_idls(serviceWorkerIdl, { only: [
+    'ServiceWorkerGlobalScope',
+    'Client',
+    'WindowClient',
+    'Clients',
+    'ServiceWorker',
+    'ServiceWorkerState',
+    'ServiceWorkerUpdateViaCache',
+    'ServiceWorkerRegistration',
+    'EventTarget',
+    'NavigationPreloadManager',
+    'Cache',
+    'CacheStorage',
+  ]});
+  idlArray.add_dependency_idls(dedicated);
+  idlArray.add_dependency_idls(dom);
+  idlArray.add_dependency_idls(html);
+  idlArray.add_objects({
     ServiceWorkerGlobalScope: ['self'],
     Clients: ['self.clients'],
     ServiceWorkerRegistration: ['self.registration'],
@@ -17,16 +36,14 @@ idlArray.add_objects({
     // Client: ['self.clientInstance'],
     // WindowClient: ['self.windowClientInstance']
   });
+  return create_temporary_cache(t)
+    .then(function(cache) {
+        self.cacheInstance = cache;
 
-promise_test(function(t) {
-    return create_temporary_cache(t)
-      .then(function(cache) {
-          self.cacheInstance = cache;
-
-          idlArray.add_objects({ Cache: ['self.cacheInstance'] });
-          idlArray.test();
-        });
-  }, 'test setup (cache creation)');
+        idlArray.add_objects({ Cache: ['self.cacheInstance'] });
+        idlArray.test();
+      });
+}, 'test setup (cache creation)');
 
 test(function() {
     var req = new Request('http://{{host}}/',
@@ -76,3 +93,7 @@ test(function() {
 test(() => {
     assert_false('XMLHttpRequest' in self);
   }, 'xhr is not exposed');
+
+test(() => {
+    assert_false('createObjectURL' in self.URL);
+  }, 'URL.createObjectURL is not exposed')

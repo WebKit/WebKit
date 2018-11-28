@@ -1,3 +1,3 @@
 
-PASS The headers of FetchEvent shouldn't contain freshness headers. 
+FAIL The headers of FetchEvent shouldn't contain freshness headers. assert_false: if-none-match header must not be set in the FetchEvent's request. (url = https://localhost:9443/service-workers/service-worker/resources/fetch-request-no-freshness-headers-script.py) expected false got true
 

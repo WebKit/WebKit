@@ -12,11 +12,14 @@ def main(request, response):
 <script>
 function nestedLoaded() {
   parent.postMessage({ type: 'NESTED_LOADED' }, '*');
-  popup.close();
 }
 
 let popup = window.open('?nested=true');
 popup.onload = nestedLoaded;
+
+addEventListener('unload', evt => {
+  popup.close();
+}, { once: true });
 
 // Helper routine to make it slightly easier for our parent to find
 // the nested popup window.

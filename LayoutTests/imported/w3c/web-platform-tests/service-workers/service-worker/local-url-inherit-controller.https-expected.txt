@@ -1,0 +1,9 @@
+
+PASS Same-origin blob URL iframe should inherit service worker controller. 
+PASS Same-origin blob URL iframe should intercept fetch(). 
+FAIL Same-origin blob URL worker should inherit service worker controller. assert_equals: blob URL worker should inherit controller expected (string) "https://localhost:9443/service-workers/service-worker/resources/local-url-inherit-controller-worker.js" but got (object) null
+PASS Same-origin blob URL worker should intercept fetch(). 
+FAIL Data URL iframe should not intercept fetch(). assert_equals: data URL iframe should not intercept fetch expected "" but got "intercepted"
+FAIL Data URL worker should not inherit service worker controller. promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+FAIL Data URL worker should not intercept fetch(). promise_test: Unhandled rejection with value: object "SecurityError: The operation is insecure."
+

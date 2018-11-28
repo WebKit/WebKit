@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'https://localhost:9443/service-workers/service-worker/resources/cross-origin-html.css' because non CSS MIME types are not allowed for cross-origin stylesheets.
-
-PASS Mime type checking of CSS files fetched via SW. 
-

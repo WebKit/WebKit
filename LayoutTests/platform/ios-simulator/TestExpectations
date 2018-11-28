@@ -92,7 +92,6 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/white-space/tex
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-normal-ko-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-020.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selectors-empty-001.xml [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Pass Failure ]
 
 # Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]

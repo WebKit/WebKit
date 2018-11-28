@@ -1,3 +1,14 @@
+2018-11-27  Chris Dumez  <cdumez@apple.com>
+
+        Resync service-workers web platform tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=192035
+
+        Reviewed by Youenn Fablet.
+
+        Resync service-workers web platform tests from upstream 73507a79fc.
+
+        * web-platform-tests/: Updated.
+
 2018-11-27  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] align-self center and position sticky don't work together

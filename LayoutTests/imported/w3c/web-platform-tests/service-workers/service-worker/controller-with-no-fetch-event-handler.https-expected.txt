@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/cors-denied.txt due to access control checks.
+
+PASS global setup 
+PASS cross-origin request, no-cors mode 
+PASS cross-origin request, cors denied 
+PASS cross-origin request, cors approved 
+PASS cleanup global state 
+

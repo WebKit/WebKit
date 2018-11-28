@@ -6,5 +6,5 @@ PASS Scope including non-escaped multibyte characters
 PASS Scope including self-reference 
 PASS Scope including parent-reference 
 PASS Scope including consecutive slashes 
-FAIL Scope URL is same-origin filesystem: URL assert_throws: Registering with the scope that has same-origin filesystem: URL should fail with SecurityError. function "function () { throw e }" threw object "TypeError: Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+PASS Scope URL is same-origin filesystem: URL 
 

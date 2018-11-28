@@ -1,3 +1,4 @@
 
 PASS waiting is set after installation 
+PASS The ServiceWorker objects returned from waiting attribute getter that represent the same service worker are the same objects 
 

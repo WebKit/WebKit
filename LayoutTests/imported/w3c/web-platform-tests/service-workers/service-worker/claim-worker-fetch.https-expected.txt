@@ -1,3 +1,4 @@
 
 PASS fetch() in Worker should be intercepted after the client is claimed. 
+FAIL fetch() in nested Worker should be intercepted after the client is claimed. assert_equals: fetch() should not be intercepted. expected "a simple text file\n" but got "Fail: undefined"
 

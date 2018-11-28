@@ -1,4 +1,4 @@
 
 PASS register on a secure page after redirect from an non-secure url 
-FAIL register on a non-secure page after redirect from an non-secure url assert_equals: expected "FAIL: SecurityError" but got "OK"
+FAIL register on a non-secure page after redirect from an non-secure url assert_equals: expected "FAIL: navigator.serviceWorker is undefined" but got "OK"
 
