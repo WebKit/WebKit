@@ -1,3 +1,14 @@
+2018-11-27  Saam barati  <sbarati@apple.com>
+
+        r238510 broke scopes of size zero
+        https://bugs.webkit.org/show_bug.cgi?id=192033
+        <rdar://problem/46281734>
+
+        Reviewed by Keith Miller.
+
+        * stress/r238510-bad-loop.js: Added.
+        (foo):
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] NaNs read from Wasm code needs to be be purified.

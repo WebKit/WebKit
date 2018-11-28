@@ -1,3 +1,21 @@
+2018-11-27  Saam barati  <sbarati@apple.com>
+
+        r238510 broke scopes of size zero
+        https://bugs.webkit.org/show_bug.cgi?id=192033
+        <rdar://problem/46281734>
+
+        Reviewed by Keith Miller.
+
+        In r238510, I wrote the loop like this: 
+        `for (ScopeOffset offset { 0 }; offset <= symbolTable->maxScopeOffset(); offset += 1)`
+        
+        This breaks for scopes of size zero because maxScopeOffset() will be UINT_MAX.
+        
+        This patch fixes this by writing the loop as:
+        `for (unsigned offset = 0; offset < symbolTable->scopeSize(); ++offset)`
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: capacity && isPageAligned(capacity) in JSC::CLoopStack::CLoopStack(JSC::VM&).

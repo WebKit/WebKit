@@ -878,9 +878,9 @@ private:
             {
                 SymbolTable* symbolTable = node->castOperand<SymbolTable*>();
                 LazyNode initialValue(m_graph.freeze(node->initializationValueForActivation()));
-                for (ScopeOffset offset { 0 }; offset <= symbolTable->maxScopeOffset(); offset += 1) {
+                for (unsigned offset = 0; offset < symbolTable->scopeSize(); ++offset) {
                     writes.add(
-                        PromotedLocationDescriptor(ClosureVarPLoc, offset.offset()),
+                        PromotedLocationDescriptor(ClosureVarPLoc, offset),
                         initialValue);
                 }
             }
