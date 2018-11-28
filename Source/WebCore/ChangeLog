@@ -1,3 +1,21 @@
+2018-11-27  Youenn Fablet  <youenn@apple.com>
+
+        Log WebRTC stats in inspector console only when setting is verbose
+        https://bugs.webkit.org/show_bug.cgi?id=192014
+
+        Reviewed by Eric Carlson.
+
+        Add a WebRTCStats channel that is used by default to output WebRTC stats in console.
+        When WebRTC Debug logging is enabled, log WebRTC stats in WebRTC channel,
+        so that they appear as debug information in Web Inspector.
+
+        No change of JS behavior.
+        Covered by manually testing what is logged in inspector and console.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+        * platform/Logging.h:
+
 2018-11-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the mis-spelled "m_clienstWaitingForAsyncDecoding"

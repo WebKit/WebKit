@@ -854,8 +854,18 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
             m_statsLogTimer.startRepeating(statsLogInterval(timestamp));
         }
 
-        for (auto iterator = report->begin(); iterator != report->end(); ++iterator)
-            ALWAYS_LOG(Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()), RTCStatsLogger { *iterator });
+        for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
+            if (logger().willLog(logChannel(), WTFLogLevelDebug)) {
+                // Stats are very verbose, let's only display them in inspector console in verbose mode.
+                logger().debug(LogWebRTC,
+                    Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()),
+                    RTCStatsLogger { *iterator });
+            } else {
+                logger().logAlways(LogWebRTCStats,
+                    Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()),
+                    RTCStatsLogger { *iterator });
+            }
+        }
     });
 #else
     UNUSED_PARAM(report);
