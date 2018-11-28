@@ -508,7 +508,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/AbortController.idl \
-    $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \
@@ -1072,11 +1071,6 @@ ifeq ($(OS),Windows_NT)
 else
     DELETE = rm -f
 endif
-
-ALL_GENERATED_FILES =
-
-all : real_all
-
 # --------
 
 ifeq ($(OS),MACOS)
@@ -1131,16 +1125,6 @@ PLATFORM_FEATURE_DEFINES = Configurations/FeatureDefines.xcconfig
 endif
 endif
 
-# Items on ADDITIONAL_BINDING_IDLS get added to JS_BINDING_IDLS and are copied
-# into the current directory.
-#
-# TODO: Determine why they don't need to have full path information prepended
-# to them like the other items in JS_BINDING_IDLS. Perhaps related to the vpath
-# specification set up for *.idl files? Also look into why DocumentTouch.idl,
-# et al, get added to JS_BINDING_IDLS by virtual of ADDITIONAL_BINDING_IDLS
-# getting added to it, and also later on when they are explicitly added to
-# JS_BINDING_IDLS by hand with the full paths.
-
 ADDITIONAL_BINDING_IDLS =
 ifeq ($(findstring ENABLE_MAC_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_MAC_GESTURE_EVENTS)
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
@@ -1150,8 +1134,6 @@ ifeq ($(findstring ENABLE_IOS_GESTURE_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_GES
 ADDITIONAL_BINDING_IDLS += GestureEvent.idl
 endif
 
-# TODO: Determine if the two levels of protection hear are necessary. If so, do
-# they also need to be applied to the parallel files below?
 ifeq ($(WTF_PLATFORM_IOS_FAMILY), 1)
 ifeq ($(findstring ENABLE_IOS_TOUCH_EVENTS,$(FEATURE_DEFINES)), ENABLE_IOS_TOUCH_EVENTS)
 ADDITIONAL_BINDING_IDLS += \
@@ -1162,20 +1144,14 @@ ADDITIONAL_BINDING_IDLS += \
 endif
 endif # IOS
 
-# TODO: Check places that use .in files; there seems to be inconsistent use of
-# full paths and partial paths.
 vpath %.in $(WEBKITADDITIONS_HEADER_SEARCH_PATHS)
 
-# TODO: These don't seem to be used. I see that Andreas carefully added these as
-# "extention points", but I'm not seeing how they're actually used.
 ADDITIONAL_EVENT_NAMES =
 ADDITIONAL_EVENT_TARGET_FACTORY =
 
 JS_BINDING_IDLS += $(ADDITIONAL_BINDING_IDLS)
 
-# TODO: Is this needed? Down below, we say "all : ALL_GENERATED_FILES", which
-# includes JS_DOM_HEADERS, which includes ADDITIONAL_BINDING_IDLS.
-# all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
+all : $(ADDITIONAL_BINDING_IDLS:%.idl=JS%.h)
 
 vpath %.idl $(BUILT_PRODUCTS_DIR)/usr/local/include $(SDKROOT)/usr/local/include
 
@@ -1192,6 +1168,8 @@ JS_BINDING_IDLS += \
     $(WebCore)/dom/TouchList.idl
 endif
 
+.PHONY : all
+
 JS_DOM_CLASSES=$(basename $(notdir $(JS_BINDING_IDLS)))
 
 JS_DOM_HEADERS=$(filter-out JSEventListener.h, $(JS_DOM_CLASSES:%=JS%.h))
@@ -1199,7 +1177,54 @@ JS_DOM_IMPLEMENTATIONS=$(filter-out JSEventListener.cpp, $(JS_DOM_CLASSES:%=JS%.
 
 WEB_DOM_HEADERS :=
 
-ALL_GENERATED_FILES += $(JS_DOM_HEADERS) $(JS_DOM_IMPLEMENTATIONS) $(WEB_DOM_HEADERS)
+all : \
+    $(JS_DOM_HEADERS) \
+    $(JS_DOM_IMPLEMENTATIONS) \
+    $(WEB_DOM_HEADERS) \
+    \
+    CSSPropertyNames.cpp \
+    CSSPropertyNames.h \
+    CSSValueKeywords.cpp \
+    CSSValueKeywords.h \
+    ColorData.cpp \
+    DOMJITAbstractHeapRepository.h \
+    EventInterfaces.h \
+    EventTargetInterfaces.h \
+    HTMLElementFactory.cpp \
+    HTMLElementFactory.h \
+    HTMLElementTypeHelpers.h \
+    HTMLEntityTable.cpp \
+    HTMLNames.cpp \
+    HTMLNames.h \
+    JSHTMLElementWrapperFactory.cpp \
+    JSHTMLElementWrapperFactory.h \
+    JSMathMLElementWrapperFactory.cpp \
+    JSMathMLElementWrapperFactory.h \
+    JSSVGElementWrapperFactory.cpp \
+    JSSVGElementWrapperFactory.h \
+    PlugInsResources.h \
+    SVGElementFactory.cpp \
+    SVGElementFactory.h \
+    SVGElementTypeHelpers.h \
+    SVGNames.cpp \
+    SVGNames.h \
+    SelectorPseudoClassAndCompatibilityElementMap.cpp \
+    SelectorPseudoElementTypeMap.cpp \
+    StyleBuilder.cpp \
+    StylePropertyShorthandFunctions.cpp \
+    StylePropertyShorthandFunctions.h \
+    UserAgentStyleSheets.h \
+    WebKitFontFamilyNames.cpp \
+    WebKitFontFamilyNames.h \
+    XLinkNames.cpp \
+    XMLNSNames.cpp \
+    XMLNames.cpp \
+    MathMLElementFactory.cpp \
+    MathMLElementFactory.h \
+    MathMLElementTypeHelpers.h \
+    MathMLNames.cpp \
+    MathMLNames.h \
+#
 
 # --------
 
@@ -1232,7 +1257,7 @@ CSS_PROPERTY_NAME_FILES = \
 #
 CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
 
-ALL_GENERATED_FILES += $(CSS_PROPERTY_NAME_FILES)
+all : $(CSS_PROPERTY_NAME_FILES)
 $(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSProperties.json
 	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
@@ -1243,7 +1268,7 @@ CSS_VALUE_KEYWORD_FILES = \
 #
 CSS_VALUE_KEYWORD_FILES_PATTERNS = $(subst .,%,$(CSS_VALUE_KEYWORD_FILES))
 
-ALL_GENERATED_FILES += $(CSS_VALUE_KEYWORD_FILES)
+all : $(CSS_VALUE_KEYWORD_FILES)
 $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
@@ -1252,11 +1277,9 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalu
 
 # CSS Selector pseudo type name to value map.
 
-ALL_GENERATED_FILES += SelectorPseudoClassAndCompatibilityElementMap.cpp
 SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in
 	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in gperf "$(FEATURE_DEFINES)"
 
-ALL_GENERATED_FILES += SelectorPseudoElementTypeMap.cpp
 SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in
 	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in gperf "$(FEATURE_DEFINES)"
 
@@ -1264,7 +1287,8 @@ SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.
 
 # DOMJIT Abstract Heap
 
-ALL_GENERATED_FILES += DOMJITAbstractHeapRepository.h
+all : DOMJITAbstractHeapRepository.h
+
 DOMJITAbstractHeapRepository.h : $(WebCore)/domjit/generate-abstract-heap.rb $(WebCore)/domjit/DOMJITAbstractHeapRepository.yaml
 	$(RUBY) "$(WebCore)/domjit/generate-abstract-heap.rb" $(WebCore)/domjit/DOMJITAbstractHeapRepository.yaml ./DOMJITAbstractHeapRepository.h
 
@@ -1272,7 +1296,8 @@ DOMJITAbstractHeapRepository.h : $(WebCore)/domjit/generate-abstract-heap.rb $(W
 
 # XMLViewer CSS
 
-ALL_GENERATED_FILES += XMLViewerCSS.h
+all : XMLViewerCSS.h
+
 XMLViewerCSS.h : xml/XMLViewer.css
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/cssmin.py <"$(WebCore)/xml/XMLViewer.css" > ./XMLViewer.min.css
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_css ./XMLViewer.min.css XMLViewerCSS.h
@@ -1282,7 +1307,8 @@ XMLViewerCSS.h : xml/XMLViewer.css
 
 # XMLViewer JS
 
-ALL_GENERATED_FILES += XMLViewerJS.h
+all : XMLViewerJS.h
+
 XMLViewerJS.h : xml/XMLViewer.js
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py <"$(WebCore)/xml/XMLViewer.js" > ./XMLViewer.min.js
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl XMLViewer_js ./XMLViewer.min.js XMLViewerJS.h
@@ -1292,7 +1318,6 @@ XMLViewerJS.h : xml/XMLViewer.js
 
 # HTML entity names
 
-ALL_GENERATED_FILES += HTMLEntityTable.cpp
 HTMLEntityTable.cpp : html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
 	$(PYTHON) $(WebCore)/html/parser/create-html-entity-table -o HTMLEntityTable.cpp $(WebCore)/html/parser/HTMLEntityNames.in
 
@@ -1307,7 +1332,7 @@ HTTP_HEADER_NAMES_FILES = \
 #
 HTTP_HEADER_NAMES_FILES_PATTERNS = $(subst .,%,$(HTTP_HEADER_NAMES_FILES))
 
-ALL_GENERATED_FILES += $(HTTP_HEADER_NAMES_FILES)
+all : $(HTTP_HEADER_NAMES_FILES)
 $(HTTP_HEADER_NAMES_FILES_PATTERNS) : platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
 	$(PYTHON) $(WebCore)/platform/network/create-http-header-name-table $(WebCore)/platform/network/HTTPHeaderNames.in gperf
 
@@ -1315,7 +1340,6 @@ $(HTTP_HEADER_NAMES_FILES_PATTERNS) : platform/network/HTTPHeaderNames.in $(WebC
 
 # color names
 
-ALL_GENERATED_FILES += ColorData.cpp
 ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl . $(WebCore)/platform/ColorData.gperf
 
@@ -1353,7 +1377,6 @@ ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMEN
 	USER_AGENT_STYLE_SHEETS += $(WebCore)/html/shadow/meterElementShadow.css
 endif
 
-ALL_GENERATED_FILES += UserAgentStyleSheets.h
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
@@ -1374,7 +1397,8 @@ USER_AGENT_SCRIPTS_FILES = \
 #
 USER_AGENT_SCRIPTS_FILES_PATTERNS = $(subst .,%,$(USER_AGENT_SCRIPTS_FILES))
 
-ALL_GENERATED_FILES += $(USER_AGENT_SCRIPTS_FILES)
+all : $(USER_AGENT_SCRIPTS_FILES)
+
 $(USER_AGENT_SCRIPTS_FILES_PATTERNS) : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore $(USER_AGENT_SCRIPTS_FILES) $(USER_AGENT_SCRIPTS)
 endif
@@ -1385,7 +1409,6 @@ endif
 
 PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
 
-ALL_GENERATED_FILES += PlugInsResources.h
 PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $@ PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
 
@@ -1397,7 +1420,7 @@ WEBKIT_FONT_FAMILY_NAME_FILES = \
 #
 WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS = $(subst .,%,$(WEBKIT_FONT_FAMILY_NAME_FILES))
 
-ALL_GENERATED_FILES += $(WEBKIT_FONT_FAMILY_NAME_FILES)
+all : $(WEBKIT_FONT_FAMILY_NAME_FILES)
 $(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm css/WebKitFontFamilyNames.in
 	$(PERL) $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
 
@@ -1446,15 +1469,14 @@ HTML_TAG_FILES = \
 #
 HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
 
-ALL_GENERATED_FILES += $(HTML_TAG_FILES)
+all : $(HTML_TAG_FILES)
+
 $(HTML_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
 	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory $(if $(HTML_FLAGS), --extraDefines "$(HTML_FLAGS)")
 
-ALL_GENERATED_FILES += XMLNSNames.cpp
 XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
 
-ALL_GENERATED_FILES += XMLNames.cpp
 XMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlattrs.in
 	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in
 
@@ -1479,11 +1501,11 @@ SVG_TAG_FILES = \
 #
 SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
 
-ALL_GENERATED_FILES += $(SVG_TAG_FILES)
+all : $(SVG_TAG_FILES)
+
 $(SVG_TAG_FILES_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory $(if $(SVG_FLAGS), --extraDefines "$(SVG_FLAGS)")
 
-ALL_GENERATED_FILES += XLinkNames.cpp
 XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
 	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in
 
@@ -1500,7 +1522,7 @@ EVENT_FACTORY_FILES = \
 #
 EVENT_FACTORY_PATTERNS = $(subst .,%,$(EVENT_FACTORY_FILES))
 
-ALL_GENERATED_FILES += $(EVENT_FACTORY_FILES)
+all : $(EVENT_FACTORY_FILES)
 $(EVENT_FACTORY_PATTERNS) : dom/make_event_factory.pl $(EVENT_NAMES)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
@@ -1513,7 +1535,7 @@ EVENT_TARGET_FACTORY_FILES = \
 #
 EVENT_TARGET_FACTORY_PATTERNS = $(subst .,%,$(EVENT_TARGET_FACTORY_FILES))
 
-ALL_GENERATED_FILES += $(EVENT_TARGET_FACTORY_FILES)
+all : $(EVENT_TARGET_FACTORY_FILES)
 $(EVENT_TARGET_FACTORY_PATTERNS) : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
@@ -1532,7 +1554,7 @@ MATH_ML_GENERATED_FILES = \
 #
 MATH_ML_GENERATED_PATTERNS = $(subst .,%,$(MATH_ML_GENERATED_FILES))
 
-ALL_GENERATED_FILES += $(MATH_ML_GENERATED_FILES)
+all : $(MATH_ML_GENERATED_FILES)
 $(MATH_ML_GENERATED_PATTERNS) : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm mathml/mathtags.in mathml/mathattrs.in
 	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
 
@@ -1550,7 +1572,7 @@ GENERATE_SETTINGS_TEMPLATES = \
 GENERATE_SETTINGS_FILES = $(basename $(notdir $(GENERATE_SETTINGS_TEMPLATES)))
 GENERATE_SETTINGS_PATTERNS = $(subst .,%,$(GENERATE_SETTINGS_FILES))
 
-ALL_GENERATED_FILES += $(GENERATE_SETTINGS_FILES)
+all : $(GENERATE_SETTINGS_FILES)
 $(GENERATE_SETTINGS_PATTERNS) : $(WebCore)/Scripts/GenerateSettings.rb $(GENERATE_SETTINGS_TEMPLATES) page/Settings.yaml
 	$(RUBY) $< --input $(WebCore)/page/Settings.yaml
 
@@ -1597,16 +1619,15 @@ IDL_COMMON_ARGS = $(IDL_INCLUDES:%=--include %) --write-dependencies --outputDir
 
 JS_BINDINGS_SCRIPTS = $(COMMON_BINDINGS_SCRIPTS) bindings/scripts/CodeGeneratorJS.pm
 
-# TODO: These next six files get created, and so should probably go into the xcfilelist
-SUPPLEMENTAL_DEPENDENCY_FILE = ./SupplementalDependencies.txt
-SUPPLEMENTAL_MAKEFILE_DEPS = ./SupplementalDependencies.dep
-WINDOW_CONSTRUCTORS_FILE = ./DOMWindowConstructors.idl
-WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./WorkerGlobalScopeConstructors.idl
-DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./DedicatedWorkerGlobalScopeConstructors.idl
-SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ./ServiceWorkerGlobalScopeConstructors.idl
-WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = ./WorkletGlobalScopeConstructors.idl
-PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = ./PaintWorkletGlobalScopeConstructors.idl
-IDL_FILES_TMP = ./idl_files.tmp
+SUPPLEMENTAL_DEPENDENCY_FILE = SupplementalDependencies.txt
+SUPPLEMENTAL_MAKEFILE_DEPS = SupplementalDependencies.dep
+WINDOW_CONSTRUCTORS_FILE = DOMWindowConstructors.idl
+WORKERGLOBALSCOPE_CONSTRUCTORS_FILE = WorkerGlobalScopeConstructors.idl
+DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = DedicatedWorkerGlobalScopeConstructors.idl
+SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE = ServiceWorkerGlobalScopeConstructors.idl
+WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = WorkletGlobalScopeConstructors.idl
+PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE = PaintWorkletGlobalScopeConstructors.idl
+IDL_FILES_TMP = idl_files.tmp
 IDL_ATTRIBUTES_FILE = $(WebCore)/bindings/scripts/IDLAttributes.json
 
 # The following lines get a newline character stored in a variable.
@@ -1616,32 +1637,51 @@ define NL
 
 endef
 
-$(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
+
+IDL_INTERMEDIATE_FILES = \
+    $(SUPPLEMENTAL_MAKEFILE_DEPS) \
+    $(SUPPLEMENTAL_DEPENDENCY_FILE) \
+    $(WINDOW_CONSTRUCTORS_FILE) \
+    $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
+    $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
+    $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
+    $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) \
+    $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE)
+#
+IDL_INTERMEDIATE_PATTERNS = $(subst .,%,$(IDL_INTERMEDIATE_FILES))
+
+$(IDL_INTERMEDIATE_PATTERNS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
 	$(foreach f,$(JS_BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
 	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_AND_PLATFORM_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --serviceWorkerGlobalScopeConstructorsFile $(SERVICEWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --workletGlobalScopeConstructorsFile $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --paintWorkletGlobalScopeConstructorsFile $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	$(DELETE) $(IDL_FILES_TMP)
 
-JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
+JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_INTERMEDIATE_FILES) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_AND_PLATFORM_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
+ifneq ($(NO_SUPPLEMENTAL_FILES),1)
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
+endif
+
+ifneq ($(NO_SUPPLEMENTAL_FILES),1)
+-include $(JS_DOM_HEADERS:.h=.dep)
+endif
 
 # Inspector interfaces
 
-ALL_GENERATED_FILES += InspectorOverlayPage.h
+all : InspectorOverlayPage.h
+
 InspectorOverlayPage.h : InspectorOverlayPage.html InspectorOverlayPage.css InspectorOverlayPage.js
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/inline-and-minify-stylesheets-and-scripts.py $(WebCore)/inspector/InspectorOverlayPage.html ./InspectorOverlayPage.combined.html
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl InspectorOverlayPage_html ./InspectorOverlayPage.combined.html InspectorOverlayPage.h
 	$(DELETE) InspectorOverlayPage.combined.html
 
-ALL_GENERATED_FILES += CommandLineAPIModuleSource.h
+all : CommandLineAPIModuleSource.h
+
 CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 	echo "//# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js" > ./CommandLineAPIModuleSource.min.js
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py <$(WebCore)/inspector/CommandLineAPIModuleSource.js >> ./CommandLineAPIModuleSource.min.js
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	$(DELETE) CommandLineAPIModuleSource.min.js
-
--include $(JS_DOM_HEADERS:.h=.dep)
 
 # WebCore JS Builtins
 
@@ -1704,27 +1744,7 @@ $(WebCore_BUILTINS_WRAPPERS_PATTERNS) : $(WebCore_BUILTINS_SOURCES) WebCore_BUIL
 %Builtins.h: %.js $(BUILTINS_GENERATOR_SCRIPTS) WebCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --output-directory . --framework WebCore $<
 
-ALL_GENERATED_FILES += $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(WebCore_BUILTINS_WRAPPERS)
+all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(WebCore_BUILTINS_WRAPPERS)
 
 # ------------------------
-
-.PHONY : all real_all print_all_generated_files
-
-# TODO: The first three prerequisites should probably not be here. Some of the
-# file-generation rules use them; *those* rules should be dependent on these
-# script (and then 'all' will transitively be dependent on them).
-real_all : \
-    $(SUPPLEMENTAL_DEPENDENCY_FILE) \
-    $(WINDOW_CONSTRUCTORS_FILE) \
-    $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) \
-    $(WORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) \
-    $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) \
-    $(ALL_GENERATED_FILES) \
-#
-
-print_all_generated_files :
-	@for target in $(ALL_GENERATED_FILES); \
-	do \
-		echo $${target}; \
-	done
 

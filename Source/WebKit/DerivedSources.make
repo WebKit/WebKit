@@ -93,10 +93,6 @@ else
     DELETE = rm -f
 endif
 
-ALL_GENERATED_FILES =
-
-all : real_all
-
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
     CacheStorageEngineConnection \
@@ -204,14 +200,12 @@ HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTE
 
 -include WebKitDerivedSourcesAdditions.make
 
-# Message Receivers
+.PHONY : all
 
-MESSAGE_RECEIVERS_FILES = \
+all : \
     $(MESSAGE_RECEIVERS:%=%MessageReceiver.cpp) \
     $(MESSAGE_RECEIVERS:%=%Messages.h) \
 #
-
-ALL_GENERATED_FILES += $(MESSAGE_RECEIVERS_FILES)
 
 %MessageReceiver.cpp : %.messages.in $(SCRIPTS)
 	@echo Generating message receiver for $*...
@@ -220,8 +214,6 @@ ALL_GENERATED_FILES += $(MESSAGE_RECEIVERS_FILES)
 %Messages.h : %.messages.in $(SCRIPTS)
 	@echo Generating messages header for $*...
 	@python $(WebKit2)/Scripts/generate-messages-header.py $< > $@
-
-# Sandbox Profiles
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
 
@@ -239,13 +231,11 @@ SANDBOX_PROFILES = \
 	com.apple.WebKit.plugin-common.sb \
 	com.apple.WebKit.NetworkProcess.sb
 
-ALL_GENERATED_FILES += $(SANDBOX_PROFILES)
+all : $(SANDBOX_PROFILES)
 
 %.sb : %.sb.in
 	@echo Pre-processing $* sandbox profile...
 	grep -o '^[^;]*' $< | $(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" - > $@
-
-# JSON-RPC Frontend Dispatchers, Backend Dispatchers, Type Builders
 
 AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator_templates.py \
@@ -266,8 +256,6 @@ AUTOMATION_PROTOCOL_INPUT_FILES = \
     $(WebKit2)/UIProcess/Automation/Automation.json \
 #
 
-# TODO: Is there some way to not hardcode this? Can we get it from
-# generate-inspector-protocol-bindings.py and ./Automation.json?
 AUTOMATION_PROTOCOL_OUTPUT_FILES = \
     AutomationBackendDispatchers.h \
     AutomationBackendDispatchers.cpp \
@@ -286,13 +274,11 @@ else
 endif
 endif # MACOS
 
+# JSON-RPC Frontend Dispatchers, Backend Dispatchers, Type Builders
 $(AUTOMATION_PROTOCOL_OUTPUT_PATTERNS) : $(AUTOMATION_PROTOCOL_INPUT_FILES) $(AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit $(AUTOMATION_BACKEND_PLATFORM_ARGUMENTS) --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
-#
 
-ALL_GENERATED_FILES += $(AUTOMATION_PROTOCOL_OUTPUT_FILES)
-
-# *ScriptSource generation
+all : $(AUTOMATION_PROTOCOL_OUTPUT_FILES)
 
 %ScriptSource.h : %.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__InjectedScript_$(notdir $<)" > $(basename $(notdir $<)).min.js
@@ -300,10 +286,7 @@ ALL_GENERATED_FILES += $(AUTOMATION_PROTOCOL_OUTPUT_FILES)
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(basename $(notdir $<))ScriptSource $(basename $(notdir $<)).min.js $@
 	$(DELETE) $(basename $(notdir $<)).min.js
 
-SCRIPT_SOURCE_FILES = \
-    WebAutomationSessionProxyScriptSource.h
-
-ALL_GENERATED_FILES += $(SCRIPT_SOURCE_FILES)
+all : WebAutomationSessionProxyScriptSource.h
 
 # WebPreferences generation
 
@@ -319,18 +302,7 @@ WEB_PREFERENCES_TEMPLATES = \
 WEB_PREFERENCES_FILES = $(basename $(notdir $(WEB_PREFERENCES_TEMPLATES)))
 WEB_PREFERENCES_PATTERNS = $(subst .,%,$(WEB_PREFERENCES_FILES))
 
-ALL_GENERATED_FILES += $(WEB_PREFERENCES_FILES)
+all : $(WEB_PREFERENCES_FILES)
 
 $(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WebKit2)/Shared/WebPreferences.yaml
 	$(RUBY) $< --input $(WebKit2)/Shared/WebPreferences.yaml
-
-
-.PHONY : all real_all print_all_generated_files
-
-real_all : $(ALL_GENERATED_FILES)
-
-print_all_generated_files :
-	@for target in $(ALL_GENERATED_FILES); \
-	do \
-		echo $${target}; \
-	done

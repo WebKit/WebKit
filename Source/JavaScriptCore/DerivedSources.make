@@ -46,11 +46,23 @@ else
     DELETE = rm -f
 endif
 
-ALL_GENERATED_FILES =
-
-all : real_all
-
 # --------
+
+.PHONY : all
+all : \
+    udis86_itab.h \
+    InjectedScriptSource.h \
+    IntlCanonicalizeLanguage.h \
+    JSCBuiltins.h \
+    Lexer.lut.h \
+    KeywordLookup.h \
+    RegExpJitTables.h \
+    UnicodePatternTables.h \
+    yarr/YarrCanonicalizeUnicode.cpp \
+    WasmOps.h \
+    WasmValidateInlines.h \
+    WasmB3IRGeneratorInlines.h \
+#
 
 # JavaScript builtins.
 
@@ -116,7 +128,6 @@ JavaScriptCore_BUILTINS_SOURCES = \
 JavaScriptCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(JavaScriptCore_BUILTINS_SOURCES) $(BUILTINS_GENERATOR_SCRIPTS)' $@
 
-ALL_GENERATED_FILES += JSCBuiltins.h
 JSCBuiltins.h: $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
 
@@ -178,27 +189,22 @@ OBJECT_LUT_HEADERS = \
     WebAssemblyTablePrototype.lut.h \
 #
 
-ALL_GENERATED_FILES += $(OBJECT_LUT_HEADERS)
 $(OBJECT_LUT_HEADERS): %.lut.h : %.cpp $(JavaScriptCore)/create_hash_table
 	$(PERL) $(JavaScriptCore)/create_hash_table $< > $@
 
-ALL_GENERATED_FILES += Lexer.lut.h
 Lexer.lut.h: Keywords.table $(JavaScriptCore)/create_hash_table
 	$(PERL) $(JavaScriptCore)/create_hash_table $< > $@
 
 # character tables for Yarr
 
-ALL_GENERATED_FILES += RegExpJitTables.h
 RegExpJitTables.h: yarr/create_regex_tables
 	$(PYTHON) $^ > $@
 
-ALL_GENERATED_FILES += KeywordLookup.h
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 	$(PYTHON) $^ > $@
 
 # udis86 instruction tables
 
-ALL_GENERATED_FILES += udis86_itab.h
 udis86_itab.h: $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml
 	$(PYTHON) $(JavaScriptCore)/disassembler/udis86/ud_itab.py $(JavaScriptCore)/disassembler/udis86/optable.xml .
 
@@ -212,13 +218,14 @@ BYTECODE_FILES = \
 #
 BYTECODE_FILES_PATTERNS = $(subst .,%,$(BYTECODE_FILES))
 
-ALL_GENERATED_FILES += $(BYTECODE_FILES)
+all : $(BYTECODE_FILES)
+
 $(BYTECODE_FILES_PATTERNS): $(wildcard $(JavaScriptCore)/generator/*.rb) $(JavaScriptCore)/bytecode/BytecodeList.rb
 	$(RUBY) $(JavaScriptCore)/generator/main.rb $(JavaScriptCore)/bytecode/BytecodeList.rb --bytecode_structs_h BytecodeStructs.h --init_bytecodes_asm InitBytecodes.asm --bytecodes_h Bytecodes.h --bytecode_indices_h BytecodeIndices.h
 
 # Inspector interfaces
 
-INSPECTOR_DOMAINS = \
+INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/ApplicationCache.json \
     $(JavaScriptCore)/inspector/protocol/CSS.json \
     $(JavaScriptCore)/inspector/protocol/Canvas.json \
@@ -288,6 +295,8 @@ INSPECTOR_DISPATCHER_FILES = \
 #
 INSPECTOR_DISPATCHER_FILES_PATTERNS = $(subst .,%,$(INSPECTOR_DISPATCHER_FILES))
 
+all : $(INSPECTOR_DISPATCHER_FILES)
+
 # The combined JSON file depends on the actual set of domains and their file contents, so that
 # adding, modifying, or removing domains will trigger regeneration of inspector files.
 
@@ -299,11 +308,9 @@ CombinedDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
-ALL_GENERATED_FILES += $(INSPECTOR_DISPATCHER_FILES)
-$(INSPECTOR_DISPATCHER_FILES_PATTERNS) : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS) inspector
+$(INSPECTOR_DISPATCHER_FILES_PATTERNS) : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir inspector ./CombinedDomains.json
 
-ALL_GENERATED_FILES += InjectedScriptSource.h
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ./InjectedScriptSource.min.js
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $(JavaScriptCore)/inspector/InjectedScriptSource.js >> ./InjectedScriptSource.min.js
@@ -317,43 +324,31 @@ AIR_OPCODE_FILES = \
 #
 AIR_OPCODE_FILES_PATTERNS = $(subst .,%,$(AIR_OPCODE_FILES))
 
-ALL_GENERATED_FILES += $(AIR_OPCODE_FILES)
+all : $(AIR_OPCODE_FILES)
+
 $(AIR_OPCODE_FILES_PATTERNS) : $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
 	$(RUBY) $^
 
-ALL_GENERATED_FILES += UnicodePatternTables.h
 UnicodePatternTables.h: $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/yarr/hasher.py $(JavaScriptCore)/ucd/DerivedBinaryProperties.txt $(JavaScriptCore)/ucd/DerivedCoreProperties.txt $(JavaScriptCore)/ucd/DerivedNormalizationProps.txt $(JavaScriptCore)/ucd/PropList.txt $(JavaScriptCore)/ucd/PropertyAliases.txt $(JavaScriptCore)/ucd/PropertyValueAliases.txt $(JavaScriptCore)/ucd/ScriptExtensions.txt $(JavaScriptCore)/ucd/Scripts.txt $(JavaScriptCore)/ucd/UnicodeData.txt $(JavaScriptCore)/ucd/emoji-data.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrUnicodePropertyTables.py $(JavaScriptCore)/ucd ./UnicodePatternTables.h
 
-ALL_GENERATED_FILES += yarr/YarrCanonicalizeUnicode.cpp
 yarr/YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
 	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./yarr/YarrCanonicalizeUnicode.cpp
 
-ALL_GENERATED_FILES += IntlCanonicalizeLanguage.h
 IntlCanonicalizeLanguage.h: $(JavaScriptCore)/Scripts/generateIntlCanonicalizeLanguage.py $(JavaScriptCore)/ucd/language-subtag-registry.txt
 	$(PYTHON) $(JavaScriptCore)/Scripts/generateIntlCanonicalizeLanguage.py $(JavaScriptCore)/ucd/language-subtag-registry.txt ./IntlCanonicalizeLanguage.h
 
-ALL_GENERATED_FILES += WasmOps.h
 WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmOps.h
 
-ALL_GENERATED_FILES += WasmValidateInlines.h
 WasmValidateInlines.h: $(JavaScriptCore)/wasm/generateWasmValidateInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmValidateInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmValidateInlines.h
 
-ALL_GENERATED_FILES += WasmB3IRGeneratorInlines.h
 WasmB3IRGeneratorInlines.h: $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmB3IRGeneratorInlinesHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmB3IRGeneratorInlines.h
 
-# --------
+# Dynamically-defined targets are listed below. Static targets belong up top.
 
-.PHONY : all real_all print_all_generated_files
-
-real_all : $(ALL_GENERATED_FILES)
-
-print_all_generated_files :
-	@for target in $(ALL_GENERATED_FILES); \
-	do \
-		echo $${target}; \
-	done
-
+all : \
+    $(OBJECT_LUT_HEADERS) \
+#
