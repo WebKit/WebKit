@@ -1,3 +1,23 @@
+2018-11-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the mis-spelled "m_clienstWaitingForAsyncDecoding"
+        https://bugs.webkit.org/show_bug.cgi?id=192060
+
+        Reviewed by Wenson Hsieh.
+
+        Fix the mis-spelling of "m_clienstWaitingForAsyncDecoding".
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        (WebCore::CachedImage::isClientWaitingForAsyncDecoding const):
+        (WebCore::CachedImage::addClientWaitingForAsyncDecoding):
+        (WebCore::CachedImage::removeAllClientsWaitingForAsyncDecoding):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::createImage):
+        (WebCore::CachedImage::imageFrameAvailable):
+        * loader/cache/CachedImage.h:
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.
