@@ -1,5 +1,20 @@
 2018-11-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Experimental Computed panel is unreadable in Dark Mode
+        https://bugs.webkit.org/show_bug.cgi?id=192053
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (@media (prefers-dark-interface)):
+        (.computed-with-traces .details-section.computed-style-properties:not(.collapsed) > :matches(.header, .content)):
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item.expanded):
+        (.computed-style-section .computed-property-item.expanded + .computed-property-item):
+        (@media (prefers-dark-interface)):
+
+2018-11-27  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Computed panel: allow to expand properties to show list of overridden values
         https://bugs.webkit.org/show_bug.cgi?id=191984
 
