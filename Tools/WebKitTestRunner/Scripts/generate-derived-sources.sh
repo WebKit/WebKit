@@ -2,6 +2,8 @@
 
 set -e
 
+ARGS=("$@")
+
 mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitTestRunner"
 
@@ -13,5 +15,5 @@ if [ ! $CC ]; then
 fi
 
 if [ "${ACTION}" = "build" -o "${ACTION}" = "install" -o "${ACTION}" = "installhdrs" ]; then
-    make -f "${WebKitTestRunner}/DerivedSources.make" -j `/usr/sbin/sysctl -n hw.activecpu`
+    make -f "${WebKitTestRunner}/DerivedSources.make" -j `/usr/sbin/sysctl -n hw.activecpu` "${ARGS[@]}"
 fi

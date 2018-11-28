@@ -1,5 +1,31 @@
 2018-11-28  Keith Rollin  <krollin@apple.com>
 
+        Update generate-{derived,unified}-sources scripts to support generating .xcfilelist files
+        https://bugs.webkit.org/show_bug.cgi?id=192031
+        <rdar://problem/46286816>
+
+        Reviewed by Alex Christensen.
+
+        The Generate Derived Sources and Generate Unified Sources build phases
+        in Xcode need to have their inputs and outputs specified. This
+        specification will come in the form of .xcfilelist files that will be
+        attached to these build phases. There is one .xcfilelist file that
+        lists the input file and one that lists the output files. As part of
+        this work, the various generate-{derived,unified}-sources scripts that
+        are executed in these Generate build phases are modified to help in
+        the creation of these .xcfilelist files. In particular, they can now
+        be invoked with command-line parameters. These parameters are then
+        used to alter the normal execution of these scripts, causing them to
+        produce the .xcfilelist files as opposed to actually generating the
+        files that are listed in those files.
+
+        No new tests -- no changed functionality.
+
+        * Scripts/generate-derived-sources.sh:
+        * Scripts/generate-unified-sources.sh:
+
+2018-11-28  Keith Rollin  <krollin@apple.com>
+
         Revert print_all_generated_files work in r238008; tighten up target specifications
         https://bugs.webkit.org/show_bug.cgi?id=192025
         <rdar://problem/46284301>
