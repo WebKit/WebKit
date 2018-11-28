@@ -1,5 +1,20 @@
 2018-11-28  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Add support to download Patch from Bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=191943
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py: Added.
+        (Bugzilla.retrieve_attachment): Retreives the attachment from Bugzilla and saves to disk.
+        (Bugzilla._fetch_attachment_json):
+        (Bugzilla.file_path_for_patch):
+        * BuildSlaveSupport/ews-app/ews/common/util.py: Added.
+        (fetch_data_from_url): Method to fetch data from given url.
+        * BuildSlaveSupport/ews-app/ews/config.py:
+
+2018-11-28  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add methods to update Patch fields
         https://bugs.webkit.org/show_bug.cgi?id=191931
 

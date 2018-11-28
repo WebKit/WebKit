@@ -20,19 +20,24 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
+import logging
+import requests
 
-BUG_SERVER_HOST = 'bugs.webkit.org'
-BUG_SERVER_URL = 'https://{}/'.format(BUG_SERVER_HOST)
-PATCH_FOLDER = '/tmp/'
+_log = logging.getLogger(__name__)
 
-BUILDBOT_SERVER_HOST = 'ews-build.webkit-uat.org'
-BUILDBOT_SERVER_PORT = '5555'
-BUILDBOT_PB_USERNAME = os.getenv('BUILDBOT_PB_USERNAME', 'sampleuser')
-BUILDBOT_PB_PASSWORD = os.getenv('BUILDBOT_PB_PASSWORD', 'samplepass')
 
-SUCCESS = 0
-ERR_UNEXPECTED = -1
-ERR_EXISTING_PATCH = -2
-ERR_NON_EXISTING_PATCH = -3
-ERR_INVALID_PATCH_ID = -4
+def fetch_data_from_url(url):
+    _log.debug('Fetching: {}'.format(url))
+    response = None
+    try:
+        response = requests.get(url)
+    except Exception as e:
+        if response:
+            _log.error('Failed to access {url} with status code {status_code}.'.format(url=url, status_code=response.status_code))
+        else:
+            _log.error('Failed to access {url} with exception: {exception}'.format(url=url, exception=e))
+        return None
+    if response.status_code != 200:
+        _log.error('Accessed {url} with unexpected status code {status_code}.'.format(url=url, status_code=response.status_code))
+        return None
+    return response
