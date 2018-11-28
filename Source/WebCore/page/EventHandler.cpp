@@ -65,6 +65,7 @@
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "Pasteboard.h"
@@ -139,6 +140,8 @@ const int ColorDragHystersis = 3;
 const int GeneralDragHysteresis = 3;
 #if PLATFORM(COCOA)
 const Seconds EventHandler::TextDragDelay { 150_ms };
+#else
+const Seconds EventHandler::TextDragDelay { 0_s };
 #endif
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -4273,5 +4276,78 @@ void EventHandler::setImmediateActionStage(ImmediateActionStage stage)
 {
     m_immediateActionStage = stage;
 }
+
+#if !PLATFORM(COCOA)
+OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
+{
+    return PlatformEvent::Modifier::AltKey;
+}
+
+bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
+{
+    subframe->eventHandler().handleMousePressEvent(mev.event());
+    return true;
+}
+
+bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
+{
+    subframe->eventHandler().handleMouseReleaseEvent(mev.event());
+    return true;
+}
+
+bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& event, Widget& widget)
+{
+    if (!is<FrameView>(widget))
+        return false;
+
+    return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(event);
+}
+
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
+{
+    // We always allow tabs to all controls
+    return true;
+}
+
+bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
+{
+    return passMouseDownEventToWidget(renderWidget->widget());
+}
+
+bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
+{
+    // Figure out which view to send the event to.
+    RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
+    if (!is<RenderWidget>(target))
+        return false;
+    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
+}
+
+bool EventHandler::passMouseDownEventToWidget(Widget*)
+{
+    notImplemented();
+    return false;
+}
+
+void EventHandler::focusDocumentView()
+{
+    if (Page* page = m_frame.page())
+        page->focusController().setFocusedFrame(&m_frame);
+}
+#endif // !PLATFORM(COCOA)
+
+#if !PLATFORM(COCOA) && !PLATFORM(WIN)
+bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
+{
+    notImplemented();
+    return false;
+}
+
+bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
+{
+    subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
+    return true;
+}
+#endif // !PLATFORM(COCOA) && !PLATFORM(WIN)
 
 } // namespace WebCore

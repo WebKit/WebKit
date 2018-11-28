@@ -1,3 +1,49 @@
+2018-11-28  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Make generic EventHandler methods
+        https://bugs.webkit.org/show_bug.cgi?id=192032
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No new behavior.
+
+        Move mostly generic for non-Apple platform implementations
+        of methods from EventHandlerGlib into EventHandler. Two
+        of these also had different Windows implementations, so
+        to limit behavior change from this, those are currently
+        overridden for Windows as well as Mac and IOS.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe):
+        (WebCore::EventHandler::widgetDidHandleWheelEvent):
+        (WebCore::EventHandler::tabsToAllFormControls const):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passMouseDownEventToWidget):
+        (WebCore::EventHandler::focusDocumentView):
+        (WebCore::EventHandler::eventActivatedView const):
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passMouseMoveEventToSubframe):
+        (WebCore::EventHandler::passMousePressEventToSubframe): Deleted.
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe): Deleted.
+        (WebCore::EventHandler::widgetDidHandleWheelEvent): Deleted.
+        (WebCore::EventHandler::tabsToAllFormControls const): Deleted.
+        (WebCore::EventHandler::focusDocumentView): Deleted.
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget): Deleted.
+        (WebCore::EventHandler::accessKeyModifiers): Deleted.
+        * platform/glib/EventHandlerGLib.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls const): Deleted.
+        (WebCore::EventHandler::focusDocumentView): Deleted.
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget): Deleted.
+        (WebCore::EventHandler::passMouseDownEventToWidget): Deleted.
+        (WebCore::EventHandler::eventActivatedView const): Deleted.
+        (WebCore::EventHandler::widgetDidHandleWheelEvent): Deleted.
+        (WebCore::EventHandler::passMousePressEventToSubframe): Deleted.
+        (WebCore::EventHandler::passMouseMoveEventToSubframe): Deleted.
+        (WebCore::EventHandler::passMouseReleaseEventToSubframe): Deleted.
+        (WebCore::EventHandler::accessKeyModifiers): Deleted.
+
 2018-11-28  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Quirk] Use non-collapsed vertical margin values when the container is stretched to the size of the ICB.

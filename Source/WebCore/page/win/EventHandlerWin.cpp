@@ -27,35 +27,9 @@
 #include "config.h"
 #include "EventHandler.h"
 
-#include "COMPtr.h"
-#include "Cursor.h"
-#include "DataTransfer.h"
-#include "FloatPoint.h"
-#include "FocusController.h"
-#include "FrameView.h"
-#include "Frame.h"
-#include "FrameSelection.h"
-#include "HitTestRequest.h"
-#include "HitTestResult.h"
 #include "MouseEventWithHitTestResults.h"
-#include "Page.h"
-#include "PlatformKeyboardEvent.h"
-#include "PlatformWheelEvent.h"
-#include "Scrollbar.h"
-#include "WCDataObject.h"
-#include "NotImplemented.h"
 
 namespace WebCore {
-
-#if ENABLE(DRAG_SUPPORT)
-const Seconds EventHandler::TextDragDelay { 0_s };
-#endif
-
-bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
-{
-    subframe->eventHandler().handleMousePressEvent(mev.event());
-    return true;
-}
 
 bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe, HitTestResult* hoveredNode)
 {
@@ -63,51 +37,14 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& me
     if (m_mouseDownMayStartDrag && !m_mouseDownWasInSubframe)
         return false;
 #endif
+
     subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
-    return true;
-}
-
-bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
-{
-    subframe->eventHandler().handleMouseReleaseEvent(mev.event());
-    return true;
-}
-
-bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEvent, Widget& widget)
-{
-    if (!is<FrameView>(widget))
-        return false;
-
-    return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
-}
-
-bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
-{
     return true;
 }
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
     return event.didActivateWebView();
-}
-
-void EventHandler::focusDocumentView()
-{
-    Page* page = m_frame.page();
-    if (!page)
-        return;
-    page->focusController().setFocusedFrame(&m_frame);
-}
-
-bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&)
-{
-    notImplemented();
-    return false;
-}
-
-OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
-{
-    return PlatformEvent::Modifier::AltKey;
 }
 
 }
