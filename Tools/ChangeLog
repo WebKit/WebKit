@@ -1,3 +1,19 @@
+2018-11-28  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WebRTC][GStreamer] Make sure to have the default microphone on the top of the list
+        https://bugs.webkit.org/show_bug.cgi?id=192026
+
+        Reviewed by Philippe Normand.
+
+        Otherwise we might end up picking a useless one in some applications
+        (not sure what those application do though).
+
+        GStreamer patch proposed as https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/merge_requests/34/diffs
+
+        * flatpak/org.webkit.CommonModules.yaml:
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-good-0014-pulse-Mark-default-devices-as-default.patch: Added.
+
 2018-11-28  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Silence compilation warnings in glib unittests

@@ -38,7 +38,7 @@ public:
     virtual CaptureDevice::DeviceType deviceType() = 0;
 
 private:
-    void deviceAdded(GRefPtr<GstDevice>&&);
+    void addDevice(GRefPtr<GstDevice>&&);
     void refreshCaptureDevices();
 
     GRefPtr<GstDeviceMonitor> m_deviceMonitor;

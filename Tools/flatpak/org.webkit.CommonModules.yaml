@@ -171,6 +171,8 @@
       path: ../gstreamer/patches/gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch
     - type: patch
       path: ../gstreamer/patches/gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch
+    - type: patch
+      path: ../gstreamer/patches/gst-plugins-good-0014-pulse-Mark-default-devices-as-default.patch
   config-opts:
     - -Ddisable_gtkdoc=true
 - name: x264

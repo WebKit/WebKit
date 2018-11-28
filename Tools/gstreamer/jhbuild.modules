@@ -90,6 +90,7 @@
       <patch file="gst-plugins-good-0011-matroska-Add-the-WebM-encrypted-content-support-in-m.patch" strip="1" /> <!-- Merged as 0432826950d4d80fe2b50ffd3757dc08155de9e3 -->
       <patch file="gst-plugins-good-0012-matroskdemux-do-not-use-MapInfo.data-after-unmapping.patch" strip="1" /> <!-- Merged as defae350358660e557c74e41a4fe8a8bb327e9c8 -->
       <patch file="gst-plugins-good-0013-Avoid-warning-when-reporting-about-decryptors.patch" strip="1" /> <!-- Merged as 56669205eb2d0887596574eabb7806b31c5ba5cf -->
+      <patch file="gst-plugins-good-0014-pulse-Mark-default-devices-as-default.patch" strip="1" />
     </branch>
   </autotools>
 

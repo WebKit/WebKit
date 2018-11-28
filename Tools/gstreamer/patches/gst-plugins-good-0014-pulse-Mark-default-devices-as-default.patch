@@ -1,0 +1,318 @@
+From 32c833ebb42b8e8f46c5a72a16a874bc00fc5553 Mon Sep 17 00:00:00 2001
+From: Thibault Saunier <tsaunier@igalia.com>
+Date: Mon, 26 Nov 2018 13:48:56 -0300
+Subject: [PATCH] pulse: Mark default devices as "default"
+
+---
+ ext/pulse/pulsedeviceprovider.c | 117 +++++++++++++++++++++-----------
+ ext/pulse/pulsedeviceprovider.h |   3 +
+ 2 files changed, 79 insertions(+), 41 deletions(-)
+
+diff --git a/ext/pulse/pulsedeviceprovider.c b/ext/pulse/pulsedeviceprovider.c
+index a1964dab2..9b66a0e33 100644
+--- a/ext/pulse/pulsedeviceprovider.c
++++ b/ext/pulse/pulsedeviceprovider.c
+@@ -40,7 +40,7 @@ GST_DEBUG_CATEGORY_EXTERN (pulse_debug);
+ 
+ static GstDevice *gst_pulse_device_new (guint id,
+     const gchar * device_name, GstCaps * caps, const gchar * internal_name,
+-    GstPulseDeviceType type, GstStructure * properties);
++    GstPulseDeviceType type, GstStructure * properties, gboolean is_default);
+ 
+ G_DEFINE_TYPE (GstPulseDeviceProvider, gst_pulse_device_provider,
+     GST_TYPE_DEVICE_PROVIDER);
+@@ -65,6 +65,12 @@ enum
+ };
+ 
+ 
++typedef struct
++{
++  GList *devices;
++  GstPulseDeviceProvider *self;
++} ListDevicesData;
++
+ static void
+ gst_pulse_device_provider_class_init (GstPulseDeviceProviderClass * klass)
+ {
+@@ -114,6 +120,8 @@ gst_pulse_device_provider_finalize (GObject * object)
+ 
+   g_free (self->client_name);
+   g_free (self->server);
++  g_free (self->default_sink_name);
++  g_free (self->default_source_name);
+ 
+   G_OBJECT_CLASS (gst_pulse_device_provider_parent_class)->finalize (object);
+ }
+@@ -186,7 +194,7 @@ context_state_cb (pa_context * c, void *userdata)
+ }
+ 
+ static GstDevice *
+-new_source (const pa_source_info * info)
++new_source (GstPulseDeviceProvider * self, const pa_source_info * info)
+ {
+   GstCaps *caps;
+   GstStructure *props;
+@@ -200,11 +208,12 @@ new_source (const pa_source_info * info)
+   props = gst_pulse_make_structure (info->proplist);
+ 
+   return gst_pulse_device_new (info->index, info->description,
+-      caps, info->name, GST_PULSE_DEVICE_TYPE_SOURCE, props);
++      caps, info->name, GST_PULSE_DEVICE_TYPE_SOURCE, props,
++      !g_strcmp0 (info->name, self->default_source_name));
+ }
+ 
+ static GstDevice *
+-new_sink (const pa_sink_info * info)
++new_sink (GstPulseDeviceProvider * self, const pa_sink_info * info)
+ {
+   GstCaps *caps;
+   GstStructure *props;
+@@ -218,7 +227,8 @@ new_sink (const pa_sink_info * info)
+   props = gst_pulse_make_structure (info->proplist);
+ 
+   return gst_pulse_device_new (info->index, info->description,
+-      caps, info->name, GST_PULSE_DEVICE_TYPE_SINK, props);
++      caps, info->name, GST_PULSE_DEVICE_TYPE_SINK, props,
++      !g_strcmp0 (info->name, self->default_sink_name));
+ }
+ 
+ static void
+@@ -233,12 +243,26 @@ get_source_info_cb (pa_context * context,
+     return;
+   }
+ 
+-  dev = new_source (info);
++  dev = new_source (self, info);
+ 
+   if (dev)
+     gst_device_provider_device_add (GST_DEVICE_PROVIDER (self), dev);
+ }
+ 
++static void
++get_server_info_cb (pa_context * context, const pa_server_info * info,
++    void *userdata)
++{
++  GstPulseDeviceProvider *self = userdata;
++
++  g_free (self->default_sink_name);
++  g_free (self->default_source_name);
++  self->default_sink_name = g_strdup (info->default_sink_name);
++  self->default_source_name = g_strdup (info->default_source_name);
++
++  pa_threaded_mainloop_signal (self->mainloop, 0);
++}
++
+ static void
+ get_sink_info_cb (pa_context * context,
+     const pa_sink_info * info, int eol, void *userdata)
+@@ -251,7 +275,7 @@ get_sink_info_cb (pa_context * context,
+     return;
+   }
+ 
+-  dev = new_sink (info);
++  dev = new_sink (self, info);
+ 
+   if (dev)
+     gst_device_provider_device_add (GST_DEVICE_PROVIDER (self), dev);
+@@ -312,34 +336,38 @@ static void
+ get_source_info_list_cb (pa_context * context, const pa_source_info * info,
+     int eol, void *userdata)
+ {
+-  GList **devices = userdata;
++  ListDevicesData *data = userdata;
+ 
+   if (eol)
+     return;
+ 
+-  *devices = g_list_prepend (*devices, gst_object_ref_sink (new_source (info)));
++  data->devices =
++      g_list_prepend (data->devices,
++      gst_object_ref_sink (new_source (data->self, info)));
+ }
+ 
+ static void
+ get_sink_info_list_cb (pa_context * context, const pa_sink_info * info,
+     int eol, void *userdata)
+ {
+-  GList **devices = userdata;
++  ListDevicesData *data = userdata;
+ 
+   if (eol)
+     return;
+ 
+-  *devices = g_list_prepend (*devices, gst_object_ref_sink (new_sink (info)));
++  data->devices =
++      g_list_prepend (data->devices, gst_object_ref_sink (new_sink (data->self,
++              info)));
+ }
+ 
+ static GList *
+ gst_pulse_device_provider_probe (GstDeviceProvider * provider)
+ {
+   GstPulseDeviceProvider *self = GST_PULSE_DEVICE_PROVIDER (provider);
+-  GList *devices = NULL;
+   pa_mainloop *m = NULL;
+   pa_context *c = NULL;
+   pa_operation *o;
++  ListDevicesData data = { NULL, self };
+ 
+   if (!(m = pa_mainloop_new ()))
+     return NULL;
+@@ -376,7 +404,7 @@ gst_pulse_device_provider_probe (GstDeviceProvider * provider)
+   }
+   GST_DEBUG_OBJECT (self, "connected");
+ 
+-  o = pa_context_get_sink_info_list (c, get_sink_info_list_cb, &devices);
++  o = pa_context_get_sink_info_list (c, get_sink_info_list_cb, &data);
+   while (pa_operation_get_state (o) == PA_OPERATION_RUNNING &&
+       pa_operation_get_state (o) == PA_OPERATION_RUNNING) {
+     if (pa_mainloop_iterate (m, TRUE, NULL) < 0)
+@@ -384,7 +412,7 @@ gst_pulse_device_provider_probe (GstDeviceProvider * provider)
+   }
+   pa_operation_unref (o);
+ 
+-  o = pa_context_get_source_info_list (c, get_source_info_list_cb, &devices);
++  o = pa_context_get_source_info_list (c, get_source_info_list_cb, &data);
+   while (pa_operation_get_state (o) == PA_OPERATION_RUNNING &&
+       pa_operation_get_state (o) == PA_OPERATION_RUNNING) {
+     if (pa_mainloop_iterate (m, TRUE, NULL) < 0)
+@@ -395,18 +423,38 @@ gst_pulse_device_provider_probe (GstDeviceProvider * provider)
+   pa_context_disconnect (c);
+   pa_mainloop_free (m);
+ 
+-  return devices;
++  return data.devices;
+ 
+ failed:
+ 
+   return NULL;
+ }
+ 
++static gboolean
++run_pulse_operation (GstPulseDeviceProvider * self, pa_operation * operation)
++{
++  if (!operation)
++    return FALSE;
++
++  while (pa_operation_get_state (operation) == PA_OPERATION_RUNNING) {
++    if (!PA_CONTEXT_IS_GOOD (pa_context_get_state ((self->context)))) {
++      pa_operation_cancel (operation);
++      pa_operation_unref (operation);
++      return FALSE;
++    }
++
++    pa_threaded_mainloop_wait (self->mainloop);
++  }
++
++  pa_operation_unref (operation);
++
++  return TRUE;
++}
++
+ static gboolean
+ gst_pulse_device_provider_start (GstDeviceProvider * provider)
+ {
+   GstPulseDeviceProvider *self = GST_PULSE_DEVICE_PROVIDER (provider);
+-  pa_operation *initial_operation;
+ 
+   if (!(self->mainloop = pa_threaded_mainloop_new ())) {
+     GST_ERROR_OBJECT (self, "Could not create pulseaudio mainloop");
+@@ -462,27 +510,18 @@ gst_pulse_device_provider_start (GstDeviceProvider * provider)
+   pa_context_subscribe (self->context,
+       PA_SUBSCRIPTION_MASK_SOURCE | PA_SUBSCRIPTION_MASK_SINK, NULL, NULL);
+ 
+-  initial_operation = pa_context_get_source_info_list (self->context,
+-      get_source_info_cb, self);
+-  while (pa_operation_get_state (initial_operation) == PA_OPERATION_RUNNING) {
+-    if (!PA_CONTEXT_IS_GOOD (pa_context_get_state ((self->context))))
+-      goto cancel_and_fail;
+-
+-    pa_threaded_mainloop_wait (self->mainloop);
+-  }
+-  pa_operation_unref (initial_operation);
++  if (!run_pulse_operation (self, pa_context_get_server_info (self->context,
++              get_server_info_cb, self)))
++    goto unlock_and_fail;
+ 
+-  initial_operation = pa_context_get_sink_info_list (self->context,
+-      get_sink_info_cb, self);
+-  if (!initial_operation)
++  if (!run_pulse_operation (self,
++          pa_context_get_source_info_list (self->context, get_source_info_cb,
++              self)))
+     goto unlock_and_fail;
+-  while (pa_operation_get_state (initial_operation) == PA_OPERATION_RUNNING) {
+-    if (!PA_CONTEXT_IS_GOOD (pa_context_get_state ((self->context))))
+-      goto cancel_and_fail;
+ 
+-    pa_threaded_mainloop_wait (self->mainloop);
+-  }
+-  pa_operation_unref (initial_operation);
++  if (!run_pulse_operation (self, pa_context_get_sink_info_list (self->context,
++              get_sink_info_cb, self)))
++    goto unlock_and_fail;
+ 
+   pa_threaded_mainloop_unlock (self->mainloop);
+ 
+@@ -495,11 +534,6 @@ unlock_and_fail:
+ 
+ mainloop_failed:
+   return FALSE;
+-
+-cancel_and_fail:
+-  pa_operation_cancel (initial_operation);
+-  pa_operation_unref (initial_operation);
+-  goto unlock_and_fail;
+ }
+ 
+ static void
+@@ -611,7 +645,7 @@ gst_pulse_device_reconfigure_element (GstDevice * device, GstElement * element)
+ static GstDevice *
+ gst_pulse_device_new (guint device_index, const gchar * device_name,
+     GstCaps * caps, const gchar * internal_name, GstPulseDeviceType type,
+-    GstStructure * props)
++    GstStructure * props, gboolean is_default)
+ {
+   GstPulseDevice *gstdev;
+   const gchar *element = NULL;
+@@ -636,7 +670,7 @@ gst_pulse_device_new (guint device_index, const gchar * device_name,
+       break;
+   }
+ 
+-
++  gst_structure_set (props, "is-default", G_TYPE_BOOLEAN, is_default, NULL);
+   gstdev = g_object_new (GST_TYPE_PULSE_DEVICE,
+       "display-name", device_name, "caps", caps, "device-class", klass,
+       "internal-name", internal_name, "properties", props, NULL);
+@@ -644,6 +678,7 @@ gst_pulse_device_new (guint device_index, const gchar * device_name,
+   gstdev->type = type;
+   gstdev->device_index = device_index;
+   gstdev->element = element;
++  gstdev->is_default = is_default;
+ 
+   gst_structure_free (props);
+   gst_caps_unref (caps);
+diff --git a/ext/pulse/pulsedeviceprovider.h b/ext/pulse/pulsedeviceprovider.h
+index 0892ad586..7bcd1bc47 100644
+--- a/ext/pulse/pulsedeviceprovider.h
++++ b/ext/pulse/pulsedeviceprovider.h
+@@ -50,6 +50,8 @@ struct _GstPulseDeviceProvider {
+ 
+   gchar *server;
+   gchar *client_name;
++  gchar *default_source_name;
++  gchar *default_sink_name;
+ 
+   pa_threaded_mainloop *mainloop;
+   pa_context *context;
+@@ -84,6 +86,7 @@ struct _GstPulseDevice {
+   GstPulseDeviceType type;
+   guint             device_index;
+   gchar            *internal_name;
++  gboolean         is_default;
+   const gchar      *element;
+ };
+ 
+-- 
+2.19.1
+
