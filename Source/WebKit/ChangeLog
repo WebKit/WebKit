@@ -1,3 +1,13 @@
+2018-11-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize version checks for same site cookie support
+        https://bugs.webkit.org/show_bug.cgi?id=192054
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm: (WebKit::updateTaskWithFirstPartyForSameSiteCookies):
+        Also removed runtime checks, which are no longer relevant.
+
 2018-11-27  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_FAST_JIT_PERMISSIONS should be false for iosmac.

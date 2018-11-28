@@ -152,12 +152,10 @@ static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* tas
 {
     if (request.isSameSiteUnspecified())
         return;
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
+#if HAVE(FOUNDATION_WITH_SAME_SITE_COOKIE_SUPPORT)
     static NSURL *emptyURL = [[NSURL alloc] initWithString:@""];
-    if ([task respondsToSelector:@selector(set_siteForCookies:)])
-        task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
-    if ([task respondsToSelector:@selector(set_isTopLevelNavigation:)])
-        task._isTopLevelNavigation = request.isTopSite();
+    task._siteForCookies = request.isSameSite() ? task.currentRequest.URL : emptyURL;
+    task._isTopLevelNavigation = request.isTopSite();
 #else
     UNUSED_PARAM(task);
 #endif
