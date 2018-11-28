@@ -1,3 +1,12 @@
+2018-11-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Fetch bugs from Bugzilla and submit to Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=191947
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/fetcher.py: Added.
+
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS API test after r238585
