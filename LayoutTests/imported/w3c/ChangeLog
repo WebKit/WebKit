@@ -1,3 +1,12 @@
+2018-11-28  Rob Buis  <rbuis@igalia.com>
+
+        [XHR] Document.lastModified doesn't work for non-rendered documents
+        https://bugs.webkit.org/show_bug.cgi?id=179375
+
+        Reviewed by Alexey Proskuryakov.
+
+        * web-platform-tests/xhr/responsexml-document-properties-expected.txt:
+
 2018-11-28  Ali Juma  <ajuma@chromium.org>
 
         Intersection Observer: rootMargin: '' gives weird results

@@ -748,8 +748,6 @@ webkit.org/b/187034 imported/w3c/web-platform-tests/webmessaging/without-ports/0
 imported/w3c/web-platform-tests/xhr/send-redirect-bogus.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-redirect-to-cors.htm [ Skip ]
 imported/w3c/web-platform-tests/xhr/send-redirect-to-non-cors.htm [ Skip ]
-# Failing assertion with dynamic message
-imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm [ Failure ]
 
 imported/w3c/web-platform-tests/fetch/api/basic/block-mime-as-script.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ DumpJSConsoleLogInStdErr ]

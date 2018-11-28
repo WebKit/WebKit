@@ -1,3 +1,24 @@
+2018-11-28  Rob Buis  <rbuis@igalia.com>
+
+        [XHR] Document.lastModified doesn't work for non-rendered documents
+        https://bugs.webkit.org/show_bug.cgi?id=179375
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add setOverrideLastModified to override last modified date for
+        standalone Documents.
+
+        Behavior matches Firefox and Chrome.
+
+        Test: web-platform-tests/xhr/responsexml-document-properties.htm
+
+        * dom/Document.cpp:
+        (WebCore::Document::overrideLastModified):
+        (WebCore::Document::lastModified const): no need to test m_frame since that's already done in loader().
+        (WebCore::Document::lastModified): Deleted.
+        * dom/Document.h:
+        * xml/XMLHttpRequest.cpp:
+
 2018-11-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Allow WebKit clients to specify a minimum effective width for layout.

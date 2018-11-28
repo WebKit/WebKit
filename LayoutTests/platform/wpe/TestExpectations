@@ -1005,7 +1005,6 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-method-denied.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-not-supported.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
-webkit.org/b/179375 imported/w3c/web-platform-tests/xhr/responsexml-document-properties.htm [ Failure ]
 webkit.org/b/171031 imported/w3c/web-platform-tests/xhr/getallresponseheaders-cl.htm [ Failure ]
 
 webkit.org/b/179663 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]

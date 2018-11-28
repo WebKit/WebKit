@@ -929,7 +929,8 @@ public:
     WEBCORE_EXPORT String domain() const;
     ExceptionOr<void> setDomain(const String& newDomain);
 
-    WEBCORE_EXPORT String lastModified();
+    void overrideLastModified(const std::optional<WallTime>&);
+    WEBCORE_EXPORT String lastModified() const;
 
     // The cookieURL is used to query the cookie database for this document's
     // cookies. For example, if the cookie URL is http://example.com, we'll
@@ -1929,6 +1930,8 @@ private:
     RefPtr<SocketProvider> m_socketProvider;
 
     String m_cachedDOMCookies;
+
+    std::optional<WallTime> m_overrideLastModified;
 
     HashSet<RefPtr<Element>> m_associatedFormControls;
     unsigned m_disabledFieldsetElementsCount { 0 };

@@ -4836,11 +4836,18 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
     return { };
 }
 
+void Document::overrideLastModified(const std::optional<WallTime>& lastModified)
+{
+    m_overrideLastModified = lastModified;
+}
+
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
-String Document::lastModified()
+String Document::lastModified() const
 {
     std::optional<WallTime> dateTime;
-    if (m_frame && loader())
+    if (m_overrideLastModified)
+        dateTime = m_overrideLastModified;
+    else if (loader())
         dateTime = loader()->response().lastModified();
 
     // FIXME: If this document came from the file system, the HTML5
