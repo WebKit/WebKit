@@ -36,7 +36,7 @@ enum class RouteSharingPolicy : uint8_t;
 @class UIView;
 
 @interface WKAirPlayRoutePicker : NSObject
-- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID;
+- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)policy routingContextUID:(NSString *)contextUID hasVideo:(BOOL)hasVideo;
 @end
 
 #else

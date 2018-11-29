@@ -167,7 +167,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 SOFT_LINK_FRAMEWORK(MediaPlayer)
 SOFT_LINK_CLASS(MediaPlayer, MPAVRoutingController)
+SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsConfiguration)
 SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
+
+@interface MPMediaControlsConfiguration (WKMPMediaControlsConfiguration)
+@property (nonatomic) BOOL sortByIsVideoRoute;
+@end
 
 enum {
     WKAirPlayRoutePickerRouteSharingPolicyDefault = 0,
@@ -177,6 +182,7 @@ enum {
 typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
 
 @interface MPMediaControlsViewController (WKMPMediaControlsViewControllerPrivate)
+- (instancetype)initWithConfiguration:(MPMediaControlsConfiguration *)configuration;
 - (void)setOverrideRouteSharingPolicy:(WKAirPlayRoutePickerRouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 @end
 
@@ -190,7 +196,7 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
     [super dealloc];
 }
 
-- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
+- (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID hasVideo:(BOOL)hasVideo
 {
     static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::Default) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not WKAirPlayRoutePickerRouteSharingPolicyDefault as expected");
     static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::LongForm) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not WKAirPlayRoutePickerRouteSharingPolicyLongForm as expected");
@@ -202,7 +208,12 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
     __block RetainPtr<MPAVRoutingController> routingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebKit - HTML media element showing AirPlay route picker"]);
     [routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
-    _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() init]);
+    RetainPtr<MPMediaControlsConfiguration> configuration;
+    if ([getMPMediaControlsConfigurationClass() instancesRespondToSelector:@selector(setSortByIsVideoRoute:)]) {
+        configuration = adoptNS([allocMPMediaControlsConfigurationInstance() init]);
+        configuration.get().sortByIsVideoRoute = hasVideo;
+    }
+    _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() initWithConfiguration:configuration.get()]);
 
     if ([_actionSheet respondsToSelector:@selector(setOverrideRouteSharingPolicy:routingContextUID:)])
         [_actionSheet setOverrideRouteSharingPolicy:static_cast<WKAirPlayRoutePickerRouteSharingPolicy>(routeSharingPolicy) routingContextUID:routingContextUID];

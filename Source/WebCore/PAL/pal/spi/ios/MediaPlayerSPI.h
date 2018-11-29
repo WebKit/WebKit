@@ -66,6 +66,9 @@ typedef NSInteger MPRouteDiscoveryMode;
 @property (nonatomic, copy, nullable) void (^didDismissHandler)(void);
 @end
 
+@interface MPMediaControlsConfiguration : NSObject <NSSecureCoding, NSCopying>
+@end
+
 #else
 
 enum {

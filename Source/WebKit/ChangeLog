@@ -1,3 +1,21 @@
+2018-11-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Tell AirPlay picker when a file has video
+        https://bugs.webkit.org/show_bug.cgi?id=192155
+        <rdar://problem/43843865>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showPlaybackTargetPicker:fromRect:routeSharingPolicy:routingContextUID:]):
+        Add hasVideo parameter.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.h:
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker showFromView:routeSharingPolicy:routingContextUID:hasVideo:]): Add
+        hasVideo parameter, pass info to MPMediaControlsViewController.
+        (-[WKAirPlayRoutePicker showFromView:routeSharingPolicy:routingContextUID:]): Deleted.
+
 2018-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence

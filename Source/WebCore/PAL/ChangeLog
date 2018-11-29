@@ -1,3 +1,12 @@
+2018-11-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Tell AirPlay picker when a file has video
+        https://bugs.webkit.org/show_bug.cgi?id=192155
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/ios/MediaPlayerSPI.h:
+
 2018-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence
