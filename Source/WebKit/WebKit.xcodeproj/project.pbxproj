@@ -3455,6 +3455,7 @@
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSessionCreationParameters.h; sourceTree = "<group>"; };
 		5C85C7861C3F23C50061A4FA /* PendingDownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingDownload.cpp; sourceTree = "<group>"; };
+		5C89DF5621AF61FF004645E8 /* NetworkSessionCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSessionCreationParameters.cpp; sourceTree = "<group>"; };
 		5C8BC796218CB58A00813886 /* SafeBrowsing.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = SafeBrowsing.xcassets; path = Resources/SafeBrowsing.xcassets; sourceTree = "<group>"; };
 		5C8DD37C1FE4501100F2A556 /* APIWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWebsitePolicies.h; sourceTree = "<group>"; };
 		5C8DD37D1FE4501100F2A556 /* APIWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWebsitePolicies.cpp; sourceTree = "<group>"; };
@@ -6434,6 +6435,7 @@
 				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
 				532159521DBAE6FC0054AA3C /* NetworkSession.cpp */,
 				5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */,
+				5C89DF5621AF61FF004645E8 /* NetworkSessionCreationParameters.cpp */,
 				5C84CF901F96AC4E00B6705A /* NetworkSessionCreationParameters.h */,
 				5C0B177D1E7C886700E9123C /* NetworkSocketStream.cpp */,
 				5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */,

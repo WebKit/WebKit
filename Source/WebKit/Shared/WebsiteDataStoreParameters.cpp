@@ -113,11 +113,7 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
 WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
 {
     ASSERT(sessionID.isEphemeral());
-    return { { }, { }, { }, { sessionID, { }, AllowsCellularAccess::Yes
-#if PLATFORM(COCOA)
-        , nullptr , { } , { }
-#endif
-        }
+    return { { }, { }, { }, NetworkSessionCreationParameters::privateSessionParameters(sessionID)
 #if ENABLE(INDEXED_DATABASE)
         , { }, { }
 #endif

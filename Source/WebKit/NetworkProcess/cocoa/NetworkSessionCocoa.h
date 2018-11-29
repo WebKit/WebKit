@@ -71,6 +71,7 @@ private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
+    Seconds loadThrottleLatency() const override { return m_loadThrottleLatency; }
 
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithoutState;
@@ -84,6 +85,7 @@ private:
     String m_boundInterfaceIdentifier;
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     bool m_shouldLogCookieInformation { false };
+    Seconds m_loadThrottleLatency;
 
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;

@@ -97,6 +97,7 @@ private:
     
     struct Throttle;
     std::unique_ptr<Throttle> m_throttle;
+    Seconds m_loadThrottleLatency;
 
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
 

@@ -70,6 +70,7 @@ struct NetworkLoad::Throttle {
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)
     , m_parameters(WTFMove(parameters))
+    , m_loadThrottleLatency(networkSession.loadThrottleLatency())
     , m_currentRequest(m_parameters.request)
 {
 #if ENABLE(NETWORK_CAPTURE)
@@ -268,9 +269,8 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, ResponseComple
         return;
     }
 
-    auto delay = NetworkProcess::singleton().loadThrottleLatency();
-    if (delay > 0_s) {
-        m_throttle = std::make_unique<Throttle>(*this, delay, WTFMove(response), WTFMove(completionHandler));
+    if (m_loadThrottleLatency > 0_s) {
+        m_throttle = std::make_unique<Throttle>(*this, m_loadThrottleLatency, WTFMove(response), WTFMove(completionHandler));
         return;
     }
 

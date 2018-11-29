@@ -169,8 +169,6 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, uint64_t contextId);
 #endif
 
-    Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
-
     using CacheStorageParametersCallback = CompletionHandler<void(const String&, uint64_t quota)>;
     void cacheStorageParameters(PAL::SessionID, CacheStorageParametersCallback&&);
 
@@ -357,7 +355,6 @@ private:
     bool m_suppressMemoryPressureHandler { false };
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
-    Seconds m_loadThrottleLatency;
 
     RefPtr<NetworkCache::Cache> m_cache;
 

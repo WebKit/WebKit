@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 class AuthenticationChallenge;
@@ -48,6 +49,7 @@ public:
     virtual void invalidateAndCancel();
     virtual void clearCredentials() { };
     virtual bool shouldLogCookieInformation() const { return false; }
+    virtual Seconds loadThrottleLatency() const { return { }; }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     WebCore::NetworkStorageSession& networkStorageSession() const;

@@ -1,3 +1,44 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Move loadThrottleLatency from NetworkProcessCreationParameters to NetworkSessionCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=192122
+
+        Reviewed by Dean Jackson.
+
+        This is part of an effort to reduce global variables in the NetworkProcess.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::didReceiveResponse):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::loadThrottleLatency const): Deleted.
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::loadThrottleLatency const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp: Added.
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        (WebKit::NetworkSessionCreationParameters::encode const): Deleted.
+        (WebKit::NetworkSessionCreationParameters::decode): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * Sources.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-15  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage

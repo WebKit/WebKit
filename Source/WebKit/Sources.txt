@@ -35,6 +35,7 @@ NetworkProcess/NetworkProcessPlatformStrategies.cpp
 NetworkProcess/NetworkResourceLoadParameters.cpp
 NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/NetworkSession.cpp
+NetworkProcess/NetworkSessionCreationParameters.cpp
 NetworkProcess/NetworkSocketStream.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
