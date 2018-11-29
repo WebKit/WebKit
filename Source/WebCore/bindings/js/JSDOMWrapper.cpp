@@ -41,7 +41,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
 JSDOMObject::JSDOMObject(JSC::Structure* structure, JSC::JSGlobalObject& globalObject)
     : Base(globalObject.vm(), structure)
 {
-    ASSERT(scriptExecutionContext() || globalObject.classInfo() == JSRemoteDOMWindow::info());
+    ASSERT(globalObject.classInfo() == JSDOMGlobalObject::info() || scriptExecutionContext() || globalObject.classInfo() == JSRemoteDOMWindow::info());
 }
 
 CompleteSubspace* outputConstraintSubspaceFor(VM& vm)

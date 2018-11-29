@@ -35,19 +35,26 @@ getLincolnAfterInjectedKeySuccess():
 PASS event.target.result.name is "Lincoln"
 PASS event.target.result.number is "7012"
 PASS event.target.result.id is 4
-store = trans.objectStore('StoreWithAutoIncrement')
-Insert into object store with key gen using explicit key
-store.add({name: 'Lincoln', number: '7012'}, 5)
-addLincolnWithExplicitKeySuccess():
+store.add({name: 'Bob', number: Uint8Array.from([100, 101])})
+putBobSuccess():
 PASS event.target.result is 5
 store.get(5)
+getBobSuccess():
+PASS event.target.result.name is "Bob"
+PASS event.target.result.number is [100, 101]
+store = trans.objectStore('StoreWithAutoIncrement')
+Insert into object store with key gen using explicit key
+store.add({name: 'Lincoln', number: '7012'}, 6)
+addLincolnWithExplicitKeySuccess():
+PASS event.target.result is 6
+store.get(6)
 getLincolnSuccess():
 PASS event.target.result.name is "Lincoln"
 PASS event.target.result.number is "7012"
 store.put({name: 'Abraham', number: '2107'})
 putAbrahamSuccess():
-PASS event.target.result is 6
-store.get(6)
+PASS event.target.result is 7
+store.get(7)
 getAbrahamSuccess():
 PASS event.target.result.name is "Abraham"
 PASS event.target.result.number is "2107"

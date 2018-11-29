@@ -1,5 +1,22 @@
 2018-11-29  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: breaks if binary data (Uint8Array) and autoIncrement key in store
+        https://bugs.webkit.org/show_bug.cgi?id=185869
+        <rdar://problem/40453623>
+
+        Reviewed by Geoffrey Garen.
+
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-autoincrement-private-expected.txt:
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+        (getLincolnAfterInjectedKeySuccess):
+        (putBobSuccess):
+        (getBobSuccess):
+        (addLincolnWithExplicitKeySuccess):
+        (putAbrahamSuccess):
+
+2018-11-29  Sihui Liu  <sihui_liu@apple.com>
+
         Unexpected constructor / instanceof  behavior when retrieving indexedDB data in an iframe
         https://bugs.webkit.org/show_bug.cgi?id=185906
         <rdar://problem/40583100>

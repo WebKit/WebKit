@@ -70,9 +70,30 @@ function getLincolnAfterInjectedKeySuccess()
     shouldBeEqualToString("event.target.result.number", "7012");
     shouldBe("event.target.result.id", "4");
 
+    request = evalAndLog("store.add({name: 'Bob', number: Uint8Array.from([100, 101])})");
+    request.onsuccess = putBobSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function putBobSuccess()
+{
+    debug("putBobSuccess():");
+    shouldBe("event.target.result", "5");
+
+    request = evalAndLog("store.get(5)");
+    request.onsuccess = getBobSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function getBobSuccess()
+{
+    debug("getBobSuccess():");
+    shouldBeEqualToString("event.target.result.name", "Bob");
+    shouldBe("event.target.result.number", "[100, 101]");
+
     self.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
     debug("Insert into object store with key gen using explicit key");
-    request = evalAndLog("store.add({name: 'Lincoln', number: '7012'}, 5)");
+    request = evalAndLog("store.add({name: 'Lincoln', number: '7012'}, 6)");
     request.onsuccess = addLincolnWithExplicitKeySuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -80,9 +101,9 @@ function getLincolnAfterInjectedKeySuccess()
 function addLincolnWithExplicitKeySuccess()
 {
     debug("addLincolnWithExplicitKeySuccess():");
-    shouldBe("event.target.result", "5");
+    shouldBe("event.target.result", "6");
 
-    request = evalAndLog("store.get(5)");
+    request = evalAndLog("store.get(6)");
     request.onsuccess = getLincolnSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -101,9 +122,9 @@ function getLincolnSuccess()
 function putAbrahamSuccess()
 {
     debug("putAbrahamSuccess():");
-    shouldBe("event.target.result", "6");
+    shouldBe("event.target.result", "7");
 
-    request = evalAndLog("store.get(6)");
+    request = evalAndLog("store.get(7)");
     request.onsuccess = getAbrahamSuccess;
     request.onerror = unexpectedErrorCallback;
 }

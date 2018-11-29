@@ -1,5 +1,27 @@
 2018-11-29  Sihui Liu  <sihui_liu@apple.com>
 
+        IndexedDB: breaks if binary data (Uint8Array) and autoIncrement key in store
+        https://bugs.webkit.org/show_bug.cgi?id=185869
+        <rdar://problem/40453623>
+
+        Reviewed by Geoffrey Garen.
+
+        lexicalGlobalObject is casted to JSDOMGlobalObject in CloneSerializer::dumpArrayBufferView, 
+        so we should use JSDOMGlobalObject instead of JSGlobalObject in IDB database thread.
+
+        Covered by modified test: storage/indexeddb/objectstore-autoincrement.html
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadVM):
+        (WebCore::IDBServer::UniqueIDBDatabase::databaseThreadExecState):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::create):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMObject::JSDOMObject):
+
+2018-11-29  Sihui Liu  <sihui_liu@apple.com>
+
         Unexpected constructor / instanceof  behavior when retrieving indexedDB data in an iframe
         https://bugs.webkit.org/show_bug.cgi?id=185906
         <rdar://problem/40583100>
