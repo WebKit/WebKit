@@ -101,9 +101,6 @@
     (allow user-preference-read
         (preference-domain "com.apple.opengl")
         (preference-domain "com.nvidia.OpenGL"))
-    ;; OpenGL memory debugging
-    (allow mach-lookup
-        (global-name "com.apple.gpumemd.source"))
     ;; CVMS
     (allow mach-lookup
         (global-name "com.apple.cvmsServ"))
@@ -384,9 +381,7 @@
     (xpc-service-name "com.apple.coremedia.videoencoder")
     (xpc-service-name-regex #"\.apple-extension-service$")
     (xpc-service-name "com.apple.hiservices-xpcservice")
-    (xpc-service-name "com.apple.ist.ds.appleconnect2.HelperService")
     (xpc-service-name "com.apple.print.normalizerd")
-    (xpc-service-name "com.apple.signpost.signpost-notificationd")
 )
 #endif
 
@@ -577,29 +572,20 @@
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
-       (global-name "com.apple.FileCoordination")
-       (global-name "com.apple.FontObjectsServer")
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.SystemConfiguration.PPPController")
-       (global-name "com.apple.audio.SystemSoundServer-OSX")
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
        (global-name "com.apple.analyticsd")
        (global-name "com.apple.audio.AudioComponentRegistrar")
 #endif
        (global-name "com.apple.assertiond.processassertionconnection")
        (global-name "com.apple.audio.audiohald")
-       (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.awdd")
-       (global-name "com.apple.cfnetwork.AuthBrokerAgent")
        (global-name "com.apple.cfprefsd.agent")
        (global-name "com.apple.cfprefsd.daemon")
-       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
+       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
        (global-name "com.apple.cookied")
        (global-name "com.apple.coreservices.launchservicesd")
-       (global-name "com.apple.diagnosticd")
-       (global-name "com.apple.dock.server")
-       (global-name "com.apple.dyld.closured")
        (global-name "com.apple.fonts")
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
@@ -608,25 +594,48 @@
        (global-name "com.apple.logd.events")
        (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.mobileassetd")
-       (global-name "com.apple.nesessionmanager.flow-divert-token")
        (global-name "com.apple.powerlog.plxpclogger.xpc")
-       (global-name "com.apple.speech.speechsynthesisd")
-       (global-name "com.apple.speech.synthesis.console")
-       (global-name "com.apple.system.DirectoryService.libinfo_v1")
        (global-name "com.apple.system.logger")
-       (global-name "com.apple.system.opendirectoryd.api")
        (global-name "com.apple.tccd")
-       (global-name "com.apple.tccd.system")
-       (global-name "com.apple.trustd")
        (global-name "com.apple.trustd.agent")
-       (global-name "com.apple.window_proxies")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
 #else
        (global-name "com.apple.windowserver.active")
 #endif
-       (global-name "com.apple.xpc.activity.unmanaged")
-       (global-name "com.apple.xpcd")
+)
+
+(allow mach-lookup (with report)
+    (global-name "com.apple.FileCoordination")
+    (global-name "com.apple.FontObjectsServer")
+    (global-name "com.apple.GSSCred")
+    (global-name "com.apple.SystemConfiguration.PPPController")
+    (global-name "com.apple.audio.SystemSoundServer-OSX")
+    (global-name "com.apple.audio.coreaudiod")
+    (global-name "com.apple.cfnetwork.AuthBrokerAgent")
+    ; "com.apple.coremedia.endpointpicker.xpc" can be removed when <rdar://problem/30081582> is resolved.
+    (global-name "com.apple.coremedia.endpointpicker.xpc")
+    (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
+    (global-name "com.apple.diagnosticd")
+    (global-name "com.apple.dock.server")
+    (global-name "com.apple.dyld.closured")
+    ;; OpenGL memory debugging
+    (global-name "com.apple.gpumemd.source")
+    (global-name "com.apple.nesessionmanager.flow-divert-token")
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    (xpc-service-name "com.apple.ist.ds.appleconnect2.HelperService")
+    (xpc-service-name "com.apple.signpost.signpost-notificationd")
+#endif
+    (global-name "com.apple.speech.speechsynthesisd")
+    (global-name "com.apple.speech.synthesis.console")
+    (global-name "com.apple.system.DirectoryService.libinfo_v1")
+    (global-name "com.apple.system.opendirectoryd.api")
+    (global-name "com.apple.tccd.system")
+    (global-name "com.apple.trustd")
+    (global-name "com.apple.window_proxies")
+    (global-name "com.apple.xpc.activity.unmanaged")
+    (global-name "com.apple.xpcd")
+    (global-name "org.h5l.kcm")
 )
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
@@ -692,8 +701,6 @@
 #if PLATFORM(MAC)
 ;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
 (allow mach-lookup
-       (global-name "org.h5l.kcm")
-       (global-name "com.apple.GSSCred")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.system.notification_center"))
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
@@ -750,9 +757,6 @@
 (allow mach-lookup
     (global-name "com.apple.coremedia.endpoint.xpc")
     (global-name "com.apple.coremedia.endpointstream.xpc")
-    (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
-    ; "com.apple.coremedia.endpointpicker.xpc" can be removed when <rdar://problem/30081582> is resolved.
-    (global-name "com.apple.coremedia.endpointpicker.xpc")
     ; <rdar://problem/35509194>
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
