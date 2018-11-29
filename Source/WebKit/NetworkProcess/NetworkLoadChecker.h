@@ -138,6 +138,11 @@ private:
     bool m_checkContentExtensions { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     WebCore::NetworkLoadInformation m_loadInformation;
+
+#if ENABLE(HTTPS_UPGRADE)
+    static bool applyHTTPSUpgradeIfNeeded(WebCore::ResourceRequest&);
+#endif // ENABLE(HTTPS_UPGRADE)
+
 };
 
 }

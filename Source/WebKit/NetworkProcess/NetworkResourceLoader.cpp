@@ -192,9 +192,11 @@ void NetworkResourceLoader::start()
                     this->didFailLoading(result.error());
                 return;
             }
-            if (this->canUseCache(this->originalRequest())) {
+
+            auto currentRequest = result.value();
+            if (this->canUseCache(currentRequest)) {
                 RELEASE_LOG_IF_ALLOWED("start: Checking cache for resource (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, this->isMainResource(), this->isSynchronous());
-                this->retrieveCacheEntry(this->originalRequest());
+                this->retrieveCacheEntry(currentRequest);
                 return;
             }
 

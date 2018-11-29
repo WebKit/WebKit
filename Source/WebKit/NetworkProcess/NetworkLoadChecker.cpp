@@ -190,8 +190,45 @@ auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message
     return makeUnexpected(ResourceError { String { }, 0, m_url, WTFMove(message), ResourceError::Type::AccessControl });
 }
 
+#if ENABLE(HTTPS_UPGRADE)
+bool NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest& request)
+{
+    // Use dummy list for now.
+    static NeverDestroyed<HashSet<String>> upgradableHosts = std::initializer_list<String> {
+        "www.bbc.com"_s, // (source: https://whynohttps.com)
+        "www.speedtest.net"_s, // (source: https://whynohttps.com)
+        "www.bea.gov"_s // (source: https://pulse.cio.gov/data/domains/https.csv)
+    };
+
+    auto& url = request.url();
+
+    // Only upgrade http urls.
+    if (!url.protocolIs("http"))
+        return false;
+
+    if (!upgradableHosts.get().contains(url.host().toString()))
+        return false;
+
+    auto newURL = url;
+    newURL.setProtocol("https"_s);
+    request.setURL(newURL);
+    return true;
+
+    return false;
+}
+#endif // ENABLE(HTTPS_UPGRADE)
+
 void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurityPolicyClient* client, ValidationHandler&& handler)
 {
+
+#if ENABLE(HTTPS_UPGRADE)
+    if (request.requester() == ResourceRequest::Requester::Main) {
+        if (applyHTTPSUpgradeIfNeeded(request))
+            ASSERT(request.url().protocolIs("https"));
+    }
+
+#endif // ENABLE(HTTPS_UPGRADE)
+
     if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
         if (isRedirected()) {
             auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
