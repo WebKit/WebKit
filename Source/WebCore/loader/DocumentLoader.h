@@ -32,6 +32,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContentSecurityPolicyClient.h"
+#include "DocumentIdentifier.h"
 #include "DocumentWriter.h"
 #include "FrameDestructionObserver.h"
 #include "LinkIcon.h"
@@ -83,6 +84,7 @@ class Page;
 class PreviewConverter;
 class ResourceLoader;
 class SharedBuffer;
+class SWClientConnection;
 class SubresourceLoader;
 class SubstituteResource;
 
@@ -342,6 +344,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
 #endif
+    void registerTemporaryServiceWorkerClient(const URL&);
+    void unregisterTemporaryServiceWorkerClient();
 
     void loadMainResource(ResourceRequest&&);
 
@@ -535,6 +539,11 @@ private:
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    struct TemporaryServiceWorkerClient {
+        DocumentIdentifier documentIdentifier;
+        Ref<SWClientConnection> serviceWorkerConnection;
+    };
+    std::optional<TemporaryServiceWorkerClient> m_temporaryServiceWorkerClient;
 #endif
 
 #ifndef NDEBUG

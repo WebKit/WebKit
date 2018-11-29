@@ -1,3 +1,28 @@
+2018-11-29  Youenn Fablet  <youenn@apple.com>
+
+        Updating a service worker during a navigation load sometimes makes the load fail
+        https://bugs.webkit.org/show_bug.cgi?id=191986
+        <rdar://problem/46259790>
+
+        Reviewed by Chris Dumez.
+
+        Previously, we were registering a document as service worker client at creation of the document.
+        According the service worker spec, this should be done when handling the fetch event of the corresponding navigation load.
+        This ensures that the service worker will have a client and will not get updated in the middle of the navigation load.
+
+        At navigation load start, we do not have a document yet since it is created when receiving the first bytes.
+        Instead, we register a temporary document when starting the navigation load and unregister it when the real document is registered.
+
+        Test: imported/w3c/web-platform-tests/service-workers/service-worker/update-on-navigation.https.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::registerTemporaryServiceWorkerClient):
+        (WebCore::DocumentLoader::unregisterTemporaryServiceWorkerClient):
+        (WebCore::DocumentLoader::loadMainResource):
+        (WebCore::DocumentLoader::clearMainResource):
+        * loader/DocumentLoader.h:
+
 2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238678.

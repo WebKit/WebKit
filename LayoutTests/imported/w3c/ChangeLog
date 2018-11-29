@@ -1,3 +1,18 @@
+2018-11-29  Youenn Fablet  <youenn@apple.com>
+
+        Updating a service worker during a navigation load sometimes makes the load fail
+        https://bugs.webkit.org/show_bug.cgi?id=191986
+        <rdar://problem/46259790>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/resources/trickle.py: Added.
+        (main):
+        * web-platform-tests/service-workers/service-worker/resources/update-fetch-worker.py: Added.
+        (main):
+        * web-platform-tests/service-workers/service-worker/update-on-navigation.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/update-on-navigation.https.html: Added.
+
 2018-11-29  Rob Buis  <rbuis@igalia.com>
 
         Import fetch/api/cors tests

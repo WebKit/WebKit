@@ -76,6 +76,7 @@
 #include "ScriptableDocumentParser.h"
 #include "SecurityPolicy.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerProvider.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
@@ -1032,8 +1033,6 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 #endif
 #if ENABLE(SERVICE_WORKER)
         if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()) {
-            // FIXME: We should probably register the client as soon as we do the related navigation fetch.
-            // We can probably implement this when supporting FetchEvent.reservedClientId.
             if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                 m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
@@ -1044,6 +1043,10 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
             if (m_frame->document()->activeServiceWorker() || SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
                 m_frame->document()->setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID()));
+
+            // We currently unregister the temporary service worker client since we now registered the real document.
+            // FIXME: We should make the real document use the temporary client identifier.
+            unregisterTemporaryServiceWorkerClient();
         }
 #endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
@@ -1759,6 +1762,44 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
     });
 }
 
+void DocumentLoader::registerTemporaryServiceWorkerClient(const URL& url)
+{
+#if ENABLE(SERVICE_WORKER)
+    ASSERT(!m_temporaryServiceWorkerClient);
+
+    if (!m_serviceWorkerRegistrationData)
+        return;
+
+    m_temporaryServiceWorkerClient = TemporaryServiceWorkerClient {
+        generateObjectIdentifier<DocumentIdentifierType>(),
+        *ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID())
+    };
+
+    // FIXME: Compute ServiceWorkerClientFrameType appropriately.
+    ServiceWorkerClientData data { { m_temporaryServiceWorkerClient->serviceWorkerConnection->serverConnectionIdentifier(), m_temporaryServiceWorkerClient->documentIdentifier }, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, url };
+
+    RefPtr<SecurityOrigin> topOrigin;
+    if (m_frame->isMainFrame())
+        topOrigin = SecurityOrigin::create(url);
+    else
+        topOrigin = &m_frame->mainFrame().document()->topOrigin();
+    m_temporaryServiceWorkerClient->serviceWorkerConnection->registerServiceWorkerClient(*topOrigin, WTFMove(data), m_serviceWorkerRegistrationData->identifier);
+#else
+    UNUSED_PARAM(url);
+#endif
+}
+
+void DocumentLoader::unregisterTemporaryServiceWorkerClient()
+{
+#if ENABLE(SERVICE_WORKER)
+    if (!m_temporaryServiceWorkerClient)
+        return;
+
+    m_temporaryServiceWorkerClient->serviceWorkerConnection->unregisterServiceWorkerClient(m_temporaryServiceWorkerClient->documentIdentifier);
+    m_temporaryServiceWorkerClient = std::nullopt;
+#endif
+}
+
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
     static NeverDestroyed<ResourceLoaderOptions> mainResourceLoadOptions(
@@ -1786,6 +1827,11 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
 #if ENABLE(SERVICE_WORKER)
     mainResourceRequest.setNavigationServiceWorkerRegistrationData(m_serviceWorkerRegistrationData);
+    if (mainResourceRequest.options().serviceWorkersMode != ServiceWorkersMode::None) {
+        // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
+        // Since we did not yet create the document, we register a temporary service worker client instead.
+        registerTemporaryServiceWorkerClient(mainResourceRequest.resourceRequest().url());
+    }
 #endif
 
     m_mainResource = m_cachedResourceLoader->requestMainResource(WTFMove(mainResourceRequest)).value_or(nullptr);
@@ -1883,6 +1929,8 @@ void DocumentLoader::clearMainResource()
 #endif
 
     m_mainResource = nullptr;
+
+    unregisterTemporaryServiceWorkerClient();
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)
