@@ -1,3 +1,20 @@
+2018-11-29  Youenn Fablet  <youenn@apple.com>
+
+        A sender created through addTransceiver and populated using addTrack should have its source set
+        https://bugs.webkit.org/show_bug.cgi?id=192136
+
+        Reviewed by Eric Carlson.
+
+        In case libwebrtc backend is already created, we need to make sure to
+        set the track source to the libwebrtc sender backend that is actually
+        tied to the sender.
+
+        Covered by updated test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2018-11-29  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage
