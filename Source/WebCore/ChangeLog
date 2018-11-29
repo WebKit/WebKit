@@ -1,3 +1,16 @@
+2018-11-29  Rob Buis  <rbuis@igalia.com>
+
+        Remove some superfluous code in ContentSecurityPolicy::upgradeInsecureRequestIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=192076
+
+        Reviewed by Frédéric Wang.
+
+        Since we do an early return if the protocol is not http or ws, the if check
+        for ws protocol and else statement are not needed, so use an ASSERT instead.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::upgradeInsecureRequestIfNeeded const):
+
 2018-11-29  Frederic Wang  <fwang@igalia.com>
 
         Add ParentRelativeScrollableRect to ScrollingCoordinator::ScrollingGeometry

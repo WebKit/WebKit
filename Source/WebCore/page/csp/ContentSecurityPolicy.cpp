@@ -882,17 +882,17 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     bool upgradeRequest = m_insecureNavigationRequestsToUpgrade.contains(SecurityOriginData::fromURL(url));
     if (requestType == InsecureRequestType::Load || requestType == InsecureRequestType::FormSubmission)
         upgradeRequest |= m_upgradeInsecureRequests;
-    
+
     if (!upgradeRequest)
         return;
 
     if (url.protocolIs("http"))
         url.setProtocol("https");
-    else if (url.protocolIs("ws"))
+    else {
+        ASSERT(url.protocolIs("ws"));
         url.setProtocol("wss");
-    else
-        return;
-    
+    }
+
     if (url.port() && url.port().value() == 80)
         url.setPort(443);
 }
