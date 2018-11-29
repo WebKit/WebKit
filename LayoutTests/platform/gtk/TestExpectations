@@ -621,7 +621,7 @@ webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disab
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout Crash ]
 webkit.org/b/79203 http/tests/media/media-stream/getusermedia-with-canvas.html [ Timeout ]
-webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
+webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure Pass ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 # Crash is bug #176801
@@ -773,7 +773,7 @@ webkit.org/b/128172 fast/events/touch/touch-input-element-change-documents.html 
 webkit.org/b/128172 fast/events/touch/multi-touch-grouped-targets.html [ Timeout Failure ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Failure ]
+webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Failure Timeout ]
 webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
@@ -991,6 +991,10 @@ webkit.org/b/167579 fast/forms/validation-message-detached-iframe2.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-messages.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-bubble-escape-key-dismiss.html [ Skip ]
 webkit.org/b/167579 fast/forms/validation-message-minimum-font-size.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-on-checkbox.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-on-listbox.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-on-menulist.html [ Skip ]
+webkit.org/b/167579 fast/forms/validation-message-on-radio.html [ Skip ]
 
 # Tests failing with GStreamer 1.6.3
 webkit.org/b/154390 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
@@ -1175,6 +1179,8 @@ webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+webkit.org/b/177633 editing/pasteboard/paste-text-with-style.html [ Failure Pass ]
+webkit.org/b/177633 editing/pasteboard/paste-without-nesting.html [ Failure Pass ]
 
 webkit.org/b/180062 fast/text/user-installed-fonts [ Skip ]
 
@@ -2060,6 +2066,13 @@ webkit.org/b/191686 imported/blink/fast/canvas/bug382588.html [ Timeout Pass ]
 
 webkit.org/b/191687 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Timeout Pass ]
 
+webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-exception.html [ Failure Pass ]
+webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-invoked.html [ Failure Pass ]
+webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html [ Failure Pass ]
+webkit.org/b/192148 imported/w3c/web-platform-tests/html/webappapis/animation-frames/same-dispatch-time.html [ Failure Pass ]
+
+webkit.org/b/192149 imported/blink/animations/animation-events-prefixed-01.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2124,7 +2137,7 @@ webkit.org/b/149916 inspector/console/messageRepeatCountUpdated.html [ Pass Slow
 webkit.org/b/149916 inspector/console/messagesCleared.html [ Pass Slow ]
 webkit.org/b/149916 inspector/controller/runtime-controller.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/createStyleSheet.html [ Pass Slow ]
-webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Pass Slow ]
+webkit.org/b/149916 inspector/css/getAllStyleSheets.html [ Failure Pass Slow ]
 webkit.org/b/149916 inspector/css/get-system-fonts.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/manager-preferredInspectorStyleSheetForFrame.html [ Pass Slow ]
 webkit.org/b/149916 inspector/css/matched-style-properties.html [ Pass Slow ]
@@ -2927,8 +2940,6 @@ webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ Pass ]
 
 webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
 
-webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
-
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 
 webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
@@ -3513,7 +3524,7 @@ webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 webkit.org/b/187770 media/no-fullscreen-when-hidden.html [ Failure ]
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 
-webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure ]
+webkit.org/b/188098 webanimations/accelerated-animation-with-delay.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/188217 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
@@ -3597,6 +3608,10 @@ webkit.org/b/191005 webgpu/webgpu-enabled.html [ Failure ]
 webkit.org/b/191005 webgpu/render-pipelines.html [ Failure ]
 webkit.org/b/191005 webgpu/shader-modules.html [ Failure ]
 webkit.org/b/191005 webgpu/webgpu-basics.html [ Failure ]
+webkit.org/b/191005 webgpu/command-buffers.html [ Failure ]
+webkit.org/b/191005 webgpu/queue-creation.html [ Failure ]
+webkit.org/b/191005 webgpu/render-passes.html [ Failure ]
+webkit.org/b/191005 webgpu/textures-textureviews.html [ Failure ]
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
@@ -3618,8 +3633,6 @@ webkit.org/b/191882 fast/forms/validation-message-on-range.html [ Failure ]
 webkit.org/b/191882 fast/forms/validation-message-on-textarea.html [ Failure ]
 webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
 
-webkit.org/b/191883 fast/events/touch/emulate-touch-events.html [ Failure ]
-
 webkit.org/b/191884 fast/images/icon-decoding.html [ Failure ]
 
 webkit.org/b/191885 fast/inline/simple-inline-inflow-positioned.html [ Failure ]
@@ -3628,6 +3641,12 @@ webkit.org/b/191885 fast/inline/simple-inline-with-out-of-flow-descendant2.html 
 webkit.org/b/191885 fast/inline/simple-intruding-floats3.html [ Failure ]
 
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
+
+webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getallresponseheaders.htm [ Failure ]
+webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.html [ Failure ]
+webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker.html [ Failure ]
+webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
@@ -3705,6 +3724,8 @@ imported/blink/fast/forms/datalist/slider-appearance-with-ticks-crash.html [ Pas
 
 imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html [ Pass ]
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/current-time.html [ Pass ]
+
+imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.
