@@ -1,3 +1,21 @@
+2018-11-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Unexpected constructor / instanceof  behavior when retrieving indexedDB data in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=185906
+        <rdar://problem/40583100>
+
+        Reviewed by Geoffrey Garen.
+
+        * storage/indexeddb/instanceof-iframe-expected.txt: Added.
+        * storage/indexeddb/instanceof-iframe.html: Added.
+        * storage/indexeddb/resources/instanceof-iframe.js: Added.
+        (test.else.shouldBe):
+        (test.else.shouldBeTrue):
+        (test.else.shouldBeFalse):
+        (test.else.evalAndLog):
+        (test):
+        (callback):
+
 2018-11-28  Dean Jackson  <dino@apple.com>
 
         [ES Modules] Allow .mjs content when loaded from file://

@@ -1,3 +1,19 @@
+2018-11-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Unexpected constructor / instanceof  behavior when retrieving indexedDB data in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=185906
+        <rdar://problem/40583100>
+
+        Reviewed by Geoffrey Garen.
+
+        ScriptExecutionContext::execState() returned state of main frame, so deserialization of 
+        IDBValue in iframe used constructors of main frame, which is wrong.
+
+        Test: storage/indexeddb/instanceof-iframe.html
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::execState):
+
 2018-11-29  Don Olmstead  <don.olmstead@sony.com>
 
         Make generic ScrollAnimator

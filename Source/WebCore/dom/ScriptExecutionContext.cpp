@@ -525,7 +525,8 @@ JSC::ExecState* ScriptExecutionContext::execState()
 {
     if (is<Document>(*this)) {
         Document& document = downcast<Document>(*this);
-        return execStateFromPage(mainThreadNormalWorld(), document.page());
+        auto* frame = document.frame();
+        return frame ? frame->script().globalObject(mainThreadNormalWorld())->globalExec() : nullptr;
     }
 
     if (is<WorkerGlobalScope>(*this))
