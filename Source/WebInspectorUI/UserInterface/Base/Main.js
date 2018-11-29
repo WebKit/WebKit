@@ -157,6 +157,7 @@ WI.loaded = function()
     this.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     this.visible = false;
     this._windowKeydownListeners = [];
+    this._targetsAvailablePromise = new WI.WrappedPromise;
 
     // Targets.
     WI.backendTarget = null;
@@ -181,6 +182,8 @@ WI.initializeBackendTarget = function(target)
     WI.backendTarget = target;
 
     WI.resetMainExecutionContext();
+
+    this._targetsAvailablePromise.resolve();
 };
 
 WI.initializePageTarget = function(target)
@@ -551,7 +554,9 @@ WI.contentLoaded = function()
     this.tabBar.addEventListener(WI.TabBar.Event.TabBarItemsReordered, this._rememberOpenTabs, this);
 
     // Signal that the frontend is now ready to receive messages.
-    InspectorFrontendAPI.loadCompleted();
+    WI.whenTargetsAvailable().then(() => {
+        InspectorFrontendAPI.loadCompleted();
+    });
 
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
@@ -578,6 +583,11 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
         WI.__didPerformCSSInitialization = true;
         WI.CSSCompletions.initializeCSSCompletions(target);
     }
+};
+
+WI.whenTargetsAvailable = function()
+{
+    return this._targetsAvailablePromise.promise;
 };
 
 WI.isTabTypeAllowed = function(tabType)

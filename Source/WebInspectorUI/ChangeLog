@@ -1,3 +1,19 @@
+2018-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(?): all "Show *" develop menu items cause the page to crash
+        https://bugs.webkit.org/show_bug.cgi?id=192016
+        <rdar://problem/46284417>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.initializeBackendTarget):
+        (WI.contentLoaded):
+        (WI.whenTargetsAvailable):
+        Don't evaluate any InspectorFrontendAPI commands until the frontend
+        has initialized a main target and the user interface.
+
 2018-11-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: enable selection of multiple properties by default

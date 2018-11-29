@@ -1,3 +1,32 @@
+2018-11-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(?): all "Show *" develop menu items cause the page to crash
+        https://bugs.webkit.org/show_bug.cgi?id=192016
+        <rdar://problem/46284417>
+
+        Reviewed by Devin Rousso.
+
+        Previously calling the Page's inspectorController.show()
+        would create a frontend connection on the WebProcess side.
+        However now the frontend connection is handed to the WebProcess
+        once the UIProcess creates it. So queue actions that take place
+        immediately after showing the inspector until we have a frontend
+        to send the actions to.
+
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::setFrontendConnection):
+        (WebKit::WebInspector::closeFrontendConnection):
+        (WebKit::WebInspector::whenFrontendConnectionEstablished):
+        (WebKit::WebInspector::showConsole):
+        (WebKit::WebInspector::showResources):
+        (WebKit::WebInspector::showTimelines):
+        (WebKit::WebInspector::showMainResourceForFrame):
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::startElementSelection):
+        (WebKit::WebInspector::stopElementSelection):
+
 2018-11-28  Vivek Seth  <v_seth@apple.com>
 
         Consult dummy storage for HTTPS Upgrade, Apply If Appropriate

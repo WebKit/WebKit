@@ -100,6 +100,10 @@ void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdenti
 
     m_frontendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
     m_frontendConnection->open();
+
+    for (auto& callback : m_frontendConnectionActions)
+        callback();
+    m_frontendConnectionActions.clear();
 }
 
 void WebInspector::closeFrontendConnection()
@@ -112,6 +116,8 @@ void WebInspector::closeFrontendConnection()
         m_frontendConnection = nullptr;
     }
 
+    m_frontendConnectionActions.clear();
+
     m_attached = false;
     m_previousCanAttach = false;
 }
@@ -119,6 +125,16 @@ void WebInspector::closeFrontendConnection()
 void WebInspector::bringToFront()
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::BringToFront(), m_page->pageID());
+}
+
+void WebInspector::whenFrontendConnectionEstablished(Function<void()>&& callback)
+{
+    if (m_frontendConnection) {
+        callback();
+        return;
+    }
+
+    m_frontendConnectionActions.append(WTFMove(callback));
 }
 
 // Called by WebInspector messages
@@ -175,7 +191,10 @@ void WebInspector::showConsole()
         return;
 
     m_page->corePage()->inspectorController().show();
-    m_frontendConnection->send(Messages::WebInspectorUI::ShowConsole(), 0);
+
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::ShowConsole(), 0);
+    });
 }
 
 void WebInspector::showResources()
@@ -184,7 +203,10 @@ void WebInspector::showResources()
         return;
 
     m_page->corePage()->inspectorController().show();
-    m_frontendConnection->send(Messages::WebInspectorUI::ShowResources(), 0);
+
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::ShowResources(), 0);
+    });
 }
 
 void WebInspector::showTimelines()
@@ -193,7 +215,10 @@ void WebInspector::showTimelines()
         return;
 
     m_page->corePage()->inspectorController().show();
-    m_frontendConnection->send(Messages::WebInspectorUI::ShowTimelines(), 0);
+
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::ShowTimelines(), 0);
+    });
 }
 
 void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
@@ -208,7 +233,10 @@ void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
     m_page->corePage()->inspectorController().show();
 
     String inspectorFrameIdentifier = m_page->corePage()->inspectorController().pageAgent()->frameId(frame->coreFrame());
-    m_frontendConnection->send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
+
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
+    });
 }
 
 void WebInspector::startPageProfiling()
@@ -216,7 +244,9 @@ void WebInspector::startPageProfiling()
     if (!m_page->corePage())
         return;
 
-    m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
+    });
 }
 
 void WebInspector::stopPageProfiling()
@@ -224,7 +254,9 @@ void WebInspector::stopPageProfiling()
     if (!m_page->corePage())
         return;
 
-    m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
+    });
 }
 
 void WebInspector::startElementSelection()
@@ -232,7 +264,9 @@ void WebInspector::startElementSelection()
     if (!m_page->corePage())
         return;
 
-    m_frontendConnection->send(Messages::WebInspectorUI::StartElementSelection(), 0);
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::StartElementSelection(), 0);
+    });
 }
 
 void WebInspector::stopElementSelection()
@@ -240,7 +274,9 @@ void WebInspector::stopElementSelection()
     if (!m_page->corePage())
         return;
 
-    m_frontendConnection->send(Messages::WebInspectorUI::StopElementSelection(), 0);
+    whenFrontendConnectionEstablished([=] {
+        m_frontendConnection->send(Messages::WebInspectorUI::StopElementSelection(), 0);
+    });
 }
 
 void WebInspector::elementSelectionChanged(bool active)
