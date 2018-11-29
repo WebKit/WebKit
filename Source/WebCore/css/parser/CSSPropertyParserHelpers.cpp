@@ -1359,13 +1359,13 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
 {
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
-    RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
+    RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create(context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
     do {
         AtomicString urlValue = consumeUrlAsStringView(args).toAtomicString();
         if (urlValue.isNull())
             return nullptr;
 
-        RefPtr<CSSValue> image = CSSImageValue::create(completeURL(context, urlValue));
+        RefPtr<CSSValue> image = CSSImageValue::create(completeURL(context, urlValue), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
         imageSet->append(image.releaseNonNull());
 
         const CSSParserToken& token = args.consumeIncludingWhitespace();
@@ -1580,7 +1580,8 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, CSSParserContext conte
 {
     AtomicString uri = consumeUrlAsStringView(range).toAtomicString();
     if (!uri.isNull())
-        return CSSImageValue::create(completeURL(context, uri));
+        return CSSImageValue::create(completeURL(context, uri), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+
     if (range.peek().type() == FunctionToken) {
         CSSValueID id = range.peek().functionId();
         if (id == CSSValueWebkitImageSet || id == CSSValueImageSet)

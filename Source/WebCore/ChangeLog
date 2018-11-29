@@ -1,3 +1,62 @@
+2018-11-29  Youenn Fablet  <youenn@apple.com>
+
+        CSS subresource loads should not be observable from resource timing if the stylesheet is opaque
+        https://bugs.webkit.org/show_bug.cgi?id=192132
+
+        Reviewed by Ryosuke Niwa.
+
+        Introduce a new ResourceLoaderOptions to determine whether a load is made from a resource that is opaque.
+        Make use of that option to disable exposing such loads to the web page through resource timing.
+        The same option might later be used to bypass service workers.
+
+        Make use of this option for CSS subresource loads.
+        When the CSS stylesheet is opaque for the page, set this option.
+
+        Test: http/tests/security/clean-origin-exposed-resource-timing.html
+              http/tests/security/cross-origin-resource-timing.html
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::loadImage):
+        * css/CSSCursorImageValue.h:
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont):
+        * css/CSSFontFaceSrcValue.h:
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::CSSImageSetValue):
+        (WebCore::CSSImageSetValue::loadBestFitImage):
+        * css/CSSImageSetValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue):
+        (WebCore::CSSImageValue::loadImage):
+        * css/CSSImageValue.h:
+        * css/CSSStyleSheet.h:
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::setCSSStyleSheet):
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/StyleSheetContents.h:
+        * css/parser/CSSParserContext.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeCursor):
+        (WebCore::consumeFontFaceSrcURI):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        (WebCore::CSSPropertyParserHelpers::consumeImage):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForPresentationAttribute):
+        * loader/ResourceLoaderOptions.h:
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::shouldAddResourceTiming):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue const):
+
 2018-11-29  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage

@@ -38,8 +38,9 @@
 
 namespace WebCore {
 
-CSSImageSetValue::CSSImageSetValue()
+CSSImageSetValue::CSSImageSetValue(LoadedFromOpaqueSource loadedFromOpaqueSource)
     : CSSValueList(ImageSetClass, CommaSeparator)
+    , m_loadedFromOpaqueSource(loadedFromOpaqueSource)
 {
 }
 
@@ -98,7 +99,10 @@ std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResource
         // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
         // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
         ImageWithScale image = bestImageForScaleFactor();
-        CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)), options);
+
+        ResourceLoaderOptions loadOptions = options;
+        loadOptions.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
+        CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)), loadOptions);
         request.setInitiator(cachedResourceRequestInitiators().css);
         if (options.mode == FetchOptions::Mode::Cors)
             request.updateForAccessControl(*document);

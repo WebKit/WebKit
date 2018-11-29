@@ -58,7 +58,7 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
 
 Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
-    auto src = CSSFontFaceSrcValue::create(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr));
+    auto src = CSSFontFaceSrcValue::create(getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr), LoadedFromOpaqueSource::No);
     AtomicString value(attributeWithoutSynchronization(formatAttr));
     src.get().setFormat(value.isEmpty() ? "svg" : value); // Default format
     return src;

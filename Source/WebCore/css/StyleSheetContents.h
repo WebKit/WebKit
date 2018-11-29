@@ -144,6 +144,9 @@ public:
 
     void shrinkToFit();
 
+    void setAsOpaque() { m_parserContext.isContentOpaque = true; }
+    bool isContentOpaque() const { return m_parserContext.isContentOpaque; }
+
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);

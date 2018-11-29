@@ -125,6 +125,8 @@ public:
 
     void detachFromDocument() { m_ownerNode = nullptr; }
 
+    bool canAccessRules() const;
+
 private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet);
@@ -132,8 +134,6 @@ private:
 
     bool isCSSStyleSheet() const final { return true; }
     String type() const final { return "text/css"_s; }
-
-    bool canAccessRules() const;
 
     Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet;

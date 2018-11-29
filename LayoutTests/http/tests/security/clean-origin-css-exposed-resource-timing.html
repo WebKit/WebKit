@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<title>CSS subresources of a clean stylesheet should populate resource timing entries</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<link href='/security/resources/loading-subresources.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div id="mydiv" style="font: 12px 'ahem'">Test</div>
+<script>
+const waitOnLoad = new Promise((resolve) => {
+    window.onload = resolve;
+})
+
+function waitFor(delay)
+{
+    return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+document.fonts.ready.then(async () => {
+    await waitOnLoad;
+    let hasImport = false;
+    let hasImage = false;
+    let hasCursor = false;
+    let hasFont = false;
+    let counter = 0;
+    while (++counter < 20) {
+        const entries = performance.getEntries();
+        if (!hasImport)
+            hasImport = entries.some(entry => entry.name.includes('imported-loading-subresources.css'));
+        if (!hasImage)
+            hasImage = entries.some(entry => entry.name.includes('abe-allow-star.php?image'));
+        if (!hasCursor)
+            hasCursor = entries.some(entry => entry.name.includes('abe-allow-star.php?cursor'));
+        if (!hasFont)
+            hasFont = entries.some(entry => entry.name.includes('Ahem.woff'));
+        if (hasImport && hasImage && hasFont && hasCursor)
+            break;
+        await waitFor(50);
+    }
+    mydiv.innerHTML = "";
+    assert_true(hasImport, "import");
+    assert_true(hasImage, "image");
+    assert_true(hasCursor, "cursor");
+    assert_true(hasFont, "font");
+    done();
+})
+</script>
+</body>
+</html>

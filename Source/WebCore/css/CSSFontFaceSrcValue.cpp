@@ -98,6 +98,7 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document, bool isSVG, bool
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
 
     CachedResourceRequest request(ResourceRequest(document->completeURL(m_resource)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);

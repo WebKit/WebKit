@@ -2170,7 +2170,7 @@ static RefPtr<CSSValue> consumeCursor(CSSParserTokenRange& range, const CSSParse
         if (!list)
             list = CSSValueList::createCommaSeparated();
 
-        list->append(CSSCursorImageValue::create(image.releaseNonNull(), hotSpotSpecified, hotSpot));
+        list->append(CSSCursorImageValue::create(image.releaseNonNull(), hotSpotSpecified, hotSpot, context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No));
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     }
@@ -4434,8 +4434,8 @@ static RefPtr<CSSValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const 
     String url = consumeUrlAsStringView(range).toString();
     if (url.isNull())
         return nullptr;
-    
-    RefPtr<CSSFontFaceSrcValue> uriValue = CSSFontFaceSrcValue::create(context.completeURL(url));
+
+    RefPtr<CSSFontFaceSrcValue> uriValue = CSSFontFaceSrcValue::create(context.completeURL(url), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 
     if (range.peek().functionId() != CSSValueFormat)
         return uriValue;

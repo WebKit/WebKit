@@ -122,6 +122,11 @@ enum class PreflightPolicy : uint8_t {
     Prevent
 };
 
+enum class LoadedFromOpaqueSource : uint8_t {
+    Yes,
+    No
+};
+
 struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions() { }
 
@@ -167,6 +172,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     ApplicationCacheMode applicationCacheMode { ApplicationCacheMode::Use };
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
     PreflightPolicy preflightPolicy { PreflightPolicy::Consider };
+    LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
 };
 
 } // namespace WebCore

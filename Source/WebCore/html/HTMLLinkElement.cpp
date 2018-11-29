@@ -402,6 +402,9 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
     m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);
     m_sheet->setMediaQueries(MediaQuerySet::create(m_media, context));
     m_sheet->setTitle(title());
+
+    if (!m_sheet->canAccessRules())
+        m_sheet->contents().setAsOpaque();
 }
 
 void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
@@ -443,6 +446,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     auto styleSheet = StyleSheetContents::create(href, parserContext);
     initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, MediaQueryParserContext(document()));
 
+    // FIXME: Set the visibility option based on m_sheet being clean or not.
+    // Best approach might be to set it on the style sheet content itself or its context parser otherwise.
     styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, &document().securityOrigin());
 
     m_loading = false;

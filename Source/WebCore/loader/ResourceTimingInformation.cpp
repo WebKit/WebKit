@@ -52,6 +52,9 @@ bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource
     if (resource.wasCanceled())
         return false;
 
+    if (resource.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes)
+        return false;
+
     return true;
 }
 

@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<title>CSS subresources of an opaque stylesheet should not populate resource timing entries</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<link href='http://localhost:8080/security/resources/loading-subresources.css' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div id="mydiv" style="font: 12px 'ahem'">Test</div>
+<script>
+const waitOnLoad = new Promise((resolve) => {
+    window.onload = resolve;
+})
+document.fonts.ready.then(async () => {
+    await waitOnLoad;
+    performance.getEntries().map(obj => {
+        assert_false(obj.name.includes('imported-loading-subresources.css'), "import");
+        assert_false(obj.name.includes('Ahem.woff'), "font");
+        assert_false(obj.name.includes('abe-allow-star.php?image'), "image");
+        assert_false(obj.name.includes('abe-allow-star.php?cursor'), "cursor");
+    });
+    mydiv.innerHTML = "";
+    done();
+})
+</script>
+</body>
+</html>

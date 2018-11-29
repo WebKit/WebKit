@@ -75,6 +75,8 @@ public:
         auto& encodingForURLParsing = encoding.encodingForFormSubmissionOrURLParsing();
         return URL(baseURL, url, encodingForURLParsing == UTF8Encoding() ? nullptr : &encodingForURLParsing);
     }
+
+    bool isContentOpaque { false };
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
