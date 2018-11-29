@@ -122,6 +122,11 @@ protected:
         static WidthAndMargin floatingNonReplacedWidthAndMargin(LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
     };
 
+    class Quirks {
+    public:
+        static LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const LayoutState&, const Box&);
+    };
+
 private:
     void computeOutOfFlowVerticalGeometry(const Box&) const;
     void computeOutOfFlowHorizontalGeometry(const Box&) const;

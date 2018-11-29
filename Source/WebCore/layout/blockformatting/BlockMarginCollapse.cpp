@@ -36,23 +36,6 @@
 namespace WebCore {
 namespace Layout {
 
-static bool isQuirkContainer(const Box& layoutBox)
-{
-    return layoutBox.isBodyBox() || layoutBox.isDocumentBox() || layoutBox.isTableCell();
-}
-
-static bool hasMarginTopQuirkValue(const Box& layoutBox)
-{
-    return layoutBox.style().hasMarginBeforeQuirk();
-}
-
-static bool shouldIgnoreMarginTopInQuirkContext(const LayoutState& layoutState, const Box& layoutBox)
-{
-    if (!layoutBox.parent())
-        return false;
-    return layoutState.inQuirksMode() && isQuirkContainer(*layoutBox.parent()) && hasMarginTopQuirkValue(layoutBox);
-}
-
 static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidateMarginValue)
 {
     if (!candidateMarginValue)
@@ -99,7 +82,7 @@ static bool isMarginBottomCollapsedWithSibling(const Box& layoutBox)
     return layoutBox.style().bottom().isAuto();
 }
 
-static bool isMarginTopCollapsedWithParent(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParent(const LayoutState& layoutState, const Box& layoutBox)
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -132,7 +115,7 @@ static bool isMarginTopCollapsedWithParent(const LayoutState& layoutState, const
     if (parentDisplayBox.paddingTop().value_or(0))
         return false;
 
-    if (shouldIgnoreMarginTopInQuirkContext(layoutState, layoutBox))
+    if (BlockFormattingContext::Quirks::shouldIgnoreMarginTop(layoutState, layoutBox))
         return false;
 
     return true;
@@ -232,7 +215,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginTop(const Lay
         return 0;
 
     // FIXME: Find out the logic behind this.
-    if (shouldIgnoreMarginTopInQuirkContext(layoutState, layoutBox))
+    if (BlockFormattingContext::Quirks::shouldIgnoreMarginTop(layoutState, layoutBox))
         return 0;
 
     if (!isMarginTopCollapsedWithSibling(layoutBox)) {

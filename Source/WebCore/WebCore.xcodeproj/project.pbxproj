@@ -9185,6 +9185,8 @@
 		6F7CA3C5208C2956002F29AB /* LayoutFormattingState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutFormattingState.cpp; sourceTree = "<group>"; };
 		6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineFormattingContext.h; sourceTree = "<group>"; };
 		6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContext.cpp; sourceTree = "<group>"; };
+		6F8F460121B03BB40041AC3A /* FormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextQuirks.cpp; sourceTree = "<group>"; };
+		6F8F460321B03BC60041AC3A /* BlockFormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockFormattingContextQuirks.cpp; sourceTree = "<group>"; };
 		6F995A091A7070E600A735F4 /* WebGLQuery.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLQuery.idl; sourceTree = "<group>"; };
 		6F995A0A1A7070E600A735F4 /* WebGLSampler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLSampler.idl; sourceTree = "<group>"; };
 		6F995A0B1A7070E600A735F4 /* WebGLSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLSync.idl; sourceTree = "<group>"; };
@@ -16165,6 +16167,7 @@
 				115CFA69208AF7D0001E6991 /* FormattingContext.cpp */,
 				115CFA68208AF7D0001E6991 /* FormattingContext.h */,
 				6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */,
+				6F8F460121B03BB40041AC3A /* FormattingContextQuirks.cpp */,
 				115CFA75208AFE30001E6991 /* FormattingState.cpp */,
 				115CFA74208AFE30001E6991 /* FormattingState.h */,
 				115F7805209CBCBD00739C13 /* Invalidation.h */,
@@ -16209,6 +16212,7 @@
 				115CFA6D208AFAB6001E6991 /* BlockFormattingContext.cpp */,
 				115CFA6C208AFAB6001E6991 /* BlockFormattingContext.h */,
 				6F0830DF20B46951008A945B /* BlockFormattingContextGeometry.cpp */,
+				6F8F460321B03BC60041AC3A /* BlockFormattingContextQuirks.cpp */,
 				115CFA79208B8D9D001E6991 /* BlockFormattingState.cpp */,
 				115CFA78208B8D9D001E6991 /* BlockFormattingState.h */,
 				1123AFDA209ABB2000736ACC /* BlockInvalidation.cpp */,

@@ -28,6 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "InlineItem.h"
+#include "InlineRunProvider.h"
 
 namespace WebCore {
 namespace Layout {

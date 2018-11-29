@@ -100,12 +100,22 @@ private:
 
             static LayoutUnit collapsedMarginTopFromFirstChild(const LayoutState&, const Box&);
             static LayoutUnit nonCollapsedMarginTop(const LayoutState&, const Box&);
+
+            static bool isMarginTopCollapsedWithParent(const LayoutState&, const Box&);
         };
 
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inFlowNonReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
         static WidthAndMargin inFlowReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { });
         static Point staticPositionForOutOfFlowPositioned(const LayoutState&, const Box&);
+    };
+
+    class Quirks {
+    public:
+        static bool isStretchedToInitialContainingBlock(const LayoutState&, const Box&);
+        static HeightAndMargin stretchedHeight(const LayoutState&, const Box&, HeightAndMargin);
+        static WidthAndMargin stretchedWidth(const LayoutState&, const Box&, WidthAndMargin);
+        static bool shouldIgnoreMarginTop(const LayoutState&, const Box&);
     };
 };
 
