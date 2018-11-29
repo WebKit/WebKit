@@ -26,7 +26,7 @@
 #import "config.h"
 #import "DictionaryLookup.h"
 
-#if PLATFORM(MAC) && ENABLE(REVEAL)
+#if PLATFORM(COCOA)
 
 #import "Document.h"
 #import "Editing.h"
@@ -35,6 +35,7 @@
 #import "FrameSelection.h"
 #import "HTMLConverter.h"
 #import "HitTestResult.h"
+#import "NotImplemented.h"
 #import "Page.h"
 #import "Range.h"
 #import "RenderObject.h"
@@ -43,11 +44,14 @@
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
 #import <PDFKit/PDFKit.h>
+#import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
-#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
-#import <pal/spi/mac/RevealSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
+
+#if ENABLE(REVEAL)
+
+#if PLATFORM(MAC)
 
 @interface WebRevealHighlight <RVPresenterHighlightDelegate> : NSObject {
 @private
@@ -132,7 +136,13 @@
 
 @end
 
+#endif // PLATFORM(MAC)
+
+#endif // ENABLE(REVEAL)
+
 namespace WebCore {
+
+#if ENABLE(REVEAL)
 
 std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
@@ -302,11 +312,13 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     return { @"", nil };
 }
 
-static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+static WKRevealController showPopupOrCreateAnimationController(bool createAnimationController, const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    if (!getRVItemClass())
+#if PLATFORM(MAC)
+    
+    if (!getRVItemClass() || !getRVPresenterClass())
         return nil;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
@@ -357,9 +369,21 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
         return [presenter animationControllerForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     [presenter revealItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
     return nil;
-
-    END_BLOCK_OBJC_EXCEPTIONS;
+    
+#else // PLATFORM(MAC)
+    
+    UNUSED_PARAM(createAnimationController);
+    UNUSED_PARAM(dictionaryPopupInfo);
+    UNUSED_PARAM(view);
+    UNUSED_PARAM(textIndicatorInstallationCallback);
+    UNUSED_PARAM(rootViewToViewConversionCallback);
+    UNUSED_PARAM(clearTextIndicator);
+    
     return nil;
+#endif // PLATFORM(MAC)
+    
+    END_BLOCK_OBJC_EXCEPTIONS;
+    
 }
 
 void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
@@ -369,20 +393,32 @@ void DictionaryLookup::showPopup(const DictionaryPopupInfo& dictionaryPopupInfo,
 
 void DictionaryLookup::hidePopup()
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    if (!getLULookupDefinitionModuleClass())
-        return;
-    [getLULookupDefinitionModuleClass() hideDefinition];
-
-    END_BLOCK_OBJC_EXCEPTIONS;
+    notImplemented();
 }
 
-id <NSImmediateActionAnimationController> DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
+#if PLATFORM(MAC)
+
+WKRevealController DictionaryLookup::animationControllerForPopup(const DictionaryPopupInfo& dictionaryPopupInfo, NSView *view, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback, WTF::Function<void()>&& clearTextIndicator)
 {
     return showPopupOrCreateAnimationController(true, dictionaryPopupInfo, view, textIndicatorInstallationCallback, rootViewToViewConversionCallback, WTFMove(clearTextIndicator));
 }
 
+#endif // PLATFORM(MAC)
+
+#elif PLATFORM(IOS_FAMILY) // ENABLE(REVEAL)
+
+std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeForSelection(const VisibleSelection&)
+{
+    return { nullptr, nil };
+}
+
+std::tuple<RefPtr<Range>, NSDictionary *> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
+{
+    return { nullptr, nil };
+}
+
+#endif // ENABLE(REVEAL)
+
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)

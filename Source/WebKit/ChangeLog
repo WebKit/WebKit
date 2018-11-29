@@ -1,3 +1,51 @@
+2018-11-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Move Lookup Code for better cross platform usage
+        https://bugs.webkit.org/show_bug.cgi?id=191732
+
+        Reviewed by Alex Christensen.
+
+        Lookup is being replaced by Reveal. This framework should work on all platforms.
+        The patch moves the code that we expect will be needed for all platforms to the more
+        general cocoa area. This patch changes no funcationality, and should not change
+        anything currently. This work will be build on later when Reveal is ready to support
+        multiple platforms.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation):
+        (WebKit::WebPageProxy::performDictionaryLookupOfCurrentSelection):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _removeDefaultGestureRecognizers]):
+        (-[WKContentView _addDefaultGestureRecognizers]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView _lookupGestureRecognized:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::performDictionaryLookupAtLocation): Deleted.
+        (WebKit::WebPageProxy::performDictionaryLookupOfCurrentSelection): Deleted.
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        (WebKit::WebPage::performDictionaryLookupOfCurrentSelection):
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        (WebKit::WebPage::dictionaryPopupInfoForRange):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Deleted.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Deleted.
+        (WebKit::WebPage::performDictionaryLookupForRange): Deleted.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Deleted.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Deleted.
+        (WebKit::WebPage::performDictionaryLookupOfCurrentSelection): Deleted.
+        (WebKit::WebPage::dictionaryPopupInfoForRange): Deleted.
+        (WebKit::WebPage::performDictionaryLookupForRange): Deleted.
+
 2018-11-29  Conrad Shultz  <conrad_shultz@apple.com>
 
         Factor out configuration of the file upload image picker

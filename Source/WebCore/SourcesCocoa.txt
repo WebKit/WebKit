@@ -77,6 +77,7 @@ editing/SelectionRectGatherer.cpp
 editing/SmartReplaceCF.cpp
 
 editing/cocoa/DataDetection.mm
+editing/cocoa/DictionaryLookup.mm
 editing/cocoa/EditorCocoa.mm
 editing/cocoa/FontAttributeChangesCocoa.mm
 editing/cocoa/FontAttributesCocoa.mm
@@ -90,7 +91,6 @@ editing/ios/DictationCommandIOS.cpp
 editing/ios/EditorIOS.mm
 
 editing/mac/AlternativeTextUIController.mm
-editing/mac/DictionaryLookup.mm
 editing/mac/DictionaryLookupLegacy.mm
 editing/mac/EditorMac.mm
 editing/mac/FrameSelectionMac.mm
