@@ -38,6 +38,7 @@ OBJC_PROTOCOL(MTLRenderCommandEncoder);
 namespace WebCore {
 
 class GPUCommandBuffer;
+class GPURenderPipeline;
 
 struct GPURenderPassDescriptor;
 
@@ -48,13 +49,18 @@ class GPURenderPassEncoder : public GPUProgrammablePassEncoder {
 public:
     static RefPtr<GPURenderPassEncoder> create(const GPUCommandBuffer&, GPURenderPassDescriptor&&);
 
+    void setPipeline(Ref<GPURenderPipeline>&&) final;
+
+    void draw(unsigned long, unsigned long, unsigned long, unsigned long);
+
 private:
     GPURenderPassEncoder(PlatformRenderPassEncoderSmartPtr&&);
-    ~GPURenderPassEncoder();
+    ~GPURenderPassEncoder() { endPass(); } // Ensure that encoding has ended before release.
 
-    PlatformProgrammablePassEncoder *platformPassEncoder() const final;
+    PlatformProgrammablePassEncoder* platformPassEncoder() const final;
 
     PlatformRenderPassEncoderSmartPtr m_platformRenderPassEncoder;
+    RefPtr<GPURenderPipeline> m_pipeline;
 };
 
 } // namespace WebCore

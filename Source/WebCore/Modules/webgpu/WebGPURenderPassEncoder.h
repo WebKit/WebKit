@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPURenderPassEncoder.h"
 #include "WebGPUProgrammablePassEncoder.h"
 
 #include <wtf/RefPtr.h>
@@ -35,13 +34,16 @@
 namespace WebCore {
 
 class GPUProgrammablePassEncoder;
+class GPURenderPassEncoder;
 
 class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
 public:
-    static Ref<WebGPURenderPassEncoder> create(Ref<GPURenderPassEncoder>&&);
+    static Ref<WebGPURenderPassEncoder> create(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
+
+    void draw(unsigned long, unsigned long, unsigned long, unsigned long);
 
 private:
-    WebGPURenderPassEncoder(Ref<GPURenderPassEncoder>&&);
+    WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
 
     GPUProgrammablePassEncoder& passEncoder() const final;
 

@@ -32,13 +32,23 @@
 namespace WebCore {
 
 class GPUProgrammablePassEncoder;
+class WebGPUCommandBuffer;
+class WebGPURenderPipeline;
 
 class WebGPUProgrammablePassEncoder : public RefCounted<WebGPUProgrammablePassEncoder> {
 public:
     virtual ~WebGPUProgrammablePassEncoder() = default;
 
+    Ref<WebGPUCommandBuffer> endPass();
+    void setPipeline(Ref<WebGPURenderPipeline>&&);
+
 protected:
+    WebGPUProgrammablePassEncoder(Ref<WebGPUCommandBuffer>&&);
+
     virtual GPUProgrammablePassEncoder& passEncoder() const = 0;
+
+private:
+    Ref<WebGPUCommandBuffer> m_commandBuffer;
 };
 
 } // namespace WebCore

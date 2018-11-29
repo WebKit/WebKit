@@ -1,3 +1,54 @@
+2018-11-29  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPURenderPassEncoder::setPipeline, draw, and endPass prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=192134
+
+        Reviewed by Dean Jackson.
+
+        Wrap up prototype features for WebGPURenderPassEncoder. 
+
+        Test: webgpu/render-command-encoding.html
+
+        * Modules/webgpu/WebGPUCommandBuffer.cpp: 
+        (WebCore::WebGPUCommandBuffer::beginRenderPass):
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder):
+        (WebCore::WebGPUProgrammablePassEncoder::endPass): Returns a reference to the WebGPUCommandBuffer that created this encoder.
+        (WebCore::WebGPUProgrammablePassEncoder::setPipeline):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h: Updated to support endPass and setPipeline.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::create): Must be provided with the WebGPUCommandBuffer.
+        (WebCore::WebGPURenderPassEncoder::WebGPURenderPassEncoder):
+        (WebCore::WebGPURenderPassEncoder::draw):
+        * Modules/webgpu/WebGPURenderPassEncoder.h: Updated to cache a reference to the WebGPUCommandBuffer, and for draw.
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::create):
+        (WebCore::WebGPURenderPipeline::WebGPURenderPipeline):
+        * Modules/webgpu/WebGPURenderPipeline.h:
+        (WebCore::WebGPURenderPipeline::renderPipeline):
+        * Modules/webgpu/WebGPUTexture.cpp:
+        * Modules/webgpu/WebGPUTexture.h: Replaced include with forward declaration.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h: Updated to support new WebGPU_PassEncoder functionality.
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        (WebCore::GPURenderPassEncoder::~GPURenderPassEncoder): Now ends encoding on the MTLCommandEncoder, if not already ended, before freeing it.
+        * platform/graphics/gpu/GPURenderPipeline.h: Now remembers the GPUPrimitiveTopology that it was created with.
+        (WebCore::GPURenderPipeline::primitiveTopology const): 
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::endPass): Calls endEncoding on the backing MTLCommandEncoder, if not already ended.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::platformPassEncoder const):
+        (WebCore::GPURenderPassEncoder::setPipeline): Added.
+        (WebCore::primitiveTypeForGPUPrimitiveTopology): Added. Helper function to convert GPUPrimitiveTopology to MTLPrimitiveType.
+        (WebCore::GPURenderPassEncoder::draw): Added. Draws using primitive topology specified during pipeline creation. 
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setFunctionsForPipelineDescriptor):
+        (WebCore::GPURenderPipeline::create):
+        (WebCore::GPURenderPipeline::GPURenderPipeline): Now must store the GPURenderPipelineDescriptor for later reference. 
+
 2018-11-29  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should pass 'this' correctly to paint callback, and repaint when properties change.

@@ -28,7 +28,18 @@
 
 #if ENABLE(WEBGPU)
 
+#import <Metal/Metal.h>
+
 namespace WebCore {
+
+void GPUProgrammablePassEncoder::endPass()
+{
+    if (!m_isEncoding)
+        return;
+
+    [platformPassEncoder() endEncoding];
+    m_isEncoding = false;
+}
 
 } // namespace WebCore
 

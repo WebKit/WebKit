@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPipelineDescriptor.h"
+
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -37,10 +39,9 @@ namespace WebCore {
 
 class GPUDevice;
 
-struct GPURenderPipelineDescriptor;
-
 using PlatformRenderPipeline = MTLRenderPipelineState;
 using PlatformRenderPipelineSmartPtr = RetainPtr<MTLRenderPipelineState>;
+using PrimitiveTopology = GPURenderPipelineDescriptor::PrimitiveTopology;
 
 class GPURenderPipeline : public RefCounted<GPURenderPipeline> {
 public:
@@ -48,10 +49,13 @@ public:
 
     PlatformRenderPipeline* platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
 
+    PrimitiveTopology primitiveTopology() const { return m_descriptor.primitiveTopology; }
+
 private:
-    GPURenderPipeline(PlatformRenderPipelineSmartPtr&&);
+    GPURenderPipeline(PlatformRenderPipelineSmartPtr&&, GPURenderPipelineDescriptor&&);
 
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
+    GPURenderPipelineDescriptor m_descriptor;
 };
 
 } // namespace WebCore

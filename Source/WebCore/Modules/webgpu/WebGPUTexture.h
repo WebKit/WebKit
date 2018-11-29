@@ -27,13 +27,12 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class GPUTexture;
 class WebGPUTextureView;
 
 class WebGPUTexture : public RefCounted<WebGPUTexture> {

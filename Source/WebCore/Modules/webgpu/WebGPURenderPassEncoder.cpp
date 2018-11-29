@@ -29,17 +29,25 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUProgrammablePassEncoder.h"
+#include "GPURenderPassEncoder.h"
 
 namespace WebCore {
 
-Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<GPURenderPassEncoder>&& encoder)
+Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<WebGPUCommandBuffer>&& creator, Ref<GPURenderPassEncoder>&& encoder)
 {
-    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(encoder)));
+    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(creator), WTFMove(encoder)));
 }
 
-WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<GPURenderPassEncoder>&& encoder)
-    : m_passEncoder(WTFMove(encoder))
+WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&& creator, Ref<GPURenderPassEncoder>&& encoder)
+    : WebGPUProgrammablePassEncoder(WTFMove(creator))
+    , m_passEncoder(WTFMove(encoder))
 {
+}
+
+void WebGPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance)
+{
+    // FIXME: What kind of validation do we need to handle here?
+    m_passEncoder->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 GPUProgrammablePassEncoder& WebGPURenderPassEncoder::passEncoder() const

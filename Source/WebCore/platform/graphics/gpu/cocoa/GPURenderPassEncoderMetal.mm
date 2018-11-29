@@ -30,6 +30,7 @@
 
 #import "GPUCommandBuffer.h"
 #import "GPURenderPassDescriptor.h"
+#import "GPURenderPipeline.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
@@ -68,16 +69,41 @@ GPURenderPassEncoder::GPURenderPassEncoder(PlatformRenderPassEncoderSmartPtr&& e
 {
 }
 
-GPURenderPassEncoder::~GPURenderPassEncoder()
-{
-    // The MTLCommandEncoder must have finished encoding before it can be released.
-    // FIXME: Only call this if we have not already ended encoding.
-    [m_platformRenderPassEncoder endEncoding];
-}
-
 PlatformProgrammablePassEncoder *GPURenderPassEncoder::platformPassEncoder() const
 {
     return m_platformRenderPassEncoder.get();
+}
+
+void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
+{
+    [m_platformRenderPassEncoder setRenderPipelineState:pipeline->platformRenderPipeline()];
+    m_pipeline = WTFMove(pipeline);
+}
+
+static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(PrimitiveTopology type)
+{
+    switch (type) {
+    case PrimitiveTopology::PointList:
+        return MTLPrimitiveTypePoint;
+    case PrimitiveTopology::LineList:
+        return MTLPrimitiveTypeLine;
+    case PrimitiveTopology::LineStrip:
+        return MTLPrimitiveTypeLineStrip;
+    case PrimitiveTopology::TriangleList:
+        return MTLPrimitiveTypeTriangle;
+    case PrimitiveTopology::TriangleStrip:
+        return MTLPrimitiveTypeTriangleStrip;
+    }
+}
+
+void GPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance)
+{
+    [m_platformRenderPassEncoder 
+        drawPrimitives:primitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
+        vertexStart:firstVertex
+        vertexCount:vertexCount
+        instanceCount:instanceCount
+        baseInstance:firstInstance];
 }
 
 } // namespace WebCore

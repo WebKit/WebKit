@@ -29,11 +29,13 @@
     EnabledAtRuntime=WebGPU,
     SkipVTableValidation
 ] interface WebGPUProgrammablePassEncoder {
-/* Not Yet Implemented
     WebGPUCommandBuffer endPass();
+
+    // FIXME: Only support render pipelines for prototype.
+    void setPipeline(WebGPURenderPipeline pipeline);
+/* Not Yet Implemented
     // Allowed in both compute and render passes
     // TODO: setPushConstants() ?
     void setBindGroup(u32 index, WebGPUBindGroup bindGroup);
-    void setPipeline((WebGPUComputePipeline or WebGPURenderPipeline) pipeline);
 */
 };

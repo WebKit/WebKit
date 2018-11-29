@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
+<meta charset=utf-8>
+<title>Get the WebGPUDevice and ask for the WebGPUQueue</title>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/js-test-pre.js"></script>
+<script src="js/basic-webgpu-functions.js"></script>
+<script>
+'use strict';
+
+let commandBuffer, renderPassEncoder;
+
+function beginPass() {
+    // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
+    // Default a loadOp, storeOp, and clearColor in the implementation for now.
+    const renderPassDescriptor = {
+        attachment : context.getNextTexture().createDefaultTextureView()
+    }
+
+    renderPassEncoder = commandBuffer.beginRenderPass(renderPassDescriptor);
+    assert_true(renderPassEncoder instanceof WebGPURenderPassEncoder, "beginRenderPass returned a WebGPURenderPassEncoder");
+}
+
+function setUpCommandBuffer() {
+    commandBuffer = defaultDevice.createCommandBuffer();
+    assert_true(commandBuffer instanceof WebGPUCommandBuffer, "createCommandBuffer returned a WebGPUCommandBuffer");
+}
+
+function endRenderPass() {
+    renderPassEncoder.setPipeline(renderPipeline);
+
+    const commandBufferEnd = renderPassEncoder.endPass();
+    assert_true(commandBufferEnd instanceof WebGPUCommandBuffer, "endPass() returned a WebGPUCommandBuffer");
+
+    // FIXME: Should commandBufferEnd === commandBuffer?
+}
+
+promise_test(async () => {
+    const canvas = document.createElement("canvas");
+    await setUpContexts(canvas);
+    setUpPipeline();
+    setUpCommandBuffer();
+    beginPass();
+    endRenderPass();
+}, "WebGPURenderPassEncoder created and successfully ended");
+
+</script>
+</body>

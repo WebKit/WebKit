@@ -63,7 +63,7 @@ RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURende
     if (!encoder)
         return nullptr;
 
-    return WebGPURenderPassEncoder::create(encoder.releaseNonNull());
+    return WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull());
 }
 
 } // namespace WebCore

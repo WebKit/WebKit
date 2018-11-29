@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#import "GPURenderPipelineDescriptor.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
@@ -36,7 +35,7 @@
 
 namespace WebCore {
 
-static bool setFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, GPURenderPipelineDescriptor&& descriptor)
+static bool setFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
@@ -105,7 +104,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    if (!setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), WTFMove(descriptor)))
+    if (!setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor))
         return nullptr;
 
     // FIXME: Get the pixelFormat as configured for the context/CAMetalLayer.
@@ -124,11 +123,12 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    return adoptRef(new GPURenderPipeline(WTFMove(pipeline)));
+    return adoptRef(new GPURenderPipeline(WTFMove(pipeline), WTFMove(descriptor)));
 }
 
-GPURenderPipeline::GPURenderPipeline(PlatformRenderPipelineSmartPtr&& pipeline)
+GPURenderPipeline::GPURenderPipeline(PlatformRenderPipelineSmartPtr&& pipeline, GPURenderPipelineDescriptor&& descriptor)
     : m_platformRenderPipeline(WTFMove(pipeline))
+    , m_descriptor(WTFMove(descriptor))
 {
 }
 

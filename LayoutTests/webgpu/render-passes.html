@@ -6,16 +6,16 @@
 if (window.testRunner)
     window.testRunner.dumpAsText();
 
-let commandBuffer, texture, textureView, renderPassDescriptor, renderPassEncoder;
+let commandBuffer, renderPassEncoder;
 
 function setUpBasicRenderPassEncoder() {
     commandBuffer = defaultDevice.createCommandBuffer();
-    texture = context.getNextTexture();
-    textureView = texture.createDefaultTextureView();
+    const texture = context.getNextTexture();
+    const textureView = texture.createDefaultTextureView();
 
     // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
     // Default a loadOp, storeOp, and clearColor in the implementation for now.
-    renderPassDescriptor = {
+    const renderPassDescriptor = {
         attachment : textureView
     }
 

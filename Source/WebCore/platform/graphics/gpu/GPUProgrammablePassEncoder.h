@@ -33,14 +33,23 @@ OBJC_PROTOCOL(MTLCommandEncoder);
 
 namespace WebCore {
 
+class GPURenderPipeline;
+
 using PlatformProgrammablePassEncoder = MTLCommandEncoder;
 
 class GPUProgrammablePassEncoder : public RefCounted<GPUProgrammablePassEncoder> {
 public:
     virtual ~GPUProgrammablePassEncoder() = default;
 
+    void endPass();
+
+    virtual void setPipeline(Ref<GPURenderPipeline>&&) = 0;
+
 protected:
     virtual PlatformProgrammablePassEncoder* platformPassEncoder() const = 0;
+
+private:
+    bool m_isEncoding { true };
 };
 
 } // namespace WebCore

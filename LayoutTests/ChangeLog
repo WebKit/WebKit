@@ -1,3 +1,19 @@
+2018-11-29  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPURenderPassEncoder::setPipeline, draw, and endPass prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=192134
+
+        Reviewed by Dean Jackson.
+
+        Updating the basic rendering test with more commands, and a prototype WPT-based test for WebGPURenderCommandEncoder's
+        new functionality.
+
+        * webgpu/js/basic-webgpu-functions.js:
+        (render):
+        * webgpu/render-command-encoding-expected.txt: Added.
+        * webgpu/render-command-encoding.html: Added.
+        * webgpu/render-passes.html:
+
 2018-11-29  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should pass 'this' correctly to paint callback, and repaint when properties change.

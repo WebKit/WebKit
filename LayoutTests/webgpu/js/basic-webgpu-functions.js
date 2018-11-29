@@ -149,5 +149,15 @@ function render() {
         return;
     }
 
+    renderPassEncoder.setPipeline(renderPipeline);
+
+    // Note that we didn't attach any buffers - the shader is generating the vertices for us.
+    renderPassEncoder.draw(3, 1, 0, 0);
+    let commandBufferEnd = renderPassEncoder.endPass();
+    if (!commandBufferEnd) {
+        testFailed("Unable to create WebGPUCommandBuffer from WeGPURenderPassEncoder::endPass!");
+        return;
+    }
+
     // FIXME: Rest of rendering commands to follow.
 }

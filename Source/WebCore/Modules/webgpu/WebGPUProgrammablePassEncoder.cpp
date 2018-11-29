@@ -28,7 +28,27 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUProgrammablePassEncoder.h"
+#include "WebGPUCommandBuffer.h"
+#include "WebGPURenderPipeline.h"
+
 namespace WebCore {
+
+WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder(Ref<WebGPUCommandBuffer>&& creator)
+    : m_commandBuffer(WTFMove(creator))
+{
+}
+
+Ref<WebGPUCommandBuffer> WebGPUProgrammablePassEncoder::endPass()
+{
+    passEncoder().endPass();
+    return m_commandBuffer.copyRef();
+}
+
+void WebGPUProgrammablePassEncoder::setPipeline(Ref<WebGPURenderPipeline>&& pipeline)
+{
+    passEncoder().setPipeline(pipeline->renderPipeline());
+}
 
 } // namespace WebCore
 
