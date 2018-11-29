@@ -1,3 +1,50 @@
+2018-11-29  Tomas Popela  <tpopela@redhat.com>
+
+        [WebDriver] Fix clang warnings in Session.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=192077
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Session.cpp:
+        (WebDriver::Session::dismissAndNotifyAlert):
+        (WebDriver::Session::acceptAndNotifyAlert):
+        (WebDriver::Session::reportUnexpectedAlertOpen):
+        (WebDriver::Session::getCurrentURL):
+        (WebDriver::Session::getTitle):
+        (WebDriver::Session::getWindowHandle):
+        (WebDriver::Session::getWindowHandles):
+        (WebDriver::Session::getToplevelBrowsingContextRect):
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::getElementRect):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::getElementProperty):
+        (WebDriver::Session::getElementCSSValue):
+        (WebDriver::Session::selectOptionElement):
+        (WebDriver::Session::elementClick):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::handleScriptResult):
+        (WebDriver::Session::performMouseInteraction):
+        (WebDriver::Session::performKeyboardInteractions):
+        (WebDriver::Session::getAllCookies):
+        (WebDriver::Session::getNamedCookie):
+        (WebDriver::Session::addCookie):
+        (WebDriver::Session::deleteCookie):
+        (WebDriver::Session::deleteAllCookies):
+        (WebDriver::Session::performActions):
+        (WebDriver::Session::releaseActions):
+        (WebDriver::Session::dismissAlert):
+        (WebDriver::Session::acceptAlert):
+        (WebDriver::Session::getAlertText):
+        (WebDriver::Session::sendAlertText):
+        (WebDriver::Session::takeScreenshot):
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::deleteSession):
+
 2018-11-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] WebDriver: support validating and parsing the 'certificates' capability
