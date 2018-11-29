@@ -1,3 +1,14 @@
+2018-11-29  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK][WPE] Fix BubblewrapLauncher clang warnings
+        https://bugs.webkit.org/show_bug.cgi?id=192086
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bindPathVar): Initialize the i variable to 0.
+        (WebKit::setupSeccomp): Initialize the optional datum_b member.
+
 2018-11-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION(?): all "Show *" develop menu items cause the page to crash
