@@ -1,7 +1,4 @@
-if (this.document === undefined) {
-  importScripts("/resources/testharness.js");
-  importScripts("../resources/utils.js");
-}
+// META: script=../resources/utils.js
 
 const url = "http://{{host}}:{{ports[http][1]}}" + dirname(location.pathname) + RESOURCES_DIR + "top.txt",
       sharedHeaders = "?pipe=header(Access-Control-Expose-Headers,*)|header(Test,X)|header(Set-Cookie,X)|header(*,whoa)|"

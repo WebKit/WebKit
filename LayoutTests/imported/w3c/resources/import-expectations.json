@@ -149,6 +149,7 @@
     "web-platform-tests/feature-policy/resources/": "import", 
     "web-platform-tests/fetch": "import", 
     "web-platform-tests/fetch/api": "import", 
+    "web-platform-tests/fetch/api/cors": "import", 
     "web-platform-tests/fetch/range": "import", 
     "web-platform-tests/fullscreen": "skip", 
     "web-platform-tests/gamepad": "skip", 

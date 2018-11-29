@@ -1,7 +1,4 @@
-if (this.document === undefined) {
-  importScripts("/resources/testharness.js");
-  importScripts("../resources/utils.js");
-}
+// META: script=../resources/utils.js
 
 function corsFilter(corsUrl, headerName, headerValue, isFiltered) {
   var url = corsUrl + "?pipe=header(" + headerName + "," + encodeURIComponent(headerValue) +")|header(Access-Control-Allow-Origin,*)";
