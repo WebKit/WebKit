@@ -1,3 +1,12 @@
+2018-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence
+        https://bugs.webkit.org/show_bug.cgi?id=192041
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h:
+
 2018-11-28  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_SEPARATED_WX_HEAP needs to be defined in Platform.h.

@@ -1,3 +1,16 @@
+2018-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence
+        https://bugs.webkit.org/show_bug.cgi?id=192041
+
+        Reviewed by Tim Horton.
+
+        * loader/ResourceLoaderOptions.h: Added a FIXME for poor naming of loader options.
+        There is a lot of code that needs to be cleaned up here.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::applySniffingPoliciesIfNeeded):
+
 2018-11-29  Youenn Fablet  <youenn@apple.com>
 
         Updating a service worker during a navigation load sometimes makes the load fail

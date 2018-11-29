@@ -46,6 +46,8 @@ enum class SendCallbackPolicy : uint8_t {
     DoNotSendCallbacks
 };
 
+// FIXME: These options are named poorly. We only implement force disabling content sniffing, not enabling it,
+// and even that only on some platforms.
 enum class ContentSniffingPolicy : uint8_t {
     SniffContent,
     DoNotSniffContent
@@ -107,6 +109,8 @@ enum class ApplicationCacheMode : uint8_t {
     Bypass
 };
 
+// FIXME: These options are named poorly. We only implement force disabling content encoding sniffing, not enabling it,
+// and even that only on some platforms.
 enum class ContentEncodingSniffingPolicy : uint8_t {
     Sniff,
     DoNotSniff,
