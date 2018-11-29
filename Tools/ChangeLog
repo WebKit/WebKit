@@ -1,5 +1,16 @@
 2018-11-29  Jonathan Bedard  <jbedard@apple.com>
 
+        EWS iOS-sim bots sometimes fails to shutdown simulator
+        https://bugs.webkit.org/show_bug.cgi?id=191864
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice._shut_down): Increase time to wait for simulated device to
+        shut down, ignore exit code indicating a device is already shut down.
+
+2018-11-29  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Unify ios_version/watchos_version code
         https://bugs.webkit.org/show_bug.cgi?id=192153
         <rdar://problem/46343642>

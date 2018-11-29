@@ -512,11 +512,13 @@ class SimulatedDevice(object):
                 return True
         return False
 
-    def _shut_down(self, timeout=10.0):
+    def _shut_down(self, timeout=30.0):
         deadline = time.time() + timeout
 
-        if self.state(force_update=True) != SimulatedDevice.DeviceState.SHUT_DOWN and self.state != SimulatedDevice.DeviceState.SHUTTING_DOWN:
-            self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'shutdown', self.udid])
+        # Either shutdown is successful, or the device was already shutdown when we attempted to shut it down.
+        exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'shutdown', self.udid], return_exit_code=True)
+        if exit_code != 0 and exit_code != 164:
+            raise RuntimeError('Failed to shutdown {} with exit code {}'.format(self.udid, exit_code))
 
         while self.state(force_update=True) != SimulatedDevice.DeviceState.SHUT_DOWN:
             time.sleep(.5)
