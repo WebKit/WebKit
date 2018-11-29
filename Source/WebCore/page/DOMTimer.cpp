@@ -220,11 +220,11 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
     // is destroyed, or if explicitly cancelled by removeById. 
     DOMTimer* timer = new DOMTimer(context, WTFMove(action), timeout, singleShot);
 #if PLATFORM(IOS_FAMILY)
-    if (is<Document>(context)) {
+    if (WKIsObservingDOMTimerScheduling() && is<Document>(context)) {
         bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
         if (!didDeferTimeout && timeout <= 100_ms && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
-            WebThreadAddObservedDOMTimer(timer); // Will only take affect if not already visibility change.
+            WebThreadAddObservedDOMTimer(timer);
         }
     }
 #endif

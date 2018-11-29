@@ -44,6 +44,7 @@ WEBCORE_EXPORT void WKStopObservingContentChanges(void);
 
 WEBCORE_EXPORT void WKStartObservingDOMTimerScheduling(void);
 WEBCORE_EXPORT void WKStopObservingDOMTimerScheduling(void);
+WEBCORE_EXPORT bool WKIsObservingDOMTimerScheduling(void);
 
 WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
 

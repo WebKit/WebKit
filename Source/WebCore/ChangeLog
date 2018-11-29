@@ -1,3 +1,16 @@
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentObservation] DOMTimer::install should explicitly check if timer observation is on
+        https://bugs.webkit.org/show_bug.cgi?id=192181
+
+        Reviewed by Simon Fraser.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKIsObservingDOMTimerScheduling):
+        * platform/ios/wak/WKContentObservation.h:
+
 2018-11-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Executing "insertunorderedlist" while selecting a contenteditable element inside a shadow dom hangs the browser

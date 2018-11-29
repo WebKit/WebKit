@@ -67,6 +67,11 @@ void WKStopObservingDOMTimerScheduling(void)
     _WKObservingDOMTimerScheduling = false;
 }
 
+bool WKIsObservingDOMTimerScheduling(void)
+{
+    return _WKObservingDOMTimerScheduling;
+}
+
 WKContentChange WKObservedContentChange(void)
 {
     return _WKContentChange;
@@ -106,7 +111,8 @@ bool WebThreadContainsObservedDOMTimer(void* timer)
 
 void WebThreadAddObservedDOMTimer(void* timer)
 {
-    if (_WKContentChange != WKContentVisibilityChange && _WKObservingDOMTimerScheduling)
+    ASSERT(_WKObservingDOMTimerScheduling);
+    if (_WKContentChange != WKContentVisibilityChange)
         WebThreadGetObservedDOMTimers().add(timer);
 }
 
