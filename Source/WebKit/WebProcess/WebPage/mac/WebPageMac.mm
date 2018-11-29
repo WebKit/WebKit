@@ -389,7 +389,102 @@ void WebPage::fontAtSelection(CallbackID callbackID)
     send(Messages::WebPageProxy::FontAtSelectionCallback(fontName, fontSize, selectionHasMultipleFonts, callbackID));
 }
     
+void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
+{
+    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame())) {
+        if (pluginView->performDictionaryLookupAtLocation(floatPoint))
+            return;
+    }
 
+    // Find the frame the point is over.
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(floatPoint)));
+    RefPtr<Range> range;
+    NSDictionary *options;
+    std::tie(range, options) = DictionaryLookup::rangeAtHitTestResult(result);
+    if (!range)
+        return;
+
+    auto* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    performDictionaryLookupForRange(*frame, *range, options, TextIndicatorPresentationTransition::Bounce);
+}
+
+void WebPage::performDictionaryLookupForSelection(Frame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
+{
+    RefPtr<Range> selectedRange;
+    NSDictionary *options;
+    std::tie(selectedRange, options) = DictionaryLookup::rangeForSelection(selection);
+    if (selectedRange)
+        performDictionaryLookupForRange(frame, *selectedRange, options, presentationTransition);
+}
+
+void WebPage::performDictionaryLookupOfCurrentSelection()
+{
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    performDictionaryLookupForSelection(frame, frame.selection().selection(), TextIndicatorPresentationTransition::BounceAndCrossfade);
+}
+
+DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+{
+    Editor& editor = frame.editor();
+    editor.setIsGettingDictionaryPopupInfo(true);
+
+    DictionaryPopupInfo dictionaryPopupInfo;
+    if (range.text().stripWhiteSpace().isEmpty()) {
+        editor.setIsGettingDictionaryPopupInfo(false);
+        return dictionaryPopupInfo;
+    }
+
+    Vector<FloatQuad> quads;
+    range.absoluteTextQuads(quads);
+    if (quads.isEmpty()) {
+        editor.setIsGettingDictionaryPopupInfo(false);
+        return dictionaryPopupInfo;
+    }
+
+    IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+
+    const RenderStyle* style = range.startContainer().renderStyle();
+    float scaledAscent = style ? style->fontMetrics().ascent() * pageScaleFactor() : 0;
+    dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
+    dictionaryPopupInfo.options = options;
+
+    NSAttributedString *nsAttributedString = editingAttributedStringFromRange(range, IncludeImagesInAttributedString::No);
+
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
+
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font)
+            font = [fontManager convertFont:font toSize:font.pointSize * pageScaleFactor()];
+        if (font)
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+
+        [scaledNSAttributedString addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    TextIndicatorOptions indicatorOptions = TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
+        indicatorOptions |= TextIndicatorOptionIncludeSnapshotWithSelectionHighlight;
+
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, indicatorOptions, presentationTransition);
+    if (!textIndicator) {
+        editor.setIsGettingDictionaryPopupInfo(false);
+        return dictionaryPopupInfo;
+    }
+
+    dictionaryPopupInfo.textIndicator = textIndicator->data();
+    dictionaryPopupInfo.attributedString = scaledNSAttributedString;
+
+    editor.setIsGettingDictionaryPopupInfo(false);
+    return dictionaryPopupInfo;
+}
 
 #if ENABLE(PDFKIT_PLUGIN)
 
@@ -443,6 +538,11 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
 }
 
 #endif
+
+void WebPage::performDictionaryLookupForRange(Frame& frame, Range& range, NSDictionary *options, TextIndicatorPresentationTransition presentationTransition)
+{
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfoForRange(frame, range, options, presentationTransition)));
+}
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
 {

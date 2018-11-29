@@ -733,9 +733,6 @@ struct _UIWebTouchEvent {
     bool isPotentialTap;
 };
 
-@interface _UILookupGestureRecognizer : UIGestureRecognizer
-@end
-
 @class UIWebTouchEventsGestureRecognizer;
 
 @protocol UIWebTouchEventsGestureRecognizerDelegate <NSObject>

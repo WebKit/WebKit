@@ -87,7 +87,6 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
 
-@class _UILookupGestureRecognizer;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 @class UIHoverGestureRecognizer;
@@ -216,7 +215,6 @@ struct WKAutoCorrectionData {
 
 #if PLATFORM(IOSMAC)
     RetainPtr<UIHoverGestureRecognizer> _hoverGestureRecognizer;
-    RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
 #endif
 
     RetainPtr<UIWKTextInteractionAssistant> _textSelectionAssistant;

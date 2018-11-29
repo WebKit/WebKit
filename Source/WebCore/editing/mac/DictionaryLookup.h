@@ -23,24 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
 
 #include "DictionaryPopupInfo.h"
-#if PLATFORM(MAC)
-#import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
-#endif // PLATFORM(MAC)
+#include <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
 #include <wtf/Function.h>
 
 OBJC_CLASS NSView;
 OBJC_CLASS PDFSelection;
-
-#if PLATFORM(MAC)
-typedef id <NSImmediateActionAnimationController> WKRevealController;
-#else
-typedef id WKRevealController;
-#endif // PLATFORM(MAC)
 
 namespace WebCore {
 
@@ -58,11 +48,8 @@ public:
 
     WEBCORE_EXPORT static void showPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
     WEBCORE_EXPORT static void hidePopup();
-    
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static WKRevealController animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
-#endif // PLATFORM(MAC)
-    
+
+    WEBCORE_EXPORT static id <NSImmediateActionAnimationController> animationControllerForPopup(const DictionaryPopupInfo&, NSView *, const WTF::Function<void(TextIndicator&)>& textIndicatorInstallationCallback, const WTF::Function<FloatRect(FloatRect)>& rootViewToViewConversionCallback = nullptr, WTF::Function<void()>&& clearTextIndicator = nullptr);
 };
 
 } // namespace WebCore

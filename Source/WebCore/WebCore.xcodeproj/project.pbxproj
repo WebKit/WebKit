@@ -20523,7 +20523,6 @@
 			children = (
 				C5227DEF1C3C6DD700F5ED54 /* DataDetection.h */,
 				C5227DF01C3C6DD700F5ED54 /* DataDetection.mm */,
-				937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */,
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
 				F42CEB54214031EE002DCA72 /* FontAttributeChangesCocoa.mm */,
 				F48D2A752156FE5700C6752B /* FontAttributesCocoa.mm */,
@@ -26230,6 +26229,7 @@
 				CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */,
 				CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */,
 				937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */,
+				937FF3D61A10131B008EBA31 /* DictionaryLookup.mm */,
 				442956CA218A6D300080DB54 /* DictionaryLookupLegacy.mm */,
 				ED501DC50B249F2900AE18D9 /* EditorMac.mm */,
 				4A8C96EA0BE69032004EEFF0 /* FrameSelectionMac.mm */,

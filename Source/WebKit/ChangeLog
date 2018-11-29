@@ -1,3 +1,15 @@
+2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r238678.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Move Lookup Code for better cross platform usage"
+        https://bugs.webkit.org/show_bug.cgi?id=191732
+        https://trac.webkit.org/changeset/238678
+
 2018-11-29  Suresh Koppisetty  <skoppisetty@apple.com>
 
         Addressed a FIXME by removing an unnecessary call to [NSApplication sharedApplication].

@@ -24,9 +24,7 @@
  */
 
 #import <objc/runtime.h>
-#if PLATFORM(MAC)
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
-#endif // PLATFORM(MAC)
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(Reveal)
@@ -38,17 +36,13 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if PLATFORM(MAC)
 #import <Reveal/RVPresenter.h>
 #import <Reveal/Reveal.h>
-#endif // PLATFORM(MAC)
 #import <RevealCore/RVSelection.h>
 #import <RevealCore/RevealCore.h>
 
-#else // USE(APPLE_INTERNAL_SDK)
 
-
-@protocol RVPresenterHighlightDelegate;
+#else
 
 @interface RVItem : NSObject <NSSecureCoding>
 - (instancetype)initWithText:(NSString *)text selectedRange:(NSRange)selectedRange NS_DESIGNATED_INITIALIZER;
@@ -58,27 +52,8 @@ SOFT_LINK_CLASS_OPTIONAL(RevealCore, RVSelection)
 + (NSRange)revealRangeAtIndex:(NSUInteger)clickIndex selectedRanges:(NSArray <NSValue *> *)selectedRanges shouldUpdateSelection:(BOOL *)shouldUpdateSelection;
 @end
 
-#if PLATFORM(MAC)
-@interface RVPresentingContext : NSObject
-- (instancetype)initWithPointerLocationInView:(NSPoint)pointerLocationInView inView:(NSView *)view highlightDelegate:(id<RVPresenterHighlightDelegate>)highlightDelegate;
-@end
-#endif
-
-@protocol RVPresenterHighlightDelegate <NSObject>
-@required
-- (NSArray <NSValue *> *)revealContext:(RVPresentingContext *)context rectsForItem:(RVItem *)item;
-@optional
-- (void)revealContext:(RVPresentingContext *)context stopHighlightingItem:(RVItem *)item;
-- (void)revealContext:(RVPresentingContext *)context drawRectsForItem:(RVItem *)item;
-@end
-
-@interface RVDocumentContext : NSObject < NSSecureCoding >
-@end
-
 @interface RVPresenter : NSObject
-#if PLATFORM(MAC)
 - (id<NSImmediateActionAnimationController>)animationControllerForItem:(RVItem *)item documentContext:(RVDocumentContext *)documentContext presentingContext:(RVPresentingContext *)presentingContext options:(NSDictionary *)options;
-#endif // PLATFORM(MAC)
 - (BOOL)revealItem:(RVItem *)item documentContext:(RVDocumentContext *)documentContext presentingContext:(RVPresentingContext *)presentingContext options:(NSDictionary *)options;
 @end
 

@@ -189,14 +189,17 @@ messages -> WebPage LegacyReceiver {
     RunJavaScriptInMainFrameScriptWorld(String script, bool forceUserGesture, String worldName, WebKit::CallbackID callbackID)
     ForceRepaint(WebKit::CallbackID callbackID)
 
+#if PLATFORM(COCOA)
+    # Dictionary support.
+    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#endif
+
 #if ENABLE(DATA_DETECTION)
     DetectDataInAllFrames(uint64_t types) -> (struct WebKit::DataDetectionResult result) Async
     RemoveDataDetectedLinks() -> (struct WebKit::DataDetectionResult result) Async
 #endif
 
-#if PLATFORM(COCOA)
-    # Dictionary support.
-    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#if PLATFORM(MAC)
     PerformDictionaryLookupOfCurrentSelection()
 #endif
 
