@@ -1,3 +1,15 @@
+2018-11-28  Christopher Reid  <chris.reid@sony.com>
+
+        SQLiteDatabase::open is constantly printing "SQLite database failed to checkpoint: database table is locked" errors
+        https://bugs.webkit.org/show_bug.cgi?id=192111
+
+        Reviewed by Alex Christensen.
+
+        Ensure the journal_mode=WAL statement is finalized before wal_checkpoint is executed.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2018-11-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Updating href on linearGradient and radialGradient doesn't update its rendering

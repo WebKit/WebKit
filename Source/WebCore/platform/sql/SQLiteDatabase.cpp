@@ -112,22 +112,26 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;"_s).executeCommand())
         LOG_ERROR("SQLite database could not set temp_store to memory");
 
-    SQLiteStatement walStatement(*this, "PRAGMA journal_mode=WAL;"_s);
-    if (walStatement.prepareAndStep() == SQLITE_ROW) {
+    {
+        SQLiteStatement walStatement(*this, "PRAGMA journal_mode=WAL;"_s);
+        if (walStatement.prepareAndStep() == SQLITE_ROW) {
 #ifndef NDEBUG
-        String mode = walStatement.getColumnText(0);
-        if (!equalLettersIgnoringASCIICase(mode, "wal"))
-            LOG_ERROR("journal_mode of database should be 'WAL', but is '%s'", mode.utf8().data());
+            String mode = walStatement.getColumnText(0);
+            if (!equalLettersIgnoringASCIICase(mode, "wal"))
+                LOG_ERROR("journal_mode of database should be 'WAL', but is '%s'", mode.utf8().data());
 #endif
-    } else
-        LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s", lastErrorMsg());
+        } else
+            LOG_ERROR("SQLite database failed to set journal_mode to WAL, error: %s", lastErrorMsg());
+    }
 
-    SQLiteStatement checkpointStatement(*this, "PRAGMA wal_checkpoint(TRUNCATE)"_s);
-    if (checkpointStatement.prepareAndStep() == SQLITE_ROW) {
-        if (checkpointStatement.getColumnInt(0))
-            LOG(SQLDatabase, "SQLite database checkpoint is blocked");
-    } else
-        LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
+    {
+        SQLiteStatement checkpointStatement(*this, "PRAGMA wal_checkpoint(TRUNCATE)"_s);
+        if (checkpointStatement.prepareAndStep() == SQLITE_ROW) {
+            if (checkpointStatement.getColumnInt(0))
+                LOG(SQLDatabase, "SQLite database checkpoint is blocked");
+        } else
+            LOG_ERROR("SQLite database failed to checkpoint: %s", lastErrorMsg());
+    }
 
     return isOpen();
 }
