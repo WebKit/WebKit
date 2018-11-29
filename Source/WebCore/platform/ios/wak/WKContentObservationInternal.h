@@ -35,10 +35,10 @@ extern "C" {
 #endif
 
 bool WKObservingContentChanges(void);
-void WKSetObservedContentChange(WKContentChange aChange);
-bool WebThreadContainsObservedContentModifier(void * aContentModifier);
-void WebThreadAddObservedContentModifier(void * aContentModifier);
-void WebThreadRemoveObservedContentModifier(void * aContentModifier);
+void WKSetObservedContentChange(WKContentChange);
+bool WebThreadContainsObservedDOMTimer(void* timer);
+void WebThreadAddObservedDOMTimer(void* timer);
+void WebThreadRemoveObservedDOMTimer(void* timer);
 
 #ifdef __cplusplus
 }

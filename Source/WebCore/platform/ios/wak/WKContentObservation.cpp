@@ -57,7 +57,7 @@ void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges)
     
     _WKObservingIndeterminateChanges = allowsIntedeterminateChanges;
     if (_WKObservingIndeterminateChanges)
-        WebThreadClearObservedContentModifiers();
+        WebThreadClearObservedDOMTimers();
 }
 
 WKContentChange WKObservedContentChange(void)
@@ -70,44 +70,44 @@ void WKSetObservedContentChange(WKContentChange aChange)
     if (aChange > _WKContentChange && (_WKObservingIndeterminateChanges || aChange != WKContentIndeterminateChange)) {
         _WKContentChange = aChange;
         if (_WKContentChange == WKContentVisibilityChange)
-            WebThreadClearObservedContentModifiers();
+            WebThreadClearObservedDOMTimers();
     }
 }
 
-static HashMap<void *, void *> * WebThreadGetObservedContentModifiers()
+using DOMTimerList = HashSet<void*>;
+static DOMTimerList& WebThreadGetObservedDOMTimers()
 {
     ASSERT(WebThreadIsLockedOrDisabled());
-    typedef HashMap<void *, void *> VoidVoidMap;
-    static NeverDestroyed<VoidVoidMap> observedContentModifiers;
-    return &observedContentModifiers.get();
+    static NeverDestroyed<DOMTimerList> observedDOMTimers;
+    return observedDOMTimers;
 }
 
-int WebThreadCountOfObservedContentModifiers(void)
+int WebThreadCountOfObservedDOMTimers(void)
 {
-    return WebThreadGetObservedContentModifiers()->size();
+    return WebThreadGetObservedDOMTimers().size();
 }
 
-void WebThreadClearObservedContentModifiers()
+void WebThreadClearObservedDOMTimers()
 {
-    WebThreadGetObservedContentModifiers()->clear();
+    WebThreadGetObservedDOMTimers().clear();
 }
 
-bool WebThreadContainsObservedContentModifier(void * aContentModifier)
+bool WebThreadContainsObservedDOMTimer(void* timer)
 {
-    return WebThreadGetObservedContentModifiers()->contains(aContentModifier);
+    return WebThreadGetObservedDOMTimers().contains(timer);
 }
 
-void WebThreadAddObservedContentModifier(void * aContentModifier)
+void WebThreadAddObservedDOMTimer(void* timer)
 {
     if (_WKContentChange != WKContentVisibilityChange && _WKObservingIndeterminateChanges)
-        WebThreadGetObservedContentModifiers()->set(aContentModifier, aContentModifier);
+        WebThreadGetObservedDOMTimers().add(timer);
 }
 
-void WebThreadRemoveObservedContentModifier(void * aContentModifier)
+void WebThreadRemoveObservedDOMTimer(void* timer)
 {
-    WebThreadGetObservedContentModifiers()->remove(aContentModifier);
+    WebThreadGetObservedDOMTimers().remove(timer);
     // Force reset the content change flag when the last observed content modifier is removed. We should not be in indeterminate state anymore.
-    if (WebThreadCountOfObservedContentModifiers())
+    if (WebThreadCountOfObservedDOMTimers())
         return;
     if (WKObservedContentChange() != WKContentIndeterminateChange)
         return;

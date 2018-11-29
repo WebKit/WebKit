@@ -1678,10 +1678,10 @@ void DOMWindow::clearTimeout(int timeoutId)
         Document* document = frame->document();
         if (timeoutId > 0 && document) {
             DOMTimer* timer = document->findTimeout(timeoutId);
-            if (timer && WebThreadContainsObservedContentModifier(timer)) {
-                WebThreadRemoveObservedContentModifier(timer);
+            if (timer && WebThreadContainsObservedDOMTimer(timer)) {
+                WebThreadRemoveObservedDOMTimer(timer);
 
-                if (!WebThreadCountOfObservedContentModifiers()) {
+                if (!WebThreadCountOfObservedDOMTimers()) {
                     if (Page* page = frame->page())
                         page->chrome().client().observedContentChange(*frame);
                 }

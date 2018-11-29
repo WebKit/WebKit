@@ -188,9 +188,9 @@ void WebChromeClientIOS::observedContentChange(WebCore::Frame& frame)
 
 void WebChromeClientIOS::clearContentChangeObservers(WebCore::Frame& frame)
 {
-    ASSERT(WebThreadCountOfObservedContentModifiers() > 0);
-    if (WebThreadCountOfObservedContentModifiers() > 0) {
-        WebThreadClearObservedContentModifiers();
+    ASSERT(WebThreadCountOfObservedDOMTimers() > 0);
+    if (WebThreadCountOfObservedDOMTimers() > 0) {
+        WebThreadClearObservedDOMTimers();
         observedContentChange(frame);
     }
 }

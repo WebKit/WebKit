@@ -2601,7 +2601,7 @@ bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (WebThreadCountOfObservedContentModifiers() > 0) {
+    if (WebThreadCountOfObservedDOMTimers() > 0) {
         if (auto* frame = this->frame()) {
             if (auto* page = frame->page())
                 page->chrome().client().clearContentChangeObservers(*frame);

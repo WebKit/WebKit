@@ -805,7 +805,7 @@ void Frame::willDetachPage()
         page()->scrollingCoordinator()->willDestroyScrollableArea(*m_view);
 
 #if PLATFORM(IOS_FAMILY)
-    if (WebThreadCountOfObservedContentModifiers() > 0 && m_page)
+    if (WebThreadCountOfObservedDOMTimers() > 0 && m_page)
         m_page->chrome().client().clearContentChangeObservers(*this);
 #endif
 

@@ -44,8 +44,8 @@ WEBCORE_EXPORT void WKBeginObservingContentChanges(bool allowsIntedeterminateCha
 
 WEBCORE_EXPORT WKContentChange WKObservedContentChange(void);
 
-WEBCORE_EXPORT int WebThreadCountOfObservedContentModifiers(void);
-WEBCORE_EXPORT void WebThreadClearObservedContentModifiers(void);
+WEBCORE_EXPORT int WebThreadCountOfObservedDOMTimers(void);
+WEBCORE_EXPORT void WebThreadClearObservedDOMTimers(void);
 
 #ifdef __cplusplus
 }

@@ -224,7 +224,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
         bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
         if (!didDeferTimeout && timeout <= 100_ms && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
-            WebThreadAddObservedContentModifier(timer); // Will only take affect if not already visibility change.
+            WebThreadAddObservedDOMTimer(timer); // Will only take affect if not already visibility change.
         }
     }
 #endif
@@ -344,8 +344,8 @@ void DOMTimer::fired()
     bool shouldReportLackOfChanges;
     bool shouldBeginObservingChanges;
     if (is<Document>(context)) {
-        shouldReportLackOfChanges = WebThreadCountOfObservedContentModifiers() == 1;
-        shouldBeginObservingChanges = WebThreadContainsObservedContentModifier(this);
+        shouldReportLackOfChanges = WebThreadCountOfObservedDOMTimers() == 1;
+        shouldBeginObservingChanges = WebThreadContainsObservedDOMTimer(this);
     } else {
         shouldReportLackOfChanges = false;
         shouldBeginObservingChanges = false;
@@ -353,7 +353,7 @@ void DOMTimer::fired()
 
     if (shouldBeginObservingChanges) {
         WKBeginObservingContentChanges(false);
-        WebThreadRemoveObservedContentModifier(this);
+        WebThreadRemoveObservedDOMTimer(this);
     }
 #endif
 
