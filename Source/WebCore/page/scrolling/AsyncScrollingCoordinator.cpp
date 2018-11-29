@@ -523,6 +523,7 @@ void AsyncScrollingCoordinator::updateFrameScrollingNode(ScrollingNodeID nodeID,
     node->setCounterScrollingLayer(counterScrollingLayer);
 
     if (scrollingGeometry) {
+        node->setParentRelativeScrollableRect(scrollingGeometry->parentRelativeScrollableRect);
         node->setScrollOrigin(scrollingGeometry->scrollOrigin);
         node->setScrollPosition(scrollingGeometry->scrollPosition);
         node->setTotalContentsSize(scrollingGeometry->contentSize);
@@ -542,6 +543,7 @@ void AsyncScrollingCoordinator::updateOverflowScrollingNode(ScrollingNodeID node
     node->setScrolledContentsLayer(scrolledContentsLayer);
     
     if (scrollingGeometry) {
+        node->setParentRelativeScrollableRect(scrollingGeometry->parentRelativeScrollableRect);
         node->setScrollOrigin(scrollingGeometry->scrollOrigin);
         node->setScrollPosition(scrollingGeometry->scrollPosition);
         node->setTotalContentsSize(scrollingGeometry->contentSize);

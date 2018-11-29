@@ -1,3 +1,33 @@
+2018-11-29  Frederic Wang  <fwang@igalia.com>
+
+        Add ParentRelativeScrollableRect to ScrollingCoordinator::ScrollingGeometry
+        https://bugs.webkit.org/show_bug.cgi?id=172914
+
+        Reviewed by Simon Fraser.
+
+        This patch adds a ParentRelativeScrollableRect ScrollingCoordinator::ScrollingGeometry and
+        the corresponding set/get/dump APIs. Currently, the setter is never used so the behavior is
+        unchanged. In the future, this rect will be used for hit testing of subframes during
+        asynchronous macOS scrolling (but 172917).
+
+        No new tests, behavior unchanged.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setParentRelativeScrollableRect):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::parentRelativeScrollableRect const):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::parentRelativeScrollableRect const):
+
 2018-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOSMac] Dropping text selections from web content into editable elements crashes the web process

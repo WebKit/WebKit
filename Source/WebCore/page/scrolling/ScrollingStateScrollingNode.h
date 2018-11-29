@@ -42,6 +42,7 @@ public:
         ScrollableAreaSize = NumStateNodeBits,
         TotalContentsSize,
         ReachableContentsSize,
+        ParentRelativeScrollableRect,
         ScrollPosition,
         ScrollOrigin,
         ScrollableAreaParams,
@@ -67,6 +68,9 @@ public:
 
     const FloatSize& reachableContentsSize() const { return m_reachableContentsSize; }
     WEBCORE_EXPORT void setReachableContentsSize(const FloatSize&);
+
+    const LayoutRect& parentRelativeScrollableRect() const { return m_parentRelativeScrollableRect; }
+    WEBCORE_EXPORT void setParentRelativeScrollableRect(const LayoutRect&);
 
     const FloatPoint& scrollPosition() const { return m_scrollPosition; }
     WEBCORE_EXPORT void setScrollPosition(const FloatPoint&);
@@ -118,6 +122,7 @@ private:
     FloatSize m_scrollableAreaSize;
     FloatSize m_totalContentsSize;
     FloatSize m_reachableContentsSize;
+    LayoutRect m_parentRelativeScrollableRect;
     FloatPoint m_scrollPosition;
     FloatPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;

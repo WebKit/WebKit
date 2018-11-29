@@ -173,6 +173,7 @@ public:
     virtual void updateNodeViewportConstraints(ScrollingNodeID, const ViewportConstraints&) { }
 
     struct ScrollingGeometry {
+        LayoutRect parentRelativeScrollableRect;
         FloatSize scrollableAreaSize;
         FloatSize contentSize;
         FloatSize reachableContentSize; // Smaller than contentSize when overflow is hidden on one axis.
