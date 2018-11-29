@@ -1,3 +1,20 @@
+2018-11-28  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize BlobRegistry::writeBlobsToTemporaryFiles
+        https://bugs.webkit.org/show_bug.cgi?id=192117
+
+        Reviewed by Dean Jackson.
+
+        No change in behavior.  Just use CompletionHandlers and the new sendWithAsyncReply instead of two way messaging
+        and manual completion handler management.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::writeBlobsToDiskForIndexedDB):
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFiles):
+        * platform/network/BlobRegistryImpl.h:
+
 2018-11-15  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage

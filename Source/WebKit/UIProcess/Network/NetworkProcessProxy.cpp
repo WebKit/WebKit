@@ -272,10 +272,6 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     m_syncAllCookiesToken = nullptr;
     m_syncAllCookiesCounter = 0;
 
-    for (auto& callback : m_writeBlobToFilePathCallbackMap.values())
-        callback(false);
-    m_writeBlobToFilePathCallbackMap.clear();
-
     for (auto& callback : m_removeAllStorageAccessCallbackMap.values())
         callback();
     m_removeAllStorageAccessCallbackMap.clear();
@@ -564,28 +560,16 @@ void NetworkProcessProxy::sendProcessDidResume()
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
 
-void NetworkProcessProxy::writeBlobToFilePath(const WebCore::URL& url, const String& path, CompletionHandler<void(bool)>&& callback)
+void NetworkProcessProxy::writeBlobToFilePath(const WebCore::URL& url, const String& path, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {
-        callback(false);
+        completionHandler(false);
         return;
     }
 
-    static uint64_t writeBlobToFilePathCallbackIdentifiers = 0;
-    uint64_t callbackID = ++writeBlobToFilePathCallbackIdentifiers;
-    m_writeBlobToFilePathCallbackMap.add(callbackID, WTFMove(callback));
-
     SandboxExtension::Handle handleForWriting;
     SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, handleForWriting);
-    send(Messages::NetworkProcess::WriteBlobToFilePath(url, path, handleForWriting, callbackID), 0);
-}
-
-void NetworkProcessProxy::didWriteBlobToFilePath(bool success, uint64_t callbackID)
-{
-    if (auto handler = m_writeBlobToFilePathCallbackMap.take(callbackID))
-        handler(success);
-    else
-        ASSERT_NOT_REACHED();
+    sendWithAsyncReply(Messages::NetworkProcess::WriteBlobToFilePath(url, path, handleForWriting), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::processReadyToSuspend()

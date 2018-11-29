@@ -70,7 +70,7 @@ private:
 
     unsigned long long blobSize(const URL&) override;
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler) override;
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&) override;
 
     struct BlobForFileWriting {
         String blobURL;

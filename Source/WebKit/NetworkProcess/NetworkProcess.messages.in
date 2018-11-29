@@ -77,7 +77,7 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-    WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle, uint64_t callbackID)
+    WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle) -> (bool success) Async
 
     PreconnectTo(WebCore::URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 

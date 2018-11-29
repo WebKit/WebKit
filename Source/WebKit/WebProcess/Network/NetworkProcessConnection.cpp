@@ -164,13 +164,6 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     Ref<NetworkProcessConnection> protector(*this);
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
-    Vector<String> dummyFilenames;
-    for (auto& handler : m_writeBlobToFileCompletionHandlers.values())
-        handler(dummyFilenames);
-
-    m_writeBlobToFileCompletionHandlers.clear();
-
-
 #if ENABLE(INDEXED_DATABASE)
     for (auto& connection : m_webIDBConnectionsByIdentifier.values())
         connection->connectionToServerLost();
@@ -192,21 +185,9 @@ void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::S
 {
 }
 
-void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler)
+void NetworkProcessConnection::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
-    static uint64_t writeBlobToFileIdentifier;
-    uint64_t requestIdentifier = ++writeBlobToFileIdentifier;
-
-    m_writeBlobToFileCompletionHandlers.set(requestIdentifier, WTFMove(completionHandler));
-
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs, requestIdentifier), 0);
-}
-
-void NetworkProcessConnection::didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames)
-{
-    auto handler = m_writeBlobToFileCompletionHandlers.take(requestIdentifier);
-    if (handler)
-        handler(filenames);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::WriteBlobsToTemporaryFiles(blobURLs), WTFMove(completionHandler));
 }
 
 void NetworkProcessConnection::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceError&& error, ResourceResponse&& response)

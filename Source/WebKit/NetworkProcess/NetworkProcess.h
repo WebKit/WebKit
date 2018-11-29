@@ -287,7 +287,7 @@ private:
     void syncAllCookies();
     void didSyncAllCookies();
 
-    void writeBlobToFilePath(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, uint64_t requestID);
+    void writeBlobToFilePath(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, CompletionHandler<void(bool)>&&);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);

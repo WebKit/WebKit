@@ -41,6 +41,7 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
@@ -300,7 +301,7 @@ static bool writeFilePathsOrDataBuffersToFile(const Vector<std::pair<String, Thr
     return true;
 }
 
-void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void(const Vector<String>& filePaths)>&& completionHandler)
+void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&& completionHandler)
 {
     Vector<BlobForFileWriting> blobsForWriting;
     if (!populateBlobsForFileWriting(blobURLs, blobsForWriting)) {
@@ -320,8 +321,8 @@ void BlobRegistryImpl::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs
             filePaths.append(tempFilePath.isolatedCopy());
         }
 
-        callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)]() {
-            completionHandler(filePaths);
+        callOnMainThread([completionHandler = WTFMove(completionHandler), filePaths = WTFMove(filePaths)] () mutable {
+            completionHandler(WTFMove(filePaths));
         });
     });
 }

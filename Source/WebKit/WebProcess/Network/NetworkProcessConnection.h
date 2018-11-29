@@ -64,7 +64,7 @@ public:
 
     void didReceiveNetworkProcessConnectionMessage(IPC::Connection&, IPC::Decoder&);
 
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>& filePaths)>&& completionHandler);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
 #if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer* existingIDBConnectionToServerForIdentifier(uint64_t identifier) const { return m_webIDBConnectionsByIdentifier.get(identifier); };
@@ -85,7 +85,6 @@ private:
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
-    void didWriteBlobsToTemporaryFiles(uint64_t requestIdentifier, const Vector<String>& filenames);
     void didFinishPingLoad(uint64_t pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
     void didFinishPreconnection(uint64_t preconnectionIdentifier, WebCore::ResourceError&&);
     void setOnLineState(bool isOnLine);
@@ -97,8 +96,6 @@ private:
 
     // The connection from the web process to the network process.
     Ref<IPC::Connection> m_connection;
-
-    HashMap<uint64_t, Function<void (const Vector<String>&)>> m_writeBlobToFileCompletionHandlers;
 
 #if ENABLE(INDEXED_DATABASE)
     HashMap<PAL::SessionID, RefPtr<WebIDBConnectionToServer>> m_webIDBConnectionsBySession;

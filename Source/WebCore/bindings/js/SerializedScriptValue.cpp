@@ -3566,9 +3566,8 @@ void SerializedScriptValue::writeBlobsToDiskForIndexedDB(CompletionHandler<void(
     ASSERT(isMainThread());
     ASSERT(hasBlobURLs());
 
-    RefPtr<SerializedScriptValue> protectedThis(this);
     // FIXME: Add m_sessionID as a parameter here.
-    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = WTFMove(protectedThis)] (auto& blobFilePaths) mutable {
+    blobRegistry().writeBlobsToTemporaryFiles(m_blobURLs, [completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)] (auto&& blobFilePaths) mutable {
         ASSERT(isMainThread());
 
         if (blobFilePaths.isEmpty()) {

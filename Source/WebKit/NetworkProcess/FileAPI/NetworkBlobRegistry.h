@@ -53,8 +53,8 @@ public:
     void registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);
     uint64_t blobSize(NetworkConnectionToWebProcess*, const WebCore::URL&);
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>&)>&& completionHandler);
-    void writeBlobToFilePath(const WebCore::URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
+    void writeBlobToFilePath(const WebCore::URL& blobURL, const String& path, CompletionHandler<void(bool success)>&&);
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 

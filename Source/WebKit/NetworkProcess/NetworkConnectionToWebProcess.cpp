@@ -532,7 +532,7 @@ void NetworkConnectionToWebProcess::blobSize(const URL& url, uint64_t& resultSiz
     resultSize = NetworkBlobRegistry::singleton().blobSize(this, url);
 }
 
-void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier)
+void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     Vector<RefPtr<BlobDataFileReference>> fileReferences;
     for (auto& url : blobURLs)
@@ -541,11 +541,10 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFiles(const Vector<Stri
     for (auto& file : fileReferences)
         file->prepareForFileAccess();
 
-    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [this, protectedThis = makeRef(*this), requestIdentifier, fileReferences = WTFMove(fileReferences)](auto& fileNames) mutable {
+    NetworkBlobRegistry::singleton().writeBlobsToTemporaryFiles(blobURLs, [fileReferences = WTFMove(fileReferences), completionHandler = WTFMove(completionHandler)](auto&& fileNames) mutable {
         for (auto& file : fileReferences)
             file->revokeFileAccess();
-
-        m_connection->send(Messages::NetworkProcessConnection::DidWriteBlobsToTemporaryFiles(requestIdentifier, fileNames), 0);
+        completionHandler(WTFMove(fileNames));
     });
 }
 

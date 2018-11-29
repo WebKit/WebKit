@@ -168,7 +168,7 @@ private:
     void registerBlobURLForSlice(const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void blobSize(const WebCore::URL&, uint64_t& resultSize);
     void unregisterBlobURL(const WebCore::URL&);
-    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, uint64_t requestIdentifier);
+    void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&&);
 
     void storeDerivedDataToCache(const WebKit::NetworkCache::DataKey&, const IPC::DataReference&);
 

@@ -88,7 +88,7 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
-    void writeBlobToFilePath(const WebCore::URL&, const String& path, CompletionHandler<void(bool)>&& callback);
+    void writeBlobToFilePath(const WebCore::URL&, const String& path, CompletionHandler<void(bool)>&&);
 
     void processReadyToSuspend();
     
@@ -139,7 +139,6 @@ private:
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
-    void didWriteBlobToFilePath(bool success, uint64_t callbackID);
     void logDiagnosticMessage(uint64_t pageID, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
@@ -191,7 +190,6 @@ private:
     
     unsigned m_syncAllCookiesCounter { 0 };
 
-    HashMap<uint64_t, CompletionHandler<void(bool success)>> m_writeBlobToFilePathCallbackMap;
     HashMap<uint64_t, CompletionHandler<void()>> m_updateBlockCookiesCallbackMap;
     HashMap<uint64_t, CompletionHandler<void(bool wasGranted)>> m_storageAccessResponseCallbackMap;
     HashMap<uint64_t, CompletionHandler<void()>> m_removeAllStorageAccessCallbackMap;

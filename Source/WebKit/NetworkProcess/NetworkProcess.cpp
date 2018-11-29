@@ -482,18 +482,18 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 }
 
-void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, uint64_t requestID)
+void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto extension = SandboxExtension::create(WTFMove(handleForWriting));
     if (!extension) {
-        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidWriteBlobToFilePath(false, requestID), 0);
+        completionHandler(false);
         return;
     }
 
     extension->consume();
-    NetworkBlobRegistry::singleton().writeBlobToFilePath(url, path, [this, extension = WTFMove(extension), requestID] (bool success) {
+    NetworkBlobRegistry::singleton().writeBlobToFilePath(url, path, [extension = WTFMove(extension), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
         extension->revoke();
-        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidWriteBlobToFilePath(success, requestID), 0);
+        completionHandler(success);
     });
 }
 

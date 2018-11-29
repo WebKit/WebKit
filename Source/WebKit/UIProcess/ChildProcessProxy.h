@@ -50,6 +50,7 @@ public:
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
     template<typename T> bool sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, Seconds timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
+    template<typename T, typename... Args> void sendWithAsyncReply(T&&, CompletionHandler<void(Args...)>&&);
 
     IPC::Connection* connection() const
     {
@@ -131,4 +132,15 @@ bool ChildProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_
     return connection()->sendSync(std::forward<U>(message), WTFMove(reply), destinationID, timeout, sendSyncOptions);
 }
 
+template<typename T, typename... Args>
+void ChildProcessProxy::sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler)
+{
+    if (!m_connection) {
+        T::cancelReply(WTFMove(completionHandler));
+        return;
+    }
+
+    connection()->sendWithAsyncReply(std::forward<T>(message), WTFMove(completionHandler));
+}
+    
 } // namespace WebKit

@@ -31,8 +31,6 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     DidSyncAllCookies()
 
-    DidWriteBlobToFilePath(bool success, uint64_t callbackID)
-
     ProcessReadyToSuspend()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 

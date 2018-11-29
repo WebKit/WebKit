@@ -48,7 +48,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURLForSlice(WebCore::URL url, WebCore::URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(WebCore::URL url)
     BlobSize(WebCore::URL url) -> (uint64_t resultSize) LegacySync
-    WriteBlobsToTemporaryFiles(Vector<String> blobURLs, uint64_t requestIdentifier)
+    WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
     StoreDerivedDataToCache(WebKit::NetworkCache::DataKey key, IPC::SharedBufferDataReference data)
 

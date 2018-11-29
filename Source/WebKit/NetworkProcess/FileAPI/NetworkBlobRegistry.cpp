@@ -130,12 +130,12 @@ uint64_t NetworkBlobRegistry::blobSize(NetworkConnectionToWebProcess* connection
     return blobRegistry().blobSize(url);
 }
 
-void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void(const Vector<String>&)>&& completionHandler)
+void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     blobRegistry().writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
 }
 
-void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
+void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& path, CompletionHandler<void(bool success)>&& completionHandler)
 {
     if (!blobRegistry().isBlobRegistryImpl()) {
         completionHandler(false);
@@ -147,7 +147,7 @@ void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& 
     for (auto& file : blobFiles)
         file->prepareForFileAccess();
 
-    static_cast<BlobRegistryImpl&>(blobRegistry()).writeBlobToFilePath(blobURL, path, [blobFiles = WTFMove(blobFiles), completionHandler = WTFMove(completionHandler)] (bool success) {
+    static_cast<BlobRegistryImpl&>(blobRegistry()).writeBlobToFilePath(blobURL, path, [blobFiles = WTFMove(blobFiles), completionHandler = WTFMove(completionHandler)] (bool success) mutable {
         for (auto& file : blobFiles)
             file->revokeFileAccess();
         completionHandler(success);
