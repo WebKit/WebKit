@@ -121,6 +121,11 @@ bool WebPageProxy::readSelectionFromPasteboard(const String&)
     return false;
 }
 
+void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint&)
+{
+    notImplemented();
+}
+
 void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<GestureCallback>(callbackID);

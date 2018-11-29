@@ -417,6 +417,21 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)
     notImplemented();
 }
 
+void WebPage::performDictionaryLookupAtLocation(const FloatPoint&)
+{
+    notImplemented();
+}
+
+void WebPage::performDictionaryLookupForSelection(Frame&, const VisibleSelection&, TextIndicatorPresentationTransition)
+{
+    notImplemented();
+}
+
+void WebPage::performDictionaryLookupForRange(Frame&, Range&, NSDictionary *, TextIndicatorPresentationTransition)
+{
+    notImplemented();
+}
+
 bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*)
 {
     notImplemented();

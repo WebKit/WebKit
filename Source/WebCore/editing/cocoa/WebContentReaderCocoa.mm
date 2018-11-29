@@ -34,8 +34,6 @@
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
-#import "Editor.h"
-#import "EditorClient.h"
 #import "File.h"
 #import "FileSystem.h"
 #import "Frame.h"
