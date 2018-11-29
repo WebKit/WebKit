@@ -130,6 +130,8 @@ function updateHiddenPlatforms()
 
     for (var i = 0; i < hiddenPlatformFamilies.length; ++i) {
         var platformFamily = hiddenPlatformFamilies[i];
+        if (!(platformFamily in platformsByFamily))
+            continue;
         for (var j = 0; j < platformsByFamily[platformFamily].length; ++j) {
             var name = platformsByFamily[platformFamily][j];
             var platformRow = document.querySelector("tr.platform." + name);

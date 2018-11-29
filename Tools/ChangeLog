@@ -1,3 +1,13 @@
+2018-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Exception in bot watcher's dashboard if a hidden platform in no longer configured for display
+        https://bugs.webkit.org/show_bug.cgi?id=185527
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Main.js:
+        (updateHiddenPlatforms):
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Body and html height stretching.
