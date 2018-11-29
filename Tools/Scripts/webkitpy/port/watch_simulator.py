@@ -27,7 +27,7 @@ from webkitpy.common.version import Version
 from webkitpy.port.config import apple_additions
 from webkitpy.port.watch import WatchPort
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
+from webkitpy.xcode.simulated_device import SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
 
@@ -93,20 +93,6 @@ class WatchSimulatorPort(WatchPort):
 
     def _set_device_class(self, device_class):
         self._device_class = device_class or self.DEFAULT_DEVICE_CLASS
-
-    def _create_devices(self, device_class):
-        self._set_device_class(device_class)
-        device_type = DeviceType.from_string(self._device_class, self.device_version())
-
-        _log.debug('\nCreating devices for {}'.format(device_type))
-
-        request = DeviceRequest(
-            device_type,
-            use_booted_simulator=not self.get_option('dedicated_simulators', False),
-            use_existing_simulator=False,
-            allow_incomplete_match=True,
-        )
-        SimulatedDeviceManager.initialize_devices([request] * self.child_processes(), self.host)
 
     def operating_system(self):
         return 'watchos-simulator'

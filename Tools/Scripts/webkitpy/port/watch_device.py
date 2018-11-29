@@ -40,6 +40,7 @@ class WatchDevicePort(WatchPort):
     SDK = apple_additions().get_sdk('watchos') if apple_additions() else 'watchos'
     DEVICE_MANAGER = apple_additions().device_manager() if apple_additions() else None
     NO_ON_DEVICE_TESTING = 'On-device testing is not supported in this configuration'
+    NO_DEVICE_MANAGER = NO_ON_DEVICE_TESTING
 
     @memoized
     def default_child_processes(self):
@@ -109,15 +110,6 @@ class WatchDevicePort(WatchPort):
 
     def operating_system(self):
         return 'watchos-device'
-
-    def _create_devices(self, device_class):
-        if not apple_additions():
-            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
-        if not apple_additions().device_for_worker_number_map(self, software_variant='watchOS'):
-            raise RuntimeError('No devices are available for testing')
-
-        if self.default_child_processes() < self.child_processes():
-            raise RuntimeError('Not enought connected devices for {} processes'.format(self.child_processes()))
 
     def clean_up_test_run(self):
         super(WatchDevicePort, self).clean_up_test_run()

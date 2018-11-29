@@ -41,7 +41,8 @@ class IOSDevicePort(IOSPort):
     DEVICE_MANAGER = apple_additions().device_manager() if apple_additions() else None
 
     SDK = apple_additions().get_sdk('iphoneos') if apple_additions() else 'iphoneos'
-    NO_ON_DEVICE_TESTING = 'On-device testing is not supported on this machine'
+    NO_ON_DEVICE_TESTING = 'On-device testing is not supported in this configuration'
+    NO_DEVICE_MANAGER = NO_ON_DEVICE_TESTING
 
     @memoized
     def default_child_processes(self):
@@ -111,15 +112,6 @@ class IOSDevicePort(IOSPort):
 
     def operating_system(self):
         return 'ios-device'
-
-    def _create_devices(self, device_class):
-        if not apple_additions():
-            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
-        if not self.devices():
-            raise RuntimeError('No devices are available for testing')
-
-        if self.default_child_processes() < self.child_processes():
-            raise RuntimeError('Not enought connected devices for {} processes'.format(self.child_processes()))
 
     def clean_up_test_run(self):
         super(IOSDevicePort, self).clean_up_test_run()

@@ -103,6 +103,8 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertEqual('iPad Air 2 running iOS', str(DeviceType.from_string('iPad Air 2')))
         self.assertEqual('Apple Watch Series 2 - 42mm running watchOS', str(DeviceType.from_string('Apple Watch Series 2 - 42mm')))
         self.assertEqual('Apple TV 4K running tvOS', str(DeviceType.from_string('Apple TV 4K')))
+        self.assertEqual('Device running iOS', str(DeviceType.from_string('')))
+        self.assertEqual('Apple Watch running watchOS', str(DeviceType.from_string('Apple Watch')))
 
     def test_comparison(self):
         # iPhone comparisons
