@@ -185,8 +185,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
     // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
     // Currently, it is also needed to allocate and initialize an NSApplication object.
-    // FIXME: Remove the following line when rdar://problem/36323569 is fixed.
-    [NSApplication sharedApplication];
     [NSApplication _accessibilityInitialize];
 #endif
 
