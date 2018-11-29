@@ -29,7 +29,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUProgrammablePassEncoder.h"
-#include "WebGPUCommandBuffer.h"
 #include "WebGPURenderPipeline.h"
 
 namespace WebCore {

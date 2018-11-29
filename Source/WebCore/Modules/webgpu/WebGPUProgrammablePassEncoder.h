@@ -27,12 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WebGPUCommandBuffer.h"
+
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class GPUProgrammablePassEncoder;
-class WebGPUCommandBuffer;
 class WebGPURenderPipeline;
 
 class WebGPUProgrammablePassEncoder : public RefCounted<WebGPUProgrammablePassEncoder> {
