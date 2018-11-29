@@ -1,3 +1,9 @@
+2018-11-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix the iOS build by only including RevealSPI.h when it's needed.
+
+        * editing/cocoa/DictionaryLookup.mm:
+
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
         Modernize BlobRegistry::writeBlobsToTemporaryFiles

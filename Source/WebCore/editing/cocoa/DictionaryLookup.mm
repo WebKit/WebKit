@@ -44,12 +44,12 @@
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
 #import <PDFKit/PDFKit.h>
-#import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
 #if ENABLE(REVEAL)
+#import <pal/spi/cocoa/RevealSPI.h>
 
 #if PLATFORM(MAC)
 
