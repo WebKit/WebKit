@@ -112,6 +112,7 @@
 #if PLATFORM(IOSMAC)
 #import "NativeWebMouseEvent.h"
 #import <UIKit/UIHoverGestureRecognizer.h>
+#import <UIKit/_UILookupGestureRecognizer.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
@@ -649,6 +650,11 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     _hoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognizerChanged:)]);
     [_hoverGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+    
+    _lookupGestureRecognizer = adoptNS([[_UILookupGestureRecognizer alloc] initWithTarget:self action:@selector(_lookupGestureRecognized:)]);
+    [_lookupGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_lookupGestureRecognizer.get()];
+    
 #endif
 
     _singleTapGestureRecognizer = adoptNS([[WKSyntheticClickTapGestureRecognizer alloc] initWithTarget:self action:@selector(_singleTapCommited:)]);
@@ -759,6 +765,9 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
 #if PLATFORM(IOSMAC)
     [_hoverGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+    
+    [_lookupGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 
     [_singleTapGestureRecognizer setDelegate:nil];
@@ -846,6 +855,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self removeGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if PLATFORM(IOSMAC)
     [self removeGestureRecognizer:_hoverGestureRecognizer.get()];
+    [self removeGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 }
 
@@ -861,6 +871,7 @@ static inline bool hasAssistedNode(WebKit::AssistedNodeInformation assistedNodeI
     [self addGestureRecognizer:_stylusSingleTapGestureRecognizer.get()];
 #if PLATFORM(IOSMAC)
     [self addGestureRecognizer:_hoverGestureRecognizer.get()];
+    [self addGestureRecognizer:_lookupGestureRecognizer.get()];
 #endif
 }
 
@@ -1467,6 +1478,10 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     if ([gestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]] || [otherGestureRecognizer isKindOfClass:[UIHoverGestureRecognizer class]])
         return YES;
+    
+    if (([gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) || ([otherGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]] && [gestureRecognizer isKindOfClass:[_UILookupGestureRecognizer class]]))
+        return YES;
+
 #endif
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _textSelectionAssistant.get().forcePressGesture))
         return YES;
@@ -6057,6 +6072,12 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 #endif // PLATFORM(WATCHOS)
 
 #if PLATFORM(IOSMAC)
+- (void)_lookupGestureRecognized:(UIGestureRecognizer *)gestureRecognizer
+{
+    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:self];
+    _page->performDictionaryLookupAtLocation(WebCore::FloatPoint(locationInViewCoordinates));
+}
+
 - (void)_hoverGestureRecognizerChanged:(UIGestureRecognizer *)gestureRecognizer
 {
     if (!_page->isValid())

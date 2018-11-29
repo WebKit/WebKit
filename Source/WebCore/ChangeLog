@@ -1,3 +1,24 @@
+2018-11-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Move Lookup Code for better cross platform usage
+        https://bugs.webkit.org/show_bug.cgi?id=191732
+
+        Reviewed by Alex Christensen.
+
+        Not currenlty testable
+
+        DictionaryLookup uses Reveal now, which is slated to be cross-platform.
+        That patch gates the parts of DictionaryLookup that currently do not have
+        an available implementation on iOS. Once Reveal is ready, this code will be
+        replaced or expanded upon, as appropriate.
+
+        * editing/mac/DictionaryLookup.h:
+        * editing/mac/DictionaryLookup.mm:
+        (WebCore::showPopupOrCreateAnimationController):
+        (WebCore::DictionaryLookup::showPopup):
+        (WebCore::DictionaryLookup::hidePopup):
+        (WebCore::DictionaryLookup::animationControllerForPopup):
+
 2018-11-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Move ServerTimingParser.* into a better group in the Xcode project

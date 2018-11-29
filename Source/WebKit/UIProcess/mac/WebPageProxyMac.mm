@@ -323,22 +323,6 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
 
 #endif
 
-void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID);
-}
-
-void WebPageProxy::performDictionaryLookupOfCurrentSelection()
-{
-    if (!isValid())
-        return;
-
-    process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_pageID);
-}
-
 // Complex text input support for plug-ins.
 void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
 {

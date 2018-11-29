@@ -1,3 +1,13 @@
+2018-11-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Move Lookup Code for better cross platform usage
+        https://bugs.webkit.org/show_bug.cgi?id=191732
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/mac/LookupSPI.h:
+        * pal/spi/mac/RevealSPI.h:
+
 2018-11-29  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Tell AirPlay picker when a file has video
