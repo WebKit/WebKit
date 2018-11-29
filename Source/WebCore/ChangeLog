@@ -1,5 +1,23 @@
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][Quirk] Width does not need stretching quirk.
+        https://bugs.webkit.org/show_bug.cgi?id=192135
+
+        Reviewed by Antti Koivisto.
+
+        In BFC the block box's width (auto) always streches to the content width of the containing block.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::needsStretching):
+        (WebCore::Layout::BlockFormattingContext::Quirks::isStretchedToInitialContainingBlock): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedWidth): Deleted.
+
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][Quirk] Move quirk functions to dedicated classes.
         https://bugs.webkit.org/show_bug.cgi?id=192133
 

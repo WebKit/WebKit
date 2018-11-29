@@ -195,14 +195,7 @@ WidthAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin
     };
 
     auto widthAndMargin = compute();
-    if (!Quirks::isStretchedToInitialContainingBlock(layoutState, layoutBox)) {
-        LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow non-replaced -> width(" << widthAndMargin.width << "px) margin(" << widthAndMargin.margin.left << "px, " << widthAndMargin.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
-        return widthAndMargin;
-    }
-
-    widthAndMargin = Quirks::stretchedWidth(layoutState, layoutBox, widthAndMargin);
-
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow non-replaced -> streched to viewport-> width(" << widthAndMargin.width << "px) margin(" << widthAndMargin.margin.left << "px, " << widthAndMargin.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width][Margin] -> inflow non-replaced -> width(" << widthAndMargin.width << "px) margin(" << widthAndMargin.margin.left << "px, " << widthAndMargin.margin.right << "px) -> layoutBox(" << &layoutBox << ")");
     return widthAndMargin;
 }
 
@@ -264,7 +257,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowHeightAndMargin(const La
         heightAndMargin = complicatedCases(layoutState, layoutBox, usedHeight);
     }
 
-    if (!Quirks::isStretchedToInitialContainingBlock(layoutState, layoutBox))
+    if (!Quirks::needsStretching(layoutState, layoutBox))
         return heightAndMargin;
 
     heightAndMargin = Quirks::stretchedHeight(layoutState, layoutBox, heightAndMargin);

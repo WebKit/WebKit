@@ -53,10 +53,10 @@ static bool hasMarginTopQuirkValue(const Box& layoutBox)
     return layoutBox.style().hasMarginBeforeQuirk();
 }
 
-bool BlockFormattingContext::Quirks::isStretchedToInitialContainingBlock(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Quirks::needsStretching(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isInFlow());
-    // In quirks mode, body and html stretch to the viewport.
+    // In quirks mode, body stretches to html and html to the initial containing block (height: auto only).
     if (!layoutState.inQuirksMode())
         return false;
 
@@ -79,17 +79,6 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutStat
         heightAndMargin.height = initialContainingBlockHeight - totalVerticalMargins;
 
     return heightAndMargin;
-}
-
-WidthAndMargin BlockFormattingContext::Quirks::stretchedWidth(const LayoutState& layoutState, const Box& layoutBox, WidthAndMargin widthAndMargin)
-{
-    auto initialContainingBlockWidth = layoutState.displayBoxForLayoutBox(initialContainingBlock(layoutBox)).contentBoxWidth();
-    auto horizontalMargins = widthAndMargin.margin.left + widthAndMargin.margin.right;
-    // Stretch but never overstretch with the margins.
-    if (widthAndMargin.width + horizontalMargins < initialContainingBlockWidth)
-        widthAndMargin.width = initialContainingBlockWidth - horizontalMargins;
-
-    return widthAndMargin;
 }
 
 bool BlockFormattingContext::Quirks::shouldIgnoreMarginTop(const LayoutState& layoutState, const Box& layoutBox)
