@@ -25,11 +25,51 @@
 
 #import "config.h"
 
+#if WK_API_ENABLED && ENABLE(DRAG_SUPPORT)
+
 #import "DragAndDropSimulator.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WebArchive.h>
 
-#if WK_API_ENABLED && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(IOS_FAMILY)
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
+
+TEST(DragAndDropTests, ModernWebArchiveType)
+{
+    NSData *markupData = [@"<strong><i>Hello world</i></strong>" dataUsingEncoding:NSUTF8StringEncoding];
+    auto mainResource = adoptNS([[WebResource alloc] initWithData:markupData URL:[NSURL URLWithString:@"foo.html"] MIMEType:@"text/html" textEncodingName:@"utf-8" frameName:nil]);
+    auto archive = adoptNS([[WebArchive alloc] initWithMainResource:mainResource.get() subresources:@[ ] subframeArchives:@[ ]]);
+    NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width'><body style='width: 100%; height: 100%;' contenteditable>"];
+#if PLATFORM(MAC)
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:@[webArchiveType, (__bridge NSString *)kUTTypeUTF8PlainText] owner:nil];
+    [pasteboard setData:[archive data] forType:webArchiveType];
+    [pasteboard setData:[@"Hello world" dataUsingEncoding:NSUTF8StringEncoding] forType:(__bridge NSString *)kUTTypeUTF8PlainText];
+    [simulator setExternalDragPasteboard:pasteboard];
+#else
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerDataRepresentationForTypeIdentifier:webArchiveType visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+        completionHandler([archive data], nil);
+        return nil;
+    }];
+    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeUTF8PlainText visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[&] (void (^completionHandler)(NSData *, NSError *)) -> NSProgress * {
+        completionHandler([@"Hello world" dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+    [simulator setExternalItemProviders:@[ item.get() ]];
+#endif
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(50, 50)];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus(); getSelection().setBaseAndExtent(document.body, 0, document.body, 1)"];
+    EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('bold')"].boolValue);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"document.queryCommandState('italic')"].boolValue);
+}
 
 TEST(DragAndDropTests, DragImageLocationForLinkInSubframe)
 {

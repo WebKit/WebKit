@@ -1,3 +1,39 @@
+2018-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOSMac] Dropping text selections from web content into editable elements crashes the web process
+        https://bugs.webkit.org/show_bug.cgi?id=192113
+        <rdar://problem/46323701>
+
+        Reviewed by Ryosuke Niwa.
+
+        In iOSMac, registering invalid UTIs on NSItemProvider when starting a drag or handling a drop does not work.
+        Since iOS writes and reads only "Apple Web Archive pasteboard type" (a.k.a. `WebArchivePboardType`) during drag
+        and drop as well as copy and paste, we fail to read or write any web archive data, and subsequently fall back to
+        reading RTF or flat RTFD, both of which are not supported in iOSMac, since UIFoundation links against the
+        system's macOS WebKit stack.
+
+        To fix this, we add support for reading and writing com.apple.webarchive (`kUTTypeWebArchive`) on iOS, so that
+        WebKit-based iOSMac applications can understand web archive data from the host running macOS, and the host can
+        also understand web archive data written by the iOSMac app. Additionally, don't allow reading RTF and flat RTFD
+        as web content in iOSMac. (Note that writing RTF and flat RTFD is still safe, since it does not depend on
+        UIFoundation.framework but rather `WebCore::HTMLConverter`).
+
+        Test: DragAndDropTests.ModernWebArchiveType
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragment):
+
+        Additionally make sure that we never call into UIFoundation's NSAttributedString to markup conversion codepath
+        by making `createFragment` an empty stub on iOSMac.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::supportedImageTypes):
+        (WebCore::isTypeAllowedByReadingPolicy):
+        (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+        (WebCore::Pasteboard::supportedWebContentPasteboardTypes):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2018-11-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r238653 and r238656.

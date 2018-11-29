@@ -350,14 +350,21 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 {
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
 
+#if !PLATFORM(IOSMAC)
     [representationsToRegister addData:[webIOSPastePboardType dataUsingEncoding:NSUTF8StringEncoding] forType:webIOSPastePboardType];
+#endif
 
     ASSERT(content.clientTypes.size() == content.clientData.size());
     for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
         [representationsToRegister addData:content.clientData[i]->createNSData().get() forType:content.clientTypes[i]];
 
-    if (content.dataInWebArchiveFormat)
-        [representationsToRegister addData:content.dataInWebArchiveFormat->createNSData().get() forType:WebArchivePboardType];
+    if (content.dataInWebArchiveFormat) {
+        auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
+#if !PLATFORM(IOSMAC)
+        [representationsToRegister addData:webArchiveData.get() forType:WebArchivePboardType];
+#endif
+        [representationsToRegister addData:webArchiveData.get() forType:(__bridge NSString *)kUTTypeWebArchive];
+    }
 
     if (content.dataInAttributedStringFormat) {
         NSAttributedString *attributedString = unarchivedObjectOfClassesFromData([NSSet setWithObject:[NSAttributedString class]], content.dataInAttributedStringFormat->createNSData().get());

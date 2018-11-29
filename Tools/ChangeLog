@@ -1,3 +1,16 @@
+2018-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOSMac] Dropping text selections from web content into editable elements crashes the web process
+        https://bugs.webkit.org/show_bug.cgi?id=192113
+        <rdar://problem/46323701>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to verify that, when dropping an item with both "com.apple.webarchive" and "public.utf8-plain-text"
+        representations, the higher fidelity web archive data is used when handling the drop.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+
 2018-11-28  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Fetch bugs from Bugzilla and submit to Buildbot

@@ -85,7 +85,14 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 
 namespace WebCore {
 
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+#if PLATFORM(IOSMAC)
+
+static FragmentAndResources createFragment(Frame&, NSAttributedString *)
+{
+    return { };
+}
+
+#elif (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 
 static NSDictionary *attributesForAttributedStringConversion()
 {
