@@ -55,7 +55,6 @@ void WKStopObservingContentChanges(void)
     _WKObservingContentChanges = false;
 }
 
-
 void WKStartObservingDOMTimerScheduling(void)
 {
     _WKObservingDOMTimerScheduling = true;
@@ -77,13 +76,24 @@ WKContentChange WKObservedContentChange(void)
     return _WKContentChange;
 }
 
-void WKSetObservedContentChange(WKContentChange aChange)
+void WKSetObservedContentChange(WKContentChange change)
 {
-    if (aChange > _WKContentChange && (_WKObservingDOMTimerScheduling || aChange != WKContentIndeterminateChange)) {
-        _WKContentChange = aChange;
-        if (_WKContentChange == WKContentVisibilityChange)
-            WebThreadClearObservedDOMTimers();
+    // We've already have a definite answer.
+    if (_WKContentChange == WKContentVisibilityChange)
+        return;
+
+    if (change == WKContentVisibilityChange) {
+        _WKContentChange = change;
+        // Don't need to listen to DOM timers anymore.
+        WebThreadClearObservedDOMTimers();
+        return;
     }
+
+    if (change == WKContentIndeterminateChange) {
+        _WKContentChange = change;
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 using DOMTimerList = HashSet<void*>;
