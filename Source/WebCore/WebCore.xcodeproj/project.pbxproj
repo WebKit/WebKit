@@ -693,7 +693,6 @@
 		26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */; };
 		26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		285D32082035D6560070D32F /* ServerTimingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 288E82F02035D4ED00B0DCFF /* ServerTimingParser.h */; };
 		2914E3081CAB5A440049966F /* AccessibilityAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2914E3061CAB5A440049966F /* AccessibilityAttachment.h */; };
 		293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
@@ -6525,8 +6524,6 @@
 		28538EEE20221FA600D1909A /* HeaderFieldTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeaderFieldTokenizer.h; sourceTree = "<group>"; };
 		286E4DCB2021048800315238 /* ServerTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerTiming.cpp; sourceTree = "<group>"; };
 		286E4DCC2021048800315238 /* ServerTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerTiming.h; sourceTree = "<group>"; };
-		288E82EE2035D2BE00B0DCFF /* ServerTimingParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerTimingParser.cpp; path = loader/ServerTimingParser.cpp; sourceTree = "<group>"; };
-		288E82F02035D4ED00B0DCFF /* ServerTimingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerTimingParser.h; path = loader/ServerTimingParser.h; sourceTree = "<group>"; };
 		28DB9BC52020EA0400E54A07 /* PerformanceServerTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceServerTiming.cpp; sourceTree = "<group>"; };
 		28DB9BC62020EA0400E54A07 /* PerformanceServerTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceServerTiming.h; sourceTree = "<group>"; };
 		28DB9BC72020EA0400E54A07 /* PerformanceServerTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceServerTiming.idl; sourceTree = "<group>"; };
@@ -11394,6 +11391,8 @@
 		A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerInspectorProxy.h; sourceTree = "<group>"; };
 		A52B34951FA3E286008B6246 /* ServiceWorkerInspectorProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerInspectorProxy.cpp; sourceTree = "<group>"; };
 		A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerDebuggerProxy.h; sourceTree = "<group>"; };
+		A52D85CA21B0982F0061C1EB /* ServerTimingParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServerTimingParser.cpp; sourceTree = "<group>"; };
+		A52D85CB21B098300061C1EB /* ServerTimingParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServerTimingParser.h; sourceTree = "<group>"; };
 		A5416FE318810EF80009FC5F /* YouTubeEmbedShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubeEmbedShadowElement.cpp; sourceTree = "<group>"; };
 		A5416FE418810EF80009FC5F /* YouTubeEmbedShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouTubeEmbedShadowElement.h; sourceTree = "<group>"; };
 		A54A0C5F1DB7F8B70017A90B /* WorkerInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerInspectorController.cpp; sourceTree = "<group>"; };
@@ -15917,8 +15916,6 @@
 		0867D691FE84028FC02AAC07 /* WebCore */ = {
 			isa = PBXGroup;
 			children = (
-				288E82F02035D4ED00B0DCFF /* ServerTimingParser.h */,
-				288E82EE2035D2BE00B0DCFF /* ServerTimingParser.cpp */,
 				1C09D04B1E31C32800725F18 /* PAL.xcodeproj */,
 				65C97AF208EA908800ACD273 /* config.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
@@ -25004,6 +25001,8 @@
 				CBC2D22E1CE5B77D00D1880B /* ResourceTimingInformation.h */,
 				286E4DCB2021048800315238 /* ServerTiming.cpp */,
 				286E4DCC2021048800315238 /* ServerTiming.h */,
+				A52D85CA21B0982F0061C1EB /* ServerTimingParser.cpp */,
+				A52D85CB21B098300061C1EB /* ServerTimingParser.h */,
 				8362E8BF20CEF9CB00245886 /* ShouldTreatAsContinuingLoad.h */,
 				51327D5F11A33A2B004F9D65 /* SinkDocument.cpp */,
 				51327D5E11A33A2B004F9D65 /* SinkDocument.h */,
@@ -31034,7 +31033,6 @@
 				077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				516F7F6D1C31E39A00F111DC /* ServerOpenDBRequest.h in Headers */,
-				285D32082035D6560070D32F /* ServerTimingParser.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				51F1755D1F3EBC8300C74950 /* ServiceWorker.h in Headers */,
 				A581ED131FB288CF00CED4EC /* ServiceWorkerAgent.h in Headers */,
