@@ -245,4 +245,22 @@ inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
     return node.nextSibling();
 }
 
+inline Node* nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(node))
+        return sibling;
+    for (auto* ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
+        if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(*ancestor))
+            return sibling;
+    }
+    return nullptr;
+}
+
+inline Node* nextInComposedTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* firstChild = firstChildInComposedTreeIgnoringUserAgentShadow(node))
+        return firstChild;
+    return nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow(node);
+}
+
 } // namespace WebCore

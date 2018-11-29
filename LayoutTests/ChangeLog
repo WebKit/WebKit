@@ -1,3 +1,16 @@
+2018-11-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Executing "insertunorderedlist" while selecting a contenteditable element inside a shadow dom hangs the browser
+        https://bugs.webkit.org/show_bug.cgi?id=184049
+        <rdar://problem/38931033>
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for executing InsertUnorderedList inside a shadow tree.
+
+        * editing/execCommand/insert-ordered-list-in-shadow-tree-expected.txt: Added.
+        * editing/execCommand/insert-ordered-list-in-shadow-tree.html: Added.
+
 2018-11-29  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] WebGPURenderPassEncoder::setPipeline, draw, and endPass prototypes

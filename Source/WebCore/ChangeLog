@@ -1,3 +1,38 @@
+2018-11-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Executing "insertunorderedlist" while selecting a contenteditable element inside a shadow dom hangs the browser
+        https://bugs.webkit.org/show_bug.cgi?id=184049
+        <rdar://problem/38931033>
+
+        Reviewed by Antti Koivisto.
+
+        The primary hung was caused by TextIterator::advance traversing the next node in the tree order using
+        NodeTraversal::next which doesn't take the composed tree into account. Fixed the bug by traversing
+        the composed tree while sharing code with StylizedMarkupAccumulator.
+
+        This revealed a second hang in InsertListCommand::doApply() caused by endingSelection() being null,
+        which was caused by CompositeEditCommand::moveParagraphs failing to restore the ending selection properly
+        because it was computing the text indices difference from the beginning of the document until the destination.
+
+        Fixed this second bug by computing the indices against the beginning of the root editable element.
+        Note that editability never crosses a shadow boundary.
+
+        Test: editing/execCommand/insert-unordered-list-in-shadow-tree.html
+
+        * dom/ComposedTreeIterator.h:
+        (WebCore::nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow): Extracted out of nextSkippingChildren
+        in markup.cpp.
+        (WebCore::nextInComposedTreeIgnoringUserAgentShadow): Added.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Compute the index from the beginning of the root editable
+        element as opposed to the beginning of the document.
+        * editing/TextIterator.cpp:
+        (WebCore::nextNode): Added.
+        (WebCore::isDescendantOf): Added.
+        (WebCore::TextIterator::advance): Use the newly added functions to traverse the composed tree when the options
+        contains TextIteratorTraversesFlatTree.
+        * editing/markup.cpp:
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [ContentObservation] Decouple content change and DOM timer scheduling observation

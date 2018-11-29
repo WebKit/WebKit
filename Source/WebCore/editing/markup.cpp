@@ -273,15 +273,8 @@ private:
     
     Node* nextSkippingChildren(Node& node)
     {
-        if (UNLIKELY(m_useComposedTree)) {
-            if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(node))
-                return sibling;
-            for (auto* ancestor = node.parentInComposedTree(); ancestor; ancestor = ancestor->parentInComposedTree()) {
-                if (auto* sibling = nextSiblingInComposedTreeIgnoringUserAgentShadow(*ancestor))
-                    return sibling;
-            }
-            return nullptr;
-        }
+        if (UNLIKELY(m_useComposedTree))
+            return nextSkippingChildrenInComposedTreeIgnoringUserAgentShadow(node);
         return NodeTraversal::nextSkippingChildren(node);
     }
 

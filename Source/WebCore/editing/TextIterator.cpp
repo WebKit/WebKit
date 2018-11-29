@@ -424,6 +424,20 @@ static inline Node* nextSibling(TextIteratorBehavior options, Node& node)
     return node.nextSibling();
 }
 
+static inline Node* nextNode(TextIteratorBehavior options, Node& node)
+{
+    if (UNLIKELY(options & TextIteratorTraversesFlatTree))
+        return nextInComposedTreeIgnoringUserAgentShadow(node);
+    return NodeTraversal::next(node);
+}
+
+static inline bool isDescendantOf(TextIteratorBehavior options, Node& node, Node& possibleAncestor)
+{
+    if (UNLIKELY(options & TextIteratorTraversesFlatTree))
+        return node.isDescendantOrShadowDescendantOf(&possibleAncestor);
+    return node.isDescendantOf(&possibleAncestor);
+}
+
 static inline Node* parentNodeOrShadowHost(TextIteratorBehavior options, Node& node)
 {
     if (UNLIKELY(options & TextIteratorTraversesFlatTree))
@@ -507,10 +521,10 @@ void TextIterator::advance()
         if (!next) {
             next = nextSibling(m_behavior, *m_node);
             if (!next) {
-                bool pastEnd = NodeTraversal::next(*m_node) == m_pastEndNode;
+                bool pastEnd = nextNode(m_behavior, *m_node) == m_pastEndNode;
                 Node* parentNode = parentNodeOrShadowHost(m_behavior, *m_node);
                 while (!next && parentNode) {
-                    if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(*parentNode))
+                    if ((pastEnd && parentNode == m_endContainer) || isDescendantOf(m_behavior, *m_endContainer, *parentNode))
                         return;
                     bool haveRenderer = m_node->renderer();
                     Node* exitedNode = m_node;
