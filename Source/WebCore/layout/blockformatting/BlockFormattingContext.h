@@ -80,6 +80,7 @@ private:
         static InstrinsicWidthConstraints instrinsicWidthConstraints(const LayoutState&, const Box&);
 
         static LayoutUnit estimatedMarginTop(const LayoutState&, const Box&);
+        static LayoutUnit estimatedMarginBottom(const LayoutState&, const Box&);
 
     private:
         // This class implements margin collapsing for block formatting context.

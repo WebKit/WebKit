@@ -1,3 +1,23 @@
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][Quirk] Body and html height stretching.
+        https://bugs.webkit.org/show_bug.cgi?id=192154
+
+        Reviewed by Antti Koivisto.
+
+        This patch takes the document box's margin/border/padding into account when stretching html/body to the height of the initial containing block.
+
+        Tests: fast/block/block-only/body-height-with-auto-html-height-quirk.html
+               fast/block/block-only/body-height-with-auto-html-height-quirk2.html
+               fast/block/block-only/body-height-with-non-auto-html-height-quirk.html
+               fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginBottom):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+
 2018-11-29  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Replace forward declare of WebGPUCommandBuffer with include

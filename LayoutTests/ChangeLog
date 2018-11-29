@@ -1,3 +1,19 @@
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][Quirk] Body and html height stretching.
+        https://bugs.webkit.org/show_bug.cgi?id=192154
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/body-height-with-auto-html-height-quirk-expected.txt: Added.
+        * fast/block/block-only/body-height-with-auto-html-height-quirk.html: Added.
+        * fast/block/block-only/body-height-with-auto-html-height-quirk2-expected.txt: Added.
+        * fast/block/block-only/body-height-with-auto-html-height-quirk2.html: Added.
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk-expected.txt: Added.
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk.html: Added.
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk2-expected.txt: Added.
+        * fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html: Added.
+
 2018-11-29  Youenn Fablet  <youenn@apple.com>
 
         CSS subresource loads should not be observable from resource timing if the stylesheet is opaque

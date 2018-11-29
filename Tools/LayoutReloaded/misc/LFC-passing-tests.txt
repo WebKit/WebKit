@@ -62,6 +62,10 @@ fast/block/block-only/inflow-min-max-height.html
 fast/block/block-only/absolute-position-min-max-height.html
 fast/block/block-only/float-min-max-height.html
 fast/block/block-only/min-max-height-percentage.html
+fast/block/block-only/body-height-with-non-auto-html-height-quirk.html
+fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html
+fast/block/block-only/body-height-with-auto-html-height-quirk.html
+fast/block/block-only/body-height-with-auto-html-height-quirk2.html
 fast/block/basic/inline-content-with-floating-image.html
 fast/block/basic/inline-content-with-floating-images2.html
 fast/inline/simple-intruding-float1.html
