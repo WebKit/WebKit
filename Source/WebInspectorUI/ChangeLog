@@ -1,3 +1,16 @@
+2018-11-28  Dean Jackson  <dino@apple.com>
+
+        [ES Modules] Allow .mjs content when loaded from file://
+        https://bugs.webkit.org/show_bug.cgi?id=192100
+        <rdar://problem/46320065>
+
+        Reviewed by Sam Weinig.
+
+        Add a mapping from .mjs to application/javascript.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.mimeTypeForFileExtension):
+
 2018-11-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements: selecting more than one DOM node causes the scope highlight to contrast

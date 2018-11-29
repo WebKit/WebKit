@@ -1,0 +1,13 @@
+Test import of a .mjs module.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+Module B was imported.
+Module A was imported.
+Exported B was visible.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,21 @@
+2018-11-28  Dean Jackson  <dino@apple.com>
+
+        [ES Modules] Allow .mjs content when loaded from file://
+        https://bugs.webkit.org/show_bug.cgi?id=192100
+        <rdar://problem/46320065>
+
+        Reviewed by Sam Weinig.
+
+        Test for both import() function and the import statement loading
+        from .mjs files.
+
+        * js/dom/modules/import-mjs-module-expected.txt: Added.
+        * js/dom/modules/import-mjs-module.html: Added.
+        * js/dom/modules/resources/module-simple-A.mjs: Added.
+        * js/dom/modules/resources/module-simple-B.mjs: Added.
+        * platform/win/TestExpectations: Skip this on Windows. Just wait for Windows
+          to recognise the extension.
+
 2018-11-29  Guillaume Emont  <guijemont@igalia.com>
 
         Gardening: skip test that newly times out on Armv7

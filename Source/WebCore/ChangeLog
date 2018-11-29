@@ -1,3 +1,29 @@
+2018-11-28  Dean Jackson  <dino@apple.com>
+
+        [ES Modules] Allow .mjs content when loaded from file://
+        https://bugs.webkit.org/show_bug.cgi?id=192100
+        <rdar://problem/46320065>
+
+        Reviewed by Sam Weinig.
+
+        Node JS requires ES Module files to be identified by the file
+        extension of ".mjs" (no relation to Maciej Stachowiak). This new
+        extension causes issues because it isn't recognised as a JavaScript
+        file. When using the script tag, the author is able to force the type
+        of the referenced file using an attribute, but this isn't possible
+        for the import() function or import statement.
+
+        Add a new entry into our table that maps file extensions to MIME types
+        so that when a .mjs file is loaded from a file:// reference it is
+        identified as JavaScript.
+
+        Test: js/dom/modules/import-mjs-module.html
+
+        * platform/network/mac/WebCoreURLResponse.mm: Add .mjs to the existing dictionary.
+        (WebCore::createExtensionToMIMETypeMap):
+        * platform/network/ios/WebCoreURLResponseIOS.mm: Add code just for .mjs.
+        (WebCore::createExtensionToMIMETypeMap):
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Width does not need stretching quirk.
