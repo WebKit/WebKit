@@ -1,3 +1,19 @@
+2018-11-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Updating href on linearGradient and radialGradient doesn't update its rendering
+        https://bugs.webkit.org/show_bug.cgi?id=191934
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/svg-linear-gradient-dynamic-update-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-linear-gradient-dynamic-update-href-in-shadow-tree.html: Added.
+        * fast/shadow-dom/svg-radial-gradient-dynamic-update-href-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/svg-radial-gradient-dynamic-update-href-in-shadow-tree.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-href-prop-expected.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-href-prop.html: Added.
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-href-prop-expected.html: Added.
+        * svg/dynamic-updates/SVGRadialGradientElement-svgdom-href-prop.html: Added.
+
 2018-11-28  Truitt Savell  <tsavell@apple.com>
 
         [ Mojave WK1 ] Layout Test fast/images/animated-image-different-dest-size.html fast/images/animated-image-loop-count.html is failing

@@ -1,3 +1,22 @@
+2018-11-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Updating href on linearGradient and radialGradient doesn't update its rendering
+        https://bugs.webkit.org/show_bug.cgi?id=191934
+
+        Reviewed by Ryosuke Niwa.
+
+        Mark the gradient renderer for repaint when the value of the 'href'
+        attribute changes.
+
+        Tests: fast/shadow-dom/svg-linear-gradient-dynamic-update-href-in-shadow-tree.html
+               fast/shadow-dom/svg-radial-gradient-dynamic-update-href-in-shadow-tree.html
+               svg/dynamic-updates/SVGLinearGradientElement-svgdom-href-prop.html
+               svg/dynamic-updates/SVGRadialGradientElement-svgdom-href-prop.html
+
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+
+
 2018-11-28  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-transceivers.https.html is flaky on iOS simulator
