@@ -1,3 +1,26 @@
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentObservation] Decouple content change and DOM timer scheduling observation
+        https://bugs.webkit.org/show_bug.cgi?id=192170
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation for adding style recalc scheduling observation (the main goal here is to simplify the indeterminate change logic).
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::mouseMoved):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKStartObservingContentChanges):
+        (WKStopObservingContentChanges):
+        (WKStartObservingDOMTimerSchedules):
+        (WKStopObservingDOMTimerSchedules):
+        (WKSetObservedContentChange):
+        (WebThreadAddObservedDOMTimer):
+        (WKBeginObservingContentChanges): Deleted.
+        * platform/ios/wak/WKContentObservation.h:
+
 2018-11-29  Frederic Wang  <fwang@igalia.com>
 
         Make reconcileViewportConstrainedLayerPositions start from a specified scrolling node

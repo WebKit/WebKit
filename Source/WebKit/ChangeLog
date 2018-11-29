@@ -1,3 +1,13 @@
+2018-11-29  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentObservation] Decouple content change and DOM timer scheduling observation
+        https://bugs.webkit.org/show_bug.cgi?id=192170
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2018-11-29  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Tell AirPlay picker when a file has video

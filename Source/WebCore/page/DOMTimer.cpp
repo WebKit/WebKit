@@ -352,7 +352,7 @@ void DOMTimer::fired()
     }
 
     if (shouldBeginObservingChanges) {
-        WKBeginObservingContentChanges(false);
+        WKStartObservingContentChanges();
         WebThreadRemoveObservedDOMTimer(this);
     }
 #endif

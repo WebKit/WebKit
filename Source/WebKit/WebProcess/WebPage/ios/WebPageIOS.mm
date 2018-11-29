@@ -550,11 +550,13 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
     Frame& mainframe = m_page->mainFrame();
 
-    WKBeginObservingContentChanges(true);
+    WKStartObservingContentChanges();
+    WKStartObservingDOMTimerScheduling();
 
     mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
     mainframe.document()->updateStyleIfNeeded();
 
+    WKStopObservingDOMTimerScheduling();
     WKStopObservingContentChanges();
 
     m_pendingSyntheticClickNode = nullptr;

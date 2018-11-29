@@ -36,7 +36,7 @@
 
 WKContentChange _WKContentChange                    = WKContentNoChange;
 bool            _WKObservingContentChanges          = false;
-bool            _WKObservingIndeterminateChanges    = false;
+bool            _WKObservingDOMTimerScheduling      = false;
 
 
 bool WKObservingContentChanges(void)
@@ -44,20 +44,27 @@ bool WKObservingContentChanges(void)
     return _WKObservingContentChanges;
 }
 
-void WKStopObservingContentChanges(void)
-{
-    _WKObservingContentChanges = false;
-    _WKObservingIndeterminateChanges = false;
-}
-
-void WKBeginObservingContentChanges(bool allowsIntedeterminateChanges)
+void WKStartObservingContentChanges()
 {
     _WKContentChange = WKContentNoChange;
     _WKObservingContentChanges = true;
-    
-    _WKObservingIndeterminateChanges = allowsIntedeterminateChanges;
-    if (_WKObservingIndeterminateChanges)
-        WebThreadClearObservedDOMTimers();
+}
+
+void WKStopObservingContentChanges(void)
+{
+    _WKObservingContentChanges = false;
+}
+
+
+void WKStartObservingDOMTimerScheduling(void)
+{
+    _WKObservingDOMTimerScheduling = true;
+    WebThreadClearObservedDOMTimers();
+}
+
+void WKStopObservingDOMTimerScheduling(void)
+{
+    _WKObservingDOMTimerScheduling = false;
 }
 
 WKContentChange WKObservedContentChange(void)
@@ -67,7 +74,7 @@ WKContentChange WKObservedContentChange(void)
 
 void WKSetObservedContentChange(WKContentChange aChange)
 {
-    if (aChange > _WKContentChange && (_WKObservingIndeterminateChanges || aChange != WKContentIndeterminateChange)) {
+    if (aChange > _WKContentChange && (_WKObservingDOMTimerScheduling || aChange != WKContentIndeterminateChange)) {
         _WKContentChange = aChange;
         if (_WKContentChange == WKContentVisibilityChange)
             WebThreadClearObservedDOMTimers();
@@ -99,7 +106,7 @@ bool WebThreadContainsObservedDOMTimer(void* timer)
 
 void WebThreadAddObservedDOMTimer(void* timer)
 {
-    if (_WKContentChange != WKContentVisibilityChange && _WKObservingIndeterminateChanges)
+    if (_WKContentChange != WKContentVisibilityChange && _WKObservingDOMTimerScheduling)
         WebThreadGetObservedDOMTimers().add(timer);
 }
 

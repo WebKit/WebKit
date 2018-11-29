@@ -493,12 +493,14 @@ void EventHandler::mouseMoved(WebEvent *event)
 
     m_frame.document()->updateStyleIfNeeded();
 
-    WKBeginObservingContentChanges(true);
+    WKStartObservingContentChanges();
+    WKStartObservingDOMTimerScheduling();
     CurrentEventScope scope(event);
     event.wasHandled = mouseMoved(currentPlatformMouseEvent());
     
     // FIXME: Why is this here?
     m_frame.document()->updateStyleIfNeeded();
+    WKStopObservingDOMTimerScheduling();
     WKStopObservingContentChanges();
 
     END_BLOCK_OBJC_EXCEPTIONS;
