@@ -2039,7 +2039,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         return;
 
     _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
-    _unobscuredCenterToRestore = center.value();
+    _unobscuredCenterToRestore = center;
 
     _scaleToRestore = scale;
 }
