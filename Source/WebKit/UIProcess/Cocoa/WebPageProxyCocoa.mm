@@ -33,6 +33,7 @@
 #import "PageClient.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
+#import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/NotImplemented.h>
@@ -189,5 +190,21 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
+    
+void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
+{
+    if (!isValid())
+        return;
+    
+    process().send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID);
 }
+
+void WebPageProxy::performDictionaryLookupOfCurrentSelection()
+{
+    if (!isValid())
+        return;
+    
+    process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_pageID);
+}
+
+} // namespace WebKit
