@@ -127,7 +127,7 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
 }
 
 .tree-outline.dom li.selected + ol.children.expanded {
-    border-color: hsl(0, 0%, 83%);
+    border-color: hsl(0, 0%, 65%, 0.5);
 }
 
 .tree-outline.dom li {
@@ -323,10 +323,6 @@ body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
 
     .tree-outline.dom:focus li.selected .selection-area {
         background-color: var(--selected-background-color);
-    }
-
-    .tree-outline.dom li.selected + ol.children.expanded {
-        border-color: hsl(0, 0%, 27%);
     }
 
     .tree-outline.dom .shadow {
