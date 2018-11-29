@@ -101,6 +101,14 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         WI.auditManager.removeEventListener(null, null, this);
     }
 
+    applyFiltersToTreeElement(treeElement)
+    {
+        super.applyFiltersToTreeElement(treeElement);
+
+        if (treeElement === this._resultsFolderTreeElement && !WI.auditManager.results.length)
+            this._resultsFolderTreeElement.hidden = true;
+    }
+
     // Private
 
     _addTest(test)
