@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets repaint when properties change">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<script id="code" type="text/worklet">
+  class MyPaint {
+    static get inputProperties() { return ['--my-prop']; }
+
+    paint(ctx, geom, properties) {
+      if (properties.get('--my-prop').toString() != "goodbye") {
+        ctx.fillStyle = "red";
+      } else {
+        ctx.fillStyle = "green";
+      }
+
+      ctx.fillRect(0, 0, geom.width, geom.height);
+    }
+  }
+  registerPaint('my-paint', MyPaint);
+</script>
+
+<script type="text/javascript">
+  importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+
+  // FIXME: Once importWorklet returns a promise, these setTimeouts should go away.
+  setTimeout(function() {
+    document.getElementById('paint').style.setProperty('--my-prop', 'goodbye');
+  }, 500);
+</script>
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    --my-prop: hello;
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<body>
+  <div id="paint"></div>
+</body>

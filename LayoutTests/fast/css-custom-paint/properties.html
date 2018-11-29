@@ -21,6 +21,11 @@
 class MyPaint {
   static get inputProperties() { return ['height', '--my-prop', '--my-registered-prop', "--never-specified"]; }
   static get inputArguments() { return ['*', '*', '*']; }
+
+  constructor() { this.myAttribute = 42; }
+
+  testThis() { return this.myAttribute; }
+
   paint(ctx, geom, properties, args) {
     assert_equals(properties.get('height').toString(), args[0].toString());
     assert_equals(properties.get('height').value, 150);
@@ -29,6 +34,8 @@ class MyPaint {
     assert_equals(properties.get('--my-registered-prop').toString(), args[2].toString());
     assert_equals(properties.get('width'), null);
     assert_equals(properties.get('--never-specified').toString(), '');
+
+    assert_equals(this.testThis(), 42);
 
     for (var i = 0; i < 6; i++){
       for (var j = 0; j < 6; j++){

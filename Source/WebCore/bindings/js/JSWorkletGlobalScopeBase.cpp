@@ -128,7 +128,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkletGlobalScope& workletGlo
 
 JSValue toJS(ExecState*, WorkletGlobalScope& workletGlobalScope)
 {
-    auto* contextWrapper = workletGlobalScope.script().workletGlobalScopeWrapper();
+    ASSERT(workletGlobalScope.script());
+    auto* contextWrapper = workletGlobalScope.script()->workletGlobalScopeWrapper();
     ASSERT(contextWrapper);
     return contextWrapper->proxy();
 }

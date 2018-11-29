@@ -675,6 +675,8 @@ enum CompositingPolicy {
     unsigned long long documentIdentifier(Document document);
     boolean isDocumentAlive(unsigned long long documentIdentifier);
 
+    boolean isAnyWorkletGlobalScopeAlive();
+
     DOMString serviceWorkerClientIdentifier(Document document);
 
     Promise<void> clearCacheStorageMemoryRepresentation();

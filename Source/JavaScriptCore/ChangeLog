@@ -1,3 +1,14 @@
+2018-11-29  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API should pass 'this' correctly to paint callback, and repaint when properties change.
+        https://bugs.webkit.org/show_bug.cgi?id=191443
+
+        Reviewed by Dean Jackson.
+
+        Export the simpler construct() method for use in WebCore.
+
+        * runtime/ConstructData.h:
+
 2018-11-28  Mark Lam  <mark.lam@apple.com>
 
         ENABLE_SEPARATED_WX_HEAP needs to be defined in Platform.h.

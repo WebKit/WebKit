@@ -35,6 +35,7 @@
 #include <JavaScriptCore/Error.h>
 
 namespace WebCore {
+using namespace JSC;
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDOMObject);
 

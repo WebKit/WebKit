@@ -40,6 +40,8 @@ public:
         return adoptRef(*new CSSPaintImageValue(name, WTFMove(arguments)));
     }
 
+    const String& name() const { return m_name; }
+
     RefPtr<Image> image(RenderElement&, const FloatSize&);
 
     bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }

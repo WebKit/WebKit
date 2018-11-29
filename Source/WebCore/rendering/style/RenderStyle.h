@@ -1267,6 +1267,10 @@ public:
     void setApplePayButtonType(ApplePayButtonType type) { SET_VAR(m_rareNonInheritedData, applePayButtonType, static_cast<unsigned>(type)); }
 #endif
 
+#if ENABLE(CSS_PAINTING_API)
+    void addCustomPaintWatchProperty(const String& name);
+#endif
+
     // Support for paint-order, stroke-linecap, stroke-linejoin, and stroke-miterlimit from https://drafts.fxtf.org/paint/.
     void setPaintOrder(PaintOrder order) { SET_VAR(m_rareInheritedData, paintOrder, static_cast<unsigned>(order)); }
     PaintOrder paintOrder() const { return static_cast<PaintOrder>(m_rareInheritedData->paintOrder); }

@@ -169,6 +169,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
     , customProperties(o.customProperties)
+    , customPaintWatchedProperties(o.customPaintWatchedProperties ? std::make_unique<HashSet<String>>(*o.customPaintWatchedProperties) : nullptr)
 #if ENABLE(TOUCH_EVENTS)
     , touchAction(o.touchAction)
 #endif
@@ -271,6 +272,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && justifyItems == o.justifyItems
         && justifySelf == o.justifySelf
         && customProperties == o.customProperties
+        && ((customPaintWatchedProperties && o.customPaintWatchedProperties && *customPaintWatchedProperties == *o.customPaintWatchedProperties)
+            || (!customPaintWatchedProperties && !o.customPaintWatchedProperties))
         && pageSizeType == o.pageSizeType
         && transformStyle3D == o.transformStyle3D
         && backfaceVisibility == o.backfaceVisibility

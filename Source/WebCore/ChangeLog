@@ -1,3 +1,77 @@
+2018-11-29  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API should pass 'this' correctly to paint callback, and repaint when properties change.
+        https://bugs.webkit.org/show_bug.cgi?id=191443
+
+        Reviewed by Dean Jackson.
+
+        Instantiate a new instance of the paint class, and pass it as 'this' object when the paint callback is called. 
+        Also, this patch makes sure that custom paint elements get repainted when properties that they care about get changed.
+        Finally, we fix two reference cycles that caused WorkletGlobalScope to never be destroyed.
+
+        Tests: fast/css-custom-paint/animate-repaint.html
+               fast/css-custom-paint/animate.html
+
+        * bindings/js/JSDOMWrapper.cpp:
+        * bindings/js/JSPaintWorkletGlobalScopeCustom.cpp:
+        (WebCore::JSPaintWorkletGlobalScope::visitAdditionalChildren):
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::execStateFromWorkletGlobalScope):
+        * css/CSSPaintCallback.h:
+        * css/CSSPaintCallback.idl:
+        * css/CSSPaintImageValue.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::vm):
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::CustomPaintImage):
+        (WebCore::CustomPaintImage::doCustomPaint):
+        * platform/graphics/CustomPaintImage.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCustomPaintWatchProperty):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isAnyWorkletGlobalScopeAlive const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * worklets/PaintWorkletGlobalScope.cpp:
+        (WebCore::PaintWorkletGlobalScope::devicePixelRatio const):
+        (WebCore::PaintWorkletGlobalScope::PaintDefinition::PaintDefinition):
+        (WebCore::PaintWorkletGlobalScope::registerPaint):
+        * worklets/PaintWorkletGlobalScope.h:
+        (WebCore::PaintWorkletGlobalScope::~PaintWorkletGlobalScope):
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::WorkletGlobalScope):
+        (WebCore::WorkletGlobalScope::~WorkletGlobalScope):
+        (WebCore::WorkletGlobalScope::prepareForDestruction):
+        (WebCore::WorkletGlobalScope::allWorkletGlobalScopesSet):
+        (WebCore::WorkletGlobalScope::isJSExecutionForbidden const):
+        (WebCore::WorkletGlobalScope::logExceptionToConsole):
+        (WebCore::WorkletGlobalScope::addConsoleMessage):
+        (WebCore::WorkletGlobalScope::addMessage):
+        * worklets/WorkletGlobalScope.h:
+        (WebCore::WorkletGlobalScope::script):
+        (WebCore::WorkletGlobalScope::responsibleDocument):
+        (WebCore::WorkletGlobalScope::responsibleDocument const):
+        (WebCore::WorkletGlobalScope::identifier const): Deleted.
+        (WebCore::WorkletGlobalScope::responsableDocument): Deleted.
+        (WebCore::WorkletGlobalScope::responsableDocument const): Deleted.
+        * worklets/WorkletScriptController.cpp:
+        (WebCore::WorkletScriptController::~WorkletScriptController):
+        (WebCore::WorkletScriptController::disableEval):
+        (WebCore::WorkletScriptController::disableWebAssembly):
+        (WebCore::WorkletScriptController::initScript):
+
 2018-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence

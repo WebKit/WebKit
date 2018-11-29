@@ -40,11 +40,12 @@
 #include "JSCSSPaintCallback.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
+#include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {
 
-CustomPaintImage::CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
-    : m_paintCallback(definition.paintCallback.get())
+CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
+    : m_paintDefinition(makeWeakPtr(definition))
     , m_inputProperties(definition.inputProperties)
     , m_element(makeWeakPtr(element))
     , m_arguments(arguments)
@@ -56,13 +57,20 @@ CustomPaintImage::~CustomPaintImage() = default;
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
-    if (!m_element || !m_element->element())
+    if (!m_element || !m_element->element() || !m_paintDefinition)
         return ImageDrawResult::DidNothing;
+
+    JSC::JSValue paintConstructor(m_paintDefinition->paintConstructor);
+
+    if (!paintConstructor)
+        return ImageDrawResult::DidNothing;
+
+    auto& paintCallback = m_paintDefinition->paintCallback.get();
 
     ASSERT(!m_element->needsLayout());
     ASSERT(!m_element->element()->document().needsStyleRecalc());
 
-    JSCSSPaintCallback& callback = static_cast<JSCSSPaintCallback&>(m_paintCallback.get());
+    JSCSSPaintCallback& callback = static_cast<JSCSSPaintCallback&>(paintCallback);
     auto* scriptExecutionContext = callback.scriptExecutionContext();
     if (!scriptExecutionContext)
         return ImageDrawResult::DidNothing;
@@ -103,7 +111,21 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
     auto propertyMap = StylePropertyMapReadOnly::create(WTFMove(propertyValues));
 
-    auto result = m_paintCallback->handleEvent(*context, size, propertyMap, m_arguments);
+    auto& vm = *paintConstructor.getObject()->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto& globalObject = *paintConstructor.getObject()->globalObject();
+
+    auto& state = *globalObject.globalExec();
+    JSC::ArgList noArgs;
+    JSC::JSValue thisObject = { JSC::construct(&state, WTFMove(paintConstructor), noArgs, "Failed to construct paint class") };
+
+    if (UNLIKELY(scope.exception())) {
+        reportException(&state, scope.exception());
+        return ImageDrawResult::DidNothing;
+    }
+
+    auto result = paintCallback.handleEvent(WTFMove(thisObject), *context, size, propertyMap, m_arguments);
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 

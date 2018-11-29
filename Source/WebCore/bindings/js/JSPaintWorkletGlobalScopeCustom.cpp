@@ -34,8 +34,10 @@ using namespace JSC;
 void JSPaintWorkletGlobalScope::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
     auto locker = holdLock(wrapped().paintDefinitionLock());
-    for (auto& registered : wrapped().paintDefinitionMap().values())
+    for (auto& registered : wrapped().paintDefinitionMap().values()) {
         registered->paintCallback->visitJSFunction(visitor);
+        visitor.appendUnbarriered(registered->paintConstructor);
+    }
 }
 
 }

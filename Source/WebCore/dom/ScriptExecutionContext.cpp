@@ -482,7 +482,7 @@ JSC::VM& ScriptExecutionContext::vm()
         return downcast<WorkerGlobalScope>(*this).script()->vm();
 #if ENABLE(CSS_PAINTING_API)
     if (is<WorkletGlobalScope>(*this))
-        return downcast<WorkletGlobalScope>(*this).script().vm();
+        return downcast<WorkletGlobalScope>(*this).script()->vm();
 #endif
 
     RELEASE_ASSERT_NOT_REACHED();

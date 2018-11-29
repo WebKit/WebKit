@@ -388,6 +388,8 @@ public:
     uint64_t documentIdentifier(const Document&) const;
     bool isDocumentAlive(uint64_t documentIdentifier) const;
 
+    bool isAnyWorkletGlobalScopeAlive() const;
+
     String serviceWorkerClientIdentifier(const Document&) const;
 
     RefPtr<WindowProxy> openDummyInspectorFrontend(const String& url);

@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets don't leak">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+
+<style>
+  .paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div class="paint"></div>
+
+<script id="code" type="text/worklet">
+const globalScope = this;
+class MyPaint {
+  paint(ctx, geom, properties, args) {
+    const dummy = globalScope; // Leak!
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, geom.width, geom.height);
+  }
+}
+MyPaint.createALeak = this;
+registerPaint('my-paint', MyPaint);
+</script>
+
+<script>
+CSS.paintWorklet.addModule(document.getElementById('code').textContent);
+</script>

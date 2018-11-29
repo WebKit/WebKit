@@ -2531,6 +2531,13 @@ void Document::prepareForDestruction()
     }
 #endif
 
+#if ENABLE(CSS_PAINTING_API)
+    if (m_paintWorkletGlobalScope) {
+        m_paintWorkletGlobalScope->prepareForDestruction();
+        m_paintWorkletGlobalScope = nullptr;
+    }
+#endif
+
     m_hasPreparedForDestruction = true;
 
     // Note that m_pageCacheState can be Document::AboutToEnterPageCache if our frame

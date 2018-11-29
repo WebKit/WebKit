@@ -33,6 +33,7 @@
 #include "JSCSSPaintCallback.h"
 #include "JSDOMConvertCallbacks.h"
 #include "JSDOMConvertSequences.h"
+#include "RenderView.h"
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -50,15 +51,25 @@ PaintWorkletGlobalScope::PaintWorkletGlobalScope(Document& document, ScriptSourc
 
 double PaintWorkletGlobalScope::devicePixelRatio() const
 {
-    if (!responsableDocument() || !responsableDocument()->domWindow())
+    if (!responsibleDocument() || !responsibleDocument()->domWindow())
         return 1.0;
-    return responsableDocument()->domWindow()->devicePixelRatio();
+    return responsibleDocument()->domWindow()->devicePixelRatio();
+}
+
+PaintWorkletGlobalScope::PaintDefinition::PaintDefinition(const AtomicString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<String>&& inputProperties, Vector<String>&& inputArguments)
+    : name(name)
+    , paintConstructor(paintConstructor)
+    , paintCallback(WTFMove(paintCallback))
+    , inputProperties(WTFMove(inputProperties))
+    , inputArguments(WTFMove(inputArguments))
+{
 }
 
 // https://drafts.css-houdini.org/css-paint-api/#registering-custom-paint
 ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const String& name, Strong<JSObject> paintConstructor)
 {
     auto& vm = *paintConstructor->vm();
+    JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Validate that paintConstructor is a VoidFunction
@@ -69,61 +80,69 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::ExecState& state, 
     if (name.isEmpty())
         return Exception { TypeError, "The first argument must not be the empty string" };
 
-    auto locker = holdLock(paintDefinitionLock());
+    {
+        auto locker = holdLock(paintDefinitionLock());
 
-    if (paintDefinitionMap().contains(name))
-        return Exception { InvalidModificationError, "This name has already been registered" };
+        if (paintDefinitionMap().contains(name))
+            return Exception { InvalidModificationError, "This name has already been registered" };
 
-    Vector<String> inputProperties;
+        Vector<String> inputProperties;
 
-    JSValue inputPropertiesIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputProperties"));
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        JSValue inputPropertiesIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputProperties"));
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    if (!inputPropertiesIterableValue.isUndefined())
-        inputProperties = convert<IDLSequence<IDLDOMString>>(state, inputPropertiesIterableValue);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        if (!inputPropertiesIterableValue.isUndefined())
+            inputProperties = convert<IDLSequence<IDLDOMString>>(state, inputPropertiesIterableValue);
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    // FIXME: Validate input properties here (step 7).
+        // FIXME: Validate input properties here (step 7).
 
-    Vector<String> inputArguments;
+        Vector<String> inputArguments;
 
-    JSValue inputArgumentsIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputArguments"));
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        JSValue inputArgumentsIterableValue = paintConstructor->get(&state, Identifier::fromString(&vm, "inputArguments"));
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    if (!inputArgumentsIterableValue.isUndefined())
-        inputArguments = convert<IDLSequence<IDLDOMString>>(state, inputArgumentsIterableValue);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        if (!inputArgumentsIterableValue.isUndefined())
+            inputArguments = convert<IDLSequence<IDLDOMString>>(state, inputArgumentsIterableValue);
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
+        // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
 
-    JSValue contextOptionsValue = paintConstructor->get(&state, Identifier::fromString(&vm, "contextOptions"));
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
-    UNUSED_PARAM(contextOptionsValue);
+        JSValue contextOptionsValue = paintConstructor->get(&state, Identifier::fromString(&vm, "contextOptions"));
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        UNUSED_PARAM(contextOptionsValue);
 
-    // FIXME: Convert to PaintRenderingContext2DSettings here (step 14).
+        // FIXME: Convert to PaintRenderingContext2DSettings here (step 14).
 
-    if (!paintConstructor->isConstructor(vm))
-        return Exception { TypeError, "The second argument must be a constructor" };
+        if (!paintConstructor->isConstructor(vm))
+            return Exception { TypeError, "The second argument must be a constructor" };
 
-    JSValue prototypeValue = paintConstructor->get(&state, vm.propertyNames->prototype);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        JSValue prototypeValue = paintConstructor->get(&state, vm.propertyNames->prototype);
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    if (!prototypeValue.isObject())
-        return Exception { TypeError, "The second argument must have a prototype that is an object" };
+        if (!prototypeValue.isObject())
+            return Exception { TypeError, "The second argument must have a prototype that is an object" };
 
-    JSValue paintValue = prototypeValue.get(&state, Identifier::fromString(&vm, "paint"));
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        JSValue paintValue = prototypeValue.get(&state, Identifier::fromString(&vm, "paint"));
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    if (paintValue.isUndefined())
-        return Exception { TypeError, "The class must have a paint method" };
+        if (paintValue.isUndefined())
+            return Exception { TypeError, "The class must have a paint method" };
 
-    RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(state, paintValue, globalObject);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(state, paintValue, globalObject);
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-    auto paintDefinition = std::unique_ptr<PaintDefinition>(new PaintDefinition { name, paint.releaseNonNull(), inputProperties, inputArguments });
-    paintDefinitionMap().add(name, WTFMove(paintDefinition));
+        auto paintDefinition = std::make_unique<PaintDefinition>(name, paintConstructor.get(), paint.releaseNonNull(), WTFMove(inputProperties), WTFMove(inputArguments));
+        paintDefinitionMap().add(name, WTFMove(paintDefinition));
+    }
+
+    // This is for the case when we have already visited the paint definition map, and the GC is currently running in the background.
+    vm.heap.writeBarrier(&globalObject);
 
     // FIXME: construct documentDefinition (step 22).
+
+    if (responsibleDocument() && responsibleDocument()->renderView())
+        responsibleDocument()->renderView()->repaintRootContents();
 
     return { };
 }

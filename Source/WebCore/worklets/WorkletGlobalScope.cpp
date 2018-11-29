@@ -39,7 +39,6 @@
 #include "WorkletScriptController.h"
 
 #include <JavaScriptCore/Exception.h>
-#include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 
@@ -49,12 +48,14 @@ using namespace Inspector;
 WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& code)
     : m_document(makeWeakPtr(document))
     , m_sessionID(m_document->sessionID())
-    , m_script(makeUniqueRef<WorkletScriptController>(this))
+    , m_script(std::make_unique<WorkletScriptController>(this))
     , m_topOrigin(SecurityOrigin::createUnique())
-    , m_identifier(makeString("WorkletGlobalScope:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_eventQueue(*this)
     , m_code(WTFMove(code))
 {
+    auto addResult = allWorkletGlobalScopesSet().add(this);
+    ASSERT_UNUSED(addResult, addResult);
+
     auto* frame = document.frame();
     m_jsRuntimeFlags = frame ? frame->settings().javaScriptRuntimeFlags() : JSC::RuntimeFlags();
     ASSERT(document.page());
@@ -65,8 +66,26 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, ScriptSourceCode&& co
 
 WorkletGlobalScope::~WorkletGlobalScope()
 {
+    ASSERT(!m_script);
     removeFromContextsMap();
-    m_script->workletGlobalScopeWrapper()->setConsoleClient(nullptr);
+    auto removeResult = allWorkletGlobalScopesSet().remove(this);
+    ASSERT_UNUSED(removeResult, removeResult);
+}
+
+void WorkletGlobalScope::prepareForDestruction()
+{
+    ASSERT(m_script);
+    stopActiveDOMObjects();
+    removeRejectedPromiseTracker();
+    removeAllEventListeners();
+    m_script->vm().notifyNeedTermination();
+    m_script = nullptr;
+}
+
+auto WorkletGlobalScope::allWorkletGlobalScopesSet() -> WorkletGlobalScopesSet&
+{
+    static NeverDestroyed<WorkletGlobalScopesSet> scopes;
+    return scopes;
 }
 
 String WorkletGlobalScope::origin() const
@@ -88,7 +107,7 @@ void WorkletGlobalScope::evaluate()
 
 bool WorkletGlobalScope::isJSExecutionForbidden() const
 {
-    return m_script->isExecutionForbidden();
+    return !m_script || m_script->isExecutionForbidden();
 }
 
 void WorkletGlobalScope::disableEval(const String& errorMessage)
@@ -110,30 +129,30 @@ URL WorkletGlobalScope::completeURL(const String& url) const
 
 void WorkletGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<ScriptCallStack>&& stack)
 {
-    if (!m_document)
+    if (!m_document || isJSExecutionForbidden())
         return;
     m_document->logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, WTFMove(stack));
 }
 
 void WorkletGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
 {
-    if (!m_document)
+    if (!m_document || isJSExecutionForbidden() || !message)
         return;
-    m_document->addConsoleMessage(WTFMove(message));
+    m_document->addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(message->source(), message->type(), message->level(), message->message(), 0));
 }
 
 void WorkletGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
-    if (!m_document)
+    if (!m_document || isJSExecutionForbidden())
         return;
     m_document->addConsoleMessage(source, level, message, requestIdentifier);
 }
 
-void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState*, unsigned long requestIdentifier)
 {
-    if (!m_document)
+    if (!m_document || isJSExecutionForbidden())
         return;
-    m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
+    m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTFMove(callStack), nullptr, requestIdentifier);
 }
 
 } // namespace WebCore

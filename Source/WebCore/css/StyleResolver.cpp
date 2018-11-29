@@ -42,6 +42,7 @@
 #include "CSSImageValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSPaintImageValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
@@ -73,6 +74,7 @@
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
+#include "PaintWorkletGlobalScope.h"
 #include "Pair.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
@@ -1716,6 +1718,18 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
 
     if (isInherit && !CSSProperty::isInheritedProperty(id))
         state.style()->setHasExplicitlyInheritedProperties();
+
+#if ENABLE(CSS_PAINTING_API)
+    if (is<CSSPaintImageValue>(*valueToApply) && document().paintWorkletGlobalScope()) {
+        // FIXME: This should use the "document paint registration map" from the spec, once it is implemented.
+        auto& paintWorklet = *document().paintWorkletGlobalScope();
+        auto locker = holdLock(paintWorklet.paintDefinitionLock());
+        if (auto* registration = paintWorklet.paintDefinitionMap().get(downcast<CSSPaintImageValue>(*valueToApply).name())) {
+            for (auto& property : registration->inputProperties)
+                state.style()->addCustomPaintWatchProperty(property);
+        }
+    }
+#endif
 
     // Use the generated StyleBuilder.
     StyleBuilder::applyProperty(id, *this, *valueToApply, isInitial, isInherit, customPropertyRegistered);

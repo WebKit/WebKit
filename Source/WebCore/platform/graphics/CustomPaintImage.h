@@ -29,6 +29,8 @@
 
 #include "GeneratedImage.h"
 #include "PaintWorkletGlobalScope.h"
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Weak.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,7 +40,7 @@ class RenderElement;
 
 class CustomPaintImage final : public GeneratedImage {
 public:
-    static Ref<CustomPaintImage> create(const PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
+    static Ref<CustomPaintImage> create(PaintWorkletGlobalScope::PaintDefinition& definition, const FloatSize& size, RenderElement& element, const Vector<String>& arguments)
     {
         return adoptRef(*new CustomPaintImage(definition, size, element, arguments));
     }
@@ -47,14 +49,14 @@ public:
     bool isCustomPaintImage() const override { return true; }
 
 private:
-    CustomPaintImage(const PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, RenderElement&, const Vector<String>& arguments);
+    CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition&, const FloatSize&, RenderElement&, const Vector<String>& arguments);
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) final;
 
-    Ref<CSSPaintCallback> m_paintCallback;
+    WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
     Vector<String> m_inputProperties;
     WeakPtr<RenderElement> m_element;
     Vector<String> m_arguments;

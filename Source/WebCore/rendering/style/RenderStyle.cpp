@@ -23,10 +23,12 @@
 #include "config.h"
 #include "RenderStyle.h"
 
-#include "ContentData.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
+#include "ContentData.h"
 #include "CursorList.h"
 #include "FloatRoundedRect.h"
 #include "FontCascade.h"
@@ -962,6 +964,16 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
     ;
 }
 
+#if ENABLE(CSS_PAINTING_API)
+void RenderStyle::addCustomPaintWatchProperty(const String& name)
+{
+    auto& data = m_rareNonInheritedData.access();
+    if (!data.customPaintWatchedProperties)
+        data.customPaintWatchedProperties = std::make_unique<HashSet<String>>();
+    data.customPaintWatchedProperties->add(name);
+}
+#endif
+
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
     if (!requiresPainting(*this) && !requiresPainting(other))
@@ -982,6 +994,45 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
     if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr()
         && rareInheritedDataChangeRequiresRepaint(*m_rareInheritedData, *other.m_rareInheritedData))
         return true;
+
+#if ENABLE(CSS_PAINTING_API)
+    auto* propertiesA = m_rareNonInheritedData.ptr()->customPaintWatchedProperties.get();
+    auto* propertiesB = other.m_rareNonInheritedData.ptr()->customPaintWatchedProperties.get();
+
+    if (UNLIKELY(propertiesA || propertiesB)) {
+        // FIXME: We should not need to use ComputedStyleExtractor here.
+        ComputedStyleExtractor extractor((Element*) nullptr);
+
+        for (auto* watchPropertiesMap : { propertiesA, propertiesB }) {
+            if (!watchPropertiesMap)
+                continue;
+
+            for (auto& name : *watchPropertiesMap) {
+                RefPtr<CSSValue> valueA;
+                RefPtr<CSSValue> valueB;
+                if (isCustomPropertyName(name) && getCustomProperty(name) && other.getCustomProperty(name)) {
+                    valueA = CSSCustomPropertyValue::create(*getCustomProperty(name));
+                    valueB = CSSCustomPropertyValue::create(*other.getCustomProperty(name));
+                } else {
+                    CSSPropertyID propertyID = cssPropertyID(name);
+                    if (!propertyID)
+                        continue;
+                    valueA = extractor.valueForPropertyinStyle(*this, propertyID);
+                    valueB = extractor.valueForPropertyinStyle(other, propertyID);
+                }
+
+                if ((valueA && !valueB) || (!valueA && valueB))
+                    return true;
+
+                if (!valueA)
+                    continue;
+
+                if (!(*valueA == *valueB))
+                    return true;
+            }
+        }
+    }
+#endif
 
     return false;
 }

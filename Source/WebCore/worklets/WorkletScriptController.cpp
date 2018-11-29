@@ -59,13 +59,15 @@ WorkletScriptController::WorkletScriptController(WorkletGlobalScope* workletGlob
 WorkletScriptController::~WorkletScriptController()
 {
     JSLockHolder lock(vm());
-    m_workletGlobalScopeWrapper.clear();
-    m_vm = nullptr;
+    forbidExecution();
+
     if (m_workletGlobalScopeWrapper) {
         m_workletGlobalScopeWrapper->clearDOMGuardedObjects();
         m_workletGlobalScopeWrapper->setConsoleClient(nullptr);
         m_consoleClient = nullptr;
     }
+    m_workletGlobalScopeWrapper.clear();
+    m_vm = nullptr;
 }
 
 void WorkletScriptController::forbidExecution()
@@ -82,6 +84,9 @@ bool WorkletScriptController::isExecutionForbidden() const
 
 void WorkletScriptController::disableEval(const String& errorMessage)
 {
+    if (isExecutionForbidden())
+        return;
+
     initScriptIfNeeded();
     JSLockHolder lock { vm() };
 
@@ -90,6 +95,9 @@ void WorkletScriptController::disableEval(const String& errorMessage)
 
 void WorkletScriptController::disableWebAssembly(const String& errorMessage)
 {
+    if (isExecutionForbidden())
+        return;
+
     initScriptIfNeeded();
     JSLockHolder lock { vm() };
 
@@ -132,6 +140,9 @@ void WorkletScriptController::initScriptWithSubclass()
 
 void WorkletScriptController::initScript()
 {
+    if (isExecutionForbidden())
+        return;
+
     if (is<PaintWorkletGlobalScope>(m_workletGlobalScope)) {
         initScriptWithSubclass<JSPaintWorkletGlobalScopePrototype, JSPaintWorkletGlobalScope, PaintWorkletGlobalScope>();
         return;

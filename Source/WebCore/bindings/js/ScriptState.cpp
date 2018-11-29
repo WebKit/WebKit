@@ -106,7 +106,9 @@ JSC::ExecState* execStateFromWorkerGlobalScope(WorkerGlobalScope& workerGlobalSc
 #if ENABLE(CSS_PAINTING_API)
 JSC::ExecState* execStateFromWorkletGlobalScope(WorkletGlobalScope& workletGlobalScope)
 {
-    return workletGlobalScope.script().workletGlobalScopeWrapper()->globalExec();
+    if (!workletGlobalScope.script())
+        return nullptr;
+    return workletGlobalScope.script()->workletGlobalScopeWrapper()->globalExec();
 }
 #endif
 

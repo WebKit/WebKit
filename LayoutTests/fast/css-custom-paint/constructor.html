@@ -1,0 +1,52 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets do not crash if the constructor throws">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<script id="code" type="text/worklet">
+  class MyPaint {
+    constructor() {
+      throw "Hello!";
+    }
+
+    paint(ctx, geom) {
+      ctx.fillStyle = "green";
+      ctx.fillRect(0, 0, geom.width, geom.height);
+    }
+  }
+
+  class MyPaint2 {
+    constructor() {
+    }
+
+    paint(ctx, geom) {
+      ctx.fillStyle = "green";
+      ctx.fillRect(0, 0, geom.width, geom.height);
+    }
+  }
+  registerPaint('my-paint', MyPaint);
+  registerPaint('my-paint2', MyPaint2);
+</script>
+
+<script type="text/javascript">
+  importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+  setTimeout(function() {
+    if (window.internals && window.internals.isAnyWorkletGlobalScopeAlive()) {
+      document.getElementById('leaks').style.background = "green";
+    }
+  }, 500);
+</script>
+
+<style>
+  .paint {
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<body>
+  <div class="paint" style="background-image: paint(my-paint);"></div>
+  <div class="paint" style="background-image: paint(my-paint2);"></div>
+  <div id="leaks" style="background: red; width: 150px; height: 150px;"></div>
+</body>
