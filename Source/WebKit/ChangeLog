@@ -1,3 +1,18 @@
+2018-11-29  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Factor out configuration of the file upload image picker
+        https://bugs.webkit.org/show_bug.cgi?id=192138
+        <rdar://problem/46334871>
+
+        Reviewed by Tim Horton.
+
+        By factoring configuration of the picker into its own method, it makes it easier
+        to apply custom configuration in subclasses in the future.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+        (-[WKFileUploadPanel _configureImagePicker:]):
+
 2018-11-29  Tomas Popela  <tpopela@redhat.com>
 
         [GTK][WPE] Fix BubblewrapLauncher clang warnings
