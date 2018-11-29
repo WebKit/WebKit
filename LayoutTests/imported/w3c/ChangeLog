@@ -1,3 +1,25 @@
+2018-11-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update web-platform-tests/shadow-dom
+        https://bugs.webkit.org/show_bug.cgi?id=192137
+
+        Reviewed by Antti Koivisto.
+
+        Re-imported the shadow DOM tests from wpt.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/shadow-dom/ShadowRoot-interface.html:
+        * web-platform-tests/shadow-dom/event-dispatch-order.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/event-dispatch-order.tentative.html: Added.
+        * web-platform-tests/shadow-dom/input-type-radio-expected.txt: Added.
+        * web-platform-tests/shadow-dom/input-type-radio.html: Added.
+        * web-platform-tests/shadow-dom/resources/shadow-dom.js:
+        (dispatchEventWithLog):
+        (assert_event_path_equals):
+        * web-platform-tests/shadow-dom/slots-outside-shadow-dom-expected.txt: Added.
+        * web-platform-tests/shadow-dom/slots-outside-shadow-dom.html: Added.
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
 2018-11-29  Youenn Fablet  <youenn@apple.com>
 
         Updating a service worker during a navigation load sometimes makes the load fail

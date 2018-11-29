@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-with-related-target.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-dispatch-order.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-shadow-tree.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-slotted-node.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-post-dispatch.html
@@ -43,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/getElementById-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-element-list.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/input-type-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-assigned.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/layout-slot-no-longer-fallback-expected.html
@@ -53,4 +55,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback-in-document.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-outside-shadow-dom.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots.html
