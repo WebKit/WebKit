@@ -1,3 +1,11 @@
+2018-11-29  Guillaume Emont  <guijemont@igalia.com>
+
+        Gardening: skip test that newly times out on Armv7
+
+        Unreviewed Test Gardening.
+
+        * js/slow-stress/script-tests/marsaglia.js: skip on arm/linux
+
 2018-11-29  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r238665.
