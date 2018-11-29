@@ -398,10 +398,11 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     frameView.setInProgrammaticScroll(oldProgrammaticScroll);
 
     if (!programmaticScroll && scrollingLayerPositionAction != ScrollingLayerPositionAction::Set) {
+        auto scrollingNodeID = frameView.scrollLayerID();
         if (viewportRectStability == ViewportRectStability::Stable)
-            reconcileViewportConstrainedLayerPositions(frameView.rectForFixedPositionLayout(), scrollingLayerPositionAction);
+            reconcileViewportConstrainedLayerPositions(scrollingNodeID, frameView.rectForFixedPositionLayout(), scrollingLayerPositionAction);
         else if (layoutViewportRect)
-            reconcileViewportConstrainedLayerPositions(LayoutRect(layoutViewportRect.value()), scrollingLayerPositionAction);
+            reconcileViewportConstrainedLayerPositions(scrollingNodeID, LayoutRect(layoutViewportRect.value()), scrollingLayerPositionAction);
     }
 
     auto* scrollLayer = scrollLayerForFrameView(frameView);
@@ -488,14 +489,15 @@ void AsyncScrollingCoordinator::clearStateTree()
     m_scrollingStateTree->clear();
 }
 
-void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
+void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
-    if (!m_scrollingStateTree->rootStateNode())
+    auto* scrollingNode = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
+    if (!scrollingNode)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect);
+    LOG_WITH_STREAM(Scrolling, stream << getCurrentProcessID() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect << " and node " << scrollingNodeID);
 
-    m_scrollingStateTree->rootStateNode()->reconcileLayerPositionForViewportRect(viewportRect, action);
+    scrollingNode->reconcileLayerPositionForViewportRect(viewportRect, action);
 }
 
 void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frameView)

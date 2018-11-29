@@ -116,7 +116,7 @@ private:
     bool isScrollSnapInProgress() const override;
 #endif
 
-    WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
+    WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
     WEBCORE_EXPORT void setSynchronousScrollingReasons(FrameView&, SynchronousScrollingReasons) final;

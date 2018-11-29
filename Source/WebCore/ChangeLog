@@ -1,3 +1,30 @@
+2018-11-29  Frederic Wang  <fwang@igalia.com>
+
+        Make reconcileViewportConstrainedLayerPositions start from a specified scrolling node
+        https://bugs.webkit.org/show_bug.cgi?id=180002
+
+        Reviewed by Simon Fraser.
+
+        For non-programmatic scrolling of frames, AsyncScrollingCoordinator::reconcileScrollingState
+        currently always call reconcileViewportConstrainedLayerPositions for the main frame
+        since async subframe scrolling is not supported yet (bug 171667 and bug 149264). This
+        function in turn calls reconcileLayerPositionForViewportRect on the whole scrolling tree to
+        readjust position of fixed/sticky descendants. This patch refactors a bit the code so that
+        the operation is actually only applied to the descendants of the frame's scrolling node,
+        which would mean a small optimization when subframe are asynchronously scrollable. The code
+        is already covered by reconcile-layer-position-recursive.html.
+
+        No new tests, behavior unchanged and already covered by existing tests.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState): Pass the frame's scrolling
+        node id.
+        (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions): Start
+        reconciliation from the specified scrolling node and log its ID.
+        * page/scrolling/AsyncScrollingCoordinator.h: Add ScrollingNodeID parameter.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::reconcileViewportConstrainedLayerPositions): Ditto.
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         Rename *ObservedContentModifier(s) to *ObservedDOMTimer(s)
