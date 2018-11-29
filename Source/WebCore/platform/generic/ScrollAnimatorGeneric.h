@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2011, Google Inc. All rights reserved.
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (c) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,41 +28,67 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimatorSmooth_h
-#define ScrollAnimatorSmooth_h
+#pragma once
 
 #include "ScrollAnimator.h"
-
-#if ENABLE(SMOOTH_SCROLLING)
+#include "Timer.h"
 
 namespace WebCore {
 
 class ScrollAnimation;
 
-class ScrollAnimatorSmooth final : public ScrollAnimator {
+class ScrollAnimatorGeneric final : public ScrollAnimator {
 public:
-    explicit ScrollAnimatorSmooth(ScrollableArea&);
-    virtual ~ScrollAnimatorSmooth();
-
-    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
-    void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
-
-#if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void cancelAnimations() override;
-    void serviceScrollAnimations() override;
-#endif
-
-    void willEndLiveResize() override;
-    void didAddVerticalScrollbar(Scrollbar*) override;
-    void didAddHorizontalScrollbar(Scrollbar*) override;
+    explicit ScrollAnimatorGeneric(ScrollableArea&);
+    virtual ~ScrollAnimatorGeneric();
 
 private:
+#if ENABLE(SMOOTH_SCROLLING)
+    bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier) override;
+#endif
+    void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping) override;
+    void willEndLiveResize() override;
 
-    std::unique_ptr<ScrollAnimation> m_animation;
+    bool handleWheelEvent(const PlatformWheelEvent&) override;
+
+    void didAddVerticalScrollbar(Scrollbar*) override;
+    void didAddHorizontalScrollbar(Scrollbar*) override;
+    void willRemoveVerticalScrollbar(Scrollbar*) override;
+    void willRemoveHorizontalScrollbar(Scrollbar*) override;
+
+    void mouseEnteredContentArea() override;
+    void mouseExitedContentArea() override;
+    void mouseMovedInContentArea() override;
+    void contentAreaDidShow() override;
+    void contentAreaDidHide() override;
+    void notifyContentAreaScrolled(const FloatSize& delta) override;
+    void lockOverlayScrollbarStateToHidden(bool) override;
+
+    void updatePosition(FloatPoint&&);
+
+    void overlayScrollbarAnimationTimerFired();
+    void showOverlayScrollbars();
+    void hideOverlayScrollbars();
+    void updateOverlayScrollbarsOpacity();
+
+    FloatPoint computeVelocity();
+
+#if ENABLE(SMOOTH_SCROLLING)
+    void ensureSmoothScrollingAnimation();
+
+    std::unique_ptr<ScrollAnimation> m_smoothAnimation;
+#endif
+    std::unique_ptr<ScrollAnimation> m_kineticAnimation;
+    Vector<PlatformWheelEvent> m_scrollHistory;
+    Scrollbar* m_horizontalOverlayScrollbar { nullptr };
+    Scrollbar* m_verticalOverlayScrollbar { nullptr };
+    bool m_overlayScrollbarsLocked { false };
+    Timer m_overlayScrollbarAnimationTimer;
+    double m_overlayScrollbarAnimationSource { 0 };
+    double m_overlayScrollbarAnimationTarget { 0 };
+    double m_overlayScrollbarAnimationCurrent { 0 };
+    MonotonicTime m_overlayScrollbarAnimationStartTime;
+    MonotonicTime m_overlayScrollbarAnimationEndTime;
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SMOOTH_SCROLLING)
-
-#endif // ScrollAnimatorSmooth_h

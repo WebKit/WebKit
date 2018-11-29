@@ -111,10 +111,4 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
 }
 
-FloatPoint PlatformWheelEvent::swipeVelocity() const
-{
-    // The swiping velocity is stored in the deltas of the event declaring it.
-    return isTransitioningToMomentumScroll() ? FloatPoint(m_wheelTicksX, m_wheelTicksY) : FloatPoint();
-}
-
-}
+} // namespace WebCore

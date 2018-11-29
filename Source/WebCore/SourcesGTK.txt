@@ -59,6 +59,8 @@ platform/ScrollAnimationKinetic.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/UserAgentQuirks.cpp
 
+platform/generic/ScrollAnimatorGeneric.cpp
+
 platform/geoclue/GeolocationProviderGeoclue.cpp
 
 platform/graphics/GLContext.cpp @no-unify
@@ -89,7 +91,6 @@ platform/graphics/x11/XUniqueResource.cpp @no-unify
 platform/gtk/DragDataGtk.cpp
 platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
-platform/gtk/ScrollAnimatorGtk.cpp
 platform/gtk/SelectionData.cpp
 
 platform/text/Hyphenation.cpp

@@ -34,7 +34,7 @@ OBJC_CLASS WebLowPowerModeObserver;
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
-typedef _GDBusProxy GDBusProxy;
+typedef struct _GDBusProxy GDBusProxy;
 #endif
 
 namespace WebCore {

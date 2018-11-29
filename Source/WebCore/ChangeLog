@@ -1,3 +1,59 @@
+2018-11-29  Don Olmstead  <don.olmstead@sony.com>
+
+        Make generic ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=192128
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        Moves ScrollAnimatorGtk into ScrollAnimatorGeneric where it can be used
+        by other implementations. Fixed some compilation issues around using
+        this as a default implementation.
+
+        Removing ScrollAnimatorSmooth since it is dead code and doesn't even
+        compile at this time.
+
+        Fixing a compilation issue within LowPowerModeNotifierGLib
+        implementation that appeared due to unified sources changes.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * platform/LowPowerModeNotifier.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::swipeVelocity const):
+        * platform/ScrollAnimatorSmooth.cpp: Removed.
+        * platform/ScrollAnimatorSmooth.h: Removed.
+        * platform/generic/ScrollAnimatorGeneric.cpp: Renamed from Source/WebCore/platform/gtk/ScrollAnimatorGtk.cpp.
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric):
+        (WebCore::ScrollAnimatorGeneric::ensureSmoothScrollingAnimation):
+        (WebCore::ScrollAnimatorGeneric::scroll):
+        (WebCore::ScrollAnimatorGeneric::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorGeneric::computeVelocity):
+        (WebCore::ScrollAnimatorGeneric::handleWheelEvent):
+        (WebCore::ScrollAnimatorGeneric::willEndLiveResize):
+        (WebCore::ScrollAnimatorGeneric::updatePosition):
+        (WebCore::ScrollAnimatorGeneric::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorGeneric::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorGeneric::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorGeneric::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorGeneric::updateOverlayScrollbarsOpacity):
+        (WebCore::ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired):
+        (WebCore::ScrollAnimatorGeneric::showOverlayScrollbars):
+        (WebCore::ScrollAnimatorGeneric::hideOverlayScrollbars):
+        (WebCore::ScrollAnimatorGeneric::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorGeneric::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorGeneric::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorGeneric::contentAreaDidShow):
+        (WebCore::ScrollAnimatorGeneric::contentAreaDidHide):
+        (WebCore::ScrollAnimatorGeneric::notifyContentAreaScrolled):
+        (WebCore::ScrollAnimatorGeneric::lockOverlayScrollbarStateToHidden):
+        * platform/generic/ScrollAnimatorGeneric.h: Renamed from Source/WebCore/platform/gtk/ScrollAnimatorGtk.h.
+        * platform/glib/LowPowerModeNotifierGLib.cpp:
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::swipeVelocity const): Deleted.
+
 2018-11-28  Dean Jackson  <dino@apple.com>
 
         [ES Modules] Allow .mjs content when loaded from file://

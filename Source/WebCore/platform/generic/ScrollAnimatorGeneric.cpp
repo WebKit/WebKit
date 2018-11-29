@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "ScrollAnimatorGtk.h"
+#include "ScrollAnimatorGeneric.h"
 
 #include "ScrollAnimationKinetic.h"
 #include "ScrollAnimationSmooth.h"
@@ -44,12 +44,12 @@ static const Seconds scrollCaptureThreshold { 150_ms };
 
 std::unique_ptr<ScrollAnimator> ScrollAnimator::create(ScrollableArea& scrollableArea)
 {
-    return std::make_unique<ScrollAnimatorGtk>(scrollableArea);
+    return std::make_unique<ScrollAnimatorGeneric>(scrollableArea);
 }
 
-ScrollAnimatorGtk::ScrollAnimatorGtk(ScrollableArea& scrollableArea)
+ScrollAnimatorGeneric::ScrollAnimatorGeneric(ScrollableArea& scrollableArea)
     : ScrollAnimator(scrollableArea)
-    , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired)
+    , m_overlayScrollbarAnimationTimer(*this, &ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired)
 {
     m_kineticAnimation = std::make_unique<ScrollAnimationKinetic>(m_scrollableArea, [this](FloatPoint&& position) {
 #if ENABLE(SMOOTH_SCROLLING)
@@ -65,10 +65,10 @@ ScrollAnimatorGtk::ScrollAnimatorGtk(ScrollableArea& scrollableArea)
 #endif
 }
 
-ScrollAnimatorGtk::~ScrollAnimatorGtk() = default;
+ScrollAnimatorGeneric::~ScrollAnimatorGeneric() = default;
 
 #if ENABLE(SMOOTH_SCROLLING)
-void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()
+void ScrollAnimatorGeneric::ensureSmoothScrollingAnimation()
 {
     if (m_smoothAnimation)
         return;
@@ -80,7 +80,7 @@ void ScrollAnimatorGtk::ensureSmoothScrollingAnimation()
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)
-bool ScrollAnimatorGtk::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+bool ScrollAnimatorGeneric::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
 {
     if (!m_scrollableArea.scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
@@ -90,7 +90,7 @@ bool ScrollAnimatorGtk::scroll(ScrollbarOrientation orientation, ScrollGranulari
 }
 #endif
 
-void ScrollAnimatorGtk::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping)
+void ScrollAnimatorGeneric::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping)
 {
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(offset, toFloatSize(m_scrollableArea.scrollOrigin()));
     m_kineticAnimation->stop();
@@ -104,7 +104,7 @@ void ScrollAnimatorGtk::scrollToOffsetWithoutAnimation(const FloatPoint& offset,
     updatePosition(WTFMove(position));
 }
 
-FloatPoint ScrollAnimatorGtk::computeVelocity()
+FloatPoint ScrollAnimatorGeneric::computeVelocity()
 {
     if (m_scrollHistory.isEmpty())
         return { };
@@ -124,7 +124,7 @@ FloatPoint ScrollAnimatorGtk::computeVelocity()
     return FloatPoint(accumDelta.x() * -1 / (last - first).value(), accumDelta.y() * -1 / (last - first).value());
 }
 
-bool ScrollAnimatorGtk::handleWheelEvent(const PlatformWheelEvent& event)
+bool ScrollAnimatorGeneric::handleWheelEvent(const PlatformWheelEvent& event)
 {
     m_kineticAnimation->stop();
 
@@ -132,6 +132,7 @@ bool ScrollAnimatorGtk::handleWheelEvent(const PlatformWheelEvent& event)
         return (event.timestamp() - otherEvent.timestamp()) > scrollCaptureThreshold;
     });
 
+#if ENABLE(ASYNC_SCROLLING)
     if (event.isEndOfNonMomentumScroll()) {
         // We don't need to add the event to the history as its delta will be (0, 0).
         static_cast<ScrollAnimationKinetic*>(m_kineticAnimation.get())->start(m_currentPosition, computeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
@@ -142,13 +143,14 @@ bool ScrollAnimatorGtk::handleWheelEvent(const PlatformWheelEvent& event)
         static_cast<ScrollAnimationKinetic*>(m_kineticAnimation.get())->start(m_currentPosition, event.swipeVelocity(), m_scrollableArea.horizontalScrollbar(), m_scrollableArea.verticalScrollbar());
         return true;
     }
+#endif
 
     m_scrollHistory.append(event);
 
     return ScrollAnimator::handleWheelEvent(event);
 }
 
-void ScrollAnimatorGtk::willEndLiveResize()
+void ScrollAnimatorGeneric::willEndLiveResize()
 {
     m_kineticAnimation->updateVisibleLengths();
 
@@ -158,14 +160,14 @@ void ScrollAnimatorGtk::willEndLiveResize()
 #endif
 }
 
-void ScrollAnimatorGtk::updatePosition(FloatPoint&& position)
+void ScrollAnimatorGeneric::updatePosition(FloatPoint&& position)
 {
     FloatSize delta = position - m_currentPosition;
     m_currentPosition = WTFMove(position);
     notifyPositionChanged(delta);
 }
 
-void ScrollAnimatorGtk::didAddVerticalScrollbar(Scrollbar* scrollbar)
+void ScrollAnimatorGeneric::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
     m_kineticAnimation->updateVisibleLengths();
 
@@ -182,7 +184,7 @@ void ScrollAnimatorGtk::didAddVerticalScrollbar(Scrollbar* scrollbar)
     hideOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::didAddHorizontalScrollbar(Scrollbar* scrollbar)
+void ScrollAnimatorGeneric::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
     m_kineticAnimation->updateVisibleLengths();
 
@@ -199,7 +201,7 @@ void ScrollAnimatorGtk::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     hideOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
+void ScrollAnimatorGeneric::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
     if (m_verticalOverlayScrollbar != scrollbar)
         return;
@@ -208,7 +210,7 @@ void ScrollAnimatorGtk::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
         m_overlayScrollbarAnimationCurrent = 0;
 }
 
-void ScrollAnimatorGtk::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
+void ScrollAnimatorGeneric::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
     if (m_horizontalOverlayScrollbar != scrollbar)
         return;
@@ -217,7 +219,7 @@ void ScrollAnimatorGtk::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
         m_overlayScrollbarAnimationCurrent = 0;
 }
 
-void ScrollAnimatorGtk::updateOverlayScrollbarsOpacity()
+void ScrollAnimatorGeneric::updateOverlayScrollbarsOpacity()
 {
     if (m_verticalOverlayScrollbar && m_overlayScrollbarAnimationCurrent != m_verticalOverlayScrollbar->opacity()) {
         m_verticalOverlayScrollbar->setOpacity(m_overlayScrollbarAnimationCurrent);
@@ -238,7 +240,7 @@ static inline double easeOutCubic(double t)
     return p * p * p + 1;
 }
 
-void ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired()
+void ScrollAnimatorGeneric::overlayScrollbarAnimationTimerFired()
 {
     if (!m_horizontalOverlayScrollbar && !m_verticalOverlayScrollbar)
         return;
@@ -265,7 +267,7 @@ void ScrollAnimatorGtk::overlayScrollbarAnimationTimerFired()
         hideOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::showOverlayScrollbars()
+void ScrollAnimatorGeneric::showOverlayScrollbars()
 {
     if (m_overlayScrollbarsLocked)
         return;
@@ -287,7 +289,7 @@ void ScrollAnimatorGtk::showOverlayScrollbars()
         hideOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::hideOverlayScrollbars()
+void ScrollAnimatorGeneric::hideOverlayScrollbars()
 {
     if (m_overlayScrollbarAnimationTimer.isActive() && !m_overlayScrollbarAnimationTarget)
         return;
@@ -305,27 +307,27 @@ void ScrollAnimatorGtk::hideOverlayScrollbars()
     m_overlayScrollbarAnimationTimer.startOneShot(overflowScrollbarsAnimationHideDelay);
 }
 
-void ScrollAnimatorGtk::mouseEnteredContentArea()
+void ScrollAnimatorGeneric::mouseEnteredContentArea()
 {
     showOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::mouseExitedContentArea()
+void ScrollAnimatorGeneric::mouseExitedContentArea()
 {
     hideOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::mouseMovedInContentArea()
+void ScrollAnimatorGeneric::mouseMovedInContentArea()
 {
     showOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::contentAreaDidShow()
+void ScrollAnimatorGeneric::contentAreaDidShow()
 {
     showOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::contentAreaDidHide()
+void ScrollAnimatorGeneric::contentAreaDidHide()
 {
     if (m_overlayScrollbarsLocked)
         return;
@@ -336,12 +338,12 @@ void ScrollAnimatorGtk::contentAreaDidHide()
     }
 }
 
-void ScrollAnimatorGtk::notifyContentAreaScrolled(const FloatSize&)
+void ScrollAnimatorGeneric::notifyContentAreaScrolled(const FloatSize&)
 {
     showOverlayScrollbars();
 }
 
-void ScrollAnimatorGtk::lockOverlayScrollbarStateToHidden(bool shouldLockState)
+void ScrollAnimatorGeneric::lockOverlayScrollbarStateToHidden(bool shouldLockState)
 {
     if (m_overlayScrollbarsLocked == shouldLockState)
         return;

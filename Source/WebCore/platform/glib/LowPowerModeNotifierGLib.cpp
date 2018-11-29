@@ -22,6 +22,7 @@
 
 #include <cstring>
 #include <gio/gio.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 
