@@ -160,3 +160,6 @@ class DevicePort(DarwinPort):
             self._append_value_colon_separated(env, '__XPC_DYLD_INSERT_LIBRARIES', '/usr/lib/libgmalloc.dylib')
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
+
+    def device_version(self):
+        raise NotImplementedError

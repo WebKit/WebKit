@@ -85,7 +85,7 @@ class WatchDevicePort(WatchPort):
         return (stderr, None)
 
     @memoized
-    def watchos_version(self):
+    def device_version(self):
         if self.get_option('version'):
             return Version.from_string(self.get_option('version'))
 

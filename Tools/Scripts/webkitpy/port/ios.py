@@ -56,10 +56,10 @@ class IOSPort(DevicePort):
             wk_string = 'wk2'
 
         versions_to_fallback = []
-        if self.ios_version().major == self.CURRENT_VERSION.major:
+        if self.device_version().major == self.CURRENT_VERSION.major:
             versions_to_fallback = [self.CURRENT_VERSION]
-        elif self.ios_version():
-            temp_version = Version(self.ios_version().major)
+        elif self.device_version():
+            temp_version = Version(self.device_version().major)
             while temp_version != self.CURRENT_VERSION:
                 versions_to_fallback.append(Version.from_iterable(temp_version))
                 if temp_version < self.CURRENT_VERSION:
@@ -109,6 +109,3 @@ class IOSPort(DevicePort):
 
     def test_expectations_file_position(self):
         return 4
-
-    def ios_version(self):
-        raise NotImplementedError

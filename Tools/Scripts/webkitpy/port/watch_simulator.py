@@ -62,7 +62,7 @@ class WatchSimulatorPort(WatchPort):
         return None
 
     @memoized
-    def watchos_version(self):
+    def device_version(self):
         if self.get_option('version'):
             return Version.from_string(self.get_option('version'))
         return WatchSimulatorPort._version_from_name(self._name) or self.host.platform.xcode_sdk_version('watchsimulator')
@@ -83,7 +83,7 @@ class WatchSimulatorPort(WatchPort):
         def filter_booted_watchos_devices(device):
             if not device.platform_device.is_booted_or_booting():
                 return False
-            return device.platform_device.device_type in DeviceType(software_variant='watchOS', software_version=self.watchos_version())
+            return device.platform_device.device_type in DeviceType(software_variant='watchOS', software_version=self.device_version())
 
         if not self.get_option('dedicated_simulators', False):
             num_booted_sims = len(SimulatedDeviceManager.device_by_filter(filter_booted_watchos_devices, host=self.host))
@@ -96,7 +96,7 @@ class WatchSimulatorPort(WatchPort):
 
     def _create_devices(self, device_class):
         self._set_device_class(device_class)
-        device_type = DeviceType.from_string(self._device_class, self.watchos_version())
+        device_type = DeviceType.from_string(self._device_class, self.device_version())
 
         _log.debug('\nCreating devices for {}'.format(device_type))
 
@@ -112,7 +112,7 @@ class WatchSimulatorPort(WatchPort):
         return 'watchos-simulator'
 
     def check_sys_deps(self):
-        target_device_type = DeviceType(software_variant='watchOS', software_version=self.watchos_version())
+        target_device_type = DeviceType(software_variant='watchOS', software_version=self.device_version())
         for device in SimulatedDeviceManager.available_devices(self.host):
             if device.platform_device.device_type in target_device_type:
                 return super(WatchSimulatorPort, self).check_sys_deps()

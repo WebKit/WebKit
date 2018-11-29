@@ -87,7 +87,7 @@ class IOSDevicePort(IOSPort):
         return (stderr, None)
 
     @memoized
-    def ios_version(self):
+    def device_version(self):
         if self.get_option('version'):
             return Version.from_string(self.get_option('version'))
 

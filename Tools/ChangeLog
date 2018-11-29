@@ -1,3 +1,41 @@
+2018-11-29  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Unify ios_version/watchos_version code
+        https://bugs.webkit.org/show_bug.cgi?id=192153
+        <rdar://problem/46343642>
+
+        Reviewed by Lucas Forschler.
+
+        Treating watchOS and iOS versions differently makes it harder to share code between the similar ports.
+
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort):
+        (DevicePort.device_version): Added.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): Use device_version() instead of ios_version().
+        (IOSPort.ios_version): Deleted.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.device_version): Renamed from ios_version().
+        (IOSDevicePort.ios_version): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.device_version): Renamed from ios_version().
+        (IOSSimulatorPort.default_child_processes.booted_ios_devices_filter): Use device_version() instead of ios_version().
+        (IOSSimulatorPort._create_devices): Ditto.
+        (IOSSimulatorPort.check_sys_deps): Ditto.
+        (IOSSimulatorPort.ios_version): Deleted.
+        * Scripts/webkitpy/port/watch.py:
+        (WatchPort.default_baseline_search_path): Use device_version() instead of watchos_version().
+        (WatchPort.watchos_version): Deleted.
+        * Scripts/webkitpy/port/watch_device.py:
+        (WatchDevicePort.device_version): Renamed from watchos_version().
+        (WatchDevicePort.watchos_version): Deleted.
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort.device_version): Renamed from watchos_version().
+        (WatchSimulatorPort.default_child_processes.filter_booted_watchos_devices): Use device_version() instead of watchos_version().
+        (WatchSimulatorPort._create_devices): Ditto.
+        (WatchSimulatorPort.check_sys_deps): Ditto.
+        (WatchSimulatorPort.watchos_version): Deleted.
+
 2018-11-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOSMac] Dropping text selections from web content into editable elements crashes the web process

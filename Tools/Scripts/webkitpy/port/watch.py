@@ -59,10 +59,10 @@ class WatchPort(DevicePort):
     @memoized
     def default_baseline_search_path(self):
         versions_to_fallback = []
-        if self.watchos_version() == self.CURRENT_VERSION:
+        if self.device_version() == self.CURRENT_VERSION:
             versions_to_fallback = [self.CURRENT_VERSION]
-        elif self.watchos_version():
-            temp_version = Version(self.watchos_version().major)
+        elif self.device_version():
+            temp_version = Version(self.device_version().major)
             while temp_version.major != self.CURRENT_VERSION.major:
                 versions_to_fallback.append(Version.from_iterable(temp_version))
                 if temp_version < self.CURRENT_VERSION:
@@ -97,7 +97,3 @@ class WatchPort(DevicePort):
         expectations.append(self._webkit_baseline_path('wk2'))
 
         return expectations
-
-    def watchos_version(self):
-        # The implementation of this function differs between on-device and simulator testing.
-        raise NotImplementedError

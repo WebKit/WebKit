@@ -60,7 +60,7 @@ class IOSSimulatorPort(IOSPort):
         return None
 
     @memoized
-    def ios_version(self):
+    def device_version(self):
         if self.get_option('version'):
             return Version.from_string(self.get_option('version'))
         return IOSSimulatorPort._version_from_name(self._name) if IOSSimulatorPort._version_from_name(self._name) else self.host.platform.xcode_sdk_version('iphonesimulator')
@@ -70,8 +70,7 @@ class IOSSimulatorPort(IOSPort):
         def booted_ios_devices_filter(device):
             if not device.platform_device.is_booted_or_booting():
                 return False
-            return device.platform_device.device_type in DeviceType(software_variant='iOS',
-                                                                    software_version=self.ios_version())
+            return device.platform_device.device_type in DeviceType(software_variant='iOS', software_version=self.device_version())
 
         if not self.get_option('dedicated_simulators', False):
             num_booted_sims = len(SimulatedDeviceManager.device_by_filter(booted_ios_devices_filter, host=self.host))
@@ -84,7 +83,7 @@ class IOSSimulatorPort(IOSPort):
 
     def _create_devices(self, device_class):
         self._set_device_class(device_class)
-        device_type = DeviceType.from_string(self._device_class, self.ios_version())
+        device_type = DeviceType.from_string(self._device_class, self.device_version())
 
         _log.debug('\nCreating devices for {}'.format(device_type))
 
@@ -128,7 +127,7 @@ class IOSSimulatorPort(IOSPort):
         return 'ios-simulator'
 
     def check_sys_deps(self):
-        target_device_type = DeviceType(software_variant='iOS', software_version=self.ios_version())
+        target_device_type = DeviceType(software_variant='iOS', software_version=self.device_version())
         for device in SimulatedDeviceManager.available_devices(self.host):
             if device.platform_device.device_type in target_device_type:
                 return super(IOSSimulatorPort, self).check_sys_deps()
