@@ -1,3 +1,38 @@
+2018-11-28  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: enable selection of multiple properties by default
+        https://bugs.webkit.org/show_bug.cgi?id=192109
+        <rdar://problem/46323565>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        Remove the checkbox.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property):
+        (.spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing)):
+        (.spreadsheet-style-declaration-editor .property.selected):
+        (.spreadsheet-style-declaration-editor .property.selected:focus):
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property): Deleted.
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing)): Deleted.
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected): Deleted.
+        (.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected:focus): Deleted.
+        Remove `.multiple-properties-selection` class.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField):
+        (WI.SpreadsheetTextField.prototype._handleFocus): Deleted.
+
 2018-11-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: empty results folder is shown after clearing filters

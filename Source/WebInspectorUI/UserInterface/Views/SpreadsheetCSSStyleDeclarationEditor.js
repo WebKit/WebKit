@@ -68,8 +68,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this.focused = false;
         }, true);
 
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
-            this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
+        this.element.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
 
     layout()

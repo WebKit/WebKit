@@ -55,7 +55,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
 
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value && this._isEditable()) {
+        if (this._isEditable()) {
             this._element.tabIndex = -1;
 
             this._element.addEventListener("blur", (event) => {
@@ -472,13 +472,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         tokenElement.append(swatch.element, innerElement);
 
         // Prevent the value from editing when clicking on the swatch.
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value) {
-            swatch.element.addEventListener("click", (event) => {
-                if (this._swatchActive)
-                    event.stop();
-            });
-        } else
-            swatch.element.addEventListener("mousedown", (event) => { event.stop(); });
+        swatch.element.addEventListener("click", (event) => {
+            if (this._swatchActive)
+                event.stop();
+        });
 
         return tokenElement;
     }

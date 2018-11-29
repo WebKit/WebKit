@@ -38,9 +38,6 @@
 .spreadsheet-style-declaration-editor .property {
     padding-right: var(--css-declaration-horizontal-padding);
     padding-left: calc(var(--css-declaration-horizontal-padding) + 17px);
-}
-
-.multiple-properties-selection .spreadsheet-style-declaration-editor .property {
     border-left: 1px solid transparent;
     outline: none;
 }
@@ -53,7 +50,7 @@
     color: var(--text-color);
 }
 
-.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {
+.spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {
     outline: none;
 }
 
@@ -62,10 +59,6 @@
     box-shadow: 0 1px 2px 1px hsla(0, 0%, 0%, 0.6);
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
-}
-
-.multiple-properties-selection .spreadsheet-style-declaration-editor :matches(.name, .value):not(.editing) {
-    outline: none;
 }
 
 .spreadsheet-style-declaration-editor .value.editing {
@@ -136,11 +129,11 @@
     -webkit-clip-path: polygon(0% 50%, 6px 0%, 100% 0%, 100% 100%, 6px 100%);
 }
 
-.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected {
+.spreadsheet-style-declaration-editor .property.selected {
     background-color: var(--background-color-selected);
 }
 
-.multiple-properties-selection .spreadsheet-style-declaration-editor .property.selected:focus {
+.spreadsheet-style-declaration-editor .property.selected:focus {
     border-left-color: var(--border-color-selected);
 }
 

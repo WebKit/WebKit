@@ -32,13 +32,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         let element = document.createElement("section");
         element.classList.add("spreadsheet-css-declaration");
 
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
-            element.classList.add("multiple-properties-selection");
-
         super(element);
-
-        if (WI.settings.experimentalEnableMultiplePropertiesSelection.value)
-            element.classList.add("multiple-properties-selection");
 
         this._delegate = delegate || null;
         this._style = style;
@@ -389,9 +383,6 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     _handleMouseDown(event)
     {
         this._wasEditing = this._propertiesEditor.editing || document.activeElement === this._selectorElement;
-
-        if (!WI.settings.experimentalEnableMultiplePropertiesSelection.value)
-            return;
 
         let propertyElement = event.target.closest(".property");
         if (!propertyElement)
