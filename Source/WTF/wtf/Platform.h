@@ -965,6 +965,14 @@
 #define JIT_OPERATION
 #endif
 
+#ifndef ENABLE_SEPARATED_WX_HEAP
+#if (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)) && PLATFORM(IOS_FAMILY) && CPU(ARM64)
+#define ENABLE_SEPARATED_WX_HEAP 1
+#else
+#define ENABLE_SEPARATED_WX_HEAP 0
+#endif
+#endif
+
 /* Configure the interpreter */
 #if COMPILER(GCC_COMPATIBLE)
 #define HAVE_COMPUTED_GOTO 1

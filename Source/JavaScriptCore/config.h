@@ -37,11 +37,3 @@
 #endif
 
 #include <wtf/DisallowCType.h>
-
-#if !defined(ENABLE_SEPARATED_WX_HEAP)
-#if (!ENABLE(FAST_JIT_PERMISSIONS) || !CPU(ARM64E)) && PLATFORM(IOS_FAMILY) && CPU(ARM64)
-#define ENABLE_SEPARATED_WX_HEAP 1
-#else
-#define ENABLE_SEPARATED_WX_HEAP 0
-#endif
-#endif // !defined(ENABLE_SEPARATED_WX_HEAP)

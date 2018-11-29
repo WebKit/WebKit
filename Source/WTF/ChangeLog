@@ -1,3 +1,19 @@
+2018-11-28  Mark Lam  <mark.lam@apple.com>
+
+        ENABLE_SEPARATED_WX_HEAP needs to be defined in Platform.h.
+        https://bugs.webkit.org/show_bug.cgi?id=192110
+        <rdar://problem/46317746>
+
+        Reviewed by Saam Barati.
+
+        Contrary my previous claim in r238564, ENABLE_SEPARATED_WX_HEAP needs to be
+        defined in Platform.h because it is also needed in WebCore for the CSS JIT.  Also
+        contrary to my previous claim, ENABLE(FAST_JIT_PERMISSIONS) is defined for WebCore
+        (and other projects) as well as JSC.  Hence, there's no reason why
+        ENABLE_SEPARATED_WX_HEAP cannot be defined in Platform.h.
+
+        * wtf/Platform.h:
+
 2018-11-28  Keith Rollin  <krollin@apple.com>
 
         Update generate-unified-source-bundles.rb to generate .xcfilelist files
