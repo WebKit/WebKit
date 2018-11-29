@@ -646,6 +646,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
+    , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
+    , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 

@@ -1,3 +1,14 @@
+2018-11-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix _WKWebsiteDataStoreConfiguration. sourceApplicationBundleIdentifier and sourceApplicationSecondaryIdentifier SPI introduced in r235127
+        https://bugs.webkit.org/show_bug.cgi?id=192191
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        When trying to adopt the new SPI and verify it worked, I found that the strings are not copied in one place where they should be.
+
 2018-11-29  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage
