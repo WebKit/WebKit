@@ -480,8 +480,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         m_websiteDataStore->websiteDataStore().clearPendingCookies();
     }
 
-    parameters.privateBrowsingEnabled = WebPreferences::anyPagesAreUsingPrivateBrowsing();
-
     parameters.cacheModel = cacheModel();
     parameters.diskCacheSizeOverride = m_configuration->diskCacheSizeOverride();
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
@@ -557,6 +555,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     // Initialize the network process.
     m_networkProcess->send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
+
+    if (WebPreferences::anyPagesAreUsingPrivateBrowsing())
+        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
 
 #if PLATFORM(COCOA)
     m_networkProcess->send(Messages::NetworkProcess::SetQOS(networkProcessLatencyQOS(), networkProcessThroughputQOS()), 0);

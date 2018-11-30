@@ -1,3 +1,19 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove privateBrowsingEnabled from NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=192156
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2018-11-30  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Add API for ProtectionSpace.

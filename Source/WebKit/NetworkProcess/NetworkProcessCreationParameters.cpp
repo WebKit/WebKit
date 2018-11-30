@@ -41,7 +41,6 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
-    encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);
     encoder << diskCacheSizeOverride;
     encoder << canHandleHTTPSServerTrustEvaluation;
@@ -119,8 +118,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
 {
-    if (!decoder.decode(result.privateBrowsingEnabled))
-        return false;
     if (!decoder.decodeEnum(result.cacheModel))
         return false;
     if (!decoder.decode(result.diskCacheSizeOverride))
