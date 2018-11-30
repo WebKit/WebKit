@@ -1,3 +1,12 @@
+2018-11-29  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build fix.
+
+        r238637 introduced some DerivedSources.make changes that could produce
+        some invalid .idl files, leading to IDLParser.pm error messages.
+
+        * DerivedSources.make:
+
 2018-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Add an internal feature flag to enable async overflow scrolling
