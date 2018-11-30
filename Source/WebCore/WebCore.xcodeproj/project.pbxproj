@@ -7044,66 +7044,6 @@
 		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
 		31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPURenderingContextCustom.cpp; sourceTree = "<group>"; };
 		31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPURenderPassAttachmentDescriptorCustom.cpp; sourceTree = "<group>"; };
-		31A088C61E737B4D003B6609 /* WebGPUBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBuffer.cpp; sourceTree = "<group>"; };
-		31A088C71E737B4D003B6609 /* WebGPUBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUBuffer.h; sourceTree = "<group>"; };
-		31A088C81E737B4D003B6609 /* WebGPUBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUBuffer.idl; sourceTree = "<group>"; };
-		31A088C91E737B4D003B6609 /* WebGPUCommandBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCommandBuffer.cpp; sourceTree = "<group>"; };
-		31A088CA1E737B4D003B6609 /* WebGPUCommandBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUCommandBuffer.h; sourceTree = "<group>"; };
-		31A088CB1E737B4D003B6609 /* WebGPUCommandBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUCommandBuffer.idl; sourceTree = "<group>"; };
-		31A088CC1E737B4D003B6609 /* WebGPUCommandQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCommandQueue.cpp; sourceTree = "<group>"; };
-		31A088CD1E737B4D003B6609 /* WebGPUCommandQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUCommandQueue.h; sourceTree = "<group>"; };
-		31A088CE1E737B4D003B6609 /* WebGPUCommandQueue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUCommandQueue.idl; sourceTree = "<group>"; };
-		31A088CF1E737B4D003B6609 /* WebGPUDepthStencilDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDepthStencilDescriptor.cpp; sourceTree = "<group>"; };
-		31A088D01E737B4D003B6609 /* WebGPUDepthStencilDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUDepthStencilDescriptor.h; sourceTree = "<group>"; };
-		31A088D11E737B4D003B6609 /* WebGPUDepthStencilDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUDepthStencilDescriptor.idl; sourceTree = "<group>"; };
-		31A088D21E737B4D003B6609 /* WebGPUDepthStencilState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDepthStencilState.cpp; sourceTree = "<group>"; };
-		31A088D31E737B4D003B6609 /* WebGPUDepthStencilState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUDepthStencilState.h; sourceTree = "<group>"; };
-		31A088D41E737B4D003B6609 /* WebGPUDepthStencilState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUDepthStencilState.idl; sourceTree = "<group>"; };
-		31A088D51E737B4D003B6609 /* WebGPUDrawable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDrawable.cpp; sourceTree = "<group>"; };
-		31A088D61E737B4D003B6609 /* WebGPUDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUDrawable.h; sourceTree = "<group>"; };
-		31A088D71E737B4D003B6609 /* WebGPUDrawable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUDrawable.idl; sourceTree = "<group>"; };
-		31A088D81E737B4D003B6609 /* WebGPUEnums.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUEnums.cpp; sourceTree = "<group>"; };
-		31A088D91E737B4D003B6609 /* WebGPUEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUEnums.h; sourceTree = "<group>"; };
-		31A088DA1E737B4D003B6609 /* WebGPUEnums.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUEnums.idl; sourceTree = "<group>"; };
-		31A088DB1E737B4D003B6609 /* WebGPUFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUFunction.cpp; sourceTree = "<group>"; };
-		31A088DC1E737B4D003B6609 /* WebGPUFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUFunction.h; sourceTree = "<group>"; };
-		31A088DD1E737B4D003B6609 /* WebGPUFunction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUFunction.idl; sourceTree = "<group>"; };
-		31A088DE1E737B4D003B6609 /* WebGPULibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPULibrary.cpp; sourceTree = "<group>"; };
-		31A088DF1E737B4D003B6609 /* WebGPULibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPULibrary.h; sourceTree = "<group>"; };
-		31A088E01E737B4D003B6609 /* WebGPULibrary.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPULibrary.idl; sourceTree = "<group>"; };
-		31A088E31E737B4D003B6609 /* WebGPURenderCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderCommandEncoder.cpp; sourceTree = "<group>"; };
-		31A088E41E737B4D003B6609 /* WebGPURenderCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderCommandEncoder.h; sourceTree = "<group>"; };
-		31A088E51E737B4D003B6609 /* WebGPURenderCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderCommandEncoder.idl; sourceTree = "<group>"; };
-		31A088E61E737B4D003B6609 /* WebGPURenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderingContext.cpp; sourceTree = "<group>"; };
-		31A088E71E737B4D003B6609 /* WebGPURenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderingContext.h; sourceTree = "<group>"; };
-		31A088E81E737B4D003B6609 /* WebGPURenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderingContext.idl; sourceTree = "<group>"; };
-		31A088E91E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		31A088EA1E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassAttachmentDescriptor.h; sourceTree = "<group>"; };
-		31A088EB1E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPassAttachmentDescriptor.idl; sourceTree = "<group>"; };
-		31A088EC1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		31A088ED1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassColorAttachmentDescriptor.h; sourceTree = "<group>"; };
-		31A088EE1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPassColorAttachmentDescriptor.idl; sourceTree = "<group>"; };
-		31A088EF1E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassDepthAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		31A088F01E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassDepthAttachmentDescriptor.h; sourceTree = "<group>"; };
-		31A088F11E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPassDepthAttachmentDescriptor.idl; sourceTree = "<group>"; };
-		31A088F21E737B4D003B6609 /* WebGPURenderPassDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassDescriptor.cpp; sourceTree = "<group>"; };
-		31A088F31E737B4D003B6609 /* WebGPURenderPassDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassDescriptor.h; sourceTree = "<group>"; };
-		31A088F41E737B4D003B6609 /* WebGPURenderPassDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPassDescriptor.idl; sourceTree = "<group>"; };
-		31A088F51E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPipelineColorAttachmentDescriptor.cpp; sourceTree = "<group>"; };
-		31A088F61E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPipelineColorAttachmentDescriptor.h; sourceTree = "<group>"; };
-		31A088F71E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPipelineColorAttachmentDescriptor.idl; sourceTree = "<group>"; };
-		31A088F81E737B4D003B6609 /* WebGPURenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
-		31A088F91E737B4D003B6609 /* WebGPURenderPipelineDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPipelineDescriptor.h; sourceTree = "<group>"; };
-		31A088FA1E737B4D003B6609 /* WebGPURenderPipelineDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPipelineDescriptor.idl; sourceTree = "<group>"; };
-		31A088FB1E737B4D003B6609 /* WebGPURenderPipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPipelineState.cpp; sourceTree = "<group>"; };
-		31A088FC1E737B4D003B6609 /* WebGPURenderPipelineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPipelineState.h; sourceTree = "<group>"; };
-		31A088FD1E737B4D003B6609 /* WebGPURenderPipelineState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPURenderPipelineState.idl; sourceTree = "<group>"; };
-		31A088FE1E737B4D003B6609 /* WebGPUTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTexture.cpp; sourceTree = "<group>"; };
-		31A088FF1E737B4D003B6609 /* WebGPUTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUTexture.h; sourceTree = "<group>"; };
-		31A089001E737B4D003B6609 /* WebGPUTexture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUTexture.idl; sourceTree = "<group>"; };
-		31A089011E737B4D003B6609 /* WebGPUTextureDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUTextureDescriptor.cpp; sourceTree = "<group>"; };
-		31A089021E737B4D003B6609 /* WebGPUTextureDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUTextureDescriptor.h; sourceTree = "<group>"; };
-		31A089031E737B4D003B6609 /* WebGPUTextureDescriptor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUTextureDescriptor.idl; sourceTree = "<group>"; };
 		31A0891B1E738D59003B6609 /* JSWebGPUBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUBuffer.cpp; sourceTree = "<group>"; };
 		31A0891D1E738D59003B6609 /* JSWebGPUBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUBuffer.h; sourceTree = "<group>"; };
 		31A0891E1E738D59003B6609 /* JSWebGPUCommandBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUCommandBuffer.cpp; sourceTree = "<group>"; };
@@ -7253,14 +7193,6 @@
 		37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreURLResponse.mm; sourceTree = "<group>"; };
 		37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrailingFloatsRootInlineBox.h; sourceTree = "<group>"; };
 		37FD4297118368460093C029 /* TreeDepthLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeDepthLimit.h; sourceTree = "<group>"; };
-		381E35E31E8E1B450043E850 /* WebGPUComputePipelineState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUComputePipelineState.idl; sourceTree = "<group>"; };
-		381E35E41E8E1BD40043E850 /* WebGPUComputePipelineState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUComputePipelineState.h; sourceTree = "<group>"; };
-		381E35E51E8E1C6A0043E850 /* WebGPUComputePipelineState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePipelineState.cpp; sourceTree = "<group>"; };
-		381E35E61E8E1DB90043E850 /* WebGPUComputeCommandEncoder.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUComputeCommandEncoder.idl; sourceTree = "<group>"; };
-		381E35E71E8E1E0A0043E850 /* WebGPUComputeCommandEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUComputeCommandEncoder.h; sourceTree = "<group>"; };
-		381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
-		381E35EF1E8E3D7F0043E850 /* WebGPUSize.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGPUSize.idl; sourceTree = "<group>"; };
-		381E35F51E8E4C420043E850 /* WebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPUSize.h; sourceTree = "<group>"; };
 		387AE9581E8E92EF0000DE96 /* JSWebGPUSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUSize.cpp; sourceTree = "<group>"; };
 		387AE9591E8E92EF0000DE96 /* JSWebGPUSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGPUSize.h; sourceTree = "<group>"; };
 		38F23AAE1E8E83C400CE46F5 /* JSWebGPUComputeCommandEncoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGPUComputeCommandEncoder.cpp; sourceTree = "<group>"; };
@@ -17985,74 +17917,6 @@
 				77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */,
 				77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */,
 				77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */,
-				31A088C61E737B4D003B6609 /* WebGPUBuffer.cpp */,
-				31A088C71E737B4D003B6609 /* WebGPUBuffer.h */,
-				31A088C81E737B4D003B6609 /* WebGPUBuffer.idl */,
-				31A088C91E737B4D003B6609 /* WebGPUCommandBuffer.cpp */,
-				31A088CA1E737B4D003B6609 /* WebGPUCommandBuffer.h */,
-				31A088CB1E737B4D003B6609 /* WebGPUCommandBuffer.idl */,
-				31A088CC1E737B4D003B6609 /* WebGPUCommandQueue.cpp */,
-				31A088CD1E737B4D003B6609 /* WebGPUCommandQueue.h */,
-				31A088CE1E737B4D003B6609 /* WebGPUCommandQueue.idl */,
-				381E35E81E8E1E160043E850 /* WebGPUComputeCommandEncoder.cpp */,
-				381E35E71E8E1E0A0043E850 /* WebGPUComputeCommandEncoder.h */,
-				381E35E61E8E1DB90043E850 /* WebGPUComputeCommandEncoder.idl */,
-				381E35E51E8E1C6A0043E850 /* WebGPUComputePipelineState.cpp */,
-				381E35E41E8E1BD40043E850 /* WebGPUComputePipelineState.h */,
-				381E35E31E8E1B450043E850 /* WebGPUComputePipelineState.idl */,
-				31A088CF1E737B4D003B6609 /* WebGPUDepthStencilDescriptor.cpp */,
-				31A088D01E737B4D003B6609 /* WebGPUDepthStencilDescriptor.h */,
-				31A088D11E737B4D003B6609 /* WebGPUDepthStencilDescriptor.idl */,
-				31A088D21E737B4D003B6609 /* WebGPUDepthStencilState.cpp */,
-				31A088D31E737B4D003B6609 /* WebGPUDepthStencilState.h */,
-				31A088D41E737B4D003B6609 /* WebGPUDepthStencilState.idl */,
-				31A088D51E737B4D003B6609 /* WebGPUDrawable.cpp */,
-				31A088D61E737B4D003B6609 /* WebGPUDrawable.h */,
-				31A088D71E737B4D003B6609 /* WebGPUDrawable.idl */,
-				31A088D81E737B4D003B6609 /* WebGPUEnums.cpp */,
-				31A088D91E737B4D003B6609 /* WebGPUEnums.h */,
-				31A088DA1E737B4D003B6609 /* WebGPUEnums.idl */,
-				31A088DB1E737B4D003B6609 /* WebGPUFunction.cpp */,
-				31A088DC1E737B4D003B6609 /* WebGPUFunction.h */,
-				31A088DD1E737B4D003B6609 /* WebGPUFunction.idl */,
-				31A088DE1E737B4D003B6609 /* WebGPULibrary.cpp */,
-				31A088DF1E737B4D003B6609 /* WebGPULibrary.h */,
-				31A088E01E737B4D003B6609 /* WebGPULibrary.idl */,
-				31A088E31E737B4D003B6609 /* WebGPURenderCommandEncoder.cpp */,
-				31A088E41E737B4D003B6609 /* WebGPURenderCommandEncoder.h */,
-				31A088E51E737B4D003B6609 /* WebGPURenderCommandEncoder.idl */,
-				31A088E61E737B4D003B6609 /* WebGPURenderingContext.cpp */,
-				31A088E71E737B4D003B6609 /* WebGPURenderingContext.h */,
-				31A088E81E737B4D003B6609 /* WebGPURenderingContext.idl */,
-				31A088E91E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.cpp */,
-				31A088EA1E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.h */,
-				31A088EB1E737B4D003B6609 /* WebGPURenderPassAttachmentDescriptor.idl */,
-				31A088EC1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.cpp */,
-				31A088ED1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.h */,
-				31A088EE1E737B4D003B6609 /* WebGPURenderPassColorAttachmentDescriptor.idl */,
-				31A088EF1E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.cpp */,
-				31A088F01E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.h */,
-				31A088F11E737B4D003B6609 /* WebGPURenderPassDepthAttachmentDescriptor.idl */,
-				31A088F21E737B4D003B6609 /* WebGPURenderPassDescriptor.cpp */,
-				31A088F31E737B4D003B6609 /* WebGPURenderPassDescriptor.h */,
-				31A088F41E737B4D003B6609 /* WebGPURenderPassDescriptor.idl */,
-				31A088F51E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.cpp */,
-				31A088F61E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.h */,
-				31A088F71E737B4D003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.idl */,
-				31A088F81E737B4D003B6609 /* WebGPURenderPipelineDescriptor.cpp */,
-				31A088F91E737B4D003B6609 /* WebGPURenderPipelineDescriptor.h */,
-				31A088FA1E737B4D003B6609 /* WebGPURenderPipelineDescriptor.idl */,
-				31A088FB1E737B4D003B6609 /* WebGPURenderPipelineState.cpp */,
-				31A088FC1E737B4D003B6609 /* WebGPURenderPipelineState.h */,
-				31A088FD1E737B4D003B6609 /* WebGPURenderPipelineState.idl */,
-				381E35F51E8E4C420043E850 /* WebGPUSize.h */,
-				381E35EF1E8E3D7F0043E850 /* WebGPUSize.idl */,
-				31A088FE1E737B4D003B6609 /* WebGPUTexture.cpp */,
-				31A088FF1E737B4D003B6609 /* WebGPUTexture.h */,
-				31A089001E737B4D003B6609 /* WebGPUTexture.idl */,
-				31A089011E737B4D003B6609 /* WebGPUTextureDescriptor.cpp */,
-				31A089021E737B4D003B6609 /* WebGPUTextureDescriptor.h */,
-				31A089031E737B4D003B6609 /* WebGPUTextureDescriptor.idl */,
 				D045AD2121682474000A6E9B /* WebMetalBuffer.cpp */,
 				D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */,
 				D0CAAE98216824A6001C91C7 /* WebMetalBuffer.idl */,

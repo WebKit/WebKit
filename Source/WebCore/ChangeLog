@@ -1,3 +1,14 @@
+2018-11-29  Justin Fan  <justin_fan@apple.com>
+
+        Remove dangling WebGPU file references from WebCore project
+        https://bugs.webkit.org/show_bug.cgi?id=192185
+
+        Unreviewed project file gardening.
+
+        No new tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-11-29  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build fix.
