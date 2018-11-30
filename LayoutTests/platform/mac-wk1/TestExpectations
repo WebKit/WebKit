@@ -667,3 +667,5 @@ webkit.org/b/186406 [ Mojave+ ] compositing/iframes/display-none-subframe.html [
 
 webkit.org/b/190383 fast/images/animated-image-loop-count.html [ Pass ImageOnlyFailure ]
 webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]

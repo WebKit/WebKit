@@ -1,3 +1,12 @@
+2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r238090): [ MacOS WK1 ] Layout Test imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=191639
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as flaky.
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Body and html height stretching.
