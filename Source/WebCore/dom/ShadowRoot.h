@@ -35,6 +35,7 @@ namespace WebCore {
 
 class HTMLSlotElement;
 class SlotAssignment;
+class StyleSheetList;
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
     WTF_MAKE_ISO_ALLOCATED(ShadowRoot);
@@ -54,6 +55,7 @@ public:
     using TreeScope::rootNode;
 
     Style::Scope& styleScope();
+    StyleSheetList& styleSheets();
 
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
@@ -110,6 +112,7 @@ private:
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
     Element* m_host { nullptr };
+    RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<SlotAssignment> m_slotAssignment;

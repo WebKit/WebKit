@@ -36,6 +36,7 @@
 #include "SlotAssignment.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleSheetList.h"
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -46,6 +47,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ShadowRoot);
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
     void* styleScope;
+    void* styleSheetList;
     void* host;
     void* slotAssignment;
 };
@@ -75,6 +77,9 @@ ShadowRoot::~ShadowRoot()
 {
     if (isConnected())
         document().didRemoveInDocumentShadowRoot(*this);
+
+    if (m_styleSheetList)
+        m_styleSheetList->detach();
 
     // We cannot let ContainerNode destructor call willBeDeletedFrom()
     // for this ShadowRoot instance because TreeScope destructor
@@ -149,6 +154,13 @@ void ShadowRoot::moveShadowRootToNewDocument(Document& newDocument)
 Style::Scope& ShadowRoot::styleScope()
 {
     return *m_styleScope;
+}
+
+StyleSheetList& ShadowRoot::styleSheets()
+{
+    if (!m_styleSheetList)
+        m_styleSheetList = StyleSheetList::create(*this);
+    return *m_styleSheetList;
 }
 
 String ShadowRoot::innerHTML() const

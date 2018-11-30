@@ -20,7 +20,7 @@
 
 [
     ExportToWrappedFunction,
-    GenerateIsReachable=ImplDocument,
+    GenerateIsReachable=ImplOwnerNodeRoot,
     ImplementationLacksVTable,
 ] interface StyleSheetList {
     readonly attribute unsigned long length;

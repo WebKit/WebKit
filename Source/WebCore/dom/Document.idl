@@ -130,10 +130,6 @@ typedef (
     // Special event handler IDL attributes that only apply to Document objects.
     [LenientThis] attribute EventHandler onreadystatechange;
 
-    // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-document-interface).
-    // FIXME: Should likely be moved to DocumentOrShadowRoot.
-    readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
-
     // Extensions from the CSSOM-View specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface).
     [ImplementedAs=scrollingElementForAPI] readonly attribute Element? scrollingElement;
 

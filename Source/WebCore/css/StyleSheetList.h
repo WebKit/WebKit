@@ -28,12 +28,15 @@ namespace WebCore {
 
 class Document;
 class HTMLStyleElement;
+class Node;
+class ShadowRoot;
 class StyleSheet;
 class CSSStyleSheet;
 
 class StyleSheetList final : public RefCounted<StyleSheetList> {
 public:
-    static Ref<StyleSheetList> create(Document* document) { return adoptRef(*new StyleSheetList(document)); }
+    static Ref<StyleSheetList> create(Document& document) { return adoptRef(*new StyleSheetList(document)); }
+    static Ref<StyleSheetList> create(ShadowRoot& shadowRoot) { return adoptRef(*new StyleSheetList(shadowRoot)); }
     WEBCORE_EXPORT ~StyleSheetList();
 
     WEBCORE_EXPORT unsigned length() const;
@@ -42,15 +45,17 @@ public:
     CSSStyleSheet* namedItem(const AtomicString&) const;
     Vector<AtomicString> supportedPropertyNames();
 
-    Document* document() { return m_document; }
+    Node* ownerNode() const;
 
-    void detachFromDocument();
+    void detach();
 
 private:
-    StyleSheetList(Document*);
+    StyleSheetList(Document&);
+    StyleSheetList(ShadowRoot&);
     const Vector<RefPtr<StyleSheet>>& styleSheets() const;
 
-    Document* m_document;
+    Document* m_document { nullptr };
+    ShadowRoot* m_shadowRoot { nullptr };
     Vector<RefPtr<StyleSheet>> m_detachedStyleSheets;
 };
 

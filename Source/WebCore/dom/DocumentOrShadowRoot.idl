@@ -34,7 +34,9 @@
     sequence<Element> elementsFromPoint(double x, double y);
     // CaretPosition? caretPositionFromPoint(double x, double y); // FIXME: Implement this.
     readonly attribute Element? activeElement;
-    // readonly attribute StyleSheetList styleSheets; // FIXME: Implement this.
+
+    // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-document-interface).
+    readonly attribute StyleSheetList styleSheets; // FIXME: Should be [SameObject].
 
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-documentorshadowroot-mixin).
     [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;

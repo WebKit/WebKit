@@ -1,4 +1,4 @@
 
 PASS Check initial color. 
-FAIL Check that color changes correctly after shadow stylesheet selector and #container class is changed. undefined is not an object (evaluating 'root.styleSheets[0]')
+PASS Check that color changes correctly after shadow stylesheet selector and #container class is changed. 
 

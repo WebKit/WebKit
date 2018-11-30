@@ -1,3 +1,39 @@
+2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ShadowRoot should have styleSheets property
+        https://bugs.webkit.org/show_bug.cgi?id=191311
+
+        Reviewed by Antti Koivisto.
+
+        Added the support for ShadowRoot.prototype.styleSheets by making StyleSheetList refer to either
+        a document or a shadow root. We don't support the named getter in shadow root since that's not
+        a standard feature: https://drafts.csswg.org/cssom/#the-stylesheetlist-interface
+
+        Tests: fast/shadow-dom/shadowroot-stylesheets-wrapper-gc.html
+               imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
+
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::StyleSheetList): Added a variant which takes ShadowRoot.
+        (WebCore::StyleSheetList::styleSheets const):
+        (WebCore::StyleSheetList::ownerNode): Added. The replacement for document() since now the opaque
+        root could be either a Document or a ShadowRoot.
+        (WebCore::StyleSheetList::detach): Renamed from detachFromDocument.
+        (WebCore::StyleSheetList::namedItem const): Added a comment that the named getter is only supported
+        for Document since it's not in the standard.
+        * css/StyleSheetList.h:
+        (WebCore::StyleSheetList::create): Added a variant which takes ShadowRoot.
+        (WebCore::StyleSheetList::document): Deleted. Replaced by StyleSheetList::ownerNode in .cpp file.
+        * css/StyleSheetList.idl:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::styleSheets):
+        * dom/Document.idl:
+        * dom/DocumentOrShadowRoot.idl: Moved the declaration of styleSheets here from Document.idl.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::~ShadowRoot): Call detach.
+        (WebCore::ShadowRoot::styleSheets):
+        * dom/ShadowRoot.h:
+
 2018-11-30  Chris Dumez  <cdumez@apple.com>
 
         [PSON] We are sometimes swapping processes even though there is an opened window with an opener link to us

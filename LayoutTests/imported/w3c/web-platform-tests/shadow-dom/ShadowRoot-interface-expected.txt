@@ -9,6 +9,6 @@ PASS ShadowRoot.innerHTML must return the result of the HTML fragment serializat
 PASS ShadowRoot.innerHTML must return the result of the HTML fragment serialization algorithm when shadow root is closed. 
 PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is open. 
 PASS ShadowRoot.innerHTML must replace all with the result of invoking the fragment parsing algorithm when shadow root is closed. 
-FAIL ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is open. undefined is not an object (evaluating 'shadowRoot.styleSheets.length')
-FAIL ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is closed. undefined is not an object (evaluating 'shadowRoot.styleSheets.length')
+PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is open. 
+PASS ShadowRoot.styleSheets must return a StyleSheetList sequence containing the shadow root style sheets when shadow root is closed. 
 

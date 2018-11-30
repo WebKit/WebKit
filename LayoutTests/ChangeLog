@@ -1,3 +1,17 @@
+2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ShadowRoot should have styleSheets property
+        https://bugs.webkit.org/show_bug.cgi?id=191311
+        <rdar://problem/46333290>
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for testing that the JS wrapper of a StyleSheetList does not get collected
+        as long as its shadow root is alive.
+
+        * fast/shadow-dom/shadowroot-stylesheets-wrapper-gc-expected.txt: Added.
+        * fast/shadow-dom/shadowroot-stylesheets-wrapper-gc.html: Added.
+
 2018-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace "auto fill" with "AutoFill" in some localizable strings
