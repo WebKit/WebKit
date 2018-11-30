@@ -31,7 +31,7 @@
     display: inline-block;
     vertical-align: baseline;
     margin-bottom: -2px;
-    margin-right: 2px;
+    -webkit-margin-end: 2px;
     width: 13px;
     height: 13px;
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
@@ -39,6 +39,10 @@
     background-repeat: no-repeat;
     background-position: center;
     content: "";
+}
+
+body[dir=rtl] .error-object > .formatted-error::before {
+    transform: scaleX(-1);
 }
 
 .error-object.expanded > .formatted-error::before {
@@ -58,5 +62,5 @@
 }
 
 .error-object .content {
-    padding-left: 16px
+    -webkit-padding-start: 16px
 }

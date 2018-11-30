@@ -59,6 +59,10 @@
     background-size: 13px 13px;
 }
 
+body[dir=rtl] .item.type-tree-element.parent > .disclosure-button {
+    transform: scaleX(-1);
+}
+
 .item.type-tree-element.parent.expanded > .disclosure-button {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }

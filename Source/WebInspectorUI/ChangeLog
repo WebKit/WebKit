@@ -1,3 +1,35 @@
+2018-11-29  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: RTL: disclosure triangles should be flipped and aligned right
+        https://bugs.webkit.org/show_bug.cgi?id=192089
+        <rdar://problem/46316753>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item .disclosure-button):
+        (body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button):
+
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-message.expandable .console-top-level-message::before):
+        (body[dir=rtl] .console-message.expandable .console-top-level-message::before):
+
+        * UserInterface/Views/ErrorObjectView.css:
+        (.error-object > .formatted-error::before):
+        (body[dir=rtl] .error-object > .formatted-error::before):
+        (.error-object .content):
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-group-title::before):
+        (body[dir=ltr] .console-group-title::before):
+        (body[dir=rtl] .console-group-title::before):
+
+        * UserInterface/Views/ObjectTreeView.css:
+        (body[dir=rtl] .object-tree > :matches(.title, .object-preview)::before):
+
+        * UserInterface/Views/TypeTreeElement.css:
+        (body[dir=rtl] .item.type-tree-element.parent > .disclosure-button):
+
 2018-11-28  Dean Jackson  <dino@apple.com>
 
         [ES Modules] Allow .mjs content when loaded from file://

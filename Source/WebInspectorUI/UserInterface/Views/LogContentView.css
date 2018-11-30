@@ -160,9 +160,17 @@ body[dir=rtl] .log-scope-bar > li.unread::before {
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
     background-size: 13px 13px;
     top: 4px;
-    left: 4px;
     width: 13px;
     height: 13px;
+}
+
+body[dir=ltr] .console-group-title::before {
+    left: 4px;
+}
+
+body[dir=rtl] .console-group-title::before {
+    transform: scaleX(-1);
+    right: 4px;
 }
 
 .console-group.collapsed .console-group-title::before {

@@ -49,6 +49,10 @@
     content: "";
 }
 
+body[dir=rtl] .object-tree > :matches(.title, .object-preview)::before {
+    transform: scaleX(-1);
+}
+
 .object-tree:not(.lossless-preview) > :matches(.title, .object-preview) {
     margin-left: 0;
 }

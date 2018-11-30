@@ -76,7 +76,7 @@
 
     vertical-align: baseline;
     margin-bottom: -2px;
-    margin-right: 2px;
+    -webkit-margin-end: 2px;
 
     width: 13px;
     height: 13px;
@@ -87,6 +87,10 @@
     background-position: center;
 
     content: "";
+}
+
+body[dir=rtl] .console-message.expandable .console-top-level-message::before {
+    transform: scaleX(-1);
 }
 
 .console-message.expandable.expanded .console-top-level-message::before {

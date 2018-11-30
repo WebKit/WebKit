@@ -54,7 +54,7 @@
     display: inline-block;
     width: var(--disclosure-button-size);
     height: var(--disclosure-button-size);
-    margin-left: calc(-1 * var(--disclosure-button-size));
+    -webkit-margin-start: calc(-1 * var(--disclosure-button-size));
     border: 0;
     background-color: transparent;
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
@@ -62,6 +62,10 @@
     background-position: center;
     background-size: 13px 13px;
     -webkit-appearance: none;
+}
+
+body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button {
+    transform: scaleX(-1);
 }
 
 .computed-style-section .computed-property-item .property-traces {
