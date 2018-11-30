@@ -1429,7 +1429,7 @@ def allJSFiles(path)
         result = []
         Dir.foreach(path) {
             | filename |
-            next unless filename =~ /\.js$/
+            next unless filename =~ /\.m?js$/
             next unless (path + filename).file?
             result << path + filename
         }

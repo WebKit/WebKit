@@ -2568,8 +2568,20 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
     fprintf(stderr, "\n");
+    fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
+    fprintf(stderr, "\n");
 
     jscExit(help ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+
+static bool isMJSFile(char *filename)
+{
+    filename = strrchr(filename, '.');
+
+    if (filename)
+        return !strcasecmp(filename, ".mjs");
+
+    return false;
 }
 
 void CommandLine::parseArguments(int argc, char** argv)
@@ -2722,7 +2734,8 @@ void CommandLine::parseArguments(int argc, char** argv)
 
         // This arg is not recognized by the VM nor by jsc. Pass it on to the
         // script.
-        m_scripts.append(Script(Script::StrictMode::Sloppy, Script::CodeSource::File, Script::ScriptType::Script, argv[i]));
+        Script::ScriptType scriptType = isMJSFile(argv[i]) ? Script::ScriptType::Module : Script::ScriptType::Script;
+        m_scripts.append(Script(Script::StrictMode::Sloppy, Script::CodeSource::File, scriptType, argv[i]));
     }
 
     if (hasBadJSCOptions && JSC::Options::validateOptions())

@@ -1,3 +1,14 @@
+2018-11-30  Dean Jackson  <dino@apple.com>
+
+        Add first-class support for .mjs files in jsc binary
+        https://bugs.webkit.org/show_bug.cgi?id=192190
+        <rdar://problem/46375715>
+
+        Reviewed by Keith Miller.
+
+        * stress/simple-module.mjs: Added.
+        * stress/simple-script.js: Added.
+
 2018-11-30  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Implement ValueBitXor into DFG

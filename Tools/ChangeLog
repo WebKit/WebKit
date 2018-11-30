@@ -1,3 +1,15 @@
+2018-11-30  Dean Jackson  <dino@apple.com>
+
+        Add first-class support for .mjs files in jsc binary
+        https://bugs.webkit.org/show_bug.cgi?id=192190
+        <rdar://problem/46375715>
+
+        Reviewed by Keith Miller.
+
+        Add .mjs files to the regexp looking for all JS files.
+
+        * Scripts/run-jsc-stress-tests:
+
 2018-11-30  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Use DeviceType instead of str to represent device class
