@@ -1,3 +1,20 @@
+2018-11-30  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API for ProtectionSpace.
+        https://bugs.webkit.org/show_bug.cgi?id=191648
+
+        Reviewed by Alex Christensen.
+
+        Added API to get certificate information from protection space.
+
+        * PlatformWin.cmake:
+        * Shared/curl/WebCoreArgumentCodersCurl.cpp:
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<ProtectionSpace>::decodePlatformData):
+        * UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp: Added.
+        (WKProtectionSpaceCopyCertificateInfo):
+        * UIProcess/API/C/curl/WKProtectionSpaceCurl.h: Added.
+
 2018-11-30  David Quesada  <david_quesada@apple.com>
 
         -[WKProcessPool _downloadURLRequest:] should allow specifying the initiating web view

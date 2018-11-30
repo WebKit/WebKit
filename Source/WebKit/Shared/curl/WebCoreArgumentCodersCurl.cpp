@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/CurlProxySettings.h>
+#include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -130,15 +131,42 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     return true;
 }
 
-void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder&, const ProtectionSpace&)
+void ArgumentCoder<ProtectionSpace>::encodePlatformData(Encoder& encoder, const ProtectionSpace& space)
 {
-    ASSERT_NOT_REACHED();
+    encoder << space.host() << space.port() << space.realm();
+    encoder.encodeEnum(space.authenticationScheme());
+    encoder.encodeEnum(space.serverType());
+    encoder << space.certificateInfo();
 }
 
-bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder&, ProtectionSpace&)
+bool ArgumentCoder<ProtectionSpace>::decodePlatformData(Decoder& decoder, ProtectionSpace& space)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    String host;
+    if (!decoder.decode(host))
+        return false;
+
+    int port;
+    if (!decoder.decode(port))
+        return false;
+
+    String realm;
+    if (!decoder.decode(realm))
+        return false;
+
+    ProtectionSpaceAuthenticationScheme authenticationScheme;
+    if (!decoder.decodeEnum(authenticationScheme))
+        return false;
+
+    ProtectionSpaceServerType serverType;
+    if (!decoder.decodeEnum(serverType))
+        return false;
+
+    CertificateInfo certificateInfo;
+    if (!decoder.decode(certificateInfo))
+        return false;
+
+    space = ProtectionSpace(host, port, serverType, realm, authenticationScheme, certificateInfo);
+    return true;
 }
 
 void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)

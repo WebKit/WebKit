@@ -29,6 +29,8 @@
 #include "ProtectionSpaceCocoa.h"
 #elif USE(CFURLCONNECTION)
 #include "ProtectionSpaceCFNet.h"
+#elif USE(CURL)
+#include "ProtectionSpaceCurl.h"
 #else
 
 #include "ProtectionSpaceBase.h"

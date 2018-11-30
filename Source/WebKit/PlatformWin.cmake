@@ -42,6 +42,7 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/API/C/WKViewportAttributes.cpp
 
+    UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
     UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
 
     UIProcess/API/C/win/WKView.cpp

@@ -1,3 +1,23 @@
+2018-11-30  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Add API for ProtectionSpace.
+        https://bugs.webkit.org/show_bug.cgi?id=191648
+
+        Reviewed by Alex Christensen.
+
+        Create a platform dependent header and implementation files for ProtectionSpace.
+
+        No new tests because there's no behavior change.
+
+        * platform/Curl.cmake:
+        * platform/network/ProtectionSpace.h:
+        * platform/network/curl/ProtectionSpaceCurl.cpp: Added.
+        (WebCore::ProtectionSpace::certificateInfo const):
+        * platform/network/curl/ProtectionSpaceCurl.h: Added.
+        (WebCore::ProtectionSpace::ProtectionSpace):
+        (WebCore::ProtectionSpace::encodingRequiresPlatformData const):
+        (WebCore::ProtectionSpace::platformCompare):
+
 2018-11-30  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Flesh out WebGPURenderPassDescriptor to match the WebGPU IDL
