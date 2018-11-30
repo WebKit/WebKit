@@ -1,3 +1,21 @@
+2018-11-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Settings: reload button needs horizontal spacing
+        https://bugs.webkit.org/show_bug.cgi?id=192231
+        <rdar://problem/46274363>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings > .settings-view > .container button):
+        (.content-view.settings > .settings-view > .container > .title):
+        (.content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]):
+        (body[dir=ltr] .content-view.settings > .settings-view > .container > .title): Deleted.
+        (body[dir=rtl] .content-view.settings > .settings-view > .container > .title): Deleted.
+        (body[dir=ltr] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Deleted.
+        (body[dir=rtl] .content-view.settings > .settings-view > .container > .editor-group > .editor input[type="checkbox"]): Deleted.
+        Drive-by: replace `dir=*` attribute rules with `-webkit-margin-*` properties.
+
 2018-11-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception opening Web Inspector to Debugger Tab
