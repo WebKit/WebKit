@@ -560,7 +560,7 @@ void RenderLayerBacking::updateCustomAppearance(const RenderStyle& style)
 static bool layerOrAncestorIsTransformedOrUsingCompositedScrolling(RenderLayer& layer)
 {
     for (auto* curr = &layer; curr; curr = curr->parent()) {
-        if (curr->hasTransform() || curr->hasTouchScrollableOverflow())
+        if (curr->hasTransform() || curr->hasCompositedScrollableOverflow())
             return true;
     }
 
@@ -702,7 +702,7 @@ bool RenderLayerBacking::updateConfiguration()
     
     // This requires descendants to have been updated.
     bool needsDescendantsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
-    bool usesCompositedScrolling = m_owningLayer.hasTouchScrollableOverflow();
+    bool usesCompositedScrolling = m_owningLayer.hasCompositedScrollableOverflow();
 
     // Our scrolling layer will clip.
     if (usesCompositedScrolling)
@@ -947,7 +947,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (compositedAncestor->hasTouchScrollableOverflow()) {
+    if (compositedAncestor->hasCompositedScrollableOverflow()) {
         LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
         auto& renderBox = downcast<RenderBox>(compositedAncestor->renderer());
         LayoutRect paddingBox(renderBox.borderLeft(), renderBox.borderTop(), renderBox.width() - renderBox.borderLeft() - renderBox.borderRight(), renderBox.height() - renderBox.borderTop() - renderBox.borderBottom());

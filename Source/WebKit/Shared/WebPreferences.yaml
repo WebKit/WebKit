@@ -1387,7 +1387,14 @@ AsyncFrameScrollingEnabled:
   type: bool
   defaultValue: false
   humanReadableName: "Async Frame Scrolling"
-  humanReadableDescription: "Perform frame scrolling in a dedicated thread or process"
+  humanReadableDescription: "Perform frame scrolling off the main thread"
+  category: internal
+
+AsyncOverflowScrollingEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Async Overflow Scrolling"
+  humanReadableDescription: "Perform overflow scrolling off the main thread"
   category: internal
 
 FetchAPIKeepAliveEnabled:

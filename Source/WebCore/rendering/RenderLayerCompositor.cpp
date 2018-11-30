@@ -2709,8 +2709,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
 bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const RenderLayer& layer, RequiresCompositingData& queryData) const
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!layer.canUseAcceleratedTouchScrolling())
+    if (!layer.canUseCompositedScrolling())
         return false;
 
     if (queryData.layoutUpToDate == LayoutUpToDate::No) {
@@ -2718,12 +2717,7 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
         return layer.isComposited();
     }
 
-    return layer.hasTouchScrollableOverflow();
-#else
-    UNUSED_PARAM(layer);
-    UNUSED_PARAM(queryData);
-    return false;
-#endif
+    return layer.hasCompositedScrollableOverflow();
 }
 
 // FIXME: why doesn't this handle the clipping cases?
@@ -2781,7 +2775,7 @@ bool RenderLayerCompositor::isAsyncScrollableStickyLayer(const RenderLayer& laye
     auto* enclosingOverflowLayer = layer.enclosingOverflowClipLayer(ExcludeSelf);
 
 #if PLATFORM(IOS_FAMILY)
-    if (enclosingOverflowLayer && enclosingOverflowLayer->hasTouchScrollableOverflow()) {
+    if (enclosingOverflowLayer && enclosingOverflowLayer->hasCompositedScrollableOverflow()) {
         if (enclosingAcceleratedOverflowLayer)
             *enclosingAcceleratedOverflowLayer = enclosingOverflowLayer;
         return true;
@@ -2846,7 +2840,10 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     if (layer.isRenderViewLayer() && hasCoordinatedScrolling())
         return true;
 
-    return layer.hasTouchScrollableOverflow();
+#if PLATFORM(IOS_FAMILY)
+    return layer.hasCompositedScrollableOverflow();
+#endif
+    return false; // FIXME: Fix for composited scrolling on other platforms.
 }
 
 bool RenderLayerCompositor::isRunningTransformAnimation(RenderLayerModelObject& renderer) const

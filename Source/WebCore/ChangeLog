@@ -1,3 +1,39 @@
+2018-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an internal feature flag to enable async overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=192184
+
+        Reviewed by Tim Horton.
+
+        Add a new internal feature flag that will enable async overflow-scrolling for
+        most overflow:scroll elements. Defaults to off.
+        
+        Make the "UseAcceleratedTouchScrolling" terminology in RenderLayer etc be more generic,
+        and refer to async overflow scrolling.
+
+        * page/Settings.yaml:
+        * rendering/RenderLayer.cpp:
+        (WebCore::canCreateStackingContext): Remove a line which is not necessary, since -webkit-overflow-scrolling: touch
+        already triggers non-auto z-index via code in StyleResolver::adjustRenderStyle().
+        (WebCore::RenderLayer::canUseCompositedScrolling const):
+        (WebCore::RenderLayer::hasCompositedScrollableOverflow const):
+        (WebCore::RenderLayer::handleTouchEvent):
+        (WebCore::RenderLayer::usesAsyncScrolling const):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::showsOverflowControls const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::canUseAcceleratedTouchScrolling const): Deleted.
+        (WebCore::RenderLayer::hasTouchScrollableOverflow const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsTransformedOrUsingCompositedScrolling):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForOverflowScrolling const):
+        (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer const):
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+
 2018-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add some WKA extension points

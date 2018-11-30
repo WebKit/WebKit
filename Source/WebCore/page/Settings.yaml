@@ -342,24 +342,36 @@ windowFocusRestricted:
 
 diagnosticLoggingEnabled:
   initial: false
+
 delegatesPageScaling:
   initial: false
+
 plugInSnapshottingEnabled:
   initial: false
+
 snapshotAllPlugIns:
   initial: false
+
 autostartOriginPlugInSnapshottingEnabled:
   initial: true
+
 primaryPlugInSnapshotDetectionEnabled:
   initial: true
+
 maximumPlugInSnapshotAttempts:
   type: unsigned
   initial: 20
+
 frameFlattening:
   type: FrameFlattening
   initial: FrameFlattening::Disabled
   onChange: setNeedsRelayoutAllFrames
+
 asyncFrameScrollingEnabled:
+  initial: false
+  onChange: setNeedsRelayoutAllFrames
+
+asyncOverflowScrollingEnabled:
   initial: false
   onChange: setNeedsRelayoutAllFrames
 

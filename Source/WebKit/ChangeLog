@@ -1,3 +1,15 @@
+2018-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an internal feature flag to enable async overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=192184
+
+        Reviewed by Tim Horton.
+
+        Add a new internal feature flag that will enable async overflow-scrolling for
+        most overflow:scroll elements. Defaults to off.
+
+        * Shared/WebPreferences.yaml:
+
 2018-11-29  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add some WKA extension points
