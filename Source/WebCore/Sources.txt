@@ -3221,12 +3221,14 @@ JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
 JSWebGPUCommandBuffer.cpp
+JSWebGPUColor.cpp
 JSWebGPUDevice.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineStageDescriptor.cpp
 JSWebGPUProgrammablePassEncoder.cpp
 JSWebGPURenderingContext.cpp
+JSWebGPURenderPassColorAttachmentDescriptor.cpp
 JSWebGPURenderPassDescriptor.cpp
 JSWebGPURenderPassEncoder.cpp
 JSWebGPURenderPipeline.cpp

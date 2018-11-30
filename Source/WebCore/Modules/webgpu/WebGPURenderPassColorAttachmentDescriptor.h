@@ -27,25 +27,15 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "WebGPUColor.h"
+#include "WebGPUTextureView.h"
 
 namespace WebCore {
 
-class WebGPUTextureView;
+struct WebGPURenderPassColorAttachmentDescriptor {
+    RefPtr<WebGPUTextureView> attachment;
 
-class WebGPUTexture : public RefCounted<WebGPUTexture> {
-public:
-    static RefPtr<WebGPUTexture> create(RefPtr<GPUTexture>&&);
-
-    RefPtr<WebGPUTextureView> createDefaultTextureView();
-
-private:
-    explicit WebGPUTexture(Ref<GPUTexture>&&);
-
-    Ref<GPUTexture> m_texture;
+    WebGPUColor clearColor;
 };
 
 } // namespace WebCore

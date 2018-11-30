@@ -27,25 +27,13 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class WebGPUTextureView;
-
-class WebGPUTexture : public RefCounted<WebGPUTexture> {
-public:
-    static RefPtr<WebGPUTexture> create(RefPtr<GPUTexture>&&);
-
-    RefPtr<WebGPUTextureView> createDefaultTextureView();
-
-private:
-    explicit WebGPUTexture(Ref<GPUTexture>&&);
-
-    Ref<GPUTexture> m_texture;
+struct GPUColor {
+    float r;
+    float g;
+    float b;
+    float a;
 };
 
 } // namespace WebCore

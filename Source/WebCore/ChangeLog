@@ -1,3 +1,33 @@
+2018-11-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Flesh out WebGPURenderPassDescriptor to match the WebGPU IDL
+        https://bugs.webkit.org/show_bug.cgi?id=192213
+
+        Reviewed by Dean Jackson.
+
+        WebGPU prototype now uses WebGPURenderPassColorAttachmentDescriptor in WebGPURenderPassDescriptor to match the WebGPU Sketch.
+        WebGPU developer can now also set the clearColor in WebGPURenderPassDescriptor.
+
+        No new tests. Older WebGPURenderPass* tests updated. 
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webgpu/WebGPUColor.h: Added. Typedef'd to GPUColor.h.
+        * Modules/webgpu/WebGPUColor.idl: Added.
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::beginRenderPass): Updated to error check and support the new structure of WebGPURenderPassDescriptor.
+        * Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.h: Added.
+        * Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl: Added.
+        * Modules/webgpu/WebGPURenderPassDescriptor.h: 
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl: Updated to match the sketch IDL.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUColor.h: Added.
+        * platform/graphics/gpu/GPURenderPassColorAttachmentDescriptor.h: Added. Backing struct for WebGPU__.
+        * platform/graphics/gpu/GPURenderPassDescriptor.h: Updated to match new WebGPURenderPassDescriptor.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::create): Now also uses clearColor set by developer.
+
 2018-11-30  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add some WKA extension points

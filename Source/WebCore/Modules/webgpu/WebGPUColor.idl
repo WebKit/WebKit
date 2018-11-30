@@ -22,32 +22,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "GPUTexture.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-
-class WebGPUTextureView;
-
-class WebGPUTexture : public RefCounted<WebGPUTexture> {
-public:
-    static RefPtr<WebGPUTexture> create(RefPtr<GPUTexture>&&);
-
-    RefPtr<WebGPUTextureView> createDefaultTextureView();
-
-private:
-    explicit WebGPUTexture(Ref<GPUTexture>&&);
-
-    Ref<GPUTexture> m_texture;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] dictionary WebGPUColor {
+    float r;
+    float g;
+    float b;
+    float a;
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

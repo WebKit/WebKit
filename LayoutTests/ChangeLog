@@ -1,3 +1,17 @@
+2018-11-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Flesh out WebGPURenderPassDescriptor to match the WebGPU IDL
+        https://bugs.webkit.org/show_bug.cgi?id=192213
+
+        Reviewed by Dean Jackson.
+
+        Updating some tests to match the updated WebGPURenderPassDescriptor. 
+
+        * webgpu/js/basic-webgpu-functions.js:
+        (render):
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-passes.html:
+
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Compute min/maxHeight margins only when they are needed.

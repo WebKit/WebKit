@@ -137,10 +137,14 @@ function render() {
         return;
     }
 
-    // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
-    // Default a loadOp, storeOp, and clearColor in the implementation for now.
+    // FIXME: Default a loadOp, and storeOp in the implementation for now.
+    const colorAttachmentDescriptor = {
+        attachment : textureView,
+        clearColor : { r:0.35, g:0.65, b:0.85, a:1.0 }
+    }
+
     let renderPassDescriptor = {
-        attachment : textureView
+        colorAttachments : [colorAttachmentDescriptor]
     }
 
     let renderPassEncoder = commandBuffer.beginRenderPass(renderPassDescriptor);

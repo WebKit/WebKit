@@ -27,13 +27,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUTextureView.h"
+#include "WebGPURenderPassColorAttachmentDescriptor.h"
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct WebGPURenderPassDescriptor {
-    // FIXME: Temporary shortcut implementation for prototyping.
-    RefPtr<WebGPUTextureView> attachment;
+    Vector<WebGPURenderPassColorAttachmentDescriptor> colorAttachments;
 };
 
 } // namespace WebCore

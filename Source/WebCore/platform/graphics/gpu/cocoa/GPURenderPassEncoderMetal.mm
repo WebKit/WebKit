@@ -42,15 +42,18 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::create(const GPUCommandBuffer
 {
     PlatformRenderPassEncoderSmartPtr mtlEncoder;
 
+    // FIXME: Default to colorAttachments[0] and this loadOp, storeOp for now.
+    const auto& attachmentDescriptor = descriptor.colorAttachments[0];
+    const auto& color = attachmentDescriptor.clearColor;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     auto mtlDescriptor = adoptNS([MTLRenderPassDescriptor new]);
 
-    // FIXME: Default to colorAttachments[0] and this loadOp, storeOp, clearColor for now.
-    mtlDescriptor.get().colorAttachments[0].texture = descriptor.attachment->platformTexture();
+    mtlDescriptor.get().colorAttachments[0].texture = attachmentDescriptor.attachment->platformTexture();
     mtlDescriptor.get().colorAttachments[0].loadAction = MTLLoadActionClear;
     mtlDescriptor.get().colorAttachments[0].storeAction = MTLStoreActionStore;
-    mtlDescriptor.get().colorAttachments[0].clearColor = MTLClearColorMake(0.35, 0.65, 0.85, 1.0);
+    mtlDescriptor.get().colorAttachments[0].clearColor = MTLClearColorMake(color.r, color.g, color.b, color.a);
 
     mtlEncoder = retainPtr([buffer.platformCommandBuffer() renderCommandEncoderWithDescriptor:mtlDescriptor.get()]);
 

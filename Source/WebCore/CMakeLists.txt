@@ -458,12 +458,14 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUColor.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineStageDescriptor.idl
     Modules/webgpu/WebGPUProgrammablePassEncoder.idl
     Modules/webgpu/WebGPUQueue.idl
+    Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl
     Modules/webgpu/WebGPURenderPassDescriptor.idl
     Modules/webgpu/WebGPURenderPassEncoder.idl
     Modules/webgpu/WebGPURenderPipeline.idl

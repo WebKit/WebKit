@@ -28,11 +28,6 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPURenderPassDescriptor {
-    // FIXME: Temporary shortcut implementation for prototyping.
-    WebGPUTextureView attachment;
-
-/* Not Yet Implemented:
     sequence<WebGPURenderPassColorAttachmentDescriptor> colorAttachments;
-    WebGPURenderPassDepthStencilAttachmentDescriptor depthStencilAttachment;
-*/
+    // WebGPURenderPassDepthStencilAttachmentDescriptor depthStencilAttachment;
 };

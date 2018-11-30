@@ -27,12 +27,14 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
+#include "GPURenderPassColorAttachmentDescriptor.h"
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPURenderPassDescriptor {
-    Ref<GPUTexture> attachment;
+    Vector<GPURenderPassColorAttachmentDescriptor> colorAttachments;
 };
 
 } // namespace WebCore

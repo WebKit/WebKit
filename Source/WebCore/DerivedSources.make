@@ -375,12 +375,14 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUColor.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineStageDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUProgrammablePassEncoder.idl \
+    $(WebCore)/Modules/webgpu/WebGPURenderPassColorAttachmentDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPassEncoder.idl \
     $(WebCore)/Modules/webgpu/WebGPURenderPipeline.idl \
