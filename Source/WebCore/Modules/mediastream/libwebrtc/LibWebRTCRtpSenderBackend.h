@@ -94,12 +94,6 @@ public:
         ASSERT(hasSource());
     }
 
-    void takeSource(LibWebRTCRtpSenderBackend& backend)
-    {
-        ASSERT(backend.hasSource());
-        setSource(WTFMove(backend.m_source));
-    }
-
 private:
     void replaceTrack(ScriptExecutionContext&, RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromiseDeferred<void>&&) final;
     RTCRtpSendParameters getParameters() const final;

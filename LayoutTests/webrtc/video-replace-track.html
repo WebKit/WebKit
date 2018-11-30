@@ -181,14 +181,6 @@ promise_test((test) => {
     });
 
 }, "Switching from front to back camera, with higher resolution");
-
-promise_test(async (test) => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    const pc = new RTCPeerConnection();
-    pc.addTransceiver("video", {direction: "sendonly"});
-    const sender = pc.addTrack(stream.getVideoTracks()[0], stream);
-    await sender.replaceTrack(stream.getVideoTracks()[0].clone());
-}, "Replace a track for a sender created by addTransceiver and used by addTrack");
         </script>
     </body>
 </html>
