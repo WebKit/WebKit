@@ -1,3 +1,12 @@
+2018-11-30  Frederic Wang  <fwang@igalia.com>
+
+        [WebAuthN] Support CTAP HID authenticators on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=188623
+
+        Unreviewed build fix.
+
+        * UIProcess/WebAuthentication/Cocoa/HidConnection.mm: Add missing header.
+
 2018-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r238635): Dragging a text selection within WKWebView causes the selection highlight to get into a bad state

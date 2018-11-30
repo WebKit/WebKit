@@ -30,6 +30,7 @@
 
 #import <WebCore/FidoConstants.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/RunLoop.h>
 
 namespace WebKit {
 using namespace fido;
