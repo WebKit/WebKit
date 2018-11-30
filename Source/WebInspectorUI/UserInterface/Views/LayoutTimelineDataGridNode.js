@@ -72,7 +72,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
             return isNaN(value) ? emDash : WI.UIString("%dpx").format(value);
 
         case "area":
-            return isNaN(value) ? emDash : WI.UIString("%dpx²").format(value);
+            return isNaN(value) ? emDash : WI.UIString("%dpx\u00B2").format(value);
 
         case "startTime":
             return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);

@@ -486,7 +486,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         if (compositingReasons.iFrame)
             addReason(WI.UIString("Element is <iframe>"));
         if (compositingReasons.backfaceVisibilityHidden)
-            addReason(WI.UIString("Element has “backface-visibility: hidden” style"));
+            addReason(WI.UIString("Element has \u201Cbackface-visibility: hidden\u201D style"));
         if (compositingReasons.clipsCompositingDescendants)
             addReason(WI.UIString("Element clips compositing descendants"));
         if (compositingReasons.animation)
@@ -494,11 +494,11 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         if (compositingReasons.filters)
             addReason(WI.UIString("Element has CSS filters applied"));
         if (compositingReasons.positionFixed)
-            addReason(WI.UIString("Element has “position: fixed” style"));
+            addReason(WI.UIString("Element has \u201Cposition: fixed\u201D style"));
         if (compositingReasons.positionSticky)
-            addReason(WI.UIString("Element has “position: sticky” style"));
+            addReason(WI.UIString("Element has \u201Cposition: sticky\u201D style"));
         if (compositingReasons.overflowScrollingTouch)
-            addReason(WI.UIString("Element has “-webkit-overflow-scrolling: touch” style"));
+            addReason(WI.UIString("Element has \u201C-webkit-overflow-scrolling: touch\u201D style"));
         if (compositingReasons.stacking)
             addReason(WI.UIString("Element may overlap another compositing element"));
         if (compositingReasons.overlap)
@@ -522,13 +522,13 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         if (compositingReasons.perspective)
             addReason(WI.UIString("Element has perspective applied"));
         if (compositingReasons.preserve3D)
-            addReason(WI.UIString("Element has “transform-style: preserve-3d” style"));
+            addReason(WI.UIString("Element has \u201Ctransform-style: preserve-3d\u201D style"));
         if (compositingReasons.willChange)
-            addReason(WI.UIString("Element has “will-change” style which includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
+            addReason(WI.UIString("Element has \u201Cwill-change\u201D style which includes opacity, transform, transform-style, perspective, filter or backdrop-filter"));
         if (compositingReasons.root)
             addReason(WI.UIString("Element is the root element"));
         if (compositingReasons.blending)
-            addReason(WI.UIString("Element has “blend-mode” style"));
+            addReason(WI.UIString("Element has \u201Cblend-mode\u201D style"));
     }
 };
 

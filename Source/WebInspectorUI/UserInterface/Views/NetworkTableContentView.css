@@ -91,7 +91,7 @@ body[dir=rtl] .network-table .cell.dom-node.name .disclosure {
 }
 
 .network-table .data-container .cell.name .range::before {
-    content: " — ";
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
 .network-table:focus .data-container li.selected .cell.name .range {

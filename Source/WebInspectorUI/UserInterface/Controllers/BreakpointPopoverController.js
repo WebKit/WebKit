@@ -75,7 +75,7 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         };
 
         if (WI.debuggerManager.isBreakpointEditable(breakpoint))
-            contextMenu.appendItem(WI.UIString("Edit Breakpoint…"), editBreakpoint);
+            contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), editBreakpoint);
 
         if (breakpoint.autoContinue && !breakpoint.disabled) {
             contextMenu.appendItem(WI.UIString("Disable Breakpoint"), toggleBreakpoint);

@@ -701,7 +701,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
                     let originator = fullscreenDOMEvents[i].originator || fullscreenDOMEvents[i + 1].originator;
                     if (originator)
-                        fullscreenElement.title = WI.UIString("Full-Screen from “%s“").format(originator.displayName);
+                        fullscreenElement.title = WI.UIString("Full-Screen from \u201C%s\u201D").format(originator.displayName);
                     else
                         fullscreenElement.title = WI.UIString("Full-Screen");
                 }

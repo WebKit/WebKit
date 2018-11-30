@@ -44,7 +44,7 @@ WI.LayerTreeDataGridNode = class LayerTreeDataGridNode extends WI.DataGridNode
 
     createCellContent(columnIdentifier, cell)
     {
-        cell = columnIdentifier === "name" ? this._makeNameCell() : this._makeOutlet(columnIdentifier, document.createTextNode("–"));
+        cell = columnIdentifier === "name" ? this._makeNameCell() : this._makeOutlet(columnIdentifier, document.createTextNode(enDash));
         this._updateCell(columnIdentifier);
         return cell;
     }

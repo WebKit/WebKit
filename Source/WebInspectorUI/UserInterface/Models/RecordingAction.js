@@ -310,7 +310,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 if (prototype && !(name in prototype)) {
                     this.markInvalid();
 
-                    WI.Recording.synthesizeError(WI.UIString("“%s” is invalid.").format(name));
+                    WI.Recording.synthesizeError(WI.UIString("\u0022%s\u0022 is invalid.").format(name));
                 }
             }
         }
@@ -360,7 +360,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         } catch {
             this.markInvalid();
 
-            WI.Recording.synthesizeError(WI.UIString("“%s” threw an error.").format(this._name));
+            WI.Recording.synthesizeError(WI.UIString("\u0022%s\u0022 threw an error.").format(this._name));
         }
     }
 

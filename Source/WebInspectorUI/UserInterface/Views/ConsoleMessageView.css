@@ -146,7 +146,7 @@ body[dir=rtl] .console-message.expandable .console-top-level-message::before {
     text-align: center;
 
     height: 13px;
-    content: "•";
+    content: "\2022"; /* &middot; */
 
     font-family: -webkit-system-font, sans-serif;
     font-size: 11px;

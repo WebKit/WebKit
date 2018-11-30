@@ -1186,7 +1186,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
             var eventBreakpointTreeElement = new WI.EventBreakpointTreeElement(eventBreakpoint, {
                 className: WI.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName,
-                title: WI.UIString("“%s“ Event Fired").format(pauseData.eventName),
+                title: WI.UIString("\u201C%s\u201D Event Fired").format(pauseData.eventName),
             });
             this._pauseReasonTreeOutline.appendChild(eventBreakpointTreeElement);
 

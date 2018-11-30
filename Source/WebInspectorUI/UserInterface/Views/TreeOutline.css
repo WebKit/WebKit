@@ -252,7 +252,7 @@ body[dir=rtl] .tree-outline .item .status {
 
 .tree-outline .item .subtitle::before,
 .tree-outline .item .alternate-subtitle::before {
-    content: " — ";
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
 @media (prefers-dark-interface) {

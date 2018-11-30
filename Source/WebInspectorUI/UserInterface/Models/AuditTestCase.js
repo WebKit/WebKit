@@ -142,9 +142,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                     function addErrorForValueType(valueType) {
                         let value = null;
                         if (valueType === "object" || valueType === "array")
-                            value = WI.UIString("“%s“ must be an %s");
+                            value = WI.UIString("\u0022%s\u0022 must be an %s");
                         else
-                            value = WI.UIString("“%s“ must be a %s");
+                            value = WI.UIString("\u0022%s\u0022 must be a %s");
                         addError(value.format(key, valueType));
                     }
 
@@ -195,7 +195,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
                 await resultArrayForEach("domNodes", async (item) => {
                     if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "node") {
-                        addError(WI.UIString("All items in “%s“ must be valid DOM nodes").format(WI.unlocalizedString("domNodes")));
+                        addError(WI.UIString("All items in \u0022%s\u0022 must be valid DOM nodes").format(WI.unlocalizedString("domNodes")));
                         return;
                     }
 
@@ -215,7 +215,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
                 await resultArrayForEach("domAttributes", (item) => {
                     if (!item || !item.value || item.value.type !== "string" || !item.value.value.length) {
-                        addError(WI.UIString("All items in “%s“ must be non-empty strings").format(WI.unlocalizedString("domAttributes")));
+                        addError(WI.UIString("All items in \u0022%s\u0022 must be non-empty strings").format(WI.unlocalizedString("domAttributes")));
                         return;
                     }
 
@@ -226,7 +226,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
                 await resultArrayForEach("errors", (item) => {
                     if (!item || !item.value || item.value.type !== "object" || item.value.subtype !== "error") {
-                        addError(WI.UIString("All items in “%s“ must be error objects").format(WI.unlocalizedString("errors")));
+                        addError(WI.UIString("All items in \u0022%s\u0022 must be error objects").format(WI.unlocalizedString("errors")));
                         return;
                     }
 

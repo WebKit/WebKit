@@ -40,7 +40,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
     static synthesizeError(message)
     {
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Audit test error: %s").format(message));
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Audit error: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);

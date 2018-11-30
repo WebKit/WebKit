@@ -117,7 +117,7 @@ WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
 
         // FIXME: <https://webkit.org/b/155072> Web Inspector: Charge to Caller should work with Bottom Up Profile View
         let disableChargeToCaller = this._tree.callingContextTree.type === WI.CallingContextTree.Type.BottomUp;
-        contextMenu.appendItem(WI.UIString("Charge ‘%s’ to Callers").format(this.displayName()), () => {
+        contextMenu.appendItem(WI.UIString("Charge \u201C%s\u201D to Callers").format(this.displayName()), () => {
             this._tree.addModifier({type: WI.ProfileDataGridTree.ModifierType.ChargeToCaller, source: this._node});
         }, disableChargeToCaller);
 

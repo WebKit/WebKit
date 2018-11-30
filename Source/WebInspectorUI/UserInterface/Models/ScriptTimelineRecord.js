@@ -371,7 +371,7 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         return WI.UIString("Probe Sample Recorded");
     case WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded:
         if (details && (details instanceof String || typeof details === "string"))
-            return WI.UIString("“%s” Profile Recorded").format(details);
+            return WI.UIString("\u201C%s\u201D Profile Recorded").format(details);
         return WI.UIString("Console Profile Recorded");
     case WI.ScriptTimelineRecord.EventType.GarbageCollected:
         console.assert(details);

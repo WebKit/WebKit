@@ -399,7 +399,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             let formatString = this.representedObject.recordingFrameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
             title = formatString.format(this.representedObject.recordingFrameCount);
         } else
-            title = WI.UIString("Waiting for frames…");
+            title = WI.UIString("Waiting for frames\u2026");
 
         this._progressView.title = title;
         this._progressView.subtitle = this.representedObject.recordingBufferUsed ? Number.bytesToString(this.representedObject.recordingBufferUsed) : "";

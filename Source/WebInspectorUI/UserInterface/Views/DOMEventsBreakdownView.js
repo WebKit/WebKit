@@ -133,7 +133,7 @@ WI.DOMEventsBreakdownView = class DOMEventsBreakdownView extends WI.View
                     fullscreenArea.style.setProperty("width", percentOfTotalTime(fullscreenRange.endTimestamp - fullscreenRange.startTimestamp) + "%");
 
                     if (fullscreenRange.originator)
-                        fullscreenArea.title = WI.UIString("Full-Screen from “%s“").format(fullscreenRange.originator.displayName);
+                        fullscreenArea.title = WI.UIString("Full-Screen from \u201C%s\u201D").format(fullscreenRange.originator.displayName);
                     else
                         fullscreenArea.title = WI.UIString("Full-Screen");
                 }

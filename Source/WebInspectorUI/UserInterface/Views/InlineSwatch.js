@@ -48,10 +48,10 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 this._swatchElement.title = WI.UIString("Edit custom gradient");
                 break;
             case WI.InlineSwatch.Type.Bezier:
-                this._swatchElement.title = WI.UIString("Edit “cubic-bezier“ function");
+                this._swatchElement.title = WI.UIString("Edit \u201Ccubic-bezier\u201D function");
                 break;
             case WI.InlineSwatch.Type.Spring:
-                this._swatchElement.title = WI.UIString("Edit “spring“ function");
+                this._swatchElement.title = WI.UIString("Edit \u201Cspring\u201D function");
                 break;
             case WI.InlineSwatch.Type.Variable:
                 this._swatchElement.title = WI.UIString("View variable value");

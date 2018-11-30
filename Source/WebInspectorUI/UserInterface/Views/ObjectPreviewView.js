@@ -203,7 +203,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
         var lossless = preview.lossless;
         var overflow = preview.overflow;
 
-        // FIXME: Array previews should have better sparse support: (undefined × 10).
+        // FIXME: Array previews should have better sparse support.
         var isArray = preview.subtype === "array";
 
         element.append(isArray ? "[" : "{");

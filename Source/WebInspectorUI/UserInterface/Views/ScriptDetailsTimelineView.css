@@ -48,5 +48,5 @@
 }
 
 .tree-outline .item.small:not(.two-line) .alternate-subtitle::before {
-    content: " — ";
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }

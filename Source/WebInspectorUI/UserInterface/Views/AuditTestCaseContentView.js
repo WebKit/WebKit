@@ -223,7 +223,7 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
     showRunningPlaceholder()
     {
         if (!this.placeholderElement || !this.placeholderElement.__placeholderRunning) {
-            this.placeholderElement = WI.createMessageTextView(WI.UIString("Running the “%s“ audit").format(this.representedObject.name));
+            this.placeholderElement = WI.createMessageTextView(WI.UIString("Running the \u201C%s\u201D audit").format(this.representedObject.name));
             this.placeholderElement.__placeholderRunning = true;
 
             let spinner = new WI.IndeterminateProgressSpinner;

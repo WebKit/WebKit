@@ -49,7 +49,7 @@ WI.CallFrameView = class CallFrameView extends WI.Object
             if (showFunctionName) {
                 var separatorElement = document.createElement("span");
                 separatorElement.classList.add("separator");
-                separatorElement.textContent = " — ";
+                separatorElement.textContent = ` ${emDash} `;
                 subtitleElement.append(separatorElement);
             }
 

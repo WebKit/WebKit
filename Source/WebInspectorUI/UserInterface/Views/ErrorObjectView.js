@@ -55,7 +55,7 @@ WI.ErrorObjectView = class ErrorObjectView extends WI.Object
 
         var span = document.createElement("span");
         span.classList.add("error-object-link-container");
-        span.textContent = " — ";
+        span.textContent = ` ${emDash} `;
 
         const options = {
             ignoreNetworkTab: true,

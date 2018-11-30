@@ -82,7 +82,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.Popover
             this._typeSelectElement.hidden = true;
 
         this._domEventNameInputElement = typeContainer.appendChild(document.createElement("input"));
-        this._domEventNameInputElement.placeholder = WI.UIString("Example: “%s”").format("click");
+        this._domEventNameInputElement.placeholder = WI.UIString("Example: \u201C%s\u201D").format("click");
         this._domEventNameInputElement.spellcheck = false;
         this._domEventNameInputElement.addEventListener("keydown", (event) => {
             if (isEnterKey(event) || event.key === "Tab") {

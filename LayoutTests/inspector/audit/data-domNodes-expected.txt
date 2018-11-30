@@ -35,23 +35,23 @@ PASS: Result should be "pass".
 Testing value `{"level":"pass","domNodes":null}`...
 PASS: Result should be "error".
   errors:
-   - “domNodes“ must be an array
+   - "domNodes" must be an array
 
 -- Running test case: Audit.DOMNodes.Error.Number
 Testing value `{"level":"pass","domNodes":42}`...
 PASS: Result should be "error".
   errors:
-   - “domNodes“ must be an array
+   - "domNodes" must be an array
 
 -- Running test case: Audit.DOMNodes.Error.String
 Testing value `{"level":"pass","domNodes":"foo"}`...
 PASS: Result should be "error".
   errors:
-   - “domNodes“ must be an array
+   - "domNodes" must be an array
 
 -- Running test case: Audit.DOMNodes.Error.Object
 Testing value `{"level":"pass","domNodes":{}}`...
 PASS: Result should be "error".
   errors:
-   - “domNodes“ must be an array
+   - "domNodes" must be an array
 

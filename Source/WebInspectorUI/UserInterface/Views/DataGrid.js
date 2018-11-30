@@ -1641,7 +1641,7 @@ WI.DataGrid = class DataGrid extends WI.View
                         let element = event.target.enclosingNodeOrSelfWithNodeName("td");
                         let columnIdentifier = element.__columnIdentifier;
                         let columnTitle = this.dataGrid.columns.get(columnIdentifier)["title"];
-                        contextMenu.appendItem(WI.UIString("Edit “%s”").format(columnTitle), this._startEditing.bind(this, event.target));
+                        contextMenu.appendItem(WI.UIString("Edit \u201C%s\u201D").format(columnTitle), this._startEditing.bind(this, event.target));
                     }
                 }
 

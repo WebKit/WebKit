@@ -207,7 +207,7 @@ function createErrorSheet() {
 
     function stringifyAndTruncateObject(object) {
         let string = JSON.stringify(object);
-        return string.length > 500 ? string.substr(0, 500) + "…" : string;
+        return string.length > 500 ? string.substr(0, 500) + ellipsis : string;
     }
 
     if (window.InspectorBackend && InspectorBackend.currentDispatchState) {

@@ -30,7 +30,7 @@ PASS: Result should be "error".
 Testing value `{"level":"pass","errors":["user generated error"]}`...
 PASS: Result should be "error".
   errors:
-   - All items in “errors“ must be error objects
+   - All items in "errors" must be error objects
 
 -- Running test case: Audit.Errors.Undefined
 Testing value `{"level":"pass"}`...
@@ -40,23 +40,23 @@ PASS: Result should be "pass".
 Testing value `{"level":"pass","errors":null}`...
 PASS: Result should be "error".
   errors:
-   - “errors“ must be an array
+   - "errors" must be an array
 
 -- Running test case: Audit.Errors.Error.Number
 Testing value `{"level":"pass","errors":42}`...
 PASS: Result should be "error".
   errors:
-   - “errors“ must be an array
+   - "errors" must be an array
 
 -- Running test case: Audit.Errors.Error.String
 Testing value `{"level":"pass","errors":"foo"}`...
 PASS: Result should be "error".
   errors:
-   - “errors“ must be an array
+   - "errors" must be an array
 
 -- Running test case: Audit.Errors.Error.Object
 Testing value `{"level":"pass","errors":{}}`...
 PASS: Result should be "error".
   errors:
-   - “errors“ must be an array
+   - "errors" must be an array
 

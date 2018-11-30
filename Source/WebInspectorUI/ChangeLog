@@ -1,3 +1,48 @@
+2018-11-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: replace all unicode characters with the escaped character code
+        https://bugs.webkit.org/show_bug.cgi?id=192216
+        <rdar://problem/46275637>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        * UserInterface/Debug/UncaughtExceptionReporter.js:
+        * UserInterface/Models/AuditTestCase.js:
+        * UserInterface/Models/Canvas.js:
+        * UserInterface/Models/RecordingAction.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        * UserInterface/Views/AuditTestContentView.js:
+        * UserInterface/Views/AuditTestGroupContentView.js:
+        * UserInterface/Views/CallFrameView.js:
+        * UserInterface/Views/CanvasContentView.js:
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        * UserInterface/Views/ConsoleMessageView.css:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/DOMEventsBreakdownView.js:
+        * UserInterface/Views/DataGrid.css:
+        * UserInterface/Views/DataGrid.js:
+        * UserInterface/Views/DatabaseTableContentView.js:
+        * UserInterface/Views/DebuggerDashboardView.css:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/ErrorObjectView.js:
+        * UserInterface/Views/EventBreakpointPopover.js:
+        * UserInterface/Views/InlineSwatch.js:
+        * UserInterface/Views/LayerTreeDataGridNode.js:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.js:
+        * UserInterface/Views/Layers3DContentView.js:
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        * UserInterface/Views/NetworkTableContentView.css:
+        * UserInterface/Views/NetworkTableContentView.js:
+        * UserInterface/Views/ObjectPreviewView.js:
+        * UserInterface/Views/ProfileDataGridNode.js:
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        * UserInterface/Views/ScriptDetailsTimelineView.css:
+        * UserInterface/Views/TextEditor.css:
+        * UserInterface/Views/TreeOutline.css:
+
 2018-11-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: RTL: disclosure triangles should be flipped and aligned right

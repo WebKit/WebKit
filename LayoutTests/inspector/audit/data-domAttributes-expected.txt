@@ -17,23 +17,23 @@ PASS: Result should be "pass".
 Testing value `{"level":"pass","domAttributes":null}`...
 PASS: Result should be "error".
   errors:
-   - “domAttributes“ must be an array
+   - "domAttributes" must be an array
 
 -- Running test case: Audit.DOMAttributes.Error.Number
 Testing value `{"level":"pass","domAttributes":42}`...
 PASS: Result should be "error".
   errors:
-   - “domAttributes“ must be an array
+   - "domAttributes" must be an array
 
 -- Running test case: Audit.DOMAttributes.Error.String
 Testing value `{"level":"pass","domAttributes":"foo"}`...
 PASS: Result should be "error".
   errors:
-   - “domAttributes“ must be an array
+   - "domAttributes" must be an array
 
 -- Running test case: Audit.DOMAttributes.Error.Object
 Testing value `{"level":"pass","domAttributes":{}}`...
 PASS: Result should be "error".
   errors:
-   - “domAttributes“ must be an array
+   - "domAttributes" must be an array
 

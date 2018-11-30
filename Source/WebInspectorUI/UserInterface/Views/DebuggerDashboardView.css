@@ -175,7 +175,7 @@ body[dir=rtl] .dashboard.debugger > .location .function-icon {
 }
 
 .dashboard.debugger > .location .function-name::after {
-    content: '\00A0\2014\00A0'; /* &nbsp;&mdash;&nbsp; */
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
 .dashboard.debugger > .location .go-to-link {

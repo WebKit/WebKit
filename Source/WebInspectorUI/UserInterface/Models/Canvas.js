@@ -152,7 +152,7 @@ WI.Canvas = class Canvas extends WI.Object
     get displayName()
     {
         if (this._cssCanvasName)
-            return WI.UIString("CSS canvas “%s”").format(this._cssCanvasName);
+            return WI.UIString("CSS canvas \u201C%s\u201D").format(this._cssCanvasName);
 
         if (this._domNode) {
             let idSelector = this._domNode.escapedIdSelector;

@@ -75,7 +75,7 @@
 }
 
 .text-editor > .CodeMirror .has-breakpoint.multiple-breakpoints .CodeMirror-linenumber::before {
-    content: "•••";
+    content: "\2022\2022\2022"; /* &middot;&middot;&middot; */
     color: white;
     line-height: 6px;
     text-align: center;

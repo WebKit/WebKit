@@ -314,7 +314,7 @@ body[dir=rtl] .data-grid tr.parent td.disclosure::before {
 }
 
 .data-grid td .subtitle::before {
-    content: " — ";
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
 .data-grid:focus tr.selected td .subtitle {

@@ -95,7 +95,7 @@ WI.DatabaseTableContentView = class DatabaseTableContentView extends WI.ContentV
 
         // We were returned a table with no columns. This can happen when a table has
         // no data, the SELECT query only returns column names when there is data.
-        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("The “%s”\ntable is empty.").format(this.representedObject.name), false);
+        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("The \u201C%s\u201D\ntable is empty.").format(this.representedObject.name), false);
         this.element.appendChild(this._messageTextViewElement);
     }
 
@@ -109,7 +109,7 @@ WI.DatabaseTableContentView = class DatabaseTableContentView extends WI.ContentV
         if (this._messageTextViewElement)
             this._messageTextViewElement.remove();
 
-        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("An error occurred trying to read the “%s” table.").format(this.representedObject.name), true);
+        this._messageTextViewElement = WI.createMessageTextView(WI.UIString("An error occurred trying to read the \u201C%s\u201D table.").format(this.representedObject.name), true);
         this.element.appendChild(this._messageTextViewElement);
     }
 

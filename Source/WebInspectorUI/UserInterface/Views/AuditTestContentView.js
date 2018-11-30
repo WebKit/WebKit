@@ -136,7 +136,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     showStoppingPlaceholder()
     {
         if (!this.placeholderElement || !this.placeholderElement.__placeholderStopping) {
-            this.placeholderElement = WI.createMessageTextView(WI.UIString("Stopping the “%s“ audit").format(this.representedObject.name));
+            this.placeholderElement = WI.createMessageTextView(WI.UIString("Stopping the \u201C%s\u201D audit").format(this.representedObject.name));
             this.placeholderElement.__placeholderStopping = true;
 
             let spinner = new WI.IndeterminateProgressSpinner;
@@ -176,15 +176,15 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
             let message = null;
             if (result.didError)
-                message = WI.UIString("The “%s“ audit threw an error");
+                message = WI.UIString("The \u201C%s\u201D audit threw an error");
             else if (result.didFail)
-                message = WI.UIString("The “%s“ audit failed");
+                message = WI.UIString("The \u201C%s\u201D audit failed");
             else if (result.didWarn)
-                message = WI.UIString("The “%s“ audit warned");
+                message = WI.UIString("The \u201C%s\u201D audit warned");
             else if (result.didPass)
-                message = WI.UIString("The “%s“ audit passed");
+                message = WI.UIString("The \u201C%s\u201D audit passed");
             else if (result.unsupported)
-                message = WI.UIString("The “%s“ audit is unsupported");
+                message = WI.UIString("The \u201C%s\u201D audit is unsupported");
             else {
                 console.error("Unknown result", result);
                 return;

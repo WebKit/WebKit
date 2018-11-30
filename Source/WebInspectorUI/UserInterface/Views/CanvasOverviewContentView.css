@@ -81,7 +81,7 @@
 }
 
 .content-view.canvas-overview .content-view.canvas > header .subtitle::before {
-    content: " — ";
+    content: "\00A0\2014\00A0"; /* &nbsp;&mdash;&nbsp; */;
 }
 
 .content-view.canvas-overview .content-view.canvas.recording-active > header > .titles > .title {

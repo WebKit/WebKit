@@ -360,7 +360,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             if (resource.failed)
                 descriptionElement.textContent = WI.UIString("Resource failed to load.");
             else if (resource.urlComponents.scheme === "data")
-                descriptionElement.textContent = WI.UIString("Resource was loaded with the “data” scheme.");
+                descriptionElement.textContent = WI.UIString("Resource was loaded with the \u201Cdata\u201D scheme.");
             else
                 descriptionElement.textContent = WI.UIString("Resource was served from the cache.");
             popoverContentElement.appendChild(descriptionElement);
