@@ -1,3 +1,25 @@
+2018-11-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION(r238599): Multiple Selection: selecting a breakpoint will change the selection to it's parent on the first click
+        https://bugs.webkit.org/show_bug.cgi?id=192093
+        <rdar://problem/46318466>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.select):
+        TreeElement shouldn't manage the TreeOutline's selection barrier.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.get processingSelectionChange):
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+        (WI.TreeOutline.prototype.selectTreeElementInternal):
+        The selection re-entry barrier `processingSelectionChange` should be
+        managed internally by TreeOutline, and exposed as a read-only property.
+        Fix a bug where the barrier was cleared before dispatching the change
+        notification, which can cause re-entry as a side effect.
+
 2018-11-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Settings: reload button needs horizontal spacing

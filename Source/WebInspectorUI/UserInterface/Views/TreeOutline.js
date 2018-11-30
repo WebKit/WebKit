@@ -59,7 +59,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._treeElementIndexCache = new Map;
 
         this._itemWasSelectedByUser = false;
-        this._processingSelectionControllerSelectionDidChange = false;
+        this._processingSelectionChange = false;
         this._suppressNextSelectionDidChangeEvent = false;
 
         this._virtualizedVisibleTreeElements = null;
@@ -131,6 +131,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         return [];
     }
+
+    get processingSelectionChange() { return this._processingSelectionChange; }
 
     get hidden()
     {
@@ -788,7 +790,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     selectionControllerSelectionDidChange(controller, deselectedItems, selectedItems)
     {
-        this._processingSelectionControllerSelectionDidChange = true;
+        this._processingSelectionChange = true;
 
         for (let index of deselectedItems) {
             let treeElement = this._treeElementAtIndex(index);
@@ -810,9 +812,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             }
         }
 
-        this._processingSelectionControllerSelectionDidChange = false;
-
         this._dispatchSelectionDidChangeEvent();
+
+        this._processingSelectionChange = false;
     }
 
     selectionControllerNextSelectableIndex(controller, index)
@@ -855,7 +857,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     selectTreeElementInternal(treeElement, suppressNotification = false, selectedByUser = false)
     {
-        if (this._processingSelectionControllerSelectionDidChange)
+        if (this._processingSelectionChange)
             return;
 
         this._itemWasSelectedByUser = selectedByUser;

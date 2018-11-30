@@ -514,15 +514,11 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (!treeOutline)
             return;
 
-        treeOutline.processingSelectionChange = true;
-
         this.selected = true;
         treeOutline.selectTreeElementInternal(this, suppressOnSelect, selectedByUser);
 
         if (!suppressOnSelect && this.onselect)
             this.onselect(this, selectedByUser);
-
-        treeOutline.processingSelectionChange = false;
 
         let treeOutlineGroup = WI.TreeOutlineGroup.groupForTreeOutline(treeOutline);
         if (!treeOutlineGroup)
