@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
       RenderImage {IMG} at (152,0) size 76x103
       RenderBR {BR} at (228,103) size 0x0
       RenderText {#text} at (0,103) size 784x35
-        text run at (0,103) width 629: "This tests for a bug where an images pasted on the same line would appear on different lines. "
-        text run at (629,103) width 153: "You should see several"
-        text run at (782,103) width 2: " "
+        text run at (0,103) width 628: "This tests for a bug where an images pasted on the same line would appear on different lines. "
+        text run at (627,103) width 153: "You should see several"
+        text run at (779,103) width 5: " "
         text run at (0,121) width 307: "pictures above all in the same line/paragraph."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -9,28 +9,43 @@ layer at (0,0) size 785x2327
       RenderBlock {PRE} at (0,34) size 769x270
         RenderText {#text} at (0,0) size 536x270
           text run at (0,0) width 344: "P.one {font-size: 14px; line-height: 20px;}"
+          text run at (344,0) width 0: " "
           text run at (0,15) width 304: "IMG.onea {vertical-align: text-bottom;"
+          text run at (304,15) width 0: " "
           text run at (0,30) width 272: "     width: 200px; height: 200px;}"
+          text run at (272,30) width 0: " "
           text run at (0,45) width 520: "IMG.oneb {vertical-align: text-top; width: 200px; height: 200px;}"
+          text run at (520,45) width 0: " "
           text run at (0,60) width 0: " "
           text run at (0,75) width 344: "P.two {font-size: 14px; line-height: 20px;}"
+          text run at (344,75) width 0: " "
           text run at (0,90) width 536: "IMG.twoa {vertical-align: text-bottom; width: 100px; height: 100px;"
+          text run at (536,90) width 0: " "
           text run at (0,105) width 312: "     padding: 5px; border-style: solid;"
+          text run at (312,105) width 0: " "
           text run at (0,120) width 312: "     border-width: 10px; margin: 15px;}"
+          text run at (312,120) width 0: " "
           text run at (0,135) width 280: "IMG.twob {vertical-align: text-top;"
+          text run at (280,135) width 0: " "
           text run at (0,150) width 304: "          width: 100px; height: 100px;"
+          text run at (304,150) width 0: " "
           text run at (0,165) width 312: "     padding: 5px; border-style: solid;"
+          text run at (312,165) width 0: " "
           text run at (0,180) width 312: "     border-width: 10px; margin: 15px;}"
+          text run at (312,180) width 0: " "
           text run at (0,195) width 0: " "
           text run at (0,210) width 480: "IMG.twoc {vertical-align: middle; width: 50px; height: 50px;"
+          text run at (480,210) width 0: " "
           text run at (0,225) width 312: "     padding: 5px; border-style: solid;"
+          text run at (312,225) width 0: " "
           text run at (0,240) width 320: "     border-width: 10px; margin: -10px;}"
+          text run at (320,240) width 0: " "
           text run at (0,255) width 0: " "
       RenderBlock {HR} at (0,317) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,333) size 769x465
         RenderText {#text} at (0,2) size 767x238
           text run at (0,2) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
-          text run at (420,2) width 347: "This means that the lines of text within it should be separated"
+          text run at (419,2) width 348: "This means that the lines of text within it should be separated"
           text run at (0,22) width 374: "by six pixels, three of which are part of the line-box of each line. "
           text run at (374,22) width 375: "Any images within the paragraph should increase the height of the"
           text run at (0,225) width 296: "line-box so that they fit within the line box, such as "
@@ -46,16 +61,16 @@ layer at (0,0) size 785x2327
       RenderBlock {P} at (0,812) size 769x485
         RenderText {#text} at (0,2) size 767x198
           text run at (0,2) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
-          text run at (420,2) width 347: "This means that the lines of text within it should be separated"
+          text run at (419,2) width 348: "This means that the lines of text within it should be separated"
           text run at (0,22) width 79: "by six pixels. "
           text run at (79,22) width 652: "Any images within the paragraph should increase the height of the line-box so that they fit, including their padding"
           text run at (0,185) width 396: "(5px), border (10px) and margins (15px) within the line box, such as "
-        RenderImage {IMG} at (411,55) size 130x130 [border: (10px solid #000000)]
-        RenderText {#text} at (556,185) size 28x15
-          text run at (556,185) width 28: " and "
-        RenderImage {IMG} at (599,200) size 130x130 [border: (10px solid #000000)]
-        RenderText {#text} at (744,185) size 759x256
-          text run at (744,185) width 4: "."
+        RenderImage {IMG} at (410,55) size 131x130 [border: (10px solid #000000)]
+        RenderText {#text} at (555,185) size 29x15
+          text run at (555,185) width 29: " and "
+        RenderImage {IMG} at (598,200) size 131x130 [border: (10px solid #000000)]
+        RenderText {#text} at (743,185) size 759x256
+          text run at (743,185) width 5: "."
           text run at (0,347) width 755: "This is additional text to make sure that there is enough room left below the image so that this line does not hit the image that is text-"
           text run at (0,367) width 71: "top aligned. "
           text run at (71,367) width 683: "It is the outer edge of the margin that should be text-bottom and text-top aligned in this paragraph, so for the first image"
@@ -70,9 +85,9 @@ layer at (0,0) size 785x2327
         RenderTableSection {TBODY} at (1,1) size 767x998
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x972
             RenderTableCell {TD} at (0,499) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -81,7 +96,7 @@ layer at (0,0) size 785x2327
               RenderBlock {P} at (4,4) size 747x465
                 RenderText {#text} at (0,2) size 729x238
                   text run at (0,2) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
-                  text run at (420,2) width 291: "This means that the lines of text within it should be"
+                  text run at (419,2) width 292: "This means that the lines of text within it should be"
                   text run at (0,22) width 430: "separated by six pixels, three of which are part of the line-box of each line. "
                   text run at (430,22) width 299: "Any images within the paragraph should increase the"
                   text run at (0,225) width 372: "height of the line-box so that they fit within the line box, such as "
@@ -96,13 +111,13 @@ layer at (0,0) size 785x2327
               RenderBlock {P} at (4,483) size 747x485
                 RenderText {#text} at (0,2) size 738x198
                   text run at (0,2) width 420: "This paragraph should have a font size of 14px and a line height of 20px. "
-                  text run at (420,2) width 291: "This means that the lines of text within it should be"
+                  text run at (419,2) width 292: "This means that the lines of text within it should be"
                   text run at (0,22) width 135: "separated by six pixels. "
                   text run at (135,22) width 603: "Any images within the paragraph should increase the height of the line-box so that they fit, including their"
                   text run at (0,185) width 445: "padding (5px), border (10px) and margins (15px) within the line box, such as "
-                RenderImage {IMG} at (460,55) size 130x130 [border: (10px solid #000000)]
-                RenderText {#text} at (605,185) size 28x15
-                  text run at (605,185) width 28: " and "
+                RenderImage {IMG} at (459,55) size 131x130 [border: (10px solid #000000)]
+                RenderText {#text} at (604,185) size 29x15
+                  text run at (604,185) width 29: " and "
                 RenderImage {IMG} at (15,220) size 130x130 [border: (10px solid #000000)]
                 RenderText {#text} at (160,205) size 736x236
                   text run at (160,205) width 8: ". "

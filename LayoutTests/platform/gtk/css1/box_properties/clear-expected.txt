@@ -9,14 +9,18 @@ layer at (0,0) size 785x961
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 168x60
           text run at (0,0) width 152: ".one {clear: left;}"
+          text run at (152,0) width 0: " "
           text run at (0,15) width 160: ".two {clear: right;}"
+          text run at (160,15) width 0: " "
           text run at (0,30) width 168: ".three {clear: both;}"
+          text run at (168,30) width 0: " "
           text run at (0,45) width 160: ".four {clear: none;}"
+          text run at (160,45) width 0: " "
       RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderImage {IMG} at (0,117) size 15x50
       RenderBlock {P} at (0,125) size 769x18
-        RenderText {#text} at (18,0) size 595x17
-          text run at (18,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
+        RenderText {#text} at (18,0) size 594x17
+          text run at (18,0) width 594: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
       RenderBlock (anonymous) at (0,159) size 769x18
         RenderBR {BR} at (18,0) size 0x17
         RenderImage {IMG} at (0,18) size 15x50
@@ -47,9 +51,9 @@ layer at (0,0) size 785x961
         RenderTableSection {TBODY} at (1,1) size 678x426
           RenderTableRow {TR} at (0,0) size 678x26
             RenderTableCell {TD} at (0,0) size 678x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 678x400
             RenderTableCell {TD} at (0,213) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -57,8 +61,8 @@ layer at (0,0) size 785x961
             RenderTableCell {TD} at (12,26) size 666x400 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (4,4) size 15x50
               RenderBlock {P} at (4,4) size 658x18
-                RenderText {#text} at (18,0) size 595x17
-                  text run at (18,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
+                RenderText {#text} at (18,0) size 594x17
+                  text run at (18,0) width 594: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
               RenderBlock (anonymous) at (4,38) size 658x18
                 RenderBR {BR} at (18,0) size 0x17
                 RenderImage {IMG} at (0,18) size 15x50

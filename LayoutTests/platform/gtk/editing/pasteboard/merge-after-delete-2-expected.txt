@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 777x53
+        RenderText {#text} at (0,0) size 776x53
           text run at (0,0) width 773: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases"
-          text run at (0,18) width 777: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be"
+          text run at (0,18) width 776: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be"
           text run at (0,36) width 35: "lost). "
           text run at (35,36) width 368: "It wasn't requesting a merge in cases where it should have."
       RenderBlock {P} at (0,70) size 784x72

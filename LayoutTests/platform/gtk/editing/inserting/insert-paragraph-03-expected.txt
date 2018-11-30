@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 760x35
+        RenderText {#text} at (0,0) size 759x35
           text run at (0,0) width 414: "This tests inserting a paragraph separator before a horizontal rule. "
-          text run at (414,0) width 346: "You should see 'foo', empty paragraph, horizontal rule,"
+          text run at (414,0) width 345: "You should see 'foo', empty paragraph, horizontal rule,"
           text run at (0,18) width 371: "'bar', and the caret should be just before the horizontal rule."
       RenderBlock {DIV} at (0,52) size 784x72
         RenderBlock (anonymous) at (0,0) size 784x36

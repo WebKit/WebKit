@@ -9,14 +9,23 @@ layer at (0,0) size 785x1396
       RenderBlock {PRE} at (0,34) size 769x135
         RenderText {#text} at (0,0) size 272x135
           text run at (0,0) width 272: ".one {border: medium black solid;}"
+          text run at (272,0) width 0: " "
           text run at (0,15) width 264: ".two {border: thin maroon ridge;}"
+          text run at (264,15) width 0: " "
           text run at (0,30) width 272: ".three {border: 10px teal outset;}"
+          text run at (272,30) width 0: " "
           text run at (0,45) width 264: ".four {border: 10px olive inset;}"
+          text run at (264,45) width 0: " "
           text run at (0,60) width 224: ".five {border: 10px maroon;}"
+          text run at (224,60) width 0: " "
           text run at (0,75) width 232: ".six {border: maroon double;}"
+          text run at (232,75) width 0: " "
           text run at (0,90) width 256: ".seven {border: left red solid;}"
+          text run at (256,90) width 0: " "
           text run at (0,105) width 168: ".eight {border: 0px;}"
+          text run at (168,105) width 0: " "
           text run at (0,120) width 232: "TD {border: 2px solid green;}"
+          text run at (232,120) width 0: " "
       RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,200) size 769x36
         RenderText {#text} at (0,0) size 748x35
@@ -41,8 +50,8 @@ layer at (0,0) size 785x1396
         RenderInline {TT} at (0,0) size 96x15
           RenderText {#text} at (348,3) size 96x15
             text run at (348,3) width 96: "border-style"
-        RenderText {#text} at (444,0) size 323x17
-          text run at (444,0) width 323: " was not set, and it should not be offset in any way."
+        RenderText {#text} at (444,0) size 322x17
+          text run at (444,0) width 322: " was not set, and it should not be offset in any way."
       RenderBlock {P} at (0,470) size 769x42 [border: (3px double #800000)]
         RenderText {#text} at (3,3) size 535x17
           text run at (3,3) width 535: "This paragraph should have a medium maroon double border around it, even though "
@@ -61,17 +70,17 @@ layer at (0,0) size 785x1396
             text run at (0,1) width 25: "The"
         RenderText {#text} at (25,1) size 715x17
           text run at (25,1) width 715: " following image is also an anchor which points to a target on this page, but it should not have a border around it: "
-        RenderInline {A} at (0,0) size 15x17 [color=#0000FF]
-          RenderImage {IMG} at (740,0) size 15x15
-        RenderText {#text} at (755,1) size 4x17
-          text run at (755,1) width 4: "."
+        RenderInline {A} at (0,0) size 16x17 [color=#0000FF]
+          RenderImage {IMG} at (739,0) size 16x15
+        RenderText {#text} at (754,1) size 5x17
+          text run at (754,1) width 5: "."
       RenderTable {TABLE} at (0,597) size 769x113 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x111
           RenderTableRow {TR} at (0,5) size 767x42
             RenderTableCell {TD} at (5,5) size 758x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
               RenderText {#text} at (3,3) size 711x35
                 text run at (3,3) width 405: "Every cell in this table should have a 2-pixel solid green border. "
-                text run at (408,3) width 306: "This is also true of the table-testing section in the"
+                text run at (407,3) width 307: "This is also true of the table-testing section in the"
                 text run at (3,21) width 175: "second half of the test page."
           RenderTableRow {TR} at (0,52) size 767x54
             RenderTableCell {TD} at (5,67) size 195x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
@@ -94,9 +103,9 @@ layer at (0,0) size 785x1396
         RenderTableSection {TBODY} at (1,1) size 767x618
           RenderTableRow {TR} at (0,0) size 767x28
             RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (5,5) size 163x17
-                  text run at (5,5) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (5,5) size 161x17
+                  text run at (5,5) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,28) size 767x590
             RenderTableCell {TD} at (0,309) size 14x28 [bgcolor=#C0C0C0] [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (5,5) size 4x17
@@ -127,7 +136,7 @@ layer at (0,0) size 785x1396
                     text run at (348,3) width 96: "border-style"
                 RenderText {#text} at (444,0) size 732x35
                   text run at (444,0) width 288: " was not set, and it should not be offset in any"
-                  text run at (0,18) width 31: "way."
+                  text run at (0,18) width 30: "way."
               RenderBlock {P} at (5,293) size 743x42 [border: (3px double #800000)]
                 RenderText {#text} at (3,3) size 535x17
                   text run at (3,3) width 535: "This paragraph should have a medium maroon double border around it, even though "
@@ -156,7 +165,7 @@ layer at (0,0) size 785x1396
                     RenderTableCell {TD} at (5,5) size 732x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
                       RenderText {#text} at (3,3) size 711x35
                         text run at (3,3) width 405: "Every cell in this table should have a 2-pixel solid green border. "
-                        text run at (408,3) width 306: "This is also true of the table-testing section in the"
+                        text run at (407,3) width 307: "This is also true of the table-testing section in the"
                         text run at (3,21) width 175: "second half of the test page."
                   RenderTableRow {TR} at (0,52) size 741x54
                     RenderTableCell {TD} at (5,67) size 188x24 [border: (2px solid #008000)] [r=1 c=0 rs=1 cs=1]

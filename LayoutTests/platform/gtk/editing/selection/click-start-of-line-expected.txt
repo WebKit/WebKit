@@ -14,20 +14,20 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
-          RenderText {#text} at (452,0) size 776x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 320: "REGRESSION (r12949-r12988): Clicking the first"
-            text run at (0,18) width 384: "letter on a line places the caret at the end of the previous line"
-        RenderText {#text} at (384,18) size 4x17
-          text run at (384,18) width 4: "."
+          RenderText {#text} at (451,0) size 776x35
+            text run at (451,0) width 5: " "
+            text run at (455,0) width 321: "REGRESSION (r12949-r12988): Clicking the first"
+            text run at (0,18) width 383: "letter on a line places the caret at the end of the previous line"
+        RenderText {#text} at (382,18) size 5x17
+          text run at (382,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 730x17
-          text run at (0,0) width 551: "To test interactively, click the left side of the W on the second line. The caret should be "
-          text run at (551,0) width 179: "move to the start of that line."
+        RenderText {#text} at (0,0) size 728x17
+          text run at (0,0) width 549: "To test interactively, click the left side of the W on the second line. The caret should be "
+          text run at (548,0) width 180: "move to the start of that line."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 250x110
-        RenderText {#text} at (0,1) size 236x108
+        RenderText {#text} at (0,1) size 233x108
           text run at (0,1) width 152: "Alice in"
           text run at (152,1) width 12: " "
-          text run at (0,56) width 236: "Wonderland"
+          text run at (0,56) width 233: "Wonderland"
 caret: position 10 of child 0 {#text} of child 7 {DIV} of body

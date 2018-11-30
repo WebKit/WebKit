@@ -9,13 +9,21 @@ layer at (0,0) size 785x2341
       RenderBlock {PRE} at (0,34) size 769x120
         RenderText {#text} at (0,0) size 504x120
           text run at (0,0) width 208: "IMG.one {display: inline;}"
+          text run at (208,0) width 0: " "
           text run at (0,15) width 200: "IMG.two {display: block;}"
+          text run at (200,15) width 0: " "
           text run at (0,30) width 208: "IMG.three {display: block;"
+          text run at (208,30) width 0: " "
           text run at (0,45) width 504: "           margin-right: auto; margin-left: auto; width: auto;}"
+          text run at (504,45) width 0: " "
           text run at (0,60) width 200: "IMG.four {display: block;"
+          text run at (200,60) width 0: " "
           text run at (0,75) width 488: "          margin-right: auto; margin-left: auto; width: 50%;}"
+          text run at (488,75) width 0: " "
           text run at (0,90) width 200: "IMG.five {display: block;"
+          text run at (200,90) width 0: " "
           text run at (0,105) width 464: "          margin-right: 0; margin-left: auto; width: 50%;}"
+          text run at (464,105) width 0: " "
       RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,185) size 769x19
         RenderImage {IMG} at (0,0) size 15x15
@@ -45,9 +53,9 @@ layer at (0,0) size 785x2341
         RenderTableSection {TBODY} at (1,1) size 767x1067
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1041
             RenderTableCell {TD} at (0,533) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18

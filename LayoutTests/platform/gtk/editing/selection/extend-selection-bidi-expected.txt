@@ -34,9 +34,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (14,14) size 191x26
             text run at (14,14) width 40: "abc "
             text run at (54,14) width 38 RTL: " \x{5D3}\x{5D4}\x{5D5}"
-            text run at (92,14) width 36: "123"
-            text run at (128,14) width 40 RTL: "\x{5D0}\x{5D1}\x{5D2} "
-            text run at (168,14) width 37: " def"
+            text run at (91,14) width 37: "123"
+            text run at (127,14) width 41 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (167,14) width 38: " def"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body
 selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 6 {DIV} of body

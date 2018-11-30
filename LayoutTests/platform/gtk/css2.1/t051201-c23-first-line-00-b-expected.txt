@@ -15,9 +15,9 @@ layer at (0,0) size 800x407
         RenderInline {STRONG} at (0,0) size 38x17
           RenderText {#text} at (384,0) size 38x17
             text run at (384,0) width 38: "green"
-        RenderText {#text} at (422,0) size 780x107
-          text run at (422,0) width 178: ". If this precise combination "
-          text run at (600,0) width 180: "does not occur, then the user"
+        RenderText {#text} at (421,0) size 780x107
+          text run at (421,0) width 179: ". If this precise combination "
+          text run at (599,0) width 181: "does not occur, then the user"
           text run at (0,18) width 230: "agent has failed this test. Remember "
           text run at (230,18) width 385: "that in order to ensure a complete test, the paragraph must be "
           text run at (615,18) width 147: "displayed on more than"
@@ -47,9 +47,9 @@ layer at (0,0) size 800x407
         RenderInline {STRONG} at (0,0) size 38x17
           RenderText {#text} at (178,37) size 38x17
             text run at (178,37) width 38: "green"
-        RenderText {#text} at (216,37) size 779x89
-          text run at (216,37) width 278: ". If this precise combination does not occur, "
-          text run at (494,37) width 237: "then the user agent has failed this test."
+        RenderText {#text} at (215,37) size 779x89
+          text run at (215,37) width 279: ". If this precise combination does not occur, "
+          text run at (493,37) width 238: "then the user agent has failed this test."
           text run at (0,55) width 169: "Remember that in order to "
           text run at (169,55) width 409: "ensure a complete test, the paragraph must be displayed on more "
           text run at (578,55) width 172: "than one line. Dummy text."

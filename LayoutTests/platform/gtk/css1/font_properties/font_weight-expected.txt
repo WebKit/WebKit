@@ -9,15 +9,25 @@ layer at (0,0) size 785x1046
       RenderBlock {PRE} at (0,34) size 769x165
         RenderText {#text} at (0,0) size 240x165
           text run at (0,0) width 200: ".one {font-weight: bold;}"
+          text run at (200,0) width 0: " "
           text run at (0,15) width 216: ".two {font-weight: bolder;}"
+          text run at (216,15) width 0: " "
           text run at (0,30) width 240: ".three {font-weight: lighter;}"
+          text run at (240,30) width 0: " "
           text run at (0,45) width 200: ".four {font-weight: 100;}"
+          text run at (200,45) width 0: " "
           text run at (0,60) width 200: ".five {font-weight: 300;}"
+          text run at (200,60) width 0: " "
           text run at (0,75) width 192: ".six {font-weight: 500;}"
+          text run at (192,75) width 0: " "
           text run at (0,90) width 208: ".seven {font-weight: 700;}"
+          text run at (208,90) width 0: " "
           text run at (0,105) width 208: ".eight {font-weight: 900;}"
+          text run at (208,105) width 0: " "
           text run at (0,120) width 224: ".nine {font-weight: normal;}"
+          text run at (224,120) width 0: " "
           text run at (0,135) width 200: "B {font-weight: lighter;}"
+          text run at (200,135) width 0: " "
           text run at (0,150) width 0: " "
       RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,230) size 769x18
@@ -64,9 +74,9 @@ layer at (0,0) size 785x1046
         RenderTableSection {TBODY} at (1,1) size 561x408
           RenderTableRow {TR} at (0,0) size 561x26
             RenderTableCell {TD} at (0,0) size 561x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 561x382
             RenderTableCell {TD} at (0,203) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18

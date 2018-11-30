@@ -213,17 +213,17 @@ layer at (0,0) size 800x600
                       text run at (0,72) width 90: "this behavior)."
                   RenderBlock {DIV} at (0,106) size 384x76
                     RenderBlock {DIV} at (0,0) size 384x76
-                      RenderText {#text} at (0,9) size 80x17
-                        text run at (0,9) width 80: "Inline Table:"
-                      RenderTable {TABLE} at (80,0) size 132x76 [border: (1px outset #808080)]
+                      RenderText {#text} at (0,9) size 79x17
+                        text run at (0,9) width 79: "Inline Table:"
+                      RenderTable {TABLE} at (78,0) size 133x76 [border: (1px outset #808080)]
                         RenderTableSection {TBODY} at (1,1) size 130x74
                           RenderTableRow {TR} at (0,2) size 130x22
                             RenderTableCell {TD} at (2,2) size 43x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 27x17
                                 text run at (2,2) width 27: "One"
                             RenderTableCell {TD} at (47,2) size 38x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 30x17
-                                text run at (2,2) width 30: "Two"
+                              RenderText {#text} at (2,2) size 29x17
+                                text run at (2,2) width 29: "Two"
                             RenderTableCell {TD} at (87,2) size 41x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 37x17
                                 text run at (2,2) width 37: "Three"
@@ -247,8 +247,8 @@ layer at (0,0) size 800x600
                             RenderTableCell {TD} at (87,50) size 41x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 31x17
                                 text run at (2,2) width 31: "Nine"
-                      RenderText {#text} at (212,9) size 67x17
-                        text run at (212,9) width 67: "The End..."
+                      RenderText {#text} at (210,9) size 68x17
+                        text run at (210,9) width 68: "The End..."
           RenderText {#text} at (450,188) size 66x17
             text run at (450,188) width 66: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 640x35
+        RenderText {#text} at (0,0) size 638x35
           text run at (0,0) width 423: "This tests pasting a fragment containing an <iframe> after a <div>. "
           text run at (423,0) width 215: "This used to fail on an assertion in"
-          text run at (0,18) width 325: "moveParagraphContentsToNewBlockIfNecessary. "
-          text run at (325,18) width 315: "You should see 'foo' and then an <iframe> below."
+          text run at (0,18) width 323: "moveParagraphContentsToNewBlockIfNecessary. "
+          text run at (322,18) width 314: "You should see 'foo' and then an <iframe> below."
       RenderBlock {DIV} at (0,52) size 784x70
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x17

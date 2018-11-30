@@ -9,12 +9,19 @@ layer at (0,0) size 785x2630
       RenderBlock {PRE} at (0,34) size 769x105
         RenderText {#text} at (0,0) size 360x105
           text run at (0,0) width 352: ".zero {background-color: silver; margin: 0;}"
+          text run at (352,0) width 0: " "
           text run at (0,15) width 360: ".one {margin: 0.5in; background-color: aqua;}"
+          text run at (360,15) width 0: " "
           text run at (0,30) width 352: ".two {margin: 25px; background-color: aqua;}"
+          text run at (352,30) width 0: " "
           text run at (0,45) width 360: ".three {margin: 5em; background-color: aqua;}"
+          text run at (360,45) width 0: " "
           text run at (0,60) width 352: ".four {margin: 25%; background-color: aqua;}"
+          text run at (352,60) width 0: " "
           text run at (0,75) width 168: ".five {margin: 25px;}"
+          text run at (168,75) width 0: " "
           text run at (0,90) width 360: ".six {margin: -10px; background-color: aqua;}"
+          text run at (360,90) width 0: " "
       RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 769x36
         RenderText {#text} at (0,0) size 738x35
@@ -75,8 +82,8 @@ layer at (0,0) size 785x2630
           text run at (0,0) width 758: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
           text run at (0,18) width 369: "subsequent text up toward it, and a light blue background. "
           text run at (369,18) width 386: "In all other respects, however, the element should be normal. "
-          text run at (755,18) width 20: "No"
-          text run at (0,36) width 528: "styles have been applied to it besides the negative margin and the background color."
+          text run at (754,18) width 21: "No"
+          text run at (0,36) width 527: "styles have been applied to it besides the negative margin and the background color."
       RenderBlock {P} at (0,1352) size 769x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "This element has a class of zero."
@@ -84,9 +91,9 @@ layer at (0,0) size 785x2630
         RenderTableSection {TBODY} at (1,1) size 767x1242
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1216
             RenderTableCell {TD} at (0,620) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -153,7 +160,7 @@ layer at (0,0) size 785x2630
                   text run at (0,0) width 758: "This paragraph has an overall margin of -10px, which should make it wider than usual as well as shift it upward and pull"
                   text run at (0,18) width 369: "subsequent text up toward it, and a light blue background. "
                   text run at (369,18) width 382: "In all other respects, however, the element should be normal."
-                  text run at (0,36) width 552: "No styles have been applied to it besides the negative margin and the background color."
+                  text run at (0,36) width 551: "No styles have been applied to it besides the negative margin and the background color."
               RenderBlock {P} at (4,1193) size 747x19 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 203x17
                   text run at (0,0) width 203: "This element has a class of zero."

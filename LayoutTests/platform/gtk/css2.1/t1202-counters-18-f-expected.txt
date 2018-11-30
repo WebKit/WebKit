@@ -71,12 +71,12 @@ layer at (0,0) size 800x94
           RenderInline (generated) at (0,0) size 28x17
             RenderCounter at (248,0) size 28x17
               text run at (248,0) width 28: "1.11"
-        RenderText {#text} at (276,0) size 4x17
-          text run at (276,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 28x17
-          RenderInline (generated) at (0,0) size 28x17
-            RenderCounter at (280,0) size 28x17
-              text run at (280,0) width 28: "1.12"
+        RenderText {#text} at (275,0) size 5x17
+          text run at (275,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 29x17
+          RenderInline (generated) at (0,0) size 29x17
+            RenderCounter at (279,0) size 29x17
+              text run at (279,0) width 29: "1.12"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 308x17
@@ -91,4 +91,4 @@ layer at (0,0) size 800x94
           text run at (192,0) width 24: "1.9 "
           text run at (216,0) width 32: "1.10 "
           text run at (248,0) width 32: "1.11 "
-          text run at (280,0) width 28: "1.12"
+          text run at (279,0) width 29: "1.12"

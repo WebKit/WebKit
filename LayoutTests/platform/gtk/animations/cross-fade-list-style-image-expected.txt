@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 769x35
-          text run at (0,0) width 769: "PASS - \"listStyleImage\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(blue-100.png),"
+        RenderText {#text} at (0,0) size 768x35
+          text run at (0,0) width 768: "PASS - \"listStyleImage\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(blue-100.png),"
           text run at (0,18) width 161: "url(green-100.png), 50%)"
         RenderBR {BR} at (161,32) size 0x0
-        RenderText {#text} at (0,36) size 679x17
-          text run at (0,36) width 679: "PASS - \"listStyleImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (679,50) size 0x0
-        RenderText {#text} at (0,54) size 744x17
-          text run at (0,54) width 744: "PASS - \"listStyleImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (744,68) size 0x0
+        RenderText {#text} at (0,36) size 678x17
+          text run at (0,36) width 678: "PASS - \"listStyleImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (677,50) size 1x0
+        RenderText {#text} at (0,54) size 743x17
+          text run at (0,54) width 743: "PASS - \"listStyleImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (742,68) size 1x0
 layer at (100,116) size 140x100
   RenderBlock (positioned) {UL} at (100,116) size 140x100
     RenderListItem {LI} at (40,0) size 100x104

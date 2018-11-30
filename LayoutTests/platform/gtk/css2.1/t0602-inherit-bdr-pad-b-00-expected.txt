@@ -7,8 +7,8 @@ layer at (0,0) size 800x84
         RenderText {#text} at (0,0) size 239x17
           text run at (0,0) width 239: "This sentence should have no border. "
         RenderInline {SPAN} at (0,0) size 275x27 [border: (5px solid #00FF00)]
-          RenderText {#text} at (244,0) size 265x17
-            text run at (244,0) width 265: "This sentence should have a green border."
+          RenderText {#text} at (243,0) size 265x17
+            text run at (243,0) width 265: "This sentence should have a green border."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,34) size 784x18
         RenderInline {SPAN} at (0,0) size 374x33 [bgcolor=#FF0000]

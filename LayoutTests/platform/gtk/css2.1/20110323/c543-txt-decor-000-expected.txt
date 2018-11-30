@@ -66,11 +66,11 @@ layer at (0,0) size 800x430
         RenderText {#text} at (0,0) size 568x17
           text run at (0,0) width 478: "This sentence should have a long blue underline including between the two "
           text run at (478,0) width 90: "arrows here\x{2192}"
-        RenderInline {SPAN} at (0,0) size 164x17 [color=#FFFFFF]
-          RenderText {#text} at (568,0) size 164x17
-            text run at (568,0) width 164: " FAIL FAIL FAIL FAIL "
-        RenderText {#text} at (732,0) size 771x35
-          text run at (732,0) width 39: "\x{2190}and"
+        RenderInline {SPAN} at (0,0) size 157x17 [color=#FFFFFF]
+          RenderText {#text} at (568,0) size 157x17
+            text run at (568,0) width 157: " FAIL FAIL FAIL FAIL "
+        RenderText {#text} at (724,0) size 764x35
+          text run at (724,0) width 40: "\x{2190}and"
           text run at (0,18) width 31: "here."
       RenderBlock {P} at (0,380) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 343x17

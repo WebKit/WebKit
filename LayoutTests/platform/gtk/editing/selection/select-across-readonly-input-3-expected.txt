@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 776: "This test ensures selection that crosses the shadow DOM boundary of a readonly input element cannot be made by a mouse"
           text run at (0,18) width 32: "drag."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 776x35
-          text run at (0,0) width 776: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"world\". Selection should not extend into the"
+        RenderText {#text} at (0,0) size 775x35
+          text run at (0,0) width 775: "To manually test, select text by a mouse drag starting in \"hello\" and ending in \"world\". Selection should not extend into the"
           text run at (0,18) width 89: "input element."
       RenderBlock {DIV} at (0,104) size 784x28
         RenderInline {SPAN} at (0,0) size 31x17

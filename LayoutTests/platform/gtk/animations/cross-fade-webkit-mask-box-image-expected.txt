@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 784: "PASS - \"webkitMaskBoxImage\" property for \"box\" element at 2.25s saw something close to: -webkit-cross-fade(url(stripes-"
+        RenderText {#text} at (0,0) size 783x35
+          text run at (0,0) width 783: "PASS - \"webkitMaskBoxImage\" property for \"box\" element at 2.25s saw something close to: -webkit-cross-fade(url(stripes-"
           text run at (0,18) width 226: "100.png), url(green-100.png), 25%)"
         RenderBR {BR} at (226,32) size 0x0
-        RenderText {#text} at (0,36) size 742x17
-          text run at (0,36) width 742: "PASS - \"webkitMaskBoxImage\" property for \"box\" and \"boxStatic\" elements at 2.25s are close enough to each other"
-        RenderBR {BR} at (742,50) size 0x0
+        RenderText {#text} at (0,36) size 741x17
+          text run at (0,36) width 741: "PASS - \"webkitMaskBoxImage\" property for \"box\" and \"boxStatic\" elements at 2.25s are close enough to each other"
+        RenderBR {BR} at (740,50) size 1x0
 layer at (100,100) size 200x200
   RenderImage {IMG} at (100,100) size 200x200 [bgcolor=#FF0000]
 layer at (100,300) size 200x200

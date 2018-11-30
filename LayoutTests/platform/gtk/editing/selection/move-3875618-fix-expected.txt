@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (14,14) size 756x54
         RenderText {#text} at (0,0) size 139x26
           text run at (0,0) width 139: "There is a tide"
-        RenderBR {BR} at (139,21) size 0x0
+        RenderBR {BR} at (138,21) size 1x0
         RenderText {#text} at (0,27) size 197x26
           text run at (0,27) width 197: "in the affairs of men"
       RenderBlock {DIV} at (14,68) size 756x27

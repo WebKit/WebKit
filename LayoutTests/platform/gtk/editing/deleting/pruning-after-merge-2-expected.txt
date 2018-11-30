@@ -12,15 +12,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 760x35
+        RenderText {#text} at (0,0) size 759x35
           text run at (0,0) width 662: "This tests to see if deletion correctly prunes the containers of the paragraph being moved during a merge. "
-          text run at (662,0) width 98: "You should see"
+          text run at (661,0) width 98: "You should see"
           text run at (0,18) width 24: "'foo"
         RenderInline {B} at (0,0) size 24x17
           RenderText {#text} at (24,18) size 24x17
             text run at (24,18) width 24: "bar"
-        RenderText {#text} at (48,18) size 50x17
-          text run at (48,18) width 50: "' below."
+        RenderText {#text} at (48,18) size 49x17
+          text run at (48,18) width 49: "' below."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x17

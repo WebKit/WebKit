@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 350x17
-          text run at (0,0) width 350: "In the block below, the second 'bar ' should be selected."
+        RenderText {#text} at (0,0) size 349x17
+          text run at (0,0) width 349: "In the block below, the second 'bar ' should be selected."
       RenderBlock {DIV} at (0,34) size 52x38 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 45x17
           text run at (1,1) width 45: "foo bar"

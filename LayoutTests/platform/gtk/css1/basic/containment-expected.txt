@@ -9,15 +9,25 @@ layer at (0,0) size 785x961
       RenderBlock {PRE} at (0,34) size 769x150
         RenderText {#text} at (0,0) size 728x150
           text run at (0,0) width 624: "<LINK rel=\"stylesheet\" type=\"text/css\" href=\"linktest.css\" title=\"Default SS\">"
+          text run at (624,0) width 0: " "
           text run at (0,15) width 728: "<LINK rel=\"alternate stylesheet\" type=\"text/css\" href=\"linktest2.css\" title=\"Alternate SS\">"
+          text run at (728,15) width 0: " "
           text run at (0,30) width 208: "@import url(imptest1.css);"
+          text run at (208,30) width 0: " "
           text run at (0,45) width 192: "@import \"imptest1a.css\";"
+          text run at (192,45) width 0: " "
           text run at (0,60) width 128: "UL {color: red;}"
+          text run at (128,60) width 0: " "
           text run at (0,75) width 176: ".four {color: purple;}"
+          text run at (176,75) width 0: " "
           text run at (0,90) width 208: "@import url(imptest2.css);"
+          text run at (208,90) width 0: " "
           text run at (0,105) width 32: "<!--"
+          text run at (32,105) width 0: " "
           text run at (0,120) width 168: "P.six {color: green;}"
+          text run at (168,120) width 0: " "
           text run at (0,135) width 24: "-->"
+          text run at (24,135) width 0: " "
       RenderBlock {HR} at (0,197) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,215) size 769x18
         RenderText {#text} at (0,0) size 404x17
@@ -30,16 +40,16 @@ layer at (0,0) size 785x961
       RenderBlock {P} at (0,249) size 769x36
         RenderText {#text} at (0,0) size 442x17
           text run at (0,0) width 442: "This sentence should NOT be underlined due to the linked style sheet "
-        RenderInline {CODE} at (0,0) size 104x15
-          RenderText {#text} at (442,3) size 104x15
-            text run at (442,3) width 104: "linktest2.css"
-        RenderText {#text} at (546,0) size 8x17
-          text run at (546,0) width 8: ", "
-        RenderInline {STRONG} at (0,0) size 41x17
-          RenderText {#text} at (554,0) size 41x17
-            text run at (554,0) width 41: "unless"
-        RenderText {#text} at (595,0) size 741x35
-          text run at (595,0) width 146: " the external style sheet"
+        RenderInline {CODE} at (0,0) size 105x15
+          RenderText {#text} at (441,3) size 105x15
+            text run at (441,3) width 105: "linktest2.css"
+        RenderText {#text} at (545,0) size 9x17
+          text run at (545,0) width 9: ", "
+        RenderInline {STRONG} at (0,0) size 42x17
+          RenderText {#text} at (553,0) size 42x17
+            text run at (553,0) width 42: "unless"
+        RenderText {#text} at (594,0) size 741x35
+          text run at (594,0) width 147: " the external style sheet"
           text run at (0,18) width 325: "\"Alternate SS\" has been selected via the user agent."
       RenderBlock {UL} at (0,301) size 769x54 [color=#FF0000]
         RenderListItem {LI} at (40,0) size 729x18 [color=#008000]
@@ -106,9 +116,9 @@ layer at (0,0) size 785x961
         RenderTableSection {TBODY} at (1,1) size 767x382
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x356
             RenderTableCell {TD} at (0,191) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -126,16 +136,16 @@ layer at (0,0) size 785x961
               RenderBlock {P} at (4,56) size 747x36
                 RenderText {#text} at (0,0) size 442x17
                   text run at (0,0) width 442: "This sentence should NOT be underlined due to the linked style sheet "
-                RenderInline {CODE} at (0,0) size 104x15
-                  RenderText {#text} at (442,3) size 104x15
-                    text run at (442,3) width 104: "linktest2.css"
-                RenderText {#text} at (546,0) size 8x17
-                  text run at (546,0) width 8: ", "
-                RenderInline {STRONG} at (0,0) size 41x17
-                  RenderText {#text} at (554,0) size 41x17
-                    text run at (554,0) width 41: "unless"
-                RenderText {#text} at (595,0) size 741x35
-                  text run at (595,0) width 146: " the external style sheet"
+                RenderInline {CODE} at (0,0) size 105x15
+                  RenderText {#text} at (441,3) size 105x15
+                    text run at (441,3) width 105: "linktest2.css"
+                RenderText {#text} at (545,0) size 9x17
+                  text run at (545,0) width 9: ", "
+                RenderInline {STRONG} at (0,0) size 42x17
+                  RenderText {#text} at (553,0) size 42x17
+                    text run at (553,0) width 42: "unless"
+                RenderText {#text} at (594,0) size 741x35
+                  text run at (594,0) width 147: " the external style sheet"
                   text run at (0,18) width 325: "\"Alternate SS\" has been selected via the user agent."
               RenderBlock {UL} at (4,108) size 747x54 [color=#FF0000]
                 RenderListItem {LI} at (40,0) size 707x18 [color=#008000]

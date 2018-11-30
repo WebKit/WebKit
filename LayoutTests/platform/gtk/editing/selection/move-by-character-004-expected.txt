@@ -84,12 +84,12 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderImage {IMG} at (81,123) size 76x103
-          RenderText {#text} at (157,205) size 111x26
-            text run at (157,205) width 111: " conceived "
-          RenderBR {BR} at (268,226) size 0x0
+          RenderImage {IMG} at (80,123) size 77x103
+          RenderText {#text} at (156,205) size 112x26
+            text run at (156,205) width 112: " conceived "
+          RenderBR {BR} at (267,226) size 1x0
           RenderText {#text} at (14,314) size 61x26
             text run at (14,314) width 61: "nation"
-          RenderImage {IMG} at (75,232) size 76x103
+          RenderImage {IMG} at (74,232) size 77x103
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

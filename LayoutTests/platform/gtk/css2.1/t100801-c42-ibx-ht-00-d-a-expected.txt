@@ -4,8 +4,8 @@ layer at (0,0) size 800x118
   RenderBlock {HTML} at (0,0) size 800x118
     RenderBody {BODY} at (8,16) size 784x94
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 358x17
-          text run at (0,0) width 358: "There should be no red below, only green lines and dots."
+        RenderText {#text} at (0,0) size 357x17
+          text run at (0,0) width 357: "There should be no red below, only green lines and dots."
       RenderBlock {DIV} at (0,34) size 200x60 [color=#008000]
         RenderText {#text} at (0,1) size 40x10
           text run at (0,1) width 40: "z z "

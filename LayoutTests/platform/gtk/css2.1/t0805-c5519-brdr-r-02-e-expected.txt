@@ -4,9 +4,9 @@ layer at (0,0) size 800x336
   RenderBlock {HTML} at (0,0) size 800x336
     RenderBody {BODY} at (8,16) size 784x304 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 748x17
-          text run at (0,0) width 364: "There should be a solid line to the right of the text below, "
-          text run at (364,0) width 384: "having three segments each of a different colour as indicated."
+        RenderText {#text} at (0,0) size 747x17
+          text run at (0,0) width 363: "There should be a solid line to the right of the text below, "
+          text run at (362,0) width 385: "having three segments each of a different colour as indicated."
       RenderBlock {UL} at (0,34) size 588x270
         RenderListItem {LI} at (40,0) size 548x72 [border: none (3px solid #FFA500) none]
           RenderBlock (anonymous) at (0,0) size 545x18
@@ -32,9 +32,9 @@ layer at (0,0) size 800x336
             text run at (0,0) width 37: "Lime."
         RenderListItem {LI} at (40,90) size 548x180 [border: none (3px solid #FFFF00) none]
           RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (0,0) size 517x179
-            text run at (0,0) width 333: "Yellow yellow yellow yellow yellow yellow yellow "
-            text run at (333,0) width 184: "yellow yellow yellow yellow"
+          RenderText {#text} at (0,0) size 516x179
+            text run at (0,0) width 332: "Yellow yellow yellow yellow yellow yellow yellow "
+            text run at (331,0) width 185: "yellow yellow yellow yellow"
             text run at (0,18) width 235: "yellow yellow yellow yellow yellow "
             text run at (235,18) width 278: "yellow yellow yellow yellow yellow yellow"
             text run at (0,36) width 141: "yellow yellow yellow "
@@ -52,4 +52,4 @@ layer at (0,0) size 800x336
             text run at (94,126) width 419: "yellow yellow yellow yellow yellow yellow yellow yellow yellow"
             text run at (0,144) width 423: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
             text run at (423,144) width 90: "yellow yellow"
-            text run at (0,162) width 282: "yellow yellow yellow yellow yellow yellow."
+            text run at (0,162) width 281: "yellow yellow yellow yellow yellow yellow."

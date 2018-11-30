@@ -1,3 +1,9 @@
+2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Stop running tests without complex text enforced
+
+        Rebaseline tests. Part 1.
+
 2018-11-29  Frederic Wang  <fwang@igalia.com>
 
         Separate paint and scroll offsets for RenderLayerBacking::m_scrollingContentsLayer

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 581x17
-          text run at (0,0) width 581: "Testing reflections on directly composited images. Left and right sides should look the same."
+        RenderText {#text} at (0,0) size 580x17
+          text run at (0,0) width 580: "Testing reflections on directly composited images. Left and right sides should look the same."
       RenderBlock (anonymous) at (0,34) size 784x168
         RenderText {#text} at (224,150) size 4x17
           text run at (224,150) width 4: " "

@@ -57,6 +57,6 @@ layer at (0,0) size 800x94
               text run at (92,0) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 100x17
-          text run at (0,0) width 52: "122111 "
-          text run at (52,0) width 48: "133331"
+        RenderText {#text} at (0,0) size 99x17
+          text run at (0,0) width 51: "122111 "
+          text run at (50,0) width 49: "133331"

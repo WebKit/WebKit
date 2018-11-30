@@ -9,12 +9,19 @@ layer at (0,0) size 785x1151
       RenderBlock {PRE} at (0,34) size 769x120
         RenderText {#text} at (0,0) size 464x120
           text run at (0,0) width 272: ".one {text-decoration: underline;}"
+          text run at (272,0) width 0: " "
           text run at (0,15) width 264: ".two {text-decoration: overline;}"
+          text run at (264,15) width 0: " "
           text run at (0,30) width 312: ".three {text-decoration: line-through;}"
+          text run at (312,30) width 0: " "
           text run at (0,45) width 248: ".four {text-decoration: blink;}"
+          text run at (248,45) width 0: " "
           text run at (0,60) width 248: "B.five {text-decoration: none;}"
+          text run at (248,60) width 0: " "
           text run at (0,75) width 344: ".six {text-decoration: underline overline;}"
+          text run at (344,75) width 0: " "
           text run at (0,90) width 464: ".seven {text-decoration: underline overline line-through;}"
+          text run at (464,90) width 0: " "
           text run at (0,105) width 0: " "
       RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,185) size 769x18
@@ -27,9 +34,9 @@ layer at (0,0) size 785x1151
         RenderText {#text} at (0,0) size 336x17
           text run at (0,0) width 336: "This sentence should have stricken text (linethrough)."
       RenderBlock {P} at (0,287) size 769x18
-        RenderText {#text} at (0,0) size 591x17
+        RenderText {#text} at (0,0) size 590x17
           text run at (0,0) width 210: "This element should be blinking. "
-          text run at (210,0) width 381: "(It is not required, however, that UAs support this behavior.)"
+          text run at (210,0) width 380: "(It is not required, however, that UAs support this behavior.)"
       RenderBlock {P} at (0,321) size 769x36
         RenderText {#text} at (0,0) size 508x17
           text run at (0,0) width 291: "The text in this element should be underlined. "
@@ -53,16 +60,16 @@ layer at (0,0) size 785x1151
           text run at (0,0) width 761: "There should be nothing visible between this sentence and the one above (there is an empty paragraph element with class"
           text run at (0,18) width 62: "of seven)."
       RenderBlock {P} at (0,493) size 769x55
-        RenderText {#text} at (0,1) size 634x17
-          text run at (0,1) width 634: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-        RenderInline {EM} at (0,0) size 20x17
-          RenderText {#text} at (634,1) size 20x17
-            text run at (634,1) width 20: "not"
-        RenderText {#text} at (654,1) size 90x17
-          text run at (654,1) width 90: " be overlined: "
-        RenderImage {IMG} at (744,0) size 15x15
-        RenderText {#text} at (759,1) size 763x53
-          text run at (759,1) width 4: "."
+        RenderText {#text} at (0,1) size 633x17
+          text run at (0,1) width 633: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
+        RenderInline {EM} at (0,0) size 21x17
+          RenderText {#text} at (632,1) size 21x17
+            text run at (632,1) width 21: "not"
+        RenderText {#text} at (652,1) size 91x17
+          text run at (652,1) width 91: " be overlined: "
+        RenderImage {IMG} at (742,0) size 16x15
+        RenderText {#text} at (757,1) size 762x53
+          text run at (757,1) width 5: "."
           text run at (0,19) width 729: "The underline of the parent element should hold true beneath the image, however, since text-decoration 'spans' child"
           text run at (0,37) width 59: "elements."
       RenderBlock {P} at (0,564) size 769x18 [color=#008000]
@@ -101,9 +108,9 @@ layer at (0,0) size 785x1151
         RenderTableSection {TBODY} at (1,1) size 767x483
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x457
             RenderTableCell {TD} at (0,241) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -119,9 +126,9 @@ layer at (0,0) size 785x1151
                 RenderText {#text} at (0,0) size 336x17
                   text run at (0,0) width 336: "This sentence should have stricken text (linethrough)."
               RenderBlock {P} at (4,106) size 747x18
-                RenderText {#text} at (0,0) size 591x17
+                RenderText {#text} at (0,0) size 590x17
                   text run at (0,0) width 210: "This element should be blinking. "
-                  text run at (210,0) width 381: "(It is not required, however, that UAs support this behavior.)"
+                  text run at (210,0) width 380: "(It is not required, however, that UAs support this behavior.)"
               RenderBlock {P} at (4,140) size 747x36
                 RenderText {#text} at (0,0) size 508x17
                   text run at (0,0) width 291: "The text in this element should be underlined. "
@@ -145,13 +152,13 @@ layer at (0,0) size 785x1151
                   text run at (0,0) width 727: "There should be nothing visible between this sentence and the one above (there is an empty paragraph element with"
                   text run at (0,18) width 96: "class of seven)."
               RenderBlock {P} at (4,312) size 747x55
-                RenderText {#text} at (0,0) size 634x17
-                  text run at (0,0) width 634: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
-                RenderInline {EM} at (0,0) size 20x17
-                  RenderText {#text} at (634,0) size 20x17
-                    text run at (634,0) width 20: "not"
-                RenderText {#text} at (654,0) size 90x17
-                  text run at (654,0) width 90: " be overlined: "
+                RenderText {#text} at (0,0) size 633x17
+                  text run at (0,0) width 633: "Text decorations only apply to the text of an element, so the image at the end of this sentence should "
+                RenderInline {EM} at (0,0) size 21x17
+                  RenderText {#text} at (632,0) size 21x17
+                    text run at (632,0) width 21: "not"
+                RenderText {#text} at (652,0) size 91x17
+                  text run at (652,0) width 91: " be overlined: "
                 RenderImage {IMG} at (0,18) size 15x15
                 RenderText {#text} at (15,19) size 717x35
                   text run at (15,19) width 8: ". "

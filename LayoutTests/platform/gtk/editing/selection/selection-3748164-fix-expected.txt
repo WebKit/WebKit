@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 29x14
             RenderText {#text} at (0,27) size 29x14
               text run at (0,27) width 29: "- Ken"
-          RenderBR {BR} at (29,38) size 0x0
+          RenderBR {BR} at (28,38) size 1x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
 caret: position 5 of child 0 {#text} of child 4 {SPAN} of child 1 {DIV} of child 1 {DIV} of body

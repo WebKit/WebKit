@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x35
-          text run at (0,0) width 755: "This tests that window.getSelection().clear() clears the selection correctly. If this test is successful, this text should not be"
+        RenderText {#text} at (0,0) size 753x35
+          text run at (0,0) width 753: "This tests that window.getSelection().clear() clears the selection correctly. If this test is successful, this text should not be"
           text run at (0,18) width 54: "selected."

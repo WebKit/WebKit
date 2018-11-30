@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 775x53
-          text run at (0,0) width 775: "This tests to see if a mouse click inside an editable, focusable node focuses that node. Normally, we focus a node on mouse"
+        RenderText {#text} at (0,0) size 774x53
+          text run at (0,0) width 774: "This tests to see if a mouse click inside an editable, focusable node focuses that node. Normally, we focus a node on mouse"
           text run at (0,18) width 765: "down, but to make it easier to drag selections containing editable pieces we delay focus until mouse up. The editable table"
-          text run at (0,36) width 440: "cell should be focused and you should see a 'Success' message below."
+          text run at (0,36) width 439: "cell should be focused and you should see a 'Success' message below."
       RenderBlock {DIV} at (0,70) size 784x28
         RenderTable {TABLE} at (0,0) size 143x28 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 141x26

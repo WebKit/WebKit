@@ -5,19 +5,19 @@ layer at (0,0) size 800x600
 layer at (8,8) size 612x142
   RenderBody {BODY} at (8,8) size 612x143 [border: (1px solid #000000)]
     RenderBlock {H1} at (6,6) size 600x37
-      RenderText {#text} at (0,0) size 451x36
-        text run at (0,0) width 451: "Word selection on right click test"
+      RenderText {#text} at (0,0) size 450x36
+        text run at (0,0) width 450: "Word selection on right click test"
     RenderBlock (anonymous) at (6,64) size 600x73
       RenderText {#text} at (0,0) size 597x35
         text run at (0,0) width 597: "This tests to make sure that right clicking non-editable content only creates a word selection for"
         text run at (0,18) width 103: "clicks over text. "
-      RenderInline {SPAN} at (0,0) size 18x17
-        RenderText {#text} at (103,18) size 18x17
-          text run at (103,18) width 18: "To"
-      RenderText {#text} at (121,18) size 577x53
-        text run at (121,18) width 411: " run manually, right click on text, and a word should be selected. "
-        text run at (532,18) width 35: "Right"
-        text run at (0,36) width 577: "click on the empty space outside and to the right of the black border, the selection should be"
+      RenderInline {SPAN} at (0,0) size 17x17
+        RenderText {#text} at (103,18) size 17x17
+          text run at (103,18) width 17: "To"
+      RenderText {#text} at (119,18) size 599x53
+        text run at (119,18) width 411: " run manually, right click on text, and a word should be selected. "
+        text run at (529,18) width 70: "Right click"
+        text run at (0,36) width 543: "on the empty space outside and to the right of the black border, the selection should be"
         text run at (0,54) width 59: "removed."
       RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 1 {H1} of body

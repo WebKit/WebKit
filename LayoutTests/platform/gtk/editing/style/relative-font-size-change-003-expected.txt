@@ -42,19 +42,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 744x80
+        RenderText {#text} at (14,14) size 745x80
           text run at (14,14) width 723: "Size check should say: 24px. The first two words of the second line should"
-          text run at (737,14) width 6: " "
-          text run at (14,41) width 332: "appear to be 24px. The rest of the "
-          text run at (346,41) width 406: "words on the second line should appear to"
-          text run at (752,41) width 6: " "
+          text run at (736,14) width 7: " "
+          text run at (14,41) width 333: "appear to be 24px. The rest of the "
+          text run at (346,41) width 407: "words on the second line should appear to"
+          text run at (752,41) width 7: " "
           text run at (14,68) width 83: "be 30px."
       RenderBlock {DIV} at (0,133) size 784x27
         RenderText {#text} at (0,0) size 118x26
           text run at (0,0) width 118: "Size check: "
-        RenderInline {SPAN} at (0,0) size 48x26
-          RenderText {#text} at (118,0) size 48x26
-            text run at (118,0) width 48: "24px"
+        RenderInline {SPAN} at (0,0) size 49x26
+          RenderText {#text} at (117,0) size 49x26
+            text run at (117,0) width 49: "24px"
       RenderBlock {DIV} at (0,176) size 784x144
         RenderBlock {DIV} at (0,0) size 784x144 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x27
@@ -64,8 +64,8 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 56x26
               RenderText {#text} at (14,20) size 56x26
                 text run at (14,20) width 56: "In the"
-            RenderText {#text} at (70,14) size 176x33
-              text run at (70,14) width 176: " affairs of men"
+            RenderText {#text} at (69,14) size 177x33
+              text run at (69,14) width 177: " affairs of men"
           RenderBlock (anonymous) at (14,103) size 756x27
             RenderText {#text} at (0,0) size 241x26
               text run at (0,0) width 241: "Which taken at the flood"

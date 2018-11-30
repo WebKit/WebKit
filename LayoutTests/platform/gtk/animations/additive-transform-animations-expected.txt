@@ -7,6 +7,6 @@ layer at (8,8) size 100x100
   RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000FF]
 layer at (8,108) size 784x18
   RenderBlock {DIV} at (0,100) size 784x18
-    RenderText {#text} at (0,0) size 629x17
-      text run at (0,0) width 629: "PASS - \"webkitTransform\" property for \"box\" element at 1s saw something close to: 0,1,-1,0,0,100"
-    RenderBR {BR} at (629,0) size 0x17
+    RenderText {#text} at (0,0) size 627x17
+      text run at (0,0) width 627: "PASS - \"webkitTransform\" property for \"box\" element at 1s saw something close to: 0,1,-1,0,0,100"
+    RenderBR {BR} at (626,0) size 1x17

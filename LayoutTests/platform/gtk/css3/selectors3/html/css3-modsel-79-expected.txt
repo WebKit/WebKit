@@ -8,11 +8,11 @@ layer at (0,0) size 800x128
           RenderText {#text} at (0,0) size 192x17
             text run at (0,0) width 192: "This div contains 3 addresses :"
         RenderBlock {ADDRESS} at (16,18) size 768x18
-          RenderText {#text} at (0,0) size 252x17
-            text run at (0,0) width 252: "A first address with normal background"
+          RenderText {#text} at (0,0) size 251x17
+            text run at (0,0) width 251: "A first address with normal background"
         RenderBlock {ADDRESS} at (16,52) size 768x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 351x17
-            text run at (0,0) width 351: "A second address that should have a green background"
+          RenderText {#text} at (0,0) size 349x17
+            text run at (0,0) width 349: "A second address that should have a green background"
         RenderBlock {ADDRESS} at (16,86) size 768x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 337x17
-            text run at (0,0) width 337: "A third address that should have a green background"
+          RenderText {#text} at (0,0) size 335x17
+            text run at (0,0) width 335: "A third address that should have a green background"

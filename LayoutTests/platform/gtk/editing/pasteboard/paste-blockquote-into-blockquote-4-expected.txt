@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 548x17
-          text run at (0,0) width 548: "This test passes if nothing is double-quoted, and \"Two\" and \"Four\" aren't quoted at all."
+        RenderText {#text} at (0,0) size 547x17
+          text run at (0,0) width 547: "This test passes if nothing is double-quoted, and \"Two\" and \"Four\" aren't quoted at all."
       RenderBlock {DIV} at (0,34) size 784x90
         RenderBlock {BLOCKQUOTE} at (0,0) size 784x36 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 33x17
@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (22,18) size 58x17
             text run at (22,18) width 58: "HereOne"
         RenderBlock (anonymous) at (0,36) size 784x18
-          RenderText {#text} at (0,0) size 30x17
-            text run at (0,0) width 30: "Two"
+          RenderText {#text} at (0,0) size 29x17
+            text run at (0,0) width 29: "Two"
         RenderBlock {BLOCKQUOTE} at (0,54) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderText {#text} at (22,0) size 37x17
             text run at (22,0) width 37: "Three"

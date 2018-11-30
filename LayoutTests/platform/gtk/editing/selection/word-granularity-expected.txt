@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 678x17
+        RenderText {#text} at (0,0) size 677x17
           text run at (0,0) width 379: "This tests modifying a selection created with a double click. "
-          text run at (379,0) width 299: "The new selection should use word granularity."
+          text run at (379,0) width 298: "The new selection should use word granularity."
       RenderBlock {P} at (0,34) size 784x54 [color=#008000]
-        RenderText {#text} at (0,0) size 778x53
-          text run at (0,0) width 224: "This test does not run interactively. "
-          text run at (224,0) width 352: "It uses the testRunners eventSender to do mouse clicks. "
-          text run at (576,0) width 202: "To run it manually, double click"
+        RenderText {#text} at (0,0) size 775x53
+          text run at (0,0) width 223: "This test does not run interactively. "
+          text run at (222,0) width 353: "It uses the testRunners eventSender to do mouse clicks. "
+          text run at (574,0) width 201: "To run it manually, double click"
           text run at (0,18) width 284: "on the blue 'g', then drag down to the red 'g'. "
           text run at (284,18) width 490: "As you drag, watch the selection that is created, it should always start and end"
           text run at (0,36) width 130: "on word boundaries."

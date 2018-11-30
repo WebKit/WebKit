@@ -8,7 +8,7 @@ layer at (0,0) size 800x267
           text run at (0,0) width 20: "T"
       RenderText {#text} at (20,15) size 787x219
         text run at (20,15) width 510: "his very long paragraph should have a big first letter T with a green background. "
-        text run at (530,15) width 257: "Dummy text. Dummy text. Dummy text."
+        text run at (529,15) width 258: "Dummy text. Dummy text. Dummy text."
         text run at (0,37) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
         text run at (0,55) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."
         text run at (0,73) width 779: "Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text. Dummy text."

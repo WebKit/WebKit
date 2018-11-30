@@ -4,8 +4,8 @@ layer at (0,0) size 800x256
   RenderBlock {HTML} at (0,0) size 800x256
     RenderBody {BODY} at (8,16) size 784x232
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 730x17
-          text run at (0,0) width 730: "Test passes if the blue square is in the upper-left corner of the black rectangle and there is no red visible on the page."
+        RenderText {#text} at (0,0) size 729x17
+          text run at (0,0) width 729: "Test passes if the blue square is in the upper-left corner of the black rectangle and there is no red visible on the page."
 layer at (8,50) size 294x198
   RenderBlock (relative positioned) {DIV} at (0,34) size 294x198 [border: (3px solid #000000)]
 layer at (11,53) size 96x96

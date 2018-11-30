@@ -57,9 +57,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x55 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 381x26
-          RenderText {#text} at (14,14) size 381x26
-            text run at (14,14) width 381: "We hold these truths to be self-evident,"
+        RenderInline {SPAN} at (0,0) size 380x26
+          RenderText {#text} at (14,14) size 380x26
+            text run at (14,14) width 380: "We hold these truths to be self-evident,"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,55) size 784x55 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 318x26

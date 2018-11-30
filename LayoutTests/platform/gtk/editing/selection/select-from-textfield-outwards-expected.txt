@@ -22,9 +22,9 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9312"
-          RenderText {#text} at (452,0) size 755x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 299: "REGRESSION: Selection bug in new text fields"
+          RenderText {#text} at (451,0) size 755x35
+            text run at (451,0) width 5: " "
+            text run at (455,0) width 300: "REGRESSION: Selection bug in new text fields"
             text run at (0,18) width 210: "when selecting past the first letter"
         RenderText {#text} at (210,18) size 4x17
           text run at (210,18) width 4: "."

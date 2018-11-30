@@ -16,19 +16,19 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x108
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 742x80
             text run at (0,27) width 742: "Deleting when a selection starts in a blank line created by a block with a BR"
             text run at (0,54) width 730: "placeholder in it and extends to a character that is not at the end of a block."
-            text run at (0,81) width 735: "This ensures that some of our \"special-case\" code does not run for this case."
+            text run at (0,81) width 736: "This ensures that some of our \"special-case\" code does not run for this case."
         RenderBlock {DIV} at (14,138) size 756x81
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
-          RenderText {#text} at (0,27) size 682x53
-            text run at (0,27) width 682: "Should see the two lines in the red box. Each should contain \"A\" only."
+          RenderBR {BR} at (188,21) size 1x0
+          RenderText {#text} at (0,27) size 681x53
+            text run at (0,27) width 681: "Should see the two lines in the red box. Each should contain \"A\" only."
             text run at (0,54) width 620: "Insertion point should be blinking at the start of the second line."
       RenderBlock {DIV} at (0,257) size 784x58
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]

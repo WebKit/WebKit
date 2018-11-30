@@ -27,14 +27,14 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (304,154) size 0x0
         RenderBR {BR} at (0,154) size 0x17
       RenderBlock {P} at (0,188) size 784x36
-        RenderInline {B} at (0,0) size 664x17
-          RenderText {#text} at (0,0) size 664x17
+        RenderInline {B} at (0,0) size 663x17
+          RenderText {#text} at (0,0) size 663x17
             text run at (0,0) width 491: "This test uses the eventSender to do a mouse click to focus the subframe. "
-            text run at (491,0) width 173: "It won't run interactively."
-        RenderText {#text} at (664,0) size 723x35
-          text run at (664,0) width 4: " "
-          text run at (668,0) width 55: "To run it"
-          text run at (0,18) width 353: "manually, click on the iframe, Select All, then hit delete."
+            text run at (490,0) width 173: "It won't run interactively."
+        RenderText {#text} at (662,0) size 721x35
+          text run at (662,0) width 5: " "
+          text run at (666,0) width 55: "To run it"
+          text run at (0,18) width 352: "manually, click on the iframe, Select All, then hit delete."
       RenderBlock (anonymous) at (0,240) size 784x54
         RenderText {#text} at (0,0) size 779x53
           text run at (0,0) width 769: "Selecting all the content in a contenteditable iframe should select the iframe itself (to help the user delete the iframe) only if"
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
           text run at (217,18) width 423: "This test loads ../resources/select-all-iframe-src.html into an iframe. "
           text run at (640,18) width 139: "That file does a Select"
           text run at (0,36) width 86: "All + Delete. "
-          text run at (86,36) width 172: "Two things should happen:"
+          text run at (86,36) width 171: "Two things should happen:"
       RenderBlock {UL} at (0,310) size 784x54
         RenderListItem {LI} at (40,0) size 744x36
           RenderListMarker at (-17,0) size 7x17: bullet

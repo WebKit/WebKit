@@ -4,8 +4,8 @@ layer at (0,0) size 800x346
   RenderBlock {HTML} at (0,0) size 800x346
     RenderBody {BODY} at (8,16) size 784x322
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 469x17
-          text run at (0,0) width 469: "Test passes if there are two boxes below, a blue box below an orange box."
+        RenderText {#text} at (0,0) size 467x17
+          text run at (0,0) width 467: "Test passes if there are two boxes below, a blue box below an orange box."
 layer at (8,50) size 96x288
   RenderBlock (relative positioned) {DIV} at (0,34) size 96x288 [bgcolor=#0000FF]
 layer at (8,50) size 96x48

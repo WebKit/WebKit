@@ -5,8 +5,8 @@ layer at (0,0) size 785x353
 layer at (8,8) size 769x337 clip at (8,8) size 754x322
   RenderBody {BODY} at (8,8) size 769x337
     RenderBlock {P} at (0,16) size 754x18
-      RenderText {#text} at (0,0) size 267x17
-        text run at (0,0) width 267: "Test passes if there is a blue square below."
+      RenderText {#text} at (0,0) size 265x17
+        text run at (0,0) width 265: "Test passes if there is a blue square below."
 layer at (8,90) size 754x192
   RenderBlock (relative positioned) {DIV} at (0,82) size 754x192
     RenderBlock {DIV} at (0,0) size 96x96 [bgcolor=#0000FF] [border: (48px solid #0000FF) none]

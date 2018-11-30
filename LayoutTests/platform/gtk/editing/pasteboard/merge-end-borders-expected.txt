@@ -21,11 +21,11 @@ layer at (0,0) size 800x600
           text run at (0,18) width 174: "selection being pasted into. "
           text run at (174,18) width 585: "A fragment that ends in with paragraph surrounded by a blue border is pasted into a selection"
           text run at (0,36) width 320: "ending in a paragraph surrounded by a red border. "
-          text run at (320,36) width 172: "The red border should win."
+          text run at (319,36) width 173: "The red border should win."
       RenderBlock {P} at (0,70) size 784x18
-        RenderInline {B} at (0,0) size 587x17
-          RenderText {#text} at (0,0) size 587x17
-            text run at (0,0) width 587: "The second paragraph should be surrounded by a red border before and after the test."
+        RenderInline {B} at (0,0) size 586x17
+          RenderText {#text} at (0,0) size 586x17
+            text run at (0,0) width 586: "The second paragraph should be surrounded by a red border before and after the test."
       RenderBlock {DIV} at (0,104) size 784x38
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 95x17

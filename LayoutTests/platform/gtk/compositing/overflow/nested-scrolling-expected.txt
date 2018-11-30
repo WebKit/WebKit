@@ -4,8 +4,8 @@ layer at (0,0) size 785x836
   RenderBlock {HTML} at (0,0) size 785x836
     RenderBody {BODY} at (8,8) size 769x820
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 82x17
-          text run at (0,0) width 82: "Text outside."
+        RenderText {#text} at (0,0) size 81x17
+          text run at (0,0) width 81: "Text outside."
 layer at (8,26) size 702x802 clip at (9,27) size 685x785 scrollHeight 1286
   RenderBlock {DIV} at (0,18) size 702x802 [border: (1px solid #000000)]
     RenderBlock {P} at (1,17) size 685x165
@@ -13,28 +13,28 @@ layer at (8,26) size 702x802 clip at (9,27) size 685x785 scrollHeight 1286
         text run at (0,8) width 642: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et"
         text run at (0,41) width 670: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex"
         text run at (0,74) width 674: "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-        text run at (0,107) width 672: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
+        text run at (0,107) width 671: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
         text run at (0,140) width 93: "id est laborum."
     RenderBlock {P} at (1,230) size 685x165
       RenderText {#text} at (0,8) size 674x149
         text run at (0,8) width 642: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et"
         text run at (0,41) width 670: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex"
         text run at (0,74) width 674: "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-        text run at (0,107) width 672: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
+        text run at (0,107) width 671: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
         text run at (0,140) width 93: "id est laborum."
     RenderBlock {P} at (1,861) size 685x165
       RenderText {#text} at (0,8) size 674x149
         text run at (0,8) width 642: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et"
         text run at (0,41) width 670: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex"
         text run at (0,74) width 674: "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-        text run at (0,107) width 672: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
+        text run at (0,107) width 671: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
         text run at (0,140) width 93: "id est laborum."
     RenderBlock {P} at (1,1074) size 685x165
       RenderText {#text} at (0,8) size 674x149
         text run at (0,8) width 642: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et"
         text run at (0,41) width 670: "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex"
         text run at (0,74) width 674: "ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat"
-        text run at (0,107) width 672: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
+        text run at (0,107) width 671: "nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim"
         text run at (0,140) width 93: "id est laborum."
 layer at (19,469) size 602x402 backgroundClip at (19,469) size 602x343 clip at (20,470) size 585x342 scrollHeight 442
   RenderBlock {DIV} at (11,443) size 602x402 [border: (1px solid #000000)]

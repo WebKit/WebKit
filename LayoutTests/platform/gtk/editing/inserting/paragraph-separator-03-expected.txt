@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 754x53
-          text run at (0,0) width 734: "Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a paragraph"
+          text run at (0,0) width 733: "Tests for a bug in the paragraph separator insertion code that would add an extra newline when inserting a paragraph"
           text run at (0,18) width 418: "separator at the end of a paragraph in text that preserves newlines. "
           text run at (418,18) width 336: "Also, an extraneous space would be added after 'foo'."
           text run at (0,36) width 228: "Only one newline should be added. "

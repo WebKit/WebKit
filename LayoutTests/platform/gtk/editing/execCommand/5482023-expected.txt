@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H1} at (0,0) size 784x111
         RenderText {#text} at (0,0) size 779x110
           text run at (0,0) width 721: "This tests for a bug when performing a FormatBlock"
-          text run at (721,0) width 8: " "
+          text run at (720,0) width 9: " "
           text run at (0,37) width 512: "inside a body with no visible content. "
           text run at (512,37) width 259: "This text should be"
           text run at (771,37) width 8: " "

@@ -4,12 +4,12 @@ layer at (0,0) size 800x70
   RenderBlock {HTML} at (0,0) size 800x70
     RenderBody {BODY} at (8,8) size 784x54
       RenderBlock {DIV} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 771x53
+        RenderText {#text} at (0,0) size 784x53
           text run at (0,0) width 711: "This table shows unicode-bidi: isolate behavior (in red) with display: inline-block behavior overlapping in green. "
-          text run at (711,0) width 28: "You"
-          text run at (0,18) width 186: "should see no red in this test! "
-          text run at (186,18) width 585: "Behavior between these two methods should be identical for non-wrapping strings, assuming"
-          text run at (0,36) width 392: "unicode-bidi: isolate is implemented and functioning correctly."
+          text run at (711,0) width 73: "You should"
+          text run at (0,18) width 140: "see no red in this test! "
+          text run at (140,18) width 644: "Behavior between these two methods should be identical for non-wrapping strings, assuming unicode-"
+          text run at (0,36) width 336: "bidi: isolate is implemented and functioning correctly."
 layer at (8,62) size 27x400
   RenderBlock (positioned) {DIV} at (0,0) size 27x400 [color=#FF0000]
     RenderMultiColumnSet at (0,0) size 27x400

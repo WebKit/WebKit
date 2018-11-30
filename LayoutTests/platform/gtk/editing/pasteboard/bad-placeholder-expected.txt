@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 405: "collapsed away or when it has been displaced by pasted content."
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 763x35
-          text run at (0,0) width 695: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
-          text run at (695,0) width 61: "Once that"
+          text run at (0,0) width 694: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
+          text run at (693,0) width 62: "Once that"
           text run at (0,18) width 763: "happens, we don't want to make matters worse by removing them if they are acting as line breaks instead of placeholders."
       RenderBlock {DIV} at (0,104) size 784x36
         RenderText {#text} at (0,0) size 99x17

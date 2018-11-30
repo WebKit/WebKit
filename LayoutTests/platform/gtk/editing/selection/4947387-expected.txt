@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 775x71
-          text run at (0,0) width 419: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
-          text run at (419,0) width 343: "It should operate on line boundaries and not paragraph"
+        RenderText {#text} at (0,0) size 773x71
+          text run at (0,0) width 418: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
+          text run at (417,0) width 344: "It should operate on line boundaries and not paragraph"
           text run at (0,18) width 77: "boundaries. "
-          text run at (77,18) width 684: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right"
-          text run at (0,36) width 606: "Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph. "
-          text run at (606,36) width 169: "Also, moveTo{Beginning,"
+          text run at (77,18) width 682: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right"
+          text run at (0,36) width 605: "Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph. "
+          text run at (604,36) width 169: "Also, moveTo{Beginning,"
           text run at (0,54) width 335: "End}OfParagraphAndModifySelection should work."
       RenderBlock {DIV} at (0,88) size 200x36
         RenderText {#text} at (0,0) size 189x35

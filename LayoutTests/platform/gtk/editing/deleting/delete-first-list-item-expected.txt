@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 768x35
           text run at (0,0) width 768: "This tests deletion when the caret is in an empty list item at the beginning of the document. It also makes sure that the style"
           text run at (0,18) width 232: "inside the empty list item is retained. "
-          text run at (232,18) width 105: "You should see '"
-        RenderInline {B} at (0,0) size 21x17
-          RenderText {#text} at (337,18) size 21x17
-            text run at (337,18) width 21: "foo"
-        RenderText {#text} at (358,18) size 251x17
-          text run at (358,18) width 251: "' followed by a list item containing 'bar'."
+          text run at (232,18) width 104: "You should see '"
+        RenderInline {B} at (0,0) size 22x17
+          RenderText {#text} at (335,18) size 22x17
+            text run at (335,18) width 22: "foo"
+        RenderText {#text} at (356,18) size 252x17
+          text run at (356,18) width 252: "' followed by a list item containing 'bar'."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderBlock {DIV} at (0,0) size 784x18
           RenderInline {B} at (0,0) size 21x17

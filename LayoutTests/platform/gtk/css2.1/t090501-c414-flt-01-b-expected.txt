@@ -8,16 +8,16 @@ layer at (0,0) size 800x136
           text run at (0,0) width 542: "In the following test, the blue blocks should be on the given sides of the teal rectangle."
       RenderBlock {DIV} at (0,34) size 784x70
         RenderBlock {DIV} at (16,0) size 752x70 [color=#00FFFF] [bgcolor=#008080]
-          RenderBlock (floating) {P} at (8,8) size 176x52 [color=#FFFFFF] [bgcolor=#000080] [border: (4px solid #0000FF)]
-            RenderText {#text} at (8,8) size 132x35
-              text run at (8,8) width 115: "\x{21E6} This blue block"
-              text run at (8,26) width 132: "should be on the left."
-          RenderBlock (floating) {P} at (568,8) size 176x52 [color=#FFFFFF] [bgcolor=#000080] [border: (4px solid #0000FF)]
-            RenderText {#text} at (8,8) size 141x35
-              text run at (8,8) width 115: "\x{21E8} This blue block"
-              text run at (8,26) width 141: "should be on the right."
-          RenderText {#text} at (184,8) size 384x53
-            text run at (184,8) width 384: "Teal rectangle. Teal rectangle. Teal rectangle. Teal rectangle."
-            text run at (184,26) width 194: "Teal rectangle. Teal rectangle. "
-            text run at (378,26) width 190: "Teal rectangle. Teal rectangle."
-            text run at (184,44) width 384: "Teal rectangle. Teal rectangle. Teal rectangle. Teal rectangle."
+          RenderBlock (floating) {P} at (8,8) size 176x54 [color=#FFFFFF] [bgcolor=#000080] [border: (4px solid #0000FF)]
+            RenderText {#text} at (8,9) size 132x36
+              text run at (8,9) width 115: "\x{21E6} This blue block"
+              text run at (8,28) width 132: "should be on the left."
+          RenderBlock (floating) {P} at (568,8) size 176x54 [color=#FFFFFF] [bgcolor=#000080] [border: (4px solid #0000FF)]
+            RenderText {#text} at (8,9) size 141x36
+              text run at (8,9) width 115: "\x{21E8} This blue block"
+              text run at (8,28) width 141: "should be on the right."
+          RenderText {#text} at (184,8) size 380x53
+            text run at (184,8) width 380: "Teal rectangle. Teal rectangle. Teal rectangle. Teal rectangle."
+            text run at (184,26) width 192: "Teal rectangle. Teal rectangle. "
+            text run at (375,26) width 189: "Teal rectangle. Teal rectangle."
+            text run at (184,44) width 380: "Teal rectangle. Teal rectangle. Teal rectangle. Teal rectangle."

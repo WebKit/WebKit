@@ -9,13 +9,21 @@ layer at (0,0) size 785x1639
       RenderBlock {PRE} at (0,31) size 769x120
         RenderText {#text} at (0,0) size 392x120
           text run at (0,0) width 384: ".zero {background-color: silver; margin-top: 0;}"
+          text run at (384,0) width 0: " "
           text run at (0,15) width 392: ".one {margin-top: 0.5in; background-color: aqua;}"
+          text run at (392,15) width 0: " "
           text run at (0,30) width 384: ".two {margin-top: 25px; background-color: aqua;}"
+          text run at (384,30) width 0: " "
           text run at (0,45) width 392: ".three {margin-top: 5em; background-color: aqua;}"
+          text run at (392,45) width 0: " "
           text run at (0,60) width 384: ".four {margin-top: 25%; background-color: aqua;}"
+          text run at (384,60) width 0: " "
           text run at (0,75) width 200: ".five {margin-top: 25px;}"
+          text run at (200,75) width 0: " "
           text run at (0,90) width 392: ".six {margin-top: -10px; background-color: aqua;}"
+          text run at (392,90) width 0: " "
           text run at (0,105) width 200: "P, UL {margin-bottom: 0;}"
+          text run at (200,105) width 0: " "
       RenderBlock {HR} at (0,164) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,174) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
@@ -38,7 +46,7 @@ layer at (0,0) size 785x1639
       RenderBlock {P} at (0,663) size 769x37 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 753x35
           text run at (0,0) width 725: "This element should have a top margin of 25%, which is calculated with respect to the width of the parent element. "
-          text run at (725,0) width 28: "This"
+          text run at (724,0) width 29: "This"
           text run at (0,18) width 232: "will require extra text in order to test."
       RenderBlock {UL} at (0,724) size 769x98 [bgcolor=#00FFFF]
         RenderListItem {LI} at (40,0) size 729x18
@@ -64,15 +72,15 @@ layer at (0,0) size 785x1639
         RenderText {#text} at (0,0) size 766x53
           text run at (0,0) width 766: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom margin."
           text run at (0,18) width 488: "No other styles have been applied to it besides a light blue background color. "
-          text run at (488,18) width 267: "In all other respects, the element should be"
+          text run at (487,18) width 268: "In all other respects, the element should be"
           text run at (0,36) width 48: "normal."
       RenderTable {TABLE} at (0,883) size 769x740 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x738
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x712
             RenderTableCell {TD} at (0,368) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -121,9 +129,9 @@ layer at (0,0) size 785x1639
                 RenderText {#text} at (0,0) size 203x17
                   text run at (0,0) width 203: "This element has a class of zero."
               RenderBlock {P} at (4,653) size 747x55 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 742x53
+                RenderText {#text} at (0,0) size 741x53
                   text run at (0,0) width 714: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom"
                   text run at (0,18) width 52: "margin. "
-                  text run at (52,18) width 488: "No other styles have been applied to it besides a light blue background color. "
-                  text run at (540,18) width 202: "In all other respects, the element"
+                  text run at (51,18) width 488: "No other styles have been applied to it besides a light blue background color. "
+                  text run at (538,18) width 203: "In all other respects, the element"
                   text run at (0,36) width 113: "should be normal."

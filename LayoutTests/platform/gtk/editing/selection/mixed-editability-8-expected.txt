@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 765x35
-          text run at (0,0) width 765: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the start of the"
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 764: "This tests moving the caret backward through content of mixed editability. The caret should end up back at the start of the"
           text run at (0,18) width 178: "editable text inside the table."
       RenderBlock {DIV} at (0,52) size 784x64
         RenderBlock (anonymous) at (0,0) size 784x18

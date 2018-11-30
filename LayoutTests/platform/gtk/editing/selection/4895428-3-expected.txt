@@ -5,12 +5,12 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 782x35
-          text run at (0,0) width 782: "We delay focus until mouse up if the mouse down occurs inside a focusable node that is inside an already focused node. But"
+          text run at (0,0) width 781: "We delay focus until mouse up if the mouse down occurs inside a focusable node that is inside an already focused node. But"
           text run at (0,18) width 533: "we shouldn't delay focus unless the mouse down occurs in an already focused node. "
           text run at (533,18) width 249: "The text field below should be focused."
-        RenderInline {B} at (0,0) size 654x17
-          RenderText {#text} at (0,36) size 654x17
-            text run at (0,36) width 654: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
+        RenderInline {B} at (0,0) size 652x17
+          RenderText {#text} at (0,36) size 652x17
+            text run at (0,36) width 652: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
       RenderBlock {DIV} at (0,70) size 784x64
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x17

@@ -9,15 +9,25 @@ layer at (0,0) size 785x790
       RenderBlock {PRE} at (0,34) size 769x165
         RenderText {#text} at (0,0) size 576x165
           text run at (0,0) width 576: "<LINK rel=\"stylesheet\" type=\"text/css\" HREF=\"../resources/linktest.css\">"
+          text run at (576,0) width 0: " "
           text run at (0,15) width 152: "LI {color: purple;}"
+          text run at (152,15) width 0: " "
           text run at (0,30) width 160: "UL LI {color: blue;}"
+          text run at (160,30) width 0: " "
           text run at (0,45) width 184: "UL LI LI {color: gray;}"
+          text run at (184,45) width 0: " "
           text run at (0,60) width 176: "LI.red {color: green;}"
+          text run at (176,60) width 0: " "
           text run at (0,75) width 216: "UL LI.mar {color: #660000;}"
+          text run at (216,75) width 0: " "
           text run at (0,90) width 200: "UL LI#gre {color: green;}"
+          text run at (200,90) width 0: " "
           text run at (0,105) width 160: ".test {color: blue;}"
+          text run at (160,105) width 0: " "
           text run at (0,120) width 176: ".test {color: purple;}"
+          text run at (176,120) width 0: " "
           text run at (0,135) width 296: ".one {text-decoration: line-through;}"
+          text run at (296,135) width 0: " "
           text run at (0,150) width 0: " "
       RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,230) size 769x144
@@ -33,8 +43,8 @@ layer at (0,0) size 785x790
           RenderBlock {UL} at (0,18) size 729x54
             RenderListItem {LI} at (40,0) size 689x18 [color=#808080]
               RenderListMarker at (-17,0) size 7x17: white bullet
-              RenderText {#text} at (0,0) size 190x17
-                text run at (0,0) width 190: "This list item should be gray..."
+              RenderText {#text} at (0,0) size 189x17
+                text run at (0,0) width 189: "This list item should be gray..."
             RenderListItem {LI} at (40,18) size 689x18 [color=#808080]
               RenderListMarker at (-17,0) size 7x17: white bullet
               RenderText {#text} at (0,0) size 113x17
@@ -73,9 +83,9 @@ layer at (0,0) size 785x790
         RenderTableSection {TBODY} at (1,1) size 703x280
           RenderTableRow {TR} at (0,0) size 703x26
             RenderTableCell {TD} at (0,0) size 703x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 703x254
             RenderTableCell {TD} at (0,140) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -94,8 +104,8 @@ layer at (0,0) size 785x790
                   RenderBlock {UL} at (0,18) size 643x54
                     RenderListItem {LI} at (40,0) size 603x18 [color=#808080]
                       RenderListMarker at (-17,0) size 7x17: white bullet
-                      RenderText {#text} at (0,0) size 190x17
-                        text run at (0,0) width 190: "This list item should be gray..."
+                      RenderText {#text} at (0,0) size 189x17
+                        text run at (0,0) width 189: "This list item should be gray..."
                     RenderListItem {LI} at (40,18) size 603x18 [color=#808080]
                       RenderListMarker at (-17,0) size 7x17: white bullet
                       RenderText {#text} at (0,0) size 113x17

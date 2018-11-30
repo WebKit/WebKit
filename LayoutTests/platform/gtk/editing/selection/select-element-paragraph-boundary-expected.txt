@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 750x35
+        RenderText {#text} at (0,0) size 749x35
           text run at (0,0) width 326: "This tests paragraphBoundary selection navigation. "
-          text run at (326,0) width 424: "The caret should be at the end of the paragraph below, just after the"
+          text run at (326,0) width 423: "The caret should be at the end of the paragraph below, just after the"
           text run at (0,18) width 67: "select box."
       RenderBlock {DIV} at (0,52) size 784x34
         RenderMenuList {SELECT} at (2,2) size 45x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]

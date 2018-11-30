@@ -15,7 +15,7 @@ layer at (0,0) size 785x2928
       RenderBlock {P} at (0,70) size 769x18
         RenderText {#text} at (0,0) size 617x17
           text run at (0,0) width 396: "Scroll this document. A line of blue should remain stuck at the "
-          text run at (396,0) width 221: "top of the viewport the whole time."
+          text run at (395,0) width 222: "top of the viewport the whole time."
       RenderBlock {DIV} at (0,104) size 769x18 [color=#C0C0C0]
         RenderText {#text} at (0,0) size 83x17
           text run at (0,0) width 83: "Dummy text."

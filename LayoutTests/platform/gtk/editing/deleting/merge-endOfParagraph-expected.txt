@@ -23,9 +23,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,104) size 784x54
         RenderText {#text} at (0,0) size 779x53
           text run at (0,0) width 315: "Fixing that bug exposed a problem with merging. "
-          text run at (315,0) width 462: "If deletion empties out the block that contained the start of the selection to"
+          text run at (314,0) width 463: "If deletion empties out the block that contained the start of the selection to"
           text run at (0,18) width 472: "delete, that block can collapse away and become impossible to merge into. "
-          text run at (472,18) width 307: "So we insert a placeholder to prop it open so that"
+          text run at (471,18) width 308: "So we insert a placeholder to prop it open so that"
           text run at (0,36) width 142: "the merge can happen."
       RenderBlock {DIV} at (5,174) size 774x32 [border: (1px solid #000000)]
         RenderBlock {DIV} at (6,6) size 762x20 [border: (1px solid #FF0000)]

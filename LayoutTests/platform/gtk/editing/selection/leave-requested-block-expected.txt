@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 127x17
-          text run at (0,0) width 127: "Test case for fix for "
-        RenderInline {A} at (0,0) size 343x17 [color=#0000EE]
-          RenderText {#text} at (127,0) size 343x17
-            text run at (127,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
-        RenderText {#text} at (470,0) size 4x17
-          text run at (470,0) width 4: "."
+        RenderText {#text} at (0,0) size 126x17
+          text run at (0,0) width 126: "Test case for fix for "
+        RenderInline {A} at (0,0) size 344x17 [color=#0000EE]
+          RenderText {#text} at (125,0) size 344x17
+            text run at (125,0) width 344: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5354"
+        RenderText {#text} at (468,0) size 5x17
+          text run at (468,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x36
         RenderText {#text} at (0,0) size 772x35
           text run at (0,0) width 772: "Changes were made to VisiblePosition's so that init() will not leave the block containing the requested position unless there"

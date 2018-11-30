@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 376x17
-          text run at (0,0) width 376: "In pixel results, the blue box should be scrolled out of view."
+        RenderText {#text} at (0,0) size 375x17
+          text run at (0,0) width 375: "In pixel results, the blue box should be scrolled out of view."
 layer at (8,50) size 324x228
   RenderBlock (positioned) zI: 1 {DIV} at (8,50) size 324x228
     RenderIFrame {IFRAME} at (10,10) size 304x204 [border: (2px inset #000000)]

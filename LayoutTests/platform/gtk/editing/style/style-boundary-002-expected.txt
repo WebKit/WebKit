@@ -12,22 +12,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x54
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 600x26
             text run at (0,27) width 600: "Style checks performed on boundaries between style changes."
         RenderBlock {DIV} at (14,84) size 756x54
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 442x26
             text run at (0,27) width 442: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 25x26
-            RenderText {#text} at (442,27) size 25x26
-              text run at (442,27) width 25: "ab"
-          RenderText {#text} at (467,27) size 11x26
-            text run at (467,27) width 11: "c"
+          RenderInline {B} at (0,0) size 26x26
+            RenderText {#text} at (441,27) size 26x26
+              text run at (441,27) width 26: "ab"
+          RenderText {#text} at (466,27) size 12x26
+            text run at (466,27) width 12: "c"
       RenderBlock {DIV} at (0,176) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 25x26

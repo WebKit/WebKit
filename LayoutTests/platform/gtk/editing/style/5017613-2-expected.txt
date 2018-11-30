@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 21x17
           RenderText {#text} at (603,0) size 21x17
             text run at (603,0) width 21: "foo"
-        RenderText {#text} at (624,0) size 144x17
-          text run at (624,0) width 144: " should be bold below."
+        RenderText {#text} at (624,0) size 143x17
+          text run at (624,0) width 143: " should be bold below."
       RenderBlock {DIV} at (0,34) size 784x46
         RenderBlock {DIV} at (0,0) size 784x18
           RenderInline {B} at (0,0) size 21x17

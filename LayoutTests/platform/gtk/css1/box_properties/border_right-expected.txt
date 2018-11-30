@@ -9,8 +9,11 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 320x60
           text run at (0,0) width 184: "P {margin-right: 20px;}"
+          text run at (184,0) width 0: " "
           text run at (0,15) width 320: ".one {border-right: purple double 10px;}"
+          text run at (320,15) width 0: " "
           text run at (0,30) width 312: ".two {border-right: purple thin solid;}"
+          text run at (312,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 764x54 [bgcolor=#C0C0C0]
@@ -28,14 +31,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (541,18) size 741x35
           text run at (541,18) width 200: ", which should have a thin solid"
           text run at (0,36) width 126: "purple right border. "
-          text run at (126,36) width 429: "The line-height of the parent element should not change on any line."
+          text run at (125,36) width 430: "The line-height of the parent element should not change on any line."
       RenderTable {TABLE} at (0,195) size 784x90 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x88
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x62
             RenderTableCell {TD} at (0,44) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -56,4 +59,4 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (588,18) size 726x35
                   text run at (588,18) width 138: ", which should have a"
                   text run at (0,36) width 188: "thin solid purple right border. "
-                  text run at (188,36) width 429: "The line-height of the parent element should not change on any line."
+                  text run at (187,36) width 430: "The line-height of the parent element should not change on any line."

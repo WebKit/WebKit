@@ -43,7 +43,7 @@ layer at (8,26) size 784x182 clip at (9,27) size 767x165 scrollY 251 scrollHeigh
     RenderBR {BR} at (17,181) size 0x17
     RenderText {#text} at (1,199) size 16x17
       text run at (1,199) width 16: "11"
-    RenderBR {BR} at (17,199) size 0x17
+    RenderBR {BR} at (16,199) size 1x17
     RenderText {#text} at (1,217) size 16x17
       text run at (1,217) width 16: "12"
     RenderBR {BR} at (17,217) size 0x17

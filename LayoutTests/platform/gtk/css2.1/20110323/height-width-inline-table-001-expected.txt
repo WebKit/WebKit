@@ -7,13 +7,13 @@ layer at (0,0) size 800x162 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 800x162
     RenderBody {BODY} at (8,16) size 784x138
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 295x17
-          text run at (0,0) width 295: "Test passes if there is a filled green square and "
-        RenderInline {STRONG} at (0,0) size 44x17
-          RenderText {#text} at (295,0) size 44x17
-            text run at (295,0) width 44: "no red"
-        RenderText {#text} at (339,0) size 4x17
-          text run at (339,0) width 4: "."
+        RenderText {#text} at (0,0) size 294x17
+          text run at (0,0) width 294: "Test passes if there is a filled green square and "
+        RenderInline {STRONG} at (0,0) size 45x17
+          RenderText {#text} at (293,0) size 45x17
+            text run at (293,0) width 45: "no red"
+        RenderText {#text} at (337,0) size 5x17
+          text run at (337,0) width 5: "."
       RenderBlock (anonymous) at (0,34) size 784x104
         RenderTable {DIV} at (0,0) size 100x100 [bgcolor=#008000] [border: (25px solid #008000)]
         RenderText {#text} at (0,0) size 0x0

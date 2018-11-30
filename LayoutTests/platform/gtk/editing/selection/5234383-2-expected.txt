@@ -13,5 +13,5 @@ layer at (0,0) size 800x600
           text run at (754,0) width 4: " "
           text run at (0,18) width 719: "netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit."
           text run at (719,18) width 4: " "
-          text run at (0,36) width 655: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
+          text run at (0,36) width 654: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
 caret: position 241 of child 0 {#text} of child 2 {DIV} of body

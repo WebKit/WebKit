@@ -14,24 +14,24 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,27) size 631x26
-            text run at (0,27) width 631: "Delete at the end of document when there is a BR following a P. "
-          RenderBR {BR} at (631,48) size 0x0
+          RenderText {#text} at (0,27) size 629x26
+            text run at (0,27) width 629: "Delete at the end of document when there is a BR following a P. "
+          RenderBR {BR} at (628,48) size 1x0
           RenderText {#text} at (0,54) size 442x26
             text run at (0,54) width 442: "This is a test case for rdar://problem/4110366"
         RenderBlock {DIV} at (14,111) size 756x108
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 720x53
             text run at (0,27) width 240: "Red box with four lines. "
-            text run at (240,27) width 480: "The second line is a nested red box with the word"
+            text run at (239,27) width 481: "The second line is a nested red box with the word"
             text run at (0,54) width 81: "\"hello\". "
-            text run at (81,54) width 316: "The other three lines are empty. "
-          RenderBR {BR} at (397,75) size 0x0
+            text run at (81,54) width 315: "The other three lines are empty. "
+          RenderBR {BR} at (395,75) size 1x0
           RenderText {#text} at (0,81) size 468x26
             text run at (0,81) width 468: "Selection is a caret at the start of the fourth line."
       RenderBlock {DIV} at (0,257) size 784x138 [border: (2px solid #FF0000)]

@@ -4,14 +4,14 @@ layer at (0,0) size 800x139
   RenderBlock {HTML} at (0,0) size 800x139
     RenderBody {BODY} at (8,16) size 784x115
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 758x35
-          text run at (0,0) width 758: "This tests that clicking in a contenteditable div will set the caret in the right position for RTL text in a RTL block. To test"
-          text run at (0,18) width 465: "manually, click the right of the text. The caret should be on the right edge."
+        RenderText {#text} at (0,0) size 754x35
+          text run at (0,0) width 754: "This tests that clicking in a contenteditable div will set the caret in the right position for RTL text in a RTL block. To test"
+          text run at (0,18) width 464: "manually, click the right of the text. The caret should be on the right edge."
       RenderBlock {DIV} at (0,52) size 206x45 [border: (1px solid #000000)]
         RenderText {#text} at (11,11) size 66x22
           text run at (11,11) width 66 RTL: "\x{5E9}\x{5D3}\x{5D4} \x{5D1}\x{5D5}\x{5E8}"
       RenderBlock (anonymous) at (0,97) size 784x18
-        RenderText {#text} at (0,0) size 39x17
-          text run at (0,0) width 39: "PASS"
-        RenderBR {BR} at (39,0) size 0x17
+        RenderText {#text} at (0,0) size 38x17
+          text run at (0,0) width 38: "PASS"
+        RenderBR {BR} at (37,0) size 1x17
 caret: position 7 of child 0 {#text} of child 3 {DIV} of body

@@ -16,22 +16,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x260 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
-            RenderText {#text} at (113,27) size 260x26
-              text run at (113,27) width 260: "<rdar://problem/4038267>"
-          RenderText {#text} at (373,27) size 747x53
-            text run at (373,27) width 374: " REGRESSION (Mail): Crash copying"
+          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+            RenderText {#text} at (112,27) size 261x26
+              text run at (112,27) width 261: "<rdar://problem/4038267>"
+          RenderText {#text} at (372,27) size 747x53
+            text run at (372,27) width 375: " REGRESSION (Mail): Crash copying"
             text run at (0,54) width 287: "and pasting end of paragraph."
         RenderBlock {DIV} at (14,111) size 756x135
           RenderBlock (anonymous) at (0,0) size 756x81
             RenderText {#text} at (0,0) size 189x26
               text run at (0,0) width 189: "Expected Results: "
-            RenderBR {BR} at (189,21) size 0x0
+            RenderBR {BR} at (188,21) size 1x0
             RenderText {#text} at (0,27) size 732x53
               text run at (0,27) width 732: "Should see this content in the red box below (insertion point must be on the"
               text run at (0,54) width 308: "second line, right before \"bar\"):"

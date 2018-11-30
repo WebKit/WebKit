@@ -51,10 +51,10 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 157x26
           RenderText {#text} at (14,14) size 70x26
             text run at (14,14) width 70: "here is "
-          RenderInline {I} at (0,0) size 44x26
-            RenderText {#text} at (84,14) size 44x26
-              text run at (84,14) width 44: "xxxx"
-          RenderText {#text} at (128,14) size 43x26
-            text run at (128,14) width 43: " text"
+          RenderInline {I} at (0,0) size 45x26
+            RenderText {#text} at (83,14) size 45x26
+              text run at (83,14) width 45: "xxxx"
+          RenderText {#text} at (127,14) size 44x26
+            text run at (127,14) width 44: " text"
         RenderText {#text} at (0,0) size 0x0
 caret: position 4 of child 0 {#text} of child 1 {I} of child 1 {SPAN} of child 1 {DIV} of body

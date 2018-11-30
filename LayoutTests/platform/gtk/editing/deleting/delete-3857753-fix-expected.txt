@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 54x26
           RenderText {#text} at (0,0) size 54x26
             text run at (0,0) width 54: "three"
-        RenderInline {I} at (0,0) size 40x26
-          RenderText {#text} at (54,0) size 40x26
-            text run at (54,0) width 40: "four"
+        RenderInline {I} at (0,0) size 41x26
+          RenderText {#text} at (53,0) size 41x26
+            text run at (53,0) width 41: "four"
 caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of body

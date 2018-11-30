@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 742x35
           text run at (0,0) width 667: "This tests that inserting a newline in place of a full line of quoted content doesn't add an extra quoted line. "
           text run at (667,0) width 75: "The test has"
-          text run at (0,18) width 460: "passed if there are no empty lines (quoted or unquoted) in the box below."
+          text run at (0,18) width 459: "passed if there are no empty lines (quoted or unquoted) in the box below."
       RenderBlock {DIV} at (0,52) size 784x54
         RenderBlock {BLOCKQUOTE} at (0,0) size 784x18 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {DIV} at (12,0) size 772x18

@@ -40,42 +40,42 @@ layer at (0,0) size 800x600
                     RenderInline {B} at (0,0) size 26x15
                       RenderText {#text} at (4,4) size 26x15
                         text run at (4,4) width 26: "Web"
-                    RenderText {#text} at (30,4) size 12x15
-                      text run at (30,4) width 12: "    "
-                    RenderInline {A} at (0,0) size 38x15 [color=#0000CC]
-                      RenderText {#text} at (42,4) size 38x15
-                        text run at (42,4) width 38: "Images"
-                    RenderText {#text} at (80,4) size 12x15
-                      text run at (80,4) width 12: "    "
+                    RenderText {#text} at (29,4) size 13x15
+                      text run at (29,4) width 13: "    "
                     RenderInline {A} at (0,0) size 39x15 [color=#0000CC]
-                      RenderText {#text} at (92,4) size 39x15
-                        text run at (92,4) width 39: "Groups"
-                    RenderText {#text} at (131,4) size 12x15
-                      text run at (131,4) width 12: "    "
-                    RenderInline {A} at (0,0) size 29x15 [color=#0000CC]
-                      RenderText {#text} at (143,4) size 29x15
-                        text run at (143,4) width 29: "News"
-                    RenderText {#text} at (172,4) size 12x15
-                      text run at (172,4) width 12: "    "
-                    RenderInline {A} at (0,0) size 42x15 [color=#0000CC]
-                      RenderText {#text} at (184,4) size 42x15
-                        text run at (184,4) width 42: "Froogle"
-                    RenderText {#text} at (226,4) size 12x15
-                      text run at (226,4) width 12: "    "
-                    RenderInline {A} at (0,0) size 31x15 [color=#0000CC]
-                      RenderText {#text} at (238,4) size 31x15
-                        text run at (238,4) width 31: "Local"
-                      RenderInline {SUP} at (0,0) size 0x12
-                    RenderInline {A} at (0,0) size 28x15
-                      RenderInline {FONT} at (0,0) size 28x15 [color=#FF0000]
-                        RenderText {#text} at (269,4) size 28x15
-                          text run at (269,4) width 28: "New!"
-                    RenderText {#text} at (297,4) size 12x15
-                      text run at (297,4) width 12: "    "
-                    RenderInline {B} at (0,0) size 40x15
-                      RenderInline {A} at (0,0) size 40x15 [color=#0000CC]
-                        RenderText {#text} at (309,4) size 40x15
-                          text run at (309,4) width 40: "more \x{BB}"
+                      RenderText {#text} at (41,4) size 39x15
+                        text run at (41,4) width 39: "Images"
+                    RenderText {#text} at (79,4) size 13x15
+                      text run at (79,4) width 13: "    "
+                    RenderInline {A} at (0,0) size 40x15 [color=#0000CC]
+                      RenderText {#text} at (91,4) size 40x15
+                        text run at (91,4) width 40: "Groups"
+                    RenderText {#text} at (130,4) size 13x15
+                      text run at (130,4) width 13: "    "
+                    RenderInline {A} at (0,0) size 30x15 [color=#0000CC]
+                      RenderText {#text} at (142,4) size 30x15
+                        text run at (142,4) width 30: "News"
+                    RenderText {#text} at (171,4) size 13x15
+                      text run at (171,4) width 13: "    "
+                    RenderInline {A} at (0,0) size 43x15 [color=#0000CC]
+                      RenderText {#text} at (183,4) size 43x15
+                        text run at (183,4) width 43: "Froogle"
+                    RenderText {#text} at (225,4) size 13x15
+                      text run at (225,4) width 13: "    "
+                    RenderInline {A} at (0,0) size 32x15 [color=#0000CC]
+                      RenderText {#text} at (237,4) size 32x15
+                        text run at (237,4) width 32: "Local"
+                      RenderInline {SUP} at (0,0) size 1x12
+                    RenderInline {A} at (0,0) size 29x15
+                      RenderInline {FONT} at (0,0) size 29x15 [color=#FF0000]
+                        RenderText {#text} at (268,4) size 29x15
+                          text run at (268,4) width 29: "New!"
+                    RenderText {#text} at (296,4) size 13x15
+                      text run at (296,4) width 13: "    "
+                    RenderInline {B} at (0,0) size 41x15
+                      RenderInline {A} at (0,0) size 41x15 [color=#0000CC]
+                        RenderText {#text} at (308,4) size 41x15
+                          text run at (308,4) width 41: "more \x{BB}"
           RenderTable {TABLE} at (2,26) size 780x59
             RenderTableSection {TBODY} at (0,0) size 780x59
               RenderTableRow {TR} at (0,0) size 780x59

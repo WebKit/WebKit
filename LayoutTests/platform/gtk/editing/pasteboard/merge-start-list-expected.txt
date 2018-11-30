@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 679x17
           text run at (0,0) width 679: "This test makes sure that content inside a list in an incoming fragment isn't pulled out of the list during paste."
       RenderBlock {P} at (0,34) size 784x18
-        RenderInline {B} at (0,0) size 253x17
-          RenderText {#text} at (0,0) size 253x17
-            text run at (0,0) width 253: "You should see 'bar' inside a list item."
+        RenderInline {B} at (0,0) size 252x17
+          RenderText {#text} at (0,0) size 252x17
+            text run at (0,0) width 252: "You should see 'bar' inside a list item."
       RenderBlock {DIV} at (0,68) size 784x18
         RenderBlock {UL} at (0,0) size 784x18
           RenderListItem {LI} at (40,0) size 744x18

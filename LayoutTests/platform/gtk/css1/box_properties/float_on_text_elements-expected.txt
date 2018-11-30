@@ -64,7 +64,7 @@ layer at (0,0) size 785x2714
         RenderText {#text} at (48,0) size 721x53
           text run at (48,0) width 721: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as"
           text run at (48,18) width 496: "well as bold, with a content width of 1.5em and a background-color of silver. "
-          text run at (544,18) width 225: "The top of the big letter \"T\" should"
+          text run at (543,18) width 226: "The top of the big letter \"T\" should"
           text run at (48,36) width 675: "be vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
       RenderBlock (anonymous) at (0,541) size 769x18
         RenderBR {BR} at (0,0) size 0x17
@@ -87,8 +87,8 @@ layer at (0,0) size 785x2714
           text run at (0,18) width 413: "content of the paragraph should appear on the left side of the"
           text run at (0,36) width 193: "yellow \"sidebar\" on the right. "
           text run at (193,36) width 220: "The content of this element should"
-          text run at (0,54) width 220: "flow around the floated element. "
-          text run at (219,54) width 194: "However, the floated element"
+          text run at (0,54) width 221: "flow around the floated element. "
+          text run at (220,54) width 193: "However, the floated element"
           text run at (0,72) width 413: "may or may not be obscured by the blue background of this"
           text run at (0,90) width 413: "element, as the specification does not say which is drawn \"on"
           text run at (0,108) width 38: "top.\" "
@@ -160,8 +160,8 @@ layer at (0,0) size 785x2714
             text run at (0,54) width 167: "as a child. It has a yellow "
             text run at (166,54) width 363: "background color and is floated to the right. Since it is a "
             text run at (528,54) width 49: "child of"
-            text run at (0,72) width 375: "the blue DIV, the yellow DIV should appear inside the "
-            text run at (374,72) width 203: "blue rectangle. Due to it being"
+            text run at (0,72) width 374: "the blue DIV, the yellow DIV should appear inside the "
+            text run at (373,72) width 204: "blue rectangle. Due to it being"
             text run at (0,90) width 194: "floated to the right and having "
             text run at (193,90) width 384: "a 10px right margin, the yellow rectange should have a 10px"
             text run at (0,108) width 31: "blue "
@@ -173,9 +173,9 @@ layer at (0,0) size 785x2714
         RenderTableSection {TBODY} at (1,1) size 767x1383
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1357
             RenderTableCell {TD} at (0,691) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -241,8 +241,8 @@ layer at (0,0) size 785x2714
                     text run at (0,0) width 21: "T"
                 RenderText {#text} at (48,0) size 747x71
                   text run at (48,0) width 699: "he first letter (a \"T\") of this paragraph should float left and be twice the font-size of the rest of the paragraph, as"
-                  text run at (48,18) width 514: "well as bold, with a content width of 1.5em and a background-color of silver. "
-                  text run at (561,18) width 186: "The top of the big letter \"T\""
+                  text run at (48,18) width 513: "well as bold, with a content width of 1.5em and a background-color of silver. "
+                  text run at (560,18) width 187: "The top of the big letter \"T\""
                   text run at (48,36) width 699: "should be vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-"
                   text run at (0,54) width 33: "cap\"."
               RenderBlock (anonymous) at (4,563) size 747x18
@@ -266,7 +266,7 @@ layer at (0,0) size 785x2714
                   text run at (0,18) width 391: "textual content of the paragraph should appear on the left side"
                   text run at (0,36) width 261: "of the yellow \"sidebar\" on the right. "
                   text run at (260,36) width 131: "The content of this"
-                  text run at (0,54) width 328: "element should flow around the floated element. "
+                  text run at (0,54) width 329: "element should flow around the floated element. "
                   text run at (328,54) width 63: "However,"
                   text run at (0,72) width 391: "the floated element may or may not be obscured by the blue"
                   text run at (0,90) width 391: "background of this element, as the specification does not say"
@@ -338,7 +338,7 @@ layer at (0,0) size 785x2714
                     text run at (0,18) width 411: "background of the DIV element is blue and its width is 75%."
                     text run at (0,36) width 33: "This "
                     text run at (32,36) width 369: "text should all be inside the blue rectangle. The blue DIV "
-                    text run at (401,36) width 160: "element has another DIV"
+                    text run at (400,36) width 161: "element has another DIV"
                     text run at (0,54) width 218: "element as a child. It has a yellow "
                     text run at (217,54) width 344: "background color and is floated to the right. Since it is"
                     text run at (0,72) width 12: "a "

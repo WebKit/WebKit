@@ -1,3 +1,13 @@
+2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Stop running tests without complex text enforced
+
+        We have enforced complex text in GTK+ for one release cycle without noticing any major issue nor performance
+        regression.
+
+        * WebKitTestRunner/gtk/main.cpp:
+        (main):
+
 2018-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r238635): Dragging a text selection within WKWebView causes the selection highlight to get into a bad state

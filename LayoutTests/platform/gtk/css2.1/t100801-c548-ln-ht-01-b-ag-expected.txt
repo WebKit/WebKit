@@ -4,8 +4,8 @@ layer at (0,0) size 800x346
   RenderBlock {HTML} at (0,0) size 800x346
     RenderBody {BODY} at (8,8) size 784x330
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 504x17
-          text run at (0,0) width 504: "There should be a big pattern of green and lime dots below, with no red present."
+        RenderText {#text} at (0,0) size 503x17
+          text run at (0,0) width 503: "There should be a big pattern of green and lime dots below, with no red present."
       RenderBlock {DIV} at (6,24) size 66x306 [color=#00FF00] [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderBlock {P} at (15,9) size 48x48
           RenderText {#text} at (0,6) size 36x36

@@ -13,8 +13,8 @@ layer at (0,0) size 800x186
         RenderText {#text} at (0,0) size 319x17
           text run at (0,0) width 319: "And this one should also have a green background"
       RenderBlock {address} at (0,102) size 800x18
-        RenderText {#text} at (0,0) size 431x17
-          text run at (0,0) width 431: "This address is only here to fill some space between two paragraphs"
+        RenderText {#text} at (0,0) size 430x17
+          text run at (0,0) width 430: "This address is only here to fill some space between two paragraphs"
       RenderBlock {p} at (0,136) size 800x18 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 304x17
           text run at (0,0) width 304: "This paragraph should have a green background"

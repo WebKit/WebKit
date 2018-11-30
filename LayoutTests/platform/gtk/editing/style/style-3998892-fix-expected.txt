@@ -15,22 +15,22 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x179 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 113x26
             text run at (0,27) width 113: "Bug fix for "
-          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
-            RenderText {#text} at (113,27) size 260x26
-              text run at (113,27) width 260: "<rdar://problem/3998892>"
-          RenderText {#text} at (373,27) size 698x53
-            text run at (373,27) width 325: " REGRESSION (Mail): bolding a"
+          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+            RenderText {#text} at (112,27) size 261x26
+              text run at (112,27) width 261: "<rdar://problem/3998892>"
+          RenderText {#text} at (372,27) size 698x53
+            text run at (372,27) width 326: " REGRESSION (Mail): bolding a"
             text run at (0,54) width 93: "selection "
             text run at (93,54) width 551: "from end of line changes unselected text on starting line."
         RenderBlock {DIV} at (14,111) size 756x54
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 604x26
             text run at (0,27) width 604: "Should see first line (\"foo\") not bold; second line (\"bar\") bold."
       RenderBlock {DIV} at (0,203) size 784x58

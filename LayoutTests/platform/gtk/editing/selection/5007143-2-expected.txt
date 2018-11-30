@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 759x35
           text run at (0,0) width 759: "This tests for a bug when moving the caret forward by a line from a range selection with a horizontal position for vertical"
           text run at (0,18) width 136: "arrow navigation set. "
-          text run at (136,18) width 601: "To match TextEdit, the caret should be between the second and third 'x's in the forth paragraph."
+          text run at (136,18) width 599: "To match TextEdit, the caret should be between the second and third 'x's in the forth paragraph."
       RenderBlock {DIV} at (0,52) size 784x72
         RenderText {#text} at (0,0) size 24x17
           text run at (0,0) width 24: "xxx"

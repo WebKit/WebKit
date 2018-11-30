@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 612x17
           text run at (0,0) width 432: "This tests caret movement through -webkit-user-select:none content. "
-          text run at (432,0) width 180: "The caret should move over "
-        RenderInline {B} at (0,0) size 24x17
-          RenderText {#text} at (612,0) size 24x17
-            text run at (612,0) width 24: "yyy"
-        RenderText {#text} at (636,0) size 4x17
-          text run at (636,0) width 4: "."
+          text run at (431,0) width 181: "The caret should move over "
+        RenderInline {B} at (0,0) size 25x17
+          RenderText {#text} at (611,0) size 25x17
+            text run at (611,0) width 25: "yyy"
+        RenderText {#text} at (635,0) size 5x17
+          text run at (635,0) width 5: "."
       RenderBlock {DIV} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 8x17
           text run at (0,0) width 8: "x"

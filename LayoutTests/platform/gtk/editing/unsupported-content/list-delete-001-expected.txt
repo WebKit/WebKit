@@ -22,23 +22,23 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x241 [border: (4px solid #0000FF)]
         RenderBlock {DIV} at (20,20) size 744x69
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 663x20
             text run at (0,27) width 663: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
-          RenderBR {BR} at (663,43) size 0x0
+          RenderBR {BR} at (662,43) size 1x0
           RenderInline {I} at (0,0) size 99x20
             RenderText {#text} at (0,48) size 99x20
               text run at (0,48) width 99: "For this test: "
-          RenderText {#text} at (99,48) size 168x20
-            text run at (99,48) width 168: "Select and delete a list."
+          RenderText {#text} at (98,48) size 169x20
+            text run at (98,48) width 169: "Select and delete a list."
         RenderBlock (anonymous) at (20,89) size 744x21
           RenderBR {BR} at (0,0) size 0x20
         RenderBlock {DIV} at (20,110) size 744x111
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 709x41
             text run at (0,27) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
             text run at (0,48) width 53: "color). "
@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x20
             RenderText {#text} at (0,69) size 99x20
               text run at (0,69) width 99: "For this test: "
-          RenderText {#text} at (99,69) size 708x41
-            text run at (99,69) width 609: "Only list content should get deleted. Surrounding content that is not selected should"
+          RenderText {#text} at (98,69) size 708x41
+            text run at (98,69) width 610: "Only list content should get deleted. Surrounding content that is not selected should"
             text run at (0,90) width 201: "(obviously) not be affected."
       RenderBlock {DIV} at (0,251) size 784x31 [border: (2px solid #008000)]
         RenderText {#text} at (2,2) size 107x26

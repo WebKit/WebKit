@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 731x53
           RenderText {#text} at (14,14) size 78x26
             text run at (14,14) width 78: "This wo"
-          RenderInline {B} at (0,0) size 30x26
-            RenderText {#text} at (92,14) size 30x26
-              text run at (92,14) width 30: "rd "
-          RenderText {#text} at (122,14) size 731x53
-            text run at (122,14) width 617: "should be selected, since the test deleted it a character at a time"
-            text run at (739,14) width 6: " "
+          RenderInline {B} at (0,0) size 31x26
+            RenderText {#text} at (91,14) size 31x26
+              text run at (91,14) width 31: "rd "
+          RenderText {#text} at (121,14) size 731x53
+            text run at (121,14) width 618: "should be selected, since the test deleted it a character at a time"
+            text run at (738,14) width 7: " "
             text run at (14,41) width 209: "and then did an undo."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -13,12 +13,12 @@ layer at (0,0) size 800x386
         RenderText {#text} at (286,0) size 212x17
           text run at (286,0) width 212: "This sentence should be centered."
       RenderBlock {P} at (0,102) size 784x252 [color=#000080]
-        RenderText {#text} at (0,0) size 498x17
+        RenderText {#text} at (0,0) size 497x17
           text run at (0,0) width 393: "This paragraph should be justified (the right and left margins "
-          text run at (392,0) width 106: "should line up). "
+          text run at (392,0) width 105: "should line up). "
         RenderInline {SPAN} at (0,0) size 784x251 [color=#C0C0C0]
-          RenderText {#text} at (497,0) size 784x251
-            text run at (497,0) width 287: "This is just lovely dummy text. Dummy text."
+          RenderText {#text} at (496,0) size 784x251
+            text run at (496,0) width 288: "This is just lovely dummy text. Dummy text."
             text run at (0,18) width 57: "Dummy "
             text run at (56,18) width 530: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
             text run at (585,18) width 199: "This is just lovely dummy text."

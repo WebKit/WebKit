@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 600x54
         RenderText {#text} at (0,0) size 139x26
           text run at (0,0) width 139: "There is a tide"
-        RenderBR {BR} at (139,21) size 0x0
+        RenderBR {BR} at (138,21) size 1x0
         RenderText {#text} at (0,27) size 241x26
           text run at (0,27) width 241: "Which taken at the flood"
 caret: position 0 of child 2 {#text} of child 1 {DIV} of body

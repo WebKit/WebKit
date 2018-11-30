@@ -7,11 +7,11 @@ layer at (0,0) size 800x454
         RenderInline (generated) at (0,0) size 88x159 [color=#00FFFF]
           RenderText at (0,3) size 88x159
             text run at (0,3) width 88: "T"
-        RenderText {#text} at (88,88) size 57x53
-          text run at (88,88) width 57: "he "
-        RenderInline {STRONG} at (0,0) size 205x53
-          RenderText {#text} at (145,88) size 205x53
-            text run at (145,88) width 205: "first letter"
+        RenderText {#text} at (87,88) size 58x53
+          text run at (87,88) width 58: "he "
+        RenderInline {STRONG} at (0,0) size 206x53
+          RenderText {#text} at (144,88) size 206x53
+            text run at (144,88) width 206: "first letter"
         RenderText {#text} at (350,88) size 779x94
           text run at (350,88) width 429: " of this paragraph, and"
           text run at (0,165) width 59: "only that "
@@ -113,25 +113,25 @@ layer at (0,0) size 800x454
           text run at (686,0) width 22: ". If "
           text run at (708,0) width 70: "this precise"
           text run at (0,18) width 329: "combination does not occur, then the user agent has "
-          text run at (329,18) width 409: "failed this test. Remember that in order to ensure a complete test, "
-          text run at (738,18) width 19: "the"
+          text run at (328,18) width 410: "failed this test. Remember that in order to ensure a complete test, "
+          text run at (737,18) width 20: "the"
           text run at (0,36) width 386: "paragraph must be displayed on more than one line. (TEST3)"
       RenderBlock {DIV} at (0,412) size 784x18
-        RenderText {#text} at (0,0) size 168x17
-          text run at (0,0) width 168: "You should see the words "
-        RenderInline {STRONG} at (0,0) size 68x17
-          RenderText {#text} at (168,0) size 68x17
-            text run at (168,0) width 68: "\"TEST1\""
-        RenderText {#text} at (236,0) size 8x17
-          text run at (236,0) width 8: ", "
-        RenderInline {STRONG} at (0,0) size 68x17
-          RenderText {#text} at (244,0) size 68x17
-            text run at (244,0) width 68: "\"TEST2\""
-        RenderText {#text} at (312,0) size 35x17
-          text run at (312,0) width 35: ", and "
-        RenderInline {STRONG} at (0,0) size 68x17
-          RenderText {#text} at (347,0) size 68x17
-            text run at (347,0) width 68: "\"TEST3\""
-        RenderText {#text} at (415,0) size 236x17
-          text run at (415,0) width 86: " at the end of "
-          text run at (501,0) width 150: "three paragraphs above."
+        RenderText {#text} at (0,0) size 167x17
+          text run at (0,0) width 167: "You should see the words "
+        RenderInline {STRONG} at (0,0) size 69x17
+          RenderText {#text} at (166,0) size 69x17
+            text run at (166,0) width 69: "\"TEST1\""
+        RenderText {#text} at (234,0) size 9x17
+          text run at (234,0) width 9: ", "
+        RenderInline {STRONG} at (0,0) size 69x17
+          RenderText {#text} at (242,0) size 69x17
+            text run at (242,0) width 69: "\"TEST2\""
+        RenderText {#text} at (310,0) size 36x17
+          text run at (310,0) width 36: ", and "
+        RenderInline {STRONG} at (0,0) size 69x17
+          RenderText {#text} at (345,0) size 69x17
+            text run at (345,0) width 69: "\"TEST3\""
+        RenderText {#text} at (413,0) size 237x17
+          text run at (413,0) width 87: " at the end of "
+          text run at (499,0) width 151: "three paragraphs above."

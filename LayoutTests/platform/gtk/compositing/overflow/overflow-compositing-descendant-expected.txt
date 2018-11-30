@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 467x17
-          text run at (0,0) width 467: "You should see a green box under the video. If you see red, the test failed."
+        RenderText {#text} at (0,0) size 466x17
+          text run at (0,0) width 466: "You should see a green box under the video. If you see red, the test failed."
 layer at (8,50) size 132x222 clip at (9,51) size 130x220 scrollHeight 224
   RenderBlock (positioned) {DIV} at (8,50) size 132x222 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock (anonymous) at (11,11) size 110x104

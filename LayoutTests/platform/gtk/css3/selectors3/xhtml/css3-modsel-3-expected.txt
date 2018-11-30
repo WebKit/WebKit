@@ -18,5 +18,5 @@ layer at (0,0) size 800x110
         RenderInline {foo} at (0,0) size 451x17
           RenderText {#text} at (0,0) size 451x17
             text run at (0,0) width 327: "And this element, part of a non-HTML namespace, "
-            text run at (327,0) width 124: "should be green too"
+            text run at (326,0) width 125: "should be green too"
         RenderText {#text} at (0,0) size 0x0

@@ -12,11 +12,17 @@ layer at (0,0) size 785x1030
       RenderBlock {PRE} at (0,34) size 769x105
         RenderText {#text} at (0,0) size 368x105
           text run at (0,0) width 224: "P:first-line {color: green;}"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 248: "P:first-letter {color: maroon;}"
+          text run at (248,15) width 0: " "
           text run at (0,30) width 272: ".two:first-line {font-size: 200%;}"
+          text run at (272,30) width 0: " "
           text run at (0,45) width 288: ".two:first-letter {font-size: 350%;}"
+          text run at (288,45) width 0: " "
           text run at (0,60) width 312: "P.three:first-letter {font-size: 350%;}"
+          text run at (312,60) width 0: " "
           text run at (0,75) width 368: "P.three:first-line {font-variant: small-caps;}"
+          text run at (368,75) width 0: " "
           text run at (0,90) width 0: " "
       RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 769x54
@@ -27,7 +33,7 @@ layer at (0,0) size 785x1030
           text run at (10,0) width 717: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
           text run at (0,18) width 43: "green. "
           text run at (43,18) width 511: "If this precise combination does not occur, then the user agent has failed this test. "
-          text run at (554,18) width 210: "Remember that in order to ensure"
+          text run at (553,18) width 211: "Remember that in order to ensure"
           text run at (0,36) width 449: "a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,240) size 769x183
         RenderInline (generated) at (0,0) size 68x124 [color=#800000]
@@ -55,9 +61,9 @@ layer at (0,0) size 785x1030
         RenderTableSection {TBODY} at (1,1) size 767x439
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x413
             RenderTableCell {TD} at (0,219) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -71,7 +77,7 @@ layer at (0,0) size 785x1030
                   text run at (10,0) width 717: "he first letter of this paragraph, and only that one, should be maroon (dark red), while the entire first line should be"
                   text run at (0,18) width 43: "green. "
                   text run at (43,18) width 511: "If this precise combination does not occur, then the user agent has failed this test. "
-                  text run at (554,18) width 165: "Remember that in order to"
+                  text run at (553,18) width 166: "Remember that in order to"
                   text run at (0,36) width 494: "ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,74) size 747x201
                 RenderInline (generated) at (0,0) size 68x124 [color=#800000]

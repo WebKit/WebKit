@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 775x35
+        RenderText {#text} at (0,0) size 774x35
           text run at (0,0) width 625: "This tests for a bug where changing the list type of an indented list would create unwanted nesting. "
-          text run at (625,0) width 150: "You should see a single"
+          text run at (625,0) width 149: "You should see a single"
           text run at (0,18) width 220: "ordered list item in an indented list."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderBlock {UL} at (0,0) size 784x18

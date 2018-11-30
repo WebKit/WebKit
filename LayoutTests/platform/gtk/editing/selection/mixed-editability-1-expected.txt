@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 20: "On"
       RenderText {#text} at (20,0) size 784x35
         text run at (20,0) width 464: "ly the first two letters of the first word in this sentence should be selected. "
-        text run at (484,0) width 298: "To run this test manually, double click between"
-        text run at (782,0) width 2: " "
+        text run at (484,0) width 296: "To run this test manually, double click between"
+        text run at (779,0) width 5: " "
         text run at (0,18) width 351: "the first two letters of the first word of the first sentence."
       RenderText {#text} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of body

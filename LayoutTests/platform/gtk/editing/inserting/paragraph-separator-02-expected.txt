@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 585x17
-          text run at (0,0) width 361: "Tests for a bug in the paragraph separator insertion code. "
-          text run at (361,0) width 224: "Only one newline should be added."
+        RenderText {#text} at (0,0) size 584x17
+          text run at (0,0) width 360: "Tests for a bug in the paragraph separator insertion code. "
+          text run at (359,0) width 225: "Only one newline should be added."
       RenderBlock {DIV} at (0,34) size 784x54
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 21x17

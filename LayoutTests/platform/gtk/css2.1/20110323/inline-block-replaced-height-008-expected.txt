@@ -9,13 +9,13 @@ layer at (0,0) size 800x198
         RenderInline {STRONG} at (0,0) size 143x17
           RenderText {#text} at (106,0) size 143x17
             text run at (106,0) width 143: "5 filled green squares"
-        RenderText {#text} at (249,0) size 185x17
-          text run at (249,0) width 185: " with the same width and the "
-        RenderInline {STRONG} at (0,0) size 80x17
-          RenderText {#text} at (434,0) size 80x17
-            text run at (434,0) width 80: "same height"
-        RenderText {#text} at (514,0) size 236x17
-          text run at (514,0) width 236: ". The 5 filled green squares should be"
+        RenderText {#text} at (248,0) size 186x17
+          text run at (248,0) width 186: " with the same width and the "
+        RenderInline {STRONG} at (0,0) size 81x17
+          RenderText {#text} at (433,0) size 81x17
+            text run at (433,0) width 81: "same height"
+        RenderText {#text} at (513,0) size 237x17
+          text run at (513,0) width 237: ". The 5 filled green squares should be"
         RenderInline {STRONG} at (0,0) size 57x17
           RenderText {#text} at (0,18) size 57x17
             text run at (0,18) width 57: "identical"

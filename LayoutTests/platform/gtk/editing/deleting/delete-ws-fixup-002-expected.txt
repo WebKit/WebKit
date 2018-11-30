@@ -51,20 +51,20 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 741x53
           RenderText {#text} at (14,14) size 97x26
             text run at (14,14) width 97: "in Liberty"
-          RenderInline {I} at (0,0) size 117x26
-            RenderText {#text} at (111,14) size 117x26
-              text run at (111,14) width 21: "F "
-              text run at (132,14) width 96: "and seven"
-          RenderText {#text} at (228,14) size 63x26
-            text run at (228,14) width 63: " years "
-          RenderInline {B} at (0,0) size 6x26
-            RenderText {#text} at (291,14) size 6x26
-              text run at (291,14) width 6: " "
-          RenderText {#text} at (297,14) size 741x53
-            text run at (297,14) width 110: "our fathers "
-            text run at (407,14) width 342: "f upon this continent, a new nation,"
-            text run at (749,14) width 6: " "
-            text run at (14,41) width 232: "conceived    in Liberty, "
-            text run at (246,41) width 386: "and dedicated to the proposition that all"
+          RenderInline {I} at (0,0) size 118x26
+            RenderText {#text} at (110,14) size 118x26
+              text run at (110,14) width 22: "F "
+              text run at (131,14) width 97: "and seven"
+          RenderText {#text} at (227,14) size 64x26
+            text run at (227,14) width 64: " years "
+          RenderInline {B} at (0,0) size 7x26
+            RenderText {#text} at (290,14) size 7x26
+              text run at (290,14) width 7: " "
+          RenderText {#text} at (296,14) size 741x53
+            text run at (296,14) width 111: "our fathers "
+            text run at (406,14) width 343: "f upon this continent, a new nation,"
+            text run at (748,14) width 7: " "
+            text run at (14,41) width 231: "conceived    in Liberty, "
+            text run at (244,41) width 387: "and dedicated to the proposition that all"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 2 {#text} of child 1 {SPAN} of child 3 {DIV} of body

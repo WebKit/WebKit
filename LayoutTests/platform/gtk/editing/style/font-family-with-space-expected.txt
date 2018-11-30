@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderInline {U} at (0,0) size 245x15
         RenderText {#text} at (0,0) size 245x15
           text run at (0,0) width 245: "This text should be Times New Roman bold."
-      RenderInline {U} at (0,0) size 245x15
-        RenderText {#text} at (245,0) size 245x15
-          text run at (245,0) width 245: "This text should be Times New Roman bold."
+      RenderInline {U} at (0,0) size 246x15
+        RenderText {#text} at (244,0) size 246x15
+          text run at (244,0) width 246: "This text should be Times New Roman bold."
       RenderText {#text} at (0,0) size 0x0
 caret: position 41 of child 0 {#text} of child 1 {U} of body

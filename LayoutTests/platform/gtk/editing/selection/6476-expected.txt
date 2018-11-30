@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 250x36
         RenderText {#text} at (0,0) size 203x17
           text run at (0,0) width 203: "Try to create a caret after this lin"
-        RenderInline {SPAN} at (0,0) size 7x17
-          RenderText {#text} at (203,0) size 7x17
-            text run at (203,0) width 7: "e"
-        RenderText {#text} at (210,0) size 4x17
-          text run at (210,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 0x17
+        RenderInline {SPAN} at (0,0) size 8x17
+          RenderText {#text} at (202,0) size 8x17
+            text run at (202,0) width 8: "e"
+        RenderText {#text} at (209,0) size 5x17
+          text run at (209,0) width 5: " "
+        RenderInline {SPAN} at (0,0) size 1x17
         RenderText {#text} at (0,18) size 181x17
           text run at (0,18) width 181: "thisshouldbeonthesecondline"
       RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
@@ -25,14 +25,14 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 343x17 [color=#0000EE]
           RenderText {#text} at (131,0) size 343x17
             text run at (131,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6476"
-        RenderText {#text} at (474,0) size 779x35
-          text run at (474,0) width 8: ". "
-          text run at (482,0) width 297: "Creating an upstream caret with the mouse was"
+        RenderText {#text} at (473,0) size 779x35
+          text run at (473,0) width 9: ". "
+          text run at (481,0) width 298: "Creating an upstream caret with the mouse was"
           text run at (0,18) width 591: "impossible if the upstream and downstream carets were separated only by unrendered content."
       RenderBlock {P} at (0,114) size 784x36
-        RenderText {#text} at (0,0) size 766x35
+        RenderText {#text} at (0,0) size 764x35
           text run at (0,0) width 318: "This test uses the eventSender to do mouse clicks. "
-          text run at (318,0) width 448: "To run it manually, click in the space after all the text on the first line in"
+          text run at (318,0) width 446: "To run it manually, click in the space after all the text on the first line in"
           text run at (0,18) width 166: "the above editable region. "
           text run at (166,18) width 384: "Clicking should create a caret after the first space after the 'e'."
 caret: position 1 of child 2 {#text} of child 1 {DIV} of body

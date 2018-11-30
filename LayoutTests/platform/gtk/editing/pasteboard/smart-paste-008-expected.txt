@@ -22,9 +22,9 @@ layer at (0,0) size 800x600
           text run at (394,0) width 379: "In some cases, it used information gathered at the start of the"
           text run at (0,18) width 722: "selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 765x35
-          text run at (0,0) width 548: "A smart paste is performed into a selection starting in one block and ending in another. "
-          text run at (548,0) width 217: "Spaces should surround the pasted"
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 547: "A smart paste is performed into a selection starting in one block and ending in another. "
+          text run at (546,0) width 218: "Spaces should surround the pasted"
           text run at (0,18) width 37: "word."
       RenderBlock {DIV} at (0,104) size 784x18
         RenderBlock {DIV} at (0,0) size 784x18

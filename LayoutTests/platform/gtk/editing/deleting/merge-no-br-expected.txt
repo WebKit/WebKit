@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 782x35
-          text run at (0,0) width 782: "This places the caret before the 'T' in 'Two' and Deletes. 'One' and 'Two' should be merged but the blocks containing 'Three'"
+        RenderText {#text} at (0,0) size 780x35
+          text run at (0,0) width 780: "This places the caret before the 'T' in 'Two' and Deletes. 'One' and 'Two' should be merged but the blocks containing 'Three'"
           text run at (0,18) width 230: "and 'Four' should remain untouched."
       RenderBlock {DIV} at (8,52) size 768x176
         RenderBlock {DIV} at (16,16) size 736x40 [border: (3px solid #FF0000)]
-          RenderText {#text} at (11,11) size 57x17
-            text run at (11,11) width 57: "OneTwo"
+          RenderText {#text} at (11,11) size 56x17
+            text run at (11,11) width 56: "OneTwo"
         RenderBlock {DIV} at (16,64) size 736x96 [border: (3px solid #008000)]
           RenderBlock {DIV} at (19,19) size 698x40 [border: (3px solid #000000)]
             RenderText {#text} at (11,11) size 37x17

@@ -3,10 +3,10 @@ layer at (0,0) size 1008x1016
 layer at (0,0) size 785x1016
   RenderBlock {HTML} at (0,0) size 785x1016
     RenderBody {BODY} at (8,8) size 1000x1000
-layer at (50,166) size 439x18
-  RenderBlock (positioned) {P} at (50,166) size 439x18
-    RenderText {#text} at (0,0) size 439x17
-      text run at (0,0) width 439: "You should see a green square in the top left corner of an orange box."
+layer at (50,166) size 437x18
+  RenderBlock (positioned) {P} at (50,166) size 438x18
+    RenderText {#text} at (0,0) size 438x17
+      text run at (0,0) width 438: "You should see a green square in the top left corner of an orange box."
 layer at (50,50) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FFA500]
 layer at (50,50) size 50x50

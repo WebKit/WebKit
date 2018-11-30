@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 761x35
-          text run at (0,0) width 706: "This tests for a problem where empty table rows after the selection being deleted would be removed incorrectly. "
-          text run at (706,0) width 55: "Only the"
+        RenderText {#text} at (0,0) size 760x35
+          text run at (0,0) width 705: "This tests for a problem where empty table rows after the selection being deleted would be removed incorrectly. "
+          text run at (704,0) width 56: "Only the"
           text run at (0,18) width 343: "last letter in 'foo' should be removed during this delete."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderTable {TABLE} at (0,0) size 29x52 [border: (1px outset #808080)]

@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,5) size 35x17
           text run at (0,5) width 35: "Hello"
         RenderTextControl {INPUT} at (37,2) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (230,5) size 40x17
-          text run at (230,5) width 40: "World"
+        RenderText {#text} at (230,5) size 39x17
+          text run at (230,5) width 39: "World"
 layer at (48,47) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
 caret: position 5 of child 2 {#text} of child 2 {DIV} of body

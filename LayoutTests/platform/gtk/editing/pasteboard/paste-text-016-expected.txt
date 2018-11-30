@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (14,14) size 756x27
             RenderText {#text} at (0,0) size 319x26
               text run at (0,0) width 319: "Should be first line of document."
-            RenderBR {BR} at (319,21) size 0x0
+            RenderBR {BR} at (318,21) size 1x0
           RenderBlock {P} at (14,41) size 756x27
             RenderText {#text} at (0,0) size 130x26
               text run at (0,0) width 130: "***TEST***"

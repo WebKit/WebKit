@@ -103,15 +103,15 @@ layer at (0,0) size 800x94
                 text run at (421,0) width 12: "A"
               RenderCounter at (433,0) size 28x17
                 text run at (433,0) width 28: "2.11"
-              RenderText at (461,0) size 5x17
-                text run at (461,0) width 5: "-"
-          RenderInline (generated) at (0,0) size 25x17
-            RenderText at (466,0) size 12x17
-              text run at (466,0) width 12: "A"
-            RenderCounter at (478,0) size 8x17
-              text run at (478,0) width 8: "3"
-            RenderText at (486,0) size 5x17
-              text run at (486,0) width 5: "-"
+              RenderText at (460,0) size 6x17
+                text run at (460,0) width 6: "-"
+          RenderInline (generated) at (0,0) size 26x17
+            RenderText at (465,0) size 13x17
+              text run at (465,0) width 13: "A"
+            RenderCounter at (477,0) size 9x17
+              text run at (477,0) width 9: "3"
+            RenderText at (485,0) size 6x17
+              text run at (485,0) width 6: "-"
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 491x17
           text run at (0,0) width 491: "B1-B2-B2.1-B2.2-A2.3-B2.4-A2.5-A2.6-B2.7-B2.8-A2.9-A2.10-A2.11-A3-"

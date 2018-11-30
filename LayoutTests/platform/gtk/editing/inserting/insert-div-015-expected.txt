@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x27
-        RenderText {#text} at (0,0) size 627x26
-          text run at (0,0) width 627: "Test inserting paragraphs: should see empty red box above \"foo\""
+        RenderText {#text} at (0,0) size 626x26
+          text run at (0,0) width 626: "Test inserting paragraphs: should see empty red box above \"foo\""
       RenderBlock {DIV} at (0,27) size 784x12
       RenderBlock {DIV} at (0,39) size 784x55 [border: (2px solid #FF0000)]
         RenderText {#text} at (14,14) size 34x26

@@ -18,9 +18,9 @@ layer at (0,0) size 800x255
         RenderInline {STRONG} at (0,0) size 38x17
           RenderText {#text} at (395,0) size 38x17
             text run at (395,0) width 38: "green"
-        RenderText {#text} at (433,0) size 761x35
-          text run at (433,0) width 178: ". If this precise combination "
-          text run at (611,0) width 150: "does not occur, then the"
+        RenderText {#text} at (432,0) size 761x35
+          text run at (432,0) width 179: ". If this precise combination "
+          text run at (610,0) width 151: "does not occur, then the"
           text run at (0,18) width 183: "user agent has failed this test."
       RenderBlock {P} at (0,52) size 784x55
         RenderInline (generated) at (0,0) size 20x36 [color=#008000]
@@ -42,10 +42,10 @@ layer at (0,0) size 800x255
         RenderInline {STRONG} at (0,0) size 38x17
           RenderText {#text} at (603,15) size 38x17
             text run at (603,15) width 38: "green"
-        RenderText {#text} at (641,15) size 733x39
-          text run at (641,15) width 92: ". If this precise"
+        RenderText {#text} at (640,15) size 733x39
+          text run at (640,15) width 93: ". If this precise"
           text run at (0,37) width 182: "combination does not occur, "
-          text run at (182,37) width 237: "then the user agent has failed this test."
+          text run at (181,37) width 238: "then the user agent has failed this test."
       RenderBlock {P} at (0,123) size 784x100
         RenderInline (generated) at (0,0) size 57x62 [color=#008000]
           RenderText at (0,1) size 57x62
@@ -68,7 +68,7 @@ layer at (0,0) size 800x255
         RenderInline {STRONG} at (0,0) size 38x17
           RenderText {#text} at (246,64) size 38x17
             text run at (246,64) width 38: "green"
-        RenderText {#text} at (284,64) size 770x35
-          text run at (284,64) width 278: ". If this precise combination does not occur, "
-          text run at (562,64) width 208: "then the user agent has failed this"
+        RenderText {#text} at (283,64) size 770x35
+          text run at (283,64) width 279: ". If this precise combination does not occur, "
+          text run at (561,64) width 209: "then the user agent has failed this"
           text run at (0,82) width 25: "test."

@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (1,1) size 38x17
           text run at (1,1) width 38: "chello"
       RenderBlock {P} at (0,124) size 784x18
-        RenderText {#text} at (0,0) size 186x17
-          text run at (0,0) width 186: "This div is completely empty."
+        RenderText {#text} at (0,0) size 185x17
+          text run at (0,0) width 185: "This div is completely empty."
       RenderBlock {DIV} at (0,158) size 708x22 [border: (1px dotted #0000FF)]
         RenderText {#text} at (1,1) size 7x17
           text run at (1,1) width 7: "c"

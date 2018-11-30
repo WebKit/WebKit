@@ -7,8 +7,8 @@ layer at (0,0) size 800x384
         RenderText {#text} at (0,0) size 293x17
           text run at (0,0) width 293: "This paragraph should have green background"
       RenderBlock {address} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 333x17
-          text run at (0,0) width 333: "But this address is here only to fill space in the dom.."
+        RenderText {#text} at (0,0) size 332x17
+          text run at (0,0) width 332: "But this address is here only to fill space in the dom.."
       RenderBlock {p} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 152x17
           text run at (0,0) width 152: "So does this paragraph !"

@@ -4,8 +4,8 @@ layer at (0,0) size 785x2000
   RenderBlock {HTML} at (0,0) size 785x2000
     RenderBody {BODY} at (0,0) size 785x2000
       RenderBlock {P} at (0,210) size 785x18
-        RenderText {#text} at (0,0) size 188x17
-          text run at (0,0) width 188: "You should see no red above."
+        RenderText {#text} at (0,0) size 187x17
+          text run at (0,0) width 187: "You should see no red above."
 layer at (20,70) size 100x100
   RenderBlock (positioned) {DIV} at (20,70) size 100x100 [bgcolor=#FF0000]
 layer at (220,120) size 100x100

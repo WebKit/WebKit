@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 768x35
           RenderText {#text} at (350,0) size 768x35
             text run at (350,0) width 418: "This demonstrates a bug: the two cells that contained the ends"
-            text run at (0,18) width 646: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
+            text run at (0,18) width 645: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderTable {TABLE} at (0,0) size 38x52 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 36x50
@@ -59,8 +59,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 8x17
                   text run at (2,2) width 8: "9"
       RenderBlock {P} at (0,246) size 784x18
-        RenderText {#text} at (0,0) size 304x17
-          text run at (0,0) width 304: "This empties the first row, it should be removed."
+        RenderText {#text} at (0,0) size 303x17
+          text run at (0,0) width 303: "This empties the first row, it should be removed."
       RenderBlock {DIV} at (0,280) size 784x70
         RenderBlock {DIV} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 39x17

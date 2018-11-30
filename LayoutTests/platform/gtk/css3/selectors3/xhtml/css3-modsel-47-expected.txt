@@ -10,8 +10,8 @@ layer at (0,0) size 800x186
               text run at (0,0) width 370: "The text in this paragraph should have a green background"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {address} at (16,34) size 752x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 292x17
-            text run at (0,0) width 292: "This address should have a green background"
+          RenderText {#text} at (0,0) size 291x17
+            text run at (0,0) width 291: "This address should have a green background"
         RenderBlock {q} at (16,68) size 752x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 434x17
             text run at (0,0) width 434: "This element in another namespace should have a green background."

@@ -4,8 +4,8 @@ layer at (0,0) size 800x68
   RenderBlock {HTML} at (0,0) size 800x68
     RenderBody {BODY} at (8,16) size 784x36
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 774x35
-          text run at (0,0) width 774: "Below, on the right edge of the page, there should be a green square. In the middle of such green square, a black horizontal"
+        RenderText {#text} at (0,0) size 773x35
+          text run at (0,0) width 773: "Below, on the right edge of the page, there should be a green square. In the middle of such green square, a black horizontal"
           text run at (0,18) width 656: "stripe should be traversing it and protruding out of it toward the left. There should be no red in this page."
 layer at (664,68) size 128x128
   RenderBlock (positioned) {DIV} at (664,68) size 128x128 [bgcolor=#FF0000]

@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 735x53
             text run at (0,27) width 735: "Pasting and matching style when there is nothing typed, but the typing style"
@@ -32,11 +32,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (14,111) size 756x108
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
-          RenderText {#text} at (0,27) size 697x53
+          RenderBR {BR} at (188,21) size 1x0
+          RenderText {#text} at (0,27) size 698x53
             text run at (0,27) width 691: "The pasted word should match the current typing style. In this case, the"
-            text run at (0,54) width 697: "typing style is set to bold. Should see this content in the red box below: "
-          RenderBR {BR} at (697,75) size 0x0
+            text run at (0,54) width 698: "typing style is set to bold. Should see this content in the red box below: "
+          RenderBR {BR} at (697,75) size 1x0
           RenderInline {B} at (0,0) size 50x26
             RenderText {#text} at (0,81) size 50x26
               text run at (0,81) width 50: "hello"

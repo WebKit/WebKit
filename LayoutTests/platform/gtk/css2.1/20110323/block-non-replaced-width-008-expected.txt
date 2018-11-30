@@ -4,12 +4,12 @@ layer at (0,0) size 800x258
   RenderBlock {HTML} at (0,0) size 800x258
     RenderBody {BODY} at (8,16) size 784x234
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 338x17
-          text run at (0,0) width 338: "Test passes if there is a filled green square below and "
-        RenderInline {STRONG} at (0,0) size 44x17
-          RenderText {#text} at (338,0) size 44x17
-            text run at (338,0) width 44: "no red"
-        RenderText {#text} at (382,0) size 4x17
-          text run at (382,0) width 4: "."
+        RenderText {#text} at (0,0) size 337x17
+          text run at (0,0) width 337: "Test passes if there is a filled green square below and "
+        RenderInline {STRONG} at (0,0) size 45x17
+          RenderText {#text} at (336,0) size 45x17
+            text run at (336,0) width 45: "no red"
+        RenderText {#text} at (380,0) size 5x17
+          text run at (380,0) width 5: "."
       RenderBlock {DIV} at (0,34) size 400x200 [border: none (200px solid #FF0000) none]
         RenderBlock {DIV} at (0,0) size 400x200 [border: none (200px solid #008000) none]

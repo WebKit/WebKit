@@ -14,7 +14,7 @@ layer at (0,0) size 785x2088
       RenderBlock (anonymous) at (0,0) size 769x54
         RenderText {#text} at (0,0) size 583x17
           text run at (0,0) width 583: "This test makes sure that we don't scroll unnecessarily to reveal an editable HTML Element. "
-        RenderBR {BR} at (583,14) size 0x0
+        RenderBR {BR} at (582,14) size 1x0
         RenderText {#text} at (0,18) size 262x17
           text run at (0,18) width 262: "If the document doesn't scroll, test passes."
         RenderBR {BR} at (262,32) size 0x0

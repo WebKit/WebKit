@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 601x17
           text run at (0,0) width 601: "This tests inserting a paragraph separator before a special element at the start of an editable root."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 611x17
-          text run at (0,0) width 611: "Visually, it should leave a blank line before the link, and the caret selection at the start of the link."
+        RenderText {#text} at (0,0) size 609x17
+          text run at (0,0) width 609: "Visually, it should leave a blank line before the link, and the caret selection at the start of the link."
       RenderBlock {P} at (0,68) size 784x36
-        RenderText {#text} at (0,0) size 714x35
-          text run at (0,0) width 714: "Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See Radar"
+        RenderText {#text} at (0,0) size 713x35
+          text run at (0,0) width 713: "Structurally, the empty paragraph element should go before the anchor element, rather than inside of it. See Radar"
           text run at (0,18) width 68: "#5452675."
       RenderBlock {DIV} at (0,120) size 784x36
         RenderBlock {DIV} at (0,0) size 784x18

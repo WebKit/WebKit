@@ -4,8 +4,8 @@ layer at (0,0) size 800x97
   RenderBlock {html} at (0,0) size 800x97
     RenderBody {body} at (8,16) size 784x73
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 380x17
-          text run at (0,0) width 380: "There should be no red below, except for antialiasing issues."
+        RenderText {#text} at (0,0) size 379x17
+          text run at (0,0) width 379: "There should be no red below, except for antialiasing issues."
 layer at (8,50) size 784x39
   RenderBlock (relative positioned) {div} at (0,34) size 784x39
 layer at (8,50) size 784x39

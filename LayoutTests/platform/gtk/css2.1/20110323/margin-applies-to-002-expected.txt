@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 457x17
-          text run at (0,0) width 457: "Test passes if there is no space between the blue and orange lines below."
+        RenderText {#text} at (0,0) size 455x17
+          text run at (0,0) width 455: "Test passes if there is no space between the blue and orange lines below."
 layer at (8,50) size 240x240
   RenderBlock (positioned) {DIV} at (8,50) size 240x240 [border: (10px solid #0000FF)]
     RenderTable {DIV} at (10,10) size 220x220

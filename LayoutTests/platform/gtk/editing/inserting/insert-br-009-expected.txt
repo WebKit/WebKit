@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 774x35
           text run at (0,0) width 316: "This tests for a bug in InsertLineBreakCommand. "
           text run at (316,0) width 458: "Only one line break should be inserted and the caret should end up at the"
-          text run at (0,18) width 194: "end of the bordered div below."
+          text run at (0,18) width 193: "end of the bordered div below."
       RenderBlock {DIV} at (0,52) size 784x56 [border: (1px solid #000000)]
         RenderText {#text} at (1,1) size 80x17
           text run at (1,1) width 80: "Hello world."

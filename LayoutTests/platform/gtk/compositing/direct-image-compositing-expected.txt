@@ -7,11 +7,11 @@ layer at (0,0) size 785x750
         RenderText {#text} at (0,0) size 389x36
           text run at (0,0) width 389: "Image optimisation in layers"
       RenderBlock {P} at (0,58) size 769x55
-        RenderText {#text} at (0,0) size 749x53
+        RenderText {#text} at (0,0) size 747x53
           text run at (0,0) width 595: "This test exercises direct compositing of images with hardware acceleration. The visual results "
           text run at (595,0) width 34: "using"
-          text run at (0,18) width 683: "ACCELERATED_COMPOSITING and regular TOT should be identical. Running this test manually with "
-          text run at (683,18) width 66: "the correct"
+          text run at (0,18) width 681: "ACCELERATED_COMPOSITING and regular TOT should be identical. Running this test manually with "
+          text run at (680,18) width 67: "the correct"
           text run at (0,36) width 442: "debug options will show which elements are directly composited. See "
         RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
           RenderText {#text} at (442,36) size 305x17

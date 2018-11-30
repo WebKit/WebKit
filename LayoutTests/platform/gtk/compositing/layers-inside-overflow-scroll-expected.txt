@@ -4,8 +4,8 @@ layer at (0,0) size 800x428
   RenderBlock {HTML} at (0,0) size 800x428
     RenderBody {BODY} at (8,16) size 784x402
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 437x17
-          text run at (0,0) width 437: "The red box in the overflow:scroll div should be scrolled out of view."
+        RenderText {#text} at (0,0) size 436x17
+          text run at (0,0) width 436: "The red box in the overflow:scroll div should be scrolled out of view."
       RenderBlock {DIV} at (10,34) size 302x206 [border: (1px solid #000000)]
         RenderText {#text} at (0,0) size 0x0
 layer at (19,51) size 300x200

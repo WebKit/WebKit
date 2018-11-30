@@ -16,11 +16,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 745x35
-          text run at (0,0) width 392: "This tests deleting a selection created with a word granularity. "
-          text run at (392,0) width 353: "To run it manually, double click on 'bar' and hit forward"
+        RenderText {#text} at (0,0) size 742x35
+          text run at (0,0) width 391: "This tests deleting a selection created with a word granularity. "
+          text run at (390,0) width 352: "To run it manually, double click on 'bar' and hit forward"
           text run at (0,18) width 45: "delete. "
-          text run at (45,18) width 159: "You should see 'foo baz'."
+          text run at (45,18) width 158: "You should see 'foo baz'."
       RenderBlock {DIV} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 21x17
           text run at (0,0) width 21: "foo"

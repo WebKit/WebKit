@@ -9,11 +9,17 @@ layer at (0,0) size 785x1005
       RenderBlock {PRE} at (0,34) size 769x90
         RenderText {#text} at (0,0) size 408x90
           text run at (0,0) width 392: ".zero {background-color: silver; margin-left: 0;}"
+          text run at (392,0) width 0: " "
           text run at (0,15) width 400: ".one {margin-left: 0.5in; background-color: aqua;}"
+          text run at (400,15) width 0: " "
           text run at (0,30) width 392: ".two {margin-left: 25px; background-color: aqua;}"
+          text run at (392,30) width 0: " "
           text run at (0,45) width 400: ".three {margin-left: 5em; background-color: aqua;}"
+          text run at (400,45) width 0: " "
           text run at (0,60) width 392: ".four {margin-left: 25%; background-color: aqua;}"
+          text run at (392,60) width 0: " "
           text run at (0,75) width 408: ".five {margin-left: -10px; background-color: aqua;}"
+          text run at (408,75) width 0: " "
       RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
@@ -34,8 +40,8 @@ layer at (0,0) size 785x1005
       RenderBlock {UL} at (25,343) size 744x90 [bgcolor=#808080]
         RenderListItem {LI} at (40,0) size 704x18
           RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (0,0) size 686x17
-            text run at (0,0) width 686: "The left margin on this unordered list has been set to 25 pixels, and its background color has been set to gray."
+          RenderText {#text} at (0,0) size 685x17
+            text run at (0,0) width 685: "The left margin on this unordered list has been set to 25 pixels, and its background color has been set to gray."
         RenderListItem {LI} at (65,18) size 679x54 [bgcolor=#FFFFFF]
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 668x53
@@ -55,15 +61,15 @@ layer at (0,0) size 785x1005
           text run at (0,0) width 758: "This paragraph has a left margin of -10px, which should cause it to be wider than it might otherwise be, and it has a light"
           text run at (0,18) width 114: "blue background. "
           text run at (114,18) width 386: "In all other respects, however, the element should be normal. "
-          text run at (500,18) width 278: "No styles have been applied to it besides the"
-          text run at (0,36) width 294: "negative left margin and the background color."
+          text run at (499,18) width 279: "No styles have been applied to it besides the"
+          text run at (0,36) width 293: "negative left margin and the background color."
       RenderTable {TABLE} at (0,553) size 769x436 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x434
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x408
             RenderTableCell {TD} at (0,217) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -90,7 +96,7 @@ layer at (0,0) size 785x1005
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderText {#text} at (0,0) size 650x35
                     text run at (0,0) width 650: "The left margin on this unordered list has been set to 25 pixels, and its background color has been set to"
-                    text run at (0,18) width 32: "gray."
+                    text run at (0,18) width 31: "gray."
                 RenderListItem {LI} at (65,36) size 657x54 [bgcolor=#FFFFFF]
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderText {#text} at (0,0) size 656x53
@@ -110,5 +116,5 @@ layer at (0,0) size 785x1005
                   text run at (0,0) width 726: "This paragraph has a left margin of -10px, which should cause it to be wider than it might otherwise be, and it has a"
                   text run at (0,18) width 146: "light blue background. "
                   text run at (146,18) width 386: "In all other respects, however, the element should be normal. "
-                  text run at (532,18) width 205: "No styles have been applied to it"
-                  text run at (0,36) width 367: "besides the negative left margin and the background color."
+                  text run at (531,18) width 206: "No styles have been applied to it"
+                  text run at (0,36) width 366: "besides the negative left margin and the background color."

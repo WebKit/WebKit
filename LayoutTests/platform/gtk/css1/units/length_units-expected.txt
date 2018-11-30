@@ -9,16 +9,27 @@ layer at (0,0) size 785x1613
       RenderBlock {PRE} at (0,34) size 769x165
         RenderText {#text} at (0,0) size 624x165
           text run at (0,0) width 184: ".zero {margin-left: 0;}"
+          text run at (184,0) width 0: " "
           text run at (0,15) width 192: ".one {margin-left: 3em;}"
+          text run at (192,15) width 0: " "
           text run at (0,30) width 192: ".two {margin-left: 3ex;}"
+          text run at (192,30) width 0: " "
           text run at (0,45) width 216: ".three {margin-left: 36px;}"
+          text run at (216,45) width 0: " "
           text run at (0,60) width 216: ".four {margin-left: 0.5in;}"
+          text run at (216,60) width 0: " "
           text run at (0,75) width 224: ".five {margin-left: 1.27cm;}"
+          text run at (224,75) width 0: " "
           text run at (0,90) width 216: ".six {margin-left: 12.7mm;}"
+          text run at (216,90) width 0: " "
           text run at (0,105) width 216: ".seven {margin-left: 36pt;}"
+          text run at (216,105) width 0: " "
           text run at (0,120) width 208: ".eight {margin-left: 3pc;}"
+          text run at (208,120) width 0: " "
           text run at (0,135) width 208: ".nine {margin-left: +3pc;}"
+          text run at (208,135) width 0: " "
           text run at (0,150) width 624: ".ten {font-size: 40px; border-left: 1ex solid purple; background-color: aqua;}"
+          text run at (624,150) width 0: " "
       RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,230) size 769x36
         RenderText {#text} at (0,0) size 761x35
@@ -86,15 +97,15 @@ layer at (0,0) size 785x1613
       RenderTable {TABLE} at (0,891) size 769x706 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x704
           RenderTableRow {TR} at (0,0) size 767x26
-            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+            RenderTableCell {TD} at (0,0) size 768x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x678
-            RenderTableCell {TD} at (0,352) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,352) size 13x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 755x678 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (12,26) size 756x678 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x36
                 RenderText {#text} at (0,0) size 721x35
                   text run at (0,0) width 721: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer)"

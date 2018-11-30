@@ -9,10 +9,15 @@ layer at (0,0) size 785x816
       RenderBlock {PRE} at (0,34) size 769x75
         RenderText {#text} at (0,0) size 568x75
           text run at (0,0) width 176: ".one {display: block;}"
+          text run at (176,0) width 0: " "
           text run at (0,15) width 184: ".two {display: inline;}"
+          text run at (184,15) width 0: " "
           text run at (0,30) width 568: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
+          text run at (568,30) width 0: " "
           text run at (0,45) width 272: ".four {display: none; color: red;}"
+          text run at (272,45) width 0: " "
           text run at (0,60) width 152: "I {display: block;}"
+          text run at (152,60) width 0: " "
       RenderBlock {HR} at (0,122) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,140) size 769x18
         RenderText {#text} at (0,0) size 293x17
@@ -42,9 +47,9 @@ layer at (0,0) size 785x816
         RenderInline {CODE} at (0,0) size 120x15
           RenderText {#text} at (18,21) size 120x15
             text run at (18,21) width 120: "list-style-type"
-        RenderText {#text} at (138,18) size 721x35
+        RenderText {#text} at (138,18) size 720x35
           text run at (138,18) width 359: " is supported, there will be a square for the item marker). "
-          text run at (497,18) width 224: "A 3em left margin has been applied"
+          text run at (497,18) width 223: "A 3em left margin has been applied"
           text run at (0,36) width 376: "in order to ensure that there is space for the list-item marker."
       RenderBlock {P} at (0,314) size 769x18
         RenderText {#text} at (0,0) size 456x17
@@ -67,9 +72,9 @@ layer at (0,0) size 785x816
         RenderTableSection {TBODY} at (1,1) size 767x346
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x320
             RenderTableCell {TD} at (0,173) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -103,9 +108,9 @@ layer at (0,0) size 785x816
                 RenderInline {CODE} at (0,0) size 120x15
                   RenderText {#text} at (55,21) size 120x15
                     text run at (55,21) width 120: "list-style-type"
-                RenderText {#text} at (175,18) size 674x35
+                RenderText {#text} at (175,18) size 673x35
                   text run at (175,18) width 359: " is supported, there will be a square for the item marker). "
-                  text run at (534,18) width 140: "A 3em left margin has"
+                  text run at (534,18) width 139: "A 3em left margin has"
                   text run at (0,36) width 460: "been applied in order to ensure that there is space for the list-item marker."
               RenderBlock {P} at (4,178) size 747x18
                 RenderText {#text} at (0,0) size 456x17

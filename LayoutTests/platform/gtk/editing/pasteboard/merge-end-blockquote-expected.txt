@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 397: "This tests pasting a Mail blockquote at the start of a paragraph. "
           text run at (397,0) width 209: "Blockquoting should be stripped."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 122x17
-          text run at (0,0) width 122: "Blockquoted Textx"
+        RenderText {#text} at (0,0) size 121x17
+          text run at (0,0) width 121: "Blockquoted Textx"
       RenderBlock {P} at (0,68) size 784x36
         RenderText {#text} at (0,0) size 759x35
           text run at (0,0) width 289: "This tests pasting text into a Mail blockquote. "
@@ -38,6 +38,6 @@ layer at (0,0) size 800x600
               text run at (0,0) width 102: "Blockquotedfoo"
         RenderBlock {BLOCKQUOTE} at (40,34) size 704x18
           RenderBlock {DIV} at (0,0) size 704x18
-            RenderText {#text} at (0,0) size 49x17
-              text run at (0,0) width 49: "barText"
+            RenderText {#text} at (0,0) size 48x17
+              text run at (0,0) width 48: "barText"
 caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

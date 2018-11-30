@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 754x35
-          text run at (0,0) width 459: "This tests moving the caret forward through content of mixed editability. "
-          text run at (459,0) width 295: "The caret should move down one line from the"
+        RenderText {#text} at (0,0) size 753x35
+          text run at (0,0) width 458: "This tests moving the caret forward through content of mixed editability. "
+          text run at (457,0) width 296: "The caret should move down one line from the"
           text run at (0,18) width 470: "editable piece to the editable piece that's embedded in a non-editable piece."
       RenderBlock {DIV} at (0,52) size 784x64
         RenderBlock (anonymous) at (0,0) size 784x18

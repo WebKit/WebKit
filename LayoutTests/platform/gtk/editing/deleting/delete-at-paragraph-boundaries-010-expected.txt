@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x314 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x108
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 743x53
             text run at (0,27) width 743: "Deleting when a selection starts at the beginning of a text following a nested"
@@ -28,16 +28,16 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (691,75) size 0x0
           RenderText {#text} at (0,81) size 553x26
             text run at (0,81) width 267: "FIXME: Currently broken! "
-            text run at (267,81) width 286: "See rdar://problem/4099839/."
+            text run at (266,81) width 287: "See rdar://problem/4099839/."
         RenderBlock {DIV} at (14,138) size 756x162
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 752x134
             text run at (0,27) width 727: "Should see a total of five lines in the red box, with the third line inside of a"
             text run at (0,54) width 675: "nested red box. First line should be \"one\". Next line should be \"two\". "
             text run at (675,54) width 47: "Next"
-            text run at (0,81) width 737: "line should be \"cha cha cha\", inside of a nested red box. Next line should be"
+            text run at (0,81) width 738: "line should be \"cha cha cha\", inside of a nested red box. Next line should be"
             text run at (0,108) width 52: "\"ur\". "
             text run at (52,108) width 372: "The last line should be \"cha cha cha\". "
             text run at (424,108) width 328: "Insertion point should be blinking"

@@ -8,7 +8,7 @@ layer at (0,0) size 800x34
           RenderText {#text} at (0,0) size 104x17
             text run at (0,0) width 104: "This line should "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {SPAN} at (0,0) size 166x17
-          RenderText {#text} at (104,0) size 166x17
-            text run at (104,0) width 166: "have a green background."
+        RenderInline {SPAN} at (0,0) size 165x17
+          RenderText {#text} at (104,0) size 165x17
+            text run at (104,0) width 165: "have a green background."
         RenderText {#text} at (0,0) size 0x0

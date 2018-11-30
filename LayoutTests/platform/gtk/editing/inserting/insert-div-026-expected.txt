@@ -24,29 +24,29 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x108
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 721x53
             text run at (0,27) width 721: "Inserting blocks for paragraphs should do a better job of finding a block to"
-            text run at (0,54) width 117: "insert after. "
-          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
-            RenderText {#text} at (117,54) size 260x26
-              text run at (117,54) width 260: "<rdar://problem/3996605>"
-          RenderText {#text} at (377,54) size 735x53
-            text run at (377,54) width 358: " Insert paragraph command puts new"
+            text run at (0,54) width 116: "insert after. "
+          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+            RenderText {#text} at (115,54) size 261x26
+              text run at (115,54) width 261: "<rdar://problem/3996605>"
+          RenderText {#text} at (375,54) size 734x53
+            text run at (375,54) width 359: " Insert paragraph command puts new"
             text run at (0,81) width 554: "block in wrong place, creating difficult-to-handle HTML"
         RenderBlock {DIV} at (14,138) size 756x54
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 442x26
             text run at (0,27) width 442: "Should see this content in the red box below: "
-          RenderInline {B} at (0,0) size 20x26
-            RenderText {#text} at (442,27) size 20x26
-              text run at (442,27) width 20: "fo"
-          RenderText {#text} at (462,27) size 12x26
-            text run at (462,27) width 12: "x"
+          RenderInline {B} at (0,0) size 21x26
+            RenderText {#text} at (441,27) size 21x26
+              text run at (441,27) width 21: "fo"
+          RenderText {#text} at (461,27) size 13x26
+            text run at (461,27) width 13: "x"
       RenderBlock {DIV} at (0,230) size 784x31
         RenderBlock {DIV} at (0,0) size 784x31 [border: (2px solid #FF0000)]
           RenderInline {B} at (0,0) size 20x26

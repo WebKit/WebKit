@@ -9,8 +9,11 @@ layer at (0,0) size 785x655
       RenderBlock {PRE} at (0,34) size 769x60
         RenderText {#text} at (0,0) size 360x60
           text run at (0,0) width 224: "P:first-line {color: green;}"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 272: ".two:first-line {font-size: 200%;}"
+          text run at (272,15) width 0: " "
           text run at (0,30) width 360: ".three:first-line {font-variant: small-caps;}"
+          text run at (360,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 769x54
@@ -24,7 +27,7 @@ layer at (0,0) size 785x655
         RenderText {#text} at (0,0) size 767x72
           text run at (0,0) width 767: "The first line of this paragraph, and only that one, should be"
           text run at (0,37) width 216: "a larger font size as well as green. "
-          text run at (216,37) width 507: "If this precise combination does not occur, then the user agent has failed this test."
+          text run at (215,37) width 508: "If this precise combination does not occur, then the user agent has failed this test."
           text run at (0,55) width 663: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,284) size 769x72
         RenderText {#text} at (0,0) size 762x53
@@ -43,9 +46,9 @@ layer at (0,0) size 785x655
         RenderTableSection {TBODY} at (1,1) size 767x265
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x239
             RenderTableCell {TD} at (0,132) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -62,7 +65,7 @@ layer at (0,0) size 785x655
                 RenderText {#text} at (0,0) size 742x72
                   text run at (0,0) width 729: "The first line of this paragraph, and only that one, should"
                   text run at (0,37) width 235: "be a larger font size as well as green. "
-                  text run at (235,37) width 507: "If this precise combination does not occur, then the user agent has failed this test."
+                  text run at (234,37) width 508: "If this precise combination does not occur, then the user agent has failed this test."
                   text run at (0,55) width 663: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,163) size 747x72
                 RenderText {#text} at (0,0) size 744x53

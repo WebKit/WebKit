@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 783x35
           text run at (0,0) width 579: "This tests for a bug where empty table rows well after the selection to delete were removed. "
           text run at (579,0) width 204: "There should be five rows in the"
-          text run at (0,18) width 261: "table below, before and after the deletion."
+          text run at (0,18) width 260: "table below, before and after the deletion."
       RenderBlock {DIV} at (0,52) size 784x132
         RenderTable {TABLE} at (0,0) size 109x132 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 107x130

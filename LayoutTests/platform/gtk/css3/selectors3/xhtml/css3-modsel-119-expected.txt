@@ -18,8 +18,8 @@ layer at (0,0) size 800x288
             RenderText {#text} at (0,0) size 308x17
               text run at (0,0) width 308: "This paragraph should have a green background."
         RenderBlock {address} at (0,136) size 784x18 [bgcolor=#00FF00]
-          RenderText {#text} at (0,0) size 296x17
-            text run at (0,0) width 296: "This address should have a green background."
+          RenderText {#text} at (0,0) size 295x17
+            text run at (0,0) width 295: "This address should have a green background."
         RenderBlock {s} at (0,170) size 784x18 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 308x17
             text run at (0,0) width 308: "This paragraph should have a green background."

@@ -9,23 +9,31 @@ layer at (0,0) size 785x1902
       RenderBlock {PRE} at (0,34) size 769x135
         RenderText {#text} at (0,0) size 560x135
           text run at (0,0) width 344: "P.test {background: white; font-size: 20px;"
+          text run at (344,0) width 0: " "
           text run at (0,15) width 560: "        margin-left: 30px; margin-right: 10px; padding: 0; border: 0;}"
+          text run at (560,15) width 0: " "
           text run at (0,30) width 312: "IMG {padding: 0; border: 0; margin: 0;}"
+          text run at (312,30) width 0: " "
           text run at (0,45) width 200: "P.test IMG {float: left;}"
+          text run at (200,45) width 0: " "
           text run at (0,60) width 352: "#img2 {margin-top: 30px; margin-left: 30px;}"
+          text run at (352,60) width 0: " "
           text run at (0,75) width 368: "#img3 {margin-top: -30px; margin-left: -30px;}"
+          text run at (368,75) width 0: " "
           text run at (0,90) width 384: "#img4 {margin-right: 30px; margin-bottom: 30px;}"
+          text run at (384,90) width 0: " "
           text run at (0,105) width 400: "#img5 {margin-right: -30px; margin-bottom: -30px;}"
+          text run at (400,105) width 0: " "
           text run at (0,120) width 0: " "
       RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (30,204) size 729x92 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 708x91
+        RenderText {#text} at (0,0) size 729x91
           text run at (0,0) width 663: "This paragraph should have a white background which extends to the edges of the"
           text run at (0,23) width 122: "element's box. "
-          text run at (122,23) width 442: "There is no padding set on this paragraph whatsoever. "
-          text run at (564,23) width 144: "If the background"
-          text run at (0,46) width 702: "of the entire box is not white, this may cause problems with the following tests; at any"
-          text run at (0,69) width 281: "rate, it must be taken into account."
+          text run at (122,23) width 441: "There is no padding set on this paragraph whatsoever. "
+          text run at (562,23) width 167: "If the background of"
+          text run at (0,46) width 721: "the entire box is not white, this may cause problems with the following tests; at any rate,"
+          text run at (0,69) width 240: "it must be taken into account."
       RenderBlock {P} at (30,316) size 729x115 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (0,0) size 60x60
         RenderText {#text} at (60,0) size 719x114
@@ -36,17 +44,17 @@ layer at (0,0) size 785x1902
           text run at (256,46) width 454: "This paragraph should have a white background, first of"
           text run at (0,69) width 428: "all, which extends to the edges of the element's box. "
           text run at (428,69) width 249: "There is no padding set on this"
-          text run at (0,92) width 183: "paragraph whatsoever."
+          text run at (0,92) width 182: "paragraph whatsoever."
       RenderBlock {P} at (30,451) size 729x115 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (30,30) size 60x60
-        RenderText {#text} at (90,0) size 718x114
+        RenderText {#text} at (90,0) size 717x114
           text run at (90,0) width 615: "The image in the upper left corner of this paragraph should be pushed down"
           text run at (90,23) width 611: "and to the right 30 pixels each from the upper left corner of the paragraph's"
-          text run at (90,46) width 404: "box, and displace the paragraph text accordingly. "
-          text run at (494,46) width 224: "This paragraph should have"
+          text run at (90,46) width 403: "box, and displace the paragraph text accordingly. "
+          text run at (492,46) width 225: "This paragraph should have"
           text run at (90,69) width 613: "a white background, first of all, which extends to the edges of the element's"
           text run at (0,92) width 40: "box. "
-          text run at (40,92) width 437: "There is no padding set on this paragraph whatsoever."
+          text run at (40,92) width 436: "There is no padding set on this paragraph whatsoever."
       RenderBlock {P} at (30,586) size 729x115 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (-30,-30) size 60x60
         RenderText {#text} at (30,0) size 721x114
@@ -56,7 +64,7 @@ layer at (0,0) size 785x1902
           text run at (633,46) width 36: "This"
           text run at (0,69) width 719: "paragraph should have a white background, first of all, which extends to the edges of the"
           text run at (0,92) width 122: "element's box. "
-          text run at (122,92) width 437: "There is no padding set on this paragraph whatsoever."
+          text run at (122,92) width 436: "There is no padding set on this paragraph whatsoever."
       RenderBlock {P} at (30,721) size 729x138 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (0,0) size 60x60
         RenderText {#text} at (90,0) size 728x137
@@ -68,7 +76,7 @@ layer at (0,0) size 785x1902
           text run at (614,69) width 36: "This"
           text run at (0,92) width 719: "paragraph should have a white background, first of all, which extends to the edges of the"
           text run at (0,115) width 122: "element's box. "
-          text run at (122,115) width 437: "There is no padding set on this paragraph whatsoever."
+          text run at (122,115) width 436: "There is no padding set on this paragraph whatsoever."
       RenderBlock {P} at (30,879) size 729x138 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (0,0) size 60x60
         RenderText {#text} at (30,0) size 706x137
@@ -80,27 +88,27 @@ layer at (0,0) size 785x1902
           text run at (313,69) width 393: "This paragraph should have a white background,"
           text run at (0,92) width 489: "first of all, which extends to the edges of the element's box. "
           text run at (489,92) width 214: "There is no padding set on"
-          text run at (0,115) width 218: "this paragraph whatsoever."
+          text run at (0,115) width 217: "this paragraph whatsoever."
       RenderTable {TABLE} at (0,1037) size 769x849 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x847
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x821
             RenderTableCell {TD} at (0,423) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x821 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (34,4) size 707x92 [bgcolor=#FFFFFF]
-                RenderText {#text} at (0,0) size 700x91
+                RenderText {#text} at (0,0) size 707x91
                   text run at (0,0) width 663: "This paragraph should have a white background which extends to the edges of the"
                   text run at (0,23) width 122: "element's box. "
-                  text run at (122,23) width 442: "There is no padding set on this paragraph whatsoever. "
-                  text run at (564,23) width 44: "If the"
-                  text run at (0,46) width 700: "background of the entire box is not white, this may cause problems with the following"
-                  text run at (0,69) width 383: "tests; at any rate, it must be taken into account."
+                  text run at (122,23) width 441: "There is no padding set on this paragraph whatsoever. "
+                  text run at (562,23) width 145: "If the background"
+                  text run at (0,46) width 702: "of the entire box is not white, this may cause problems with the following tests; at any"
+                  text run at (0,69) width 281: "rate, it must be taken into account."
               RenderBlock {P} at (34,116) size 707x115 [bgcolor=#FFFFFF]
                 RenderImage {IMG} at (0,0) size 60x60
                 RenderText {#text} at (60,0) size 703x114
@@ -111,17 +119,17 @@ layer at (0,0) size 785x1902
                   text run at (290,46) width 393: "This paragraph should have a white background,"
                   text run at (0,69) width 489: "first of all, which extends to the edges of the element's box. "
                   text run at (489,69) width 214: "There is no padding set on"
-                  text run at (0,92) width 218: "this paragraph whatsoever."
+                  text run at (0,92) width 217: "this paragraph whatsoever."
               RenderBlock {P} at (34,251) size 707x115 [bgcolor=#FFFFFF]
                 RenderImage {IMG} at (30,30) size 60x60
                 RenderText {#text} at (90,0) size 705x114
                   text run at (90,0) width 615: "The image in the upper left corner of this paragraph should be pushed down"
                   text run at (90,23) width 611: "and to the right 30 pixels each from the upper left corner of the paragraph's"
-                  text run at (90,46) width 404: "box, and displace the paragraph text accordingly. "
-                  text run at (494,46) width 181: "This paragraph should"
+                  text run at (90,46) width 403: "box, and displace the paragraph text accordingly. "
+                  text run at (492,46) width 182: "This paragraph should"
                   text run at (90,69) width 574: "have a white background, first of all, which extends to the edges of the"
                   text run at (0,92) width 122: "element's box. "
-                  text run at (122,92) width 437: "There is no padding set on this paragraph whatsoever."
+                  text run at (122,92) width 436: "There is no padding set on this paragraph whatsoever."
               RenderBlock {P} at (34,386) size 707x115 [bgcolor=#FFFFFF]
                 RenderImage {IMG} at (-30,-30) size 60x60
                 RenderText {#text} at (30,0) size 706x114
@@ -131,7 +139,7 @@ layer at (0,0) size 785x1902
                   text run at (663,46) width 36: "This"
                   text run at (0,69) width 689: "paragraph should have a white background, first of all, which extends to the edges of"
                   text run at (0,92) width 152: "the element's box. "
-                  text run at (152,92) width 437: "There is no padding set on this paragraph whatsoever."
+                  text run at (152,92) width 436: "There is no padding set on this paragraph whatsoever."
               RenderBlock {P} at (34,521) size 707x138 [bgcolor=#FFFFFF]
                 RenderImage {IMG} at (0,0) size 60x60
                 RenderText {#text} at (90,0) size 694x137
@@ -142,7 +150,7 @@ layer at (0,0) size 785x1902
                   text run at (90,69) width 593: "the right and bottom edges of the image and the paragraph text around it."
                   text run at (0,92) width 657: "This paragraph should have a white background, first of all, which extends to the"
                   text run at (0,115) width 225: "edges of the element's box. "
-                  text run at (225,115) width 437: "There is no padding set on this paragraph whatsoever."
+                  text run at (225,115) width 436: "There is no padding set on this paragraph whatsoever."
               RenderBlock {P} at (34,679) size 707x138 [bgcolor=#FFFFFF]
                 RenderImage {IMG} at (0,0) size 60x60
                 RenderText {#text} at (30,0) size 706x137
@@ -154,4 +162,4 @@ layer at (0,0) size 785x1902
                   text run at (313,69) width 393: "This paragraph should have a white background,"
                   text run at (0,92) width 489: "first of all, which extends to the edges of the element's box. "
                   text run at (489,92) width 214: "There is no padding set on"
-                  text run at (0,115) width 218: "this paragraph whatsoever."
+                  text run at (0,115) width 217: "this paragraph whatsoever."

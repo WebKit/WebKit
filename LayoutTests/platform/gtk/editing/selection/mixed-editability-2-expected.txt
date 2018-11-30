@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 32x17
           RenderText {#text} at (57,0) size 32x17
             text run at (57,0) width 32: "Bold"
-        RenderText {#text} at (89,0) size 74x17
-          text run at (89,0) width 74: "TextShould"
-        RenderInline {SPAN} at (0,0) size 18x17
-          RenderText {#text} at (163,0) size 18x17
-            text run at (163,0) width 18: "Be"
-        RenderText {#text} at (181,0) size 53x17
-          text run at (181,0) width 53: "Selected"
+        RenderText {#text} at (89,0) size 73x17
+          text run at (89,0) width 73: "TextShould"
+        RenderInline {SPAN} at (0,0) size 19x17
+          RenderText {#text} at (161,0) size 19x17
+            text run at (161,0) width 19: "Be"
+        RenderText {#text} at (179,0) size 54x17
+          text run at (179,0) width 54: "Selected"
 selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

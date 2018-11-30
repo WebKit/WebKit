@@ -13,19 +13,19 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 693x53
             RenderText {#text} at (0,0) size 693x53
               text run at (0,0) width 687: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the"
-              text run at (687,0) width 6: " "
+              text run at (686,0) width 7: " "
               text run at (0,27) width 170: "english language."
         RenderBlock (anonymous) at (14,92) size 756x216
           RenderBlock {P} at (0,0) size 756x216
             RenderText {#text} at (0,0) size 756x215
               text run at (0,0) width 462: "Here's to the crazy ones, the misfits, the rebels, "
-              text run at (462,0) width 193: "the trouble makers, "
-              text run at (655,0) width 92: "the round"
-              text run at (747,0) width 6: " "
+              text run at (461,0) width 194: "the trouble makers, "
+              text run at (654,0) width 93: "the round"
+              text run at (746,0) width 7: " "
               text run at (0,27) width 243: "pegs in the square holes, "
-              text run at (243,27) width 350: "the ones who see things differently. "
-              text run at (593,27) width 144: "There not fond"
-              text run at (737,27) width 6: " "
+              text run at (243,27) width 349: "the ones who see things differently. "
+              text run at (591,27) width 145: "There not fond"
+              text run at (735,27) width 7: " "
               text run at (0,54) width 510: "of rules, and they have no respect for the status quo, "
               text run at (510,54) width 190: "you can quote then,"
               text run at (0,81) width 197: "disagree with them, "

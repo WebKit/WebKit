@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 735x35
+        RenderText {#text} at (0,0) size 734x35
           text run at (0,0) width 616: "This tests to make sure that a br isn't inserted into a tab span during an InsertLineBreak operation. "
-          text run at (616,0) width 119: "You can test for its"
+          text run at (616,0) width 118: "You can test for its"
           text run at (0,18) width 432: "existence with the DOM inspector or you can look at the render tree."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock {DIV} at (0,0) size 784x36

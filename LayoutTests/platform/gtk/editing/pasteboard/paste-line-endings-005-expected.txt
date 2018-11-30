@@ -21,23 +21,23 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 162x26
             text run at (0,27) width 162: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
-            RenderText {#text} at (162,27) size 260x26
-              text run at (162,27) width 260: "<rdar://problem/4045511>"
-          RenderText {#text} at (422,27) size 705x53
-            text run at (422,27) width 283: " Copying and pasting end-of-"
+          RenderInline {A} at (0,0) size 261x26 [color=#0000EE]
+            RenderText {#text} at (161,27) size 261x26
+              text run at (161,27) width 261: "<rdar://problem/4045511>"
+          RenderText {#text} at (421,27) size 705x53
+            text run at (421,27) width 284: " Copying and pasting end-of-"
             text run at (0,54) width 533: "paragraph selection puts insertion point in wrong place"
         RenderBlock {DIV} at (14,111) size 756x81
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,21) size 0x0
+          RenderBR {BR} at (188,21) size 1x0
           RenderText {#text} at (0,27) size 715x53
-            text run at (0,27) width 708: "Should see two lines of text below, self-documenting themselves as \"line"
+            text run at (0,27) width 707: "Should see two lines of text below, self-documenting themselves as \"line"
             text run at (0,54) width 715: "one\" and \"line two\". The insertion point must be at the start of \"line two\"."
       RenderBlock {DIV} at (0,230) size 784x58
         RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]

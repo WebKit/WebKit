@@ -26,7 +26,7 @@ layer at (0,0) size 800x585
       RenderBlock {DIV} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 779x53
           text run at (0,0) width 779: "This test validates the fix for a bug that occurred when typing a blank at the end of a line when the character doesn't fix by a"
-          text run at (0,18) width 760: "fraction of a pixel. If the test runs correctly, you should see the word 'you' at the end of the line and the word 'have' at the"
+          text run at (0,18) width 759: "fraction of a pixel. If the test runs correctly, you should see the word 'you' at the end of the line and the word 'have' at the"
           text run at (0,36) width 199: "beginning of the following line."
       RenderBlock (anonymous) at (0,54) size 784x18
         RenderBR {BR} at (0,0) size 0x17
