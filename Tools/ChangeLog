@@ -1,3 +1,14 @@
+2018-11-30  David Quesada  <david_quesada@apple.com>
+
+        -[WKProcessPool _downloadURLRequest:] should allow specifying the initiating web view
+        https://bugs.webkit.org/show_bug.cgi?id=192212
+        rdar://problem/46363706
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        (-[DownloadProgressTestRunner startDownload:expectedLength:]):
+
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Compute min/maxHeight margins only when they are needed.

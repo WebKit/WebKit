@@ -250,7 +250,7 @@ static void* progressObservingContext = &progressObservingContext;
         [m_webView loadRequest:request.get()];
         break;
     case DownloadStartType::StartInProcessPool:
-        [m_webView.get().configuration.processPool _downloadURLRequest:request.get()];
+        [m_webView.get().configuration.processPool _downloadURLRequest:request.get() originatingWebView:nullptr];
         break;
     }
 

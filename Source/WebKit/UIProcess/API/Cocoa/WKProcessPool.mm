@@ -36,6 +36,7 @@
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
 #import "WKObject.h"
+#import "WKWebViewInternal.h"
 #import "WebCertificateInfo.h"
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
@@ -570,9 +571,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 }
 #endif // PLATFORM(IOS_FAMILY)
 
-- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request
+- (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request originatingWebView:(WKWebView *)webView
 {
-    return (_WKDownload *)_processPool->download(nullptr, request)->wrapper();
+    return (_WKDownload *)_processPool->download([webView _page], request)->wrapper();
 }
 
 - (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path
