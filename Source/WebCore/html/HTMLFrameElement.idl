@@ -19,22 +19,22 @@
  */
 
 interface HTMLFrameElement : HTMLElement {
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString scrolling;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString frameBorder;
-    [Reflect, URL] attribute USVString longDesc;
-    [Reflect] attribute boolean noResize;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString scrolling;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString frameBorder;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString longDesc;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noResize;
     [CheckSecurityForNode] readonly attribute Document contentDocument;
     readonly attribute WindowProxy contentWindow;
 
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString marginHeight;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString marginWidth;
 
     [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 
-    readonly attribute long width;
-    readonly attribute long height;
+    [CEReactions=NotNeeded] readonly attribute long width;
+    [CEReactions=NotNeeded] readonly attribute long height;
 
     // FIXME: No other browser has this attribute.
     [SetterCallWith=ExecState] attribute DOMString? location;

@@ -20,6 +20,6 @@
 
 interface HTMLLegendElement : HTMLElement {
     readonly attribute HTMLFormElement form;
-    [Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
 };
 

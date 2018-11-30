@@ -19,15 +19,15 @@
  */
 
 interface HTMLAreaElement : HTMLElement {
-    [Reflect] attribute DOMString alt;
-    [Reflect] attribute DOMString coords;
-    [Reflect] attribute boolean noHref;
-    [Reflect] attribute USVString ping;
-    [Reflect] attribute DOMString rel;
-    [Reflect] attribute DOMString shape;
-    [Reflect] attribute DOMString target;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noHref;
+    [CEReactions=NotNeeded, Reflect] attribute USVString ping;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 
-    [Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
 };

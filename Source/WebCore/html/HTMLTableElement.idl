@@ -25,17 +25,17 @@ interface HTMLTableElement : HTMLElement {
 
     readonly attribute HTMLCollection rows;
     readonly attribute HTMLCollection tBodies;
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
-    [Reflect] attribute DOMString border;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString cellPadding;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString cellSpacing;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString border;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString cellPadding;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString cellSpacing;
 
-    [Reflect] attribute DOMString frame;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString frame;
 
-    [Reflect] attribute DOMString rules;
-    [Reflect] attribute DOMString summary;
-    [Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rules;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString summary;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
     HTMLElement createTHead();
     [CEReactions] void deleteTHead();

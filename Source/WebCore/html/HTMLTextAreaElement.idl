@@ -20,22 +20,22 @@
  */
 
 interface HTMLTextAreaElement : HTMLElement {
-    [Reflect] attribute boolean autofocus;
-    [Reflect] attribute DOMString dirName;
-    [Reflect] attribute boolean disabled;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute long minLength;
-    attribute long maxLength;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString placeholder;
-    [Reflect] attribute boolean readOnly;
-    [Reflect] attribute boolean required;
-    attribute unsigned long rows;
-    attribute unsigned long cols;
-    [Reflect] attribute DOMString wrap;
+    [CEReactions=NotNeeded] attribute long minLength;
+    [CEReactions=NotNeeded] attribute long maxLength;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString placeholder;
+    [CEReactions=NotNeeded, Reflect] attribute boolean readOnly;
+    [CEReactions=NotNeeded, Reflect] attribute boolean required;
+    [CEReactions=NotNeeded] attribute unsigned long rows;
+    [CEReactions=NotNeeded] attribute unsigned long cols;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString wrap;
 
     readonly attribute DOMString type;
-    attribute DOMString defaultValue;
+    [CEReactions=NotNeeded] attribute DOMString defaultValue;
     attribute [TreatNullAs=EmptyString] DOMString value;
     readonly attribute unsigned long textLength;
 
@@ -58,5 +58,5 @@ interface HTMLTextAreaElement : HTMLElement {
 
     void setSelectionRange(optional long start = 0, optional long end = 0, optional DOMString direction);
 
-    attribute DOMString autocomplete;
+    [CEReactions=NotNeeded] attribute DOMString autocomplete;
 };

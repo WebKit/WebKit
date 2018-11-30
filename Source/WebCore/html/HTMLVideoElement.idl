@@ -27,13 +27,13 @@
     Conditional=VIDEO,
     JSGenerateToNativeObject,
 ] interface HTMLVideoElement : HTMLMediaElement {
-    [Reflect] attribute unsigned long width;
-    [Reflect] attribute unsigned long height;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long width;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long height;
     readonly attribute unsigned long videoWidth;
     readonly attribute unsigned long videoHeight;
-    [Reflect, URL] attribute USVString poster;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString poster;
 
-    [Reflect] attribute boolean playsInline;
+    [CEReactions=NotNeeded, Reflect] attribute boolean playsInline;
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 

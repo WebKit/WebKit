@@ -1,3 +1,76 @@
+2018-11-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CEReactions=NotNeeded on all the relevant IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=188368
+        <rdar://problem/42987753>
+
+        Rubber-stamped by Antti Koivisto.
+
+        Based on a patch written by Frederic Wang. Added CEReactions=NotNeeded to all the places
+        we don't need CEReactions because we don't implement customized builtins but are marked with
+        CEReactions in the HTML specification.
+
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+        * html/HTMLBRElement.idl:
+        * html/HTMLBaseElement.idl:
+        * html/HTMLBodyElement.idl:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLDListElement.idl:
+        * html/HTMLDataElement.idl:
+        * html/HTMLDetailsElement.idl:
+        * html/HTMLDirectoryElement.idl:
+        * html/HTMLDivElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFontElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLHRElement.idl:
+        * html/HTMLHeadingElement.idl:
+        * html/HTMLHtmlElement.idl:
+        * html/HTMLHyperlinkElementUtils.idl:
+        * html/HTMLImageElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLLIElement.idl:
+        * html/HTMLLabelElement.idl:
+        * html/HTMLLegendElement.idl:
+        * html/HTMLLinkElement.idl:
+        * html/HTMLMapElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLMenuElement.idl:
+        * html/HTMLMetaElement.idl:
+        * html/HTMLMeterElement.idl:
+        * html/HTMLModElement.idl:
+        * html/HTMLOListElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLParagraphElement.idl:
+        * html/HTMLParamElement.idl:
+        * html/HTMLPreElement.idl:
+        * html/HTMLProgressElement.idl:
+        * html/HTMLQuoteElement.idl:
+        * html/HTMLScriptElement.idl:
+        * html/HTMLSlotElement.idl:
+        * html/HTMLSourceElement.idl:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLTableCaptionElement.idl:
+        * html/HTMLTableCellElement.idl:
+        * html/HTMLTableColElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLTimeElement.idl:
+        * html/HTMLTrackElement.idl:
+        * html/HTMLUListElement.idl:
+        * html/HTMLVideoElement.idl:
+
 2018-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Move USE_CFNETWORK_IGNORE_HSTS to its proper place

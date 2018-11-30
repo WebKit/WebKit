@@ -18,7 +18,7 @@
  */
 
 interface HTMLBaseElement : HTMLElement {
-    attribute USVString href;
+    [CEReactions=NotNeeded] attribute USVString href;
 
-    [Reflect] attribute DOMString target;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 };

@@ -26,11 +26,11 @@
 [
     Conditional=VIDEO_TRACK,
 ] interface HTMLTrackElement : HTMLElement {
-    attribute DOMString kind;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString srclang;
-    [Reflect] attribute DOMString label;
-    [Reflect] attribute boolean default;
+    [CEReactions=NotNeeded] attribute DOMString kind;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString srclang;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString label;
+    [CEReactions=NotNeeded, Reflect] attribute boolean default;
 
     const unsigned short NONE = 0;
     const unsigned short LOADING = 1;

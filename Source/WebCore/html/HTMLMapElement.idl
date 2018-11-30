@@ -20,6 +20,6 @@
 
 interface HTMLMapElement : HTMLElement {
     readonly attribute HTMLCollection areas;
-    [Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 };
 

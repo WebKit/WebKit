@@ -24,5 +24,5 @@
  */
 
 interface HTMLTimeElement : HTMLElement {
-    [Reflect] attribute DOMString dateTime;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString dateTime;
 };

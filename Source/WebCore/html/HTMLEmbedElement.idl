@@ -21,12 +21,12 @@
 [
     Plugin
 ] interface HTMLEmbedElement : HTMLElement {
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString height;
-    [Reflect] attribute DOMString name;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString type;
-    [Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
     [CheckSecurityForNode, MayThrowException] Document getSVGDocument();
 };

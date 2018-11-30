@@ -23,50 +23,50 @@
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface HTMLInputElement : HTMLElement {
-    [Reflect] attribute DOMString accept;
-    [Reflect] attribute DOMString alt;
-    attribute DOMString autocomplete;
-    [Reflect] attribute boolean autofocus;
-    [Reflect=checked] attribute boolean defaultChecked;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
+    [CEReactions=NotNeeded] attribute DOMString autocomplete;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
-    [Reflect] attribute DOMString dirName;
-    [Reflect] attribute boolean disabled;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
     attribute FileList? files;
-    attribute USVString formAction;
+    [CEReactions=NotNeeded] attribute USVString formAction;
 
-    attribute DOMString formEnctype;
-    attribute DOMString formMethod;
+    [CEReactions=NotNeeded] attribute DOMString formEnctype;
+    [CEReactions=NotNeeded] attribute DOMString formMethod;
 
-    [Reflect] attribute boolean formNoValidate;
-    [Reflect] attribute DOMString formTarget;
-    attribute unsigned long height;
+    [CEReactions=NotNeeded, Reflect] attribute boolean formNoValidate;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
+    [CEReactions=NotNeeded] attribute unsigned long height;
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
-    [Reflect] attribute DOMString max;
-    attribute long minLength;
-    attribute long maxLength;
-    [Reflect] attribute DOMString min;
-    [Reflect] attribute boolean multiple;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString pattern;
-    [Reflect] attribute DOMString placeholder;
-    [Reflect] attribute boolean readOnly;
-    [Reflect] attribute boolean required;
-    attribute unsigned long size;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString step;
-    attribute DOMString type; // readonly dropped as part of DOM level 2
-    attribute DOMString defaultValue;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString max;
+    [CEReactions=NotNeeded] attribute long minLength;
+    [CEReactions=NotNeeded] attribute long maxLength;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString min;
+    [CEReactions=NotNeeded, Reflect] attribute boolean multiple;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString pattern;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString placeholder;
+    [CEReactions=NotNeeded, Reflect] attribute boolean readOnly;
+    [CEReactions=NotNeeded, Reflect] attribute boolean required;
+    [CEReactions=NotNeeded] attribute unsigned long size;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString step;
+    [CEReactions=NotNeeded] attribute DOMString type; // readonly dropped as part of DOM level 2
+    [CEReactions=NotNeeded] attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-    attribute [TreatNullAs=EmptyString] DOMString value;
+    [CEReactions=NotNeeded] attribute [TreatNullAs=EmptyString] DOMString value;
     attribute Date? valueAsDate;
     attribute unrestricted double valueAsNumber;
 
     [MayThrowException] void stepUp(optional long n = 1);
     [MayThrowException] void stepDown(optional long n = 1);
 
-    attribute unsigned long width;
+    [CEReactions=NotNeeded] attribute unsigned long width;
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
@@ -86,10 +86,10 @@
 
     [ImplementedAs=setSelectionRangeForBindings, MayThrowException] void setSelectionRange(long start, long end, optional DOMString direction);
 
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString useMap;
-    [Reflect] attribute boolean incremental;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+    [CEReactions=NotNeeded, Reflect] attribute boolean incremental;
 
     // See http://www.w3.org/TR/html-media-capture/
-    [Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
+    [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
 };

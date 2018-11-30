@@ -44,17 +44,17 @@ typedef (
     readonly attribute MediaError error;
 
     // network state
-    [Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
     attribute MediaProvider? srcObject;
     [URL] readonly attribute USVString currentSrc;
-    attribute DOMString? crossOrigin;
+    [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
 
     const unsigned short NETWORK_EMPTY = 0;
     const unsigned short NETWORK_IDLE = 1;
     const unsigned short NETWORK_LOADING = 2;
     const unsigned short NETWORK_NO_SOURCE = 3;
     readonly attribute unsigned short networkState;
-    attribute DOMString preload;
+    [CEReactions=NotNeeded] attribute DOMString preload;
 
     readonly attribute TimeRanges buffered;
     void load();
@@ -80,20 +80,20 @@ typedef (
     readonly attribute TimeRanges played;
     readonly attribute TimeRanges seekable;
     readonly attribute boolean ended;
-    [Reflect] attribute boolean autoplay;
-    [Reflect] attribute boolean loop;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autoplay;
+    [CEReactions=NotNeeded, Reflect] attribute boolean loop;
     Promise<void> play();
     void pause();
     void fastSeek(unrestricted double time);
 
     // controls
-    attribute boolean controls;
+    [CEReactions=NotNeeded] attribute boolean controls;
     attribute double volume;
     attribute boolean muted;
-    [Reflect=muted] attribute boolean defaultMuted;
+    [CEReactions=NotNeeded, Reflect=muted] attribute boolean defaultMuted;
 
     // WebKit extensions
-    attribute boolean webkitPreservesPitch;
+    [CEReactions=NotNeede] attribute boolean webkitPreservesPitch;
 
     readonly attribute boolean webkitHasClosedCaptions;
     attribute boolean webkitClosedCaptionsVisible;

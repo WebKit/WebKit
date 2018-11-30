@@ -20,8 +20,8 @@
 
 interface HTMLStyleElement : HTMLElement {
     attribute boolean disabled;
-    [Reflect] attribute DOMString media;
-    [Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString media;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
 
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;

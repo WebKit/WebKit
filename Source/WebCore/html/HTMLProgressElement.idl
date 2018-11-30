@@ -18,8 +18,8 @@
  */
 
 interface HTMLProgressElement : HTMLElement {
-    attribute double value;
-    attribute double max;
+    [CEReactions=NotNeeded] attribute double value;
+    [CEReactions=NotNeeded] attribute double max;
     readonly attribute double position;
     readonly attribute NodeList labels;
 };

@@ -20,23 +20,23 @@
 
 interface HTMLTableCellElement : HTMLElement {
     readonly attribute long cellIndex;
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString axis;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
-    [Reflect=char] attribute DOMString ch;
-    [Reflect=charoff] attribute DOMString chOff;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString axis;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
+    [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
 
-    attribute unsigned long colSpan;
-    [ImplementedAs=rowSpanForBindings] attribute unsigned long rowSpan;
+    [CEReactions=NotNeeded] attribute unsigned long colSpan;
+    [CEReactions=NotNeeded, ImplementedAs=rowSpanForBindings] attribute unsigned long rowSpan;
 
-    [Reflect] attribute DOMString headers;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString headers;
 
-    [Reflect] attribute DOMString height;
-    [Reflect] attribute boolean noWrap;
-    [Reflect] attribute DOMString vAlign;
-    [Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noWrap;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 
-    [Reflect] attribute DOMString abbr;
-    attribute DOMString scope;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString abbr;
+    [CEReactions=NotNeeded] attribute DOMString scope;
 };
 

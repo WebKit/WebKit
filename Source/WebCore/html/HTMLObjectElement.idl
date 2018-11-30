@@ -22,22 +22,22 @@
     Plugin
 ] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;
-    [Reflect] attribute DOMString code;
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString archive;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString border;
-    [Reflect, URL] attribute USVString codeBase;
-    [Reflect] attribute DOMString codeType;
-    [Reflect, URL] attribute USVString data;
-    [Reflect] attribute boolean declare;
-    [Reflect] attribute DOMString height;
-    [Reflect] attribute unsigned long hspace;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString standby;
-    [Reflect] attribute DOMString type;
-    [Reflect] attribute DOMString useMap;
-    [Reflect] attribute unsigned long vspace;
-    [Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString code;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString archive;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString border;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString codeBase;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString codeType;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString data;
+    [CEReactions=NotNeeded, Reflect] attribute boolean declare;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString height;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long hspace;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString standby;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+    [CEReactions=NotNeeded, Reflect] attribute unsigned long vspace;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;

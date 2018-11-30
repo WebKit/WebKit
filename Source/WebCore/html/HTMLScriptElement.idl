@@ -18,17 +18,17 @@
  */
 
 interface HTMLScriptElement : HTMLElement {
-    attribute DOMString text;
+    [CEReactions=NotNeeded] attribute DOMString text;
 
-    [Reflect=for] attribute DOMString htmlFor;
-    [Reflect] attribute DOMString event;
-    [Reflect] attribute DOMString charset;
-    attribute boolean async;
-    [Reflect] attribute boolean defer;
-    [Reflect, URL] attribute USVString src;
-    [Reflect] attribute DOMString type;
-    attribute DOMString? crossOrigin;
+    [CEReactions=NotNeeded, Reflect=for] attribute DOMString htmlFor;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString event;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
+    [CEReactions=NotNeeded] attribute boolean async;
+    [CEReactions=NotNeeded, Reflect] attribute boolean defer;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString src;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded] attribute DOMString? crossOrigin;
     [Reflect] attribute DOMString nonce;
-    [Reflect] attribute boolean noModule;
-    [Reflect, EnabledBySetting=SubresourceIntegrity] attribute DOMString integrity;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
+    [CEReactions=NotNeeded, Reflect, EnabledBySetting=SubresourceIntegrity] attribute DOMString integrity;
 };

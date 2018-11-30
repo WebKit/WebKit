@@ -19,17 +19,17 @@
  */
 
 interface HTMLAnchorElement : HTMLElement {
-    [Reflect] attribute DOMString charset;
-    [Reflect] attribute DOMString coords;
-    [Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
-    [Reflect] attribute DOMString hreflang;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute USVString ping;
-    [Reflect] attribute DOMString rel;
-    [Reflect] attribute DOMString rev;
-    [Reflect] attribute DOMString shape;
-    [Reflect] attribute DOMString target;
-    [Reflect] attribute DOMString type;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
+    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute USVString ping;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rev;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString type;
 
     [CEReactions] attribute DOMString text;
 

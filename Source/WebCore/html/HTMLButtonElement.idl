@@ -19,19 +19,19 @@
  */
 
 interface HTMLButtonElement : HTMLElement {
-    [Reflect] attribute boolean autofocus;
-    [Reflect] attribute boolean disabled;
+    [CEReactions=NotNeeded, Reflect] attribute boolean autofocus;
+    [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement form;
-    attribute USVString formAction;
+    [CEReactions=NotNeeded] attribute USVString formAction;
 
-    attribute DOMString formEnctype;
-    attribute DOMString formMethod;
-    attribute DOMString type;
+    [CEReactions=NotNeeded] attribute DOMString formEnctype;
+    [CEReactions=NotNeeded] attribute DOMString formMethod;
+    [CEReactions=NotNeeded] attribute DOMString type;
 
-    [Reflect] attribute boolean formNoValidate;
-    [Reflect] attribute DOMString formTarget;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString value;
+    [CEReactions=NotNeeded, Reflect] attribute boolean formNoValidate;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString value;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;

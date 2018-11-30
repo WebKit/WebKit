@@ -18,6 +18,6 @@
  */
 
 interface HTMLDirectoryElement : HTMLElement {
-    [Reflect] attribute boolean compact;
+    [CEReactions=NotNeeded, Reflect] attribute boolean compact;
 };
 

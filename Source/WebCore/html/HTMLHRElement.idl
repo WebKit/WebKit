@@ -18,10 +18,10 @@
  */
 
 interface HTMLHRElement : HTMLElement {
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute DOMString color;
-    [Reflect] attribute boolean noShade;
-    [Reflect] attribute DOMString size;
-    [Reflect] attribute DOMString width;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString color;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noShade;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString size;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString width;
 };
 

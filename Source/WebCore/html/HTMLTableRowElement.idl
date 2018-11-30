@@ -22,11 +22,11 @@ interface HTMLTableRowElement : HTMLElement {
     readonly attribute long rowIndex;
     readonly attribute long sectionRowIndex;
     readonly attribute HTMLCollection cells;
-    [Reflect] attribute DOMString align;
-    [Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
-    [Reflect=char] attribute DOMString ch;
-    [Reflect=charoff] attribute DOMString chOff;
-    [Reflect] attribute DOMString vAlign;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString align;
+    [CEReactions=NotNeeded, Reflect] attribute [TreatNullAs=EmptyString] DOMString bgColor;
+    [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
+    [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
     [MayThrowException] HTMLElement insertCell(optional long index = -1);
     [CEReactions, MayThrowException] void deleteCell(long index);
 };

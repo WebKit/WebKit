@@ -18,9 +18,9 @@
  */
 
 interface HTMLMetaElement : HTMLElement {
-    [Reflect] attribute DOMString content;
-    [Reflect=http_equiv] attribute DOMString httpEquiv;
-    [Reflect] attribute DOMString name;
-    [Reflect] attribute DOMString scheme;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString content;
+    [CEReactions=NotNeeded, Reflect=http_equiv] attribute DOMString httpEquiv;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString scheme;
 };
 

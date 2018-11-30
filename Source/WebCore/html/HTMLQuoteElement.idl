@@ -18,5 +18,5 @@
  */
 
 interface HTMLQuoteElement : HTMLElement {
-    [Reflect, URL] attribute USVString cite;
+    [CEReactions=NotNeeded, Reflect, URL] attribute USVString cite;
 };

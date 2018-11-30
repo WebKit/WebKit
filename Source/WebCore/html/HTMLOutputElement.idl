@@ -26,7 +26,7 @@ interface HTMLOutputElement : HTMLElement {
     [PutForwards=value] readonly attribute DOMTokenList htmlFor;
 
     readonly attribute HTMLFormElement form;
-    [Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
 
     readonly attribute DOMString type;
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString defaultValue;

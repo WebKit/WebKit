@@ -19,8 +19,8 @@
  */
 
 interface HTMLFrameSetElement : HTMLElement {
-    [Reflect] attribute DOMString cols;
-    [Reflect] attribute DOMString rows;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString cols;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rows;
 
     [NotEnumerable, WindowEventHandler] attribute EventHandler onblur;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onerror;
