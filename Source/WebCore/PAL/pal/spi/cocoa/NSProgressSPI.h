@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#pragma once
 
-#if WK_API_ENABLED
+#define USE_NSPROGRESS_PUBLISHING_SPI ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 130000) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED < 60000) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED < 130000))
 
-#import <Foundation/Foundation.h>
+#if USE(NSPROGRESS_PUBLISHING_SPI)
 
-@class WKWebView;
+#if USE(APPLE_INTERNAL_SDK)
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface _WKDownload : NSObject
+#import <Foundation/NSProgress_Private.h>
 
-- (void)cancel;
+#else
 
-- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@interface NSProgress ()
 
-@property (nonatomic, readonly) NSURLRequest *request;
-@property (nonatomic, readonly, weak) WKWebView *originatingWebView;
-@property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_publish;
+- (void)_unpublish;
++ (id)_addSubscriberForFileURL:(NSURL *)inURL withPublishingHandler:(NSProgressPublishingHandler)inPublishingHandler;
++ (void)_removeSubscriber:(id)inSubscriber;
 
 @end
 
-#endif // WK_API_ENABLED
+#endif // not USE(APPLE_INTERNAL_SDK)
+
+#endif // USE(NSPROGRESS_PUBLISHING_SPI)

@@ -34,6 +34,7 @@ class ResourceResponse;
 
 namespace WebKit {
 
+class Download;
 class DownloadID;
 class NetworkLoad;
 class NetworkLoadParameters;
@@ -47,6 +48,11 @@ public:
 
     void continueWillSendRequest(WebCore::ResourceRequest&&);
     void cancel();
+
+#if PLATFORM(COCOA)
+    void publishProgress(const WebCore::URL&, SandboxExtension::Handle&&);
+    void didBecomeDownload(const std::unique_ptr<Download>&);
+#endif
 
 private:    
     // NetworkLoadClient.
@@ -66,6 +72,11 @@ private:
 private:
     std::unique_ptr<NetworkLoad> m_networkLoad;
     bool m_isAllowedToAskUserForCredentials;
+
+#if PLATFORM(COCOA)
+    WebCore::URL m_progressURL;
+    SandboxExtension::Handle m_progressSandboxExtension;
+#endif
 };
 
 }

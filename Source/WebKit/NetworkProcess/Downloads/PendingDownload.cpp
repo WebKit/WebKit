@@ -75,6 +75,21 @@ void PendingDownload::cancel()
     send(Messages::DownloadProxy::DidCancel({ }));
 }
 
+#if PLATFORM(COCOA)
+void PendingDownload::publishProgress(const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtension)
+{
+    ASSERT(!m_progressURL.isValid());
+    m_progressURL = url;
+    m_progressSandboxExtension = WTFMove(sandboxExtension);
+}
+
+void PendingDownload::didBecomeDownload(const std::unique_ptr<Download>& download)
+{
+    if (m_progressURL.isValid())
+        download->publishProgress(m_progressURL, WTFMove(m_progressSandboxExtension));
+}
+#endif // PLATFORM(COCOA)
+
 void PendingDownload::didFailLoading(const WebCore::ResourceError& error)
 {
     send(Messages::DownloadProxy::DidFail(error, { }));

@@ -1,3 +1,19 @@
+2018-11-29  David Quesada  <david_quesada@apple.com>
+
+        Add SPI to publish NSProgress on active downloads
+        https://bugs.webkit.org/show_bug.cgi?id=192021
+        rdar://problem/44405661
+
+        Reviewed by Alex Christensen.
+
+        Add an SPI header for NSProgress's publishing and unpublishing methods. In older
+        SDKs, these methods are explicitly unavailable on platforms other than macOS,
+        with underscore-prefixed versions available as SPI. In newer SDKs, the unprefixed
+        versions are SPI and the prefixed versions are deprecated.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NSProgressSPI.h:
+
 2018-11-29  Megan Gardner  <megan_gardner@apple.com>
 
         Move Lookup Code for better cross platform usage

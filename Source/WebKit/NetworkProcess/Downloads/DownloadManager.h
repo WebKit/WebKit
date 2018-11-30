@@ -85,6 +85,9 @@ public:
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
 
     void cancelDownload(DownloadID);
+#if PLATFORM(COCOA)
+    void publishDownloadProgress(DownloadID, const WebCore::URL&, SandboxExtension::Handle&&);
+#endif
     
     Download* download(DownloadID downloadID) { return m_downloads.get(downloadID); }
 

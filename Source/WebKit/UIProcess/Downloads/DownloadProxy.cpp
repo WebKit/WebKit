@@ -101,6 +101,21 @@ void DownloadProxy::setOriginatingPage(WebPageProxy* page)
     m_originatingPage = makeWeakPtr(page);
 }
 
+#if PLATFORM(COCOA)
+void DownloadProxy::publishProgress(const WebCore::URL& URL)
+{
+    if (!m_processPool)
+        return;
+
+    if (auto* networkProcess = m_processPool->networkProcess()) {
+        SandboxExtension::Handle handle;
+        bool createdSandboxExtension = SandboxExtension::createHandle(URL.fileSystemPath(), SandboxExtension::Type::ReadWrite, handle);
+        ASSERT_UNUSED(createdSandboxExtension, createdSandboxExtension);
+        networkProcess->send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, handle), 0);
+    }
+}
+#endif // PLATFORM(COCOA)
+
 void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)
 {
     m_request = request;

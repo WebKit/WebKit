@@ -49,6 +49,11 @@
     _download->cancel();
 }
 
+- (void)publishProgressAtURL:(NSURL *)URL
+{
+    _download->publishProgress(URL);
+}
+
 - (NSURLRequest *)request
 {
     return _download->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);

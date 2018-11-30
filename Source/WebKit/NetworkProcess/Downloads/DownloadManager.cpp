@@ -64,7 +64,11 @@ void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, P
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
 {
     ASSERT(m_pendingDownloads.contains(downloadID));
-    m_pendingDownloads.remove(downloadID);
+    if (auto pendingDownload = m_pendingDownloads.take(downloadID)) {
+#if PLATFORM(COCOA)
+        pendingDownload->didBecomeDownload(download);
+#endif
+    }
     ASSERT(!m_downloads.contains(downloadID));
     m_downloadsAfterDestinationDecided.remove(downloadID);
     m_downloads.add(downloadID, WTFMove(download));
@@ -154,6 +158,16 @@ void DownloadManager::cancelDownload(DownloadID downloadID)
     if (pendingDownload)
         pendingDownload->cancel();
 }
+
+#if PLATFORM(COCOA)
+void DownloadManager::publishDownloadProgress(DownloadID downloadID, const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+{
+    if (auto* download = m_downloads.get(downloadID))
+        download->publishProgress(url, WTFMove(sandboxExtensionHandle));
+    else if (auto* pendingDownload = m_pendingDownloads.get(downloadID))
+        pendingDownload->publishProgress(url, WTFMove(sandboxExtensionHandle));
+}
+#endif // PLATFORM(COCOA)
 
 void DownloadManager::downloadFinished(Download* download)
 {

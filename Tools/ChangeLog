@@ -1,3 +1,50 @@
+2018-11-29  David Quesada  <david_quesada@apple.com>
+
+        Add SPI to publish NSProgress on active downloads
+        https://bugs.webkit.org/show_bug.cgi?id=192021
+        rdar://problem/44405661
+
+        Reviewed by Alex Christensen.
+
+        Add API tests to exercise the progress-publishing functionality in a variety of scenarios.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm: Added.
+        (+[DownloadProgressTestProtocol registerProtocolForTestRunner:]):
+        (+[DownloadProgressTestProtocol unregisterProtocol]):
+        (+[DownloadProgressTestProtocol canInitWithRequest:]):
+        (+[DownloadProgressTestProtocol canonicalRequestForRequest:]):
+        (+[DownloadProgressTestProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[DownloadProgressTestProtocol startLoading]):
+        (-[DownloadProgressTestProtocol stopLoading]):
+        (-[DownloadProgressTestRunner init]):
+        (-[DownloadProgressTestRunner startLoadingWithProtocol:]):
+        (-[DownloadProgressTestRunner tearDown]):
+        (-[DownloadProgressTestRunner _didGetProgress:]):
+        (-[DownloadProgressTestRunner _didLoseProgress]):
+        (-[DownloadProgressTestRunner subscribeAndWaitForProgress]):
+        (-[DownloadProgressTestRunner waitToLoseProgress]):
+        (-[DownloadProgressTestRunner startDownload:expectedLength:]):
+        (-[DownloadProgressTestRunner publishProgress]):
+        (-[DownloadProgressTestRunner receiveData:]):
+        (-[DownloadProgressTestRunner finishDownloadTask]):
+        (-[DownloadProgressTestRunner failDownloadTask]):
+        (-[DownloadProgressTestRunner waitForDownloadDidCreateDestination]):
+        (-[DownloadProgressTestRunner waitForDownloadFinished]):
+        (-[DownloadProgressTestRunner waitForDownloadCanceled]):
+        (-[DownloadProgressTestRunner waitForDownloadFailed]):
+        (-[DownloadProgressTestRunner waitForUpdatedCompletedUnitCount]):
+        (-[DownloadProgressTestRunner observeValueForKeyPath:ofObject:change:context:]):
+        (-[DownloadProgressTestRunner webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[DownloadProgressTestRunner webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[DownloadProgressTestRunner _downloadDidStart:]):
+        (-[DownloadProgressTestRunner _download:didCreateDestination:]):
+        (-[DownloadProgressTestRunner _downloadDidFinish:]):
+        (-[DownloadProgressTestRunner _downloadDidCancel:]):
+        (-[DownloadProgressTestRunner _download:didFailWithError:]):
+        (-[DownloadProgressTestRunner _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (TEST):
+
 2018-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         Exception in bot watcher's dashboard if a hidden platform in no longer configured for display

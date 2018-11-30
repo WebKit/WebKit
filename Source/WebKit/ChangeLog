@@ -1,3 +1,86 @@
+2018-11-29  David Quesada  <david_quesada@apple.com>
+
+        Add SPI to publish NSProgress on active downloads
+        https://bugs.webkit.org/show_bug.cgi?id=192021
+        rdar://problem/44405661
+
+        Reviewed by Alex Christensen.
+
+        Make it possible for clients to allow other processes to monitor the state of active
+        downloads. On Cocoa platforms, this can be done by creating an NSProgress, publishing
+        it on an appropriate file URL (potentially a different file URL than where the download
+        data is being written), updating properties on it as the download makes progress, and
+        wiring up a cancellation handler that allows it to be remotely canceled. Interested
+        clients can then subscribe to progress on that URL and receive a proxy to the progress
+        that WebKit publishes.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        (WebKit::Download::platformDestroyDownload):
+            Add a platform-customizable hook for destructing the Download. DownloadCocoa.mm
+            will interact with its Objective-C NSProgress instance at this point.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask):
+            See comments for publishDownloadProgress().
+        (WebKit::DownloadManager::publishDownloadProgress):
+            If the provided downloadID corresponds to a non-Pending Download, hand the URL
+            and a matching sandbox extension to the Download so it can create its progress.
+            Otherwise, store the URL and sandbox extension on the PendingDownload to be used
+            later when the full Download is created. When this happens, dataTaskBecameDownloadTask()
+            will tell the PendingDownload about the Download it has become. The PendingDownload
+            will then relay the progress URL and sandbox extension to the Download.
+
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::publishProgress):
+            Store the progress info for later use, when the proper Download is created.
+        (WebKit::PendingDownload::didBecomeDownload):
+            If there was a progress URL provided earlier, tell the Download corresponding to this
+            PendingDownload to publish its progress using that URL.
+
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::platformDestroyDownload):
+            When the Download is destroyed (i.e. when the download succeeds, fails, or is canceled),
+            unpublish the progress, since there is no longer any activity to report.
+        (WebKit::Download::publishProgress):
+            Resolve the sandbox extension, create a progress configured to reflect the progress of
+            this Download's NSURLSessionDownloadTask, and publish it at the given file URL.
+
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKDownload.h.
+        * NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm: Added.
+        (-[WKDownloadProgress initWithDownloadTask:download:URL:sandboxExtension:]):
+            Configure this progress, start observing properties on the download task that this
+            progress will reflect, and connect the cancellation handler of the progress to cancel
+            the corresponding Download.
+        (-[WKDownloadProgress publish]):
+        (-[WKDownloadProgress unpublish]):
+            Override these methods to consume and revoke the sandbox extension to make sure the
+            process has access to the progress file while the progress will be published.
+        (-[WKDownloadProgress dealloc]):
+        (-[WKDownloadProgress observeValueForKeyPath:ofObject:change:context:]):
+            When either byte count (number received, or number expected to receive) of the download
+            task changes, update this progress to reflect that.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::publishDownloadProgress):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+            Allow looking up the services that manages published NSProgresses.
+
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload publishProgressAtURL:]):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::publishProgress):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-29  Tim Horton  <timothy_horton@apple.com>
 
         Make drawing tools available when an editable image is focused

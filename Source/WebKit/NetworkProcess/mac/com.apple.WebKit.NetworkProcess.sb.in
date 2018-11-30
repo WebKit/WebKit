@@ -290,3 +290,7 @@
     (local tcp)
     (remote tcp))
 
+;; For reporting progress for active downloads <rdar://problem/44405661>
+(allow mach-lookup
+    (global-name "com.apple.ProgressReporting"))
+

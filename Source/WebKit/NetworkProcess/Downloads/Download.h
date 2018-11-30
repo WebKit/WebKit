@@ -37,6 +37,7 @@
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(COCOA)
+OBJC_CLASS NSProgress;
 OBJC_CLASS NSURLSessionDownloadTask;
 #endif
 
@@ -73,6 +74,9 @@ public:
 
     void resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancel();
+#if PLATFORM(COCOA)
+    void publishProgress(const WebCore::URL&, SandboxExtension::Handle&&);
+#endif
 
     DownloadID downloadID() const { return m_downloadID; }
     const String& suggestedName() const { return m_suggestedName; }
@@ -91,6 +95,7 @@ private:
     uint64_t messageSenderDestinationID() override;
 
     void platformCancelNetworkLoad();
+    void platformDestroyDownload();
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -103,6 +108,7 @@ private:
     RefPtr<NetworkDataTask> m_download;
 #if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_downloadTask;
+    RetainPtr<NSProgress> m_progress;
 #endif
     PAL::SessionID m_sessionID;
     String m_suggestedName;

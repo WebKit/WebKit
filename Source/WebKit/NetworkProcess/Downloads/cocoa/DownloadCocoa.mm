@@ -29,7 +29,9 @@
 #import "DataReference.h"
 #import "NetworkSessionCocoa.h"
 #import "SessionTracker.h"
+#import "WKDownloadProgress.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/NSProgressSPI.h>
 
 namespace WebKit {
 
@@ -85,6 +87,38 @@ void Download::platformCancelNetworkLoad()
         else
             didCancel({ });
     }];
+}
+
+void Download::platformDestroyDownload()
+{
+    if (m_progress)
+#if USE(NSPROGRESS_PUBLISHING_SPI)
+        [m_progress _unpublish];
+#else
+        [m_progress unpublish];
+#endif
+}
+
+void Download::publishProgress(const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+{
+#if WK_API_ENABLED
+    ASSERT(!m_progress);
+    ASSERT(url.isValid());
+
+    auto sandboxExtension = SandboxExtension::create(WTFMove(sandboxExtensionHandle));
+
+    ASSERT(sandboxExtension);
+
+    m_progress = adoptNS([[WKDownloadProgress alloc] initWithDownloadTask:m_downloadTask.get() download:this URL:(NSURL *)url sandboxExtension:sandboxExtension]);
+#if USE(NSPROGRESS_PUBLISHING_SPI)
+    [m_progress _publish];
+#else
+    [m_progress publish];
+#endif
+#else
+    UNUSED_PARAM(url);
+    UNUSED_PARAM(sandboxExtensionHandle);
+#endif // not WK_API_ENABLED
 }
 
 }

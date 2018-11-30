@@ -95,6 +95,10 @@ public:
     const WebCore::IntRect& systemPreviewDownloadRect() const { return request().systemPreviewRect(); }
 #endif
 
+#if PLATFORM(COCOA)
+    void publishProgress(const WebCore::URL&);
+#endif
+
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
 

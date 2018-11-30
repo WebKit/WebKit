@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,23 +27,24 @@
 
 #if WK_API_ENABLED
 
-#import <Foundation/Foundation.h>
+#import <Foundation/NSProgress.h>
+#import <wtf/RefPtr.h>
 
-@class WKWebView;
+namespace WebKit {
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface _WKDownload : NSObject
+class Download;
+class SandboxExtension;
 
-- (void)cancel;
+}
 
-- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, readonly) NSURLRequest *request;
-@property (nonatomic, readonly, weak) WKWebView *originatingWebView;
-@property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@interface WKDownloadProgress : NSProgress
+
+- (instancetype)initWithDownloadTask:(NSURLSessionDownloadTask *)task download:(WebKit::Download*)download URL:(NSURL *)fileURL sandboxExtension:(RefPtr<WebKit::SandboxExtension>)sandboxExtension;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif // WK_API_ENABLED

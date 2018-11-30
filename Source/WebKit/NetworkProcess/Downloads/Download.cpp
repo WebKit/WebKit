@@ -77,6 +77,7 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
 
 Download::~Download()
 {
+    platformDestroyDownload();
     m_downloadManager.didDestroyDownload();
 }
 
@@ -177,6 +178,10 @@ bool Download::isAlwaysOnLoggingAllowed() const
 
 #if !PLATFORM(COCOA)
 void Download::platformCancelNetworkLoad()
+{
+}
+
+void Download::platformDestroyDownload()
 {
 }
 #endif

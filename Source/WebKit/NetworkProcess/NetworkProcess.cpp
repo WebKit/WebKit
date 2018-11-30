@@ -819,6 +819,13 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
     downloadManager().cancelDownload(downloadID);
 }
 
+#if PLATFORM(COCOA)
+void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+{
+    downloadManager().publishDownloadProgress(downloadID, url, WTFMove(sandboxExtensionHandle));
+}
+#endif
+
 void NetworkProcess::continueWillSendRequest(DownloadID downloadID, WebCore::ResourceRequest&& request)
 {
     downloadManager().continueWillSendRequest(downloadID, WTFMove(request));
