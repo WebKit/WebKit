@@ -583,7 +583,7 @@
        (global-name "com.apple.awdd")
        (global-name "com.apple.cfprefsd.agent")
        (global-name "com.apple.cfprefsd.daemon")
-       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
+       (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
        (global-name "com.apple.cookied")
        (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.fonts")

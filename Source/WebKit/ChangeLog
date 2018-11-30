@@ -1,3 +1,11 @@
+2018-11-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove invalid character in sandbox introduced in r238703.
+
+        Unreviewed sandbox fix.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-11-30  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add some WKA extension points
