@@ -207,6 +207,10 @@ protected:
     float m_multiLineTextMultiplierCoefficient { defaultMultiLineTextMultiplierCoefficient };
     float m_maxTextAutosizingScaleIncrease { defaultMaxTextAutosizingScaleIncrease };
 #endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/SettingsAdditions.h>
+#endif
 };
 
 } // namespace WebCore

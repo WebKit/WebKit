@@ -1,3 +1,24 @@
+2018-11-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add some WKA extension points
+        https://bugs.webkit.org/show_bug.cgi?id=192131
+        <rdar://problem/46330293>
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make: Added an extension point for WebPreferences.yaml.
+        * Platform/IPC/MessageSender.h:
+        (IPC::MessageSender::sendWithAsyncReply): Send async messages via IPC::MessageSender.
+        * Platform/cocoa/WebKitAdditions.mm: A an extension point for additional WebKit sources.
+        * SourcesCocoa.txt: Added WebKitAdditions.mm as non-unified source.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy): Called finishConstruction.
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h: Added an extension point for
+        WebPaymentCoordinatorProxy.
+        * WebKit.xcodeproj/project.pbxproj: Added WebKitAdditions.mm.
+        * WebProcess/ApplePay/WebPaymentCoordinator.h: Added an extension point for
+        WebPaymentCoordinator.
+
 2018-11-30  Frederic Wang  <fwang@igalia.com>
 
         [WebAuthN] Support CTAP HID authenticators on macOS

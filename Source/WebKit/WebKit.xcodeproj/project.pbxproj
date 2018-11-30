@@ -1270,6 +1270,7 @@
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
 		A15EEDE61E301CEE000069B0 /* WKPasswordView.h in Headers */ = {isa = PBXBuildFile; fileRef = A15EEDE41E301CEE000069B0 /* WKPasswordView.h */; };
 		A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */; };
+		A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = A181A79721ACAC610059A316 /* WebKitAdditions.mm */; };
 		A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */; };
 		A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */; };
 		A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3836,6 +3837,7 @@
 		A15EEDE41E301CEE000069B0 /* WKPasswordView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPasswordView.h; path = ios/WKPasswordView.h; sourceTree = "<group>"; };
 		A175C44921AA3170000037D0 /* ArgumentCodersCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersCocoa.h; sourceTree = "<group>"; };
 		A175C44B21AA331B000037D0 /* ArgumentCodersCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersCocoa.mm; sourceTree = "<group>"; };
+		A181A79721ACAC610059A316 /* WebKitAdditions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAdditions.mm; sourceTree = "<group>"; };
 		A182D5B21BE6BD250087A7CC /* AccessibilityIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityIOS.mm; sourceTree = "<group>"; };
 		A182D5B31BE6BD250087A7CC /* AccessibilityIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityIOS.h; sourceTree = "<group>"; };
 		A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebViewPrintFormatterInternal.h; sourceTree = "<group>"; };
@@ -6358,6 +6360,7 @@
 			isa = PBXGroup;
 			children = (
 				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
+				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				A1FB68221F6E518200C43F9F /* WKCrashReporter.h */,
 				A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */,
 			);
@@ -9112,7 +9115,6 @@
 				C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */,
 				2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */,
 				263172CF18B469490065B9C3 /* NativeWebTouchEvent.h in Headers */,
-				637281A221ADC744009E0DE6 /* WKDownloadProgress.h in Headers */,
 				1ADCB86B189831B30022EE5A /* NavigationActionData.h in Headers */,
 				1ABC3DF61899E437004F0626 /* NavigationState.h in Headers */,
 				1A6FBA2A11E6862700DB1371 /* NetscapeBrowserFuncs.h in Headers */,
@@ -9672,6 +9674,7 @@
 				293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */,
 				BC017D2116263308007054F5 /* WKDOMTextIterator.h in Headers */,
 				1AB7D78D1288CD9A00CFD08C /* WKDownload.h in Headers */,
+				637281A221ADC744009E0DE6 /* WKDownloadProgress.h in Headers */,
 				F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */,
 				2DC18FAD218910490025A88D /* WKDrawingView.h in Headers */,
 				1AF4592F19464B2000F9D4A2 /* WKError.h in Headers */,
@@ -10792,7 +10795,6 @@
 				2D92A794212B6AD400F493FD /* NPVariantData.cpp in Sources */,
 				CDA29A281CBEB67A00901CCF /* PlaybackSessionManagerMessageReceiver.cpp in Sources */,
 				CDA29A2A1CBEB67A00901CCF /* PlaybackSessionManagerProxyMessageReceiver.cpp in Sources */,
-				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				2D913449212CF9F000128AFD /* Plugin.cpp in Sources */,
 				1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */,
 				1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */,
@@ -11039,6 +11041,7 @@
 				2D92A78A212B6AB100F493FD /* WebKeyboardEvent.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				2D92A78B212B6AB100F493FD /* WebKit2Initialize.cpp in Sources */,
+				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,
 				51F060E11654318500F3282F /* WebMDNSRegisterMessageReceiver.cpp in Sources */,
 				2D92A78C212B6AB100F493FD /* WebMouseEvent.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
@@ -11079,6 +11082,7 @@
 				2D92A78F212B6AB100F493FD /* WebWheelEvent.cpp in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
+				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
 				26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */,

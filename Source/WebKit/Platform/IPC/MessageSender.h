@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,11 +66,9 @@ public:
     }
 
     template<typename T, typename... Args>
-    void sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& args, uint64_t destinationID = 0)
+    void sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler)
     {
-        ASSERT(messageSenderConnection());
-
-        messageSenderConnection()->sendWithAsyncReply(WTFMove(message), WTFMove(args), destinationID);
+        messageSenderConnection()->sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID());
     }
 
     virtual bool sendMessage(std::unique_ptr<Encoder>, OptionSet<SendOption>);

@@ -1,3 +1,20 @@
+2018-11-30  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add some WKA extension points
+        https://bugs.webkit.org/show_bug.cgi?id=192131
+        <rdar://problem/46330293>
+
+        Reviewed by Tim Horton.
+
+        * DerivedSources.make: Added an extension point for derived sources.
+        * Modules/applepay/PaymentCoordinatorClient.h: Added an extension point for
+        PaymentCoordinatorClient.
+        * SourcesCocoa.txt: Added WebCoreAdditions.mm as a non-unified source.
+        * WebCore.xcodeproj/project.pbxproj: Added WebCoreAdditions.mm.
+        * bindings/js/WebCoreBuiltinNames.h: Added an extension point for built-in names.
+        * page/SettingsBase.h: Added an extension point for settings.
+        * platform/cocoa/WebCoreAdditions.mm: Added.
+
 2018-11-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] CDMInstance should be shipped as a GstContext to the decryptors
