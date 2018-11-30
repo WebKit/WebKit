@@ -24,5 +24,5 @@ layer at (0,0) size 800x600
             RenderBody {BODY} at (8,8) size 284x134
               RenderText {#text} at (0,0) size 267x35
                 text run at (0,0) width 267: "This text successfully replaced the original"
-                text run at (0,18) width 211: "text in the frame. Test succeeded!"
+                text run at (0,18) width 210: "text in the frame. Test succeeded!"
       RenderText {#text} at (0,0) size 0x0

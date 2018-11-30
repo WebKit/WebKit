@@ -16,11 +16,11 @@ layer at (0,0) size 800x350
           RenderInline {CODE} at (0,0) size 88x15
             RenderText {#text} at (167,21) size 88x15
               text run at (167,21) width 88: "float: left"
-          RenderText {#text} at (255,18) size 32x17
-            text run at (255,18) width 32: " div. "
-          RenderInline {A} at (0,0) size 420x35 [color=#0000EE]
-            RenderText {#text} at (287,18) size 420x35
-              text run at (287,18) width 133: "Screenshot of correct"
+          RenderText {#text} at (255,18) size 31x17
+            text run at (255,18) width 31: " div. "
+          RenderInline {A} at (0,0) size 419x35 [color=#0000EE]
+            RenderText {#text} at (285,18) size 419x35
+              text run at (285,18) width 134: "Screenshot of correct"
               text run at (0,36) width 55: "behavior"
           RenderText {#text} at (55,36) size 8x17
             text run at (55,36) width 8: "; "
@@ -35,14 +35,14 @@ layer at (0,0) size 800x350
           RenderInline {A} at (0,0) size 260x17 [color=#0000EE]
             RenderText {#text} at (0,18) size 260x17
               text run at (0,18) width 260: "View this test case without a DOCTYPE"
-          RenderText {#text} at (260,18) size 4x17
-            text run at (260,18) width 4: "."
+          RenderText {#text} at (259,18) size 5x17
+            text run at (259,18) width 5: "."
         RenderBlock {OL} at (0,138) size 471x180
           RenderListItem {LI} at (40,0) size 431x36
             RenderListMarker at (-20,0) size 16x17: "1"
             RenderText {#text} at (0,0) size 402x35
               text run at (0,0) width 159: "New larger PowerBook. "
-              text run at (159,0) width 243: "Still 1 GHz, but with a 17-inch screen."
+              text run at (158,0) width 244: "Still 1 GHz, but with a 17-inch screen."
               text run at (0,18) width 44: "$3299."
           RenderListItem {LI} at (40,36) size 431x18
             RenderListMarker at (-20,0) size 16x17: "2"
@@ -99,9 +99,9 @@ layer at (0,0) size 800x350
             RenderInline {A} at (0,0) size 43x17 [color=#0000EE]
               RenderText {#text} at (210,0) size 43x17
                 text run at (210,0) width 43: "iTunes"
-            RenderText {#text} at (253,0) size 170x17
-              text run at (253,0) width 8: ". "
-              text run at (261,0) width 162: "Bundled into a box called"
+            RenderText {#text} at (252,0) size 171x17
+              text run at (252,0) width 9: ". "
+              text run at (260,0) width 163: "Bundled into a box called"
             RenderInline {A} at (0,0) size 30x17 [color=#0000EE]
               RenderText {#text} at (0,18) size 30x17
                 text run at (0,18) width 30: "iLife"
@@ -173,9 +173,9 @@ layer at (0,0) size 800x350
         RenderBlock {UL} at (0,194) size 784x108
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (413,0) size 8x17: bullet
-            RenderInline {A} at (0,0) size 92x17 [color=#0000EE]
-              RenderText {#text} at (652,0) size 92x17
-                text run at (652,0) width 92: "RSS Validator"
+            RenderInline {A} at (0,0) size 91x17 [color=#0000EE]
+              RenderText {#text} at (653,0) size 91x17
+                text run at (653,0) width 91: "RSS Validator"
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (413,0) size 8x17: bullet
             RenderInline {A} at (0,0) size 145x17 [color=#0000EE]

@@ -6,20 +6,20 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 100x17
           text run at (0,0) width 100: "Repaint test for "
-        RenderInline {I} at (0,0) size 767x35
+        RenderInline {I} at (0,0) size 766x35
           RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
             RenderText {#text} at (100,0) size 301x17
               text run at (100,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=15838"
-          RenderText {#text} at (401,0) size 767x35
-            text run at (401,0) width 366: " Incomplete repaint toggling \"How you know this person\""
+          RenderText {#text} at (400,0) size 766x35
+            text run at (400,0) width 366: " Incomplete repaint toggling \"How you know this person\""
             text run at (0,18) width 83: "on Facebook"
         RenderText {#text} at (83,18) size 4x17
           text run at (83,18) width 4: "."
       RenderBlock {DIV} at (0,52) size 784x262
         RenderBlock (anonymous) at (0,0) size 784x90
-          RenderText {#text} at (0,0) size 40x17
-            text run at (0,0) width 40: "Word,"
-          RenderBR {BR} at (40,14) size 0x0
+          RenderText {#text} at (0,0) size 39x17
+            text run at (0,0) width 39: "Word,"
+          RenderBR {BR} at (38,14) size 1x0
           RenderText {#text} at (0,18) size 43x17
             text run at (0,18) width 43: "words,"
           RenderBR {BR} at (43,32) size 0x0
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,190) size 784x72
           RenderText {#text} at (0,0) size 109x17
             text run at (0,0) width 109: "about all the stuff"
-          RenderBR {BR} at (109,14) size 0x0
+          RenderBR {BR} at (108,14) size 1x0
           RenderText {#text} at (0,18) size 67x17
             text run at (0,18) width 67: "that comes"
           RenderBR {BR} at (67,32) size 0x0

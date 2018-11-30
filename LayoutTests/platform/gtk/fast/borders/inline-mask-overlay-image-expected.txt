@@ -14,4 +14,4 @@ layer at (8,8) size 612x1824
       text run at (0,920) width 612: "masked"
       text run at (0,1149) width 495: "with a"
       text run at (0,1378) width 301: "soft"
-      text run at (0,1607) width 450: "glow."
+      text run at (0,1607) width 438: "glow."

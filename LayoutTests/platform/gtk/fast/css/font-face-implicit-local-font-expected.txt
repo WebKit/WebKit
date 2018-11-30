@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
           text run at (0,18) width 141: "used for all characters "
           text run at (141,18) width 154: "not explictly overridden."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 512x17
+        RenderText {#text} at (0,0) size 511x17
           text run at (0,0) width 444: "In the next line, the digits should be in Times, but the letters should be "
-          text run at (444,0) width 68: "in Courier."
-      RenderBlock (anonymous) at (0,86) size 784x27
+          text run at (443,0) width 68: "in Courier."
+      RenderBlock (anonymous) at (0,86) size 784x28
         RenderInline {SPAN} at (0,0) size 275x26
-          RenderText {#text} at (0,0) size 275x26
-            text run at (0,0) width 275: "ABCDEFGHIJ 1234567890"
+          RenderText {#text} at (0,1) size 275x26
+            text run at (0,1) width 275: "ABCDEFGHIJ 1234567890"
         RenderText {#text} at (0,0) size 0x0

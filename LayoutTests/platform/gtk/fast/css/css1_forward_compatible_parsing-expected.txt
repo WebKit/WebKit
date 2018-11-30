@@ -12,21 +12,21 @@ layer at (0,0) size 800x401
         RenderBlock {P} at (0,0) size 784x36 [color=#FF0000]
           RenderText {#text} at (0,0) size 776x35
             text run at (0,0) width 776: "Second sentence: this text should be green according to CSS 1 but it should be red according to CSS 2.1. The markup code"
-            text run at (0,18) width 753: "is also invalid according to W3C HTML validator but the CSS code is perfectly valid according to W3C CSS validator."
+            text run at (0,18) width 752: "is also invalid according to W3C HTML validator but the CSS code is perfectly valid according to W3C CSS validator."
       RenderBlock {H3} at (0,106) size 784x45 [color=#008000] [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 767x43
           text run at (0,0) width 767: "Third sentence: this text should be green. The markup code is valid according to W3C HTML"
-          text run at (0,22) width 581: "validator but the CSS code is invalid according to W3C CSS validator."
+          text run at (0,22) width 579: "validator but the CSS code is invalid according to W3C CSS validator."
       RenderBlock {H4} at (0,171) size 784x55 [color=#FF0000] [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 776x53
           text run at (0,0) width 776: "Fourth sentence: this text should be green according to CSS 1 (class name can not start with a dash in CSS 1) but it"
-          text run at (0,18) width 773: "should be red according to CSS 2.1 and the markup code is valid according to W3C HTML validator and the CSS"
-          text run at (0,36) width 376: "code is perfectly valid according to W3C CSS validator."
+          text run at (0,18) width 772: "should be red according to CSS 2.1 and the markup code is valid according to W3C HTML validator and the CSS"
+          text run at (0,36) width 375: "code is perfectly valid according to W3C CSS validator."
       RenderBlock {H5} at (0,252) size 784x73 [color=#800080] [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 775x71
           text run at (0,0) width 761: "Fifth sentence: this text should be green according to CSS 1 (class name can not start with a dash in CSS 1) but it"
           text run at (0,18) width 775: "should be purple according to latest CSS 2.1 WD (class name can not start with a dash unless immediately followed"
-          text run at (0,36) width 771: "by [_A-Za-z] character in CSS 2.1) and the markup code is valid according to W3C HTML validator and the CSS"
+          text run at (0,36) width 770: "by [_A-Za-z] character in CSS 2.1) and the markup code is valid according to W3C HTML validator and the CSS"
           text run at (0,54) width 402: "code is perfectly valid according to the W3C CSS validator!"
       RenderBlock {P} at (0,351) size 784x19
         RenderText {#text} at (0,0) size 27x17

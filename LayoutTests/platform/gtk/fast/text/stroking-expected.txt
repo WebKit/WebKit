@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,222) size 784x148 [textStrokeColor=#0000FF] [textStrokeWidth=1.33]
         RenderText {#text} at (0,1) size 593x145
           text run at (0,1) width 593: "Blue stroke, no fill, red"
-          text run at (0,75) width 211: "shadow."
+          text run at (0,75) width 207: "shadow."

@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9432"
-          RenderText {#text} at (520,0) size 769x35
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 245: "REGRESSION: crash in capitalization"
+          RenderText {#text} at (519,0) size 769x35
+            text run at (519,0) width 5: " "
+            text run at (523,0) width 246: "REGRESSION: crash in capitalization"
             text run at (0,18) width 273: "code due to empty-string generated content"
         RenderText {#text} at (273,18) size 4x17
           text run at (273,18) width 4: "."

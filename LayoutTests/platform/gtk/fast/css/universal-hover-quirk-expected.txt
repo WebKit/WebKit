@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,44) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 548x17
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7218"
-          RenderText {#text} at (401,0) size 200x17
-            text run at (401,0) width 200: " Text underlined on mouse over"
-        RenderText {#text} at (601,0) size 98x17
-          text run at (601,0) width 98: ". This tests that "
-        RenderInline {CODE} at (0,0) size 56x15
-          RenderText {#text} at (699,3) size 56x15
-            text run at (699,3) width 56: "*:hover"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 547x17
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7218"
+          RenderText {#text} at (399,0) size 199x17
+            text run at (399,0) width 199: " Text underlined on mouse over"
+        RenderText {#text} at (597,0) size 99x17
+          text run at (597,0) width 99: ". This tests that "
+        RenderInline {CODE} at (0,0) size 57x15
+          RenderText {#text} at (695,3) size 57x15
+            text run at (695,3) width 57: "*:hover"
         RenderText {#text} at (0,18) size 256x17
           text run at (0,18) width 256: "does not match anything in quirks mode."
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

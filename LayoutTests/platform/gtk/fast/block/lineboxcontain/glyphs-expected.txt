@@ -4,9 +4,9 @@ layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,8) size 784x252
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 493x17
-          text run at (0,0) width 260: "You should see a green rectangle below. "
-          text run at (260,0) width 233: "If you see any red, the test has failed."
+        RenderText {#text} at (0,0) size 491x17
+          text run at (0,0) width 258: "You should see a green rectangle below. "
+          text run at (257,0) width 234: "If you see any red, the test has failed."
       RenderBlock {P} at (0,164) size 784x18 [border: (1px solid #000000)]
         RenderText {#text} at (1,-1) size 275x17
           text run at (1,-1) width 275: "this block should hug the lowercase glyphs."
@@ -19,7 +19,7 @@ layer at (0,0) size 800x276
         RenderBR {BR} at (433,0) size 0x17
         RenderText {#text} at (24,18) size 515x17
           text run at (24,18) width 515: "This should make the top of the T line up with the line and not look shifted down."
-        RenderBR {BR} at (539,18) size 0x17
+        RenderBR {BR} at (538,18) size 1x17
         RenderText {#text} at (0,36) size 450x17
           text run at (0,36) width 450: "Maybe we should do this by default for all first letters like Firefox does."
 layer at (8,26) size 384x130

@@ -4,8 +4,8 @@ layer at (0,0) size 785x712
   RenderBlock {HTML} at (0,0) size 785x713
     RenderBody {BODY} at (8,16) size 769x689
       RenderBlock {P} at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 751x35
-          text run at (0,0) width 751: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on the left,"
+        RenderText {#text} at (0,0) size 749x35
+          text run at (0,0) width 749: "There should be a SPAN in the middle of all four paragraphs that has padding, a green border, and a margin on the left,"
           text run at (0,18) width 363: "and padding, an orange border, and a margin on the right."
       RenderBlock {H1} at (0,52) size 769x18
         RenderText {#text} at (0,0) size 89x17
@@ -21,8 +21,8 @@ layer at (0,0) size 785x712
             text run at (0,7) width 588: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (588,7) width 144: "labore et dolore magna"
             text run at (0,39) width 430: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderText {#text} at (659,103) size 715x81
-            text run at (659,103) width 52: "sit amet,"
+          RenderText {#text} at (658,103) size 715x81
+            text run at (658,103) width 53: "sit amet,"
             text run at (0,135) width 509: "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
             text run at (509,135) width 206: "magna aliqua. Ut enim ad minim"
             text run at (0,167) width 401: "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip."
@@ -41,7 +41,7 @@ layer at (0,0) size 785x712
             text run at (169,7) width 588 RTL override: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
             text run at (327,39) width 430 RTL override: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
           RenderText {#text} at (46,103) size 715x81
-            text run at (46,103) width 52 RTL override: "sit amet,"
+            text run at (46,103) width 53 RTL override: "sit amet,"
             text run at (42,135) width 206 RTL override: "magna aliqua. Ut enim ad minim"
             text run at (248,135) width 509 RTL override: "consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
             text run at (356,167) width 401 RTL override: "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip."

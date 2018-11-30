@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 307x17
               text run at (104,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=18809"
-          RenderText {#text} at (411,0) size 772x35
-            text run at (411,0) width 4: " "
-            text run at (415,0) width 357: "Forms with block level generated content and absolutely"
-            text run at (0,18) width 336: "positioned labels break inline layout (fixed on reflow)"
-        RenderText {#text} at (336,18) size 4x17
-          text run at (336,18) width 4: "."
+          RenderText {#text} at (410,0) size 772x35
+            text run at (410,0) width 5: " "
+            text run at (414,0) width 358: "Forms with block level generated content and absolutely"
+            text run at (0,18) width 335: "positioned labels break inline layout (fixed on reflow)"
+        RenderText {#text} at (334,18) size 5x17
+          text run at (334,18) width 5: "."
       RenderBlock {DIV} at (0,52) size 784x36
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderText {#text} at (0,0) size 97x17

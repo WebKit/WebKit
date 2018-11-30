@@ -4,8 +4,8 @@ layer at (0,0) size 800x102
   RenderBlock {HTML} at (0,0) size 800x102
     RenderBody {BODY} at (8,16) size 784x70
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 354x17
-          text run at (0,0) width 354: "Test passes if following bars are filled 30% with a color."
+        RenderText {#text} at (0,0) size 352x17
+          text run at (0,0) width 352: "Test passes if following bars are filled 30% with a color."
       RenderBlock {P} at (0,34) size 784x36
         RenderProgress {PROGRESS} at (0,13) size 160x5
         RenderBR {BR} at (160,0) size 0x17

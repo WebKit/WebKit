@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,44) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 779x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7327"
-          RenderText {#text} at (401,0) size 779x35
-            text run at (401,0) width 378: " REGRESSION (r12869): :hover subselector does not work"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 778x35
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7327"
+          RenderText {#text} at (399,0) size 778x35
+            text run at (399,0) width 379: " REGRESSION (r12869): :hover subselector does not work"
             text run at (0,18) width 94: "in quirks mode"
         RenderText {#text} at (94,18) size 98x17
           text run at (94,18) width 98: ". This tests that "

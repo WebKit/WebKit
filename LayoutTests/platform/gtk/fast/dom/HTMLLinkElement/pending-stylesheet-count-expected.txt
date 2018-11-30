@@ -6,19 +6,19 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 774x35
+        RenderInline {I} at (0,0) size 772x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9252"
-          RenderText {#text} at (452,0) size 774x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 318: "REGRESSION: Very odd roll-over issues (content"
+          RenderText {#text} at (451,0) size 772x35
+            text run at (451,0) width 5: " "
+            text run at (455,0) width 317: "REGRESSION: Very odd roll-over issues (content"
             text run at (0,18) width 88: "disappearing)"
         RenderText {#text} at (88,18) size 4x17
           text run at (88,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 244x17
-          text run at (0,0) width 244: "There should be a green square below."
+        RenderText {#text} at (0,0) size 243x17
+          text run at (0,0) width 243: "There should be a green square below."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 784x0
       RenderBlock {DIV} at (0,96) size 100x100 [bgcolor=#008000]

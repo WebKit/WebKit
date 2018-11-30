@@ -12,8 +12,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,0) size 657x128 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (4,4) size 50x50 [bgcolor=#FFA500]
               RenderBlock {P} at (4,4) size 649x18
-                RenderText {#text} at (53,0) size 595x17
-                  text run at (53,0) width 595: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
+                RenderText {#text} at (53,0) size 594x17
+                  text run at (53,0) width 594: "This text should be flowing past a tall orange rectangle on the left side of the browser window."
               RenderBlock {DIV} at (4,38) size 649x18 [bgcolor=#008000]
                 RenderBR {BR} at (53,0) size 0x17
               RenderImage {IMG} at (4,56) size 50x50 [bgcolor=#FFA500]

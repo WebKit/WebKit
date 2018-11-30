@@ -6,8 +6,8 @@ layer at (50,50) size 700x154
       RenderBlock {p} at (1,17) size 596x18
         RenderText {#text} at (0,0) size 345x17
           text run at (0,0) width 345: "There should be a yellow square in the top-left corner, "
-        RenderInline {em} at (0,0) size 52x17
-          RenderText {#text} at (345,0) size 52x17
-            text run at (345,0) width 52: "between"
-        RenderText {#text} at (397,0) size 78x17
-          text run at (397,0) width 78: " the borders."
+        RenderInline {em} at (0,0) size 53x17
+          RenderText {#text} at (344,0) size 53x17
+            text run at (344,0) width 53: "between"
+        RenderText {#text} at (396,0) size 79x17
+          text run at (396,0) width 79: " the borders."

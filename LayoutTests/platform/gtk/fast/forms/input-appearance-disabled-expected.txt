@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
 layer at (13,31) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18 [color=#545454]
-    RenderText {#text} at (0,0) size 89x17
-      text run at (0,0) width 89: "Test Passed"
+    RenderText {#text} at (0,0) size 88x17
+      text run at (0,0) width 88: "Test Passed"

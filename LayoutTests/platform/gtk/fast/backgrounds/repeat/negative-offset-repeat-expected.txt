@@ -4,17 +4,17 @@ layer at (0,0) size 800x530
   RenderBlock {HTML} at (0,0) size 800x530
     RenderBody {BODY} at (8,16) size 784x452
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 722x17
-          RenderInline {A} at (0,0) size 293x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 293x17
-              text run at (53,0) width 293: "http://bugs.webkit.org/show_bug.cgi?id=5399"
-          RenderText {#text} at (346,0) size 429x17
-            text run at (346,0) width 4: " "
-            text run at (350,0) width 425: "no-repeat on negatively positioned background images are ignored"
-        RenderText {#text} at (775,0) size 4x17
-          text run at (775,0) width 4: "."
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 720x17
+          RenderInline {A} at (0,0) size 294x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 294x17
+              text run at (51,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=5399"
+          RenderText {#text} at (344,0) size 427x17
+            text run at (344,0) width 5: " "
+            text run at (348,0) width 423: "no-repeat on negatively positioned background images are ignored"
+        RenderText {#text} at (770,0) size 5x17
+          text run at (770,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 454x17
           text run at (0,0) width 454: "Element with background image starting at (-13, -13) with no-repeat set:"

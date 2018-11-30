@@ -159,9 +159,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (4,235) size 776x20 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 43x17
           text run at (1,1) width 43: "Times "
-        RenderInline {I} at (0,0) size 64x16
-          RenderText {#text} at (44,2) size 64x16
-            text run at (44,2) width 64: "AHEM"
+        RenderInline {I} at (0,0) size 65x16
+          RenderText {#text} at (43,2) size 65x16
+            text run at (43,2) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,271) size 784x18
         RenderText {#text} at (0,0) size 101x17

@@ -5,24 +5,24 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x22
         RenderBlock {INPUT} at (2,3) size 24x16
-        RenderText {#text} at (28,3) size 34x17
-          text run at (28,3) width 34: "Two "
-        RenderBlock {INPUT} at (64,3) size 24x16
-        RenderText {#text} at (90,3) size 37x17
-          text run at (90,3) width 37: "Three"
+        RenderText {#text} at (28,3) size 33x17
+          text run at (28,3) width 33: "Two "
+        RenderBlock {INPUT} at (62,3) size 25x16
+        RenderText {#text} at (88,3) size 38x17
+          text run at (88,3) width 38: "Three"
       RenderBlock {FORM} at (0,38) size 784x22
         RenderBlock {INPUT} at (2,3) size 24x16
         RenderText {#text} at (28,3) size 31x17
           text run at (28,3) width 31: "One "
         RenderBlock {INPUT} at (61,3) size 24x16
-        RenderText {#text} at (87,3) size 34x17
-          text run at (87,3) width 34: "Two "
-        RenderBlock {INPUT} at (123,3) size 24x16
-        RenderText {#text} at (149,3) size 41x17
-          text run at (149,3) width 41: "Three "
-        RenderBlock {INPUT} at (192,3) size 24x16
-        RenderText {#text} at (218,3) size 27x17
-          text run at (218,3) width 27: "One"
+        RenderText {#text} at (87,3) size 33x17
+          text run at (87,3) width 33: "Two "
+        RenderBlock {INPUT} at (121,3) size 25x16
+        RenderText {#text} at (147,3) size 42x17
+          text run at (147,3) width 42: "Three "
+        RenderBlock {INPUT} at (190,3) size 25x16
+        RenderText {#text} at (216,3) size 28x17
+          text run at (216,3) width 28: "One"
       RenderBlock (anonymous) at (0,76) size 784x36
         RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 505: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 779x35
-          text run at (0,0) width 779: "This tests whether alt text is shown for image elements with no src attribute. You should see \"Success\" twice, followed by a"
+        RenderText {#text} at (0,0) size 778x35
+          text run at (0,0) width 778: "This tests whether alt text is shown for image elements with no src attribute. You should see \"Success\" twice, followed by a"
           text run at (0,18) width 92: "blue rectangle."
       RenderBlock {P} at (0,52) size 784x98
         RenderImage {IMG} at (0,0) size 54x21

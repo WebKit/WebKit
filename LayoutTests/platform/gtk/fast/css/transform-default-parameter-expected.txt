@@ -4,8 +4,8 @@ layer at (0,0) size 800x114
   RenderBlock {HTML} at (0,0) size 800x114
     RenderBody {BODY} at (8,21) size 784x77
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 487x36
-          text run at (0,0) width 487: "Testing default translate parameter"
+        RenderText {#text} at (0,0) size 485x36
+          text run at (0,0) width 485: "Testing default translate parameter"
       RenderBlock {P} at (0,58) size 784x19
         RenderText {#text} at (0,0) size 577x17
           text run at (0,0) width 577: "There should be blue and green boxes shown. If there is a red box visible, the test has failed"

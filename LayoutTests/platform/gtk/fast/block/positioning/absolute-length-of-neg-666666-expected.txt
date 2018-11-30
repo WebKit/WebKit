@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 579x17
           text run at (0,0) width 353: "In this test case you should only see one line green text. "
           text run at (353,0) width 226: "If there is any red the test has failed."
-layer at (8,42) size 128x18
-  RenderBlock (positioned) {DIV} at (0,0) size 128x18 [color=#008000]
-    RenderText {#text} at (0,0) size 128x17
-      text run at (0,0) width 128: "You should see this."
+layer at (8,42) size 126x18
+  RenderBlock (positioned) {DIV} at (0,0) size 127x18 [color=#008000]
+    RenderText {#text} at (0,0) size 127x17
+      text run at (0,0) width 127: "You should see this."

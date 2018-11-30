@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 782x35
-        text run at (0,0) width 782: "This test verifies that JS access to offsetParent on an element that lacks one, such as the body, doesn't crash. If it didn't crash,"
+      RenderText {#text} at (0,0) size 781x35
+        text run at (0,0) width 781: "This test verifies that JS access to offsetParent on an element that lacks one, such as the body, doesn't crash. If it didn't crash,"
         text run at (0,18) width 58: "it passed."

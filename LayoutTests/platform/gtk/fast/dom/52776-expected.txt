@@ -5,12 +5,12 @@ layer at (0,0) size 785x1682
     RenderBody {BODY} at (8,16) size 769x1650
       RenderBlock {DIV} at (0,0) size 769x800
         RenderBlock {P} at (0,0) size 769x18
-          RenderText {#text} at (682,0) size 87x17
-            text run at (682,0) width 87: "Right To Left"
+          RenderText {#text} at (683,0) size 86x17
+            text run at (683,0) width 86: "Right To Left"
         RenderBlock {P} at (0,34) size 769x18
-          RenderText {#text} at (443,0) size 326x17
-            text run at (443,0) width 4 RTL: "."
-            text run at (447,0) width 322: "Well-formed pair of unicode bidi control characters"
+          RenderText {#text} at (444,0) size 325x17
+            text run at (444,0) width 5 RTL: "."
+            text run at (448,0) width 321: "Well-formed pair of unicode bidi control characters"
         RenderBlock {DIV} at (0,68) size 769x18
           RenderText {#text} at (756,0) size 13x17
             text run at (756,0) width 0 RTL: "\x{202C}"
@@ -104,7 +104,7 @@ layer at (0,0) size 785x1682
             text run at (769,0) width 0 RTL: "\x{202C}"
         RenderBlock {P} at (0,640) size 769x18
           RenderText {#text} at (494,0) size 275x17
-            text run at (494,0) width 4 RTL: "."
+            text run at (494,0) width 5 RTL: "."
             text run at (498,0) width 271: "Start with different directionality characters"
         RenderBlock {DIV} at (0,674) size 769x18
           RenderText {#text} at (745,0) size 24x17
@@ -141,11 +141,11 @@ layer at (0,0) size 785x1682
             text run at (751,0) width 18 RTL: "\x{5D0}\x{5D1}\x{202C}"
       RenderBlock {DIV} at (0,816) size 769x800
         RenderBlock {P} at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 87x17
-            text run at (0,0) width 87: "Left To Right"
+          RenderText {#text} at (0,0) size 86x17
+            text run at (0,0) width 86: "Left To Right"
         RenderBlock {P} at (0,34) size 769x18
-          RenderText {#text} at (0,0) size 326x17
-            text run at (0,0) width 326: "Well-formed pair of unicode bidi control characters."
+          RenderText {#text} at (0,0) size 325x17
+            text run at (0,0) width 325: "Well-formed pair of unicode bidi control characters."
         RenderBlock {DIV} at (0,68) size 769x18
           RenderText {#text} at (0,0) size 13x17
             text run at (0,0) width 5 RTL: "!"
@@ -266,7 +266,7 @@ layer at (0,0) size 785x1682
       RenderBlock {UL} at (0,1632) size 769x18
         RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (0,0) size 705x17
-            text run at (0,0) width 705: "test id=test: the right-most character of rendering result of <PDF>abc<PDF> in RTL block should be c: Success"
+          RenderText {#text} at (0,0) size 704x17
+            text run at (0,0) width 704: "test id=test: the right-most character of rendering result of <PDF>abc<PDF> in RTL block should be c: Success"
 selection start: position 3 of child 0 {#text} of child 20 {DIV} of child 1 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 20 {DIV} of child 1 {DIV} of body

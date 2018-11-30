@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {H2} at (0,0) size 784x27 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,0) size 58x26
-          text run at (0,0) width 58: "PASS"
+        RenderText {#text} at (0,0) size 57x26
+          text run at (0,0) width 57: "PASS"
 layer at (8,55) size 760x193
   RenderBlock {DIV} at (0,46) size 760x194 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x8
     RenderBlock {H2} at (5,32) size 750x28 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,0) size 58x26
-        text run at (0,0) width 58: "PASS"
+      RenderText {#text} at (0,0) size 57x26
+        text run at (0,0) width 57: "PASS"
     RenderMultiColumnSet at (5,79) size 750x109
 layer at (13,60) size 367x222
   RenderMultiColumnFlowThread at (5,5) size 367x222
@@ -25,7 +25,7 @@ layer at (13,60) size 367x222
           text run at (0,54) width 358: "purus, vulputate vel, varius ut, euismod et, nisi. Sed vitae"
           text run at (0,72) width 343: "felis vel orci sagittis aliquam. Cras convallis adipiscing"
           text run at (0,90) width 340: "sem. Nam nonummy enim. Nullam bibendum lobortis"
-          text run at (0,108) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
+          text run at (0,108) width 343: "neque. Vestibulum velit orci, tempus euismod, pretium"
           text run at (0,126) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
           text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
           text run at (0,162) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"

@@ -24,19 +24,19 @@ layer at (0,0) size 800x600
           text run at (2,2) width 82: "Here is some"
           text run at (2,20) width 31: "text. "
           text run at (33,20) width 51: "I should"
-          text run at (2,38) width 61: "overflow."
-        RenderBR {BR} at (63,52) size 0x0
-        RenderText {#text} at (2,56) size 98x17
-          text run at (2,56) width 98: "I will overflow."
-        RenderBR {BR} at (100,70) size 0x0
+          text run at (2,38) width 60: "overflow."
+        RenderBR {BR} at (61,52) size 1x0
+        RenderText {#text} at (2,56) size 97x17
+          text run at (2,56) width 97: "I will overflow."
+        RenderBR {BR} at (98,70) size 1x0
         RenderText {#text} at (2,74) size 96x35
           text run at (2,74) width 96: "I definitely will"
           text run at (2,92) width 57: "overflow"
         RenderBR {BR} at (59,106) size 0x0
         RenderText {#text} at (2,110) size 65x35
           text run at (2,110) width 65: "I promis. I"
-          text run at (2,128) width 65: "lvoerflow."
-        RenderBR {BR} at (67,142) size 0x0
-        RenderText {#text} at (2,146) size 45x17
-          text run at (2,146) width 45: "Really."
+          text run at (2,128) width 64: "lvoerflow."
+        RenderBR {BR} at (65,142) size 1x0
+        RenderText {#text} at (2,146) size 44x17
+          text run at (2,146) width 44: "Really."
       RenderBlock {P} at (0,74) size 800x0

@@ -4,25 +4,25 @@ layer at (0,0) size 800x186
   RenderBlock {HTML} at (0,0) size 800x186
     RenderBody {BODY} at (8,8) size 784x170
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 108x17
-          text run at (0,0) width 108: "Testcase for bug "
-        RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
-          RenderText {#text} at (108,0) size 32x17
-            text run at (108,0) width 32: "4874"
-        RenderText {#text} at (140,0) size 417x17
-          text run at (140,0) width 417: " - Table with absolute bottom positioning is positioned incorrectly."
+        RenderText {#text} at (0,0) size 107x17
+          text run at (0,0) width 107: "Testcase for bug "
+        RenderInline {A} at (0,0) size 33x17 [color=#0000EE]
+          RenderText {#text} at (106,0) size 33x17
+            text run at (106,0) width 33: "4874"
+        RenderText {#text} at (138,0) size 416x17
+          text run at (138,0) width 416: " - Table with absolute bottom positioning is positioned incorrectly."
       RenderBlock {H1} at (0,39) size 784x38
         RenderText {#text} at (0,0) size 170x36
           text run at (0,0) width 170: "Look Down!"
       RenderBlock {P} at (0,97) size 784x73
-        RenderText {#text} at (0,0) size 783x71
+        RenderText {#text} at (0,0) size 781x71
           text run at (0,0) width 507: "At the bottom of the window you should see the word \"Paragraph\" followed by "
           text run at (507,0) width 265: "three boxes containing text. The entire red"
           text run at (0,18) width 200: "border around each box should "
           text run at (200,18) width 454: "be visible without scrolling (the window should not be scrollable at all). "
           text run at (654,18) width 101: "The three boxes"
           text run at (0,36) width 344: "should be aligned at the bottom with the bottom of the "
-          text run at (344,36) width 439: "window. The text \"Tall table\" should be vertically centered in its box,"
+          text run at (344,36) width 437: "window. The text \"Tall table\" should be vertically centered in its box,"
           text run at (0,54) width 480: "which should be 50px tall. The other two boxes should both be shorter than "
           text run at (480,54) width 203: "50px, and have the same height."
 layer at (120,550) size 120x50
@@ -30,8 +30,8 @@ layer at (120,550) size 120x50
     RenderTableSection {TBODY} at (1,1) size 118x48
       RenderTableRow {TR} at (0,2) size 118x44
         RenderTableCell {TD} at (2,14) size 114x20 [r=0 c=0 rs=1 cs=1]
-          RenderText {#text} at (1,1) size 59x17
-            text run at (1,1) width 59: "Tall table"
+          RenderText {#text} at (1,1) size 58x17
+            text run at (1,1) width 58: "Tall table"
 layer at (240,574) size 120x26
   RenderTable {TABLE} at (240,574) size 120x26 [border: (1px solid #FF0000)]
     RenderTableSection {TBODY} at (1,1) size 118x24

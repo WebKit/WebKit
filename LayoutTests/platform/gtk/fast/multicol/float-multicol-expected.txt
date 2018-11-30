@@ -10,12 +10,12 @@ layer at (8,8) size 769x795
     RenderBlock {DIV} at (0,19) size 769x28 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 386x463 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70
-        RenderText {#text} at (133,0) size 379x89
-          text run at (133,0) width 229: "You've already downloaded a build."
-          text run at (133,18) width 219: "All you have to do is use it as your"
+        RenderText {#text} at (133,0) size 385x89
+          text run at (133,0) width 252: "You've already downloaded a build. All"
+          text run at (133,18) width 195: "you have to do is use it as your"
           text run at (133,36) width 208: "everyday browser and mail/news"
           text run at (133,54) width 246: "reader. If you downloaded a build with"
-          text run at (0,72) width 253: "Talkback, please turn it on when it asks."
+          text run at (0,72) width 252: "Talkback, please turn it on when it asks."
         RenderBlock (floating) {DIV} at (302,72) size 83x390 [bgcolor=#FF0000]
           RenderBlock {P} at (0,16) size 82x18
             RenderText {#text} at (0,0) size 74x17
@@ -50,8 +50,8 @@ layer at (8,8) size 769x795
           RenderBlock {P} at (0,356) size 82x18
             RenderText {#text} at (0,0) size 82x17
               text run at (0,0) width 82: "Hola hola 11"
-        RenderText {#text} at (0,90) size 301x53
-          text run at (0,90) width 301: "Talkback reports give us really valuable data on"
+        RenderText {#text} at (0,90) size 300x53
+          text run at (0,90) width 300: "Talkback reports give us really valuable data on"
           text run at (0,108) width 280: "which crashes are the most serious, and how"
           text run at (0,126) width 226: "often people are encountering them."
       RenderBlock (floating) {DIV} at (686,0) size 83x322 [bgcolor=#FF00FF]
@@ -83,8 +83,8 @@ layer at (8,8) size 769x795
           RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "Hello Kitty 9"
       RenderBlock {H2} at (0,0) size 769x27
-        RenderText {#text} at (394,0) size 263x26
-          text run at (394,0) width 263: "What Needs To Be Done?"
+        RenderText {#text} at (394,0) size 260x26
+          text run at (394,0) width 260: "What Needs To Be Done?"
     RenderBlock (floating) {DIV} at (394,66) size 83x391 [bgcolor=#808080]
       RenderBlock {P} at (0,16) size 82x18
         RenderText {#text} at (0,0) size 74x17
@@ -126,21 +126,21 @@ layer at (8,8) size 769x795
       RenderBlock {DD} at (40,34) size 729x288
         RenderBlock {P} at (0,0) size 729x288
           RenderText {#text} at (436,0) size 210x107
-            text run at (436,0) width 190: "You've already downloaded a"
+            text run at (436,0) width 188: "You've already downloaded a"
             text run at (436,18) width 210: "build. All you have to do is use it"
             text run at (436,36) width 18: "as "
             text run at (453,36) width 174: "your everyday browser and"
-            text run at (436,54) width 154: "mail/news reader. If you"
+            text run at (436,54) width 153: "mail/news reader. If you"
             text run at (436,72) width 158: "downloaded a build with"
-            text run at (436,90) width 68: "Talkback, "
+            text run at (436,90) width 66: "Talkback, "
           RenderInline {EM} at (0,0) size 103x17
-            RenderText {#text} at (503,90) size 103x17
-              text run at (503,90) width 45: "please "
-              text run at (547,90) width 59: "turn it on"
-          RenderText {#text} at (605,90) size 209x179
-            text run at (605,90) width 40: " when"
-            text run at (436,108) width 189: "it asks. Talkback reports give "
-            text run at (624,108) width 15: "us"
+            RenderText {#text} at (501,90) size 103x17
+              text run at (501,90) width 45: "please "
+              text run at (545,90) width 59: "turn it on"
+          RenderText {#text} at (603,90) size 207x179
+            text run at (603,90) width 40: " when"
+            text run at (436,108) width 187: "it asks. Talkback reports give "
+            text run at (622,108) width 15: "us"
             text run at (436,126) width 127: "really valuable data "
             text run at (562,126) width 60: "on which"
             text run at (436,144) width 206: "crashes are the most serious, and"
@@ -219,19 +219,19 @@ layer at (8,8) size 769x795
             text run at (518,18) width 180: "to ways to get involved with"
             text run at (518,36) width 183: "helping. This doesn't involve"
             text run at (518,54) width 202: "knowing how to code, although"
-            text run at (518,72) width 194: "a little knowledge of HTML is"
+            text run at (518,72) width 193: "a little knowledge of HTML is"
             text run at (518,90) width 95: "helpful. Being "
             text run at (612,90) width 116: "involved with QA"
             text run at (518,108) width 15: "is "
             text run at (532,108) width 195: "good for people wanting to get"
             text run at (518,126) width 121: "more familiar with "
             text run at (638,126) width 80: "Mozilla, and"
-            text run at (518,144) width 190: "there's a strong community. A"
+            text run at (518,144) width 189: "there's a strong community. A"
             text run at (518,162) width 178: "particularly good way to get"
             text run at (518,180) width 60: "involved "
             text run at (577,180) width 78: "is to join the"
-          RenderInline {A} at (0,0) size 74x17 [color=#0000EE]
-            RenderText {#text} at (518,198) size 74x17
-              text run at (518,198) width 74: "BugAThon"
-          RenderText {#text} at (591,198) size 5x17
-            text run at (591,198) width 5: "."
+          RenderInline {A} at (0,0) size 72x17 [color=#0000EE]
+            RenderText {#text} at (518,198) size 72x17
+              text run at (518,198) width 72: "BugAThon"
+          RenderText {#text} at (589,198) size 5x17
+            text run at (589,198) width 5: "."

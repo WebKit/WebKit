@@ -9,8 +9,8 @@ layer at (0,0) size 800x158
         RenderInline {B} at (0,0) size 25x17
           RenderText {#text} at (106,0) size 25x17
             text run at (106,0) width 25: "two"
-        RenderText {#text} at (131,0) size 136x17
-          text run at (131,0) width 136: " black squares below."
+        RenderText {#text} at (131,0) size 135x17
+          text run at (131,0) width 135: " black squares below."
 layer at (8,50) size 784x100 scrollX 200 scrollWidth 2572
   RenderBlock {DIV} at (0,34) size 784x100
     RenderMultiColumnSet at (0,0) size 784x100

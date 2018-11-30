@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 550x17
         text run at (0,0) width 550: "This tests that a negative outline-offset won't get in the way of a cursor in a text control."
-      RenderBR {BR} at (550,14) size 0x0
+      RenderBR {BR} at (549,14) size 1x0
       RenderTextControl {INPUT} at (2,20) size 231x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
 layer at (12,30) size 227x23

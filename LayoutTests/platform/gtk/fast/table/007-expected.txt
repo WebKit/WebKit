@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
                   text run at (12,0) width 432: "Affordable, high-quality business services with unparalleled support."
           RenderTableRow {TR} at (0,68) size 522x0
             RenderTableCell {TD} at (27,68) size 495x20 [border: (1px inset #808080)] [r=2 c=1 rs=2 cs=1]
-              RenderText {#text} at (1,1) size 416x17
-                text run at (1,1) width 416: "Wireless Services\x{2014}Take the Net with you when you\x{2019}re on the go"
+              RenderText {#text} at (1,1) size 415x17
+                text run at (1,1) width 415: "Wireless Services\x{2014}Take the Net with you when you\x{2019}re on the go"
           RenderTableRow {TR} at (0,68) size 522x20
             RenderTableCell {TD} at (0,68) size 522x20 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=2]
               RenderText {#text} at (1,1) size 24x17

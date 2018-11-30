@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (2,56) width 145: "p to multiple lines beca"
           text run at (2,74) width 147: "use of the word-wrap:b"
           text run at (2,92) width 147: "reak-word CSS propert"
-          text run at (2,110) width 12: "y."
+          text run at (2,110) width 11: "y."

@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 53: "Dorothy"
                 text run at (0,18) width 72: "Rothschild:"
                 text run at (0,36) width 37: "Love,"
-                text run at (0,54) width 58: "curiosity,"
+                text run at (0,54) width 57: "curiosity,"
                 text run at (0,72) width 49: "freckles"
                 text run at (0,90) width 23: "and"
             RenderTableCell {TD} at (72,0) size 712x18 [bgcolor=#008000] [r=0 c=1 rs=1 cs=1]

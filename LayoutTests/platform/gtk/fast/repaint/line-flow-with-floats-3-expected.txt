@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
                   text run at (6,6) width 354: "The chief difficulty Alice found at first was in managing"
                   text run at (6,24) width 26: "her "
                   text run at (31,24) width 329: "flamingo: she succeeded in getting its body tucked"
-                  text run at (6,42) width 43: "away, "
-                  text run at (48,42) width 312: "comfortably enough, under her arm, with its legs"
+                  text run at (6,42) width 42: "away, "
+                  text run at (47,42) width 313: "comfortably enough, under her arm, with its legs"
                   text run at (6,60) width 107: "hanging down, "
                   text run at (112,60) width 248: "but generally, just as she had got its"
                   text run at (6,78) width 159: "neck nicely straightened "
@@ -44,8 +44,8 @@ layer at (0,0) size 800x600
                   text run at (6,222) width 265: "hedgehog to, and, as the doubled-up "
                   text run at (270,222) width 142: "soldiers were always"
                   text run at (6,240) width 292: "getting up and walking off to other parts of "
-                  text run at (298,240) width 114: "the ground, Alice"
-                  text run at (57,258) width 306: "soon came to the conclusion that it was a very "
+                  text run at (297,240) width 115: "the ground, Alice"
+                  text run at (57,258) width 307: "soon came to the conclusion that it was a very "
                 RenderBlock (floating) {SPAN} at (6,261) size 48x65 [bgcolor=#ADD8E6]
                 RenderText {#text} at (363,258) size 355x35
                   text run at (363,258) width 49: "difficult"

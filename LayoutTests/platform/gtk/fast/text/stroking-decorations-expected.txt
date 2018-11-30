@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,296) size 784x148 [textFillColor=#0000FF] [textStrokeWidth=1.33]
         RenderText {#text} at (0,1) size 596x145
           text run at (0,1) width 596: "No stroke, blue fill, red"
-          text run at (0,75) width 594: "shadow, blue underline"
+          text run at (0,75) width 590: "shadow, blue underline"

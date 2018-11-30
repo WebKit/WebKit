@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 598x17
+        RenderInline {I} at (0,0) size 595x17
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7301"
-          RenderText {#text} at (520,0) size 250x17
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 246: "Text shadow does not repaint correctly"
-        RenderText {#text} at (770,0) size 4x17
-          text run at (770,0) width 4: "."
+          RenderText {#text} at (519,0) size 248x17
+            text run at (519,0) width 5: " "
+            text run at (523,0) width 244: "Text shadow does not repaint correctly"
+        RenderText {#text} at (766,0) size 5x17
+          text run at (766,0) width 5: "."
       RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (30,66) size 724x21
         RenderInline {SPAN} at (0,0) size 202x20 [bgcolor=#C0C0C0]
@@ -37,5 +37,5 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 97x20 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 97x20
             text run at (0,0) width 97: "Lorem ipsum"
-        RenderText {#text} at (97,2) size 89x17
-          text run at (97,2) width 89: " dolor sit amet"
+        RenderText {#text} at (96,2) size 90x17
+          text run at (96,2) width 90: " dolor sit amet"

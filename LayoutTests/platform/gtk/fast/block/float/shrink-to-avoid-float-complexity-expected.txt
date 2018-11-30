@@ -4,28 +4,28 @@ layer at (0,0) size 785x2077
   RenderBlock {HTML} at (0,0) size 785x2078
     RenderBody {BODY} at (8,19) size 769x2043
       RenderBlock {H2} at (0,0) size 769x27
-        RenderText {#text} at (0,0) size 149x26
-          text run at (0,0) width 149: "Test 1 (1 float)"
+        RenderText {#text} at (0,0) size 147x26
+          text run at (0,0) width 147: "Test 1 (1 float)"
       RenderBlock {HR} at (48,294) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,344) size 769x28
-        RenderText {#text} at (0,0) size 149x26
-          text run at (0,0) width 149: "Test 2 (1 float)"
+        RenderText {#text} at (0,0) size 147x26
+          text run at (0,0) width 147: "Test 2 (1 float)"
       RenderBlock {HR} at (48,639) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,689) size 769x28
-        RenderText {#text} at (0,0) size 149x26
-          text run at (0,0) width 149: "Test 3 (1 float)"
+        RenderText {#text} at (0,0) size 147x26
+          text run at (0,0) width 147: "Test 3 (1 float)"
       RenderBlock {HR} at (48,984) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1034) size 769x28
-        RenderText {#text} at (0,0) size 158x26
-          text run at (0,0) width 158: "Test 4 (2 floats)"
+        RenderText {#text} at (0,0) size 156x26
+          text run at (0,0) width 156: "Test 4 (2 floats)"
       RenderBlock {HR} at (48,1329) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1379) size 769x28
-        RenderText {#text} at (0,0) size 158x26
-          text run at (0,0) width 158: "Test 5 (2 floats)"
+        RenderText {#text} at (0,0) size 156x26
+          text run at (0,0) width 156: "Test 5 (2 floats)"
       RenderBlock {HR} at (48,1674) size 673x3 [border: (1px inset #000000)]
       RenderBlock {H2} at (0,1724) size 769x28
-        RenderText {#text} at (0,0) size 158x26
-          text run at (0,0) width 158: "Test 6 (2 floats)"
+        RenderText {#text} at (0,0) size 156x26
+          text run at (0,0) width 156: "Test 6 (2 floats)"
 layer at (8,67) size 769x200
   RenderBlock {DIV} at (0,46) size 769x201 [bgcolor=#C0C0C0]
     RenderBlock (floating) {DIV} at (0,0) size 200x200 [bgcolor=#FFFF00] [border: (4px solid #008000)]
@@ -54,7 +54,7 @@ layer at (208,67) size 469x162
     RenderBR {BR} at (205,36) size 0x17
     RenderText {#text} at (0,54) size 327x17
       text run at (0,54) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
-    RenderBR {BR} at (327,54) size 0x17
+    RenderBR {BR} at (326,54) size 1x17
     RenderBR {BR} at (0,72) size 0x17
     RenderText {#text} at (0,90) size 140x17
       text run at (0,90) width 140: "This orange rectangle:"
@@ -103,7 +103,7 @@ layer at (208,412) size 569x162
     RenderBR {BR} at (52,36) size 0x17
     RenderText {#text} at (0,54) size 164x17
       text run at (0,54) width 164: "\x{2013} has a 200px left margin;"
-    RenderBR {BR} at (164,54) size 0x17
+    RenderBR {BR} at (163,54) size 1x17
     RenderBR {BR} at (0,72) size 0x17
     RenderText {#text} at (0,90) size 140x17
       text run at (0,90) width 140: "This orange rectangle:"
@@ -153,7 +153,7 @@ layer at (308,757) size 369x162
     RenderBR {BR} at (261,36) size 0x17
     RenderText {#text} at (0,54) size 311x17
       text run at (0,54) width 311: "\x{2013} has a 0px left margin and a 100px right margin;"
-    RenderBR {BR} at (311,54) size 0x17
+    RenderBR {BR} at (310,54) size 1x17
     RenderBR {BR} at (0,72) size 0x17
     RenderText {#text} at (0,90) size 140x17
       text run at (0,90) width 140: "This orange rectangle:"
@@ -207,7 +207,7 @@ layer at (208,1102) size 369x162
     RenderBR {BR} at (261,36) size 0x17
     RenderText {#text} at (0,54) size 327x17
       text run at (0,54) width 327: "\x{2013} has a 100px left margin and a 100px right margin;"
-    RenderBR {BR} at (327,54) size 0x17
+    RenderBR {BR} at (326,54) size 1x17
     RenderBR {BR} at (0,72) size 0x17
     RenderText {#text} at (0,90) size 140x17
       text run at (0,90) width 140: "This orange rectangle:"
@@ -261,7 +261,7 @@ layer at (208,1446) size 369x162
     RenderBR {BR} at (261,36) size 0x17
     RenderText {#text} at (0,54) size 173x17
       text run at (0,54) width 173: "\x{2013} has a 200px right margin;"
-    RenderBR {BR} at (173,54) size 0x17
+    RenderBR {BR} at (172,54) size 1x17
     RenderBR {BR} at (0,72) size 0x17
     RenderText {#text} at (0,90) size 140x17
       text run at (0,90) width 140: "This orange rectangle:"
@@ -319,7 +319,7 @@ layer at (308,1791) size 169x270
     RenderText {#text} at (0,90) size 147x35
       text run at (0,90) width 144: "\x{2013} has a 0px left margin"
       text run at (0,108) width 147: "and a 0px right margin;"
-    RenderBR {BR} at (147,108) size 0x17
+    RenderBR {BR} at (146,108) size 1x17
     RenderBR {BR} at (0,126) size 0x17
     RenderText {#text} at (0,144) size 140x17
       text run at (0,144) width 140: "This orange rectangle:"

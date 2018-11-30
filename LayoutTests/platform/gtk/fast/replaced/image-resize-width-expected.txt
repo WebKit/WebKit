@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
         RenderInline {I} at (0,0) size 529x17
-          RenderInline {A} at (0,0) size 293x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 293x17
-              text run at (53,0) width 293: "http://bugs.webkit.org/show_bug.cgi?id=9276"
-          RenderText {#text} at (346,0) size 236x17
-            text run at (346,0) width 4: " "
-            text run at (350,0) width 232: "Quirksmode: Image swap resize bug"
-        RenderText {#text} at (582,0) size 4x17
-          text run at (582,0) width 4: "."
+          RenderInline {A} at (0,0) size 294x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 294x17
+              text run at (51,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=9276"
+          RenderText {#text} at (344,0) size 236x17
+            text run at (344,0) width 5: " "
+            text run at (348,0) width 232: "Quirksmode: Image swap resize bug"
+        RenderText {#text} at (579,0) size 5x17
+          text run at (579,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 286x17
           text run at (0,0) width 286: "This should be a blue 100\x{D7}100 pixels square."

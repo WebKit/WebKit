@@ -6,61 +6,61 @@ layer at (0,0) size 785x3166
       RenderBlock (anonymous) at (0,0) size 769x36
         RenderText {#text} at (0,0) size 746x35
           text run at (0,0) width 746: "In all of the examples, you should be able to see blue and green rectangles that spill way out of their containing blocks."
-          text run at (0,18) width 602: "They should be 100px tall and not overlap one another at all. They should be stacked vertically."
+          text run at (0,18) width 601: "They should be 100px tall and not overlap one another at all. They should be stacked vertically."
       RenderBlock {DIV} at (0,52) size 720x240 [border: (10px solid #000000)]
-        RenderText {#text} at (10,10) size 309x17
-          text run at (10,10) width 309: "You should see blue and green rectangles below."
-        RenderBR {BR} at (319,24) size 0x0
+        RenderText {#text} at (10,10) size 307x17
+          text run at (10,10) width 307: "You should see blue and green rectangles below."
+        RenderBR {BR} at (316,24) size 1x0
         RenderBlock (floating) {DIV} at (10,28) size 1500x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,308) size 720x240 [border: (10px solid #000000)]
-        RenderText {#text} at (10,10) size 160x17
-          text run at (10,10) width 160: "You should see blue and "
+        RenderText {#text} at (10,10) size 159x17
+          text run at (10,10) width 159: "You should see blue and "
         RenderBlock (floating) {DIV} at (10,28) size 1500x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
-        RenderText {#text} at (170,10) size 149x17
-          text run at (170,10) width 149: "green rectangles below."
+        RenderText {#text} at (168,10) size 149x17
+          text run at (168,10) width 149: "green rectangles below."
       RenderBlock {DIV} at (0,564) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
         RenderBlock (floating) {DIV} at (10,110) size 1500x100 [bgcolor=#008000]
         RenderBR {BR} at (1510,10) size 0x17
-        RenderText {#text} at (10,210) size 308x17
-          text run at (10,210) width 308: "You should see blue and green rectangles above."
+        RenderText {#text} at (10,210) size 307x17
+          text run at (10,210) width 307: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,820) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
         RenderBlock (floating) {DIV} at (10,110) size 1500x100 [bgcolor=#008000]
-        RenderText {#text} at (10,210) size 308x17
-          text run at (10,210) width 308: "You should see blue and green rectangles above."
+        RenderText {#text} at (10,210) size 307x17
+          text run at (10,210) width 307: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,1076) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
-        RenderText {#text} at (10,110) size 284x17
-          text run at (10,110) width 284: "You should see blue above and green below."
+        RenderText {#text} at (10,110) size 282x17
+          text run at (10,110) width 282: "You should see blue above and green below."
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,1332) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
-        RenderText {#text} at (10,110) size 284x17
-          text run at (10,110) width 284: "You should see blue above and green below."
-        RenderBR {BR} at (294,124) size 0x0
+        RenderText {#text} at (10,110) size 282x17
+          text run at (10,110) width 282: "You should see blue above and green below."
+        RenderBR {BR} at (291,124) size 1x0
         RenderBlock (floating) {DIV} at (10,128) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1588) size 769x18
         RenderText {#text} at (0,0) size 583x17
           text run at (0,0) width 583: "The next examples should have blue and green rectangles that snugly fit without spilling out."
       RenderBlock {DIV} at (0,1622) size 720x240 [border: (10px solid #000000)]
-        RenderText {#text} at (10,10) size 309x17
-          text run at (10,10) width 309: "You should see blue and green rectangles below."
-        RenderBR {BR} at (319,24) size 0x0
+        RenderText {#text} at (10,10) size 307x17
+          text run at (10,10) width 307: "You should see blue and green rectangles below."
+        RenderBR {BR} at (316,24) size 1x0
         RenderBlock (floating) {DIV} at (10,28) size 698x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,1878) size 720x240 [border: (10px solid #000000)]
-        RenderText {#text} at (10,10) size 309x17
-          text run at (10,10) width 309: "You should see blue and green rectangles below."
+        RenderText {#text} at (10,10) size 307x17
+          text run at (10,10) width 307: "You should see blue and green rectangles below."
         RenderBlock (floating) {DIV} at (10,28) size 698x100 [bgcolor=#0000FF]
         RenderText {#text} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
@@ -69,23 +69,23 @@ layer at (0,0) size 785x3166
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
         RenderBlock (floating) {DIV} at (10,110) size 698x100 [bgcolor=#008000]
         RenderBR {BR} at (708,10) size 0x17
-        RenderText {#text} at (10,210) size 308x17
-          text run at (10,210) width 308: "You should see blue and green rectangles above."
+        RenderText {#text} at (10,210) size 307x17
+          text run at (10,210) width 307: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,2390) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
         RenderBlock (floating) {DIV} at (10,110) size 698x100 [bgcolor=#008000]
-        RenderText {#text} at (10,210) size 308x17
-          text run at (10,210) width 308: "You should see blue and green rectangles above."
+        RenderText {#text} at (10,210) size 307x17
+          text run at (10,210) width 307: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,2646) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
-        RenderText {#text} at (10,110) size 284x17
-          text run at (10,110) width 284: "You should see blue above and green below."
+        RenderText {#text} at (10,110) size 282x17
+          text run at (10,110) width 282: "You should see blue above and green below."
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,2902) size 720x240 [border: (10px solid #000000)]
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
-        RenderText {#text} at (10,110) size 284x17
-          text run at (10,110) width 284: "You should see blue above and green below."
-        RenderBR {BR} at (294,124) size 0x0
+        RenderText {#text} at (10,110) size 282x17
+          text run at (10,110) width 282: "You should see blue above and green below."
+        RenderBR {BR} at (291,124) size 1x0
         RenderBlock (floating) {DIV} at (10,128) size 698x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0

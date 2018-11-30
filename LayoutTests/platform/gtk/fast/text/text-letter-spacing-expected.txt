@@ -5,10 +5,10 @@ layer at (0,0) size 785x1728
     RenderBody {BODY} at (8,16) size 769x1696
       RenderBlock {P} at (0,0) size 769x90 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 752x89
-          text run at (0,0) width 746: "The following lines test various combinations of letter-spacing (especially negative values) and opacity. All of the lines"
+          text run at (0,0) width 745: "The following lines test various combinations of letter-spacing (especially negative values) and opacity. All of the lines"
           text run at (0,18) width 752: "should say \"Hello, world\" but the spacing and background shading will vary from test to test. The W3C specs are fairly"
           text run at (0,36) width 745: "silent on how user agents should handle unusual values of letter-spacing, especially negative ones, which are explicitly"
-          text run at (0,54) width 721: "implementation-dependent. Different browsers will render these differently, but hopefully the WebKit ports will be"
+          text run at (0,54) width 719: "implementation-dependent. Different browsers will render these differently, but hopefully the WebKit ports will be"
           text run at (0,72) width 117: "consistent, at least."
       RenderBlock {P} at (0,106) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 256x17
@@ -25,8 +25,8 @@ layer at (0,0) size 785x1728
           RenderText {#text} at (160,0) size 176x17
             text run at (160,0) width 176: "Hello, world"
       RenderBlock {P} at (0,242) size 769x36 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 743x35
-          text run at (0,0) width 743: "The next line tests a large positive letter spacing, and should be *very* spaced out. You may only see an 'H' and a 'w',"
+        RenderText {#text} at (0,0) size 742x35
+          text run at (0,0) width 742: "The next line tests a large positive letter spacing, and should be *very* spaced out. You may only see an 'H' and a 'w',"
           text run at (0,18) width 53: "perhaps "
           text run at (53,18) width 354: "on two different lines, unless you scroll way to the right."
       RenderBlock {P} at (0,294) size 769x36 [bgcolor=#EEEEEE]
@@ -35,8 +35,8 @@ layer at (0,0) size 785x1728
             text run at (160,0) width 19239: "Hello,"
             text run at (0,18) width 16037: "world"
       RenderBlock {P} at (0,346) size 769x36 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 767x35
-          text run at (0,0) width 767: "The next line tests a very large positive letter spacing, and should also be *very* spaced out. You may only see an 'H' and"
+        RenderText {#text} at (0,0) size 766x35
+          text run at (0,0) width 766: "The next line tests a very large positive letter spacing, and should also be *very* spaced out. You may only see an 'H' and"
           text run at (0,18) width 37: "a 'w', "
           text run at (37,18) width 407: "perhaps on two different lines, unless you scroll way to the right."
       RenderBlock {P} at (0,398) size 769x36 [bgcolor=#EEEEEE]
@@ -66,9 +66,9 @@ layer at (0,0) size 785x1728
           RenderText {#text} at (160,0) size 0x17
             text run at (160,0) width 0: "Hello, world"
       RenderBlock {P} at (0,654) size 769x36 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 767x35
-          text run at (0,0) width 713: "The next few lines test the interaction with opacity. The first line should be normally spaced out, slightly opaque, "
-          text run at (713,0) width 54: "and on a"
+        RenderText {#text} at (0,0) size 766x35
+          text run at (0,0) width 712: "The next few lines test the interaction with opacity. The first line should be normally spaced out, slightly opaque, "
+          text run at (711,0) width 55: "and on a"
           text run at (0,18) width 196: "differently-colored background"
       RenderBlock {P} at (0,706) size 769x18 [bgcolor=#EEEEEE]
       RenderBlock {P} at (0,740) size 769x18 [bgcolor=#FFFFFF]
@@ -83,7 +83,7 @@ layer at (0,0) size 785x1728
       RenderBlock {P} at (0,894) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 754x17
           text run at (0,0) width 332: "The next line tests a very large positive line spacing, "
-          text run at (332,0) width 422: "and should be very widely spaced but blank, and on a background."
+          text run at (331,0) width 423: "and should be very widely spaced but blank, and on a background."
       RenderBlock {P} at (0,928) size 769x36 [bgcolor=#EEEEEE]
       RenderBlock {P} at (0,980) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 437x17
@@ -125,16 +125,16 @@ layer at (0,0) size 785x1728
       RenderBlock {P} at (0,1422) size 769x18 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 461x17
           text run at (0,0) width 331: "The next line tests a large negative line spacing, and "
-          text run at (331,0) width 130: "should just print a 'd'"
+          text run at (330,0) width 131: "should just print a 'd'"
       RenderBlock {P} at (0,1456) size 769x18 [bgcolor=#EEEEEE]
         RenderInline {SPAN} at (0,0) size 0x17
           RenderText {#text} at (160,0) size 0x17
             text run at (160,0) width 0 RTL override: "Hello, world"
       RenderBlock {P} at (0,1490) size 769x36 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,0) size 732x35
-          text run at (0,0) width 147: "Now, opacity as well - "
-          text run at (147,0) width 398: "The next line should be printed right to left, slightly spaced out "
-          text run at (545,0) width 187: "(wider than normal), and on a"
+        RenderText {#text} at (0,0) size 731x35
+          text run at (0,0) width 146: "Now, opacity as well - "
+          text run at (145,0) width 399: "The next line should be printed right to left, slightly spaced out "
+          text run at (543,0) width 188: "(wider than normal), and on a"
           text run at (0,18) width 79: "background."
       RenderBlock {P} at (0,1542) size 769x18 [bgcolor=#EEEEEE]
       RenderBlock {P} at (0,1576) size 769x18 [bgcolor=#FFFFFF]

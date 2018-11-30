@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 67x17
           RenderText {#text} at (0,0) size 67x17
             text run at (0,0) width 67: "Italic only."
-        RenderText {#text} at (67,0) size 36x17
-          text run at (67,0) width 36: " Plain"
+        RenderText {#text} at (66,0) size 37x17
+          text run at (66,0) width 37: " Plain"
       RenderBlock {P} at (0,102) size 784x18
         RenderText {#text} at (0,0) size 126x17
           text run at (0,0) width 126: "I should not be red. "
@@ -40,10 +40,10 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 93x17
             RenderText {#text} at (0,0) size 93x17
               text run at (0,0) width 93: "Italic and red. "
-          RenderText {#text} at (93,0) size 30x17
-            text run at (93,0) width 30: "Red."
-        RenderText {#text} at (123,0) size 126x17
-          text run at (123,0) width 126: " I should not be red."
+          RenderText {#text} at (92,0) size 31x17
+            text run at (92,0) width 31: "Red."
+        RenderText {#text} at (122,0) size 127x17
+          text run at (122,0) width 127: " I should not be red."
       RenderBlock (anonymous) at (0,170) size 784x18
         RenderInline {B} at (0,0) size 131x17
           RenderText {#text} at (0,0) size 36x17

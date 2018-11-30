@@ -7,7 +7,7 @@ layer at (0,0) size 785x600
         RenderText {#text} at (0,0) size 764x71
           text run at (0,0) width 764: "The column on the right has explicit spaces. Line breaks should be roughly the same if Thai line breaks are working well."
           text run at (0,18) width 760: "The original source of this text was ICU, and the test program said \"by it's very nature, Thai word breaking is not exact\","
-          text run at (0,36) width 759: "so the columns don't match exactly. In a future version we might decide to tweak the right column to match our expected"
+          text run at (0,36) width 758: "so the columns don't match exactly. In a future version we might decide to tweak the right column to match our expected"
           text run at (0,54) width 59: "behavior."
 layer at (236,96) size 1x22824
   RenderBlock (positioned) {DIV} at (235,96) size 2x22824

@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 192x21
           text run at (0,0) width 192: "Height:100% Problems"
       RenderBlock {P} at (0,40) size 784x19
-        RenderText {#text} at (0,0) size 742x17
-          text run at (0,0) width 398: "In the example below, the inner table should be 300 pixels tall. "
-          text run at (398,0) width 344: "Instead the height:100% on the table cell isn't honored."
+        RenderText {#text} at (0,0) size 741x17
+          text run at (0,0) width 397: "In the example below, the inner table should be 300 pixels tall. "
+          text run at (396,0) width 345: "Instead the height:100% on the table cell isn't honored."
       RenderTable {TABLE} at (355,74) size 74x301 [bgcolor=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 73x300
           RenderTableRow {TR} at (0,0) size 73x300

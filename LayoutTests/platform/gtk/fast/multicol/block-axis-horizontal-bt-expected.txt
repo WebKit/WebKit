@@ -16,8 +16,8 @@ layer at (20,66) size 200x444
       text run at (0,54) width 100: "eget lobortis at, "
       text run at (100,54) width 72: "convallis ut"
       text run at (0,72) width 44: "lectus. "
-    RenderText {#text} at (101,72) size 192x131
-      text run at (101,72) width 62: " vulputate"
+    RenderText {#text} at (100,72) size 192x131
+      text run at (100,72) width 63: " vulputate"
       text run at (0,90) width 147: "tincidunt leo, eu varius "
       text run at (147,90) width 31: "nunc"
       text run at (0,108) width 176: "ullamcorper vel. Integer nec"

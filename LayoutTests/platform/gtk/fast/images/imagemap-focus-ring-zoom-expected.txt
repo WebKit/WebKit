@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (11,11) size 778x578
-      RenderText {#text} at (0,0) size 729x241
+      RenderText {#text} at (0,0) size 727x241
         text run at (0,0) width 677: "This test can be used to ensure that a focus ring is drawn correctly for an"
-        text run at (0,26) width 729: "imagemap even when the page is zoomed. This test PASSED if a focus ring is"
+        text run at (0,26) width 727: "imagemap even when the page is zoomed. This test PASSED if a focus ring is"
         text run at (0,216) width 515: "drawn around the <area> in the imagemap to the right. "
       RenderInline {MAP} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

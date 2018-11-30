@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
 layer at (8,26) size 50x70 clip at (8,26) size 35x55 scrollWidth 42 scrollHeight 108
   RenderBlock {DIV} at (0,18) size 50x70
     RenderText {#text} at (0,0) size 42x107
-      text run at (0,0) width 28: "You"
+      text run at (0,0) width 27: "You"
       text run at (0,18) width 42: "should"
       text run at (0,36) width 20: "not"
       text run at (0,54) width 20: "see"

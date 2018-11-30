@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,50) size 784x0
 layer at (8,58) size 200x18
   RenderBlock (floating) {DIV} at (0,0) size 200x18
-    RenderText {#text} at (0,0) size 39x17
-      text run at (0,0) width 39: "PASS"
+    RenderText {#text} at (0,0) size 38x17
+      text run at (0,0) width 38: "PASS"

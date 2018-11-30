@@ -7,8 +7,8 @@ layer at (8,16) size 784x203
   RenderBlock {DIV} at (0,0) size 784x203 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 774x18
     RenderBlock {H2} at (5,42) size 774x28 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,0) size 58x26
-        text run at (0,0) width 58: "PASS"
+      RenderText {#text} at (0,0) size 57x26
+        text run at (0,0) width 57: "PASS"
     RenderMultiColumnSet at (5,89) size 774x109
 layer at (13,21) size 379x234
   RenderMultiColumnFlowThread at (5,5) size 379x234
@@ -30,7 +30,7 @@ layer at (13,21) size 379x234
             text run at (0,54) width 368: "vulputate vel, varius ut, euismod et, nisi. Sed vitae felis vel"
             text run at (0,72) width 358: "orci sagittis aliquam. Cras convallis adipiscing sem. Nam"
             text run at (0,90) width 318: "nonummy enim. Nullam bibendum lobortis neque."
-            text run at (0,108) width 332: "Vestibulum velit orci, tempus euismod, pretium quis,"
+            text run at (0,108) width 331: "Vestibulum velit orci, tempus euismod, pretium quis,"
             text run at (0,126) width 309: "interdum vitae, nulla. Phasellus eget ante et tortor"
             text run at (0,144) width 369: "condimentum vestibulum. Suspendisse hendrerit quam nec"
             text run at (0,162) width 354: "felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit"

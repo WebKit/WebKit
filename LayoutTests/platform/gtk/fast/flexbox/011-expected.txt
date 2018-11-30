@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 784x71
-          text run at (0,0) width 450: "You should see a black box below that is the width of the content area. "
-          text run at (450,0) width 256: "It contains alternating struts and springs. "
-          text run at (706,0) width 62: "The struts"
+        RenderText {#text} at (0,0) size 783x71
+          text run at (0,0) width 449: "You should see a black box below that is the width of the content area. "
+          text run at (448,0) width 257: "It contains alternating struts and springs. "
+          text run at (704,0) width 63: "The struts"
           text run at (0,18) width 255: "are bordered in green and are inflexible. "
           text run at (255,18) width 515: "The springs are bordered in purple and should grow and shrink as you resize your"
-          text run at (0,36) width 115: "browser window. "
-          text run at (115,36) width 669: "The black box should get taller when you make your window wider and get shorter when you shrink your"
-          text run at (0,54) width 111: "browser window."
+          text run at (0,36) width 114: "browser window. "
+          text run at (113,36) width 670: "The black box should get taller when you make your window wider and get shorter when you shrink your"
+          text run at (0,54) width 110: "browser window."
       RenderDeprecatedFlexibleBox {DIV} at (0,88) size 784x52 [border: (2px solid #000000)]
         RenderDeprecatedFlexibleBox {DIV} at (6,6) size 40x40 [border: (2px solid #008000)]
           RenderBlock (anonymous) at (2,2) size 36x36

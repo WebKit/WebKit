@@ -6,6 +6,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x58 [border: (2px solid #FF0000)]
         RenderText {#text} at (2,38) size 158x17
           text run at (2,38) width 158: "This image has a margin "
-        RenderImage {IMG} at (210,2) size 50x50 [bgcolor=#008000]
-        RenderText {#text} at (310,38) size 36x17
-          text run at (310,38) width 36: " on it."
+        RenderImage {IMG} at (209,2) size 51x50 [bgcolor=#008000]
+        RenderText {#text} at (309,38) size 37x17
+          text run at (309,38) width 37: " on it."

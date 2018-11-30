@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 546x17
-        text run at (0,0) width 331: "There should be two 100x100 green squares below. "
-        text run at (331,0) width 215: "They should be vertically stacked."
+      RenderText {#text} at (0,0) size 545x17
+        text run at (0,0) width 330: "There should be two 100x100 green squares below. "
+        text run at (329,0) width 216: "They should be vertically stacked."
       RenderText {#text} at (0,0) size 0x0
 layer at (10,40) size 100x100
   RenderBlock (positioned) {DIV} at (10,40) size 100x100 [bgcolor=#008000]

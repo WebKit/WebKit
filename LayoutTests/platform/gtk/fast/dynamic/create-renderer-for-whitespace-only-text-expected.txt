@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 784x35
-          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x17
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14134"
-          RenderText {#text} at (354,0) size 784x35
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 426: "REGRESSION (r25353): Whitespace nodes ignored between inline"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 782x35
+          RenderInline {A} at (0,0) size 302x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 302x17
+              text run at (51,0) width 302: "http://bugs.webkit.org/show_bug.cgi?id=14134"
+          RenderText {#text} at (352,0) size 782x35
+            text run at (352,0) width 5: " "
+            text run at (356,0) width 426: "REGRESSION (r25353): Whitespace nodes ignored between inline"
             text run at (0,18) width 55: "list items"
         RenderText {#text} at (55,18) size 4x17
           text run at (55,18) width 4: "."

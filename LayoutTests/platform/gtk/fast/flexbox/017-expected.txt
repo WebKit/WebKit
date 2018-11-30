@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 767x35
-          text run at (0,0) width 316: "You should see identical rows of numbers below. "
-          text run at (316,0) width 451: "Every row should look exactly the same. If any objects are out of order,"
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 314: "You should see identical rows of numbers below. "
+          text run at (313,0) width 451: "Every row should look exactly the same. If any objects are out of order,"
           text run at (0,18) width 143: "then the test has failed."
       RenderDeprecatedFlexibleBox {DIV} at (0,52) size 784x190
         RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x38

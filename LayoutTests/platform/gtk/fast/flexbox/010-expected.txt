@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 765x35
-          text run at (0,0) width 304: "You should see a 100x100 green square below. "
-          text run at (304,0) width 268: "If you see any red, then the test has failed. "
-          text run at (572,0) width 193: "This test is ensuring that boxes"
+        RenderText {#text} at (0,0) size 763x35
+          text run at (0,0) width 302: "You should see a 100x100 green square below. "
+          text run at (301,0) width 269: "If you see any red, then the test has failed. "
+          text run at (569,0) width 194: "This test is ensuring that boxes"
           text run at (0,18) width 330: "can act as containing blocks for positioned elements."
 layer at (8,60) size 100x100
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,52) size 100x100 [bgcolor=#FF0000]

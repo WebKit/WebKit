@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
         RenderInline {I} at (0,0) size 574x17
           RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x17
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11362"
-          RenderText {#text} at (354,0) size 273x17
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 269: "Native popup with size=\"1\" wraps options"
-        RenderText {#text} at (627,0) size 4x17
-          text run at (627,0) width 4: "."
+            RenderText {#text} at (51,0) size 301x17
+              text run at (51,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=11362"
+          RenderText {#text} at (351,0) size 274x17
+            text run at (351,0) width 5: " "
+            text run at (355,0) width 270: "Native popup with size=\"1\" wraps options"
+        RenderText {#text} at (624,0) size 5x17
+          text run at (624,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x24
         RenderText {#text} at (0,3) size 35x17
           text run at (0,3) width 35: "With "
-        RenderInline {TT} at (0,0) size 64x15
-          RenderText {#text} at (35,6) size 64x15
-            text run at (35,6) width 64: "size=\"1\""
-        RenderText {#text} at (99,3) size 8x17
-          text run at (99,3) width 8: ": "
-        RenderMenuList {SELECT} at (107,2) size 100x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderInline {TT} at (0,0) size 65x15
+          RenderText {#text} at (34,6) size 65x15
+            text run at (34,6) width 65: "size=\"1\""
+        RenderText {#text} at (98,3) size 9x17
+          text run at (98,3) width 9: ": "
+        RenderMenuList {SELECT} at (106,2) size 101x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 98x18
             RenderText at (0,0) size 227x17
               text run at (0,0) width 227: "Very long option that does not fit"
@@ -31,12 +31,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,74) size 784x24
         RenderText {#text} at (0,3) size 55x17
           text run at (0,3) width 55: "Without "
-        RenderInline {TT} at (0,0) size 32x15
-          RenderText {#text} at (55,6) size 32x15
-            text run at (55,6) width 32: "size"
-        RenderText {#text} at (87,3) size 8x17
-          text run at (87,3) width 8: ": "
-        RenderMenuList {SELECT} at (95,2) size 100x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderInline {TT} at (0,0) size 33x15
+          RenderText {#text} at (54,6) size 33x15
+            text run at (54,6) width 33: "size"
+        RenderText {#text} at (86,3) size 9x17
+          text run at (86,3) width 9: ": "
+        RenderMenuList {SELECT} at (94,2) size 101x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 98x18
             RenderText at (0,0) size 227x17
               text run at (0,0) width 227: "Very long option that does not fit"

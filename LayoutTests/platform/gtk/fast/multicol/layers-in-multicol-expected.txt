@@ -4,11 +4,11 @@ layer at (0,0) size 785x672
   RenderBlock {HTML} at (0,0) size 785x672
     RenderBody {BODY} at (8,8) size 769x656
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 89x17
-          text run at (0,0) width 89: "LTR Version:"
+        RenderText {#text} at (0,0) size 86x17
+          text run at (0,0) width 86: "LTR Version:"
       RenderBlock (anonymous) at (0,328) size 769x18
-        RenderText {#text} at (0,0) size 89x17
-          text run at (0,0) width 89: "RTL Version:"
+        RenderText {#text} at (0,0) size 86x17
+          text run at (0,0) width 86: "RTL Version:"
 layer at (8,26) size 769x310
   RenderBlock {DIV} at (0,18) size 769x310 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 759x300

@@ -6,7 +6,7 @@ layer at (0,0) size 785x602
       RenderBlock (anonymous) at (0,0) size 769x36
         RenderText {#text} at (0,0) size 739x35
           text run at (0,0) width 739: "Make sure that overflow:auto/hidden/scroll blocks interleave their background and foreground with other overlapping"
-          text run at (0,18) width 165: "blocks in the normal flow."
+          text run at (0,18) width 164: "blocks in the normal flow."
       RenderBlock {DIV} at (0,286) size 300x300 [bgcolor=#FFFF00]
         RenderText {#text} at (0,1) size 174x108
           text run at (0,1) width 168: "This text"

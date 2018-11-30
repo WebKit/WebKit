@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (248,0) size 775x35
             text run at (248,0) width 527: "Radar 4279765: REGRESSION: \"More...\" links on flickr groups pages have hover"
             text run at (0,18) width 115: "issues (flickr.com)"
-        RenderText {#text} at (115,18) size 597x17
-          text run at (115,18) width 597: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
+        RenderText {#text} at (114,18) size 596x17
+          text run at (114,18) width 596: ", or rather, a related painting issue. The word \"PASS\" should appear below in translucent blue."
 layer at (8,44) size 784x125
   RenderBlock {DIV} at (0,36) size 784x125
     RenderBlock (floating) {DIV} at (0,0) size 104x125
@@ -19,9 +19,9 @@ layer at (8,44) size 784x125
       RenderText {#text} at (100,86) size 4x17
         text run at (100,86) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderBlock (floating) {H1} at (25,125) size 79x38
-        RenderInline {A} at (0,0) size 79x36 [color=#0000EE]
-          RenderText {#text} at (0,0) size 79x36
-            text run at (0,0) width 79: "PASS"
+      RenderBlock (floating) {H1} at (27,125) size 77x38
+        RenderInline {A} at (0,0) size 77x36 [color=#0000EE]
+          RenderText {#text} at (0,0) size 77x36
+            text run at (0,0) width 77: "PASS"
       RenderText {#text} at (0,0) size 0x0
     RenderBR {BR} at (104,0) size 0x17

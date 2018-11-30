@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 247x21
           text run at (0,0) width 247: "Small Percentage Heights Bug"
       RenderBlock {P} at (0,40) size 784x37
-        RenderText {#text} at (0,0) size 768x35
-          text run at (0,0) width 401: "In the example below, all eight cells should be the same height. "
-          text run at (401,0) width 367: "It appears that any percentage heights cause cells to fill the"
+        RenderText {#text} at (0,0) size 767x35
+          text run at (0,0) width 400: "In the example below, all eight cells should be the same height. "
+          text run at (399,0) width 368: "It appears that any percentage heights cause cells to fill the"
           text run at (0,18) width 120: "entire table height. "
           text run at (120,18) width 533: "Note how cell 8 is correct but 2-7 are not, despite the cells all specifying height:30%."
       RenderTable {TABLE} at (0,92) size 784x97 [border: (1px outset #808080)]
@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 474x94 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (192,11) size 90x17
                 text run at (192,11) width 90: "Table Data #1"
-              RenderBR {BR} at (282,25) size 0x0
+              RenderBR {BR} at (281,25) size 1x0
               RenderText {#text} at (203,29) size 68x17
                 text run at (203,29) width 68: "Other cells"
               RenderBR {BR} at (271,43) size 0x0

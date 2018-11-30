@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock (relative positioned) {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 622x17
-          text run at (0,0) width 622: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
-        RenderBR {BR} at (622,14) size 0x0
+        RenderText {#text} at (0,0) size 620x17
+          text run at (0,0) width 620: "To reproduce this bug outside of DumpRenderTree, click the link below. If broken, we will crash. "
+        RenderBR {BR} at (619,14) size 1x0
 layer at (8,26) size 58x88
   RenderTable {TABLE} at (0,18) size 58x88
     RenderTableSection {TBODY} at (0,0) size 58x88

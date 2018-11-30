@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (55,45) size 780x118
           text run at (55,45) width 726: "ere is the first paragraph. Here the CSS :first-line rule sets the text to"
           text run at (1,83) width 232: "a green, sans-serif font. "
-          text run at (233,83) width 541: "Then, the CSS :first-letter rule sets the font size to 3em,"
+          text run at (233,83) width 542: "Then, the CSS :first-letter rule sets the font size to 3em,"
           text run at (1,110) width 743: "and makes the text bold. And here's some more text to pad out the paragraph"
           text run at (1,137) width 723: "and make things look nice (or, at least, to illustrate the problem correctly)."
       RenderBlock {P} at (0,276) size 784x139 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
@@ -22,9 +22,9 @@ layer at (0,0) size 800x600
             text run at (1,2) width 52: "H"
         RenderText {#text} at (55,1) size 768x135
           text run at (55,1) width 714: "ere is the second paragraph. This is just like the first except that the"
-          text run at (55,29) width 382: "rule p.floated:first-letter floats the first "
-          text run at (437,29) width 163: "letter to the left. "
+          text run at (55,29) width 383: "rule p.floated:first-letter floats the first "
+          text run at (437,29) width 164: "letter to the left. "
           text run at (600,29) width 135: "However, this"
           text run at (55,56) width 683: "floated element should still inherit the font properties (green and sans-"
-          text run at (55,83) width 704: "serif) from the first-line: selector. It does not -- instead, the font is black,"
+          text run at (55,83) width 703: "serif) from the first-line: selector. It does not -- instead, the font is black,"
           text run at (1,110) width 542: "and uses the serif font. .... And here's some more text ...."

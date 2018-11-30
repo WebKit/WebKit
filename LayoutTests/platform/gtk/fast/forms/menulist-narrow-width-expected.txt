@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 499x17
-        text run at (0,0) width 499: "This tests that select elements with a narrow width (1px) are rendered correctly."
-      RenderBR {BR} at (499,14) size 0x0
+      RenderText {#text} at (0,0) size 498x17
+        text run at (0,0) width 498: "This tests that select elements with a narrow width (1px) are rendered correctly."
+      RenderBR {BR} at (497,14) size 1x0
       RenderMenuList {SELECT} at (0,20) size 2x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]
         RenderBlock (anonymous) at (1,1) size 34x28
           RenderText at (9,5) size 25x17

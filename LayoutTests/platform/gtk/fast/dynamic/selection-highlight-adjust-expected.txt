@@ -10,9 +10,9 @@ layer at (0,0) size 800x156
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8835"
-          RenderText {#text} at (520,0) size 784x35
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 260: "REGRESSION: Line moves but selection"
+          RenderText {#text} at (519,0) size 784x35
+            text run at (519,0) width 5: " "
+            text run at (523,0) width 261: "REGRESSION: Line moves but selection"
             text run at (0,18) width 138: "highlight stays behind"
         RenderText {#text} at (138,18) size 4x17
           text run at (138,18) width 4: "."

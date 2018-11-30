@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,200) size 784x18
-        RenderText {#text} at (0,0) size 589x17
-          text run at (0,0) width 364: "The word 'PASSED' should be scrolled into view above. "
-          text run at (364,0) width 225: "If you don't see it the test has failed."
+        RenderText {#text} at (0,0) size 588x17
+          text run at (0,0) width 363: "The word 'PASSED' should be scrolled into view above. "
+          text run at (362,0) width 226: "If you don't see it the test has failed."
         RenderText {#text} at (0,0) size 0x0
 layer at (8,8) size 200x200 clip at (8,8) size 185x185 scrollX 200 scrollY 200 scrollWidth 400 scrollHeight 400
   RenderBlock {DIV} at (0,0) size 200x200
     RenderBlock {DIV} at (0,0) size 400x400 [color=#FFFFFF] [bgcolor=#008000]
-      RenderText {#text} at (200,200) size 61x17
-        text run at (200,200) width 61: "PASSED"
+      RenderText {#text} at (200,200) size 60x17
+        text run at (200,200) width 60: "PASSED"

@@ -15,20 +15,20 @@ layer at (0,0) size 800x264
         RenderText {#text} at (183,0) size 438x17
           text run at (183,0) width 438: " REGRESSION: Incomplete repaint when block with clipping grows"
       RenderBlock {P} at (0,34) size 784x42 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x17
-          RenderText {#text} at (3,3) size 91x17
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 748x35
-          text run at (94,3) width 4: " "
-          text run at (98,3) width 653: "There should be a white square with a blue border below, and no line running through the middle of the"
-          text run at (3,21) width 45: "square."
-      RenderBlock {P} at (0,92) size 784x24 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x17
           RenderText {#text} at (3,3) size 90x17
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 600x17
-          text run at (93,3) width 4: " "
-          text run at (97,3) width 596: "The white square will have a blue border and a blue horizontal line running through its middle."
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (92,3) size 746x35
+          text run at (92,3) width 5: " "
+          text run at (96,3) width 653: "There should be a white square with a blue border below, and no line running through the middle of the"
+          text run at (3,21) width 45: "square."
+      RenderBlock {P} at (0,92) size 784x24 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x17
+          RenderText {#text} at (3,3) size 89x17
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (91,3) size 601x17
+          text run at (91,3) width 5: " "
+          text run at (95,3) width 597: "The white square will have a blue border and a blue horizontal line running through its middle."
 layer at (8,148) size 784x108
   RenderBlock {DIV} at (0,132) size 784x108
     RenderBlock {DIV} at (0,0) size 108x108 [border: (4px solid #0000FF)]

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 40x17 [color=#0000EE]
           RenderText {#text} at (96,86) size 40x17
             text run at (96,86) width 40: "11760"
-        RenderText {#text} at (136,86) size 201x17
-          text run at (136,86) width 8: ". "
-          text run at (144,86) width 193: "If it doesn't crash, we're good. "
-        RenderImage {IMG} at (337,0) size 100x100
+        RenderText {#text} at (135,86) size 202x17
+          text run at (135,86) width 9: ". "
+          text run at (143,86) width 194: "If it doesn't crash, we're good. "
+        RenderImage {IMG} at (336,0) size 101x100
         RenderText {#text} at (0,0) size 0x0

@@ -61,8 +61,8 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (40,0) size 40x16
           RenderListItem {LI} at (40,108) size 744x50 [bgcolor=#EEEEEE]
             RenderListMarker at (-17,0) size 7x17: bullet
-            RenderText {#text} at (0,0) size 32x17
-              text run at (0,0) width 32: "Tall:"
+            RenderText {#text} at (0,0) size 31x17
+              text run at (0,0) width 31: "Tall:"
             RenderBlock (floating) {METER} at (664,0) size 80x50
               RenderBlock {DIV} at (0,0) size 80x50
                 RenderBlock {DIV} at (0,0) size 80x50
@@ -146,8 +146,8 @@ layer at (0,0) size 800x600
                   RenderBlock {DIV} at (40,0) size 40x16
           RenderListItem {LI} at (40,108) size 744x50 [bgcolor=#EEEEEE]
             RenderListMarker at (-17,0) size 7x17: bullet
-            RenderText {#text} at (0,0) size 32x17
-              text run at (0,0) width 32: "Tall:"
+            RenderText {#text} at (0,0) size 31x17
+              text run at (0,0) width 31: "Tall:"
             RenderBlock (floating) {METER} at (664,0) size 80x50
               RenderBlock {DIV} at (0,0) size 80x50
                 RenderBlock {DIV} at (0,0) size 80x50

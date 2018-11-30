@@ -11,17 +11,18 @@ layer at (0,0) size 800x289
       RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 511x14
           text run at (0,0) width 511: "error on line 1 at column 110: Namespace prefix foo on bar is not defined"
+          text run at (511,0) width 0: " "
       RenderBlock {h3} at (18,94) size 732x23
-        RenderText {#text} at (0,0) size 429x21
-          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
       RenderBlock {p} at (18,134) size 732x37
         RenderText {#text} at (0,0) size 731x35
           text run at (0,0) width 731: "This document was created as the result of an XSL transformation. The line and column numbers given are from the"
           text run at (0,18) width 117: "transformed result."
     RenderBody {body} at (8,220) size 784x53
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 227x17
-          text run at (0,0) width 227: "You should see error text above this"
+        RenderText {#text} at (0,0) size 226x17
+          text run at (0,0) width 226: "You should see error text above this"
       RenderBlock (anonymous) at (0,34) size 784x0
         RenderInline {foo:bar} at (0,0) size 0x0
       RenderBlock {p} at (0,34) size 784x18

@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         text run at (0,54) width 466: "parargaph and its left side should begin right after the end of this sentence."
       RenderText {#text} at (0,0) size 0x0
 layer at (474,62) size 240x340
-  RenderBlock (positioned) {SPAN} at (474,62) size 240x340 [border: (20px solid #000000)]
+  RenderBlock (positioned) {SPAN} at (473,62) size 241x340 [border: (20px solid #000000)]
 layer at (594,182) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
 layer at (594,82) size 100x100

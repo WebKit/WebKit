@@ -5,8 +5,8 @@ layer at (0,0) size 800x94
     RenderBody {BODY} at (8,8) size 784x70
       RenderBlock {DIV} at (0,0) size 784x70
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 361x17
-            text run at (0,0) width 361: "Test pass if background of image list style in ul is yellow."
+          RenderText {#text} at (0,0) size 359x17
+            text run at (0,0) width 359: "Test pass if background of image list style in ul is yellow."
         RenderBlock {UL} at (0,34) size 784x36
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-17,4) size 10x10
@@ -14,7 +14,7 @@ layer at (0,0) size 800x94
               text run at (0,0) width 27: "One"
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (-17,4) size 10x10
-            RenderText {#text} at (0,0) size 30x17
-              text run at (0,0) width 30: "Two"
+            RenderText {#text} at (0,0) size 29x17
+              text run at (0,0) width 29: "Two"
 selection start: position 66 of child 0 {#text} of child 0 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 3 {LI} of child 1 {UL} of child 0 {DIV} of body

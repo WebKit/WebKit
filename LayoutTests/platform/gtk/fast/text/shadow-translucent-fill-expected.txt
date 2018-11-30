@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 594x17
-          text run at (0,0) width 470: "Test that the intensity of text-shadow does not depend on the transparency "
-          text run at (470,0) width 124: "of the text fill color."
+        RenderText {#text} at (0,0) size 592x17
+          text run at (0,0) width 469: "Test that the intensity of text-shadow does not depend on the transparency "
+          text run at (468,0) width 124: "of the text fill color."
       RenderBlock {DIV} at (0,34) size 784x72
         RenderText {#text} at (0,0) size 48x24
           text run at (0,0) width 48: "A "

@@ -3,8 +3,8 @@ layer at (0,0) size 785x2026
 layer at (0,0) size 785x600
   RenderBlock {HTML} at (0,0) size 785x600
     RenderBody {BODY} at (8,8) size 769x584
-      RenderText {#text} at (0,0) size 363x17
-        text run at (0,0) width 363: "The purple box should stick to the bottom of the window."
+      RenderText {#text} at (0,0) size 362x17
+        text run at (0,0) width 362: "The purple box should stick to the bottom of the window."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 726x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3560"
-          RenderText {#text} at (401,0) size 726x35
-            text run at (401,0) width 325: " page with use of first-letter crashes reproducibly in"
-            text run at (0,18) width 189: "RenderObject::renderArena()"
-        RenderText {#text} at (189,18) size 4x17
-          text run at (189,18) width 4: "."
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 724x35
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3560"
+          RenderText {#text} at (399,0) size 724x35
+            text run at (399,0) width 325: " page with use of first-letter crashes reproducibly in"
+            text run at (0,18) width 188: "RenderObject::renderArena()"
+        RenderText {#text} at (187,18) size 5x17
+          text run at (187,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 231x17
           text run at (0,0) width 231: "The next three lines should all read \x{201C}"
         RenderInline {SPAN} at (0,0) size 9x17 [color=#0000FF]
           RenderText {#text} at (231,0) size 9x17
             text run at (231,0) width 9: "P"
-        RenderText {#text} at (240,0) size 209x17
-          text run at (240,0) width 209: "ASS\x{201D}, with nothing before the P."
+        RenderText {#text} at (240,0) size 208x17
+          text run at (240,0) width 208: "ASS\x{201D}, with nothing before the P."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,104) size 784x18
         RenderInline (generated) at (0,0) size 9x17 [color=#0000FF]

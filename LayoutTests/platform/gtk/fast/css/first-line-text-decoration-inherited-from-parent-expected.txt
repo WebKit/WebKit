@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 583x21
-          text run at (0,0) width 583: "Test case for First-line text-decoration style inherited from Parent Block"
+        RenderText {#text} at (0,0) size 581x21
+          text run at (0,0) width 581: "Test case for First-line text-decoration style inherited from Parent Block"
       RenderBlock {P} at (0,40) size 784x19
-        RenderText {#text} at (0,0) size 454x17
-          text run at (0,0) width 454: "The First line text and its text-decoration must be of the same color."
+        RenderText {#text} at (0,0) size 453x17
+          text run at (0,0) width 453: "The First line text and its text-decoration must be of the same color."
       RenderBlock {DIV} at (0,74) size 784x101 [color=#FF0000]
         RenderBlock {P} at (0,0) size 784x66 [color=#008000]
           RenderText {#text} at (0,10) size 616x27
@@ -40,9 +40,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,10) size 712x27
             text run at (0,10) width 712: "Line-Through Line-Through Line-Through Line "
           RenderBR {BR} at (712,32) size 0x0
-          RenderText {#text} at (0,48) size 400x17
-            text run at (0,48) width 400: "Line-Through Line-Through Line-Through Line-Through"
-          RenderBR {BR} at (400,62) size 0x0
+          RenderText {#text} at (0,48) size 399x17
+            text run at (0,48) width 399: "Line-Through Line-Through Line-Through Line-Through"
+          RenderBR {BR} at (398,62) size 1x0
         RenderBlock (anonymous) at (0,82) size 784x18
           RenderText {#text} at (0,0) size 368x17
             text run at (0,0) width 368: "Line-Through Line-Through Line-Through Line-Through"

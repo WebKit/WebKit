@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5813"
-          RenderText {#text} at (560,0) size 755x35
-            text run at (560,0) width 4: " "
-            text run at (564,0) width 191: "positioned blocks don't update"
+          RenderText {#text} at (559,0) size 755x35
+            text run at (559,0) width 5: " "
+            text run at (563,0) width 192: "positioned blocks don't update"
             text run at (0,18) width 226: "when resizing the window vertically"
-        RenderText {#text} at (226,18) size 4x17
-          text run at (226,18) width 4: "."
+        RenderText {#text} at (225,18) size 5x17
+          text run at (225,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 289x17
           text run at (0,0) width 289: "The two squares below should be solid green."

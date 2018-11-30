@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 451x17
-          text run at (0,0) width 451: "Two green 16x16 pixel squares should appear below stacked vertically."
+        RenderText {#text} at (0,0) size 449x17
+          text run at (0,0) width 449: "Two green 16x16 pixel squares should appear below stacked vertically."
       RenderBlock {DIV} at (0,18) size 16x16 [bgcolor=#FF0000]
         RenderImage {IMG} at (0,0) size 16x16
         RenderText {#text} at (0,0) size 0x0

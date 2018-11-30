@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (139,0) size 348x17
               text run at (139,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=4334"
-          RenderText {#text} at (487,0) size 763x35
-            text run at (487,0) width 4: " "
-            text run at (491,0) width 272: "REGRESSION: Flickering when css-hover"
+          RenderText {#text} at (486,0) size 763x35
+            text run at (486,0) width 5: " "
+            text run at (490,0) width 273: "REGRESSION: Flickering when css-hover"
             text run at (0,18) width 273: "should change opacity on floating elements"
         RenderText {#text} at (273,18) size 4x17
           text run at (273,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 278x17
-          text run at (0,0) width 278: "There should be a solid green square below."
+        RenderText {#text} at (0,0) size 277x17
+          text run at (0,0) width 277: "There should be a solid green square below."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,96) size 100x100 [bgcolor=#008000]

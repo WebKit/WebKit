@@ -4,8 +4,8 @@ layer at (0,0) size 800x206
   RenderBlock {HTML} at (0,0) size 800x206
     RenderBody {BODY} at (8,16) size 784x174
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 618x17
-          text run at (0,0) width 618: "The following square should contain exactly two bands, one yellow, one lime, with no red visible."
+        RenderText {#text} at (0,0) size 617x17
+          text run at (0,0) width 617: "The following square should contain exactly two bands, one yellow, one lime, with no red visible."
       RenderTable {TABLE} at (0,34) size 106x106 [bgcolor=#FF0000] [border: (3px solid #000000)]
         RenderTableSection {TBODY} at (3,3) size 100x100
           RenderTableRow {TR} at (0,0) size 100x100

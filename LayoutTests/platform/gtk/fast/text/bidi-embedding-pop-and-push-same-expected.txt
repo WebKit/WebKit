@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 512x17
-          text run at (0,0) width 512: "In each box below, the words or letters should be in the same order on every line."
+        RenderText {#text} at (0,0) size 511x17
+          text run at (0,0) width 511: "In each box below, the words or letters should be in the same order on every line."
       RenderBlock {DIV} at (8,34) size 768x64 [border: (1px solid #ADD8E6)]
         RenderBlock {DIV} at (5,5) size 758x18
           RenderText {#text} at (0,0) size 46x17

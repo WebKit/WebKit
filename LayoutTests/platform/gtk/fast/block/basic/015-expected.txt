@@ -156,8 +156,8 @@ layer at (0,0) size 800x424
             text run at (32,21) width 32: "auto"
         RenderText {#text} at (64,18) size 192x17
           text run at (64,18) width 192: " (with 70% margin-right), and "
-        RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (256,21) size 32x15
-            text run at (256,21) width 32: "auto"
-        RenderText {#text} at (288,18) size 4x17
-          text run at (288,18) width 4: "."
+        RenderInline {CODE} at (0,0) size 33x15
+          RenderText {#text} at (255,21) size 33x15
+            text run at (255,21) width 33: "auto"
+        RenderText {#text} at (287,18) size 5x17
+          text run at (287,18) width 5: "."

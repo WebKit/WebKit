@@ -97,8 +97,8 @@ layer at (19,278) size 166x17
   RenderBlock {DIV} at (6,6) size 166x17
 layer at (13,311) size 185x25
   RenderBlock {DIV} at (3,3) size 185x25
-    RenderText {#text} at (0,4) size 42x17
-      text run at (0,4) width 42: "Value"
+    RenderText {#text} at (0,4) size 41x17
+      text run at (0,4) width 41: "Value"
 layer at (212,311) size 185x25
   RenderBlock {DIV} at (3,3) size 185x25 [color=#A9A9A9]
     RenderText {#text} at (0,4) size 84x17
@@ -107,8 +107,8 @@ layer at (212,311) size 185x25
   RenderBlock {DIV} at (3,3) size 185x25
 layer at (13,346) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18
-    RenderText {#text} at (71,0) size 43x17
-      text run at (71,0) width 43: "Value"
+    RenderText {#text} at (72,0) size 41x17
+      text run at (72,0) width 41: "Value"
 layer at (212,346) size 185x18
   RenderBlock {DIV} at (3,3) size 185x18 [color=#A9A9A9]
     RenderText {#text} at (50,0) size 85x17

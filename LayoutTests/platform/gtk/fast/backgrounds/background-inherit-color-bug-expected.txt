@@ -55,7 +55,7 @@ layer at (0,0) size 785x1150
             text run at (0,0) width 219: "This DIV has a green background."
         RenderBlock {H1} at (61,43) size 501x157 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 445x147
-            text run at (4,4) width 441: "This header should have a green"
+            text run at (4,4) width 440: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 445: "inline style rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
@@ -64,7 +64,7 @@ layer at (0,0) size 785x1150
             text run at (0,0) width 157: "The DIV continues here."
         RenderBlock {H1} at (61,268) size 501x157 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 449x147
-            text run at (4,4) width 441: "This header should have a green"
+            text run at (4,4) width 440: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 449: "!important rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
@@ -72,6 +72,6 @@ layer at (0,0) size 785x1150
           RenderText {#text} at (0,0) size 157x17
             text run at (0,0) width 157: "The DIV continues here."
         RenderBlock {H1} at (61,494) size 501x83 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
-          RenderText {#text} at (4,4) size 485x73
-            text run at (4,4) width 485: "This header has a pink background"
+          RenderText {#text} at (4,4) size 484x73
+            text run at (4,4) width 484: "This header has a pink background"
             text run at (4,41) width 219: "and that's good."

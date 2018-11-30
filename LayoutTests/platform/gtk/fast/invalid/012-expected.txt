@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {CENTER} at (0,0) size 784x18
-        RenderInline {FONT} at (0,0) size 298x17
-          RenderText {#text} at (243,0) size 298x17
-            text run at (243,0) width 298: "You should see a 100x100 green Image below."
+        RenderInline {FONT} at (0,0) size 296x17
+          RenderText {#text} at (244,0) size 296x17
+            text run at (244,0) width 296: "You should see a 100x100 green Image below."
       RenderBlock (anonymous) at (0,18) size 784x100
         RenderInline {FONT} at (0,0) size 100x17
           RenderImage {IMG} at (0,0) size 100x100 [bgcolor=#008000]

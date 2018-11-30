@@ -6,7 +6,7 @@ layer at (0,0) size 800x166
       RenderBlock (floating) {DIV} at (532,0) size 252x102 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 86x17
           text run at (1,1) width 86: "TOP-RIGHT"
-        RenderBR {BR} at (87,1) size 0x17
+        RenderBR {BR} at (86,1) size 1x17
         RenderText {#text} at (1,19) size 65x17
           text run at (1,19) width 65: "float:right;"
         RenderBR {BR} at (66,19) size 0x17
@@ -18,13 +18,13 @@ layer at (0,0) size 800x166
       RenderBlock {DIV} at (0,0) size 394x38 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 31x17
           text run at (1,1) width 31: "TOP"
-        RenderBR {BR} at (32,1) size 0x17
+        RenderBR {BR} at (31,1) size 1x17
         RenderText {#text} at (1,19) size 73x17
           text run at (1,19) width 73: "width:50%;"
       RenderBlock (floating) {DIV} at (0,102) size 115x56 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 113x17
           text run at (1,1) width 113: "BOTTOM-LEFT"
-        RenderBR {BR} at (114,1) size 0x17
+        RenderBR {BR} at (113,1) size 1x17
         RenderText {#text} at (1,19) size 60x17
           text run at (1,19) width 60: "float: left;"
         RenderBR {BR} at (61,19) size 0x17

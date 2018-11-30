@@ -35,5 +35,5 @@ layer at (0,0) size 800x600
         RenderInline {TT} at (0,0) size 88x15
           RenderText {#text} at (289,3) size 88x15
             text run at (289,3) width 88: "hello world"
-        RenderText {#text} at (377,0) size 235x17
-          text run at (377,0) width 235: ". Notice it is displayed correctly now."
+        RenderText {#text} at (377,0) size 234x17
+          text run at (377,0) width 234: ". Notice it is displayed correctly now."

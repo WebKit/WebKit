@@ -4,46 +4,46 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 311x17
-          text run at (0,0) width 311: "Test shrink-to-fit width for floating elements (see "
-        RenderInline {A} at (0,0) size 97x17 [color=#0000EE]
-          RenderText {#text} at (311,0) size 97x17
-            text run at (311,0) width 97: "CSS 2.1 10.3.5"
-        RenderText {#text} at (408,0) size 9x17
-          text run at (408,0) width 9: ")."
+        RenderText {#text} at (0,0) size 310x17
+          text run at (0,0) width 310: "Test shrink-to-fit width for floating elements (see "
+        RenderInline {A} at (0,0) size 98x17 [color=#0000EE]
+          RenderText {#text} at (309,0) size 98x17
+            text run at (309,0) width 98: "CSS 2.1 10.3.5"
+        RenderText {#text} at (406,0) size 10x17
+          text run at (406,0) width 10: ")."
       RenderBlock {P} at (0,34) size 784x36
         RenderText {#text} at (0,0) size 196x17
           text run at (0,0) width 196: "Shrink-to-fit width is min(max("
-        RenderInline {I} at (0,0) size 162x17
-          RenderText {#text} at (196,0) size 162x17
-            text run at (196,0) width 162: "preferred minimum width"
-        RenderText {#text} at (358,0) size 8x17
-          text run at (358,0) width 8: ", "
-        RenderInline {I} at (0,0) size 97x17
-          RenderText {#text} at (366,0) size 97x17
-            text run at (366,0) width 97: "available width"
-        RenderText {#text} at (463,0) size 13x17
-          text run at (463,0) width 13: "), "
+        RenderInline {I} at (0,0) size 161x17
+          RenderText {#text} at (196,0) size 161x17
+            text run at (196,0) width 161: "preferred minimum width"
+        RenderText {#text} at (356,0) size 9x17
+          text run at (356,0) width 9: ", "
         RenderInline {I} at (0,0) size 98x17
-          RenderText {#text} at (476,0) size 98x17
-            text run at (476,0) width 98: "preferred width"
-        RenderText {#text} at (574,0) size 775x35
-          text run at (574,0) width 13: "). "
-          text run at (587,0) width 188: "In the following cases (except"
+          RenderText {#text} at (364,0) size 98x17
+            text run at (364,0) width 98: "available width"
+        RenderText {#text} at (461,0) size 14x17
+          text run at (461,0) width 14: "), "
+        RenderInline {I} at (0,0) size 98x17
+          RenderText {#text} at (474,0) size 98x17
+            text run at (474,0) width 98: "preferred width"
+        RenderText {#text} at (571,0) size 773x35
+          text run at (571,0) width 14: "). "
+          text run at (584,0) width 189: "In the following cases (except"
           text run at (0,18) width 58: "the \x{201C}x\x{201D}), "
-        RenderInline {I} at (0,0) size 162x17
-          RenderText {#text} at (58,18) size 162x17
-            text run at (58,18) width 162: "preferred minimum width"
-        RenderText {#text} at (220,18) size 17x17
-          text run at (220,18) width 17: " < "
-        RenderInline {I} at (0,0) size 97x17
-          RenderText {#text} at (237,18) size 97x17
-            text run at (237,18) width 97: "available width"
-        RenderText {#text} at (334,18) size 17x17
-          text run at (334,18) width 17: " < "
+        RenderInline {I} at (0,0) size 161x17
+          RenderText {#text} at (58,18) size 161x17
+            text run at (58,18) width 161: "preferred minimum width"
+        RenderText {#text} at (218,18) size 18x17
+          text run at (218,18) width 18: " < "
         RenderInline {I} at (0,0) size 98x17
-          RenderText {#text} at (351,18) size 98x17
-            text run at (351,18) width 98: "preferred width"
+          RenderText {#text} at (235,18) size 98x17
+            text run at (235,18) width 98: "available width"
+        RenderText {#text} at (332,18) size 18x17
+          text run at (332,18) width 18: " < "
+        RenderInline {I} at (0,0) size 98x17
+          RenderText {#text} at (349,18) size 98x17
+            text run at (349,18) width 98: "preferred width"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,86) size 100x236
         RenderBlock (floating) {DIV} at (0,0) size 100x42 [border: (3px solid #000000)]

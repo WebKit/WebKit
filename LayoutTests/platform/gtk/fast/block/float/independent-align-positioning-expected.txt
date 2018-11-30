@@ -16,12 +16,12 @@ layer at (0,0) size 800x158
         RenderText {#text} at (0,0) size 556x107
           text run at (0,0) width 528: "The first element is floated to the right. The second element clears the right float and"
           text run at (0,18) width 556: "also floats right. The third element is floated to the left, but is forced below the bottom of"
-          text run at (0,36) width 525: "the first element. Yet, somehow this paragraph comes at the end of the markup, and"
-          text run at (219,54) width 238: "manages to rise to the top of the page."
-          text run at (219,72) width 261: "This behavior is present in Firefox, Safari"
-          text run at (219,90) width 74: "and Opera. "
+          text run at (0,36) width 524: "the first element. Yet, somehow this paragraph comes at the end of the markup, and"
+          text run at (218,54) width 239: "manages to rise to the top of the page."
+          text run at (218,72) width 262: "This behavior is present in Firefox, Safari"
+          text run at (218,90) width 75: "and Opera. "
         RenderInline {A} at (0,0) size 254x35 [color=#0000EE]
           RenderInline {STRONG} at (0,0) size 254x35
-            RenderText {#text} at (293,90) size 254x35
-              text run at (293,90) width 180: "Click here for a real world"
-              text run at (219,108) width 135: "example of this bug."
+            RenderText {#text} at (292,90) size 254x35
+              text run at (292,90) width 180: "Click here for a real world"
+              text run at (218,108) width 136: "example of this bug."

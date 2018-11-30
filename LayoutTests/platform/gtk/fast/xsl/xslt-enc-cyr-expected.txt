@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 322x17
-        text run at (0,0) width 322: "CHARACTERS IN XSLT: \x{414}\x{43E}\x{431}\x{430}\x{432}\x{43B}\x{435}\x{43D}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442} "
-      RenderBR {BR} at (322,14) size 0x0
+      RenderText {#text} at (0,0) size 320x17
+        text run at (0,0) width 320: "CHARACTERS IN XSLT: \x{414}\x{43E}\x{431}\x{430}\x{432}\x{43B}\x{435}\x{43D}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442} "
+      RenderBR {BR} at (319,14) size 1x0
       RenderBR {BR} at (0,18) size 0x17
-      RenderText {#text} at (0,36) size 225x17
-        text run at (0,36) width 225: "SOURCE XML: \x{418}\x{441}\x{445}\x{43E}\x{434}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442}"
+      RenderText {#text} at (0,36) size 224x17
+        text run at (0,36) width 224: "SOURCE XML: \x{418}\x{441}\x{445}\x{43E}\x{434}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442}"

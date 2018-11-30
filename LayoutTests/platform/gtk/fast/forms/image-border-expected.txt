@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 769x35
           text run at (0,0) width 523: "The first empty image box below should have the default grey \"no border\" border. "
-          text run at (523,0) width 246: "The second should have a 1-pixel solid"
+          text run at (522,0) width 247: "The second should have a 1-pixel solid"
           text run at (0,18) width 313: "black border. They should be the same otherwise."
       RenderBlock (anonymous) at (0,52) size 784x54
         RenderText {#text} at (0,36) size 53x17

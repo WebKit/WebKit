@@ -12,18 +12,18 @@ layer at (0,0) size 800x136 layerType: foreground only
         RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
           RenderText {#text} at (0,0) size 305x17
             text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=22570"
-        RenderText {#text} at (305,0) size 697x35
-          text run at (305,0) width 61: ". Test for "
-          text run at (366,0) width 331: "reflection painting on overflow:hidden element. You"
-          text run at (0,18) width 188: "should not see any red below."
+        RenderText {#text} at (304,0) size 694x35
+          text run at (304,0) width 61: ". Test for "
+          text run at (364,0) width 330: "reflection painting on overflow:hidden element. You"
+          text run at (0,18) width 187: "should not see any red below."
 layer at (50,100) size 400x200
   RenderBlock (positioned) {DIV} at (50,100) size 400x200
 layer at (50,100) size 400x200
   RenderBlock (relative positioned) {DIV} at (0,0) size 400x200
 layer at (50,100) size 400x50
   RenderBlock (positioned) {DIV} at (0,0) size 400x50 [bgcolor=#008000]
-    RenderText {#text} at (0,0) size 26x17
-      text run at (0,0) width 26: "Top"
+    RenderText {#text} at (0,0) size 25x17
+      text run at (0,0) width 25: "Top"
 layer at (50,250) size 400x50
   RenderBlock (positioned) {DIV} at (0,150) size 400x50 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 47x17

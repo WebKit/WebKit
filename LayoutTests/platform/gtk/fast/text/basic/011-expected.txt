@@ -9,8 +9,8 @@ layer at (0,0) size 800x142
         RenderInline {FONT} at (0,0) size 764x29
           RenderText {#text} at (99,5) size 764x29
             text run at (99,5) width 84: "I am teeny and tiny. "
-            text run at (183,5) width 297: "I am going to have lots of text but each line should retain the big height. "
-            text run at (480,5) width 284: "If the lines shrink, it means that the root line box's height is not being"
+            text run at (182,5) width 298: "I am going to have lots of text but each line should retain the big height. "
+            text run at (479,5) width 285: "If the lines shrink, it means that the root line box's height is not being"
             text run at (0,23) width 114: "considered and that's wrong."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,52) size 784x0
@@ -21,7 +21,7 @@ layer at (0,0) size 800x142
           RenderInline {FONT} at (0,0) size 778x48
             RenderText {#text} at (431,20) size 778x48
               text run at (431,20) width 84: "I am teeny and tiny. "
-              text run at (515,20) width 263: "I am going to have lots of text but each line should retain the big"
+              text run at (514,20) width 264: "I am going to have lots of text but each line should retain the big"
               text run at (0,57) width 31: "height. "
               text run at (31,57) width 409: "If the lines shrink, it means that the span's line box's height is not being considered and that's wrong."
           RenderText {#text} at (0,0) size 0x0

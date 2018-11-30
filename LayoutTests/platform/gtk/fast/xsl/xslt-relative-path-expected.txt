@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 511x17
-          text run at (0,0) width 511: "Here is an attempt to extract the string \"Hello, Webkit!\" from the file findme.xml:"
+        RenderText {#text} at (0,0) size 510x17
+          text run at (0,0) width 510: "Here is an attempt to extract the string \"Hello, Webkit!\" from the file findme.xml:"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 377x17
+        RenderText {#text} at (0,0) size 376x17
           text run at (0,0) width 283: "using document('file:resources/findme.xml'): "
-          text run at (283,0) width 94: "Hello, Webkit!"
+          text run at (283,0) width 93: "Hello, Webkit!"
       RenderBlock {P} at (0,68) size 784x18
-        RenderText {#text} at (0,0) size 353x17
+        RenderText {#text} at (0,0) size 352x17
           text run at (0,0) width 259: "using document('resources/findme.xml'): "
-          text run at (259,0) width 94: "Hello, Webkit!"
+          text run at (259,0) width 93: "Hello, Webkit!"

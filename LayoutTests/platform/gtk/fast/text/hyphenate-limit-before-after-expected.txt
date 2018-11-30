@@ -53,15 +53,15 @@ layer at (0,0) size 800x600
       RenderText {#text} at (434,123) size 4x17
         text run at (434,123) width 4: " "
       RenderBlock {DIV} at (446,84) size 126x60 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 86x53
+        RenderText {#text} at (3,3) size 72x53
           text run at (3,3) width 72: "There is re" + hyphen string "-"
-          text run at (3,21) width 86: "markable evi" + hyphen string "-"
-          text run at (3,39) width 41: "dence."
+          text run at (3,21) width 58: "markable"
+          text run at (3,39) width 60: "evidence."
       RenderText {#text} at (580,123) size 4x17
         text run at (580,123) width 4: " "
       RenderBlock {DIV} at (592,84) size 126x60 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 98x53
+        RenderText {#text} at (3,3) size 70x53
           text run at (3,3) width 51: "There is"
-          text run at (3,21) width 98: "remarkable evi" + hyphen string "-"
-          text run at (3,39) width 41: "dence."
+          text run at (3,21) width 70: "remarkable"
+          text run at (3,39) width 60: "evidence."
       RenderText {#text} at (0,0) size 0x0

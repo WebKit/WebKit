@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 741: "This test makes sure we don't crash when trying to get the index of an option element that has no corresponding select"
           text run at (0,18) width 53: "element."
       RenderBlock {DIV} at (0,36) size 784x36
-        RenderText {#text} at (0,0) size 82x17
-          text run at (0,0) width 82: "Test Passed. "
-        RenderBR {BR} at (82,14) size 0x0
+        RenderText {#text} at (0,0) size 81x17
+          text run at (0,0) width 81: "Test Passed. "
+        RenderBR {BR} at (80,14) size 1x0
         RenderText {#text} at (0,18) size 370x17
           text run at (0,18) width 370: "Index for option element with no corresponding select is: 0"

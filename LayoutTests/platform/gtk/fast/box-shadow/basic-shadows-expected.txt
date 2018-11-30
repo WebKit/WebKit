@@ -83,6 +83,6 @@ layer at (0,0) size 785x671
             text run at (5,6) width 29: "T"
         RenderText {#text} at (43,0) size 488x17
           text run at (43,0) width 488: "he first letter of this paragraph should have a border and a nice shadow effect."
-        RenderBR {BR} at (531,14) size 0x0
+        RenderBR {BR} at (530,14) size 1x0
         RenderText {#text} at (43,18) size 162x17
           text run at (43,18) width 162: "It should look pretty cool."

@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (12,12) size 245x121
           RenderText {#text} at (0,22) size 101x14
             text run at (0,22) width 101: "This text should snap"
-          RenderBR {BR} at (101,33) size 0x0
+          RenderBR {BR} at (100,33) size 1x0
           RenderText {#text} at (0,64) size 113x14
             text run at (0,64) width 113: "to a 36px font-size grid."
           RenderBR {BR} at (113,75) size 0x0
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
       RenderBlock (floating) {DIV} at (284,5) size 369x108 [border: (2px solid #000000)]
         RenderText {#text} at (12,13) size 307x40
           text run at (12,13) width 307: "This text should snap"
-        RenderBR {BR} at (319,45) size 0x0
+        RenderBR {BR} at (318,45) size 1x0
         RenderText {#text} at (12,55) size 345x40
           text run at (12,55) width 345: "to a 36px font-size grid."
         RenderBR {BR} at (357,87) size 0x0

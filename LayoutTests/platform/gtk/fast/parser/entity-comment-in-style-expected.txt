@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 547x17
           text run at (0,0) width 547: "--> */ h1 { background-color: red; } /* This comment should not be part of the style. */"
       RenderBlock {H1} at (0,39) size 784x38
-        RenderText {#text} at (0,0) size 604x36
-          text run at (0,0) width 604: "This text should not have a red background."
+        RenderText {#text} at (0,0) size 603x36
+          text run at (0,0) width 603: "This text should not have a red background."

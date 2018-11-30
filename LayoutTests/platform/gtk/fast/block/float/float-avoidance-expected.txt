@@ -4,9 +4,9 @@ layer at (0,0) size 785x2495
   RenderBlock {HTML} at (0,0) size 785x2495
     RenderBody {BODY} at (8,8) size 769x2479
       RenderBlock (anonymous) at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 765x35
-          text run at (0,0) width 538: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
-          text run at (538,0) width 227: "This test is designed to illustrate that"
+        RenderText {#text} at (0,0) size 764x35
+          text run at (0,0) width 537: "Test of objects that avoid floats to see what they do with percentage and auto widths. "
+          text run at (536,0) width 228: "This test is designed to illustrate that"
           text run at (0,18) width 447: "we have removed the WinIE quirk and are behaving more like Firefox."
       RenderBlock {HR} at (0,44) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,54) size 769x18
@@ -98,14 +98,14 @@ layer at (0,0) size 785x2495
           RenderTableSection {TBODY} at (2,2) size 96x26
             RenderTableRow {TR} at (0,2) size 96x22
               RenderTableCell {TD} at (2,2) size 92x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 36x17
-                  text run at (2,2) width 36: "Table"
+                RenderText {#text} at (2,2) size 35x17
+                  text run at (2,2) width 35: "Table"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (210,28) size 0x17
       RenderBlock (anonymous) at (0,725) size 769x36
         RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "The floating table with an auto width should be even with the select and shrinks to use the available line width. THIS IS"
-          text run at (0,18) width 166: "CURRENTLY BUGGY."
+          text run at (0,18) width 162: "CURRENTLY BUGGY."
       RenderBlock {P} at (0,777) size 220x138 [border: (10px solid #FF0000)]
         RenderText {#text} at (10,10) size 60x17
           text run at (10,10) width 60: "Line One"
@@ -193,7 +193,7 @@ layer at (0,0) size 785x2495
       RenderBlock (anonymous) at (0,1527) size 769x36
         RenderText {#text} at (0,0) size 728x35
           text run at (0,0) width 728: "The floating overflow section with an auto width should be even with the select and shrinks to use the available line"
-          text run at (0,18) width 268: "width. THIS IS CURRENTLY BUGGY."
+          text run at (0,18) width 264: "width. THIS IS CURRENTLY BUGGY."
       RenderBlock {DIV} at (0,1563) size 220x126 [border: (10px solid #FF0000)]
         RenderText {#text} at (10,10) size 60x17
           text run at (10,10) width 60: "Line One"

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             text run at (0,0) width 59: "Line One"
       RenderBlock (anonymous) at (0,34) size 784x18
         RenderBlock {P} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 60x17
-            text run at (0,0) width 60: "Line Two"
+          RenderText {#text} at (0,0) size 59x17
+            text run at (0,0) width 59: "Line Two"
       RenderBlock (anonymous) at (0,68) size 784x18
         RenderInline {I} at (0,0) size 32x17
           RenderText {#text} at (0,0) size 32x17

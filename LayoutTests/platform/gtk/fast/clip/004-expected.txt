@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x52
   RenderBlock {HTML} at (0,0) size 800x52
     RenderBody {BODY} at (8,8) size 784x36
-      RenderText {#text} at (0,0) size 753x35
-        text run at (0,0) width 304: "You should see a 100x100 green square below. "
-        text run at (304,0) width 237: "If you see any red, the test has failed. "
-        text run at (541,0) width 212: "This test is checking to make sure"
+      RenderText {#text} at (0,0) size 751x35
+        text run at (0,0) width 302: "You should see a 100x100 green square below. "
+        text run at (301,0) width 238: "If you see any red, the test has failed. "
+        text run at (538,0) width 213: "This test is checking to make sure"
         text run at (0,18) width 148: "overflow is done using "
         text run at (148,18) width 163: "a containing block model."
       RenderText {#text} at (0,0) size 0x0

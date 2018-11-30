@@ -4,16 +4,16 @@ layer at (0,0) size 785x168
   RenderBlock {HTML} at (0,0) size 785x168
     RenderBody {BODY} at (8,21) size 769x131
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 759x36
-          text run at (0,0) width 759: "Testing the values of 'pointer-events' on HTML content"
+        RenderText {#text} at (0,0) size 754x36
+          text run at (0,0) width 754: "Testing the values of 'pointer-events' on HTML content"
       RenderBlock {P} at (0,58) size 769x73
-        RenderText {#text} at (0,0) size 768x71
-          text run at (0,0) width 579: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
-          text run at (579,0) width 145: "the elements in the first"
+        RenderText {#text} at (0,0) size 767x71
+          text run at (0,0) width 578: "This test is expected to be run from within DumpRenderTree. If running manually, click on "
+          text run at (577,0) width 146: "the elements in the first"
           text run at (0,18) width 379: "column, making sure the actual result (3rd column) matches "
           text run at (379,18) width 382: "the expected result (2nd column). Repeat for click target (4th"
           text run at (0,36) width 243: "column), expected result (5th column) "
-          text run at (243,36) width 525: "and actual result (6th column). Note: You should click on a yellow inline element if"
+          text run at (243,36) width 524: "and actual result (6th column). Note: You should click on a yellow inline element if"
           text run at (0,54) width 268: "one exists, otherwise anywhere in the box."
 layer at (10,140) size 300x100
   RenderBlock (positioned) {DIV} at (10,140) size 300x100

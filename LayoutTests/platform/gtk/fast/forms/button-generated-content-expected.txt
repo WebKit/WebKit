@@ -11,12 +11,12 @@ layer at (0,0) size 800x334
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (314,0) size 348x17
               text run at (314,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9561"
-          RenderText {#text} at (662,0) size 767x35
-            text run at (662,0) width 4: " "
-            text run at (666,0) width 101: "REGRESSION:"
-            text run at (0,18) width 430: "Content property on :before of button causes hang on click or hover"
-        RenderText {#text} at (430,18) size 4x17
-          text run at (430,18) width 4: "."
+          RenderText {#text} at (661,0) size 767x35
+            text run at (661,0) width 5: " "
+            text run at (665,0) width 102: "REGRESSION:"
+            text run at (0,18) width 429: "Content property on :before of button causes hang on click or hover"
+        RenderText {#text} at (428,18) size 5x17
+          text run at (428,18) width 5: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,62) size 784x248
         RenderButton {BUTTON} at (2,2) size 61x27 [color=#0000FF] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

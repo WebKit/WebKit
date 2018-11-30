@@ -304,14 +304,14 @@ layer at (10,1270) size 375x643 backgroundClip at (0,0) size 1166x1680 clip at (
       RenderText {#text} at (100,400) size 211x26
         text run at (100,400) width 211: "Longer text designed "
       RenderImage {IMG} at (274,427) size 101x20 [bgcolor=#008000]
-      RenderText {#text} at (311,400) size 370x242
-        text run at (311,400) width 59: "to test"
+      RenderText {#text} at (310,400) size 370x242
+        text run at (310,400) width 60: "to test"
         text run at (0,427) width 183: "float and wrapping"
-        text run at (0,454) width 367: "behavior. Longer text designed to test"
-        text run at (0,481) width 356: "float and wrapping behavior. Longer"
+        text run at (0,454) width 366: "behavior. Longer text designed to test"
+        text run at (0,481) width 355: "float and wrapping behavior. Longer"
         text run at (0,508) width 286: "text designed to test float and"
-        text run at (0,535) width 307: "wrapping behavior. Longer text"
+        text run at (0,535) width 306: "wrapping behavior. Longer text"
         text run at (0,562) width 340: "designed to test float and wrapping"
-        text run at (0,589) width 367: "behavior. Longer text designed to test"
-        text run at (0,616) width 280: "float and wrapping behavior."
+        text run at (0,589) width 366: "behavior. Longer text designed to test"
+        text run at (0,616) width 279: "float and wrapping behavior."
     RenderText {#text} at (0,0) size 0x0

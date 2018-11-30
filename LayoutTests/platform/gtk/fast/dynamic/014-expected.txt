@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 563x17
-          text run at (0,0) width 563: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
+        RenderText {#text} at (0,0) size 562x17
+          text run at (0,0) width 562: "You should see three rows below labeled \"row 1\", \"row 2\", \"row 3\", from top to bottom."
       RenderTable {TABLE} at (0,34) size 43x68
         RenderTableSection {TBODY} at (0,0) size 43x68
           RenderTableRow {TR} at (0,2) size 43x20

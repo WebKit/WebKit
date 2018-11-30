@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 554x17
         text run at (0,0) width 250: "This tests that styled popups look right. "
         text run at (250,0) width 304: "(Aqua for now- later, we will honor the styling)."
-      RenderBR {BR} at (554,14) size 0x0
+      RenderBR {BR} at (553,14) size 1x0
       RenderMenuList {SELECT} at (2,20) size 61x30 [color=#2E3436] [bgcolor=#FF0000] [border: (1px solid #2E3436)]
         RenderBlock (anonymous) at (1,1) size 59x28
           RenderText at (9,5) size 25x17

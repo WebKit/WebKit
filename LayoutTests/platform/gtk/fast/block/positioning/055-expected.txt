@@ -40,7 +40,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,176) size 0x0
     RenderText {#text} at (0,180) size 16x17
       text run at (0,180) width 16: "11"
-    RenderBR {BR} at (16,194) size 0x0
+    RenderBR {BR} at (15,194) size 1x0
     RenderText {#text} at (0,198) size 16x17
       text run at (0,198) width 16: "12"
     RenderBR {BR} at (16,212) size 0x0
@@ -100,7 +100,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,536) size 0x0
     RenderText {#text} at (0,540) size 16x17
       text run at (0,540) width 16: "11"
-    RenderBR {BR} at (16,554) size 0x0
+    RenderBR {BR} at (15,554) size 1x0
     RenderText {#text} at (0,558) size 16x17
       text run at (0,558) width 16: "12"
     RenderBR {BR} at (16,572) size 0x0
@@ -160,7 +160,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,896) size 0x0
     RenderText {#text} at (0,900) size 16x17
       text run at (0,900) width 16: "11"
-    RenderBR {BR} at (16,914) size 0x0
+    RenderBR {BR} at (15,914) size 1x0
     RenderText {#text} at (0,918) size 16x17
       text run at (0,918) width 16: "12"
     RenderBR {BR} at (16,932) size 0x0
@@ -220,7 +220,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,1256) size 0x0
     RenderText {#text} at (0,1260) size 16x17
       text run at (0,1260) width 16: "11"
-    RenderBR {BR} at (16,1274) size 0x0
+    RenderBR {BR} at (15,1274) size 1x0
     RenderText {#text} at (0,1278) size 16x17
       text run at (0,1278) width 16: "12"
     RenderBR {BR} at (16,1292) size 0x0
@@ -280,7 +280,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,1616) size 0x0
     RenderText {#text} at (0,1620) size 16x17
       text run at (0,1620) width 16: "11"
-    RenderBR {BR} at (16,1634) size 0x0
+    RenderBR {BR} at (15,1634) size 1x0
     RenderText {#text} at (0,1638) size 16x17
       text run at (0,1638) width 16: "12"
     RenderBR {BR} at (16,1652) size 0x0
@@ -340,7 +340,7 @@ layer at (8,8) size 16x2160
     RenderBR {BR} at (16,1976) size 0x0
     RenderText {#text} at (0,1980) size 16x17
       text run at (0,1980) width 16: "11"
-    RenderBR {BR} at (16,1994) size 0x0
+    RenderBR {BR} at (15,1994) size 1x0
     RenderText {#text} at (0,1998) size 16x17
       text run at (0,1998) width 16: "12"
     RenderBR {BR} at (16,2012) size 0x0

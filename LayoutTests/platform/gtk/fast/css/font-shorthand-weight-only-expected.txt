@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
         RenderInline {I} at (0,0) size 716x17
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9341"
-          RenderText {#text} at (401,0) size 368x17
-            text run at (401,0) width 4: " "
-            text run at (405,0) width 364: "REGRESSION: Repro crash caused by style=\"font:bold\""
-        RenderText {#text} at (769,0) size 4x17
-          text run at (769,0) width 4: "."
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9341"
+          RenderText {#text} at (399,0) size 368x17
+            text run at (399,0) width 5: " "
+            text run at (403,0) width 364: "REGRESSION: Repro crash caused by style=\"font:bold\""
+        RenderText {#text} at (766,0) size 5x17
+          text run at (766,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 127x17
-          text run at (0,0) width 127: "PASS (didn\x{2019}t crash)"
+        RenderText {#text} at (0,0) size 126x17
+          text run at (0,0) width 126: "PASS (didn\x{2019}t crash)"

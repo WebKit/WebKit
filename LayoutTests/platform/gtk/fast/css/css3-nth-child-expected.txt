@@ -44,14 +44,14 @@ layer at (0,0) size 800x600
                   text run at (1,19) width 105: "should be purple"
       RenderBlock {DIV} at (0,178) size 784x120
         RenderBlock {P} at (0,0) size 784x18 [color=#000080]
-          RenderText {#text} at (0,0) size 387x17
-            text run at (0,0) width 387: "This should be navy, as this is the first paragraph in this page."
+          RenderText {#text} at (0,0) size 386x17
+            text run at (0,0) width 386: "This should be navy, as this is the first paragraph in this page."
         RenderBlock {P} at (0,34) size 784x18 [color=#FF0000]
           RenderText {#text} at (0,0) size 396x17
             text run at (0,0) width 396: "This should be red, as this is the second paragraph in this page."
         RenderBlock {P} at (0,68) size 784x18 [color=#000080]
-          RenderText {#text} at (0,0) size 392x17
-            text run at (0,0) width 392: "This should be navy, as this is the third paragraph in this page."
+          RenderText {#text} at (0,0) size 391x17
+            text run at (0,0) width 391: "This should be navy, as this is the third paragraph in this page."
         RenderBlock {P} at (0,102) size 784x18 [color=#FF0000]
           RenderText {#text} at (0,0) size 390x17
             text run at (0,0) width 390: "This should be red, as this is the fourth paragraph in this page."

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#008000]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 432x17
-          text run at (0,0) width 432: "Test for iframe flattening. The flattening only works inside the DRT."
+        RenderText {#text} at (0,0) size 429x17
+          text run at (0,0) width 429: "Test for iframe flattening. The flattening only works inside the DRT."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 778x17
           text run at (0,0) width 434: "This inner frame should be 400px in each direction, disregarding the "

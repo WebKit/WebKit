@@ -5,17 +5,17 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x542
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,18) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
         RenderInline {I} at (0,0) size 646x17
           RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x17
-              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=22118"
-          RenderText {#text} at (360,0) size 339x17
-            text run at (360,0) width 4: " "
-            text run at (364,0) width 335: "Resize corner does not track in transformed elements"
-        RenderText {#text} at (699,0) size 4x17
-          text run at (699,0) width 4: "."
+            RenderText {#text} at (51,0) size 307x17
+              text run at (51,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=22118"
+          RenderText {#text} at (357,0) size 340x17
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 336: "Resize corner does not track in transformed elements"
+        RenderText {#text} at (696,0) size 5x17
+          text run at (696,0) width 5: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (58,112) size 163x129 clip at (60,114) size 159x125
   RenderBlock {DIV} at (50,104) size 163x129 [border: (2px solid #0000FF)]

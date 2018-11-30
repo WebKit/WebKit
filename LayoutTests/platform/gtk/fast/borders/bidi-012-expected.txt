@@ -4,10 +4,10 @@ layer at (0,0) size 800x446
   RenderBlock {HTML} at (0,0) size 800x446
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 513x17
-          text run at (0,0) width 498: "The following two blocks should be identical, including overflow. (Force bidi: "
-          text run at (498,0) width 10 RTL: "\x{5D0}"
-          text run at (508,0) width 5: ")"
+        RenderText {#text} at (0,0) size 512x17
+          text run at (0,0) width 497: "The following two blocks should be identical, including overflow. (Force bidi: "
+          text run at (496,0) width 11 RTL: "\x{5D0}"
+          text run at (506,0) width 6: ")"
       RenderBlock {DIV} at (0,34) size 784x0
         RenderBlock (floating) {P} at (16,16) size 177x166 [bgcolor=#FFFFCC] [border: (3px solid #000000)]
           RenderInline {SPAN} at (0,0) size 150x37 [color=#000080] [border: (3px solid #000080) none (3px solid #000080)]
@@ -17,12 +17,12 @@ layer at (0,0) size 800x446
           RenderInline {SPAN} at (0,0) size 38x37 [color=#000080] [border: (3px solid #000080) none]
             RenderText {#text} at (11,74) size 19x17
               text run at (11,74) width 19: "fff "
-          RenderText {#text} at (49,74) size 72x17
-            text run at (49,74) width 72: "ggg hhh iii "
-          RenderInline {SPAN} at (0,0) size 31x37 [color=#FFA500] [border: (3px solid #FFA500) none (3px solid #FFA500)]
-            RenderText {#text} at (140,74) size 12x17
-              text run at (140,74) width 12: "jjj"
-          RenderBR {BR} at (152,74) size 0x17
+          RenderText {#text} at (48,74) size 73x17
+            text run at (48,74) width 73: "ggg hhh iii "
+          RenderInline {SPAN} at (0,0) size 32x37 [color=#FFA500] [border: (3px solid #FFA500) none (3px solid #FFA500)]
+            RenderText {#text} at (139,74) size 13x17
+              text run at (139,74) width 13: "jjj"
+          RenderBR {BR} at (151,74) size 1x17
           RenderInline {SPAN} at (0,0) size 155x37 [color=#FFA500] [border: (3px solid #FFA500) none]
             RenderText {#text} at (11,122) size 136x17
               text run at (11,122) width 136: "kkk lll mmm nnn ooo"
@@ -38,13 +38,13 @@ layer at (0,0) size 800x446
             RenderBR {BR} at (0,0) size 0x0
             RenderText {#text} at (11,74) size 19x17
               text run at (11,74) width 19: "fff "
-          RenderText {#text} at (49,74) size 72x17
-            text run at (49,74) width 28: "ggg "
-            text run at (77,74) width 28: "hhh "
-            text run at (105,74) width 16: "iii "
+          RenderText {#text} at (48,74) size 73x17
+            text run at (48,74) width 29: "ggg "
+            text run at (76,74) width 29: "hhh "
+            text run at (104,74) width 17: "iii "
           RenderInline {SPAN} at (0,0) size 159x85 [color=#FFA500] [border: (3px solid #FFA500)]
-            RenderText {#text} at (140,74) size 16x17
-              text run at (140,74) width 16: "jjj "
+            RenderText {#text} at (139,74) size 17x17
+              text run at (139,74) width 17: "jjj "
             RenderBR {BR} at (0,0) size 0x0
             RenderText {#text} at (11,122) size 140x17
               text run at (11,122) width 28: "kkk "

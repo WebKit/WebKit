@@ -4,11 +4,11 @@ layer at (0,0) size 785x340
   RenderBlock {HTML} at (0,0) size 785x340
     RenderBody {BODY} at (8,170) size 162x162 [color=#000080] [border: (1px solid #000080)]
       RenderBlock {P} at (1,17) size 160x126
-        RenderText {#text} at (0,0) size 155x125
+        RenderText {#text} at (0,0) size 154x125
           text run at (0,0) width 102: "There should be"
           text run at (0,18) width 105: "scrollbars for the"
           text run at (0,36) width 142: "viewport -- not for this"
-          text run at (0,54) width 155: "box. (Additionally, there"
+          text run at (0,54) width 154: "box. (Additionally, there"
           text run at (0,72) width 142: "should be a box above"
           text run at (0,90) width 90: "that does have"
           text run at (0,108) width 69: "scrollbars.)"

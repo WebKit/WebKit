@@ -6,20 +6,20 @@ layer at (0,0) size 800x454
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 738x35
+        RenderInline {I} at (0,0) size 737x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9122"
-          RenderText {#text} at (520,0) size 738x35
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 214: "REGRESSION: Incorrect vertical"
+          RenderText {#text} at (519,0) size 737x35
+            text run at (519,0) width 5: " "
+            text run at (523,0) width 214: "REGRESSION: Incorrect vertical"
             text run at (0,18) width 304: "position for text fields in a \"display: table\" block"
         RenderText {#text} at (304,18) size 4x17
           text run at (304,18) width 4: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 745x35
-          text run at (0,0) width 745: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and"
-          text run at (0,18) width 320: "resize the window. The text field should not move."
+        RenderText {#text} at (0,0) size 783x35
+          text run at (0,0) width 783: "Type something in the text field. Resize the window. The text field should not jump down. Delete what you typed and resize"
+          text run at (0,18) width 279: "the window. The text field should not move."
       RenderBlock {FORM} at (0,104) size 784x318
         RenderTable {DL} at (0,0) size 220x28
           RenderTableSection (anonymous) at (0,0) size 220x28

@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 763x35
-          text run at (0,0) width 763: "You should see a table with 6 rows, labeled \"Row_0\", \"Row_1\", \"Row_2\", \"Row_3\", \"Row_4\", \"Row_5\", from top to"
+        RenderText {#text} at (0,0) size 762x35
+          text run at (0,0) width 762: "You should see a table with 6 rows, labeled \"Row_0\", \"Row_1\", \"Row_2\", \"Row_3\", \"Row_4\", \"Row_5\", from top to"
           text run at (0,18) width 48: "bottom."
       RenderTable {TABLE} at (0,52) size 57x148 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 55x146

@@ -19,7 +19,7 @@ layer at (0,0) size 800x138
         RenderBlock (floating) {DIV} at (2,2) size 554x22 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 540x17
             text run at (2,2) width 246: "(Parent DIV have 2px blue border set) "
-            text run at (248,2) width 294: "There should be a green table below this block"
+            text run at (247,2) width 295: "There should be a green table below this block"
         RenderTable {TABLE} at (2,24) size 800x28 [border: (2px solid #008000)]
           RenderTableSection {TBODY} at (2,2) size 796x24
             RenderTableRow {TR} at (0,2) size 796x20

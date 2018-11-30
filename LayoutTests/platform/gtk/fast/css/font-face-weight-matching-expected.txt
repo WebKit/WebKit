@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 745x35
-          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x17
-              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=34147"
-          RenderText {#text} at (360,0) size 745x35
-            text run at (360,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 743x35
+          RenderInline {A} at (0,0) size 308x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 308x17
+              text run at (51,0) width 308: "https://bugs.webkit.org/show_bug.cgi?id=34147"
+          RenderText {#text} at (358,0) size 743x35
+            text run at (358,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
             text run at (0,18) width 94: "regular is used"
-        RenderText {#text} at (94,18) size 4x17
-          text run at (94,18) width 4: "."
+        RenderText {#text} at (93,18) size 5x17
+          text run at (93,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 328x17
-          text run at (0,0) width 328: "Checks if WebKit font matching algorithm matches "
-        RenderInline {A} at (0,0) size 166x17 [color=#0000EE]
-          RenderText {#text} at (328,0) size 166x17
-            text run at (328,0) width 166: "the latest CSS3 Fonts WD"
-        RenderText {#text} at (494,0) size 782x35
-          text run at (494,0) width 288: ". If the test passes, all 14 glyphs below should"
+        RenderText {#text} at (0,0) size 327x17
+          text run at (0,0) width 327: "Checks if WebKit font matching algorithm matches "
+        RenderInline {A} at (0,0) size 167x17 [color=#0000EE]
+          RenderText {#text} at (326,0) size 167x17
+            text run at (326,0) width 167: "the latest CSS3 Fonts WD"
+        RenderText {#text} at (492,0) size 781x35
+          text run at (492,0) width 289: ". If the test passes, all 14 glyphs below should"
           text run at (0,18) width 108: "be black squares:"
       RenderBlock (anonymous) at (0,104) size 784x18
         RenderInline {SPAN} at (0,0) size 16x16
@@ -72,30 +72,30 @@ layer at (0,0) size 800x600
             text run at (160,1) width 16: "A"
         RenderText {#text} at (176,0) size 4x17
           text run at (176,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (180,1) size 16x16
-            text run at (180,1) width 16: "A"
-        RenderText {#text} at (196,0) size 4x17
-          text run at (196,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 17x16
+          RenderText {#text} at (180,1) size 17x16
+            text run at (180,1) width 17: "A"
+        RenderText {#text} at (197,0) size 4x17
+          text run at (197,0) width 4: " "
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (200,1) size 16x16
-            text run at (200,1) width 16: "A"
-        RenderText {#text} at (216,0) size 4x17
-          text run at (216,0) width 4: " "
+          RenderText {#text} at (201,1) size 16x16
+            text run at (201,1) width 16: "A"
+        RenderText {#text} at (217,0) size 4x17
+          text run at (217,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (220,1) size 16x16
-            text run at (220,1) width 16: "A"
-        RenderText {#text} at (236,0) size 4x17
-          text run at (236,0) width 4: " "
+          RenderText {#text} at (221,1) size 16x16
+            text run at (221,1) width 16: "A"
+        RenderText {#text} at (237,0) size 4x17
+          text run at (237,0) width 4: " "
         RenderText {#text} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (240,1) size 16x16
-            text run at (240,1) width 16: "A"
-        RenderText {#text} at (256,0) size 4x17
-          text run at (256,0) width 4: " "
+          RenderText {#text} at (241,1) size 16x16
+            text run at (241,1) width 16: "A"
+        RenderText {#text} at (257,0) size 4x17
+          text run at (257,0) width 4: " "
         RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (260,1) size 16x16
-            text run at (260,1) width 16: "A"
+          RenderText {#text} at (261,1) size 16x16
+            text run at (261,1) width 16: "A"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

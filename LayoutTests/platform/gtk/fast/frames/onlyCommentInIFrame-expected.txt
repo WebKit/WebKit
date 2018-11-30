@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 780x53
         text run at (0,0) width 780: "The documents in the src attributes of the iframes below only contain comments. This test is for a bug where we would only"
-        text run at (0,18) width 773: "construct RenderViews for such iframes. We need to propery construct an empty frame instead, so the RenderView should"
+        text run at (0,18) width 770: "construct RenderViews for such iframes. We need to propery construct an empty frame instead, so the RenderView should"
         text run at (0,36) width 502: "have a RenderBlock and RenderBody below it in the dump of the RenderTree. "
-      RenderBR {BR} at (502,50) size 0x0
+      RenderBR {BR} at (501,50) size 1x0
       RenderIFrame {IFRAME} at (0,54) size 788x14 [border: (2px inset #000000)]
         layer at (0,0) size 784x10
           RenderView at (0,0) size 784x10
@@ -30,7 +30,8 @@ layer at (0,0) size 800x600
                 RenderBlock {div} at (18,61) size 685x15
                   RenderText {#text} at (0,0) size 490x14
                     text run at (0,0) width 490: "error on line 1 at column 15: Extra content at the end of the document"
+                    text run at (490,0) width 0: " "
                 RenderBlock {h3} at (18,94) size 685x23
-                  RenderText {#text} at (0,0) size 429x21
-                    text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+                  RenderText {#text} at (0,0) size 427x21
+                    text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
       RenderText {#text} at (0,0) size 0x0

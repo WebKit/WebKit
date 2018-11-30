@@ -13,6 +13,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (54,0) size 590x17
           text run at (54,0) width 220: "The \"S\" to the left should be gold. "
           text run at (274,0) width 370: "This is testing :before used in conjunction with :first-letter. "
-        RenderInline (generated) at (0,0) size 65x17
-          RenderText at (644,0) size 65x17
-            text run at (644,0) width 65: "[The End]"
+        RenderInline (generated) at (0,0) size 66x17
+          RenderText at (643,0) size 66x17
+            text run at (643,0) width 66: "[The End]"

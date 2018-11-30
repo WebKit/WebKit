@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
-          RenderText {#text} at (452,0) size 750x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 294: "REGRESSION: text field width shrinks on first"
+          RenderText {#text} at (451,0) size 750x35
+            text run at (451,0) width 5: " "
+            text run at (455,0) width 295: "REGRESSION: text field width shrinks on first"
             text run at (0,18) width 59: "keystroke"
-        RenderText {#text} at (59,18) size 4x17
-          text run at (59,18) width 4: "."
+        RenderText {#text} at (58,18) size 5x17
+          text run at (58,18) width 5: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
 layer at (8,70) size 784x0
   RenderBlock (relative positioned) {DIV} at (0,62) size 784x0

@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 744x35
+        RenderInline {I} at (0,0) size 743x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (253,0) size 348x17
               text run at (253,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
-          RenderText {#text} at (601,0) size 744x35
-            text run at (601,0) width 4: " "
-            text run at (605,0) width 139: "Image thumbnails are"
-            text run at (0,18) width 195: "misplaced on forum.2ostrov.ru"
-        RenderText {#text} at (195,18) size 4x17
-          text run at (195,18) width 4: "."
+          RenderText {#text} at (600,0) size 743x35
+            text run at (600,0) width 5: " "
+            text run at (604,0) width 139: "Image thumbnails are"
+            text run at (0,18) width 194: "misplaced on forum.2ostrov.ru"
+        RenderText {#text} at (193,18) size 5x17
+          text run at (193,18) width 5: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 232x17
@@ -27,7 +27,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
         RenderText {#text} at (6,32) size 16x17
           text run at (6,32) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
         RenderText {#text} at (6,56) size 15x17
           text run at (6,56) width 15: "B "
         RenderBlock {DIV} at (21,50) size 20x20 [bgcolor=#008000]
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (6,6) size 40x20 [bgcolor=#0000FF]
         RenderText {#text} at (6,32) size 16x17
           text run at (6,32) width 16: "A "
-        RenderBlock {DIV} at (22,26) size 35x20 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (21,26) size 36x20 [bgcolor=#FF0000]
         RenderText {#text} at (6,56) size 15x17
           text run at (6,56) width 15: "B "
         RenderBlock {DIV} at (21,50) size 20x20 [bgcolor=#008000]

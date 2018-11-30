@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 652x17
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 647x17
           RenderInline {A} at (0,0) size 154x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 154x17
-              text run at (53,0) width 154: "rdar://problem/5615307"
-          RenderText {#text} at (207,0) size 498x17
-            text run at (207,0) width 498: " Repro crash in WebKit!WebCore::RenderContainer::destroyLeftoverChildren"
-        RenderText {#text} at (705,0) size 4x17
-          text run at (705,0) width 4: "."
+            RenderText {#text} at (51,0) size 154x17
+              text run at (51,0) width 154: "rdar://problem/5615307"
+          RenderText {#text} at (204,0) size 494x17
+            text run at (204,0) width 494: " Repro crash in WebKit!WebCore::RenderContainer::destroyLeftoverChildren"
+        RenderText {#text} at (697,0) size 5x17
+          text run at (697,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 270x17
-          text run at (0,0) width 270: "There should be a line of green text below."
+        RenderText {#text} at (0,0) size 269x17
+          text run at (0,0) width 269: "There should be a line of green text below."
       RenderTable {TABLE} at (0,68) size 148x30 [color=#FF0000]
         RenderTableSection {TBODY} at (0,0) size 148x30
           RenderTableRow {TR} at (0,2) size 148x26

@@ -4,21 +4,21 @@ layer at (0,0) size 785x658
   RenderBlock {HTML} at (0,0) size 785x658
     RenderBody {BODY} at (8,8) size 769x630
       RenderBlock {P} at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 748x35
-          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x17
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=14875"
-          RenderText {#text} at (354,0) size 748x35
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 390: "Textarea with nowrap - left/right nav, Up/down nav both hide"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 744x35
+          RenderInline {A} at (0,0) size 302x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 302x17
+              text run at (51,0) width 302: "http://bugs.webkit.org/show_bug.cgi?id=14875"
+          RenderText {#text} at (352,0) size 744x35
+            text run at (352,0) width 5: " "
+            text run at (356,0) width 388: "Textarea with nowrap - left/right nav, Up/down nav both hide"
             text run at (0,18) width 22: "text"
         RenderText {#text} at (22,18) size 4x17
           text run at (22,18) width 4: "."
       RenderBlock {P} at (0,52) size 769x18
-        RenderText {#text} at (0,0) size 458x17
-          text run at (0,0) width 458: "The letter A should be fully visible in each one of the eight boxes below."
+        RenderText {#text} at (0,0) size 457x17
+          text run at (0,0) width 457: "The letter A should be fully visible in each one of the eight boxes below."
 layer at (28,98) size 150x50 clip at (28,98) size 150x35 scrollX 50 scrollWidth 200
   RenderBlock {DIV} at (20,90) size 150x50
     RenderBlock {DIV} at (0,0) size 200x18

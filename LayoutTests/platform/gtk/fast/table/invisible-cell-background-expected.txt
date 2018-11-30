@@ -12,8 +12,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (448,0) size 107x17
           text run at (448,0) width 107: " is never painted."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 460x17
-          text run at (0,0) width 460: "You should see nine green squares and no red, orange or yellow squares."
+        RenderText {#text} at (0,0) size 459x17
+          text run at (0,0) width 459: "You should see nine green squares and no red, orange or yellow squares."
       RenderTable {TABLE} at (4,68) size 27x25
         RenderTableSection {TBODY} at (0,0) size 27x25 [bgcolor=#FFFF00]
           RenderTableRow {TR} at (0,0) size 27x25 [bgcolor=#FFA500]

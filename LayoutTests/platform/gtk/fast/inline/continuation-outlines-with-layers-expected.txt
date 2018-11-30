@@ -52,5 +52,5 @@ layer at (8,276) size 784x22
 layer at (8,316) size 784x22
   RenderBlock (anonymous) at (0,0) size 784x22
     RenderBlock {H3} at (0,0) size 784x22
-      RenderText {#text} at (0,0) size 216x21
-        text run at (0,0) width 216: "No content before or after."
+      RenderText {#text} at (0,0) size 214x21
+        text run at (0,0) width 214: "No content before or after."

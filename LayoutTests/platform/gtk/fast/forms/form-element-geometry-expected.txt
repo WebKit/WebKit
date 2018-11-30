@@ -4,8 +4,8 @@ layer at (0,0) size 785x757
   RenderBlock {HTML} at (0,0) size 785x757
     RenderBody {BODY} at (8,8) size 769x741
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 422x36
-          text run at (0,0) width 422: "Form Element Geometry Tests"
+        RenderText {#text} at (0,0) size 420x36
+          text run at (0,0) width 420: "Form Element Geometry Tests"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 540x17
           text run at (0,0) width 540: "These tests help us tune the widget classes in KWQ to have all the right fudge factors."
@@ -108,22 +108,22 @@ layer at (0,0) size 785x757
         RenderInline {FONT} at (0,0) size 261x26
           RenderText {#text} at (0,1) size 43x26
             text run at (0,1) width 43: "text "
-          RenderButton {INPUT} at (45,4) size 60x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderButton {INPUT} at (44,4) size 61x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 44x18
               RenderText at (0,0) size 44x17
                 text run at (0,0) width 44: "button"
-          RenderText {#text} at (107,1) size 6x26
-            text run at (107,1) width 6: " "
-          RenderMenuList {SELECT} at (115,2) size 76x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]
+          RenderText {#text} at (106,1) size 7x26
+            text run at (106,1) width 7: " "
+          RenderMenuList {SELECT} at (114,2) size 77x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]
             RenderBlock (anonymous) at (1,1) size 74x28
               RenderText at (9,5) size 40x17
                 text run at (9,5) width 40: "menu"
-          RenderText {#text} at (193,1) size 6x26
-            text run at (193,1) width 6: " "
-          RenderBlock {INPUT} at (201,8) size 24x16
-          RenderText {#text} at (227,1) size 6x26
-            text run at (227,1) width 6: " "
-          RenderBlock {INPUT} at (235,8) size 24x16
+          RenderText {#text} at (192,1) size 7x26
+            text run at (192,1) width 7: " "
+          RenderBlock {INPUT} at (200,8) size 25x16
+          RenderText {#text} at (226,1) size 7x26
+            text run at (226,1) width 7: " "
+          RenderBlock {INPUT} at (234,8) size 25x16
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,447) size 769x35
         RenderText {#text} at (0,8) size 27x17

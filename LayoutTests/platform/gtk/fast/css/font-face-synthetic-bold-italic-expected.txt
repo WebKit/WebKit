@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 745x35
-          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x17
-              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=34147"
-          RenderText {#text} at (360,0) size 745x35
-            text run at (360,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 743x35
+          RenderInline {A} at (0,0) size 308x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 308x17
+              text run at (51,0) width 308: "https://bugs.webkit.org/show_bug.cgi?id=34147"
+          RenderText {#text} at (358,0) size 743x35
+            text run at (358,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
             text run at (0,18) width 94: "regular is used"
-        RenderText {#text} at (94,18) size 4x17
-          text run at (94,18) width 4: "."
+        RenderText {#text} at (93,18) size 5x17
+          text run at (93,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 91x17
           text run at (0,0) width 91: "Ahem regular:"

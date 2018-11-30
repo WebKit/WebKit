@@ -85,8 +85,8 @@ layer at (0,0) size 785x5270 layerType: foreground only
   RenderBlock {HTML} at (0,0) size 785x5270
     RenderBody {BODY} at (8,21) size 769x5233
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 294x36
-          text run at (0,0) width 294: "Layered Presentation"
+        RenderText {#text} at (0,0) size 293x36
+          text run at (0,0) width 293: "Layered Presentation"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 733x17
           text run at (0,0) width 398: "Robert O'Callahan pointed out to me some mistakes in this test "

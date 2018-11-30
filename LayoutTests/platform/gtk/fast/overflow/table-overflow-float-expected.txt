@@ -8,19 +8,19 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 106x102
             RenderTableCell {TD} at (2,2) size 102x102 [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (0,106) size 784x126
-        RenderText {#text} at (0,0) size 764x35
-          text run at (0,0) width 764: "Here it is: a gray, one-cell, no-width-specified table, with a 100x100 scrolling (overflow:auto) div inside. In this div, there"
+        RenderText {#text} at (0,0) size 762x35
+          text run at (0,0) width 762: "Here it is: a gray, one-cell, no-width-specified table, with a 100x100 scrolling (overflow:auto) div inside. In this div, there"
           text run at (0,18) width 367: "are floating (float: left) span tags with content inside (text)."
         RenderBR {BR} at (367,32) size 0x0
         RenderBR {BR} at (0,36) size 0x17
-        RenderText {#text} at (0,54) size 746x35
-          text run at (0,54) width 746: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
+        RenderText {#text} at (0,54) size 745x35
+          text run at (0,54) width 745: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
           text run at (0,72) width 195: "expands to fit the height of the "
         RenderInline {I} at (0,0) size 133x17
           RenderText {#text} at (195,72) size 133x17
             text run at (195,72) width 133: "content inside the div"
-        RenderText {#text} at (328,72) size 777x35
-          text run at (328,72) width 449: ", not the height of the div. This behavior does not occur if the content is"
+        RenderText {#text} at (328,72) size 776x35
+          text run at (328,72) width 448: ", not the height of the div. This behavior does not occur if the content is"
           text run at (0,90) width 71: "not floated."
         RenderBR {BR} at (71,104) size 0x0
         RenderBR {BR} at (0,108) size 0x17
@@ -29,100 +29,100 @@ layer at (11,11) size 100x100 clip at (11,11) size 85x100 scrollHeight 216
     RenderBlock (floating) {SPAN} at (0,0) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,0) size 28x18
+    RenderBlock (floating) {SPAN} at (27,0) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,0) size 28x18
+    RenderBlock (floating) {SPAN} at (55,0) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,18) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,18) size 28x18
+    RenderBlock (floating) {SPAN} at (27,18) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,18) size 28x18
+    RenderBlock (floating) {SPAN} at (55,18) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,36) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,36) size 28x18
+    RenderBlock (floating) {SPAN} at (27,36) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,36) size 28x18
+    RenderBlock (floating) {SPAN} at (55,36) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,54) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,54) size 28x18
+    RenderBlock (floating) {SPAN} at (27,54) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,54) size 28x18
+    RenderBlock (floating) {SPAN} at (55,54) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,72) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,72) size 28x18
+    RenderBlock (floating) {SPAN} at (27,72) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,72) size 28x18
+    RenderBlock (floating) {SPAN} at (55,72) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,90) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,90) size 28x18
+    RenderBlock (floating) {SPAN} at (27,90) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,90) size 28x18
+    RenderBlock (floating) {SPAN} at (55,90) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,108) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,108) size 28x18
+    RenderBlock (floating) {SPAN} at (27,108) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,108) size 28x18
+    RenderBlock (floating) {SPAN} at (55,108) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,126) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,126) size 28x18
+    RenderBlock (floating) {SPAN} at (27,126) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,126) size 28x18
+    RenderBlock (floating) {SPAN} at (55,126) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,144) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,144) size 28x18
+    RenderBlock (floating) {SPAN} at (27,144) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,144) size 28x18
+    RenderBlock (floating) {SPAN} at (55,144) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,162) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,162) size 28x18
+    RenderBlock (floating) {SPAN} at (27,162) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,162) size 28x18
+    RenderBlock (floating) {SPAN} at (55,162) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,180) size 28x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (28,180) size 28x18
+    RenderBlock (floating) {SPAN} at (27,180) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
-    RenderBlock (floating) {SPAN} at (56,180) size 28x18
+    RenderBlock (floating) {SPAN} at (55,180) size 29x18
       RenderText {#text} at (0,0) size 28x17
         text run at (0,0) width 28: "stuff"
     RenderBlock (floating) {SPAN} at (0,198) size 28x18

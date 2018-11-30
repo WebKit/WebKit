@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 780x56 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 778x54
                 RenderText {#text} at (0,0) size 775x53
-                  text run at (0,0) width 771: "Three cheers    for OldVet and the letter he wrote to Senator Dodd (see above Comment).  We all need to be proactive and"
-                  text run at (771,0) width 4: " "
+                  text run at (0,0) width 768: "Three cheers    for OldVet and the letter he wrote to Senator Dodd (see above Comment).  We all need to be proactive and"
+                  text run at (767,0) width 5: " "
                   text run at (0,18) width 771: "contact our senators and representatives to let them know our strong feelings on this subject.  I would lose what little faith I"
                   text run at (771,18) width 4: " "
                   text run at (0,36) width 419: "have left in our government if they engineered a tax payer bailout. "

@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 321x17
           text run at (0,0) width 321: "This tests that the slider control considers padding. "
-        RenderBR {BR} at (321,14) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (0,18) size 784x58 [bgcolor=#ADD8E6]
         RenderSlider {INPUT} at (2,2) size 100x54 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (10,10) size 80x34

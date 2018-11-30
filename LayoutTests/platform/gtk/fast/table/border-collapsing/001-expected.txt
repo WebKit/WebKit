@@ -19,9 +19,9 @@ layer at (0,0) size 800x422
                 RenderText {#text} at (26,26) size 59x17
                   text run at (26,26) width 59: "Goodbye"
       RenderBlock {DIV} at (0,380) size 784x26 [border: (1px solid #008000)]
-        RenderTable {TABLE} at (1,1) size 33x24 [border: (1px none #808080)]
-          RenderTableSection {TBODY} at (1,1) size 31x22
-            RenderTableRow {TR} at (0,0) size 31x22
-              RenderTableCell {TD} at (0,0) size 31x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 27x17
-                  text run at (2,2) width 27: "Test"
+        RenderTable {TABLE} at (1,1) size 32x24 [border: (1px none #808080)]
+          RenderTableSection {TBODY} at (1,1) size 30x22
+            RenderTableRow {TR} at (0,0) size 30x22
+              RenderTableCell {TD} at (0,0) size 30x22 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 26x17
+                  text run at (2,2) width 26: "Test"

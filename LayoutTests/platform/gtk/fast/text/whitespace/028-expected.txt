@@ -5,5 +5,5 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 16x17
         text run at (0,0) width 16: "A "
-      RenderText {#text} at (16,0) size 11x17
-        text run at (16,0) width 11: "C"
+      RenderText {#text} at (15,0) size 12x17
+        text run at (15,0) width 12: "C"

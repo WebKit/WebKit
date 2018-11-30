@@ -11,65 +11,65 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,78) size 784x486
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 197x17
-          text run at (0,18) width 197: "Test 1: setSelectionRange(0, 0)"
-        RenderBR {BR} at (197,32) size 0x0
+        RenderText {#text} at (0,18) size 196x17
+          text run at (0,18) width 196: "Test 1: setSelectionRange(0, 0)"
+        RenderBR {BR} at (195,32) size 1x0
         RenderText {#text} at (0,36) size 47x17
           text run at (0,36) width 47: "Passed."
         RenderBR {BR} at (47,50) size 0x0
         RenderBR {BR} at (0,54) size 0x17
-        RenderText {#text} at (0,72) size 161x17
-          text run at (0,72) width 161: "Test 2: selectionEnd = 17"
-        RenderBR {BR} at (161,86) size 0x0
+        RenderText {#text} at (0,72) size 160x17
+          text run at (0,72) width 160: "Test 2: selectionEnd = 17"
+        RenderBR {BR} at (159,86) size 1x0
         RenderText {#text} at (0,90) size 47x17
           text run at (0,90) width 47: "Passed."
         RenderBR {BR} at (47,104) size 0x0
         RenderBR {BR} at (0,108) size 0x17
-        RenderText {#text} at (0,126) size 156x17
-          text run at (0,126) width 156: "Test 3: selectionStart = 1"
-        RenderBR {BR} at (156,140) size 0x0
+        RenderText {#text} at (0,126) size 155x17
+          text run at (0,126) width 155: "Test 3: selectionStart = 1"
+        RenderBR {BR} at (154,140) size 1x0
         RenderText {#text} at (0,144) size 47x17
           text run at (0,144) width 47: "Passed."
         RenderBR {BR} at (47,158) size 0x0
         RenderBR {BR} at (0,162) size 0x17
-        RenderText {#text} at (0,180) size 205x17
-          text run at (0,180) width 205: "Test 4: setSelectionRange(10, 3)"
-        RenderBR {BR} at (205,194) size 0x0
+        RenderText {#text} at (0,180) size 204x17
+          text run at (0,180) width 204: "Test 4: setSelectionRange(10, 3)"
+        RenderBR {BR} at (203,194) size 1x0
         RenderText {#text} at (0,198) size 47x17
           text run at (0,198) width 47: "Passed."
         RenderBR {BR} at (47,212) size 0x0
         RenderBR {BR} at (0,216) size 0x17
-        RenderText {#text} at (0,234) size 153x17
-          text run at (0,234) width 153: "Test 5: selectionEnd = 2"
-        RenderBR {BR} at (153,248) size 0x0
+        RenderText {#text} at (0,234) size 152x17
+          text run at (0,234) width 152: "Test 5: selectionEnd = 2"
+        RenderBR {BR} at (151,248) size 1x0
         RenderText {#text} at (0,252) size 47x17
           text run at (0,252) width 47: "Passed."
         RenderBR {BR} at (47,266) size 0x0
         RenderBR {BR} at (0,270) size 0x17
-        RenderText {#text} at (0,288) size 197x17
-          text run at (0,288) width 197: "Test 6: setSelectionRange(5, 4)"
-        RenderBR {BR} at (197,302) size 0x0
+        RenderText {#text} at (0,288) size 196x17
+          text run at (0,288) width 196: "Test 6: setSelectionRange(5, 4)"
+        RenderBR {BR} at (195,302) size 1x0
         RenderText {#text} at (0,306) size 47x17
           text run at (0,306) width 47: "Passed."
         RenderBR {BR} at (47,320) size 0x0
         RenderBR {BR} at (0,324) size 0x17
-        RenderText {#text} at (0,342) size 207x17
-          text run at (0,342) width 207: "Test 7: setSelectionRange(-5, -4)"
-        RenderBR {BR} at (207,356) size 0x0
+        RenderText {#text} at (0,342) size 206x17
+          text run at (0,342) width 206: "Test 7: setSelectionRange(-5, -4)"
+        RenderBR {BR} at (205,356) size 1x0
         RenderText {#text} at (0,360) size 47x17
           text run at (0,360) width 47: "Passed."
         RenderBR {BR} at (47,374) size 0x0
         RenderBR {BR} at (0,378) size 0x17
-        RenderText {#text} at (0,396) size 210x17
-          text run at (0,396) width 210: "Test 8: setSelectionRange(-5, 80)"
-        RenderBR {BR} at (210,410) size 0x0
+        RenderText {#text} at (0,396) size 209x17
+          text run at (0,396) width 209: "Test 8: setSelectionRange(-5, 80)"
+        RenderBR {BR} at (208,410) size 1x0
         RenderText {#text} at (0,414) size 47x17
           text run at (0,414) width 47: "Passed."
         RenderBR {BR} at (47,428) size 0x0
         RenderBR {BR} at (0,432) size 0x17
-        RenderText {#text} at (0,450) size 205x17
-          text run at (0,450) width 205: "Test 9: setSelectionRange(3, 12)"
-        RenderBR {BR} at (205,464) size 0x0
+        RenderText {#text} at (0,450) size 204x17
+          text run at (0,450) width 204: "Test 9: setSelectionRange(3, 12)"
+        RenderBR {BR} at (203,464) size 1x0
         RenderText {#text} at (0,468) size 47x17
           text run at (0,468) width 47: "Passed."
         RenderBR {BR} at (47,482) size 0x0

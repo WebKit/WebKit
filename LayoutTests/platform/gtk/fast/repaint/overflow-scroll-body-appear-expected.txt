@@ -4,8 +4,8 @@ layer at (0,0) size 785x2092
   RenderBlock {HTML} at (0,0) size 785x2092
     RenderBody {BODY} at (8,16) size 769x2068
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 342x17
-          text run at (0,0) width 342: "You should see both vertical and horizontal scrollbars."
+        RenderText {#text} at (0,0) size 341x17
+          text run at (0,0) width 341: "You should see both vertical and horizontal scrollbars."
       RenderBlock {P} at (0,34) size 769x18
         RenderText {#text} at (0,0) size 116x17
           text run at (0,0) width 116: "This is the test for "

@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 295x17 [color=#0000EE]
-          RenderText {#text} at (53,0) size 295x17
-            text run at (53,0) width 295: "http://bugs.webkit.org/show_bug.cgi?id=4104 "
-        RenderText {#text} at (348,0) size 248x17
-          text run at (348,0) width 248: "first-letter not updating style with hover"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {A} at (0,0) size 296x17 [color=#0000EE]
+          RenderText {#text} at (51,0) size 296x17
+            text run at (51,0) width 296: "http://bugs.webkit.org/show_bug.cgi?id=4104 "
+        RenderText {#text} at (346,0) size 249x17
+          text run at (346,0) width 249: "first-letter not updating style with hover"
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 391x17
           text run at (0,0) width 391: "The next line of text should turn green when we hover over it."

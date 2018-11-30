@@ -11,21 +11,21 @@ layer at (0,0) size 800x600
             text run at (314,0) width 27: "blue"
         RenderText {#text} at (341,0) size 125x17
           text run at (341,0) width 125: " border, to the right "
-        RenderInline {SPAN} at (0,0) size 43x17 [color=#FFA500]
-          RenderText {#text} at (466,0) size 43x17
-            text run at (466,0) width 43: "orange"
-        RenderText {#text} at (509,0) size 49x17
-          text run at (509,0) width 49: " border."
+        RenderInline {SPAN} at (0,0) size 44x17 [color=#FFA500]
+          RenderText {#text} at (465,0) size 44x17
+            text run at (465,0) width 44: "orange"
+        RenderText {#text} at (508,0) size 49x17
+          text run at (508,0) width 49: " border."
       RenderBlock {DIV} at (0,34) size 600x18
         RenderText {#text} at (0,0) size 186x17
           text run at (0,0) width 186: "ILorem ipsum dolor sit amet, "
-        RenderText {#text} at (420,0) size 173x17
-          text run at (420,0) width 173: "irure dolor in reprehenderit."
+        RenderText {#text} at (419,0) size 174x17
+          text run at (419,0) width 174: "irure dolor in reprehenderit."
 layer at (8,42) size 214x19
   RenderInline (relative positioned) {SPAN} at (0,0) size 214x19 [bgcolor=#008000] [border: (1px solid #808080) (20px solid #FFA500) (1px solid #808080) (20px solid #0000FF)]
     RenderText {#text} at (226,0) size 94x17
       text run at (226,0) width 94: "con a pariatur. "
-    RenderText {#text} at (320,0) size 60x17
-      text run at (320,0) width 60: "duis aute "
-layer at (224,42) size 174x17
+    RenderText {#text} at (319,0) size 61x17
+      text run at (319,0) width 61: "duis aute "
+layer at (224,42) size 173x17
   RenderBlock (positioned) {DIV} at (20,1) size 174x17

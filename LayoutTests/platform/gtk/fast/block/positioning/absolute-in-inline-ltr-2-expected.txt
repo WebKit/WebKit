@@ -23,8 +23,8 @@ layer at (8,60) size 597x55
     RenderText {#text} at (226,0) size 557x35
       text run at (226,0) width 331: "con a pariatur. Excepteur sint occaecat cupidatat non"
       text run at (0,18) width 366: "proident, sunt in culp qui officia deserunt mollit animequs "
-    RenderText {#text} at (366,18) size 597x35
-      text run at (366,18) width 231: "ILOREM ipsum dol sDuis aute irure"
+    RenderText {#text} at (365,18) size 597x35
+      text run at (365,18) width 232: "ILOREM ipsum dol sDuis aute irure"
       text run at (0,36) width 464: "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nullat "
 layer at (432,63) size 50x50
   RenderBlock (positioned) {DIV} at (228,4) size 50x50

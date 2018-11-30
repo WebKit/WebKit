@@ -14,13 +14,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderText {#text} at (167,0) size 616x17
-          text run at (167,0) width 616: " has a transform, which has no effect on inlines. It also has opacity to throw it into a RenderLayer."
+        RenderText {#text} at (167,0) size 615x17
+          text run at (167,0) width 615: " has a transform, which has no effect on inlines. It also has opacity to throw it into a RenderLayer."
       RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "
-        RenderText {#text} at (167,0) size 542x17
-          text run at (167,0) width 542: " has a transform and opacity, and is an inline-block. So it should respect the transform."
+        RenderText {#text} at (167,0) size 541x17
+          text run at (167,0) width 541: " has a transform and opacity, and is an inline-block. So it should respect the transform."
 layer at (8,42) size 138x17
   RenderInline {SPAN} at (0,0) size 138x17
     RenderText {#text} at (29,0) size 138x17

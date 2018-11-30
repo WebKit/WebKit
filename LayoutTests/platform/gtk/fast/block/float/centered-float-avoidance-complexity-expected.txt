@@ -9,18 +9,18 @@ layer at (0,0) size 785x641
         RenderInline {A} at (0,0) size 751x73 [color=#0000EE]
           RenderText {#text} at (543,0) size 751x73
             text run at (543,0) width 208: "additional tests"
-            text run at (0,37) width 254: "from Alan Gresley"
-        RenderText {#text} at (254,37) size 11x36
-          text run at (254,37) width 11: ")"
+            text run at (0,37) width 253: "from Alan Gresley"
+        RenderText {#text} at (252,37) size 12x36
+          text run at (252,37) width 12: ")"
       RenderBlock {H3} at (0,95) size 769x67
         RenderText {#text} at (0,0) size 704x21
           text run at (0,0) width 704: "The orange stripe has 'overflow: auto', 'margin-left: 100px' and 'margin-right: 100px'"
         RenderBR {BR} at (704,0) size 0x21
         RenderText {#text} at (0,22) size 663x21
           text run at (0,22) width 663: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
-        RenderBR {BR} at (663,22) size 0x21
-        RenderText {#text} at (0,44) size 404x21
-          text run at (0,44) width 404: "The wrapping container has a solid silver border."
+        RenderBR {BR} at (662,22) size 1x21
+        RenderText {#text} at (0,44) size 402x21
+          text run at (0,44) width 402: "The wrapping container has a solid silver border."
       RenderBlock {DIV} at (16,180) size 650x29 [border: (5px solid #C0C0C0)]
         RenderBlock (floating) {DIV} at (5,5) size 0x16 [bgcolor=#00FF00]
           RenderText {#text} at (0,0) size 38x17
@@ -59,9 +59,9 @@ layer at (0,0) size 785x641
         RenderBR {BR} at (676,0) size 0x21
         RenderText {#text} at (0,22) size 663x21
           text run at (0,22) width 663: "The lime stripes are floats with various width (topmost is 0, bottommost is 150px)"
-        RenderBR {BR} at (663,22) size 0x21
-        RenderText {#text} at (0,44) size 404x21
-          text run at (0,44) width 404: "The wrapping container has a solid silver border."
+        RenderBR {BR} at (662,22) size 1x21
+        RenderText {#text} at (0,44) size 402x21
+          text run at (0,44) width 402: "The wrapping container has a solid silver border."
 layer at (129,207) size 440x18
   RenderBlock {DIV} at (105,5) size 440x18 [bgcolor=#FFA500]
     RenderText {#text} at (0,0) size 172x17

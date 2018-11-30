@@ -8,12 +8,12 @@ layer at (0,0) size 800x280
           text run at (0,0) width 782: "This is a test to check if the loading of a stylesheet is properly cancelled (count of pending style sheets is decremented) when"
           text run at (0,18) width 552: "its link tag is changed through the DOM after the link tag is appended to the document. "
           text run at (552,18) width 227: "When the div with style is moved, it"
-          text run at (0,36) width 777: "appears on the screen if the style was loaded properly, and doesn't appear when there are out-standing stylesheets according"
+          text run at (0,36) width 776: "appears on the screen if the style was loaded properly, and doesn't appear when there are out-standing stylesheets according"
           text run at (0,54) width 119: "to the DocLoader. "
-          text run at (119,54) width 27: "See "
-        RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
-          RenderText {#text} at (146,54) size 32x17
-            text run at (146,54) width 32: "6999"
+          text run at (118,54) width 28: "See "
+        RenderInline {A} at (0,0) size 33x17 [color=#0000EE]
+          RenderText {#text} at (145,54) size 33x17
+            text run at (145,54) width 33: "6999"
       RenderBlock {P} at (0,88) size 784x18
         RenderInline {SPAN} at (0,0) size 32x17 [color=#FF0000]
           RenderText {#text} at (0,0) size 32x17

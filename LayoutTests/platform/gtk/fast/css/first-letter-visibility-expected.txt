@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 303x17 [color=#0000EE]
-          RenderText {#text} at (53,0) size 303x17
-            text run at (53,0) width 303: "http://bugs.webkit.org/show_bug.cgi?id=13169 "
-        RenderText {#text} at (356,0) size 298x17
-          text run at (356,0) width 298: "css-formatted first letter won't hide dynamically"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {A} at (0,0) size 304x17 [color=#0000EE]
+          RenderText {#text} at (51,0) size 304x17
+            text run at (51,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=13169 "
+        RenderText {#text} at (354,0) size 299x17
+          text run at (354,0) width 299: "css-formatted first letter won't hide dynamically"
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The next line of text should become invisible, including first letter."

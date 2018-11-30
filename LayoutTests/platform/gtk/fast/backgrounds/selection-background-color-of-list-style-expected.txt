@@ -5,8 +5,8 @@ layer at (0,0) size 800x146
     RenderBody {BODY} at (8,8) size 784x122
       RenderBlock {DIV} at (0,0) size 784x122
         RenderBlock (anonymous) at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 489x17
-            text run at (0,0) width 489: "Test passes if backgrounds of list style in ul and ol are each green and yellow."
+          RenderText {#text} at (0,0) size 487x17
+            text run at (0,0) width 487: "Test passes if backgrounds of list style in ul and ol are each green and yellow."
         RenderBlock {UL} at (0,34) size 784x36
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-17,0) size 7x17: bullet
@@ -14,8 +14,8 @@ layer at (0,0) size 800x146
               text run at (0,0) width 27: "One"
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (-17,0) size 7x17: bullet
-            RenderText {#text} at (0,0) size 30x17
-              text run at (0,0) width 30: "Two"
+            RenderText {#text} at (0,0) size 29x17
+              text run at (0,0) width 29: "Two"
         RenderBlock {OL} at (0,86) size 784x36
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-20,0) size 16x17: "1"
@@ -23,7 +23,7 @@ layer at (0,0) size 800x146
               text run at (0,0) width 27: "One"
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (-20,0) size 16x17: "2"
-            RenderText {#text} at (0,0) size 30x17
-              text run at (0,0) width 30: "Two"
+            RenderText {#text} at (0,0) size 29x17
+              text run at (0,0) width 29: "Two"
 selection start: position 86 of child 0 {#text} of child 0 {DIV} of body
 selection end:   position 3 of child 0 {#text} of child 3 {LI} of child 3 {OL} of child 0 {DIV} of body

@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 164x21
           text run at (0,0) width 164: "Default Appearance"
       RenderBlock (anonymous) at (0,40) size 784x42
-        RenderText {#text} at (0,0) size 456x17
-          text run at (0,0) width 456: "List color controls have different appearance if ENABLE(DATALIST)."
-        RenderBR {BR} at (456,14) size 0x0
+        RenderText {#text} at (0,0) size 453x17
+          text run at (0,0) width 453: "List color controls have different appearance if ENABLE(DATALIST)."
+        RenderBR {BR} at (452,14) size 1x0
         RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 38x17
             RenderBlock {DIV} at (2,4) size 34x8 [bgcolor=#000000]
@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,141) size 784x42
         RenderText {#text} at (0,0) size 577x17
           text run at (0,0) width 577: "List color controls have different sizes depending on font sizes. Normal color controls don't."
-        RenderBR {BR} at (577,14) size 0x0
+        RenderBR {BR} at (576,14) size 1x0
         RenderBlock {INPUT} at (0,18) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 38x17
             RenderBlock {DIV} at (2,4) size 34x8 [bgcolor=#00FF00]
@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (2,4) size 34x8 [bgcolor=#00FF00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {H3} at (0,200) size 784x23
-        RenderText {#text} at (0,0) size 124x21
-          text run at (0,0) width 124: "Various Colors"
+        RenderText {#text} at (0,0) size 123x21
+          text run at (0,0) width 123: "Various Colors"
       RenderBlock (anonymous) at (0,241) size 784x24
         RenderBlock {INPUT} at (0,0) size 44x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
           RenderFlexibleBox {DIV} at (3,3) size 38x17

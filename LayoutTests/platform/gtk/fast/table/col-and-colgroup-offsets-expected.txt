@@ -27,9 +27,9 @@ FAIL document.getElementById("hasP").offsetTop should be 24. Was 20.
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
 
 Tests for offsetWidth:
-PASS document.getElementById("productNo").parentNode.offsetWidth is 184
+PASS document.getElementById("productNo").parentNode.offsetWidth is 183
 PASS document.getElementById("productNo").offsetWidth is 89
-PASS document.getElementById("productName").offsetWidth is 91
+PASS document.getElementById("productName").offsetWidth is 90
 PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 155
 PASS document.getElementById("hasMAndHasN").offsetWidth is 103
 PASS document.getElementById("hasO").offsetWidth is 48
@@ -69,9 +69,9 @@ PASS document.getElementById("hasP").offsetTop is 19
 PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
 
 Tests for offsetWidth:
-PASS document.getElementById("productNo").parentNode.offsetWidth is 176
+PASS document.getElementById("productNo").parentNode.offsetWidth is 175
 PASS document.getElementById("productNo").offsetWidth is 87
-PASS document.getElementById("productName").offsetWidth is 89
+PASS document.getElementById("productName").offsetWidth is 88
 PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 141
 PASS document.getElementById("hasMAndHasN").offsetWidth is 95
 PASS document.getElementById("hasO").offsetWidth is 46

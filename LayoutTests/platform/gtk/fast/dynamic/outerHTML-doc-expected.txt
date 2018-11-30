@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 56x17 [color=#0000EE]
           RenderText {#text} at (47,0) size 56x17
             text run at (47,0) width 56: "4110775"
-        RenderText {#text} at (103,0) size 473x17
-          text run at (103,0) width 473: " Crash will occur when double-clicking outerHTML link on W3 DOM test"
+        RenderText {#text} at (102,0) size 473x17
+          text run at (102,0) width 473: " Crash will occur when double-clicking outerHTML link on W3 DOM test"
       RenderBlock {P} at (0,34) size 784x0
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 586x17
-          text run at (0,0) width 456: "This test passed. We don't support outerHTML on the document object. "
-          text run at (456,0) width 130: "Neither does WinIE."
+        RenderText {#text} at (0,0) size 584x17
+          text run at (0,0) width 455: "This test passed. We don't support outerHTML on the document object. "
+          text run at (454,0) width 130: "Neither does WinIE."

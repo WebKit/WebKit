@@ -4,13 +4,13 @@ layer at (0,0) size 785x886
   RenderBlock {HTML} at (0,0) size 785x886
     RenderBody {BODY} at (8,21) size 769x840
       RenderBlock {H1} at (0,0) size 769x74
-        RenderText {#text} at (0,0) size 750x73
-          text run at (0,0) width 750: "Problem: Safari improperly handles generated content"
+        RenderText {#text} at (0,0) size 749x73
+          text run at (0,0) width 749: "Problem: Safari improperly handles generated content"
           text run at (0,37) width 716: "in certain cases when used with multiple class names"
       RenderBlock {P} at (0,95) size 769x37
-        RenderInline {EM} at (0,0) size 755x35
-          RenderText {#text} at (0,0) size 755x35
-            text run at (0,0) width 755: "When referencing an element by two class names simultaneously, Safari won't generate content (using :before or :after)"
+        RenderInline {EM} at (0,0) size 753x35
+          RenderText {#text} at (0,0) size 753x35
+            text run at (0,0) width 753: "When referencing an element by two class names simultaneously, Safari won't generate content (using :before or :after)"
             text run at (0,18) width 119: "within the element."
       RenderBlock {P} at (0,147) size 769x37
         RenderText {#text} at (0,0) size 123x17
@@ -30,24 +30,24 @@ layer at (0,0) size 785x886
             text run at (348,3) width 24: "one"
         RenderText {#text} at (372,0) size 82x17
           text run at (372,0) width 82: ". Within that "
-        RenderInline {CODE} at (0,0) size 24x15
-          RenderText {#text} at (454,3) size 24x15
-            text run at (454,3) width 24: "div"
-        RenderText {#text} at (478,0) size 76x17
-          text run at (478,0) width 76: ", we have a "
-        RenderInline {CODE} at (0,0) size 8x15
-          RenderText {#text} at (554,3) size 8x15
-            text run at (554,3) width 8: "p"
-        RenderText {#text} at (562,0) size 741x35
-          text run at (562,0) width 179: " (paragraph) tag, after which"
+        RenderInline {CODE} at (0,0) size 25x15
+          RenderText {#text} at (453,3) size 25x15
+            text run at (453,3) width 25: "div"
+        RenderText {#text} at (477,0) size 77x17
+          text run at (477,0) width 77: ", we have a "
+        RenderInline {CODE} at (0,0) size 9x15
+          RenderText {#text} at (553,3) size 9x15
+            text run at (553,3) width 9: "p"
+        RenderText {#text} at (561,0) size 741x35
+          text run at (561,0) width 180: " (paragraph) tag, after which"
           text run at (0,18) width 501: "we'd like to insert generated content. One way to do so would be the following:"
       RenderBlock {PRE} at (20,199) size 749x16 [color=#FF0000]
         RenderInline {CODE} at (0,0) size 456x15
           RenderText {#text} at (0,0) size 456x15
             text run at (0,0) width 456: "div.box.one p:after{ content:'generated content here!'; }"
       RenderBlock {P} at (0,230) size 769x19
-        RenderText {#text} at (0,0) size 732x17
-          text run at (0,0) width 732: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
+        RenderText {#text} at (0,0) size 731x17
+          text run at (0,0) width 731: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as expected:"
       RenderBlock {PRE} at (20,264) size 749x16 [color=#008000]
         RenderInline {CODE} at (0,0) size 424x15
           RenderText {#text} at (0,0) size 424x15

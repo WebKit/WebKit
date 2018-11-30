@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 768x35
+        RenderInline {I} at (0,0) size 767x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6673"
-          RenderText {#text} at (560,0) size 768x35
-            text run at (560,0) width 4: " "
-            text run at (564,0) width 204: "Selection highlight doesn't scroll"
+          RenderText {#text} at (559,0) size 767x35
+            text run at (559,0) width 5: " "
+            text run at (563,0) width 204: "Selection highlight doesn't scroll"
             text run at (0,18) width 369: "along with an image contained in an overflow:scroll block"
-        RenderText {#text} at (369,18) size 4x17
-          text run at (369,18) width 4: "."
+        RenderText {#text} at (368,18) size 5x17
+          text run at (368,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 748x35
           text run at (0,0) width 412: "There should be one contiguous highlight from \x{201C}elit\x{201D} to \x{201C}Etiam\x{201D}, "

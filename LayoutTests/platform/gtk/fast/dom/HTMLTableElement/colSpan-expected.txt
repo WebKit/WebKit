@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 167x17
-          text run at (0,0) width 167: "Tests: the colspan attribute"
-        RenderBR {BR} at (167,14) size 0x0
+        RenderText {#text} at (0,0) size 166x17
+          text run at (0,0) width 166: "Tests: the colspan attribute"
+        RenderBR {BR} at (165,14) size 1x0
       RenderBlock {P} at (0,34) size 784x72
         RenderText {#text} at (0,0) size 73x17
           text run at (0,0) width 73: "Conditions:"
@@ -67,8 +67,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,308) size 197x70 [border: (1px outset #808080)]
         RenderBlock {CAPTION} at (0,0) size 197x18
-          RenderText {#text} at (15,0) size 167x17
-            text run at (15,0) width 167: "Testing Zero Special Case"
+          RenderText {#text} at (16,0) size 165x17
+            text run at (16,0) width 165: "Testing Zero Special Case"
         RenderTableSection {TBODY} at (1,19) size 195x50
           RenderTableRow {TR} at (0,2) size 195x22
             RenderTableCell {TD} at (2,2) size 44x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 765x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9193"
-          RenderText {#text} at (401,0) size 765x35
-            text run at (401,0) width 4: " "
-            text run at (405,0) width 360: "REGRESSION: setting an opacity on an element with an"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 764x35
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9193"
+          RenderText {#text} at (399,0) size 764x35
+            text run at (399,0) width 5: " "
+            text run at (403,0) width 361: "REGRESSION: setting an opacity on an element with an"
             text run at (0,18) width 314: "outline causes the outline to disappear completely"
         RenderText {#text} at (314,18) size 4x17
           text run at (314,18) width 4: "."

@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 212x17
           text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 778x35
+        RenderInline {I} at (0,0) size 776x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
               text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7054"
-          RenderText {#text} at (560,0) size 778x35
-            text run at (560,0) width 4: " "
-            text run at (564,0) width 214: "Vertical scroll bars do not appear"
+          RenderText {#text} at (559,0) size 776x35
+            text run at (559,0) width 5: " "
+            text run at (563,0) width 213: "Vertical scroll bars do not appear"
             text run at (0,18) width 169: "or do not scroll completely"
-        RenderText {#text} at (169,18) size 4x17
-          text run at (169,18) width 4: "."
+        RenderText {#text} at (168,18) size 5x17
+          text run at (168,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 649x17
           text run at (0,0) width 649: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."

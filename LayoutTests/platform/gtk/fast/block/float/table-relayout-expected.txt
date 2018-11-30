@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 744x35
+        RenderInline {I} at (0,0) size 741x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (172,0) size 348x17
               text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7395"
-          RenderText {#text} at (520,0) size 744x35
-            text run at (520,0) width 4: " "
-            text run at (524,0) width 220: "Table not properly re-flowed when"
-            text run at (0,18) width 202: "floated div removed from layout"
-        RenderText {#text} at (202,18) size 4x17
-          text run at (202,18) width 4: "."
+          RenderText {#text} at (519,0) size 741x35
+            text run at (519,0) width 5: " "
+            text run at (523,0) width 218: "Table not properly re-flowed when"
+            text run at (0,18) width 201: "floated div removed from layout"
+        RenderText {#text} at (200,18) size 5x17
+          text run at (200,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 263x17
           text run at (0,0) width 263: "The two boxes below should be identical."

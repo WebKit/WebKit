@@ -9,14 +9,15 @@ layer at (0,0) size 800x187
       RenderBlock {div} at (18,61) size 732x15
         RenderText {#text} at (0,0) size 553x14
           text run at (0,0) width 553: "error on line 7 at column 8: Opening and ending tag mismatch: p line 0 and body"
+          text run at (553,0) width 0: " "
       RenderBlock {h3} at (18,94) size 732x23
-        RenderText {#text} at (0,0) size 429x21
-          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
     RenderBlock (anonymous) at (0,168) size 800x19
-      RenderInline {body} at (0,0) size 180x17
+      RenderInline {body} at (0,0) size 179x17
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {p} at (0,0) size 180x17
-          RenderText {#text} at (0,0) size 180x17
-            text run at (0,0) width 180: "You should see errors above"
+        RenderInline {p} at (0,0) size 179x17
+          RenderText {#text} at (0,0) size 179x17
+            text run at (0,0) width 179: "You should see errors above"
         RenderText {#text} at (0,0) size 0x0
         RenderInline {p} at (0,0) size 0x0

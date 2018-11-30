@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 761x35
           text run at (0,0) width 718: "The following elements behave differently in different browsers. Our current behavior will cause them to overlap, "
-          text run at (718,0) width 43: "but we"
+          text run at (717,0) width 44: "but we"
           text run at (0,18) width 236: "may need to change this in the future."
       RenderTable {TABLE} at (0,36) size 784x22
         RenderTableSection {TBODY} at (0,0) size 784x22

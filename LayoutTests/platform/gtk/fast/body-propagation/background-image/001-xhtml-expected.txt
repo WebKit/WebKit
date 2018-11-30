@@ -4,5 +4,5 @@ layer at (0,0) size 800x50
   RenderBlock {html} at (0,0) size 800x50
     RenderBody {body} at (8,16) size 784x18 [color=#000080]
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 227x17
-          text run at (0,0) width 227: "The entire canvas should be yellow."
+        RenderText {#text} at (0,0) size 226x17
+          text run at (0,0) width 226: "The entire canvas should be yellow."

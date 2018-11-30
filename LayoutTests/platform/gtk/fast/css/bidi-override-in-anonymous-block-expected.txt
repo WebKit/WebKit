@@ -4,8 +4,8 @@ layer at (0,0) size 785x1217
   RenderBlock {HTML} at (0,0) size 785x1218
     RenderBody {BODY} at (8,16) size 769x1194
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 162x17
-          text run at (0,0) width 162: "div, span, nested div/span"
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "div, span, nested div/span"
       RenderBlock {P} at (0,34) size 769x18
         RenderText {#text} at (0,0) size 64x17
           text run at (0,0) width 64: "Single div"
@@ -178,47 +178,47 @@ layer at (0,0) size 785x1217
       RenderBlock {P} at (0,912) size 769x18
         RenderText {#text} at (0,0) size 417x17
           text run at (0,0) width 417: "The following 2 tables should be identical, ignorning whitespaces:"
-      RenderTable {TABLE} at (1,946) size 85x66 [border: (1px solid #808080)]
-        RenderBlock {CAPTION} at (0,0) size 84x18
-          RenderText {#text} at (0,0) size 84x17
-            text run at (0,0) width 84: "NormalTable"
-        RenderTableSection {TBODY} at (1,19) size 82x46
-          RenderTableRow {TR} at (0,2) size 82x20
-            RenderTableCell {TD} at (43,2) size 38x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (13,1) size 23x17
-                text run at (13,1) width 23: "abc"
-            RenderTableCell {TD} at (2,2) size 40x20 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (18,1) size 21x17
-                text run at (18,1) width 21: "def"
-          RenderTableRow {TR} at (0,24) size 82x20
-            RenderTableCell {TD} at (43,24) size 38x20 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,1) size 17x17
-                text run at (19,1) width 17: "hij"
-            RenderTableCell {TD} at (2,24) size 40x20 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (14,1) size 25x17
-                text run at (14,1) width 25: "opq"
-      RenderTable {DIV} at (1,1013) size 146x57 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (0,0) size 145x18
-          RenderText {#text} at (0,0) size 145x17
-            text run at (0,0) width 145: "AnonymousTableRow"
-        RenderTableSection (anonymous) at (1,19) size 143x36
-          RenderTableRow {DIV} at (0,0) size 143x18
-            RenderTableCell {DIV} at (74,0) size 70x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (46,0) size 23x17
-                text run at (46,0) width 23: "abc"
+      RenderTable {TABLE} at (1,946) size 84x66 [border: (1px solid #808080)]
+        RenderBlock {CAPTION} at (0,0) size 83x18
+          RenderText {#text} at (0,0) size 83x17
+            text run at (0,0) width 83: "NormalTable"
+        RenderTableSection {TBODY} at (1,19) size 81x46
+          RenderTableRow {TR} at (0,2) size 81x20
+            RenderTableCell {TD} at (42,2) size 37x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (12,1) size 23x17
+                text run at (12,1) width 23: "abc"
+            RenderTableCell {TD} at (2,2) size 39x20 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (17,1) size 21x17
+                text run at (17,1) width 21: "def"
+          RenderTableRow {TR} at (0,24) size 81x20
+            RenderTableCell {TD} at (42,24) size 37x20 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,1) size 17x17
+                text run at (18,1) width 17: "hij"
+            RenderTableCell {TD} at (2,24) size 39x20 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (13,1) size 25x17
+                text run at (13,1) width 25: "opq"
+      RenderTable {DIV} at (1,1013) size 145x57 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (0,0) size 144x18
+          RenderText {#text} at (0,0) size 144x17
+            text run at (0,0) width 144: "AnonymousTableRow"
+        RenderTableSection (anonymous) at (1,19) size 142x36
+          RenderTableRow {DIV} at (0,0) size 142x18
+            RenderTableCell {DIV} at (74,0) size 68x18 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (45,0) size 23x17
+                text run at (45,0) width 23: "abc"
             RenderTableCell {DIV} at (0,0) size 75x18 [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (54,0) size 21x17
                 text run at (54,0) width 21: "def"
-          RenderTableRow {DIV} at (0,18) size 143x18
-            RenderTableCell {DIV} at (74,18) size 70x18 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (52,0) size 17x17
-                text run at (52,0) width 17: "hij"
+          RenderTableRow {DIV} at (0,18) size 142x18
+            RenderTableCell {DIV} at (74,18) size 68x18 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (51,0) size 17x17
+                text run at (51,0) width 17: "hij"
             RenderTableCell {DIV} at (0,18) size 75x18 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (50,0) size 25x17
                 text run at (50,0) width 25: "opq"
       RenderBlock {P} at (0,1085) size 769x19
-        RenderText {#text} at (0,0) size 523x17
-          text run at (0,0) width 523: "Anonymous TABLE, TABLE_ROW, TABLE_ROW_GROUP, TABLE_CELL"
+        RenderText {#text} at (0,0) size 515x17
+          text run at (0,0) width 515: "Anonymous TABLE, TABLE_ROW, TABLE_ROW_GROUP, TABLE_CELL"
       RenderBlock {DIV} at (0,1119) size 769x75 [border: (1px solid #000000)]
         RenderTable at (1,1) size 24x72
           RenderTableSection (anonymous) at (0,18) size 24x36

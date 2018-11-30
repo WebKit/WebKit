@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 234x36
-          text run at (0,0) width 234: "Min-Width Tests"
+        RenderText {#text} at (0,0) size 231x36
+          text run at (0,0) width 231: "Min-Width Tests"
       RenderTable {TABLE} at (0,58) size 784x87 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 780x82
           RenderTableRow {TR} at (0,0) size 780x82

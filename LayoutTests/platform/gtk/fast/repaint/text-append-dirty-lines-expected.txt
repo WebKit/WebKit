@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 529x17
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 528x17
           RenderInline {A} at (0,0) size 154x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 154x17
-              text run at (53,0) width 154: "rdar://problem/6771547"
-          RenderText {#text} at (207,0) size 375x17
-            text run at (207,0) width 375: " Appending to a RenderText causes all its lines to be dirtied"
-        RenderText {#text} at (582,0) size 4x17
-          text run at (582,0) width 4: "."
+            RenderText {#text} at (51,0) size 154x17
+              text run at (51,0) width 154: "rdar://problem/6771547"
+          RenderText {#text} at (204,0) size 375x17
+            text run at (204,0) width 375: " Appending to a RenderText causes all its lines to be dirtied"
+        RenderText {#text} at (578,0) size 5x17
+          text run at (578,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x126
         RenderText {#text} at (0,0) size 756x125
           text run at (0,0) width 744: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse placerat. Morbi tristique. Mauris eu lacus sed felis"
           text run at (0,18) width 749: "pellentesque cursus. Proin vitae nulla. Vivamus in ipsum. Etiam mi. Nam malesuada purus in sem. Sed eget elit vel erat"
-          text run at (0,36) width 754: "laoreet feugiat. Phasellus mollis pulvinar mi. Etiam ut neque sed eros egestas laoreet. Vestibulum ullamcorper, nulla non"
+          text run at (0,36) width 752: "laoreet feugiat. Phasellus mollis pulvinar mi. Etiam ut neque sed eros egestas laoreet. Vestibulum ullamcorper, nulla non"
           text run at (0,54) width 713: "feugiat molestie, mi lorem bibendum leo, ac gravida orci nunc nec nulla. Nunc nunc lorem, rhoncus et, rutrum ac,"
           text run at (0,72) width 741: "fermentum ut, tortor. Sed rhoncus. Quisque enim metus, luctus tincidunt, vestibulum eu, vestibulum eu, libero. Mauris"
           text run at (0,90) width 756: "sagittis aliquam nunc. Nullam pharetra molestie eros. Donec tempus purus ut ligula. Phasellus non nisl. Etiam eu mauris."

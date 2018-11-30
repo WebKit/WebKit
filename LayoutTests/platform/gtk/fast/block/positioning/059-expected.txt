@@ -5,16 +5,16 @@ layer at (0,0) size 800x0
 layer at (8,8) size 784x54
   RenderBody {BODY} at (8,8) size 784x54
     RenderBlock {DIV} at (0,0) size 784x54
-      RenderText {#text} at (0,0) size 130x17
-        text run at (0,0) width 130: "You should see two "
-      RenderInline {I} at (0,0) size 109x17
-        RenderText {#text} at (130,0) size 109x17
-          text run at (130,0) width 109: "vertically stacked"
-      RenderText {#text} at (239,0) size 763x53
-        text run at (239,0) width 157: " green rectangles below. "
-        text run at (396,0) width 181: "Each one is 100 pixels wide "
-        text run at (577,0) width 115: "and 50 pixels tall. "
-        text run at (692,0) width 61: "If the two"
+      RenderText {#text} at (0,0) size 129x17
+        text run at (0,0) width 129: "You should see two "
+      RenderInline {I} at (0,0) size 110x17
+        RenderText {#text} at (128,0) size 110x17
+          text run at (128,0) width 110: "vertically stacked"
+      RenderText {#text} at (237,0) size 763x53
+        text run at (237,0) width 157: " green rectangles below. "
+        text run at (393,0) width 182: "Each one is 100 pixels wide "
+        text run at (574,0) width 116: "and 50 pixels tall. "
+        text run at (689,0) width 62: "If the two"
         text run at (0,18) width 386: "green rectangles are on the same line, then the test has failed. "
         text run at (386,18) width 264: "This is a test of section 10.3.7 in CSS2.1. "
         text run at (650,18) width 113: "In particular it is a"

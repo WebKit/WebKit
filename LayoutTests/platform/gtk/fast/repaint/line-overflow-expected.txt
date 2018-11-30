@@ -6,16 +6,16 @@ layer at (0,0) size 800x286
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 744x35
+        RenderInline {I} at (0,0) size 743x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
               text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9669"
-          RenderText {#text} at (452,0) size 744x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 288: "Incomplete repaint when changing an inline's"
+          RenderText {#text} at (451,0) size 743x35
+            text run at (451,0) width 5: " "
+            text run at (455,0) width 288: "Incomplete repaint when changing an inline's"
             text run at (0,18) width 43: "border"
-        RenderText {#text} at (43,18) size 4x17
-          text run at (43,18) width 4: "."
+        RenderText {#text} at (42,18) size 5x17
+          text run at (42,18) width 5: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,62) size 200x200
         RenderText {#text} at (0,0) size 192x53

@@ -13,12 +13,12 @@ layer at (0,0) size 800x386
           text run at (221,0) width 212: " cut through the top left corner of "
           text run at (433,0) width 313: "the blue border. It would cut through with our old"
           text run at (0,18) width 87: "behavior, but "
-        RenderInline {A} at (0,0) size 22x17 [color=#0000EE]
-          RenderText {#text} at (87,18) size 22x17
-            text run at (87,18) width 22: "this"
-        RenderText {#text} at (109,18) size 307x17
-          text run at (109,18) width 4: " "
-          text run at (113,18) width 303: "bug fix changed our behavior to match the spec."
+        RenderInline {A} at (0,0) size 23x17 [color=#0000EE]
+          RenderText {#text} at (86,18) size 23x17
+            text run at (86,18) width 23: "this"
+        RenderText {#text} at (108,18) size 308x17
+          text run at (108,18) width 5: " "
+          text run at (112,18) width 304: "bug fix changed our behavior to match the spec."
       RenderBlock {DIV} at (32,68) size 720x270 [border: (1px solid #0000FF)]
         RenderTable {DIV} at (1,1) size 115x220 [border: (10px none #000000)]
           RenderTableSection (anonymous) at (1,10) size 104x200

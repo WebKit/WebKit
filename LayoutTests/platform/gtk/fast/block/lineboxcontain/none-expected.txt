@@ -4,9 +4,9 @@ layer at (0,0) size 800x98
   RenderBlock {HTML} at (0,0) size 800x98
     RenderBody {BODY} at (8,8) size 784x82
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 459x17
-          text run at (0,0) width 226: "You should see a green line below. "
-          text run at (226,0) width 233: "If you see any red, the test has failed."
+        RenderText {#text} at (0,0) size 457x17
+          text run at (0,0) width 224: "You should see a green line below. "
+          text run at (223,0) width 234: "If you see any red, the test has failed."
       RenderBlock {DIV} at (0,82) size 784x0 [bgcolor=#FF0000]
         RenderInline {SPAN} at (0,0) size 320x64 [color=#FF0000]
           RenderText {#text} at (0,-51) size 320x64

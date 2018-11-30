@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,37) size 84x17
                 text run at (1,37) width 84: "html, body { "
               RenderBR {BR} at (85,51) size 0x0
-              RenderText {#text} at (1,55) size 156x17
-                text run at (1,55) width 156: "    font-family: Verdana; "
-              RenderBR {BR} at (157,69) size 0x0
+              RenderText {#text} at (1,55) size 155x17
+                text run at (1,55) width 155: "    font-family: Verdana; "
+              RenderBR {BR} at (155,69) size 1x0
               RenderText {#text} at (1,73) size 8x17
                 text run at (1,73) width 8: "}"
               RenderBR {BR} at (9,87) size 0x0
@@ -37,52 +37,52 @@ layer at (0,0) size 800x600
                 text run at (1,163) width 681: "The two columns below show that inheriting the font does not correctly inherit the font-size for a <tt> block."
               RenderBR {BR} at (682,177) size 0x0
           RenderTableRow {TR} at (0,202) size 703x20
-            RenderTableCell {TH} at (10,202) size 305x20 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (138,1) size 29x17
-                text run at (138,1) width 29: "<tt>"
-            RenderTableCell {TH} at (324,202) size 370x20 [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (10,202) size 304x20 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (137,1) size 29x17
+                text run at (137,1) width 29: "<tt>"
+            RenderTableCell {TH} at (323,202) size 371x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (159,1) size 51x17
                 text run at (159,1) width 51: "<span>"
           RenderTableRow {TR} at (0,232) size 703x18
-            RenderTableCell {TD} at (10,232) size 305x18 [r=2 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 211x15
-                RenderText {#text} at (1,1) size 211x15
-                  text run at (1,1) width 211: "font-family: Verdana; font-size: 0.8em;"
+            RenderTableCell {TD} at (10,232) size 304x18 [r=2 c=0 rs=1 cs=1]
+              RenderInline {TT} at (0,0) size 210x15
+                RenderText {#text} at (1,1) size 210x15
+                  text run at (1,1) width 210: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (324,232) size 370x18 [r=2 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 211x15
-                RenderText {#text} at (1,1) size 211x15
-                  text run at (1,1) width 211: "font-family: Verdana; font-size: 0.8em;"
+            RenderTableCell {TD} at (323,232) size 371x18 [r=2 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 210x15
+                RenderText {#text} at (1,1) size 210x15
+                  text run at (1,1) width 210: "font-family: Verdana; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,260) size 703x18
-            RenderTableCell {TD} at (10,260) size 305x18 [r=3 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 258x15
-                RenderText {#text} at (1,1) size 258x15
-                  text run at (1,1) width 258: "font-family: inherit (Verdana); font-size: 0.8em;"
+            RenderTableCell {TD} at (10,260) size 304x18 [r=3 c=0 rs=1 cs=1]
+              RenderInline {TT} at (0,0) size 257x15
+                RenderText {#text} at (1,1) size 257x15
+                  text run at (1,1) width 257: "font-family: inherit (Verdana); font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (324,260) size 370x18 [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (323,260) size 371x18 [r=3 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 202x15
                 RenderText {#text} at (1,1) size 202x15
                   text run at (1,1) width 202: "font-family: inherit; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,288) size 703x20
-            RenderTableCell {TD} at (10,288) size 305x20 [r=4 c=0 rs=1 cs=1]
-              RenderInline {TT} at (0,0) size 245x17
-                RenderText {#text} at (1,1) size 245x17
-                  text run at (1,1) width 245: "font-family: Verdana; font-size: 1.0em;"
+            RenderTableCell {TD} at (10,288) size 304x20 [r=4 c=0 rs=1 cs=1]
+              RenderInline {TT} at (0,0) size 244x17
+                RenderText {#text} at (1,1) size 244x17
+                  text run at (1,1) width 244: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (324,288) size 370x20 [r=4 c=1 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 245x17
-                RenderText {#text} at (1,1) size 245x17
-                  text run at (1,1) width 245: "font-family: Verdana; font-size: 1.0em;"
+            RenderTableCell {TD} at (323,288) size 371x20 [r=4 c=1 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 244x17
+                RenderText {#text} at (1,1) size 244x17
+                  text run at (1,1) width 244: "font-family: Verdana; font-size: 1.0em;"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,318) size 703x17
-            RenderTableCell {TD} at (10,320) size 305x13 [r=5 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (10,320) size 304x13 [r=5 c=0 rs=1 cs=1]
               RenderInline {TT} at (0,0) size 186x11
                 RenderText {#text} at (1,1) size 186x11
                   text run at (1,1) width 186: "default font; font-size: 0.8em;"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (324,318) size 370x17 [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (323,318) size 371x17 [r=5 c=1 rs=1 cs=1]
               RenderInline {SPAN} at (0,0) size 312x15
                 RenderText {#text} at (1,1) size 312x15
                   text run at (1,1) width 312: "font-family: courier; font-size: 0.8em;"

@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 371x17
-          text run at (0,0) width 371: "Tests selection painting on a transformed, replaced element"
-        RenderBR {BR} at (371,14) size 0x0
+        RenderText {#text} at (0,0) size 370x17
+          text run at (0,0) width 370: "Tests selection painting on a transformed, replaced element"
+        RenderBR {BR} at (369,14) size 1x0
         RenderInline {A} at (0,0) size 305x17 [color=#0000EE]
           RenderText {#text} at (0,18) size 305x17
             text run at (0,18) width 305: "https://bugs.webkit.org/show_bug.cgi?id=15739"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 514x17
-          text run at (0,0) width 514: "You should see a dark green square rotated 45\x{B0}. If you see any red, the test failed."
+        RenderText {#text} at (0,0) size 513x17
+          text run at (0,0) width 513: "You should see a dark green square rotated 45\x{B0}. If you see any red, the test failed."
       RenderBlock {DIV} at (0,86) size 784x150
         RenderText {#text} at (0,0) size 0x0
 layer at (58,144) size 100x100

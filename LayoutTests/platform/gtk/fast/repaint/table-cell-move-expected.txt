@@ -15,19 +15,19 @@ layer at (0,0) size 800x388
         RenderText {#text} at (183,0) size 381x17
           text run at (183,0) width 381: " REGRESSION: Incomplete repaint of table cell that moved"
       RenderBlock {P} at (0,34) size 784x24 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x17
-          RenderText {#text} at (3,3) size 91x17
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 405x17
-          text run at (94,3) width 4: " "
-          text run at (98,3) width 401: "There should be only a green square below the line, and no red."
-      RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x17
           RenderText {#text} at (3,3) size 90x17
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 310x17
-          text run at (93,3) width 4: " "
-          text run at (97,3) width 306: "There will be a red square and a green rectangle."
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (92,3) size 406x17
+          text run at (92,3) width 5: " "
+          text run at (96,3) width 402: "There should be only a green square below the line, and no red."
+      RenderBlock {P} at (0,74) size 784x24 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x17
+          RenderText {#text} at (3,3) size 89x17
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (91,3) size 311x17
+          text run at (91,3) width 5: " "
+          text run at (95,3) width 307: "There will be a red square and a green rectangle."
       RenderBlock {HR} at (0,114) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,124) size 61x240
         RenderTableSection {TBODY} at (0,0) size 61x240

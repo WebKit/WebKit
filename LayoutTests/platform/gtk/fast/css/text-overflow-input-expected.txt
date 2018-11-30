@@ -4,8 +4,8 @@ layer at (0,0) size 800x432
   RenderBlock {HTML} at (0,0) size 800x432
     RenderBody {BODY} at (8,16) size 784x400
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 308x17
-          text run at (0,0) width 308: "This test is a basic check for using text-overflow."
+        RenderText {#text} at (0,0) size 307x17
+          text run at (0,0) width 307: "This test is a basic check for using text-overflow."
       RenderBlock {P} at (0,34) size 784x130
         RenderText {#text} at (0,0) size 481x17
           text run at (0,0) width 481: "Apply \"text-overflow:clip\" to inputs. The following input should be clipped:"

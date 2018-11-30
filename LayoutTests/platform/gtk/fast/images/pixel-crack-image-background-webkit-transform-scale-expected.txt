@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 733x17
-          text run at (0,0) width 430: "Test pixel cracks when background sprite is transformed with scale. "
-          text run at (430,0) width 303: "Need to run pixel test to verify if it is successful."
+        RenderText {#text} at (0,0) size 732x17
+          text run at (0,0) width 429: "Test pixel cracks when background sprite is transformed with scale. "
+          text run at (428,0) width 304: "Need to run pixel test to verify if it is successful."
 layer at (12,72) size 16x16
   RenderBlock (positioned) {DIV} at (12,72) size 16x16
 layer at (24,72) size 16x16

@@ -4,8 +4,8 @@ layer at (0,0) size 800x558
   RenderBlock {HTML} at (0,0) size 800x558
     RenderBody {BODY} at (8,21) size 784x361
       RenderBlock {H1} at (0,0) size 784x37 [color=#990000]
-        RenderText {#text} at (0,0) size 701x36
-          text run at (0,0) width 701: "Webkit background image positioning on RTL text"
+        RenderText {#text} at (0,0) size 696x36
+          text run at (0,0) width 696: "Webkit background image positioning on RTL text"
       RenderBlock {H2} at (0,58) size 784x28
         RenderText {#text} at (0,0) size 263x26
           text run at (0,0) width 263: "Behaviour within <p> tag"

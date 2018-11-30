@@ -19,12 +19,13 @@ layer at (0,0) size 785x1183
           text run at (0,18) width 265: "a nested container element is preceded by "
           text run at (265,18) width 441: "uncontained text and a blank line, and there are \"too many\" characters"
           text run at (0,36) width 412: "contained in the nested element, the PRE width will be too wide. "
-          text run at (412,36) width 337: "In the examples below, the nested element is a SPAN"
+          text run at (412,36) width 335: "In the examples below, the nested element is a SPAN"
           text run at (0,54) width 95: "whose content "
           text run at (95,54) width 226: "is the days-of-week line, as follows:"
       RenderBlock {PRE} at (0,143) size 769x16
         RenderText {#text} at (0,0) size 376x15
           text run at (0,0) width 376: "    <SPAN CLASS=dow> D  M  T  W  J  F  S</SPAN>"
+          text run at (376,0) width 0: " "
       RenderBlock {H2} at (0,178) size 769x28
         RenderText {#text} at (0,0) size 109x26
           text run at (0,0) width 109: "Example 1"
@@ -168,10 +169,10 @@ layer at (0,0) size 785x1183
                   text run at (167,128) width 1: " "
                   text run at (7,143) width 65: "28 29 30"
             RenderTableCell {TD} at (181,2) size 586x38 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 576x35
+              RenderText {#text} at (1,1) size 575x35
                 text run at (1,1) width 341: "The blank line between '2003' and the nested element "
                 text run at (342,1) width 206: "no longer triggers the width bug,"
                 text run at (1,19) width 284: "because now the '2003' is itself contained by "
-                text run at (285,19) width 292: "a nested element (in this case, another SPAN)."
+                text run at (285,19) width 291: "a nested element (in this case, another SPAN)."
       RenderBlock (anonymous) at (0,1148) size 769x19
         RenderBR {BR} at (0,0) size 0x17

@@ -107,8 +107,8 @@ layer at (0,0) size 785x1467
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,1034) size 769x3 [border: (1px inset #000000)]
       RenderBlock {P} at (0,1052) size 769x19
-        RenderText {#text} at (0,0) size 309x17
-          text run at (0,0) width 309: "Legend align test with margin and padding, RTL"
+        RenderText {#text} at (0,0) size 308x17
+          text run at (0,0) width 308: "Legend align test with margin and padding, RTL"
       RenderBlock (anonymous) at (0,1086) size 769x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0

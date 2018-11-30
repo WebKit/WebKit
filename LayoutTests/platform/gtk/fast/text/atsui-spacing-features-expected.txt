@@ -4,17 +4,17 @@ layer at (0,0) size 800x372
   RenderBlock {HTML} at (0,0) size 800x372
     RenderBody {BODY} at (8,16) size 784x348
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 175x17
-          text run at (0,0) width 175: "Test for regressions against "
-        RenderInline {I} at (0,0) size 760x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (175,0) size 348x17
-              text run at (175,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3922"
-          RenderText {#text} at (523,0) size 760x35
-            text run at (523,0) width 237: " Variable word/letter spacing and full"
-            text run at (0,18) width 322: "justification not supported for ATSUI-rendered text"
-        RenderText {#text} at (322,18) size 4x17
-          text run at (322,18) width 4: "."
+        RenderText {#text} at (0,0) size 174x17
+          text run at (0,0) width 174: "Test for regressions against "
+        RenderInline {I} at (0,0) size 756x35
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (173,0) size 349x17
+              text run at (173,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3922"
+          RenderText {#text} at (521,0) size 756x35
+            text run at (521,0) width 235: " Variable word/letter spacing and full"
+            text run at (0,18) width 321: "justification not supported for ATSUI-rendered text"
+        RenderText {#text} at (320,18) size 5x17
+          text run at (320,18) width 5: "."
       RenderBlock (anonymous) at (0,52) size 784x18
         RenderText {#text} at (0,0) size 507x17
           text run at (0,0) width 507: "Each green box should be identical to the blue box it follows, except for accents."

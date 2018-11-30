@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 117x17
           text run at (0,0) width 117: "Rendering test for "
-        RenderInline {I} at (0,0) size 747x35
+        RenderInline {I} at (0,0) size 746x35
           RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
             RenderText {#text} at (117,0) size 301x17
               text run at (117,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=17107"
-          RenderText {#text} at (418,0) size 747x35
-            text run at (418,0) width 4: " "
-            text run at (422,0) width 325: "REGRESSION(r29834): Article text on redhat.com"
+          RenderText {#text} at (417,0) size 746x35
+            text run at (417,0) width 5: " "
+            text run at (421,0) width 325: "REGRESSION(r29834): Article text on redhat.com"
             text run at (0,18) width 269: "magazine site appears to be painting twice"
         RenderText {#text} at (269,18) size 4x17
           text run at (269,18) width 4: "."

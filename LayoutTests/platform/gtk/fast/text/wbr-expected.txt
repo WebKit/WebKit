@@ -4,8 +4,8 @@ layer at (0,0) size 785x788
   RenderBlock {HTML} at (0,0) size 785x788
     RenderBody {BODY} at (8,8) size 769x770
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 174x17
-          text run at (0,0) width 174: "Two words with no spaces."
+        RenderText {#text} at (0,0) size 173x17
+          text run at (0,0) width 173: "Two words with no spaces."
       RenderBlock {DIV} at (0,34) size 302x20 [border: (1px solid #0000FF)]
         RenderText {#text} at (1,1) size 480x17
           text run at (1,1) width 480: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-      RenderTable at (0,0) size 57x18
-        RenderTableSection (anonymous) at (0,0) size 57x18
-          RenderTableRow (anonymous) at (0,0) size 57x18
+      RenderTable at (0,0) size 56x18
+        RenderTableSection (anonymous) at (0,0) size 56x18
+          RenderTableRow (anonymous) at (0,0) size 56x18
             RenderTableCell {DIV} at (0,0) size 27x18 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 27x17
                 text run at (0,0) width 27: "One"
-            RenderTableCell {DIV} at (27,0) size 30x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 30x17
-                text run at (0,0) width 30: "Two"
+            RenderTableCell {DIV} at (27,0) size 29x18 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 29x17
+                text run at (0,0) width 29: "Two"

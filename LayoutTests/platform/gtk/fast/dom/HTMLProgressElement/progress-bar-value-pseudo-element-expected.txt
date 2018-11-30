@@ -38,9 +38,9 @@ layer at (0,0) size 800x600
                 RenderBlock {DIV} at (3,3) size 62x10 [bgcolor=#008000]
         RenderListItem {LI} at (40,84) size 744x18
           RenderListMarker at (-17,0) size 7x17: bullet
-          RenderText {#text} at (0,0) size 79x17
-            text run at (0,0) width 79: "Value style: "
-          RenderBlock {PROGRESS} at (79,1) size 160x17
+          RenderText {#text} at (0,0) size 78x17
+            text run at (0,0) width 78: "Value style: "
+          RenderBlock {PROGRESS} at (77,1) size 161x17
             RenderProgress {DIV} at (0,0) size 160x4
               RenderBlock {DIV} at (0,0) size 160x16 [bgcolor=#808080]
                 RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#FFFF00] [border: (3px solid #999900)]

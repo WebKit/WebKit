@@ -44,8 +44,8 @@ layer at (0,0) size 785x1352
         RenderText {#text} at (0,0) size 539x36
           text run at (0,0) width 539: "This should be grey: hsl(120, 0%, 50%)"
       RenderBlock {H1} at (0,681) size 769x38 [color=#7F7F7F]
-        RenderText {#text} at (0,0) size 641x36
-          text run at (0,0) width 641: "This should be grey, too: hsl(120, -100%, 50%)"
+        RenderText {#text} at (0,0) size 639x36
+          text run at (0,0) width 639: "This should be grey, too: hsl(120, -100%, 50%)"
       RenderBlock (anonymous) at (0,739) size 769x37
         RenderText {#text} at (0,0) size 755x35
           text run at (0,0) width 755: "Check Hue values that are larger than 360, should be normalized back to a value between 0 and 360. As Hue values are"

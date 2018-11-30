@@ -10,21 +10,21 @@ layer at (0,0) size 800x148
         RenderTableSection {TBODY} at (0,0) size 198x90
           RenderTableRow {TR} at (0,46) size 198x20
           RenderTableRow {TR} at (0,68) size 198x20
-layer at (8,52) size 198x20
+layer at (8,52) size 197x20
   RenderTableRow {TR} at (0,2) size 198x20
     RenderTableCell {TD} at (2,2) size 194x20 [r=0 c=0 rs=1 cs=1]
       RenderText {#text} at (1,1) size 110x17
         text run at (1,1) width 110: "Transformed row"
-layer at (8,74) size 198x20
+layer at (8,74) size 197x20
   RenderTableRow {TR} at (0,24) size 198x20
     RenderTableCell {TD} at (2,24) size 194x20 [r=1 c=0 rs=1 cs=1]
       RenderText {#text} at (1,1) size 192x17
         text run at (1,1) width 192: "Transformed row with opacity"
-layer at (10,96) size 194x20
+layer at (10,96) size 193x20
   RenderTableCell {TD} at (2,46) size 194x20 [r=2 c=0 rs=1 cs=1]
     RenderText {#text} at (1,1) size 107x17
       text run at (1,1) width 107: "Transformed cell"
-layer at (10,118) size 194x20
+layer at (10,118) size 193x20
   RenderTableCell {TD} at (2,68) size 194x20 [r=3 c=0 rs=1 cs=1]
     RenderText {#text} at (1,1) size 189x17
       text run at (1,1) width 189: "Transformed cell with opacity"

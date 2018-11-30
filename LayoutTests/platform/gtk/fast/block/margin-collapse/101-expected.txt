@@ -7,5 +7,5 @@ layer at (0,0) size 800x600
         RenderBlock {P} at (0,0) size 385x40 [border: (2px solid #0000FF)]
           RenderText {#text} at (2,2) size 365x35
             text run at (2,2) width 365: "There should be only 2em between this paragraph and the"
-            text run at (2,20) width 85: "image below."
+            text run at (2,20) width 84: "image below."
         RenderImage {IMG} at (0,72) size 395x275

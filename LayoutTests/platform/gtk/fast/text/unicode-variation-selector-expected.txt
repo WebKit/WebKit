@@ -5,10 +5,10 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 775x53
-          text run at (0,0) width 496: "This page ensures that WebKit can render unicode variation selector correctly. "
-          text run at (496,0) width 254: "On platforms which support UVSes, the"
+          text run at (0,0) width 494: "This page ensures that WebKit can render unicode variation selector correctly. "
+          text run at (493,0) width 255: "On platforms which support UVSes, the"
           text run at (0,18) width 676: "glyphs of U+845B should be different. On platforms which don't support UVSes, they should be identical. "
-          text run at (676,18) width 99: "In addition, any"
+          text run at (675,18) width 100: "In addition, any"
           text run at (0,36) width 579: "glyphs (including the last resort glyph) should not appear after the U+845B on all platforms."
       RenderBlock {DIV} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 289x17

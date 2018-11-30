@@ -9,8 +9,8 @@ layer at (0,0) size 800x212
             text run at (0,1) width 528: "Ahem_font_required_for_this_test."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 594x17
-          text run at (0,0) width 594: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
+        RenderText {#text} at (0,0) size 592x17
+          text run at (0,0) width 592: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
       RenderBlock {DIV} at (0,68) size 304x128 [color=#00FF00] [bgcolor=#008000]
         RenderText {#text} at (0,0) size 304x32
           text run at (0,0) width 0: " "

@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 57x17
-          text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 632x17
-          RenderInline {A} at (0,0) size 329x17 [color=#0000EE]
-            RenderText {#text} at (57,0) size 329x17
-              text run at (57,0) width 329: "http://bugs.webkit.org/show_bug.cgi?id=16348"
-          RenderText {#text} at (386,0) size 303x17
-            text run at (386,0) width 4: " "
-            text run at (390,0) width 299: "@font-face does not affect the default style"
-        RenderText {#text} at (689,0) size 4x17
-          text run at (689,0) width 4: "."
+        RenderText {#text} at (0,0) size 56x17
+          text run at (0,0) width 56: "Test for "
+        RenderInline {I} at (0,0) size 633x17
+          RenderInline {A} at (0,0) size 330x17 [color=#0000EE]
+            RenderText {#text} at (55,0) size 330x17
+              text run at (55,0) width 330: "http://bugs.webkit.org/show_bug.cgi?id=16348"
+          RenderText {#text} at (384,0) size 304x17
+            text run at (384,0) width 5: " "
+            text run at (388,0) width 300: "@font-face does not affect the default style"
+        RenderText {#text} at (687,0) size 5x17
+          text run at (687,0) width 5: "."
       RenderBlock (anonymous) at (0,34) size 784x18
         RenderText {#text} at (0,0) size 192x17
           text run at (0,0) width 192: "This text should be in Arial."

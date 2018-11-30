@@ -8,9 +8,9 @@ layer at (0,0) size 800x286
           text run at (0,0) width 389: "This test checks if CSS3 multi-column layout properly works "
           text run at (389,0) width 375: "when the multi-column block contains only one line of text."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 555x17
-          text run at (0,0) width 298: "Test successful if the following text is readable "
-          text run at (298,0) width 257: "(i.e. not split into two different columns)."
+        RenderText {#text} at (0,0) size 554x17
+          text run at (0,0) width 297: "Test successful if the following text is readable "
+          text run at (296,0) width 258: "(i.e. not split into two different columns)."
       RenderBlock {DIV} at (0,236) size 784x18
 layer at (8,84) size 784x18
   RenderBlock {P} at (0,68) size 784x18 [bgcolor=#EEEEEE]

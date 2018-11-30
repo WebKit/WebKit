@@ -10,16 +10,16 @@ layer at (0,0) size 800x585
         RenderBlock (anonymous) at (0,0) size 781x66
           RenderText {#text} at (0,0) size 60x21
             text run at (0,0) width 60: "Results:"
-          RenderBR {BR} at (60,17) size 0x0
-          RenderText {#text} at (0,22) size 103x21
-            text run at (0,22) width 103: "Test 1 Passed"
-          RenderBR {BR} at (103,39) size 0x0
-          RenderText {#text} at (0,44) size 99x21
-            text run at (0,44) width 99: "Test 2 Failed"
-          RenderBR {BR} at (99,61) size 0x0
+          RenderBR {BR} at (59,17) size 1x0
+          RenderText {#text} at (0,22) size 102x21
+            text run at (0,22) width 102: "Test 1 Passed"
+          RenderBR {BR} at (101,39) size 1x0
+          RenderText {#text} at (0,44) size 98x21
+            text run at (0,44) width 98: "Test 2 Failed"
+          RenderBR {BR} at (97,61) size 1x0
         RenderBlock {PRE} at (0,81) size 781x37
           RenderText {#text} at (0,0) size 1150x18
             text run at (0,0) width 1150: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"
-          RenderBR {BR} at (1150,13) size 0x0
+          RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,18) size 1130x18
             text run at (0,18) width 1130: "     Actual: false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false"

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 762x35
-          text run at (0,0) width 762: "This HTML tests if the 'while-space' property controls the behavors of line-break characters (U+000A and U+000D) in a"
+        RenderText {#text} at (0,0) size 761x35
+          text run at (0,0) width 761: "This HTML tests if the 'while-space' property controls the behavors of line-break characters (U+000A and U+000D) in a"
           text run at (0,18) width 135: "complex text (Hindi)."
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 714x35

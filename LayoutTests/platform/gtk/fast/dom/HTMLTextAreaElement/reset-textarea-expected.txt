@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 358x17
           text run at (0,0) width 358: "This test verifies that textarea controls are properly reset. "
         RenderBR {BR} at (358,14) size 0x0
-        RenderText {#text} at (0,18) size 475x17
-          text run at (0,18) width 475: "You should see two element IDs below, and the word \"SUCCESS\" twice: "
-        RenderBR {BR} at (475,32) size 0x0
-        RenderText {#text} at (0,36) size 175x17
-          text run at (0,36) width 175: "noDefaultText: SUCCESS "
-        RenderBR {BR} at (175,50) size 0x0
-        RenderText {#text} at (0,54) size 176x17
-          text run at (0,54) width 176: "hasDefaultText: SUCCESS"
+        RenderText {#text} at (0,18) size 473x17
+          text run at (0,18) width 473: "You should see two element IDs below, and the word \"SUCCESS\" twice: "
+        RenderBR {BR} at (472,32) size 1x0
+        RenderText {#text} at (0,36) size 174x17
+          text run at (0,36) width 174: "noDefaultText: SUCCESS "
+        RenderBR {BR} at (173,50) size 1x0
+        RenderText {#text} at (0,54) size 175x17
+          text run at (0,54) width 175: "hasDefaultText: SUCCESS"
 layer at (10,10) size 201x42 clip at (11,11) size 199x40
   RenderTextControl {TEXTAREA} at (2,2) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 195x18
 layer at (219,10) size 201x42 clip at (220,11) size 199x40
   RenderTextControl {TEXTAREA} at (211,2) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 195x18
-      RenderText {#text} at (0,0) size 86x17
-        text run at (0,0) width 86: "Default Text"
+      RenderText {#text} at (0,0) size 85x17
+        text run at (0,0) width 85: "Default Text"

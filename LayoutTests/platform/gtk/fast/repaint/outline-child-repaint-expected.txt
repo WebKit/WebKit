@@ -10,11 +10,11 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
             RenderText {#text} at (151,0) size 307x17
               text run at (151,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=22159"
-          RenderText {#text} at (458,0) size 271x17
-            text run at (458,0) width 4: " "
-            text run at (462,0) width 267: "Repaint issue with outlines in child objects"
-        RenderText {#text} at (729,0) size 4x17
-          text run at (729,0) width 4: "."
+          RenderText {#text} at (457,0) size 272x17
+            text run at (457,0) width 5: " "
+            text run at (461,0) width 268: "Repaint issue with outlines in child objects"
+        RenderText {#text} at (728,0) size 5x17
+          text run at (728,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 322x17
           text run at (0,0) width 322: "If the test passes, you should not see any red below"

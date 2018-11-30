@@ -27,19 +27,19 @@ layer at (0,0) size 800x510
             text run at (543,0) width 161: "border-repaint-glitch.html"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,68) size 784x24 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 91x17
-          RenderText {#text} at (3,3) size 91x17
-            text run at (3,3) width 91: "TEST PASS:"
-        RenderText {#text} at (94,3) size 441x17
-          text run at (94,3) width 4: " "
-          text run at (98,3) width 437: "The boxes will resize, maintaining their solid red rectangular outlines."
-      RenderBlock {P} at (0,108) size 784x60 [bgcolor=#FF3300]
         RenderInline {B} at (0,0) size 90x17
           RenderText {#text} at (3,3) size 90x17
-            text run at (3,3) width 90: "TEST FAIL:"
-        RenderText {#text} at (93,3) size 759x53
-          text run at (93,3) width 4: " "
-          text run at (97,3) width 665: "The boxes will resize, but the outlines will break. The first box will be missing small segments from either"
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (92,3) size 442x17
+          text run at (92,3) width 5: " "
+          text run at (96,3) width 438: "The boxes will resize, maintaining their solid red rectangular outlines."
+      RenderBlock {P} at (0,108) size 784x60 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x17
+          RenderText {#text} at (3,3) size 89x17
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (91,3) size 758x53
+          text run at (91,3) width 5: " "
+          text run at (95,3) width 666: "The boxes will resize, but the outlines will break. The first box will be missing small segments from either"
           text run at (3,21) width 758: "side of its bottom outline. The second box will have small red horizontal segments protruding inwards from both sides of"
           text run at (3,39) width 308: "the outline, where the bottom outline was before."
       RenderBlock {DIV} at (0,184) size 222x142 [border: (1px solid #0000FF)]

@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 615x17
-        text run at (0,0) width 615: "You should see a single green stripe below. The test has failed if you don't see a perfect rectangle."
+      RenderText {#text} at (0,0) size 613x17
+        text run at (0,0) width 613: "You should see a single green stripe below. The test has failed if you don't see a perfect rectangle."
       RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 96x370
   RenderBlock (positioned) {DIV} at (8,26) size 96x370

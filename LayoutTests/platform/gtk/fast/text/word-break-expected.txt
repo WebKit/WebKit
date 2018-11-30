@@ -27,11 +27,12 @@ layer at (0,0) size 785x1016
       RenderBlock {PRE} at (0,171) size 110x25 [border: (5px solid #000000)]
         RenderText {#text} at (5,5) size 448x15
           text run at (5,5) width 448: "Thislongwordshouldnotgetbrokenbutshouldstickoutofthepre."
+          text run at (453,5) width 0: " "
       RenderBlock (anonymous) at (0,209) size 769x72
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 760x53
+        RenderText {#text} at (0,18) size 759x53
           text run at (0,18) width 468: "The next two examples test our custom break-word value for word-break. "
-          text run at (468,18) width 292: "We should get the same results as break-all for"
+          text run at (468,18) width 291: "We should get the same results as break-all for"
           text run at (0,36) width 751: "the first test, but we should break up the word in the second test (since our behavior matches word-wrap: break-word in"
           text run at (0,54) width 63: "that case)."
       RenderTable {TABLE} at (0,281) size 769x104 [border: (1px outset #808080)]
@@ -57,6 +58,7 @@ layer at (0,0) size 785x1016
           text run at (5,35) width 96: "brokenbutsho"
           text run at (5,50) width 96: "uldstickouto"
           text run at (5,65) width 64: "fthepre."
+          text run at (69,65) width 0: " "
       RenderBlock (anonymous) at (0,514) size 769x72
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,18) size 764x53

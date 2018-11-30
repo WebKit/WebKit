@@ -8,8 +8,8 @@ layer at (0,0) size 800x84
           RenderText {#text} at (0,0) size 305x17
             text run at (0,0) width 305: "https://bugs.webkit.org/show_bug.cgi?id=22026"
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 654x17
-          text run at (0,0) width 654: "Test that elements with transform and opacity on a parent are not clipped. You should see no red below."
+        RenderText {#text} at (0,0) size 651x17
+          text run at (0,0) width 651: "Test that elements with transform and opacity on a parent are not clipped. You should see no red below."
 layer at (150,200) size 100x100
   RenderBlock (positioned) {DIV} at (150,200) size 100x100 [bgcolor=#FF0000]
 layer at (100,150) size 100x100

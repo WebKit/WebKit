@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x0
         RenderInline {A} at (0,0) size 0x0
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline {A} at (0,0) size 155x17
-          RenderText {#text} at (0,0) size 155x17
-            text run at (0,0) width 155: "You should see this text."
+        RenderInline {A} at (0,0) size 154x17
+          RenderText {#text} at (0,0) size 154x17
+            text run at (0,0) width 154: "You should see this text."
       RenderTable {TABLE} at (0,34) size 4x4
         RenderTableSection {TBODY} at (0,0) size 4x4
           RenderTableRow {TR} at (0,2) size 4x0

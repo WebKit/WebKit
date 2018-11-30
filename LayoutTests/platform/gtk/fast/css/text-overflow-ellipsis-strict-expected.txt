@@ -15,35 +15,35 @@ layer at (0,0) size 785x740
         RenderText {#text} at (0,72) size 35x17
           text run at (0,72) width 35: "RTL:"
       RenderBlock (anonymous) at (0,132) size 769x18
-        RenderText {#text} at (0,0) size 95x17
-          text run at (0,0) width 95: "RTL Override:"
+        RenderText {#text} at (0,0) size 94x17
+          text run at (0,0) width 94: "RTL Override:"
       RenderBlock (anonymous) at (0,192) size 769x18
-        RenderText {#text} at (0,0) size 63x17
-          text run at (0,0) width 63: "RTL link:"
+        RenderText {#text} at (0,0) size 62x17
+          text run at (0,0) width 62: "RTL link:"
       RenderBlock (anonymous) at (0,252) size 769x18
-        RenderText {#text} at (0,0) size 134x17
-          text run at (0,0) width 134: "RTL with ltr content:"
+        RenderText {#text} at (0,0) size 133x17
+          text run at (0,0) width 133: "RTL with ltr content:"
       RenderBlock (anonymous) at (0,312) size 769x18
-        RenderText {#text} at (0,0) size 162x17
-          text run at (0,0) width 162: "RTL link with ltr content:"
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "RTL link with ltr content:"
       RenderBlock (anonymous) at (0,372) size 769x18
-        RenderText {#text} at (0,0) size 63x17
-          text run at (0,0) width 63: "LTR link:"
+        RenderText {#text} at (0,0) size 62x17
+          text run at (0,0) width 62: "LTR link:"
       RenderBlock (anonymous) at (0,432) size 769x18
-        RenderText {#text} at (0,0) size 35x17
-          text run at (0,0) width 35: "LTR:"
+        RenderText {#text} at (0,0) size 34x17
+          text run at (0,0) width 34: "LTR:"
       RenderBlock (anonymous) at (0,492) size 769x18
-        RenderText {#text} at (0,0) size 134x17
-          text run at (0,0) width 134: "LTR with rtl content:"
+        RenderText {#text} at (0,0) size 133x17
+          text run at (0,0) width 133: "LTR with rtl content:"
       RenderBlock (anonymous) at (0,552) size 769x18
-        RenderText {#text} at (0,0) size 178x17
-          text run at (0,0) width 178: "LTR with forced rtl content:"
+        RenderText {#text} at (0,0) size 177x17
+          text run at (0,0) width 177: "LTR with forced rtl content:"
       RenderBlock (anonymous) at (0,612) size 769x18
-        RenderText {#text} at (0,0) size 162x17
-          text run at (0,0) width 162: "LTR link with rtl content:"
+        RenderText {#text} at (0,0) size 161x17
+          text run at (0,0) width 161: "LTR link with rtl content:"
       RenderBlock (anonymous) at (0,672) size 769x18
-        RenderText {#text} at (0,0) size 206x17
-          text run at (0,0) width 206: "LTR link with forced rtl content:"
+        RenderText {#text} at (0,0) size 205x17
+          text run at (0,0) width 205: "LTR link with forced rtl content:"
 layer at (8,98) size 182x22 clip at (9,99) size 180x20 scrollX 148 scrollWidth 328
   RenderBlock {DIV} at (0,90) size 182x22 [border: (1px solid #000000)]
     RenderText {#text} at (-147,1) size 328x17

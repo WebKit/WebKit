@@ -4,8 +4,8 @@ layer at (0,0) size 800x327
   RenderBlock {HTML} at (0,0) size 800x327
     RenderBody {BODY} at (8,18) size 784x301
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 236x21
-          text run at (0,0) width 236: "ROWSPAN of 1024 - Works"
+        RenderText {#text} at (0,0) size 234x21
+          text run at (0,0) width 234: "ROWSPAN of 1024 - Works"
       RenderTable {TABLE} at (0,40) size 168x101 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 166x98
           RenderTableRow {TR} at (0,2) size 166x22
@@ -55,8 +55,8 @@ layer at (0,0) size 800x327
               RenderText {#text} at (2,2) size 41x17
                 text run at (2,2) width 41: "foobar"
       RenderBlock {H3} at (0,159) size 784x23
-        RenderText {#text} at (0,0) size 295x21
-          text run at (0,0) width 295: "ROWSPAN of 1025 - Doesn't Work"
+        RenderText {#text} at (0,0) size 293x21
+          text run at (0,0) width 293: "ROWSPAN of 1025 - Doesn't Work"
       RenderTable {TABLE} at (0,200) size 168x101 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 166x98
           RenderTableRow {TR} at (0,2) size 166x22

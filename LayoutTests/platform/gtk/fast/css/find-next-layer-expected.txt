@@ -3,21 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 724x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 348x17
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9124"
-          RenderText {#text} at (401,0) size 724x35
-            text run at (401,0) width 4: " "
-            text run at (405,0) width 319: "Drop shadow obscures \"add more stuff\" bubble at"
-            text run at (0,18) width 53: "live.com"
-        RenderText {#text} at (53,18) size 4x17
-          text run at (53,18) width 4: "."
-      RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
-layer at (8,70) size 100x100
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 727x17
+          RenderInline {A} at (0,0) size 349x17 [color=#0000EE]
+            RenderText {#text} at (51,0) size 349x17
+              text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9124"
+          RenderText {#text} at (399,0) size 379x17
+            text run at (399,0) width 5: " "
+            text run at (403,0) width 375: "Drop shadow obscures \"add more stuff\" bubble at live.com"
+        RenderText {#text} at (777,0) size 5x17
+          text run at (777,0) width 5: "."
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+layer at (8,52) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
-layer at (8,70) size 100x100
+layer at (8,52) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

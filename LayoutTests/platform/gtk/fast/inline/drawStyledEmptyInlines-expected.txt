@@ -41,13 +41,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 191x17
           text run at (0,0) width 191: "This text is before the anchor. "
         RenderInline {A} at (0,0) size 0x0
-        RenderText {#text} at (191,0) size 783x35
-          text run at (191,0) width 409: "This text is after the anchor, but should be flush with the anchor. "
-          text run at (600,0) width 183: "There should be no spaces in"
+        RenderText {#text} at (190,0) size 781x35
+          text run at (190,0) width 408: "This text is after the anchor, but should be flush with the anchor. "
+          text run at (597,0) width 184: "There should be no spaces in"
           text run at (0,18) width 272: "between the anchor and this following text."
       RenderBlock {P} at (0,248) size 784x18
         RenderInline {A} at (0,0) size 722x17
           RenderText {#text} at (0,0) size 722x17
             text run at (0,0) width 722: "This text should be flush with the anchor. There should not be a space between the anchor and the text on this line."
-        RenderInline {A} at (0,0) size 0x17
+        RenderInline {A} at (0,0) size 1x17
           RenderText {#text} at (0,0) size 0x0

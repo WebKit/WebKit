@@ -7,22 +7,22 @@ layer at (537,0) size 263x600
         RenderInline {SPAN} at (0,0) size 26x102
           RenderText {#text} at (23,0) size 26x102
             text run at (23,0) width 102: "\x{7B2C}\x{4E00}\x{6BB5}\x{843D} "
-        RenderInline {SPAN} at (0,0) size 108x461
-          RenderText {#text} at (1,102) size 53x341
-            text run at (1,102) width 341: "PARAGRAPH 1 "
-          RenderBR {BR} at (1,443) size 53x0
-          RenderText {#text} at (56,0) size 53x297
-            text run at (56,0) width 297: "MORE TEXT. "
-          RenderInline {SPAN} at (0,0) size 14x164
-            RenderText {#text} at (88,297) size 14x164
-              text run at (88,297) width 164: "SHOULD NOT BE CENTERED."
+        RenderInline {SPAN} at (0,0) size 108x458
+          RenderText {#text} at (1,102) size 53x337
+            text run at (1,102) width 337: "PARAGRAPH 1 "
+          RenderBR {BR} at (1,438) size 53x1
+          RenderText {#text} at (56,0) size 53x294
+            text run at (56,0) width 294: "MORE TEXT. "
+          RenderInline {SPAN} at (0,0) size 14x165
+            RenderText {#text} at (88,293) size 14x165
+              text run at (88,293) width 164: "SHOULD NOT BE CENTERED."
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (134,0) size 81x584
-        RenderInline {SPAN} at (0,0) size 26x473
+        RenderInline {SPAN} at (0,0) size 26x469
           RenderText {#text} at (49,0) size 26x102
             text run at (49,0) width 102: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} "
-          RenderInline {SPAN} at (0,0) size 53x371
-            RenderText {#text} at (27,102) size 53x341
-              text run at (27,102) width 341: "PARAGRAPH 2 "
-            RenderImage {IMG} at (0,443) size 70x30 [bgcolor=#008000]
+          RenderInline {SPAN} at (0,0) size 53x367
+            RenderText {#text} at (27,102) size 53x337
+              text run at (27,102) width 337: "PARAGRAPH 2 "
+            RenderImage {IMG} at (0,438) size 70x31 [bgcolor=#008000]
             RenderText {#text} at (0,0) size 0x0

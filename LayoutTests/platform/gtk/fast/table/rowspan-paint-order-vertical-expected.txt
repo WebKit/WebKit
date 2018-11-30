@@ -56,5 +56,5 @@ layer at (0,0) size 800x600
                 text run at (6,-3) width 4: " "
           RenderTableRow {TR} at (0,67) size 29x576
             RenderTableCell {TD} at (67,42) size 29x530 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=13]
-              RenderText {#text} at (6,260) size 17x273
-                text run at (6,261) width 272: "Bottom Row Overlaps with the Right Cell!"
+              RenderText {#text} at (5,260) size 18x273
+                text run at (5,261) width 273: "Bottom Row Overlaps with the Right Cell!"

@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 304: "This table below has three hierarchical sections. "
           text run at (304,0) width 383: "Collapsing a section should cause those below it to move up."
       RenderBlock {P} at (0,80) size 784x19
-        RenderText {#text} at (0,0) size 765x17
-          text run at (0,0) width 765: "This works on the latest Windows IE and Mozilla Firefox (Win and Mac) but not on Safari 1.2.3 (v125.9) {or 2.0 (146)}."
+        RenderText {#text} at (0,0) size 764x17
+          text run at (0,0) width 764: "This works on the latest Windows IE and Mozilla Firefox (Win and Mac) but not on Safari 1.2.3 (v125.9) {or 2.0 (146)}."
       RenderBlock {P} at (0,114) size 784x19
         RenderText {#text} at (0,0) size 747x17
           text run at (0,0) width 579: "Note that the second section is collapsed when the page opens and expanding it works fine. "
@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
             text run at (16,2) width 75: " Block One"
         RenderBlock {DIV} at (0,30) size 784x20
           RenderImage {IMG} at (0,0) size 16x16
-          RenderText {#text} at (16,2) size 78x17
-            text run at (16,2) width 78: " Block Two"
+          RenderText {#text} at (16,2) size 77x17
+            text run at (16,2) width 77: " Block Two"
         RenderBlock {DIV} at (0,50) size 784x20
           RenderImage {IMG} at (0,0) size 16x16
           RenderText {#text} at (16,2) size 88x17

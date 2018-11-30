@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 783x53
-          text run at (0,0) width 777: "You should see a single 100x100 green square below. If your browser supports the display of ALT text, you should see the"
+          text run at (0,0) width 773: "You should see a single 100x100 green square below. If your browser supports the display of ALT text, you should see the"
           text run at (0,18) width 246: "word \"Image\" inside the green square. "
           text run at (246,18) width 268: "If you see any red, then the test has failed. "
           text run at (514,18) width 269: "This test is checking to make sure replaced"
