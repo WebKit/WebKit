@@ -83,6 +83,7 @@ WTF_EXTERN_C_END
 @optional
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
 - (BOOL)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token;
+- (void)_clearToken:(id <NSCopying, NSSecureCoding>)token;
 @end
 
 @interface NSURL ()

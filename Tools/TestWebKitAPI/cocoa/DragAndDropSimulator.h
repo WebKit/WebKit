@@ -89,7 +89,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
-- (void)waitForInputSession;
+- (void)ensureInputSession;
 
 @property (nonatomic, readonly) DragAndDropPhase phase;
 @property (nonatomic) BOOL allowsFocusToStartInputSession;

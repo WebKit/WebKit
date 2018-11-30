@@ -166,9 +166,7 @@ bool PageClientImpl::isViewWindowActive()
 
 bool PageClientImpl::isViewFocused()
 {
-    if (isViewInWindow() && ![m_webView _isBackground])
-        return [m_webView _contentViewIsFirstResponder];
-    return [m_webView _isRetainingActiveFocusedState];
+    return (isViewInWindow() && ![m_webView _isBackground] && [m_webView _contentViewIsFirstResponder]) || [m_webView _isRetainingActiveFocusedState];
 }
 
 bool PageClientImpl::isViewVisible()

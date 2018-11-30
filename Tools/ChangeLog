@@ -1,3 +1,54 @@
+2018-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r238635): Dragging a text selection within WKWebView causes the selection highlight to get into a bad state
+        https://bugs.webkit.org/show_bug.cgi?id=192165
+        <rdar://problem/46346682>
+
+        Reviewed by Daniel Bates.
+
+        Fixes 11 API tests that started failing or timing out after r238635. See below for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEditActions.mm:
+        (TestWebKitAPI::webViewForEditActionTesting):
+        (TestWebKitAPI::webViewForEditActionTestingWithPageNamed):
+
+        Ensure that the web view becomes first responder before executing edit actions.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/autofocus-contenteditable.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/contenteditable-and-textarea.html:
+
+        Tweak these tests to allow selected content to overflow the width of the web view. Without this change,
+        ContentEditableToContentEditable and ContentEditableToTextarea will sometimes fail because the content causes
+        the body to scroll horizontally, so we miss the drop destination.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (loadTestPageAndEnsureInputSession):
+
+        Add a new helper to load a test page with a given name, become first responder, and wait until an input session
+        starts. Use this in various drag and drop tests to reduce code duplication.
+
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator initWithWebView:]):
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+        (-[DragAndDropSimulator _advanceProgress]):
+
+        To more accurately emulate UIKit behavior, begin focus preservation when starting a drag, and attempt to clear
+        the focus preservation token when the drag session ends. This allows us to simulate and test the scenario that
+        regressed with r238635.
+
+        (-[DragAndDropSimulator ensureInputSession]):
+        (-[DragAndDropSimulator _webView:didStartInputSession:]):
+        (-[DragAndDropSimulator waitForInputSession]): Deleted.
+
+        Refactored into -ensureInputSession. Instead of assuming that an input session has not yet been started, simply
+        wait for an input session to start if needed.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
+        Add a new SPI declaration.
+
 2018-11-29  Tim Horton  <timothy_horton@apple.com>
 
         Inform clients when editable image attachment backing data changes

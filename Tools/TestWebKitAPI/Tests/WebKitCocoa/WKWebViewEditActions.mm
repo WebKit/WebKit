@@ -78,6 +78,7 @@ static RetainPtr<TestWKWebView> webViewForEditActionTesting(NSString *markup)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadHTMLString:markup];
     [webView _setEditable:YES];
+    [webView becomeFirstResponder];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
     return webView;
 }
@@ -87,6 +88,7 @@ static RetainPtr<TestWKWebView> webViewForEditActionTestingWithPageNamed(NSStrin
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
     [webView synchronouslyLoadTestPageNamed:testPageName];
     [webView _setEditable:YES];
+    [webView becomeFirstResponder];
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
     return webView;
 }
@@ -243,12 +245,11 @@ TEST(WKWebViewEditActions, PasteAsQuotation)
 TEST(WKWebViewEditActions, PasteAndMatchStyle)
 {
     auto source = webViewForEditActionTesting();
-    auto destination = webViewForEditActionTesting(@"<div><br></div>");
-
     [source selectAll:nil];
     [source evaluateJavaScript:@"document.execCommand('bold'); document.execCommand('underline'); document.execCommand('italic')" completionHandler:nil];
     [source _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
 
+    auto destination = webViewForEditActionTesting(@"<div><br></div>");
     [destination _pasteAndMatchStyle:nil];
     [destination selectAll:nil];
     EXPECT_FALSE([destination stringByEvaluatingJavaScript:@"document.queryCommandState('bold')"].boolValue);

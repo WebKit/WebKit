@@ -310,7 +310,7 @@ static NSArray *dragAndDropEventNames()
     RetainPtr<NSMutableArray<_WKAttachment *>> _insertedAttachments;
     RetainPtr<NSMutableArray<_WKAttachment *>> _removedAttachments;
 
-    bool _isDoneWaitingForInputSession;
+    bool _hasStartedInputSession;
     double _currentProgress;
     bool _isDoneWithCurrentRun;
     DragAndDropPhase _phase;
@@ -338,7 +338,6 @@ static NSArray *dragAndDropEventNames()
         _webView = webView;
         _shouldEnsureUIApplication = NO;
         _shouldAllowMoveOperation = YES;
-        _isDoneWaitingForInputSession = true;
         [_webView setUIDelegate:self];
         [_webView _setInputDelegate:self];
     }
@@ -373,6 +372,7 @@ static NSArray *dragAndDropEventNames()
     _remainingAdditionalItemRequestLocationsByProgress = nil;
     _queuedAdditionalItemRequestLocations = adoptNS([[NSMutableArray alloc] init]);
     _liftPreviews = adoptNS([[NSMutableArray alloc] init]);
+    _hasStartedInputSession = false;
 }
 
 - (NSArray *)observedEventNames
@@ -459,8 +459,13 @@ static NSArray *dragAndDropEventNames()
 
     [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidEnd:_dropSession.get()];
 
-    if (_dragSession)
-        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] session:_dragSession.get() didEndWithOperation:operation];
+    if (_dragSession) {
+        auto delegate = [_webView dragInteractionDelegate];
+        [delegate dragInteraction:[_webView dragInteraction] session:_dragSession.get() didEndWithOperation:operation];
+        if ([delegate respondsToSelector:@selector(_clearToken:)])
+            [(id <UITextInputMultiDocument>)delegate _clearToken:nil];
+        [_webView becomeFirstResponder];
+    }
 }
 
 - (void)_enqueuePendingAdditionalItemRequestLocations
@@ -543,7 +548,13 @@ static NSArray *dragAndDropEventNames()
             return;
         }
 
-        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] sessionWillBegin:_dragSession.get()];
+        auto delegate = [_webView dragInteractionDelegate];
+        if ([delegate respondsToSelector:@selector(_preserveFocusWithToken:destructively:)])
+            [(id <UITextInputMultiDocument>)delegate _preserveFocusWithToken:nil destructively:NO];
+
+        [_webView resignFirstResponder];
+
+        [delegate dragInteraction:[_webView dragInteraction] sessionWillBegin:_dragSession.get()];
 
         RetainPtr<WKWebView> retainedWebView = _webView;
         dispatch_async(dispatch_get_main_queue(), ^() {
@@ -618,14 +629,9 @@ static NSArray *dragAndDropEventNames()
     return _lastKnownDragCaretRect;
 }
 
-- (void)waitForInputSession
+- (void)ensureInputSession
 {
-    _isDoneWaitingForInputSession = false;
-
-    // Waiting for an input session implies that we should allow input sessions to begin.
-    self.allowsFocusToStartInputSession = YES;
-
-    Util::run(&_isDoneWaitingForInputSession);
+    Util::run(&_hasStartedInputSession);
 }
 
 - (NSArray<_WKAttachment *> *)insertedAttachments
@@ -707,7 +713,7 @@ static NSArray *dragAndDropEventNames()
 
 - (void)_webView:(WKWebView *)webView didStartInputSession:(id <_WKFormInputSession>)inputSession
 {
-    _isDoneWaitingForInputSession = true;
+    _hasStartedInputSession = true;
 }
 
 @end

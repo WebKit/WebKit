@@ -1,3 +1,26 @@
+2018-11-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r238635): Dragging a text selection within WKWebView causes the selection highlight to get into a bad state
+        https://bugs.webkit.org/show_bug.cgi?id=192165
+        <rdar://problem/46346682>
+
+        Reviewed by Daniel Bates.
+
+        Fixes a bug in PageClientImpl::isViewFocused. Consider the following scenario:
+        1. WKWebView is hosted within the view hierarchy
+        2. First responder is *not* WKContentView
+        3. The active focus retain count is nonzero
+
+        Before r238635, we would return true, due to condition (3). However, after r238635, we only consider whether the
+        first responder is WKContentView, since the web view is in the view hierarchy. This breaks scenarios where
+        WebKit or UIKit attempts to retain focus and later restore the content view to be the first responder (an
+        example of this is dragging a text selection between editable elements in the same web view).
+
+        To fix this, simply bail early and return true if focus is being retained.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::isViewFocused):
+
 2018-11-29  Tim Horton  <timothy_horton@apple.com>
 
         Inform clients when editable image attachment backing data changes
