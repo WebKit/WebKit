@@ -38,7 +38,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
     {
         this._pendingResponses = new Map;
         this._agents = {};
-        this._deferredScripts = [];
+        this._deferredCallbacks = [];
         this._target = null;
     }
 
@@ -72,14 +72,14 @@ InspectorBackend.Connection = class InspectorBackendConnection
             this._dispatchEvent(messageObject);
     }
 
-    runAfterPendingDispatches(script)
+    runAfterPendingDispatches(callback)
     {
-        console.assert(typeof script === "function");
+        console.assert(typeof callback === "function");
 
         if (!this._pendingResponses.size)
-            script.call(this);
+            callback.call(this);
         else
-            this._deferredScripts.push(script);
+            this._deferredCallbacks.push(callback);
     }
 
     // Protected
@@ -130,7 +130,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         for (let tracer of InspectorBackend.activeTracers)
             tracer.logDidHandleResponse(this, messageObject, {rtt: roundTripTime, dispatch: processingTime});
 
-        if (this._deferredScripts.length && !this._pendingResponses.size)
+        if (this._deferredCallbacks.length && !this._pendingResponses.size)
             this._flushPendingScripts();
     }
 
@@ -267,8 +267,8 @@ InspectorBackend.Connection = class InspectorBackendConnection
     {
         console.assert(this._pendingResponses.size === 0);
 
-        let scriptsToRun = this._deferredScripts;
-        this._deferredScripts = [];
+        let scriptsToRun = this._deferredCallbacks;
+        this._deferredCallbacks = [];
         for (let script of scriptsToRun)
             script.call(this);
     }
