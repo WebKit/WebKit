@@ -56,11 +56,43 @@ struct _BrowserTab {
     GtkWidget *titleCloseButton;
 };
 
+static GHashTable *userMediaPermissionGrantedOrigins;
 struct _BrowserTabClass {
     GtkBoxClass parent;
 };
 
 G_DEFINE_TYPE(BrowserTab, browser_tab, GTK_TYPE_BOX)
+
+typedef struct {
+    WebKitPermissionRequest *request;
+    gchar *origin;
+} PermissionRequestData;
+
+static PermissionRequestData *permissionRequestDataNew(WebKitPermissionRequest *request, gchar *origin)
+{
+    PermissionRequestData *data = g_malloc0(sizeof(PermissionRequestData));
+
+    data->request = g_object_ref(request);
+    data->origin = origin;
+
+    return data;
+}
+
+static void permissionRequestDataFree(PermissionRequestData *data)
+{
+    g_clear_object(&data->request);
+    g_clear_pointer(&data->origin, g_free);
+    g_free(data);
+}
+
+static gchar *getWebViewOrigin(WebKitWebView *webView)
+{
+    WebKitSecurityOrigin *origin = webkit_security_origin_new_for_uri(webkit_web_view_get_uri(webView));
+    gchar *originStr = webkit_security_origin_to_string(origin);
+    webkit_security_origin_unref(origin);
+
+    return originStr;
+}
 
 static void titleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserTab *tab)
 {
@@ -172,19 +204,25 @@ static gboolean loadFailedWithTLSerrors(WebKitWebView *webView, const char *fail
     return TRUE;
 }
 
-static void permissionRequestDialogResponse(GtkWidget *dialog, gint response, WebKitPermissionRequest *request)
+static void permissionRequestDialogResponse(GtkWidget *dialog, gint response, PermissionRequestData *requestData)
 {
     switch (response) {
     case GTK_RESPONSE_YES:
-        webkit_permission_request_allow(request);
+        if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(requestData->request))
+            g_hash_table_add(userMediaPermissionGrantedOrigins, g_strdup(requestData->origin));
+
+        webkit_permission_request_allow(requestData->request);
         break;
     default:
-        webkit_permission_request_deny(request);
+        if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(requestData->request))
+            g_hash_table_remove(userMediaPermissionGrantedOrigins, requestData->origin);
+
+        webkit_permission_request_deny(requestData->request);
         break;
     }
 
     gtk_widget_destroy(dialog);
-    g_object_unref(request);
+    g_clear_pointer(&requestData, permissionRequestDataFree);
 }
 
 static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermissionRequest *request, BrowserTab *tab)
@@ -215,12 +253,24 @@ static gboolean decidePermissionRequest(WebKitWebView *webView, WebKitPermission
         title = "Media plugin missing request";
         text = g_strdup_printf("The media backend was unable to find a plugin to play the requested media:\n%s.\nAllow to search and install the missing plugin?",
             webkit_install_missing_media_plugins_permission_request_get_description(WEBKIT_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request)));
-    } else
+    } else if (WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST(request)) {
+        char* origin = getWebViewOrigin(webView);
+        if (g_hash_table_contains(userMediaPermissionGrantedOrigins, origin)) {
+            webkit_permission_request_allow(request);
+            g_free(origin);
+            return TRUE;
+        }
+        g_free(origin);
         return FALSE;
+    } else {
+        g_print("%s request not handled\n", G_OBJECT_TYPE_NAME(request));
+        return FALSE;
+    }
 
     GtkWidget *dialog = createInfoBarQuestionMessage(title, text);
     g_free(text);
-    g_signal_connect(dialog, "response", G_CALLBACK(permissionRequestDialogResponse), g_object_ref(request));
+    g_signal_connect(dialog, "response", G_CALLBACK(permissionRequestDialogResponse), permissionRequestDataNew(request,
+        getWebViewOrigin(webView)));
 
     gtk_box_pack_start(GTK_BOX(tab), dialog, FALSE, FALSE, 0);
     gtk_box_reorder_child(GTK_BOX(tab), dialog, 0);
@@ -399,6 +449,9 @@ static void browser_tab_class_init(BrowserTabClass *klass)
     gobjectClass->constructed = browserTabConstructed;
     gobjectClass->set_property = browserTabSetProperty;
     gobjectClass->finalize = browserTabFinalize;
+
+    if (!userMediaPermissionGrantedOrigins)
+        userMediaPermissionGrantedOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
     g_object_class_install_property(
         gobjectClass,

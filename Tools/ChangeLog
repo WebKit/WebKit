@@ -1,3 +1,17 @@
+2018-11-30  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GTK][MiniBrowser] Handle Device Info permission requests
+        https://bugs.webkit.org/show_bug.cgi?id=191585
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (permissionRequestDataNew):
+        (permissionRequestDataFree):
+        (permissionRequestDialogResponse):
+        (decidePermissionRequest):
+        (browserTabConstructed):
+
 2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Stop running tests without complex text enforced
