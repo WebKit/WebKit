@@ -1,5 +1,17 @@
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Geometry::inFlowNonReplacedHeightAndMargin should check for empty inline formatting context.
+        https://bugs.webkit.org/show_bug.cgi?id=192215
+
+        Reviewed by Antti Koivisto.
+
+        Check if the inline formatting context actually has any lines.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Do not use computed display box values for border and padding
         https://bugs.webkit.org/show_bug.cgi?id=192214
 
