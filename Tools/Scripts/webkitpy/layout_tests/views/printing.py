@@ -113,12 +113,11 @@ class Printer(object):
     def print_workers_and_shards(self, num_workers, num_shards):
         driver_name = self._port.driver_name()
 
-        device_suffix = ' for device "{}"'.format(self._options.device_class) if self._options.device_class else ''
         if num_workers == 1:
-            self._print_default('Running 1 {}{}.'.format(driver_name, device_suffix))
+            self._print_default('Running 1 {}.'.format(driver_name))
             self._print_debug('({}).'.format(grammar.pluralize(num_shards, "shard")))
         else:
-            self._print_default('Running {} in parallel{}.'.format(grammar.pluralize(num_workers, driver_name), device_suffix))
+            self._print_default('Running {} in parallel.'.format(grammar.pluralize(num_workers, driver_name)))
             self._print_debug('({} shards).'.format(num_shards))
         self._print_default('')
 

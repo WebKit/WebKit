@@ -37,7 +37,7 @@ _log = logging.getLogger(__name__)
 class DevicePort(DarwinPort):
 
     DEVICE_MANAGER = None
-    DEFAULT_DEVICE_CLASS = None
+    DEFAULT_DEVICE_TYPE = None
     NO_DEVICE_MANAGER = 'No device manager found for port'
 
     def __init__(self, *args, **kwargs):
@@ -87,9 +87,6 @@ class DevicePort(DarwinPort):
             return []
         return self.DEVICE_MANAGER.INITIALIZED_DEVICES
 
-    def _create_devices(self, device_class):
-        raise NotImplementedError
-
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
         return ['--sdk', self.SDK] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
@@ -109,11 +106,17 @@ class DevicePort(DarwinPort):
             if not device.install_dylibs(self._build_path()):
                 raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
 
-    def setup_test_run(self, device_class=None):
+    def setup_test_run(self, device_type=None):
         if not self.DEVICE_MANAGER:
             raise RuntimeError(self.NO_DEVICE_MANAGER)
 
-        device_type = DeviceType.from_string(device_class if device_class else self.DEFAULT_DEVICE_CLASS, self.device_version())
+        device_type = device_type if device_type else self.DEFAULT_DEVICE_TYPE
+        device_type = DeviceType(
+            hardware_family=device_type.hardware_family,
+            hardware_type=device_type.hardware_type,
+            software_version=self.device_version(),
+            software_variant=device_type.software_variant,
+        )
         _log.debug('\nCreating devices for {}'.format(device_type))
 
         request = DeviceRequest(

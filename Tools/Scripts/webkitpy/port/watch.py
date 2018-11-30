@@ -27,6 +27,7 @@ from webkitpy.common.version import Version
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device_port import DevicePort
+from webkitpy.xcode.device_type import DeviceType
 
 
 _log = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class WatchPort(DevicePort):
     port_name = 'watchos'
 
     CURRENT_VERSION = Version(5)
-    DEFAULT_DEVICE_CLASS = 'Apple Watch'
+    DEFAULT_DEVICE_TYPE = DeviceType(software_variant='watchOS')
 
     def __init__(self, *args, **kwargs):
         super(WatchPort, self).__init__(*args, **kwargs)

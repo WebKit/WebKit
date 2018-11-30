@@ -1,3 +1,53 @@
+2018-11-30  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use DeviceType instead of str to represent device class
+        https://bugs.webkit.org/show_bug.cgi?id=192160
+        <rdar://problem/46344845>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._custom_device_for_test): Use DeviceTypes instead of strings to represent device type.
+        (Manager._set_up_run): Do not set _options.device_class, use device_type instead of device_class.
+        (Manager.run): Use device_type instead of device_class.
+        (Manager._print_expectations_for_subset): Ditto.
+        (Manager.print_expectations): Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_uses_custom_device): Use DeviceType and actual device definition.
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_workers_and_shards): Outputting the device suffix doesn't really help, and means
+        device type needs to be passed around.
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.setup_test_run): Use device_type instead of device_class.
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.setup_test_run): Use device_type instead of device_class.
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort):
+        (DevicePort.setup_test_run): Receive device_type as DeviceType object.
+        (DevicePort._create_devices): Deleted.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_test_run): Use device_type instead of device_class.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.__init__): Deleted.
+        (IOSSimulatorPort._set_device_class): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/watch.py:
+        (WatchPort):
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort):
+        (WatchSimulatorPort.__init__): Deleted.
+        (WatchSimulatorPort._set_device_class): Deleted.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_test_run): Use device_type instead of device_class.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._disambiguate_device_type): Using the existing devices for this is
+        a problem if no such device exists yet. Use the _device_identifier_to_name dictionary instead
+        since this should have hardware types in the device names.
+
 2018-11-30  David Quesada  <david_quesada@apple.com>
 
         -[WKProcessPool _downloadURLRequest:] should allow specifying the initiating web view

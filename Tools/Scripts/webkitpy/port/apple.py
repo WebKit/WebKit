@@ -84,7 +84,7 @@ class ApplePort(Port):
         port_name = port_name.replace('-wk2', '')
         self._version = self._strip_port_name_prefix(port_name)
 
-    def setup_test_run(self, device_class=None):
+    def setup_test_run(self, device_type=None):
         self._crash_logs_to_skip_for_host[self.host] = self.host.filesystem.files_under(self.path_to_crash_logs())
 
     def default_timeout_ms(self):

@@ -217,9 +217,10 @@ class SimulatedDeviceManager(object):
 
         if full_device_type.hardware_type is None:
             # Again, we use the existing devices to determine a legal hardware type
-            for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
-                if device.platform_device.device_type == full_device_type:
-                    full_device_type.hardware_type = device.platform_device.device_type.hardware_type
+            for name in SimulatedDeviceManager._device_identifier_to_name.itervalues():
+                type_from_name = DeviceType.from_string(name)
+                if type_from_name == full_device_type:
+                    full_device_type.hardware_type = type_from_name.hardware_type
                     break
 
         full_device_type.check_consistency()

@@ -42,16 +42,9 @@ class IOSSimulatorPort(IOSPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
-    DEFAULT_DEVICE_CLASS = 'iPhone SE'
-    CUSTOM_DEVICE_CLASSES = ['iPad', 'iPhone 7']
+    DEFAULT_DEVICE_TYPE = DeviceType(hardware_family='iPhone', hardware_type='SE')
+    CUSTOM_DEVICE_TYPES = [DeviceType(hardware_family='iPad'), DeviceType(hardware_family='iPhone', hardware_type='7')]
     SDK = apple_additions().get_sdk('iphonesimulator') if apple_additions() else 'iphonesimulator'
-
-    def __init__(self, host, port_name, **kwargs):
-        super(IOSSimulatorPort, self).__init__(host, port_name, **kwargs)
-
-        optional_device_class = self.get_option('device_class')
-        self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
-        _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
     @staticmethod
     def _version_from_name(name):
@@ -77,9 +70,6 @@ class IOSSimulatorPort(IOSPort):
             if num_booted_sims:
                 return num_booted_sims
         return SimulatedDeviceManager.max_supported_simulators(self.host)
-
-    def _set_device_class(self, device_class):
-        self._device_class = device_class if device_class else self.DEFAULT_DEVICE_CLASS
 
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()

@@ -55,6 +55,7 @@ from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.tool.grammar import pluralize
+from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
 
@@ -103,10 +104,14 @@ class Manager(object):
         return self.web_platform_test_subdir in test or self.webkit_specific_web_platform_test_subdir in test
 
     def _custom_device_for_test(self, test):
-        for device_class in self._port.CUSTOM_DEVICE_CLASSES:
-            directory_suffix = device_class.lower().replace(' ', '') + self._port.TEST_PATH_SEPARATOR
-            if directory_suffix in test:
-                return device_class
+        # FIXME: Use available devices instead of CUSTOM_DEVICE_TYPES https://bugs.webkit.org/show_bug.cgi?id=192161
+        # FIXME: This is a terrible way to do device-specific expected results https://bugs.webkit.org/show_bug.cgi?id=192162
+        for device_type in self._port.CUSTOM_DEVICE_TYPES:
+            if device_type.hardware_family and device_type.hardware_family.lower() + self._port.TEST_PATH_SEPARATOR in test:
+                return device_type
+            if device_type.hardware_family and device_type.hardware_type and \
+                (device_type.hardware_family + device_type.hardware_type).lower().replace(' ', '') + self._port.TEST_PATH_SEPARATOR in test:
+                return device_type
         return None
 
     def _http_tests(self, test_names):
@@ -159,9 +164,7 @@ class Manager(object):
         worker_count = self._runner.get_worker_count(test_inputs, int(self._options.child_processes))
         self._options.child_processes = worker_count
 
-    def _set_up_run(self, test_names, device_class=None):
-        self._options.device_class = device_class
-
+    def _set_up_run(self, test_names, device_type=None):
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         self._printer.write_update("Starting helper ...")
@@ -178,7 +181,7 @@ class Manager(object):
                 self._port.stop_helper()
                 return False
 
-        self._port.setup_test_run(self._options.device_class)
+        self._port.setup_test_run(device_type)
         return True
 
     def run(self, args):
@@ -215,8 +218,8 @@ class Manager(object):
                 default_device_tests.append(test_file)
 
         if custom_device_tests:
-            for device_class in custom_device_tests:
-                _log.debug('{} tests use device {}'.format(len(custom_device_tests[device_class]), device_class))
+            for device_type, tests in custom_device_tests.iteritems():
+                _log.debug('{} tests use device {}'.format(len(tests), device_type))
 
         initial_results = None
         retry_results = None
@@ -250,13 +253,13 @@ class Manager(object):
 
         # Only use a single worker for custom device classes
         self._options.child_processes = 1
-        for device_class in custom_device_tests:
-            device_tests = custom_device_tests[device_class]
+        for device_type in custom_device_tests:
+            device_tests = custom_device_tests[device_type]
             if device_tests:
                 _log.info('')
-                _log.info('Running %s for %s', pluralize(len(device_tests), "test"), device_class)
+                _log.info('Running %s for %s', pluralize(len(device_tests), "test"), device_type)
                 _log.info('')
-                if not self._set_up_run(device_tests, device_class):
+                if not self._set_up_run(device_tests, device_type):
                     return test_run_results.RunDetails(exit_code=-1)
 
                 device_initial_results, device_retry_results, device_enabled_pixel_tests_in_retry = self._run_test_subset(device_tests, tests_to_skip)
@@ -544,7 +547,7 @@ class Manager(object):
         line = self._expectations.model().get_expectation_line(test)
         print(format_string.format(test, line.expected_behavior, self._expectations.readable_filename_and_line_number(line), line.original_string or ''))
     
-    def _print_expectations_for_subset(self, device_class, test_col_width, tests_to_run, tests_to_skip={}):
+    def _print_expectations_for_subset(self, device_type, test_col_width, tests_to_run, tests_to_skip={}):
         format_string = '{{:{width}}} {{}} {{}} {{}}'.format(width=test_col_width)
         if tests_to_skip:
             print('')
@@ -553,7 +556,7 @@ class Manager(object):
                 self._print_expectation_line_for_test(format_string, test)
 
         print('')
-        print('Tests to run{} ({})'.format(' for ' + device_class if device_class else '', len(tests_to_run)))
+        print('Tests to run{} ({})'.format(' for ' + str(device_type) if device_type else '', len(tests_to_run)))
         for test in sorted(tests_to_run):
             self._print_expectation_line_for_test(format_string, test)
 
@@ -586,13 +589,12 @@ class Manager(object):
                 default_device_tests.append(test_file)
 
         if custom_device_tests:
-            for device_class in custom_device_tests:
-                _log.debug('{} tests use device {}'.format(len(custom_device_tests[device_class]), device_class))
+            for device_type, tests in custom_device_tests.iteritems():
+                _log.debug('{} tests use device {}'.format(len(tests), device_type))
 
         self._print_expectations_for_subset(None, test_col_width, tests_to_run, tests_to_skip)
 
-        for device_class in custom_device_tests:
-            device_tests = custom_device_tests[device_class]
-            self._print_expectations_for_subset(device_class, test_col_width, device_tests)
+        for device_type, tests in custom_device_tests.iteritems():
+            self._print_expectations_for_subset(device_type, test_col_width, tests)
 
         return 0

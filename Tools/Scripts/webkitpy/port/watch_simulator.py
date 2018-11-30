@@ -40,15 +40,8 @@ class WatchSimulatorPort(WatchPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
-    DEFAULT_DEVICE_CLASS = 'Apple Watch Series 3 - 42mm'
-    CUSTOM_DEVICE_CLASSES = []
+    DEFAULT_DEVICE_TYPE = DeviceType(hardware_family='Apple Watch', hardware_type='Series 3 - 42mm')
     SDK = apple_additions().get_sdk('watchsimulator') if apple_additions() else 'watchsimulator'
-
-    def __init__(self, *args, **kwargs):
-        super(WatchSimulatorPort, self).__init__(*args, **kwargs)
-
-        self._set_device_class(self.get_option('device_class'))
-        _log.debug('WatchSimulatorPort _device_class is %s', self._device_class)
 
     def architecture(self):
         return self.DEFAULT_ARCHITECTURE
@@ -90,9 +83,6 @@ class WatchSimulatorPort(WatchPort):
             if num_booted_sims:
                 return num_booted_sims
         return SimulatedDeviceManager.max_supported_simulators(self.host)
-
-    def _set_device_class(self, device_class):
-        self._device_class = device_class or self.DEFAULT_DEVICE_CLASS
 
     def operating_system(self):
         return 'watchos-simulator'

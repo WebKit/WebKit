@@ -81,7 +81,7 @@ class Port(object):
 
     DEFAULT_ARCHITECTURE = 'x86'
 
-    CUSTOM_DEVICE_CLASSES = []
+    CUSTOM_DEVICE_TYPES = []
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
@@ -879,7 +879,7 @@ class Port(object):
     def wpt_manifest_file(self):
         return self._build_path('web-platform-tests-manifest.json')
 
-    def setup_test_run(self, device_class=None):
+    def setup_test_run(self, device_type=None):
         """Perform port-specific work at the beginning of a test run."""
         pass
 
