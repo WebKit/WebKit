@@ -35,6 +35,7 @@
 #include "GraphicsLayerClient.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "ScrollableArea.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/Function.h>
@@ -312,6 +313,10 @@ public:
     // Offset is origin of the renderer minus origin of the graphics layer.
     FloatSize offsetFromRenderer() const { return m_offsetFromRenderer; }
     void setOffsetFromRenderer(const FloatSize&, ShouldSetNeedsDisplay = SetNeedsDisplay);
+
+    // Scroll offset of the content layer inside its scrolling parent layer.
+    ScrollOffset scrollOffset() const { return m_scrollOffset; }
+    void setScrollOffset(const ScrollOffset&, ShouldSetNeedsDisplay = SetNeedsDisplay);
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
@@ -651,6 +656,9 @@ protected:
     // Offset from the owning renderer
     FloatSize m_offsetFromRenderer;
     
+    // Scroll offset of the content layer inside its scrolling parent layer.
+    ScrollOffset m_scrollOffset;
+
     // Position is relative to the parent GraphicsLayer
     FloatPoint m_position;
 

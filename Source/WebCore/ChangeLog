@@ -1,3 +1,36 @@
+2018-11-29  Frederic Wang  <fwang@igalia.com>
+
+        Separate paint and scroll offsets for RenderLayerBacking::m_scrollingContentsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=183040
+
+        Currently, scroll offset of RenderLayerBacking::m_scrollingContentsLayer is stored in the
+        GraphicsLayer::m_offsetFromRenderer member used for paint offset. This patch separates these
+        two concept by introducing a new GraphicsLayer::m_scrollOffset for the scroll offset. This
+        makes the API a little bit cleaner, the code easier to understand and might avoid unnecessary
+        repaints in composited scroll.
+
+        Reviewed by Simon Fraser.
+
+        No new tests, already covered by existing tests.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setScrollOffset): Setter function to update the scroll offset
+        of the content layer inside its scrolling parent layer. Ask a repaint if it has changed and
+        is requested by the caller.
+        (WebCore::GraphicsLayer::paintGraphicsLayerContents): Take into account the scroll offset
+        when painting.
+        (WebCore::GraphicsLayer::dumpProperties const): Dump the scroll offset property.
+        * platform/graphics/GraphicsLayer.h: Include ScrollableArea for the ScrollOffset typedef.
+        Add member for the scroll offset of the content layer inside its scrolling parent layer.
+        (WebCore::GraphicsLayer::scrollOffset const): Getter function.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry): Do not include the scroll offset in the
+        paint offset of m_scrollingContentsLayer since it is now taken into account in
+        paintGraphicsLayerContents. Update the scroll offset of m_scrollingContentsLayer separately.
+        Leave the paint offset of m_foregroundLayer unchanged.
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect): Take into account the scroll
+        offset of m_scrollingContentsLayer when calculating the dirty rect.
+
 2018-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow scrolling layers need to be self-painting

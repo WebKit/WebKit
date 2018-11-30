@@ -1,3 +1,23 @@
+2018-11-29  Frederic Wang  <fwang@igalia.com>
+
+        Separate paint and scroll offsets for RenderLayerBacking::m_scrollingContentsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=183040
+
+        Reviewed by Simon Fraser.
+
+        Update expectations containing layer trees of RenderLayerBacking::m_scrollingContentsLayer, to separate offsetFromRenderer and
+        scrollOffset. We have OLD offsetFromRenderer = NEW offsetFromRenderer - scrollOffset.
+
+        * compositing/ios/overflow-scroll-touch-tiles-expected.txt:
+        * fast/scrolling/ios/overflow-scroll-touch-expected.txt:
+        * fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt:
+        * platform/ios/compositing/overflow/scrolling-without-painting-expected.txt:
+        * platform/ios/compositing/overflow/textarea-scroll-touch-expected.txt:
+        * platform/ios/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ios/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ios/fast/scrolling/ios/textarea-scroll-touch-expected.txt:
+
 2018-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Overflow scrolling layers need to be self-painting

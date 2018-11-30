@@ -18,7 +18,8 @@
               (bounds 300.00 400.00)
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=1 height=-29)
+                  (offsetFromRenderer width=1 height=1)
+                  (scrollOffset (0,30))
                   (bounds 300.00 900.00)
                   (drawsContent 1)
                   (children 1

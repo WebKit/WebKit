@@ -62,7 +62,8 @@
               (bounds 400.00 300.00)
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=2 height=-238)
+                  (offsetFromRenderer width=2 height=2)
+                  (scrollOffset (0,240))
                   (bounds 400.00 2002.00)
                   (usingTiledLayer 1)
                   (drawsContent 1)

@@ -456,6 +456,18 @@ void GraphicsLayer::setOffsetFromRenderer(const FloatSize& offset, ShouldSetNeed
         setNeedsDisplay();
 }
 
+void GraphicsLayer::setScrollOffset(const ScrollOffset& offset, ShouldSetNeedsDisplay shouldSetNeedsDisplay)
+{
+    if (offset == m_scrollOffset)
+        return;
+
+    m_scrollOffset = offset;
+
+    // If the compositing layer offset changes, we need to repaint.
+    if (shouldSetNeedsDisplay == SetNeedsDisplay)
+        setNeedsDisplay();
+}
+
 void GraphicsLayer::setSize(const FloatSize& size)
 {
     if (size == m_size)
@@ -474,7 +486,7 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
 
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
-    FloatSize offset = offsetFromRenderer();
+    FloatSize offset = offsetFromRenderer() - toFloatSize(scrollOffset());
     context.translate(-offset);
 
     FloatRect clipRect(clip);
@@ -779,6 +791,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
     TextStream::IndentScope indentScope(ts);
     if (!m_offsetFromRenderer.isZero())
         ts << indent << "(offsetFromRenderer " << m_offsetFromRenderer << ")\n";
+
+    if (!m_scrollOffset.isZero())
+        ts << indent << "(scrollOffset " << m_scrollOffset << ")\n";
 
     if (m_position != FloatPoint())
         ts << indent << "(position " << m_position.x() << " " << m_position.y() << ")\n";
