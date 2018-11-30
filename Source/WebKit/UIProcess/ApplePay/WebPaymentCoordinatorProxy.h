@@ -33,6 +33,10 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPaymentCoordinatorProxyAdditions.h>
+#endif
+
 namespace IPC {
 class DataReference;
 }
@@ -149,6 +153,13 @@ private:
     uint64_t m_showPaymentUIRequestSeed { 0 };
     RetainPtr<NSWindow> m_sheetWindow;
     RetainPtr<NSObject *> m_sheetWindowWillCloseObserver;
+#endif
+    
+#if defined(WEBPAYMENTCOORDINATORPROXY_ADDITIONS)
+WEBPAYMENTCOORDINATORPROXY_ADDITIONS
+#undef WEBPAYMENTCOORDINATORPROXY_ADDITIONS
+#else
+    void finishConstruction(WebPaymentCoordinatorProxy&) { }
 #endif
 };
 

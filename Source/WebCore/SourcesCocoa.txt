@@ -213,6 +213,7 @@ platform/cocoa/ThemeCocoa.mm
 platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/VideoFullscreenModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
+platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
 
 platform/gamepad/cocoa/GameControllerGamepad.mm
