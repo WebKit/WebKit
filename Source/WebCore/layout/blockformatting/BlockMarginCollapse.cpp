@@ -36,6 +36,39 @@
 namespace WebCore {
 namespace Layout {
 
+static bool hasBorder(const BorderValue& borderValue)
+{
+    if (borderValue.style() == BorderStyle::None || borderValue.style() == BorderStyle::Hidden)
+        return false;
+    return !!borderValue.width();
+}
+
+static bool hasPadding(const Length& paddingValue)
+{
+    // FIXME: Check if percent value needs to be resolved.
+    return !paddingValue.isZero();
+}
+
+static bool hasBorderBefore(const Box& layoutBox)
+{
+    return hasBorder(layoutBox.style().borderBefore());
+}
+
+static bool hasBorderAfter(const Box& layoutBox)
+{
+    return hasBorder(layoutBox.style().borderAfter());
+}
+
+static bool hasPaddingBefore(const Box& layoutBox)
+{
+    return hasPadding(layoutBox.style().paddingBefore());
+}
+
+static bool hasPaddingAfter(const Box& layoutBox)
+{
+    return hasPadding(layoutBox.style().paddingAfter());
+}
+
 static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidateMarginValue)
 {
     if (!candidateMarginValue)
@@ -94,13 +127,13 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithP
     if (layoutBox.isFloatingOrOutOfFlowPositioned())
         return false;
 
-    // We never margin collapse the initial containing block.
-    ASSERT(layoutBox.parent());
-    auto& parent = *layoutBox.parent();
     // Only the first inlflow child collapses with parent.
     if (layoutBox.previousInFlowSibling())
         return false;
 
+    // We never margin collapse the initial containing block.
+    ASSERT(layoutBox.parent());
+    auto& parent = *layoutBox.parent();
     if (parent.establishesBlockFormattingContext())
         return false;
 
@@ -108,11 +141,10 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithP
     if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    auto& parentDisplayBox = layoutState.displayBoxForLayoutBox(parent);
-    if (parentDisplayBox.borderTop())
+    if (hasBorderBefore(parent))
         return false;
 
-    if (parentDisplayBox.paddingTop().value_or(0))
+    if (hasPaddingBefore(parent))
         return false;
 
     if (BlockFormattingContext::Quirks::shouldIgnoreMarginTop(layoutState, layoutBox))
@@ -121,17 +153,15 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithP
     return true;
 }
 
-static bool isMarginBottomCollapsedThrough(const LayoutState& layoutState, const Box& layoutBox)
+static bool isMarginBottomCollapsedThrough(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
     // If the top and bottom margins of a box are adjoining, then it is possible for margins to collapse through it.
-    auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-
-    if (displayBox.borderTop() || displayBox.borderBottom())
+    if (hasBorderBefore(layoutBox) || hasBorderAfter(layoutBox))
         return false;
 
-    if (displayBox.paddingTop().value_or(0) || displayBox.paddingBottom().value_or(0))
+    if (hasPaddingBefore(layoutBox) || hasPaddingAfter(layoutBox))
         return false;
 
     if (!layoutBox.style().height().isAuto() || !layoutBox.style().minHeight().isAuto())
@@ -219,7 +249,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginTop(const Lay
         return 0;
 
     if (!isMarginTopCollapsedWithSibling(layoutBox)) {
-        if (!isMarginBottomCollapsedThrough(layoutState, layoutBox))
+        if (!isMarginBottomCollapsedThrough(layoutBox))
             return nonCollapsedMarginTop(layoutState, layoutBox);
         // Compute the collapsed through value.
         auto marginTop = nonCollapsedMarginTop(layoutState, layoutBox);
@@ -246,10 +276,10 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBottom(const 
     ASSERT(layoutBox.isBlockLevelBox());
 
     // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    if (isMarginBottomCollapsedWithParent(layoutState, layoutBox))
+    if (isMarginBottomCollapsedWithParent(layoutBox))
         return 0;
 
-    if (isMarginBottomCollapsedThrough(layoutState, layoutBox))
+    if (isMarginBottomCollapsedThrough(layoutBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.
@@ -263,7 +293,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBottom(const 
     return nonCollapsedMarginBottom(layoutState, layoutBox);
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent(const Box& layoutBox)
 {
     // last inflow box to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -275,7 +305,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     if (layoutBox.isFloatingOrOutOfFlowPositioned())
         return false;
 
-    if (isMarginBottomCollapsedThrough(layoutState, layoutBox))
+    if (isMarginBottomCollapsedThrough(layoutBox))
         return false;
 
     // We never margin collapse the initial containing block.
@@ -292,11 +322,10 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     if (parent.isDocumentBox() || parent.isInitialContainingBlock())
         return false;
 
-    auto& parentDisplayBox = layoutState.displayBoxForLayoutBox(parent);
-    if (parentDisplayBox.borderTop())
+    if (hasBorderBefore(parent))
         return false;
 
-    if (parentDisplayBox.paddingTop().value_or(0))
+    if (hasPaddingBefore(parent))
         return false;
 
     if (!parent.style().height().isAuto())
@@ -324,7 +353,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBott
 
     // FIXME: Check for collapsed through margin.
     auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
-    if (!isMarginBottomCollapsedWithParent(layoutState, lastInFlowChild))
+    if (!isMarginBottomCollapsedWithParent(lastInFlowChild))
         return 0;
 
     // Collect collapsed margin bottom recursively.

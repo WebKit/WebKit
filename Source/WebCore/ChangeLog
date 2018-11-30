@@ -1,3 +1,36 @@
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Do not use computed display box values for border and padding
+        https://bugs.webkit.org/show_bug.cgi?id=192214
+
+        Reviewed by Antti Koivisto.
+
+        Border and padding values are not necessarily computed yet when we try to estimate the margin top value. Estimating margin top is required
+        to be able to place floats (vertically) sooner than we would compute the final vertical position for a regular block box.
+
+        <body><div style="float: left"></div><div><div style="margin: 10px;"></div></div>
+
+        In the above example, to estimate a final vertical position of the floating box, we need to know whether the nested div's margin is collapsed
+        all the way up to the body. However in order to find it out we need to check for borders and paddings (they stop margin collapsing).
+        At the time when the floating box is being laied out, those <div> block boxes are still far down in the layout queue.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::hasBorder):
+        (WebCore::Layout::hasPadding):
+        (WebCore::Layout::hasBorderBefore):
+        (WebCore::Layout::hasBorderAfter):
+        (WebCore::Layout::hasPaddingBefore):
+        (WebCore::Layout::hasPaddingAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::isMarginBottomCollapsedThrough):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginTop):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBottom):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild):
+
 2018-11-29  Frederic Wang  <fwang@igalia.com>
 
         Separate paint and scroll offsets for RenderLayerBacking::m_scrollingContentsLayer

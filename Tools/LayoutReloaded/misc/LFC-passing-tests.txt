@@ -140,3 +140,4 @@ fast/block/positioning/046.html
 fast/block/positioning/049.html
 fast/block/positioning/052.html
 fast/block/positioning/054.html
+fast/block/inside-inlines/basic-float-intrusion.html
