@@ -1,3 +1,14 @@
+2018-11-30  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We are sometimes swapping processes even though there is an opened window with an opener link to us
+        https://bugs.webkit.org/show_bug.cgi?id=192242
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO

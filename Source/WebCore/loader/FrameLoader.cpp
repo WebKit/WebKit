@@ -1358,9 +1358,6 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
 
     NavigationAction action { frameLoadRequest.requester(), request, frameLoadRequest.initiatedByMainFrame(), newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
-    if (m_frame.page() && m_frame.page()->openedViaWindowOpenWithOpener())
-        action.setOpenedViaWindowOpenWithOpener();
-    action.setHasOpenedFrames(!m_openedFrames.isEmpty());
     action.setLockHistory(lockHistory);
     action.setLockBackForwardList(frameLoadRequest.lockBackForwardList());
 

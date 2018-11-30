@@ -1,3 +1,26 @@
+2018-11-30  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We are sometimes swapping processes even though there is an opened window with an opener link to us
+        https://bugs.webkit.org/show_bug.cgi?id=192242
+
+        Reviewed by Geoffrey Garen.
+
+        Move the setting of the openedViaWindowOpenWithOpener & hasOpenedFrames flags on the
+        NavigationAction from FrameLoader::loadURL(), to PolicyChecker::checkNavigationPolicy()
+        to make sure those are always accurate and so that the UIProcess can make correct process
+        swapping decisions.
+
+        NavigationAction objects are created in other places than FrameLoader::loadURL() as well.
+        Even PolicyChecker::checkNavigationPolicy() will create a NavigationAction object if
+        there is not already one.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::hasOpenedFrames const):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO
