@@ -331,12 +331,11 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
 
 static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
 {
-#if !USE(CFNETWORK_IGNORE_HSTS)
+#if HAVE(CFNETWORK_WITH_IGNORE_HSTS)
+    return [request _schemeWasUpgradedDueToDynamicHSTS];
+#else
     UNUSED_PARAM(request);
     return false;
-#else
-    return [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)]
-        && [request _schemeWasUpgradedDueToDynamicHSTS];
 #endif
 }
 

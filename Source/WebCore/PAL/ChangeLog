@@ -1,3 +1,12 @@
+2018-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Move USE_CFNETWORK_IGNORE_HSTS to its proper place
+        https://bugs.webkit.org/show_bug.cgi?id=192173
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2018-11-29  David Quesada  <david_quesada@apple.com>
 
         Add SPI to publish NSProgress on active downloads

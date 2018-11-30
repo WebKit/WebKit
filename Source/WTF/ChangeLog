@@ -1,3 +1,12 @@
+2018-11-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Move USE_CFNETWORK_IGNORE_HSTS to its proper place
+        https://bugs.webkit.org/show_bug.cgi?id=192173
+
+        Reviewed by Tim Horton.
+
+        * wtf/Platform.h: Also renamed it to better match other version checks.
+
 2018-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize the check for kCFURLRequestContentDecoderSkipURLCheck existence

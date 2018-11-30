@@ -30,14 +30,6 @@
 #include <CFNetwork/CFNetwork.h>
 #include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
 
-// FIXME: Policy about which CFNetwork features to *use* in WebKit does not belong in the SPI header.
-// The SPI header should define which CFNetwork features *exist* in the underlying system, but not
-// policy about what WebKit should do. Accordingly, we should move this somewhere else or rename it
-// to be about CFNetwork capabilities (HAVE) rather than about WebKit policy (USE).
-#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 50000) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 120000))
-#define USE_CFNETWORK_IGNORE_HSTS 1
-#endif
-
 #if PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
