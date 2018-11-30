@@ -277,6 +277,7 @@ private:
             break;
         }
 
+        case ValueBitXor:
         case ValueBitOr:
         case ValueBitAnd: {
             if (node->child1()->shouldSpeculateBigInt() && node->child2()->shouldSpeculateBigInt())
@@ -740,7 +741,7 @@ private:
         case ArithBitNot:
         case ArithBitAnd:
         case ArithBitOr:
-        case BitXor:
+        case ArithBitXor:
         case BitRShift:
         case BitLShift:
         case BitURShift:
@@ -1096,6 +1097,7 @@ private:
         case UInt32ToNumber:
         case ValueBitOr:
         case ValueBitAnd:
+        case ValueBitXor:
         case ValueNegate:
         case ValueAdd:
         case ValueSub:

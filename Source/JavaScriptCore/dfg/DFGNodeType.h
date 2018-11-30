@@ -116,7 +116,8 @@ namespace JSC { namespace DFG {
     macro(ArithBitAnd, NodeResultInt32) \
     macro(ValueBitOr, NodeResultJS | NodeMustGenerate) \
     macro(ArithBitOr, NodeResultInt32) \
-    macro(BitXor, NodeResultInt32) \
+    macro(ValueBitXor, NodeResultJS | NodeMustGenerate) \
+    macro(ArithBitXor, NodeResultInt32) \
     macro(BitLShift, NodeResultInt32) \
     macro(BitRShift, NodeResultInt32) \
     macro(BitURShift, NodeResultInt32) \

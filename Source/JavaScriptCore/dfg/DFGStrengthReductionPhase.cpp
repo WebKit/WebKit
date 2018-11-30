@@ -87,7 +87,7 @@ private:
             }
             break;
             
-        case BitXor:
+        case ArithBitXor:
         case ArithBitAnd:
             handleCommutativity();
             break;

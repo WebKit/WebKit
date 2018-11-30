@@ -567,6 +567,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpBitand, profile)
         LINK(OpBitor, profile)
         LINK(OpBitnot, profile)
+        LINK(OpBitxor, profile)
 
         LINK(OpGetById, profile, hitCountForLLIntCaching)
 
@@ -592,7 +593,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpMul)
         LINK(OpDiv)
         LINK(OpSub)
-        LINK(OpBitxor)
 
         LINK(OpNegate)
 
@@ -2953,8 +2953,6 @@ ArithProfile* CodeBlock::arithProfileForPC(const Instruction* pc)
     switch (pc->opcodeID()) {
     case op_negate:
         return &pc->as<OpNegate>().metadata(this).arithProfile;
-    case op_bitxor:
-        return &pc->as<OpBitxor>().metadata(this).arithProfile;
     case op_add:
         return &pc->as<OpAdd>().metadata(this).arithProfile;
     case op_mul:

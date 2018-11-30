@@ -240,7 +240,6 @@ op_group :ProfiledBinaryOp,
         :mul,
         :div,
         :sub,
-        :bitxor,
     ],
     args: {
         dst: VirtualRegister,
@@ -259,6 +258,7 @@ op_group :ValueProfiledBinaryOp,
     [
         :bitand,
         :bitor,
+        :bitxor,
     ],
     args: {
         dst: VirtualRegister,

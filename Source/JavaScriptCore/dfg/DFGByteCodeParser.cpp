@@ -4925,8 +4925,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpBitxor>();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, addToGraph(BitXor, op1, op2));
-            NEXT_OPCODE(op_bitxor);
+            if (isInt32Speculation(getPrediction()))
+                set(bytecode.dst, addToGraph(ArithBitXor, op1, op2));
+            else
+                set(bytecode.dst, addToGraph(ValueBitXor, op1, op2));
+            NEXT_OPCODE(op_bitor);
         }
 
         case op_rshift: {

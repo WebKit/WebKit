@@ -753,13 +753,13 @@ SLOW_PATH_DECL(slow_path_bitxor)
         if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
             JSBigInt* result = JSBigInt::bitwiseXor(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
             CHECK_EXCEPTION();
-            RETURN(result);
+            RETURN_PROFILED(result);
         }
 
         THROW(createTypeError(exec, "Invalid mix of BigInt and other type in bitwise 'xor' operation."));
     }
 
-    RETURN(jsNumber(WTF::get<int32_t>(leftNumeric) ^ WTF::get<int32_t>(rightNumeric)));
+    RETURN_PROFILED(jsNumber(WTF::get<int32_t>(leftNumeric) ^ WTF::get<int32_t>(rightNumeric)));
 }
 
 SLOW_PATH_DECL(slow_path_typeof)

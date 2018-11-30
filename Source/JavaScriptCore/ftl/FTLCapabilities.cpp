@@ -61,7 +61,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ArithBitNot:
     case ArithBitAnd:
     case ArithBitOr:
-    case BitXor:
+    case ArithBitXor:
     case BitRShift:
     case BitLShift:
     case BitURShift:
@@ -88,6 +88,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetGlobalLexicalVariable:
     case PutGlobalVariable:
     case ValueBitAnd:
+    case ValueBitXor:
     case ValueBitOr:
     case ValueNegate:
     case ValueAdd:

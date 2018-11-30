@@ -1117,7 +1117,7 @@ bitOpProfiled(bitand, OpBitand,
 bitOpProfiled(bitor, OpBitor,
     macro (left, right) ori left, right end)
 
-bitOp(bitxor, OpBitxor,
+bitOpProfiled(bitxor, OpBitxor,
     macro (left, right) xori left, right end)
 
 llintOpWithProfile(op_bitnot, OpBitnot, macro (size, get, dispatch, return)

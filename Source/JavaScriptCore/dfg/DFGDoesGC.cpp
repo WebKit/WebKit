@@ -70,7 +70,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithBitNot:
     case ArithBitAnd:
     case ArithBitOr:
-    case BitXor:
+    case ArithBitXor:
     case BitLShift:
     case BitRShift:
     case BitURShift:
@@ -99,6 +99,7 @@ bool doesGC(Graph& graph, Node* node)
     case ArithUnary:
     case ValueBitAnd:
     case ValueBitOr:
+    case ValueBitXor:
     case ValueAdd:
     case ValueSub:
     case ValueNegate:

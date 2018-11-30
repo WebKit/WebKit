@@ -119,7 +119,7 @@ private:
         }
             
         case ArithBitOr:
-        case BitXor:
+        case ArithBitXor:
         case BitLShift: {
             return power > 31;
         }
@@ -217,7 +217,7 @@ private:
 
         case ArithBitAnd:
         case ArithBitOr:
-        case BitXor:
+        case ArithBitXor:
         case BitRShift:
         case BitLShift:
         case BitURShift:

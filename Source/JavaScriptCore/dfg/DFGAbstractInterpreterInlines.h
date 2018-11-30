@@ -374,7 +374,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.operand(data->start.offset() + i).makeHeapTop();
         break;
     }
-            
+
     case ArithBitNot: {
         if (node->child1().useKind() == UntypedUse) {
             clobberWorld();
@@ -393,8 +393,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case ValueBitOr:
+    case ValueBitXor:
     case ValueBitAnd:
+    case ValueBitOr:
         clobberWorld();
         if (node->binaryUseKind() == BigIntUse)
             setTypeForNode(node, SpecBigInt);
@@ -404,7 +405,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case ArithBitAnd:
     case ArithBitOr:
-    case BitXor:
+    case ArithBitXor:
     case BitRShift:
     case BitLShift:
     case BitURShift: {
@@ -426,7 +427,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case ArithBitOr:
                 setConstant(node, JSValue(a | b));
                 break;
-            case BitXor:
+            case ArithBitXor:
                 setConstant(node, JSValue(a ^ b));
                 break;
             case BitRShift:

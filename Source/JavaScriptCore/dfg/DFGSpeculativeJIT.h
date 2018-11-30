@@ -639,7 +639,7 @@ public:
         case ArithBitOr:
             m_jit.or32(Imm32(imm), op1, result);
             break;
-        case BitXor:
+        case ArithBitXor:
             m_jit.xor32(Imm32(imm), op1, result);
             break;
         default:
@@ -655,7 +655,7 @@ public:
         case ArithBitOr:
             m_jit.or32(op1, op2, result);
             break;
-        case BitXor:
+        case ArithBitXor:
             m_jit.xor32(op1, op2, result);
             break;
         default:

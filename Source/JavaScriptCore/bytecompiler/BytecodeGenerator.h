@@ -684,8 +684,9 @@ namespace JSC {
 
         template<typename BinaryOp>
         std::enable_if_t<
-            BinaryOp::opcodeID != op_bitxor && BinaryOp::opcodeID != op_add
-            && BinaryOp::opcodeID != op_mul && BinaryOp::opcodeID != op_sub
+            BinaryOp::opcodeID != op_add
+            && BinaryOp::opcodeID != op_mul
+            && BinaryOp::opcodeID != op_sub
             && BinaryOp::opcodeID != op_div,
             RegisterID*>
         emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes)
@@ -696,8 +697,9 @@ namespace JSC {
 
         template<typename BinaryOp>
         std::enable_if_t<
-            BinaryOp::opcodeID == op_bitxor || BinaryOp::opcodeID == op_add
-            || BinaryOp::opcodeID == op_mul || BinaryOp::opcodeID == op_sub
+            BinaryOp::opcodeID == op_add
+            || BinaryOp::opcodeID == op_mul
+            || BinaryOp::opcodeID == op_sub
             || BinaryOp::opcodeID == op_div,
             RegisterID*>
         emitBinaryOp(RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes types)

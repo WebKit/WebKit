@@ -3637,6 +3637,9 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
         case ValueBitAnd:
             emitUntypedBitOp<JITBitAndGenerator, operationValueBitAnd>(node);
             return;
+        case ValueBitXor:
+            emitUntypedBitOp<JITBitXorGenerator, operationValueBitXor>(node);
+            return;
         case ValueBitOr:
             emitUntypedBitOp<JITBitOrGenerator, operationValueBitOr>(node);
             return;
@@ -3663,6 +3666,9 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
     case ValueBitAnd:
         callOperation(operationBitAndBigInt, resultGPR, leftGPR, rightGPR);
         break;
+    case ValueBitXor:
+        callOperation(operationBitXorBigInt, resultGPR, leftGPR, rightGPR);
+        break;
     case ValueBitOr:
         callOperation(operationBitOrBigInt, resultGPR, leftGPR, rightGPR);
         break;
@@ -3680,16 +3686,6 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
-    if (leftChild.useKind() == UntypedUse || rightChild.useKind() == UntypedUse) {
-        switch (op) {
-        case BitXor:
-            emitUntypedBitOp<JITBitXorGenerator, operationValueBitXor>(node);
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-
     if (leftChild->isInt32Constant()) {
         SpeculateInt32Operand op2(this, rightChild);
         GPRTemporary result(this, Reuse, op2);
@@ -3697,26 +3693,28 @@ void SpeculativeJIT::compileBitwiseOp(Node* node)
         bitOp(op, leftChild->asInt32(), op2.gpr(), result.gpr());
 
         int32Result(result.gpr(), node);
+        return;
+    }
 
-    } else if (rightChild->isInt32Constant()) {
+    if (rightChild->isInt32Constant()) {
         SpeculateInt32Operand op1(this, leftChild);
         GPRTemporary result(this, Reuse, op1);
 
         bitOp(op, rightChild->asInt32(), op1.gpr(), result.gpr());
 
         int32Result(result.gpr(), node);
-
-    } else {
-        SpeculateInt32Operand op1(this, leftChild);
-        SpeculateInt32Operand op2(this, rightChild);
-        GPRTemporary result(this, Reuse, op1, op2);
-        
-        GPRReg reg1 = op1.gpr();
-        GPRReg reg2 = op2.gpr();
-        bitOp(op, reg1, reg2, result.gpr());
-        
-        int32Result(result.gpr(), node);
+        return;
     }
+
+    SpeculateInt32Operand op1(this, leftChild);
+    SpeculateInt32Operand op2(this, rightChild);
+    GPRTemporary result(this, Reuse, op1, op2);
+
+    GPRReg reg1 = op1.gpr();
+    GPRReg reg2 = op2.gpr();
+    bitOp(op, reg1, reg2, result.gpr());
+
+    int32Result(result.gpr(), node);
 }
 
 void SpeculativeJIT::emitUntypedRightShiftBitOp(Node* node)

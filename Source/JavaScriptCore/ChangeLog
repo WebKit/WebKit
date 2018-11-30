@@ -1,3 +1,70 @@
+2018-11-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Implement ValueBitXor into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=190264
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is splitting the BitXor node into ArithBitXor and
+        ValueBitXor. This is necessary due the introduction of
+        BigInt, since BitXor operations now can result into Int32 or BigInt.
+        In such case, we use ArithBitXor when operands are Int and fallback to
+        ValueBitXor when operands are anything else. In the case of
+        ValueBitXor, we speculate BigInt when op1 and op2 are predicted as
+        BigInt as well. BigInt specialization consist into call
+        `operationBigIntBitXor` function, that calls JSBigInt::bitXor.
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::arithProfileForPC):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueBitwiseOp):
+        (JSC::DFG::SpeculativeJIT::compileBitwiseOp):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::bitOp):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitXor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithBitXor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBitXor): Deleted.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_bitxor):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2018-11-29  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should pass 'this' correctly to paint callback, and repaint when properties change.

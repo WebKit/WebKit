@@ -550,7 +550,7 @@ void JIT::emit_op_bitor(const Instruction* currentInstruction)
 
 void JIT::emit_op_bitxor(const Instruction* currentInstruction)
 {
-    emitBitBinaryOpFastPath<OpBitxor, JITBitXorGenerator>(currentInstruction);
+    emitBitBinaryOpFastPath<OpBitxor, JITBitXorGenerator>(currentInstruction, ProfilingPolicy::ShouldEmitProfiling);
 }
 
 void JIT::emit_op_lshift(const Instruction* currentInstruction)
