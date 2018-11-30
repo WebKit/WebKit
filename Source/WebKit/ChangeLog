@@ -1,3 +1,9 @@
+2018-11-29  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the build.
+
+        * Platform/spi/ios/PencilKitSPI.h:
+
 2018-11-29  David Quesada  <david_quesada@apple.com>
 
         Add SPI to publish NSProgress on active downloads
