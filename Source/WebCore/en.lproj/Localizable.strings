@@ -973,8 +973,8 @@
 /* HTTP result code string */
 "conflict" = "conflict";
 
-/* Label for the auto fill contacts button inside a text field. */
-"contact info auto fill" = "contact info auto fill";
+/* Label for the AutoFill contacts button inside a text field. */
+"contact info AutoFill" = "contact info AutoFill";
 
 /* An ARIA accessibility group that contains content. */
 "content information" = "content information";
@@ -985,8 +985,8 @@
 /* HTTP result code string */
 "created" = "created";
 
-/* Label for the credit card auto fill button inside a text field. */
-"credit card auto fill" = "credit card auto fill";
+/* Label for the credit card AutoFill button inside a text field. */
+"credit card AutoFill" = "credit card AutoFill";
 
 /* The less good value description for a meter element. */
 "critical value" = "critical value";
@@ -1186,8 +1186,8 @@
 /* HTTP result code string */
 "partial content" = "partial content";
 
-/* Label for the auto fill credentials button inside a text field. */
-"password auto fill" = "password auto fill";
+/* Label for the AutoFill credentials button inside a text field. */
+"password AutoFill" = "password AutoFill";
 
 /* accessibility label for pause button */
 "pause" = "pause";
@@ -1288,8 +1288,8 @@
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
 
-/* Label for the strong password auto fill button inside a text field. */
-"strong password auto fill" = "strong password auto fill";
+/* Label for the strong password AutoFill button inside a text field. */
+"strong password AutoFill" = "strong password AutoFill";
 
 /* The suboptimal value description for a meter element. */
 "suboptimal value" = "suboptimal value";

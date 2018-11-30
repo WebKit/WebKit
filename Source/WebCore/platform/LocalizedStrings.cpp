@@ -626,22 +626,22 @@ String AXListItemActionVerb()
 
 String AXAutoFillCredentialsLabel()
 {
-    return WEB_UI_STRING("password auto fill", "Label for the auto fill credentials button inside a text field.");
+    return WEB_UI_STRING("password AutoFill", "Label for the AutoFill credentials button inside a text field.");
 }
 
 String AXAutoFillContactsLabel()
 {
-    return WEB_UI_STRING("contact info auto fill", "Label for the auto fill contacts button inside a text field.");
+    return WEB_UI_STRING("contact info AutoFill", "Label for the AutoFill contacts button inside a text field.");
 }
 
 String AXAutoFillStrongPasswordLabel()
 {
-    return WEB_UI_STRING("strong password auto fill", "Label for the strong password auto fill button inside a text field.");
+    return WEB_UI_STRING("strong password AutoFill", "Label for the strong password AutoFill button inside a text field.");
 }
 
 String AXAutoFillCreditCardLabel()
 {
-    return WEB_UI_STRING("credit card auto fill", "Label for the credit card auto fill button inside a text field.");
+    return WEB_UI_STRING("credit card AutoFill", "Label for the credit card AutoFill button inside a text field.");
 }
 
 String autoFillStrongPasswordLabel()

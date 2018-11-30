@@ -7,10 +7,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Initial auto-fill available: false
 Auto-fill type: none
 Contact button role: AXRole: AXButton
-Contact button label: AXDescription: contact info auto fill
+Contact button label: AXDescription: contact info AutoFill
 Auto-fill type: contacts
 Credentials button role: AXRole: AXButton
-Credentials button label: AXDescription: password auto fill
+Credentials button label: AXDescription: password AutoFill
 Auto-fill type: credentials
 Post auto-fill available: true
 PASS successfullyParsed is true

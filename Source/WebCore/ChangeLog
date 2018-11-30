@@ -1,3 +1,20 @@
+2018-11-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Replace "auto fill" with "AutoFill" in some localizable strings
+        https://bugs.webkit.org/show_bug.cgi?id=192233
+        <rdar://problem/46311614>
+
+        Reviewed by Chris Fleizach.
+
+        Replace "autofill" with "AutoFill".
+
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXAutoFillCredentialsLabel):
+        (WebCore::AXAutoFillContactsLabel):
+        (WebCore::AXAutoFillStrongPasswordLabel):
+        (WebCore::AXAutoFillCreditCardLabel):
+
 2018-11-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CEReactions=NotNeeded on all the relevant IDL files
