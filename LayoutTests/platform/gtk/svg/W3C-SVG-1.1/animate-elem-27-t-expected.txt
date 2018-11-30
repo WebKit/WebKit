@@ -4,8 +4,8 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (14,25) size 413x222
       RenderSVGText {text} at (28,25) size 394x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 394x18
-          chunk 1 (middle anchor) text run 1 at (28.00,40.00) startOffset 0 endOffset 57 width 394.00: "Test animation options for specifying the target element."
+        RenderSVGInlineText {#text} at (0,0) size 393x18
+          chunk 1 (middle anchor) text run 1 at (28.89,40.00) startOffset 0 endOffset 57 width 392.23: "Test animation options for specifying the target element."
       RenderSVGContainer {g} at (14,78) size 413x169
         RenderSVGText {text} at (14,231) size 66x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 66x16

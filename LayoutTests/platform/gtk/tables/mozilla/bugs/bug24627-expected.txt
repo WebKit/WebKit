@@ -6,112 +6,112 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,0) size 706x76 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 704x74
           RenderTableRow {TR} at (0,2) size 704x22
-            RenderTableCell {TH} at (2,11) size 266x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (269,2) size 153x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (2,11) size 264x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (267,2) size 154x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x17
                 text run at (2,2) width 68: "Host name"
-            RenderTableCell {TD} at (423,2) size 174x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,2) size 174x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x17
                 text run at (2,2) width 78: "Architecture"
-            RenderTableCell {TD} at (598,2) size 104x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (597,2) size 105x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 45x17
                 text run at (2,2) width 45: "Access"
           RenderTableRow {TR} at (0,26) size 704x22
-            RenderTableCell {TD} at (2,26) size 266x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 122x17
-                text run at (2,2) width 122: "debussy.debian.org"
-            RenderTableCell {TD} at (269,26) size 153x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 264x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 121x17
+                text run at (2,2) width 121: "debussy.debian.org"
+            RenderTableCell {TD} at (267,26) size 154x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x17
                 text run at (2,2) width 37: "ARM"
-            RenderTableCell {TD} at (423,26) size 174x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,26) size 174x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x17
                 text run at (2,2) width 15: "all"
           RenderTableRow {TR} at (0,50) size 704x22
-            RenderTableCell {TD} at (2,50) size 266x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,50) size 264x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 103x17
                 text run at (2,2) width 103: "faure.debian.org"
-            RenderTableCell {TD} at (269,50) size 153x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (267,50) size 154x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 34x17
                 text run at (2,2) width 34: "alpha"
-            RenderTableCell {TD} at (423,50) size 174x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,50) size 174x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x17
                 text run at (2,2) width 15: "all"
       RenderBlock {P} at (0,92) size 784x18
-        RenderText {#text} at (0,0) size 130x17
-          text run at (0,0) width 130: "Table nested in table"
-      RenderTable {TABLE} at (0,126) size 347x100
-        RenderTableSection {TBODY} at (0,0) size 347x100
-          RenderTableRow {TR} at (0,2) size 347x96
-            RenderTableCell {TD} at (2,2) size 343x96 [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 310x94 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 308x92
-                  RenderTableRow {TR} at (0,2) size 308x40
-                    RenderTableCell {TH} at (2,20) size 126x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                    RenderTableCell {TD} at (130,2) size 41x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+        RenderText {#text} at (0,0) size 129x17
+          text run at (0,0) width 129: "Table nested in table"
+      RenderTable {TABLE} at (0,126) size 346x100
+        RenderTableSection {TBODY} at (0,0) size 346x100
+          RenderTableRow {TR} at (0,2) size 346x96
+            RenderTableCell {TD} at (2,2) size 342x96 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 309x94 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 307x92
+                  RenderTableRow {TR} at (0,2) size 307x40
+                    RenderTableCell {TH} at (2,20) size 125x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderTableCell {TD} at (128,2) size 42x40 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 34x35
                         text run at (2,2) width 30: "Host"
                         text run at (2,20) width 34: "name"
-                    RenderTableCell {TD} at (173,11) size 82x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (171,11) size 83x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 78x17
                         text run at (2,2) width 78: "Architecture"
-                    RenderTableCell {TD} at (257,11) size 49x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+                    RenderTableCell {TD} at (255,11) size 50x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 45x17
                         text run at (2,2) width 45: "Access"
-                  RenderTableRow {TR} at (0,44) size 308x22
-                    RenderTableCell {TD} at (2,44) size 126x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 122x17
-                        text run at (2,2) width 122: "debussy.debian.org"
-                    RenderTableCell {TD} at (130,44) size 41x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,44) size 307x22
+                    RenderTableCell {TD} at (2,44) size 125x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                      RenderText {#text} at (2,2) size 121x17
+                        text run at (2,2) width 121: "debussy.debian.org"
+                    RenderTableCell {TD} at (128,44) size 42x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 37x17
                         text run at (2,2) width 37: "ARM"
-                    RenderTableCell {TD} at (173,44) size 82x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (171,44) size 83x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 15x17
                         text run at (2,2) width 15: "all"
-                  RenderTableRow {TR} at (0,68) size 308x22
-                    RenderTableCell {TD} at (2,68) size 126x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,68) size 307x22
+                    RenderTableCell {TD} at (2,68) size 125x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 103x17
                         text run at (2,2) width 103: "faure.debian.org"
-                    RenderTableCell {TD} at (130,68) size 41x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (128,68) size 42x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 34x17
                         text run at (2,2) width 34: "alpha"
-                    RenderTableCell {TD} at (173,68) size 82x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+                    RenderTableCell {TD} at (171,68) size 83x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 15x17
                         text run at (2,2) width 15: "all"
       RenderBlock (anonymous) at (0,226) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,260) size 784x18
-        RenderText {#text} at (0,0) size 114x17
-          text run at (0,0) width 114: "Table - no nesting"
+        RenderText {#text} at (0,0) size 113x17
+          text run at (0,0) width 113: "Table - no nesting"
       RenderTable {TABLE} at (0,294) size 706x76 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 704x74
           RenderTableRow {TR} at (0,2) size 704x22
-            RenderTableCell {TH} at (2,11) size 266x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (269,2) size 153x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TH} at (2,11) size 264x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (267,2) size 154x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 68x17
                 text run at (2,2) width 68: "Host name"
-            RenderTableCell {TD} at (423,2) size 174x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,2) size 174x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 78x17
                 text run at (2,2) width 78: "Architecture"
-            RenderTableCell {TD} at (598,2) size 104x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (597,2) size 105x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 45x17
                 text run at (2,2) width 45: "Access"
           RenderTableRow {TR} at (0,26) size 704x22
-            RenderTableCell {TD} at (2,26) size 266x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 122x17
-                text run at (2,2) width 122: "debussy.debian.org"
-            RenderTableCell {TD} at (269,26) size 153x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (2,26) size 264x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 121x17
+                text run at (2,2) width 121: "debussy.debian.org"
+            RenderTableCell {TD} at (267,26) size 154x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 37x17
                 text run at (2,2) width 37: "ARM"
-            RenderTableCell {TD} at (423,26) size 174x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,26) size 174x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x17
                 text run at (2,2) width 15: "all"
           RenderTableRow {TR} at (0,50) size 704x22
-            RenderTableCell {TD} at (2,50) size 266x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,50) size 264x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 103x17
                 text run at (2,2) width 103: "faure.debian.org"
-            RenderTableCell {TD} at (269,50) size 153x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (267,50) size 154x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 34x17
                 text run at (2,2) width 34: "alpha"
-            RenderTableCell {TD} at (423,50) size 174x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (422,50) size 174x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 15x17
                 text run at (2,2) width 15: "all"

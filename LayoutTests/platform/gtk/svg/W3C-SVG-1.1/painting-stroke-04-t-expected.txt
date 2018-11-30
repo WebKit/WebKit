@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (65.00,210.00) startOffset 0 endOffset 25 width 351.00: "stroke-dasharray=\"10, 10\""
       RenderSVGText {text} at (75,232) size 305x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 305x34
-          chunk 1 text run 1 at (75.00,260.00) startOffset 0 endOffset 22 width 305.00: "stroke-dashoffset=\"10\""
+          chunk 1 text run 1 at (75.00,260.00) startOffset 0 endOffset 22 width 304.46: "stroke-dashoffset=\"10\""
     RenderSVGText {text} at (10,304) size 284x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 284.00: "$Revision: 1.10 $"

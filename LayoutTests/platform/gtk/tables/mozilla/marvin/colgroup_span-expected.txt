@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 760x35
           text run at (0,0) width 760: "Colgroups are used to identify column groups. In this test case, the COLGROUP element is used in conjunction with the"
-          text run at (0,18) width 714: "SPAN attribute. The table below has two distinct column groups; 'Airport Location' and 'Car Rental Information'."
+          text run at (0,18) width 713: "SPAN attribute. The table below has two distinct column groups; 'Airport Location' and 'Car Rental Information'."
       RenderTable {TABLE} at (0,52) size 499x172 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
@@ -103,8 +103,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "USA"
             RenderTableCell {TD} at (84,146) size 77x22 [border: (1px inset #808080)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 68x17
-                text run at (2,2) width 68: "New York"
+              RenderText {#text} at (2,2) size 67x17
+                text run at (2,2) width 67: "New York"
             RenderTableCell {TD} at (163,146) size 110x22 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "yes"

@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 145x17
-          text run at (0,0) width 145: "Testcase distilled from "
+        RenderText {#text} at (0,0) size 144x17
+          text run at (0,0) width 144: "Testcase distilled from "
         RenderInline {A} at (0,0) size 184x17 [color=#0000EE]
-          RenderText {#text} at (145,0) size 184x17
-            text run at (145,0) width 184: "http://webdeveloper.com/xml"
+          RenderText {#text} at (143,0) size 184x17
+            text run at (143,0) width 184: "http://webdeveloper.com/xml"
       RenderTable {TABLE} at (0,34) size 644x102 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 642x100
           RenderTableRow {TR} at (0,0) size 642x100

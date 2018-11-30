@@ -14,9 +14,9 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 142x34
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 13 width 142.00: "Pattern fill."
       RenderSVGRect {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [id="Pat3b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
-      RenderSVGText {text} at (20,232) size 399x35 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 399x34
-          chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 31 width 399.00: "Referencing pattern fill below."
+      RenderSVGText {text} at (20,232) size 398x35 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 398x34
+          chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 31 width 397.34: "Referencing pattern fill below."
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"

@@ -90,10 +90,10 @@ layer at (0,0) size 785x997
         RenderBlock {P} at (0,0) size 723x40
           RenderText {#text} at (0,1) size 689x37
             text run at (0,1) width 647: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
-            text run at (647,1) width 42: "It also"
+            text run at (646,1) width 43: "It also"
             text run at (0,21) width 345: "validates basic Shape, Image and text rendering."
         RenderBlock {P} at (0,51) size 723x141
-          RenderText {#text} at (0,1) size 718x137
+          RenderText {#text} at (0,1) size 716x137
             text run at (0,1) width 135: "This test renders 3 "
             text run at (135,1) width 247: "elements: a text string \"SVG\", then "
             text run at (382,1) width 289: "a shape, then an image. Because of their"
@@ -101,26 +101,26 @@ layer at (0,0) size 785x997
             text run at (306,21) width 406: "should be on top of the rectangle and the rectangle on top"
             text run at (0,41) width 108: "of the text. The "
             text run at (108,41) width 531: "test validates that groups are conceptually rendered offscreen before being "
-            text run at (639,41) width 64: "rendered"
+            text run at (638,41) width 65: "rendered"
             text run at (0,61) width 529: "on the canvas. This is done by grouping the same overlapping objects and "
             text run at (529,61) width 186: "rendering the group at half"
-            text run at (0,81) width 400: "opacity. The background pattern (vertical stripes) should "
-            text run at (400,81) width 318: "show throw all the group elements. However,"
+            text run at (0,81) width 399: "opacity. The background pattern (vertical stripes) should "
+            text run at (398,81) width 318: "show throw all the group elements. However,"
             text run at (0,101) width 311: "none of the \"SVG\" should show through the "
             text run at (311,101) width 402: "rectangle and none of the rectangle should show through"
             text run at (0,121) width 74: "the image."
         RenderBlock {P} at (0,202) size 723x81
-          RenderText {#text} at (0,1) size 713x77
+          RenderText {#text} at (0,1) size 712x77
             text run at (0,1) width 549: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
-            text run at (549,1) width 119: "opacity, font-size"
+            text run at (549,1) width 118: "opacity, font-size"
             text run at (0,21) width 497: "rendering properties. It uses the rect, line, text and image elements, as "
             text run at (497,21) width 166: "well as all the elements"
-            text run at (0,41) width 429: "required for the test template. To ensure that the text string is "
-            text run at (429,41) width 284: "overlapped by the other elements and to"
+            text run at (0,41) width 428: "required for the test template. To ensure that the text string is "
+            text run at (427,41) width 285: "overlapped by the other elements and to"
             text run at (0,61) width 411: "avoid a dependency on system fonts, an SVG font is used."
         RenderBlock {P} at (0,293) size 723x21
-          RenderText {#text} at (0,1) size 446x17
-            text run at (0,1) width 446: "The rendered image should match the reference image exactly."
+          RenderText {#text} at (0,1) size 445x17
+            text run at (0,1) width 445: "The rendered image should match the reference image exactly."
       RenderBlock {DIV} at (16,956) size 737x21
         RenderBlock {P} at (0,0) size 737x20
           RenderInline {A} at (0,0) size 173x17 [color=#0000EE]

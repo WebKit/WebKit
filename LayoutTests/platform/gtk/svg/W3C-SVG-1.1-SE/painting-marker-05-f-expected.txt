@@ -55,9 +55,9 @@ layer at (0,0) size 480x360
           RenderSVGEllipse {circle} at (0,0) size 3x3 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=7.00]
         RenderSVGResourceMarker {marker} [id="hmarkerEnd"] [markerUnits=strokeWidth] [ref at (10,10)] [angle=0.00]
           RenderSVGPath {path} at (0,0) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [data="M 10 0 L 20 20 L 0 20 Z"]
-      RenderSVGText {text} at (156,37) size 168x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 168x21
-          chunk 1 (middle anchor) text run 1 at (156.00,54.00) startOffset 0 endOffset 20 width 168.00: "Test marker overflow"
+      RenderSVGText {text} at (156,37) size 167x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 167x21
+          chunk 1 (middle anchor) text run 1 at (157.00,54.00) startOffset 0 endOffset 20 width 166.00: "Test marker overflow"
       RenderSVGContainer {g} at (38,267) size 417x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
         RenderSVGText {text} at (38,-13) size 44x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 43x16

@@ -106,8 +106,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "USA"
             RenderTableCell {TD} at (84,328) size 77x22 [border: (1px inset #808080)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 68x17
-                text run at (2,2) width 68: "New York"
+              RenderText {#text} at (2,2) size 67x17
+                text run at (2,2) width 67: "New York"
             RenderTableCell {TD} at (163,328) size 110x22 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "yes"

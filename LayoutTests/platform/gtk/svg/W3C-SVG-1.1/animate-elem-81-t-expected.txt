@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (173,10) size 134x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 133x18
-        chunk 1 (middle anchor) text run 1 at (173.50,25.00) startOffset 0 endOffset 18 width 133.00: "<animateTransform>"
+        chunk 1 (middle anchor) text run 1 at (173.78,25.00) startOffset 0 endOffset 18 width 132.44: "<animateTransform>"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 45x45
         RenderSVGEllipse {circle} at (0,0) size 41x41 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]

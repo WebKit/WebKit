@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
                   text run at (2,2) width 46: "SLmail"
       RenderBlock {HR} at (0,254) size 130x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,264) size 784x18
-        RenderText {#text} at (0,0) size 148x17
-          text run at (0,0) width 148: "Testcase without image"
+        RenderText {#text} at (0,0) size 147x17
+          text run at (0,0) width 147: "Testcase without image"
       RenderBlock {P} at (0,298) size 784x70
         RenderTable {TABLE} at (0,0) size 640x70 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 638x68

@@ -30,9 +30,9 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,110) size 784x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 88x17
-          text run at (0,18) width 88: "COLSPANS "
-        RenderBR {BR} at (88,32) size 0x0
+        RenderText {#text} at (0,18) size 87x17
+          text run at (0,18) width 87: "COLSPANS "
+        RenderBR {BR} at (86,32) size 1x0
       RenderTable {TABLE} at (0,146) size 637x134 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 635x132
           RenderTableRow {TR} at (0,2) size 635x104

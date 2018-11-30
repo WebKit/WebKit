@@ -5,21 +5,21 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 747x73
         text run at (0,0) width 747: "This is just a minimal page that we navigate in response to"
-        text run at (0,37) width 222: "an HTTP POST. "
-      RenderBR {BR} at (222,66) size 0x0
+        text run at (0,37) width 219: "an HTTP POST. "
+      RenderBR {BR} at (0,0) size 0x0
       RenderBR {BR} at (0,74) size 0x36
       RenderText {#text} at (0,111) size 763x110
         text run at (0,111) width 743: "If the next line is empty after the colon, it probably means"
         text run at (0,148) width 178: "that we made "
         text run at (178,148) width 585: "a mistake and requested this page with a GET"
-        text run at (0,185) width 436: "with no query instead of a POST. "
-      RenderBR {BR} at (436,214) size 0x0
+        text run at (0,185) width 434: "with no query instead of a POST. "
+      RenderBR {BR} at (0,0) size 0x0
       RenderBR {BR} at (0,222) size 0x36
       RenderText {#text} at (0,259) size 709x36
         text run at (0,259) width 709: "The first text field contained: New form text from user "
-      RenderBR {BR} at (709,288) size 0x0
-      RenderText {#text} at (0,296) size 575x36
-        text run at (0,296) width 575: "This page was requested with an HTTP GET"
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,296) size 574x36
+        text run at (0,296) width 574: "This page was requested with an HTTP GET"
 
 ============== Back Forward List ==============
         http://127.0.0.1:8000/navigation/postredirect-basic.html  **nav target**

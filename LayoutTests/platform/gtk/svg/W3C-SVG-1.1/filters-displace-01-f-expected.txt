@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
           RenderSVGTSpan {tspan} at (0,0) size 102x14
             RenderSVGInlineText {#text} at (0,0) size 102x14
               chunk 1 (middle anchor) text run 1 at (169.50,125.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
-          RenderSVGInlineText {#text} at (102,0) size 3x14
+          RenderSVGInlineText {#text} at (101,0) size 3x14
             chunk 1 (middle anchor) text run 1 at (271.50,125.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 93x14
             RenderSVGInlineText {#text} at (6,13) size 93x14
@@ -64,10 +64,10 @@ layer at (0,0) size 480x360
           [filter="SphereMap"] RenderSVGResourceFilter {filter} at (158,158) size 128x128
         RenderSVGRect {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
         RenderSVGText {text} at (166,257) size 112x29 contains 1 chunk(s)
-          RenderSVGTSpan {tspan} at (0,0) size 102x14
-            RenderSVGInlineText {#text} at (3,0) size 102x14
+          RenderSVGTSpan {tspan} at (0,0) size 103x14
+            RenderSVGInlineText {#text} at (2,0) size 102x14
               chunk 1 (middle anchor) text run 1 at (169.50,268.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
-          RenderSVGInlineText {#text} at (105,0) size 3x14
+          RenderSVGInlineText {#text} at (104,0) size 3x14
             chunk 1 (middle anchor) text run 1 at (271.50,268.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 111x14
             RenderSVGInlineText {#text} at (0,15) size 111x14

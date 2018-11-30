@@ -6,18 +6,18 @@ layer at (0,0) size 785x904
       RenderBlock {DIV} at (0,0) size 769x170
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,18) size 769x18
-          RenderInline {B} at (0,0) size 331x17
-            RenderText {#text} at (219,0) size 331x17
-              text run at (219,0) width 331: "Tables I, II, III, IV (cellpadding=0 cellspacing=5)"
+          RenderInline {B} at (0,0) size 329x17
+            RenderText {#text} at (220,0) size 329x17
+              text run at (220,0) width 329: "Tables I, II, III, IV (cellpadding=0 cellspacing=5)"
         RenderTable {TABLE} at (91,52) size 587x118 [bgcolor=#FFCC00] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 585x116
             RenderTableRow {TR} at (0,2) size 585x112
               RenderTableCell {TD} at (2,2) size 154x112 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 142x100 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 142x18
-                    RenderInline {NOBR} at (0,0) size 46x17
-                      RenderText {#text} at (48,0) size 46x17
-                        text run at (48,0) width 46: "Table I"
+                    RenderInline {NOBR} at (0,0) size 44x17
+                      RenderText {#text} at (49,0) size 44x17
+                        text run at (49,0) width 44: "Table I"
                   RenderTableSection {TBODY} at (1,19) size 140x80
                     RenderTableRow {TR} at (0,5) size 140x20
                       RenderTableCell {TD} at (5,5) size 22x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -119,9 +119,9 @@ layer at (0,0) size 785x904
               RenderTableCell {TD} at (314,2) size 134x112 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 122x100 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 122x18
-                    RenderInline {NOBR} at (0,0) size 56x17
-                      RenderText {#text} at (33,0) size 56x17
-                        text run at (33,0) width 56: "Table III"
+                    RenderInline {NOBR} at (0,0) size 54x17
+                      RenderText {#text} at (34,0) size 54x17
+                        text run at (34,0) width 54: "Table III"
                   RenderTableSection {TBODY} at (1,19) size 120x80
                     RenderTableRow {TR} at (0,5) size 120x20
                       RenderTableCell {TD} at (5,5) size 22x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -195,15 +195,15 @@ layer at (0,0) size 785x904
       RenderBlock (anonymous) at (0,170) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,204) size 769x90
-        RenderText {#text} at (0,0) size 754x89
+        RenderText {#text} at (0,0) size 753x89
           text run at (0,0) width 319: "This is a table colspan counting problem (IMHO). "
-          text run at (319,0) width 388: "The oversize <TABLE> has two rows: one has *two* <TD>"
+          text run at (319,0) width 387: "The oversize <TABLE> has two rows: one has *two* <TD>"
           text run at (0,18) width 744: "\"requesting\" total of 3 columns to span; second row has *one* <TD> \"requesting\" total of 3 columns to span. In other"
-          text run at (0,36) width 555: "words, it's asking for one more column than the max number of 'real' elements in a row. "
-          text run at (555,36) width 199: "Here's the simple case (first one"
+          text run at (0,36) width 554: "words, it's asking for one more column than the max number of 'real' elements in a row. "
+          text run at (553,36) width 200: "Here's the simple case (first one"
           text run at (0,54) width 256: "shows the problem; the other adjusts the "
           text run at (256,54) width 472: "colspan values and it works) (Dec 19 Nightly Win 95): All the elements in "
-          text run at (728,54) width 19: "the"
+          text run at (727,54) width 20: "the"
           text run at (0,72) width 422: "two tables below are width=auto (i.e., no width attribute specified)."
       RenderBlock (anonymous) at (0,310) size 769x18
         RenderBR {BR} at (0,0) size 0x17
@@ -230,26 +230,26 @@ layer at (0,0) size 785x904
       RenderBlock (anonymous) at (0,382) size 769x36
         RenderBR {BR} at (0,0) size 0x17
         RenderBR {BR} at (0,18) size 0x17
-      RenderTable {TABLE} at (0,418) size 511x54 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 509x52
-          RenderTableRow {TR} at (0,0) size 509x26
-            RenderTableCell {TD} at (0,0) size 191x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 183x18
+      RenderTable {TABLE} at (0,418) size 510x54 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 508x52
+          RenderTableRow {TR} at (0,0) size 508x26
+            RenderTableCell {TD} at (0,0) size 190x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 182x18
                 RenderInline {B} at (0,0) size 116x17
                   RenderText {#text} at (0,0) size 116x17
                     text run at (0,0) width 116: "This is colspan=1"
-            RenderTableCell {TD} at (190,0) size 320x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (189,0) size 319x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (4,4) size 200x17
                 text run at (4,4) width 200: "Blah Blah Blah Blah Blah Blah"
-          RenderTableRow {TR} at (0,26) size 509x26
-            RenderTableCell {TD} at (0,26) size 510x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderBlock {P} at (4,4) size 502x18
+          RenderTableRow {TR} at (0,26) size 508x26
+            RenderTableCell {TD} at (0,26) size 508x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderBlock {P} at (4,4) size 500x18
                 RenderInline {B} at (0,0) size 116x17
                   RenderText {#text} at (0,0) size 116x17
                     text run at (0,0) width 116: "This is colspan=2"
-                RenderText {#text} at (116,0) size 385x17
+                RenderText {#text} at (116,0) size 384x17
                   text run at (116,0) width 159: " blah blah blah blah blah "
-                  text run at (275,0) width 226: "--- this cell spans the table correctly."
+                  text run at (275,0) width 225: "--- this cell spans the table correctly."
       RenderBlock (anonymous) at (0,472) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,506) size 769x18
@@ -264,7 +264,7 @@ layer at (0,0) size 785x904
       RenderBlock {P} at (0,610) size 769x72
         RenderText {#text} at (0,0) size 758x71
           text run at (0,0) width 485: "The basic problem is \"competing colspan requests\". The table has two rows, "
-          text run at (485,0) width 260: "both of which have COLSPAN requests."
+          text run at (485,0) width 259: "both of which have COLSPAN requests."
           text run at (0,18) width 273: "They are both asking for one more column "
           text run at (273,18) width 485: "than the max number of 'real' elements in either row (i.e., both ask for total of"
           text run at (0,36) width 506: "5 but the maximum number of TD in either row is 4). This seems to confuse the "

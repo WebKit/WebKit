@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 783x35
-          text run at (0,0) width 783: "Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically generated path and"
+        RenderText {#text} at (0,0) size 782x35
+          text run at (0,0) width 782: "Below is a JavaScript-generated svg drawing. You should see two red blobs: the left, a programmatically generated path and"
           text run at (0,18) width 116: "the right, its clone."
       RenderBlock {DIV} at (0,52) size 784x400
         RenderSVGRoot {svg} at (27,189) size 372x162

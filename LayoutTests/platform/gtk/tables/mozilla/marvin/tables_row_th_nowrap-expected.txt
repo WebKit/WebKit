@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x36
         RenderText {#text} at (0,0) size 784x35
           text run at (0,0) width 734: "The table heading (The EggPlant Exchange) should not wrap when window is resized. However, the cell below the "
-          text run at (734,0) width 50: "heading"
-          text run at (0,18) width 152: "will wrap atuomatically."
-        RenderBR {BR} at (152,32) size 0x0
+          text run at (733,0) width 51: "heading"
+          text run at (0,18) width 151: "will wrap atuomatically."
+        RenderBR {BR} at (150,32) size 1x0
       RenderTable {TABLE} at (0,36) size 250x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 248x50
           RenderTableRow {TR} at (0,2) size 248x22

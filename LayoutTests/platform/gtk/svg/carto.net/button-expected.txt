@@ -90,9 +90,9 @@ layer at (0,0) size 800x600
             RenderSVGContainer {g} at (279,115) size 10x16 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
               RenderSVGPath {line} at (282,122) size 5x9 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
               RenderSVGPath {path} at (279,115) size 10x13 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
-    RenderSVGText {text} at (100,195) size 75x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 75x19
-        chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 74.24: "StatusText"
+    RenderSVGText {text} at (100,195) size 74x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 74x19
+        chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 73.08: "StatusText"
     RenderSVGText {text} at (430,305) size 497x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 497x19
         chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 496.64: "Click this text to randomly resize the multiline textbutton (textbutton7)"

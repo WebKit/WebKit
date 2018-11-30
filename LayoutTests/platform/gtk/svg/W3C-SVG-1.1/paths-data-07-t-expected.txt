@@ -4,15 +4,15 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (68,34) size 368x204
       RenderSVGContainer {g} at (68,34) size 368x204 [transform={m=((1.80,0.00)(0.00,1.80)) t=(-360.00,-270.00)}]
-        RenderSVGText {text} at (288,168) size 50x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 50x14
-            chunk 1 text run 1 at (288.00,180.00) startOffset 0 endOffset 10 width 49.44: "m, h, v, h"
-        RenderSVGText {text} at (288,182) size 46x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 46x14
-            chunk 1 text run 1 at (288.00,194.00) startOffset 0 endOffset 10 width 45.56: "v, h, v, h"
-        RenderSVGText {text} at (304,196) size 19x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 19x14
-            chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 18.89: "v, z"
+        RenderSVGText {text} at (288,168) size 49x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 49x14
+            chunk 1 text run 1 at (288.00,180.00) startOffset 0 endOffset 10 width 48.54: "m, h, v, h"
+        RenderSVGText {text} at (288,182) size 44x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x14
+            chunk 1 text run 1 at (288.00,194.00) startOffset 0 endOffset 10 width 43.74: "v, h, v, h"
+        RenderSVGText {text} at (304,196) size 18x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 18x14
+            chunk 1 text run 1 at (304.00,208.00) startOffset 0 endOffset 4 width 17.98: "v, z"
         RenderSVGPath {path} at (71,71) size 164x164 [stroke={[type=SOLID] [color=#000000]}] [data="M 240 190 L 270 190 L 270 220 L 300 220 L 300 250 L 330 250 L 330 280 L 240 280 L 240 190 Z"]
         RenderSVGRect {rect} at (68,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=238.00] [y=188.00] [width=4.00] [height=4.00]
         RenderSVGRect {rect} at (122,68) size 8x8 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=188.00] [width=4.00] [height=4.00]

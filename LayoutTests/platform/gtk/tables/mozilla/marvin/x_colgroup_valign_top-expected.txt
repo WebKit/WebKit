@@ -4,8 +4,8 @@ layer at (0,0) size 800x272
   RenderBlock {html} at (0,0) size 800x272
     RenderBody {body} at (8,16) size 784x248
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 196x17
-          text run at (0,0) width 196: "COLGROUP VALIGN=TOP"
+        RenderText {#text} at (0,0) size 194x17
+          text run at (0,0) width 194: "COLGROUP VALIGN=TOP"
       RenderTable {table} at (0,34) size 657x214 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

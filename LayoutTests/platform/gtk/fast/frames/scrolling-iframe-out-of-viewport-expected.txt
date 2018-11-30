@@ -48,7 +48,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (134,212) size 0x0
           RenderText {#text} at (0,216) size 146x17
             text run at (0,216) width 146: "pariatur. Excepteur sint"
-          RenderBR {BR} at (146,230) size 0x0
+          RenderBR {BR} at (145,230) size 1x0
           RenderText {#text} at (0,234) size 143x17
             text run at (0,234) width 143: "occaecat cupidatat non"
           RenderBR {BR} at (143,248) size 0x0
@@ -57,7 +57,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (164,266) size 0x0
           RenderText {#text} at (0,270) size 172x17
             text run at (0,270) width 172: "officia deserunt mollit anim"
-          RenderBR {BR} at (172,284) size 0x0
+          RenderBR {BR} at (171,284) size 1x0
           RenderText {#text} at (0,288) size 93x17
             text run at (0,288) width 93: "id est laborum."
           RenderBR {BR} at (93,302) size 0x0
@@ -100,7 +100,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (134,536) size 0x0
           RenderText {#text} at (0,540) size 146x17
             text run at (0,540) width 146: "pariatur. Excepteur sint"
-          RenderBR {BR} at (146,554) size 0x0
+          RenderBR {BR} at (145,554) size 1x0
           RenderText {#text} at (0,558) size 143x17
             text run at (0,558) width 143: "occaecat cupidatat non"
           RenderBR {BR} at (143,572) size 0x0
@@ -109,7 +109,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (164,590) size 0x0
           RenderText {#text} at (0,594) size 172x17
             text run at (0,594) width 172: "officia deserunt mollit anim"
-          RenderBR {BR} at (172,608) size 0x0
+          RenderBR {BR} at (171,608) size 1x0
           RenderText {#text} at (0,612) size 93x17
             text run at (0,612) width 93: "id est laborum."
           RenderBR {BR} at (93,626) size 0x0
@@ -151,7 +151,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (134,842) size 0x0
           RenderText {#text} at (0,846) size 146x17
             text run at (0,846) width 146: "pariatur. Excepteur sint"
-          RenderBR {BR} at (146,860) size 0x0
+          RenderBR {BR} at (145,860) size 1x0
           RenderText {#text} at (0,864) size 143x17
             text run at (0,864) width 143: "occaecat cupidatat non"
           RenderBR {BR} at (143,878) size 0x0
@@ -160,7 +160,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (164,896) size 0x0
           RenderText {#text} at (0,900) size 172x17
             text run at (0,900) width 172: "officia deserunt mollit anim"
-          RenderBR {BR} at (172,914) size 0x0
+          RenderBR {BR} at (171,914) size 1x0
           RenderText {#text} at (0,918) size 93x17
             text run at (0,918) width 93: "id est laborum."
           RenderBR {BR} at (93,932) size 0x0
@@ -203,7 +203,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (134,1166) size 0x0
           RenderText {#text} at (0,1170) size 146x17
             text run at (0,1170) width 146: "pariatur. Excepteur sint"
-          RenderBR {BR} at (146,1184) size 0x0
+          RenderBR {BR} at (145,1184) size 1x0
           RenderText {#text} at (0,1188) size 143x17
             text run at (0,1188) width 143: "occaecat cupidatat non"
           RenderBR {BR} at (143,1202) size 0x0
@@ -212,7 +212,7 @@ layer at (0,400) size 504x204
           RenderBR {BR} at (164,1220) size 0x0
           RenderText {#text} at (0,1224) size 172x17
             text run at (0,1224) width 172: "officia deserunt mollit anim"
-          RenderBR {BR} at (172,1238) size 0x0
+          RenderBR {BR} at (171,1238) size 1x0
           RenderText {#text} at (0,1242) size 93x17
             text run at (0,1242) width 93: "id est laborum."
           RenderBR {BR} at (93,1256) size 0x0

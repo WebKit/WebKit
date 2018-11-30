@@ -6,8 +6,8 @@ layer at (0,0) size 450x500
       RenderSVGPath {path} at (19,11) size 161x38 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 20 40 C 40 20 60 0 80 20 C 100 40 120 60 140 40 C 160 20 180 20 180 20"]
       RenderSVGPath {path} at (19,11) size 321x38 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 20 40 C 60 20 100 0 140 20 C 180 40 220 60 260 40 C 300 20 340 20 340 20"]
     RenderSVGText {text} at (130,15) size 190x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 190x18
-        chunk 1 (middle anchor) text run 1 at (130.00,30.00) startOffset 0 endOffset 27 width 190.00: "Text Orientation Horizontal"
+      RenderSVGInlineText {#text} at (0,0) size 189x18
+        chunk 1 (middle anchor) text run 1 at (130.89,30.00) startOffset 0 endOffset 27 width 188.23: "Text Orientation Horizontal"
     RenderSVGContainer {g} at (37,44) size 363x348
       RenderSVGPath {line} at (50,79) size 150x2 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=50.00] [y1=80.00] [x2=200.00] [y2=80.00]
       RenderSVGText {text} at (50,58) size 142x28 contains 1 chunk(s)

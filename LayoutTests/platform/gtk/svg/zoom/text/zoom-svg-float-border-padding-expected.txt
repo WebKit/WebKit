@@ -7,7 +7,7 @@ layer at (0,0) size 785x624
         RenderText {#text} at (0,0) size 758x51
           text run at (0,0) width 357: "The two blocks should look identical. "
           text run at (357,0) width 401: "One uses an SVG, and the other just uses a"
-          text run at (0,26) width 179: "normal HTML div."
+          text run at (0,26) width 177: "normal HTML div."
       RenderBlock {p} at (0,75) size 769x27
         RenderText {#text} at (0,0) size 524x25
           text run at (0,0) width 524: "There should be a red, white and blue pattern below this"

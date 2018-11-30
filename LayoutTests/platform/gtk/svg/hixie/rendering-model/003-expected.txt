@@ -4,8 +4,8 @@ layer at (0,0) size 800x406
   RenderBlock {html} at (0,0) size 800x406
     RenderBody {body} at (8,16) size 784x374
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 431x17
-          text run at (0,0) width 431: "There should be two identical blue squares below, and no scrollbars."
+        RenderText {#text} at (0,0) size 430x17
+          text run at (0,0) width 430: "There should be two identical blue squares below, and no scrollbars."
       RenderBlock {div} at (0,34) size 160x160 [bgcolor=#000080]
       RenderBlock {p} at (0,210) size 784x164
         RenderIFrame {iframe} at (0,0) size 160x160 [bgcolor=#FF0000]

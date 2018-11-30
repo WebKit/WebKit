@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (10,5) size 416x277
-      RenderSVGText {text} at (90,5) size 209x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 209x14
-          chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 47 width 209.00: "Verify transform attributes in the 'a' element."
+      RenderSVGText {text} at (90,5) size 208x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 208x14
+          chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 47 width 207.67: "Verify transform attributes in the 'a' element."
       RenderSVGPath {path} at (164,26) size 147x76 [stroke={[type=SOLID] [color=#000080]}] [fill={[type=SOLID] [color=#808000]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]
       RenderSVGContainer {a} at (155,8) size 164x121 [transform={m=((0.94,0.34)(-0.34,0.94)) t=(35.80,-73.03)}]
         RenderSVGPath {path} at (155,8) size 164x121 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]

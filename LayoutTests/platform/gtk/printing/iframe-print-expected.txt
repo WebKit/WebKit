@@ -9,8 +9,8 @@ layer at (0,0) size 1000x324
         layer at (0,0) size 300x34
           RenderBlock {HTML} at (0,0) size 300x34
             RenderBody {BODY} at (8,8) size 284x18
-              RenderText {#text} at (0,0) size 242x17
-                text run at (0,0) width 242: "You should see this text when printed."
+              RenderText {#text} at (0,0) size 241x17
+                text run at (0,0) width 241: "You should see this text when printed."
       RenderText {#text} at (304,290) size 4x17
         text run at (304,290) width 4: " "
       RenderIFrame {IFRAME} at (308,0) size 304x304 [border: (2px inset #000000)]
@@ -19,20 +19,20 @@ layer at (0,0) size 1000x324
         layer at (40,0) size 260x300
           RenderBlock {HTML} at (0,0) size 260x300
             RenderBody {BODY} at (8,8) size 244x284
-              RenderText {#text} at (0,0) size 17x246
-                text run at (0,0) width 246: "You should see this text when printed. "
-              RenderBR {BR} at (0,246) size 17x0
-              RenderText {#text} at (18,0) size 17x161
-                text run at (18,0) width 161: "Vertical text on the right. "
-              RenderBR {BR} at (18,161) size 17x0
+              RenderText {#text} at (0,0) size 17x245
+                text run at (0,0) width 245: "You should see this text when printed. "
+              RenderBR {BR} at (0,244) size 17x1
+              RenderText {#text} at (18,0) size 17x160
+                text run at (18,0) width 160: "Vertical text on the right. "
+              RenderBR {BR} at (18,159) size 17x1
               RenderIFrame {IFRAME} at (36,0) size 204x154 [border: (2px inset #000000)]
                 layer at (0,0) size 200x150
                   RenderView at (0,0) size 200x150
                 layer at (0,0) size 200x52
                   RenderBlock {HTML} at (0,0) size 200x52
                     RenderBody {BODY} at (8,8) size 184x36
-                      RenderText {#text} at (0,0) size 151x35
-                        text run at (0,0) width 151: "You should see this text"
+                      RenderText {#text} at (0,0) size 150x35
+                        text run at (0,0) width 150: "You should see this text"
                         text run at (0,18) width 87: "when printed."
               RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0

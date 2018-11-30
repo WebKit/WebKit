@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 778x42
                   RenderTableRow {TR} at (0,2) size 778x38
                     RenderTableCell {TD} at (2,2) size 774x38 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 755x35
-                        text run at (1,1) width 561: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text "
-                        text run at (562,1) width 194: "Text Text Text Text Text Text"
-                        text run at (1,19) width 359: "Text Text Text Text Text Text Text Text Text Text Text"
+                      RenderText {#text} at (1,1) size 762x35
+                        text run at (1,1) width 543: "Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text Text "
+                        text run at (543,1) width 220: "Text Text Text Text Text Text Text"
+                        text run at (1,19) width 315: "Text Text Text Text Text Text Text Text Text Text"

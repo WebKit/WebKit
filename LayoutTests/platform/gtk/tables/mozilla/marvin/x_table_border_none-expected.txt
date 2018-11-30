@@ -4,9 +4,9 @@ layer at (0,0) size 800x148
   RenderBlock {html} at (0,0) size 800x148
     RenderBody {body} at (8,16) size 784x124
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 399x17
+        RenderText {#text} at (0,0) size 398x17
           text run at (0,0) width 356: "There should be no border around the frame of the table "
-          text run at (356,0) width 43: "below."
+          text run at (356,0) width 42: "below."
       RenderTable {table} at (0,34) size 188x90
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

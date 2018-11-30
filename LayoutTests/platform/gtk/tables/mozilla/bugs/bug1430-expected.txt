@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x108
         RenderText {#text} at (0,0) size 782x107
           text run at (0,0) width 513: "Here's the HTML test case, extracted from the Netcenter Address Book page. At "
-          text run at (513,0) width 261: "the top of the address book is a \"tool bar\""
-          text run at (0,18) width 162: "with options like \"New,\" "
-          text run at (162,18) width 468: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
-          text run at (630,18) width 151: "image map. You should"
+          text run at (512,0) width 262: "the top of the address book is a \"tool bar\""
+          text run at (0,18) width 161: "with options like \"New,\" "
+          text run at (160,18) width 468: "\"Directory,\" \"Sign-out,\" \"Customize,\" etc. These are areas in a client side "
+          text run at (627,18) width 151: "image map. You should"
           text run at (0,36) width 352: "be able to click on these areas of the map, including the "
           text run at (352,36) width 428: "areas on the right side of the map. However, in NGLayout, the right"
           text run at (0,54) width 69: "side of the "
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           text run at (0,90) width 54: "crashes. "
           text run at (54,90) width 442: "It's as though NGLayout thinks the Imagemap areas are located a few "
           text run at (496,90) width 164: "hundred pixels to the left. "
-        RenderBR {BR} at (660,104) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
       RenderTable {TABLE} at (0,108) size 644x63
         RenderTableSection {TBODY} at (0,0) size 644x63
           RenderTableRow {TR} at (0,2) size 644x59

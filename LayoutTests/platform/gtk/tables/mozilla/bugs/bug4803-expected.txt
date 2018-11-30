@@ -13,6 +13,6 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (0,0) size 1x2
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (1,0) size 139x36 [bgcolor=#FFFFCC] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 131x35
-                text run at (0,0) width 131: " D A I LY  C H E C"
+              RenderText {#text} at (0,0) size 128x35
+                text run at (0,0) width 128: " D A I LY  C H E C"
                 text run at (0,18) width 12: "K"

@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {circle} at (98,0) size 112x80 [stroke={[type=SOLID] [color=#640000] [stroke width=12.00]}] [fill={[type=RADIAL-GRADIENT] [id="redToYellow"]}] [cx=20.00] [cy=20.00] [r=40.00]
     RenderSVGRect {rect} at (189,59) size 422x482 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="pattern"]}] [x=50.00] [y=50.00] [width=350.00] [height=400.00]
     RenderSVGRect {rect} at (130,0) size 540x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=448.00] [height=498.00]
-    RenderSVGContainer {g} at (290,13) size 220x32
+    RenderSVGContainer {g} at (291,13) size 218x32
       RenderSVGText {text} at (134,11) size 182x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 182x12
-          chunk 1 (middle anchor) text run 1 at (134.17,20.00) startOffset 0 endOffset 47 width 181.67: "stroked circle shouldn't be clipped in any way."
+          chunk 1 (middle anchor) text run 1 at (134.49,20.00) startOffset 0 endOffset 47 width 181.02: "stroked circle shouldn't be clipped in any way."
       RenderSVGText {text} at (162,26) size 126x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 126x12
           chunk 1 (middle anchor) text run 1 at (162.08,35.00) startOffset 0 endOffset 32 width 125.83: "(stroke-width should be visible!"

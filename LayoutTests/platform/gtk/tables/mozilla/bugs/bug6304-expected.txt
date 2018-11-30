@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (2,2) size 100x162 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 88x150 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 88x18
-                    RenderInline {NOBR} at (0,0) size 46x17
-                      RenderText {#text} at (21,0) size 46x17
-                        text run at (21,0) width 46: "Table I"
+                    RenderInline {NOBR} at (0,0) size 44x17
+                      RenderText {#text} at (22,0) size 44x17
+                        text run at (22,0) width 44: "Table I"
                   RenderTableSection {TBODY} at (1,19) size 86x130
                     RenderTableRow {TR} at (0,5) size 86x20
                       RenderTableCell {TD} at (5,5) size 22x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -121,9 +121,9 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (206,2) size 100x144 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
                 RenderTable {TABLE} at (6,6) size 88x132 [bgcolor=#FFFFFF] [border: (1px outset #808080)]
                   RenderBlock {CAPTION} at (0,0) size 88x18
-                    RenderInline {NOBR} at (0,0) size 56x17
-                      RenderText {#text} at (16,0) size 56x17
-                        text run at (16,0) width 56: "Table III"
+                    RenderInline {NOBR} at (0,0) size 54x17
+                      RenderText {#text} at (17,0) size 54x17
+                        text run at (17,0) width 54: "Table III"
                   RenderTableSection {TBODY} at (1,19) size 86x112
                     RenderTableRow {TR} at (0,5) size 86x20
                       RenderTableCell {TD} at (5,5) size 22x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -201,40 +201,40 @@ layer at (0,0) size 800x600
                           text run at (1,1) width 20: "5,2"
       RenderBlock {HR} at (0,210) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,228) size 784x18
-        RenderInline {B} at (0,0) size 558x17
-          RenderText {#text} at (113,0) size 558x17
-            text run at (113,0) width 558: "This demonstrates a problem with \"overlapping rowspan cells\" (look at Table IV)."
+        RenderInline {B} at (0,0) size 556x17
+          RenderText {#text} at (114,0) size 556x17
+            text run at (114,0) width 556: "This demonstrates a problem with \"overlapping rowspan cells\" (look at Table IV)."
       RenderBlock {P} at (0,262) size 784x18
-        RenderInline {B} at (0,0) size 54x17
-          RenderText {#text} at (0,0) size 54x17
-            text run at (0,0) width 54: "Table I:"
-        RenderText {#text} at (54,0) size 121x17
-          text run at (54,0) width 121: " a regular 5x3 table"
+        RenderInline {B} at (0,0) size 53x17
+          RenderText {#text} at (0,0) size 53x17
+            text run at (0,0) width 53: "Table I:"
+        RenderText {#text} at (52,0) size 122x17
+          text run at (52,0) width 122: " a regular 5x3 table"
       RenderBlock {P} at (0,296) size 784x18
-        RenderInline {B} at (0,0) size 60x17
-          RenderText {#text} at (0,0) size 60x17
-            text run at (0,0) width 60: "Table II:"
-        RenderText {#text} at (60,0) size 401x17
-          text run at (60,0) width 401: " introduces rowspan=2 for cells (2,2) and (3,1), which 'overlap'."
+        RenderInline {B} at (0,0) size 59x17
+          RenderText {#text} at (0,0) size 59x17
+            text run at (0,0) width 59: "Table II:"
+        RenderText {#text} at (58,0) size 402x17
+          text run at (58,0) width 402: " introduces rowspan=2 for cells (2,2) and (3,1), which 'overlap'."
       RenderBlock {P} at (0,330) size 784x54
-        RenderInline {B} at (0,0) size 66x17
-          RenderText {#text} at (0,0) size 66x17
-            text run at (0,0) width 66: "Table III:"
-        RenderText {#text} at (66,0) size 770x53
-          text run at (66,0) width 704: " is Table II, but cells (2,3),(3,3) and (4,3) now have 'empty' contents; the resulting table is still OK. Note that the"
-          text run at (0,18) width 768: "height of (2,3) and (4,3) is determined by cells (2,1) and (4,2) respectively, whereas (3,3) has ~0 height since no 'effective'"
+        RenderInline {B} at (0,0) size 65x17
+          RenderText {#text} at (0,0) size 65x17
+            text run at (0,0) width 65: "Table III:"
+        RenderText {#text} at (64,0) size 768x53
+          text run at (64,0) width 704: " is Table II, but cells (2,3),(3,3) and (4,3) now have 'empty' contents; the resulting table is still OK. Note that the"
+          text run at (0,18) width 767: "height of (2,3) and (4,3) is determined by cells (2,1) and (4,2) respectively, whereas (3,3) has ~0 height since no 'effective'"
           text run at (0,36) width 633: "cell in the row has any definite height requirement (except for border, margin, padding if applicable)."
       RenderBlock {P} at (0,400) size 784x36
-        RenderInline {B} at (0,0) size 66x17
-          RenderText {#text} at (0,0) size 66x17
-            text run at (0,0) width 66: "Table IV:"
-        RenderText {#text} at (66,0) size 764x35
-          text run at (66,0) width 698: " is Table III, but column 3 has been removed (cells (1,3),(2,3),(3,3),(4,3),(5,3)). This should mirror the first two"
-          text run at (0,18) width 284: "columns of Table III (but currently does not)."
+        RenderInline {B} at (0,0) size 64x17
+          RenderText {#text} at (0,0) size 64x17
+            text run at (0,0) width 64: "Table IV:"
+        RenderText {#text} at (63,0) size 760x35
+          text run at (63,0) width 697: " is Table III, but column 3 has been removed (cells (1,3),(2,3),(3,3),(4,3),(5,3)). This should mirror the first two"
+          text run at (0,18) width 283: "columns of Table III (but currently does not)."
       RenderBlock {P} at (0,452) size 784x36
-        RenderText {#text} at (0,0) size 766x35
-          text run at (0,0) width 766: "Note that cells (2,2) and (3,1) are still in the correct position, with the same size as Table III, but that their cellspacing with"
+        RenderText {#text} at (0,0) size 765x35
+          text run at (0,0) width 765: "Note that cells (2,2) and (3,1) are still in the correct position, with the same size as Table III, but that their cellspacing with"
           text run at (0,18) width 153: "(5,1) and (4,2) is absent."
       RenderBlock {P} at (0,504) size 784x18
-        RenderText {#text} at (0,0) size 481x17
-          text run at (0,0) width 481: "Tested with Apr25, M4 and 1999051109 (win95, opt.) Dated: May 11 1999"
+        RenderText {#text} at (0,0) size 479x17
+          text run at (0,0) width 479: "Tested with Apr25, M4 and 1999051109 (win95, opt.) Dated: May 11 1999"

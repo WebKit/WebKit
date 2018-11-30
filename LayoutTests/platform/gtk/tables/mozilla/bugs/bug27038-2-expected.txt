@@ -4,8 +4,8 @@ layer at (0,0) size 785x768
   RenderBlock {HTML} at (0,0) size 785x768
     RenderBody {BODY} at (8,8) size 769x752
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 285x17
-          text run at (0,0) width 285: "TABLE 1 - without 'height' style on TABLE"
+        RenderText {#text} at (0,0) size 283x17
+          text run at (0,0) width 283: "TABLE 1 - without 'height' style on TABLE"
       RenderTable {TABLE} at (0,34) size 69x74 [border: (3px solid #000000)]
         RenderTableSection {THEAD} at (3,3) size 63x24
           RenderTableRow {TR} at (0,2) size 63x20
@@ -24,8 +24,8 @@ layer at (0,0) size 785x768
                 text run at (1,1) width 57: "TBODY"
       RenderBlock {HR} at (0,116) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,134) size 769x18
-        RenderText {#text} at (0,0) size 265x17
-          text run at (0,0) width 265: "TABLE 2 - with 'height' style on TABLE"
+        RenderText {#text} at (0,0) size 263x17
+          text run at (0,0) width 263: "TABLE 2 - with 'height' style on TABLE"
       RenderTable {TABLE} at (0,168) size 69x584 [border: (3px solid #000000)]
         RenderTableSection {THEAD} at (3,3) size 63x24
           RenderTableRow {TR} at (0,2) size 63x20

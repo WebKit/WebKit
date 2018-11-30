@@ -6,7 +6,7 @@ layer at (0,0) size 785x1092
       RenderBlock {P} at (0,0) size 769x36
         RenderText {#text} at (0,0) size 747x35
           text run at (0,0) width 382: "The table below should have the same width as the red DIV "
-          text run at (382,0) width 365: "below this paragraph. The inner image should just fit. The"
+          text run at (381,0) width 366: "below this paragraph. The inner image should just fit. The"
           text run at (0,18) width 42: "image "
         RenderInline {EM} at (0,0) size 66x17
           RenderText {#text} at (42,18) size 66x17
@@ -82,7 +82,7 @@ layer at (0,0) size 785x1092
       RenderBlock {P} at (0,1006) size 769x18
         RenderText {#text} at (0,0) size 596x17
           text run at (0,0) width 494: "(Note: If the image has disappeared from the server, replace it with any 593px "
-          text run at (494,0) width 102: "image you like.)"
+          text run at (493,0) width 103: "image you like.)"
       RenderBlock {P} at (0,1040) size 769x18
         RenderText {#text} at (0,0) size 56x17
           text run at (0,0) width 56: "See also "

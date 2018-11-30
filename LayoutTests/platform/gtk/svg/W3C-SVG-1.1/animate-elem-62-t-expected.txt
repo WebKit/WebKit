@@ -16,7 +16,7 @@ layer at (0,0) size 480x360
             chunk 1 (end anchor) text run 1 at (-64.00,0.00) startOffset 0 endOffset 11 width 64.00: "unspecified"
         RenderSVGText {text} at (-32,12) size 32x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
-            chunk 1 (end anchor) text run 1 at (-32.00,25.00) startOffset 0 endOffset 6 width 32.00: "offset"
+            chunk 1 (end anchor) text run 1 at (-31.75,25.00) startOffset 0 endOffset 6 width 31.75: "offset"
         RenderSVGText {text} at (-58,37) size 58x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 58x16
             chunk 1 (end anchor) text run 1 at (-58.00,50.00) startOffset 0 endOffset 10 width 58.00: "event base"

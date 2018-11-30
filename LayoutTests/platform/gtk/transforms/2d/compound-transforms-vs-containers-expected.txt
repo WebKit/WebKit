@@ -4,8 +4,8 @@ layer at (0,0) size 800x556
   RenderBlock {HTML} at (0,0) size 800x556
     RenderBody {BODY} at (8,16) size 784x520
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 769x35
-          text run at (0,0) width 769: "Test ensures that nested transformed elements produce the same result as a single compound transform.You should not see"
+        RenderText {#text} at (0,0) size 767x35
+          text run at (0,0) width 767: "Test ensures that nested transformed elements produce the same result as a single compound transform.You should not see"
           text run at (0,18) width 188: "any red in the two tests below"
 layer at (78,72) size 402x222
   RenderBlock (relative positioned) {DIV} at (20,56) size 402x222 [border: (1px solid #000000)]

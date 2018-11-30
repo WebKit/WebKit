@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 660x17
-          text run at (0,0) width 660: "The TBODY element labels the body area of a table. In this test, the TBODY text should be left aligned."
+        RenderText {#text} at (0,0) size 659x17
+          text run at (0,0) width 659: "The TBODY element labels the body area of a table. In this test, the TBODY text should be left aligned."
       RenderTable {TABLE} at (0,34) size 688x76 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 686x26
           RenderTableRow {TR} at (0,2) size 686x22

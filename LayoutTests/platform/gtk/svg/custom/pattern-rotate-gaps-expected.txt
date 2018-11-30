@@ -16,12 +16,12 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 280x14
           RenderSVGInlineText {#text} at (0,0) size 280x14
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 280.00: "For this test case to be successful, the"
-        RenderSVGInlineText {#text} at (280,0) size 7x14
+        RenderSVGInlineText {#text} at (279,0) size 7x14
           chunk 1 text run 1 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 252x14
           RenderSVGInlineText {#text} at (0,15) size 252x14
             chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 36 width 252.00: "rotated square inside the black area"
-        RenderSVGInlineText {#text} at (252,15) size 7x14
+        RenderSVGInlineText {#text} at (251,15) size 7x14
           chunk 1 text run 1 at (252.00,15.00) startOffset 0 endOffset 1 width 7.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 147x14
           RenderSVGInlineText {#text} at (0,30) size 147x14

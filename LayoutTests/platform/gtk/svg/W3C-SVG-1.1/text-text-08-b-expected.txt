@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (17,0) size 375x256
-      RenderSVGText {text} at (19,2) size 328x72 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 328x71
-          chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 328.00: "Normal Text"
+      RenderSVGText {text} at (19,2) size 324x72 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 324x71
+          chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 323.53: "Normal Text"
       RenderSVGText {text} at (19,62) size 294x72 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 294x71
           chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 294.00: "Fill opacity"

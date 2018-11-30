@@ -11,8 +11,8 @@ layer at (0,0) size 800x258
           RenderText {#text} at (0,0) size 76x17
             text run at (0,0) width 76: "Example 1."
         RenderBR {br} at (76,0) size 0x17
-        RenderText {#text} at (0,18) size 122x17
-          text run at (0,18) width 122: "Table width=100%"
+        RenderText {#text} at (0,18) size 121x17
+          text run at (0,18) width 121: "Table width=100%"
       RenderTable {table} at (0,86) size 784x28 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 782x26
           RenderTableRow {tr} at (0,2) size 782x22

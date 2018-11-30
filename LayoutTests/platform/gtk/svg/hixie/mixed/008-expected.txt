@@ -4,8 +4,8 @@ layer at (0,0) size 800x462
   RenderBlock {html} at (0,0) size 800x462
     RenderBody {body} at (8,16) size 784x438
       RenderBlock {p} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 406x17
-          text run at (0,0) width 406: "There should be a blue circle with the word \"TEST\" in it below."
+        RenderText {#text} at (0,0) size 405x17
+          text run at (0,0) width 405: "There should be a blue circle with the word \"TEST\" in it below."
       RenderBlock (anonymous) at (0,34) size 784x404
         RenderSVGRoot {svg} at (8,50) size 400x400
           RenderSVGRect {rect} at (8,50) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]

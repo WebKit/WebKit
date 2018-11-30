@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,23) size 498x23
-      RenderSVGText {text} at (75,14) size 299x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 299x14
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 55 width 298.20: "Test that removal of referenced content does not crash."
+    RenderSVGContainer {g} at (125,23) size 495x23
+      RenderSVGText {text} at (75,14) size 297x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 297x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 55 width 296.87: "Test that removal of referenced content does not crash."
       RenderSVGText {text}
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0

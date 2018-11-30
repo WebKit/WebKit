@@ -4,8 +4,8 @@ layer at (0,0) size 800x290
   RenderBlock {HTML} at (0,0) size 800x290
     RenderBody {BODY} at (8,16) size 784x266
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 309x17
-          text run at (0,0) width 309: "Test passes if two drawings are exactly the same."
+        RenderText {#text} at (0,0) size 308x17
+          text run at (0,0) width 308: "Test passes if two drawings are exactly the same."
       RenderBlock {DIV} at (0,34) size 96x96
       RenderBlock {DIV} at (0,34) size 96x96
       RenderBlock {DIV} at (0,34) size 96x96

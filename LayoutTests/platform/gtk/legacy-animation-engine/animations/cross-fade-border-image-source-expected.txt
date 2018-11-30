@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 756x35
-          text run at (0,0) width 756: "PASS - \"borderImageSource\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(stripes-"
+        RenderText {#text} at (0,0) size 755x35
+          text run at (0,0) width 755: "PASS - \"borderImageSource\" property for \"box\" element at 2.5s saw something close to: -webkit-cross-fade(url(stripes-"
           text run at (0,18) width 217: "100.png), url(green-100.png), 0.5)"
         RenderBR {BR} at (217,32) size 0x0
-        RenderText {#text} at (0,36) size 714x17
-          text run at (0,36) width 714: "PASS - \"borderImageSource\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (714,50) size 0x0
-        RenderText {#text} at (0,54) size 779x17
-          text run at (0,54) width 779: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
-        RenderBR {BR} at (779,68) size 0x0
+        RenderText {#text} at (0,36) size 713x17
+          text run at (0,36) width 713: "PASS - \"borderImageSource\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (712,50) size 1x0
+        RenderText {#text} at (0,54) size 778x17
+          text run at (0,54) width 778: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (777,68) size 1x0
 layer at (100,100) size 106x106
   RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border: (3px none #000000)]
 layer at (100,250) size 106x106

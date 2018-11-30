@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
         RenderText {#text} at (0,0) size 777x53
-          text run at (0,0) width 738: "Test that spin buttons don't cover the value of input type number. On the GTK+ port, the width of the input field type"
+          text run at (0,0) width 736: "Test that spin buttons don't cover the value of input type number. On the GTK+ port, the width of the input field type"
           text run at (0,18) width 777: "number is incremented with the width of the spin button. The test passes if you see below the value of the 16 input numbers"
           text run at (0,36) width 258: "visible (from 1 to 8 and from 101 to 108)"
       RenderBlock (anonymous) at (0,70) size 784x316

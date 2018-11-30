@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 784x123
             RenderTableCell {TD} at (2,2) size 389x120 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 387x26 [bgcolor=#D0D0D0]
-                RenderText {#text} at (91,0) size 205x25
-                  text run at (91,0) width 205: "Table height at 24mm"
+                RenderText {#text} at (92,0) size 203x25
+                  text run at (92,0) width 203: "Table height at 24mm"
               RenderTable {TABLE} at (1,27) size 387x92
                 RenderTableSection {THEAD} at (0,0) size 387x32 [bgcolor=#FF0000]
                   RenderTableRow {TR} at (0,2) size 387x28
@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
                         text run at (154,1) width 75: "TBODY"
             RenderTableCell {TD} at (393,2) size 389x123 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 387x26 [bgcolor=#D0D0D0]
-                RenderText {#text} at (91,0) size 205x25
-                  text run at (91,0) width 205: "Table height at 25mm"
+                RenderText {#text} at (92,0) size 203x25
+                  text run at (92,0) width 203: "Table height at 25mm"
               RenderTable {TABLE} at (1,27) size 387x95
                 RenderTableSection {THEAD} at (0,0) size 387x32 [bgcolor=#FF0000]
                   RenderTableRow {TR} at (0,2) size 387x28

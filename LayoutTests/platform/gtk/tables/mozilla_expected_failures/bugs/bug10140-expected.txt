@@ -4,8 +4,8 @@ layer at (0,0) size 785x2817
   RenderBlock {HTML} at (0,0) size 785x2817
     RenderBody {BODY} at (8,21) size 769x2780
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 272x36
-          text run at (0,0) width 272: "Tables and captions"
+        RenderText {#text} at (0,0) size 270x36
+          text run at (0,0) width 270: "Tables and captions"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 527x17
           text run at (0,0) width 423: "The table should have width 300px, as should the caption (entirely "
@@ -422,16 +422,16 @@ layer at (0,0) size 785x2817
       RenderBlock {P} at (0,2727) size 769x19
         RenderText {#text} at (0,0) size 58x17
           text run at (0,0) width 58: "(Back to "
-        RenderInline {A} at (0,0) size 158x17 [color=#0000EE]
-          RenderText {#text} at (58,0) size 158x17
-            text run at (58,0) width 158: "CSS Testing Information"
-        RenderText {#text} at (216,0) size 8x17
-          text run at (216,0) width 8: ", "
-        RenderInline {A} at (0,0) size 82x17 [color=#0000EE]
-          RenderText {#text} at (224,0) size 82x17
-            text run at (224,0) width 82: "David Baron"
-        RenderText {#text} at (306,0) size 5x17
-          text run at (306,0) width 5: ")"
+        RenderInline {A} at (0,0) size 157x17 [color=#0000EE]
+          RenderText {#text} at (58,0) size 157x17
+            text run at (58,0) width 157: "CSS Testing Information"
+        RenderText {#text} at (214,0) size 9x17
+          text run at (214,0) width 9: ", "
+        RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
+          RenderText {#text} at (222,0) size 83x17
+            text run at (222,0) width 83: "David Baron"
+        RenderText {#text} at (304,0) size 6x17
+          text run at (304,0) width 6: ")"
       RenderBlock {P} at (0,2761) size 769x19
         RenderInline {A} at (0,0) size 33x17 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x17

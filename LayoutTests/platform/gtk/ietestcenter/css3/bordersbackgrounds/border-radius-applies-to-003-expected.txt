@@ -4,7 +4,7 @@ layer at (0,0) size 800x160
   RenderBlock {HTML} at (0,0) size 800x160
     RenderBody {BODY} at (8,16) size 784x136
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 357x17
-          text run at (0,0) width 357: "Test passes if there is a box with rounded corners below."
+        RenderText {#text} at (0,0) size 355x17
+          text run at (0,0) width 355: "Test passes if there is a box with rounded corners below."
       RenderListItem {DIV} at (0,34) size 102x102 [border: (3px solid #008000)]
         RenderListMarker at (-17,3) size 7x17: bullet

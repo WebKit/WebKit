@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {DIV} at (0,0) size 784x86
+      RenderBlock {DIV} at (0,0) size 784x87
         RenderBlock {P} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 391x17
-            text run at (0,0) width 391: "This test verifies that the non BMP characters render properly."
+          RenderText {#text} at (0,0) size 390x17
+            text run at (0,0) width 390: "This test verifies that the non BMP characters render properly."
         RenderBlock {P} at (0,34) size 784x18
           RenderText {#text} at (0,0) size 400x17
             text run at (0,0) width 400: "The English alphabet should be rendered below in fraktur style:"
-        RenderBlock {P} at (0,68) size 784x18
-          RenderText {#text} at (0,0) size 681x17
-            text run at (0,0) width 681: "\x{D835}\x{DD04} \x{D835}\x{DD1E} \x{D835}\x{DD05} \x{D835}\x{DD1F} \x{212D} \x{D835}\x{DD20} \x{D835}\x{DD07} \x{D835}\x{DD21} \x{D835}\x{DD08} \x{D835}\x{DD22} \x{D835}\x{DD09} \x{D835}\x{DD23} \x{D835}\x{DD0A} \x{D835}\x{DD24} \x{210C} \x{D835}\x{DD25} \x{2111} \x{D835}\x{DD26} \x{D835}\x{DD0D} \x{D835}\x{DD27} \x{D835}\x{DD0E} \x{D835}\x{DD28} \x{D835}\x{DD0F} \x{D835}\x{DD29} \x{D835}\x{DD10} \x{D835}\x{DD2A} \x{D835}\x{DD11} \x{D835}\x{DD2B} \x{D835}\x{DD12} \x{D835}\x{DD2C} \x{D835}\x{DD13} \x{D835}\x{DD2D} \x{D835}\x{DD14} \x{D835}\x{DD2E} \x{211C} \x{D835}\x{DD2F} \x{D835}\x{DD16} \x{D835}\x{DD30} \x{D835}\x{DD17} \x{D835}\x{DD31} \x{D835}\x{DD18} \x{D835}\x{DD32} \x{D835}\x{DD19} \x{D835}\x{DD33} \x{D835}\x{DD1A} \x{D835}\x{DD34} \x{D835}\x{DD1B} \x{D835}\x{DD35} \x{D835}\x{DD1C} \x{D835}\x{DD36} \x{2128} \x{D835}\x{DD37}"
+        RenderBlock {P} at (0,68) size 784x19
+          RenderText {#text} at (0,1) size 681x17
+            text run at (0,1) width 681: "\x{D835}\x{DD04} \x{D835}\x{DD1E} \x{D835}\x{DD05} \x{D835}\x{DD1F} \x{212D} \x{D835}\x{DD20} \x{D835}\x{DD07} \x{D835}\x{DD21} \x{D835}\x{DD08} \x{D835}\x{DD22} \x{D835}\x{DD09} \x{D835}\x{DD23} \x{D835}\x{DD0A} \x{D835}\x{DD24} \x{210C} \x{D835}\x{DD25} \x{2111} \x{D835}\x{DD26} \x{D835}\x{DD0D} \x{D835}\x{DD27} \x{D835}\x{DD0E} \x{D835}\x{DD28} \x{D835}\x{DD0F} \x{D835}\x{DD29} \x{D835}\x{DD10} \x{D835}\x{DD2A} \x{D835}\x{DD11} \x{D835}\x{DD2B} \x{D835}\x{DD12} \x{D835}\x{DD2C} \x{D835}\x{DD13} \x{D835}\x{DD2D} \x{D835}\x{DD14} \x{D835}\x{DD2E} \x{211C} \x{D835}\x{DD2F} \x{D835}\x{DD16} \x{D835}\x{DD30} \x{D835}\x{DD17} \x{D835}\x{DD31} \x{D835}\x{DD18} \x{D835}\x{DD32} \x{D835}\x{DD19} \x{D835}\x{DD33} \x{D835}\x{DD1A} \x{D835}\x{DD34} \x{D835}\x{DD1B} \x{D835}\x{DD35} \x{D835}\x{DD1C} \x{D835}\x{DD36} \x{2128} \x{D835}\x{DD37}"

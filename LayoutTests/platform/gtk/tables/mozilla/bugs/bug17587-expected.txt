@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 488x18
                   RenderTableRow {TR} at (0,0) size 488x18
                     RenderTableCell {TD} at (0,0) size 488x18 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 84x17
-                        text run at (0,0) width 84: "Top Nav Bar"
+                      RenderText {#text} at (0,0) size 83x17
+                        text run at (0,0) width 83: "Top Nav Bar"
           RenderTableRow {TR} at (0,82) size 604x146
             RenderTableCell {TD} at (114,154) size 338x2 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (451,82) size 154x146 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]

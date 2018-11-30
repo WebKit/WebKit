@@ -18,7 +18,7 @@ layer at (0,0) size 800x358
       RenderSVGRoot {svg} at (214,43) size 202x306
         RenderSVGText {text} at (5,265) size 81x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 81x18
-            chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 11 width 81.00: "+Transforms"
+            chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 11 width 80.44: "+Transforms"
         RenderSVGContainer {g} at (214,43) size 202x306 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
           RenderSVGRect {rect} at (214,43) size 202x306 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
           RenderSVGRect {rect} at (214,43) size 202x306 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

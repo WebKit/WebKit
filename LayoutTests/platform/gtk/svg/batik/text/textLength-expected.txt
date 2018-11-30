@@ -156,7 +156,7 @@ layer at (0,0) size 450x500
           RenderSVGTSpan {tspan} at (0,0) size 79x14
             RenderSVGInlineText {#text} at (0,14) size 79x14
               chunk 1 text run 1 at (160.00,54.40) startOffset 0 endOffset 15 width 79.00: "textLength=\"25\""
-          RenderSVGInlineText {#text} at (79,14) size 3x14
+          RenderSVGInlineText {#text} at (78,14) size 3x14
             chunk 1 text run 1 at (239.00,54.40) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 76x15
             RenderSVGInlineText {#text} at (0,28) size 76x14

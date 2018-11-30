@@ -9,14 +9,14 @@ layer at (0,0) size 800x162
       RenderBlock {div} at (0,34) size 784x104
         RenderSVGRoot {svg} at (18,68) size 63x63
           RenderSVGPath {path} at (36,68) size 45x63 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
-          RenderSVGText {text} at (10,35) size 39x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 39x18
-              chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 39.00: "PASS"
+          RenderSVGText {text} at (10,35) size 38x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 38x18
+              chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 37.53: "PASS"
         RenderText {#text} at (100,86) size 4x17
           text run at (100,86) width 4: " "
         RenderSVGRoot {svg} at (122,68) size 63x63
           RenderSVGPath {path} at (140,68) size 45x63 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
-          RenderSVGText {text} at (10,35) size 39x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 39x18
-              chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 39.00: "PASS"
+          RenderSVGText {text} at (10,35) size 38x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 38x18
+              chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 4 width 37.53: "PASS"
         RenderText {#text} at (0,0) size 0x0

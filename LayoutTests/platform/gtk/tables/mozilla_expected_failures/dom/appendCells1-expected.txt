@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,46) size 784x18
@@ -24,10 +24,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
-            RenderTableCell {TD} at (60,2) size 24x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (59,2) size 25x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X1"
       RenderBlock (anonymous) at (0,92) size 784x36
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,156) size 784x18
@@ -51,12 +51,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
-            RenderTableCell {TD} at (60,2) size 24x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (59,2) size 25x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X2"
-            RenderTableCell {TD} at (86,2) size 24x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (85,2) size 25x22 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X3"

@@ -11,12 +11,12 @@ layer at (0,0) size 480x360
           RenderSVGImage {image} at (20,40) size 50x50
         RenderSVGText {text} at (10,101) size 44x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x10
-            chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 44.00: "Viewport 1"
+            chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 43.46: "Viewport 1"
         RenderSVGContainer {g} at (10,120) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
           RenderSVGRect {rect} at (10,120) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (10,171) size 44x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x10
-            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 44.00: "Viewport 2"
+            chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 43.46: "Viewport 2"
         RenderSVGContainer {g} at (20,190) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
           RenderSVGRect {rect} at (20,190) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (100,21) size 82x59 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,50.00)}]
@@ -49,7 +49,7 @@ layer at (0,0) size 480x360
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.00: "*none"
             RenderSVGRect {rect} at (380,50) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (380,50) size 30x60
-    RenderSVGText {text} at (10,304) size 284x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 284x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 284.00: "$Revision: 1.11 $"
+    RenderSVGText {text} at (10,304) size 283x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 283x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 282.52: "$Revision: 1.11 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

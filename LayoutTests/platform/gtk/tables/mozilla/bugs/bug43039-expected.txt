@@ -16,8 +16,8 @@ layer at (0,0) size 800x585
         RenderTableSection {TBODY} at (0,0) size 16464x108
           RenderTableRow {TR} at (0,0) size 16464x18
             RenderTableCell {TD} at (0,0) size 592x18 [r=0 c=0 rs=1 cs=8]
-              RenderText {#text} at (0,0) size 352x17
-                text run at (0,0) width 352: "PRODUCT SPECIFICATIONS DAY CONTRACTS"
+              RenderText {#text} at (0,0) size 348x17
+                text run at (0,0) width 348: "PRODUCT SPECIFICATIONS DAY CONTRACTS"
             RenderTableCell {TD} at (592,9) size 64x0 [r=0 c=8 rs=1 cs=1]
             RenderTableCell {TD} at (656,9) size 64x0 [r=0 c=9 rs=1 cs=1]
             RenderTableCell {TD} at (720,9) size 64x0 [r=0 c=10 rs=1 cs=1]
@@ -99,8 +99,8 @@ layer at (0,0) size 800x585
               RenderText {#text} at (0,0) size 16x17
                 text run at (0,0) width 16: "24"
             RenderTableCell {TD} at (109,72) size 71x36 [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 62x35
-                text run at (0,0) width 62: "Week 52-"
+              RenderText {#text} at (0,0) size 61x35
+                text run at (0,0) width 61: "Week 52-"
                 text run at (0,18) width 16: "99"
             RenderTableCell {TD} at (180,81) size 68x18 [r=3 c=3 rs=1 cs=1]
               RenderText {#text} at (0,0) size 56x17

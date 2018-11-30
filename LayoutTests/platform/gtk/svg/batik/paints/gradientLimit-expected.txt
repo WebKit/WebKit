@@ -3,54 +3,54 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGText {text} at (158,30) size 134x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 134x18
-        chunk 1 (middle anchor) text run 1 at (158.00,45.00) startOffset 0 endOffset 19 width 134.00: "Gradient Limit Test"
-    RenderSVGContainer {g} at (13,80) size 433x174
-      RenderSVGContainer {g} at (13,80) size 124x74
+      RenderSVGInlineText {#text} at (0,0) size 133x18
+        chunk 1 (middle anchor) text run 1 at (158.89,45.00) startOffset 0 endOffset 19 width 132.23: "Gradient Limit Test"
+    RenderSVGContainer {g} at (14,80) size 432x174
+      RenderSVGContainer {g} at (14,80) size 122x74
         RenderSVGResourceLinearGradient {linearGradient} [id="closeOffsetsLinearGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(0,0.10)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (35,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
-        RenderSVGText {text} at (13,120) size 124x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 123x18
-            chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
+        RenderSVGText {text} at (14,120) size 122x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 122x18
+            chunk 1 (middle anchor) text run 1 at (14.09,135.00) startOffset 0 endOffset 17 width 121.83: "Two close offsets"
         RenderSVGText {text} at (15,135) size 120x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<linearGradient>"
-      RenderSVGContainer {g} at (146,80) size 158x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+      RenderSVGContainer {g} at (147,80) size 156x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
         RenderSVGResourceLinearGradient {linearGradient} [id="closeOffsetsLinearGradient2"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(0,0.10)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (185,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
-        RenderSVGText {text} at (-4,120) size 158x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 157x18
-            chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
+        RenderSVGText {text} at (-3,120) size 156x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 156x18
+            chunk 1 (middle anchor) text run 1 at (-2.91,135.00) startOffset 0 endOffset 22 width 155.83: "Two very close offsets"
         RenderSVGText {text} at (15,135) size 120x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<linearGradient>"
-      RenderSVGContainer {g} at (13,180) size 124x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+      RenderSVGContainer {g} at (14,180) size 122x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
         RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (35,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
-        RenderSVGText {text} at (13,120) size 124x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 123x18
-            chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
+        RenderSVGText {text} at (14,120) size 122x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 122x18
+            chunk 1 (middle anchor) text run 1 at (14.09,135.00) startOffset 0 endOffset 17 width 121.83: "Two close offsets"
         RenderSVGText {text} at (15,135) size 120x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<radialGradient>"
-      RenderSVGContainer {g} at (146,180) size 158x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,100.00)}]
+      RenderSVGContainer {g} at (147,180) size 156x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,100.00)}]
         RenderSVGResourceRadialGradient {radialGradient} [id="closeOffsetsRadialGradient2"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.10] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGRect {rect} at (185,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
-        RenderSVGText {text} at (-4,120) size 158x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 157x18
-            chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
+        RenderSVGText {text} at (-3,120) size 156x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 156x18
+            chunk 1 (middle anchor) text run 1 at (-2.91,135.00) startOffset 0 endOffset 22 width 155.83: "Two very close offsets"
         RenderSVGText {text} at (15,135) size 120x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 119x18
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<radialGradient>"

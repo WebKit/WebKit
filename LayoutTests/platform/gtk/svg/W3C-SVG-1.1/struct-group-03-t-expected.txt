@@ -132,7 +132,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 16 width 104.00: "stroke-dasharray"
         RenderSVGText {text} at (0,117) size 107x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 107x18
-            chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 17 width 107.00: "stroke-dashoffset"
+            chunk 1 text run 1 at (0.00,132.00) startOffset 0 endOffset 17 width 106.71: "stroke-dashoffset"
         RenderSVGText {text} at (0,139) size 88x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 88x18
             chunk 1 text run 1 at (0.00,154.00) startOffset 0 endOffset 14 width 88.00: "stroke-linecap"

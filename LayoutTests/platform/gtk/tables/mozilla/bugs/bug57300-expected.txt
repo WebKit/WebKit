@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
               RenderInline {B} at (0,0) size 27x17
                 RenderText {#text} at (181,2) size 27x18
                   text run at (181,3) width 27: "row"
-              RenderText {#text} at (208,2) size 80x18
-                text run at (208,3) width 80: " height 50%."
+              RenderText {#text} at (207,2) size 81x18
+                text run at (207,3) width 81: " height 50%."
           RenderTableRow {TR} at (0,149) size 294x47
             RenderTableCell {TD} at (2,161) size 290x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,1) size 128x18
@@ -73,8 +73,8 @@ layer at (0,0) size 800x600
               RenderInline {B} at (0,0) size 27x17
                 RenderText {#text} at (181,2) size 27x17
                   text run at (181,2) width 27: "row"
-              RenderText {#text} at (208,2) size 80x17
-                text run at (208,2) width 80: " height 50%."
+              RenderText {#text} at (207,2) size 81x17
+                text run at (207,2) width 81: " height 50%."
           RenderTableRow {TR} at (0,50) size 294x22
             RenderTableCell {TD} at (2,50) size 290x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 128x17

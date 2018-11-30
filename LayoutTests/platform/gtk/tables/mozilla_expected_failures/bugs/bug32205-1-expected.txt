@@ -7,9 +7,9 @@ layer at (0,0) size 785x828
         RenderText {#text} at (0,0) size 311x17
           text run at (0,0) width 311: "The following three examples are 2 nested tables."
         RenderBR {BR} at (311,14) size 0x0
-        RenderText {#text} at (0,18) size 768x17
-          text run at (0,18) width 768: "The inner table has a height of 100%, the outer table has a height set of 200px, on the <table>, <tr> and <td> respectively."
-        RenderBR {BR} at (768,32) size 0x0
+        RenderText {#text} at (0,18) size 767x17
+          text run at (0,18) width 767: "The inner table has a height of 100%, the outer table has a height set of 200px, on the <table>, <tr> and <td> respectively."
+        RenderBR {BR} at (766,32) size 1x0
         RenderBR {BR} at (0,36) size 0x17
         RenderText {#text} at (0,54) size 740x17
           text run at (0,54) width 740: "In all examples the inner table should completely fill the outer table. (with respect of the padding and border ofcourse)"

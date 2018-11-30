@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TH} at (228,0) size 86x23 [border: (3px none #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,4) size 84x17
                 text run at (1,4) width 84: "Windows 95"
-            RenderTableCell {TH} at (314,0) size 95x23 [border: (3px none #000000)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TH} at (313,0) size 96x23 [border: (3px none #000000)] [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,4) size 91x17
                 text run at (1,4) width 91: "Windows NT"
           RenderTableRow {TR} at (0,23) size 409x20
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (228,23) size 86x20 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (314,23) size 95x20 [border: none] [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (313,23) size 96x20 [border: none] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,43) size 409x20
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (228,43) size 86x20 [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (314,43) size 95x20 [border: none] [r=2 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (313,43) size 96x20 [border: none] [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,63) size 409x22
@@ -55,6 +55,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (228,63) size 86x22 [border: none] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (314,63) size 95x22 [border: none] [r=3 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (313,63) size 96x22 [border: none] [r=3 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"

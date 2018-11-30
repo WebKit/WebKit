@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (0,16) size 800x18
       RenderBlock {P} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 656x17
-          text run at (0,0) width 656: "Tests repaint after a layer stops compositing. You should see no red below after the end of the transition."
+        RenderText {#text} at (0,0) size 654x17
+          text run at (0,0) width 654: "Tests repaint after a layer stops compositing. You should see no red below after the end of the transition."
 layer at (0,100) size 402x232
   RenderBlock (positioned) {DIV} at (0,100) size 402x232 [border: (1px solid #000000)]
 layer at (1,111) size 200x100

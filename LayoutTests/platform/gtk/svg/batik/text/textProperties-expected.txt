@@ -10,9 +10,9 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 44x18
           chunk 1 (middle anchor) text run 1 at (-22.00,0.00) startOffset 0 endOffset 6 width 44.00: "sample"
     RenderSVGContainer {g} at (0,36) size 430x434
-      RenderSVGText {text} at (58,36) size 334x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 334x17
-          chunk 1 (middle anchor) text run 1 at (58.00,50.00) startOffset 0 endOffset 47 width 334.00: "Text Alignment, Geometry, References, and Spans"
+      RenderSVGText {text} at (59,36) size 332x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 332x17
+          chunk 1 (middle anchor) text run 1 at (59.39,50.00) startOffset 0 endOffset 47 width 331.22: "Text Alignment, Geometry, References, and Spans"
       RenderSVGContainer {g} at (111,70) size 231x70
         RenderSVGPath {line} at (224,70) size 2x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=140.00]
         RenderSVGText {text} at (225,76) size 117x18 contains 1 chunk(s)
@@ -74,9 +74,9 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (-80,0) size 160x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 160x18
             chunk 1 (middle anchor) text run 1 at (-80.00,15.00) startOffset 0 endOffset 25 width 160.00: "predefined text via <use>"
-      RenderSVGText {text} at (143,266) size 164x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 163x17
-          chunk 1 (middle anchor) text run 1 at (143.50,280.00) startOffset 0 endOffset 25 width 163.00: "Text Rendering Properties"
+      RenderSVGText {text} at (144,266) size 162x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 162x17
+          chunk 1 (middle anchor) text run 1 at (144.02,280.00) startOffset 0 endOffset 25 width 161.95: "Text Rendering Properties"
       RenderSVGContainer {g} at (24,298) size 152x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,305.00)}]
         RenderSVGContainer {g} at (58,298) size 84x34 [transform={m=((-1.00,0.00)(-0.00,-1.00)) t=(0.00,0.00)}]
           RenderSVGContainer {use} at (58,298) size 84x34

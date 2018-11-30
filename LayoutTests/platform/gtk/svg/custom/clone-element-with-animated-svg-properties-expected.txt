@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 537x17
-          text run at (0,0) width 537: "Here is an html paragraph. And below is a svg drawing. You should see two ellipses."
+        RenderText {#text} at (0,0) size 536x17
+          text run at (0,0) width 536: "Here is an html paragraph. And below is a svg drawing. You should see two ellipses."
       RenderBlock {DIV} at (0,34) size 784x400
         RenderSVGRoot {svg} at (47,231) size 222x42
           RenderSVGEllipse {ellipse} at (47,231) size 122x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=50.00] [rx=30.00] [ry=10.00]

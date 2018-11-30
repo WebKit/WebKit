@@ -6,8 +6,8 @@ layer at (0,0) size 800x155
       RenderBlock {p} at (0,0) size 784x123
         RenderText {#text} at (0,33) size 222x17
           text run at (0,33) width 222: "The alphabet A through M is here: "
-        RenderSVGRoot {svg} at (230,18) size 500x45
-          RenderSVGContainer {g} at (230,18) size 500x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,47.00)}]
+        RenderSVGRoot {svg} at (229,18) size 501x45
+          RenderSVGContainer {g} at (229,18) size 501x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,47.00)}]
             RenderSVGText {text} at (0,-45) size 36x56 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 36x56
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.00: "A"
@@ -47,12 +47,12 @@ layer at (0,0) size 800x155
             RenderSVGText {text} at (0,-45) size 44x56 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 44x56
                 chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 44.00: "M"
-        RenderText {#text} at (722,33) size 784x89
-          text run at (722,33) width 4: " "
-          text run at (726,33) width 47: "this test"
+        RenderText {#text} at (721,33) size 784x89
+          text run at (721,33) width 5: " "
+          text run at (725,33) width 48: "this test"
           text run at (0,51) width 784: "case is specially constructed so that when the view is sized to 800x600 (the default for DumpRenderTree) the text wraps and"
-          text run at (0,69) width 307: "not all of the text in the SVG is drawn correctly. "
-          text run at (307,69) width 315: "You should see all of A-L (and half of M) above. "
-          text run at (622,69) width 159: "The code was incorrectly"
+          text run at (0,69) width 306: "not all of the text in the SVG is drawn correctly. "
+          text run at (305,69) width 314: "You should see all of A-L (and half of M) above. "
+          text run at (618,69) width 160: "The code was incorrectly"
           text run at (0,87) width 780: "calculating the PaintInfo::rect (damage rect) when passing it through RenderBlock and render block was (correctly) clipping"
           text run at (0,105) width 245: "out some of the lineboxes during paint."

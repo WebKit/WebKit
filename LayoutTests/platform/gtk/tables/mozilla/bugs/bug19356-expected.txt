@@ -10,8 +10,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (20,13) size 685x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 64x17
-                text run at (4,4) width 64: "Top Story"
+              RenderText {#text} at (4,4) size 63x17
+                text run at (4,4) width 63: "Top Story"
             RenderTableCell {TD} at (709,4) size 69x44 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 61x35
                 text run at (4,4) width 25: "Full"

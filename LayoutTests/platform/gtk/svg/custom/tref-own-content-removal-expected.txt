@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,23) size 295x324
-      RenderSVGText {text} at (75,14) size 177x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 177x14
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 34 width 176.40: "Test removing tref's text content."
+    RenderSVGContainer {g} at (125,23) size 292x324
+      RenderSVGText {text} at (75,14) size 176x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 176x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 34 width 175.07: "Test removing tref's text content."
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,-91) size 172x113 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,74) size 11x21

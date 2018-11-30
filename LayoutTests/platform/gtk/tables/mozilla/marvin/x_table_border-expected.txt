@@ -4,9 +4,9 @@ layer at (0,0) size 800x158
   RenderBlock {html} at (0,0) size 800x158
     RenderBody {body} at (8,16) size 784x134
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 726x17
+        RenderText {#text} at (0,0) size 725x17
           text run at (0,0) width 406: "No 'number' specification is given for border. There should be a "
-          text run at (406,0) width 320: "2 pixel border around the frame of the table below."
+          text run at (405,0) width 320: "2 pixel border around the frame of the table below."
       RenderTable {table} at (0,34) size 196x100 [border: (1px outset #808080)]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

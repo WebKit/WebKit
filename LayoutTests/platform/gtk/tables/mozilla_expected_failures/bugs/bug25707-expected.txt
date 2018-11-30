@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 243: "table will not be wider than the screen."
       RenderBlock {P} at (0,52) size 784x72
         RenderText {#text} at (0,0) size 773x71
-          text run at (0,0) width 770: "Previously, the table would be incredibly wide, wide enough so that the entire paragraph of text was on one line. That was"
+          text run at (0,0) width 769: "Previously, the table would be incredibly wide, wide enough so that the entire paragraph of text was on one line. That was"
           text run at (0,18) width 759: "because the \"maxElementSize\" of the cell was including margins calculated from the desired size of the text (in this case,"
           text run at (0,36) width 773: "19x the desired width of the paragraph). The fix was to calculate the margin for the \"maxElementSize\" of the cell using the"
           text run at (0,54) width 631: "\"maxElementSize\" of the contained block itself, which in this case is the maximum width of a word."

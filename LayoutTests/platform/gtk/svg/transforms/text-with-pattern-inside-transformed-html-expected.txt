@@ -4,9 +4,9 @@ layer at (0,0) size 800x536
   RenderBlock {html} at (0,0) size 800x536
     RenderBody {body} at (8,16) size 784x470 [bgcolor=#FFFFFF]
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 550x17
-          text run at (0,0) width 318: "CSS Transformed HTML div with SVG inside it. "
-          text run at (318,0) width 232: "objectBoundingBox patterns on text."
+        RenderText {#text} at (0,0) size 549x17
+          text run at (0,0) width 317: "CSS Transformed HTML div with SVG inside it. "
+          text run at (316,0) width 233: "objectBoundingBox patterns on text."
 layer at (58,84) size 402x402
   RenderBlock {div} at (50,68) size 402x402 [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (66,58) size 480x420
@@ -23,8 +23,8 @@ layer at (58,84) size 402x402
         RenderSVGRect {rect} at (163,66) size 13x12 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (171,68) size 12x13 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGRect {rect} at (142,143) size 357x172 [stroke={[type=PATTERN] [id="pat2"] [stroke width=20.00]}] [x=35.00] [y=110.00] [width=410.00] [height=40.00]
-      RenderSVGText {text} at (25,164) size 319x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 319x14
+      RenderSVGText {text} at (25,164) size 318x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 318x14
           chunk 1 text run 1 at (25.00,175.00) startOffset 0 endOffset 59 width 318.00: "Pattern of 4 rectangles applied to a stroke of a rectangle."
       RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (166,58) size 12x13 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]

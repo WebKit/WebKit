@@ -3,9 +3,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (10,11) size 460x282
-      RenderSVGText {text} at (10,11) size 194x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 194x17
-          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 194.00: "Testing gradientUnits attribute"
+      RenderSVGText {text} at (10,11) size 193x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 193x17
+          chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 192.34: "Testing gradientUnits attribute"
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]

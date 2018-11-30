@@ -4,8 +4,8 @@ layer at (0,0) size 800x226
   RenderBlock {html} at (0,0) size 800x226
     RenderBody {body} at (8,16) size 784x202
       RenderBlock {p} at (0,0) size 784x18 [color=#000080]
-        RenderText {#text} at (0,0) size 264x17
-          text run at (0,0) width 264: "There should be two identical bars below."
+        RenderText {#text} at (0,0) size 263x17
+          text run at (0,0) width 263: "There should be two identical bars below."
       RenderBlock {p} at (0,34) size 784x18 [color=#000080]
         RenderText {#text} at (0,0) size 56x17
           text run at (0,0) width 56: "First bar:"

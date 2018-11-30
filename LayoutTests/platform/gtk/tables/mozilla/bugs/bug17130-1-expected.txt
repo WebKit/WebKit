@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {H4} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 154x17
-          text run at (0,0) width 154: "Testcase distilled from "
+        RenderText {#text} at (0,0) size 153x17
+          text run at (0,0) width 153: "Testcase distilled from "
         RenderInline {A} at (0,0) size 502x17 [color=#0000EE]
-          RenderText {#text} at (154,0) size 502x17
-            text run at (154,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
+          RenderText {#text} at (152,0) size 502x17
+            text run at (152,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
       RenderBlock {H4} at (0,39) size 784x19
         RenderText {#text} at (0,0) size 515x17
           text run at (0,0) width 515: "Resize the width of the window and watch the Buy and Pick columns below."
@@ -34,9 +34,9 @@ layer at (0,0) size 800x600
                 text run at (33,1) width 4: " "
           RenderTableRow {TR} at (0,24) size 784x38
             RenderTableCell {TD} at (2,24) size 705x38 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 678x35
-                text run at (1,1) width 445: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
-                text run at (446,1) width 233: "Windows 95/98/NT, Lotus Notes, or"
+              RenderText {#text} at (1,1) size 673x35
+                text run at (1,1) width 442: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
+                text run at (442,1) width 232: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,19) width 263: "Exchange with the latest virus definitions."
             RenderTableCell {TD} at (709,33) size 33x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
@@ -47,8 +47,8 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,142) size 784x19
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {H4} at (0,181) size 784x19
-        RenderText {#text} at (0,0) size 481x17
-          text run at (0,0) width 481: "This is the same table as above but with all <SPAN> elements removed."
+        RenderText {#text} at (0,0) size 480x17
+          text run at (0,0) width 480: "This is the same table as above but with all <SPAN> elements removed."
       RenderTable {TABLE} at (0,221) size 784x65
         RenderTableSection {TBODY} at (0,0) size 784x64
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#CCCCCC]
@@ -63,9 +63,9 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 36: " Pick "
           RenderTableRow {TR} at (0,24) size 784x38
             RenderTableCell {TD} at (2,24) size 705x38 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 678x35
-                text run at (1,1) width 445: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
-                text run at (446,1) width 233: "Windows 95/98/NT, Lotus Notes, or"
+              RenderText {#text} at (1,1) size 673x35
+                text run at (1,1) width 442: "Norton AntiVirus Definitions Update 10/21/99 Update your NAV for "
+                text run at (442,1) width 232: "Windows 95/98/NT, Lotus Notes, or"
                 text run at (1,19) width 263: "Exchange with the latest virus definitions."
             RenderTableCell {TD} at (709,33) size 33x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17

@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x36
-        RenderInline {B} at (0,0) size 427x35
-          RenderText {#text} at (0,0) size 154x17
-            text run at (0,0) width 154: "Testcase distilled from "
+        RenderInline {B} at (0,0) size 425x35
+          RenderText {#text} at (0,0) size 153x17
+            text run at (0,0) width 153: "Testcase distilled from "
           RenderInline {A} at (0,0) size 273x17 [color=#0000EE]
-            RenderText {#text} at (154,0) size 273x17
-              text run at (154,0) width 273: "http://www.linuxplanet.com/linuxplanet/"
-          RenderBR {BR} at (427,14) size 0x0
+            RenderText {#text} at (152,0) size 273x17
+              text run at (152,0) width 273: "http://www.linuxplanet.com/linuxplanet/"
+          RenderBR {BR} at (424,14) size 1x0
           RenderText {#text} at (0,18) size 143x17
             text run at (0,18) width 143: "First cell is coded as: "
         RenderInline {CODE} at (0,0) size 288x15
@@ -19,14 +19,14 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,52) size 784x52
         RenderTableSection {TBODY} at (0,0) size 784x52
           RenderTableRow {TR} at (0,0) size 784x52
-            RenderTableCell {TD} at (0,0) size 49x52 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {FORM} at (0,0) size 49x36
-                RenderBlock (anonymous) at (0,0) size 49x36
-                  RenderText {#text} at (0,0) size 49x35
-                    text run at (0,0) width 49: "Weekly"
+            RenderTableCell {TD} at (0,0) size 48x52 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {FORM} at (0,0) size 48x36
+                RenderBlock (anonymous) at (0,0) size 48x36
+                  RenderText {#text} at (0,0) size 48x35
+                    text run at (0,0) width 48: "Weekly"
                     text run at (0,18) width 25: "Poll"
-                RenderBlock {P} at (0,52) size 49x0
-            RenderTableCell {TD} at (49,1) size 1x50 [r=0 c=1 rs=1 cs=1]
+                RenderBlock {P} at (0,52) size 48x0
+            RenderTableCell {TD} at (47,1) size 2x50 [r=0 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 1x50
-            RenderTableCell {TD} at (50,17) size 734x18 [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (48,17) size 736x18 [r=0 c=2 rs=1 cs=1]
               RenderBR {BR} at (0,17) size 0x17

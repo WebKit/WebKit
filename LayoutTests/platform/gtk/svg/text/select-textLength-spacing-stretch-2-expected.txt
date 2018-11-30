@@ -2,26 +2,26 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,4) size 722x57
-    RenderSVGContainer {g} at (300,4) size 76x57
-      RenderSVGPath {svg:line} at (300,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=60.60] [y1=0.95] [x2=60.60] [y2=12.17]
-      RenderSVGPath {svg:line} at (370,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=74.64] [y1=0.95] [x2=74.64] [y2=12.17]
-      RenderSVGRect {svg:rect} at (303,4) size 71x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=60.60] [y=0.95] [width=14.04] [height=11.17]
+    RenderSVGContainer {g} at (296,4) size 77x57
+      RenderSVGPath {svg:line} at (296,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=59.86] [y1=0.95] [x2=59.86] [y2=12.17]
+      RenderSVGPath {svg:line} at (367,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=73.97] [y1=0.95] [x2=73.97] [y2=12.17]
+      RenderSVGRect {svg:rect} at (299,4) size 71x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=59.86] [y=0.95] [width=14.11] [height=11.17]
     RenderSVGText {text} at (10,0) size 145x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 145x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
-        chunk 1 text run 2 at (21.84,10.00) startOffset 1 endOffset 2 width 5.60: "e"
-        chunk 1 text run 3 at (33.08,10.00) startOffset 2 endOffset 3 width 5.00: "x"
-        chunk 1 text run 4 at (43.72,10.00) startOffset 3 endOffset 4 width 2.80: "t"
-        chunk 1 text run 5 at (52.16,10.00) startOffset 4 endOffset 5 width 2.80: " "
-        chunk 1 text run 6 at (60.60,10.00) startOffset 5 endOffset 6 width 2.80: "t"
-        chunk 1 text run 7 at (69.04,10.00) startOffset 6 endOffset 7 width 5.60: "o"
-        chunk 1 text run 8 at (80.28,10.00) startOffset 7 endOffset 8 width 2.80: " "
-        chunk 1 text run 9 at (88.72,10.00) startOffset 8 endOffset 9 width 6.60: "S"
-        chunk 1 text run 10 at (100.96,10.00) startOffset 9 endOffset 10 width 2.80: "t"
-        chunk 1 text run 11 at (109.40,10.00) startOffset 10 endOffset 11 width 3.40: "r"
-        chunk 1 text run 12 at (118.44,10.00) startOffset 11 endOffset 12 width 5.60: "e"
-        chunk 1 text run 13 at (129.68,10.00) startOffset 12 endOffset 13 width 2.80: "t"
-        chunk 1 text run 14 at (138.12,10.00) startOffset 13 endOffset 14 width 5.00: "c"
-        chunk 1 text run 15 at (148.76,10.00) startOffset 14 endOffset 15 width 5.60: "h"
+        chunk 1 text run 2 at (21.91,10.00) startOffset 1 endOffset 2 width 4.49: "e"
+        chunk 1 text run 3 at (32.12,10.00) startOffset 2 endOffset 3 width 5.00: "x"
+        chunk 1 text run 4 at (42.83,10.00) startOffset 3 endOffset 4 width 2.80: "t"
+        chunk 1 text run 5 at (51.35,10.00) startOffset 4 endOffset 5 width 2.80: " "
+        chunk 1 text run 6 at (59.86,10.00) startOffset 5 endOffset 6 width 2.80: "t"
+        chunk 1 text run 7 at (68.37,10.00) startOffset 6 endOffset 7 width 5.60: "o"
+        chunk 1 text run 8 at (79.69,10.00) startOffset 7 endOffset 8 width 2.80: " "
+        chunk 1 text run 9 at (88.20,10.00) startOffset 8 endOffset 9 width 6.60: "S"
+        chunk 1 text run 10 at (100.52,10.00) startOffset 9 endOffset 10 width 2.80: "t"
+        chunk 1 text run 11 at (109.03,10.00) startOffset 10 endOffset 11 width 3.40: "r"
+        chunk 1 text run 12 at (118.14,10.00) startOffset 11 endOffset 12 width 5.60: "e"
+        chunk 1 text run 13 at (129.46,10.00) startOffset 12 endOffset 13 width 2.80: "t"
+        chunk 1 text run 14 at (137.97,10.00) startOffset 13 endOffset 14 width 5.00: "c"
+        chunk 1 text run 15 at (148.69,10.00) startOffset 14 endOffset 15 width 5.60: "h"
 selection start: position 5 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
 selection end:   position 7 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

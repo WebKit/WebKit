@@ -409,9 +409,9 @@ layer at (0,0) size 800x560
                   text run at (0,-26) width 5: "3"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,472) size 784x56
-        RenderText {#text} at (0,22) size 74x17
-          text run at (0,22) width 74: "RTL roots: "
-        RenderMathMLMath {math} at (74,0) size 351x57
+        RenderText {#text} at (0,22) size 73x17
+          text run at (0,22) width 73: "RTL roots: "
+        RenderMathMLMath {math} at (72,0) size 351x57
           RenderMathMLRoot {mroot} at (0,0) size 351x57
             RenderMathMLRow {mrow} at (0,2) size 333x55
               RenderMathMLToken {mn} at (324,23) size 9x12

@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {H4} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 154x17
-          text run at (0,0) width 154: "Testcase distilled from "
+        RenderText {#text} at (0,0) size 153x17
+          text run at (0,0) width 153: "Testcase distilled from "
         RenderInline {A} at (0,0) size 502x17 [color=#0000EE]
-          RenderText {#text} at (154,0) size 502x17
-            text run at (154,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
+          RenderText {#text} at (152,0) size 502x17
+            text run at (152,0) width 502: "http://www.download.com/pc/list/0,339,0-b-0-0-a-1,00.html?st.dl.fd.ag.new"
       RenderBlock {H4} at (0,39) size 784x19
         RenderText {#text} at (0,0) size 305x17
           text run at (0,0) width 305: "Minimize the window and then open it again."
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,102) size 784x19
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {H4} at (0,141) size 784x19
-        RenderText {#text} at (0,0) size 481x17
-          text run at (0,0) width 481: "This is the same table as above but with all <SPAN> elements removed."
+        RenderText {#text} at (0,0) size 480x17
+          text run at (0,0) width 480: "This is the same table as above but with all <SPAN> elements removed."
       RenderTable {TABLE} at (0,181) size 784x25
         RenderTableSection {TBODY} at (0,0) size 784x24
           RenderTableRow {TR} at (0,2) size 784x20 [bgcolor=#006633]

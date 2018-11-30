@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {H4} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 538x17
-          text run at (0,0) width 538: "TBODY is not correctly positioned when TFOOT is present but THEAD is not:"
+        RenderText {#text} at (0,0) size 537x17
+          text run at (0,0) width 537: "TBODY is not correctly positioned when TFOOT is present but THEAD is not:"
       RenderTable {TABLE} at (0,39) size 67x53 [border: (1px outset #808080)]
         RenderTableSection {TFOOT} at (1,27) size 65x24
           RenderTableRow {TR} at (0,0) size 65x22

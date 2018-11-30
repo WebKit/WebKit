@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           chunk 1 (middle anchor) text run 1 at (273.30,180.00) startOffset 0 endOffset 14 width 111.60 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
         RenderSVGTSpan {tspan} at (0,0) size 188x21
           RenderSVGInlineText {#text} at (11,0) size 187x21
-            chunk 1 (middle anchor) text run 1 at (86.50,180.00) startOffset 0 endOffset 8 width 49.41 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
-            chunk 1 (middle anchor) text run 1 at (135.90,180.00) startOffset 0 endOffset 14 width 137.40: "dirRTL ubEmbed"
+            chunk 1 (middle anchor) text run 1 at (86.50,180.00) startOffset 0 endOffset 8 width 50.40 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}"
+            chunk 1 (middle anchor) text run 1 at (136.90,180.00) startOffset 0 endOffset 14 width 136.41: "dirRTL ubEmbed"
         RenderSVGInlineText {#text} at (0,0) size 12x21
           chunk 1 (middle anchor) text run 1 at (75.10,180.00) startOffset 0 endOffset 2 width 11.40 RTL: "\"!"

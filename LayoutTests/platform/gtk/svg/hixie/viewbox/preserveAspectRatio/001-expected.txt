@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
       RenderSVGInlineText {#text} at (0,0) size 78x8
         chunk 1 (middle anchor) text run 1 at (11.00,30.00) startOffset 0 endOffset 24 width 78.00: "This should be a SQUARE."
     RenderSVGText {text} at (15,35) size 70x7 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 70x6
-        chunk 1 (middle anchor) text run 1 at (15.42,40.00) startOffset 0 endOffset 36 width 69.17: "It should stretch to fit the window."
+      RenderSVGInlineText {#text} at (0,0) size 69x6
+        chunk 1 (middle anchor) text run 1 at (15.58,40.00) startOffset 0 endOffset 36 width 68.84: "It should stretch to fit the window."
     RenderSVGText {text} at (32,45) size 36x4 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 35x4
         chunk 1 (middle anchor) text run 1 at (32.50,48.00) startOffset 0 endOffset 27 width 35.00: "(Whatever the window size.)"

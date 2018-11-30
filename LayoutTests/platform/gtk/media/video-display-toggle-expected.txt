@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {#text} at (0,0) size 493x17
         text run at (0,0) width 493: "This tests that toggling the display property won't make the controls disappear."
-      RenderBR {BR} at (493,14) size 0x0
+      RenderBR {BR} at (492,14) size 1x0
       RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 320x240
   RenderVideo {VIDEO} at (0,18) size 320x240

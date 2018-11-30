@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x584
       RenderBlock {P} at (0,0) size 800x54
-        RenderText {#text} at (20,0) size 634x17
+        RenderText {#text} at (20,0) size 633x17
           text run at (20,0) width 429: "Here's the structure of the problem table (which usually begins with "
           text run at (449,0) width 65: "'N E W S "
-          text run at (514,0) width 140: "H E A D L I N E S'). "
-        RenderBR {BR} at (654,14) size 0x0
+          text run at (513,0) width 140: "H E A D L I N E S'). "
+        RenderBR {BR} at (652,14) size 1x0
         RenderText {#text} at (20,18) size 324x17
           text run at (20,18) width 324: "This table is width 100%; two rows; three columns;"
         RenderBR {BR} at (344,32) size 0x0

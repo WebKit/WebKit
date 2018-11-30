@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TD} at (0,0) size 116x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                       RenderText {#text} at (1,1) size 114x53
                         text run at (1,1) width 42: "R1C1,"
-                        text run at (1,19) width 92: "COLSPAN=2"
+                        text run at (1,19) width 91: "COLSPAN=2"
                         text run at (1,37) width 114: "WIDTH=\"100%\""
                   RenderTableRow {TR} at (0,56) size 116x20
                     RenderTableCell {TD} at (0,56) size 58x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -27,11 +27,11 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 195: "Quotes delayed by 20 minutes."
               RenderBR {BR} at (195,14) size 0x0
               RenderText {#text} at (0,18) size 465x71
-                text run at (0,18) width 127: "To ensure that your "
-                text run at (127,18) width 308: "portfolios and other personalized content can't be"
+                text run at (0,18) width 126: "To ensure that your "
+                text run at (125,18) width 309: "portfolios and other personalized content can't be"
                 text run at (0,36) width 50: "viewed "
                 text run at (50,36) width 368: "by others using this computer, sign out of Netcenter when "
-                text run at (418,36) width 47: "you are"
+                text run at (417,36) width 48: "you are"
                 text run at (0,54) width 330: "finished. When you want to view your personalized "
                 text run at (330,54) width 135: "content again, all you"
                 text run at (0,72) width 211: "have to do is sign in to Netcenter."

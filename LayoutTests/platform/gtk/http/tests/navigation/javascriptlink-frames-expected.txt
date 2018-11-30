@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,4) size 286x18
                     RenderText at (0,0) size 286x17
                       text run at (0,0) width 286: "Submit with POST followed by a redirect"
-                RenderBR {BR} at (306,51) size 0x0
+                RenderBR {BR} at (305,51) size 1x0
                 RenderText {#text} at (0,62) size 376x36
                   text run at (0,62) width 376: "Here are some form elements"
                 RenderTextControl {INPUT} at (378,74) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
@@ -56,11 +56,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (28,249) size 130x36
                   text run at (28,249) width 130: " option #2"
                 RenderBR {BR} at (158,278) size 0x0
-                RenderMenuList {SELECT} at (2,288) size 335x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]
-                  RenderBlock (anonymous) at (1,1) size 333x28
-                    RenderText at (9,5) size 84x17
-                      text run at (9,5) width 84: "Initial Value"
-                RenderBR {BR} at (339,308) size 0x0
+                RenderMenuList {SELECT} at (2,288) size 334x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]
+                  RenderBlock (anonymous) at (1,1) size 332x28
+                    RenderText at (9,5) size 83x17
+                      text run at (9,5) width 83: "Initial Value"
+                RenderBR {BR} at (338,308) size 0x0
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {HR} at (0,835) size 769x2 [border: (1px inset #000000)]
               RenderBlock {P} at (0,869) size 769x37
@@ -108,6 +108,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (3,3) size 285x36
               RenderText {#text} at (0,0) size 234x17
                 text run at (0,0) width 234: "More initial text before user input."
+                text run at (234,0) width 0: " "
               RenderBR {BR} at (0,18) size 0x17
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90

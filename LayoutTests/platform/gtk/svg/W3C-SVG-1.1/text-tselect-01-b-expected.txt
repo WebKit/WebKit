@@ -3,16 +3,16 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 480x360
-      RenderSVGText {text} at (10,5) size 304x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 304x18
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 304.00: "Test single line and multiline text selection."
+      RenderSVGText {text} at (10,5) size 303x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 303x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 302.23: "Test single line and multiline text selection."
       RenderSVGContainer {g} at (25,50) size 359x219
         RenderSVGText {text} at (25,50) size 252x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 252x18
             chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 37 width 252.00: "Here is a stand-alone 'text' element."
         RenderSVGText {text} at (25,75) size 296x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 296x18
-            chunk 1 text run 1 at (25.00,90.00) startOffset 0 endOffset 43 width 296.00: "Here is a second 'text' element just below."
+            chunk 1 text run 1 at (25.00,90.00) startOffset 0 endOffset 43 width 295.12: "Here is a second 'text' element just below."
         RenderSVGText {text} at (25,100) size 338x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 338x18
             chunk 1 text run 1 at (25.00,115.00) startOffset 0 endOffset 48 width 338.00: "Because these are four separate 'text' elements,"
@@ -22,9 +22,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (25,175) size 359x94 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 355x18
             RenderSVGInlineText {#text} at (0,0) size 355x18
-              chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 355.00: "However, these lines of text are achieved by using"
-          RenderSVGInlineText {#text} at (355,0) size 4x18
-            chunk 1 text run 1 at (380.00,190.00) startOffset 0 endOffset 1 width 4.00: " "
+              chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 354.12: "However, these lines of text are achieved by using"
+          RenderSVGInlineText {#text} at (354,0) size 4x18
+            chunk 1 text run 1 at (379.12,190.00) startOffset 0 endOffset 1 width 4.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 347x18
             RenderSVGInlineText {#text} at (0,25) size 347x18
               chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 347.00: "one 'tspan' per line, all contained within the same"

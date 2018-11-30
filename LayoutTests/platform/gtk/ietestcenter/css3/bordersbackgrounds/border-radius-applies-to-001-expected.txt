@@ -4,10 +4,10 @@ layer at (0,0) size 800x76
   RenderBlock {HTML} at (0,0) size 800x76
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 357x17
-          text run at (0,0) width 357: "Test passes if there is a box with rounded corners below."
+        RenderText {#text} at (0,0) size 355x17
+          text run at (0,0) width 355: "Test passes if there is a box with rounded corners below."
       RenderBlock (anonymous) at (0,34) size 784x18
-        RenderInline {DIV} at (0,0) size 86x37 [border: (10px solid #008000)]
-          RenderText {#text} at (10,0) size 66x17
-            text run at (10,0) width 66: "Filler Text"
+        RenderInline {DIV} at (0,0) size 85x37 [border: (10px solid #008000)]
+          RenderText {#text} at (10,0) size 65x17
+            text run at (10,0) width 65: "Filler Text"
         RenderText {#text} at (0,0) size 0x0

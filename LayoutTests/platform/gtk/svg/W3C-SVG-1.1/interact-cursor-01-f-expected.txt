@@ -5,11 +5,11 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (97,1) size 313x334
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (97,1) size 286x30 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 133x29
-          chunk 1 (middle anchor) text run 1 at (97.00,25.00) startOffset 0 endOffset 12 width 133.00: "Text Cursor "
-        RenderSVGInline {a} at (0,0) size 153x29
-          RenderSVGInlineText {#text} at (133,0) size 153x29
-            chunk 1 (middle anchor) text run 1 at (230.00,25.00) startOffset 0 endOffset 14 width 153.00: "Pointer Cursor"
+        RenderSVGInlineText {#text} at (0,0) size 132x29
+          chunk 1 (middle anchor) text run 1 at (97.91,25.00) startOffset 0 endOffset 12 width 131.18: "Text Cursor "
+        RenderSVGInline {a} at (0,0) size 154x29
+          RenderSVGInlineText {#text} at (131,0) size 153x29
+            chunk 1 (middle anchor) text run 1 at (229.09,25.00) startOffset 0 endOffset 14 width 153.00: "Pointer Cursor"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGRect {rect} at (118,38) size 244x240 [stroke={[type=SOLID] [color=#666666] [stroke width=3.00]}] [x=120.00] [y=40.00] [width=240.00] [height=236.00]
       RenderSVGContainer {g} at (148,70) size 184x176

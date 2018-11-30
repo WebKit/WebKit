@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,28) size 387x152
-      RenderSVGText {text} at (10,28) size 387x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 387x15
-          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 67 width 387.00: "Test getIntersectionList and getEnclosureList return value liveness"
+    RenderSVGContainer {g} at (10,28) size 386x152
+      RenderSVGText {text} at (10,28) size 386x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 386x15
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 67 width 385.56: "Test getIntersectionList and getEnclosureList return value liveness"
       RenderSVGRect {rect} at (10,70) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=70.00] [width=50.00] [height=50.00]
       RenderSVGText {text} at (70,83) size 146x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 146x21

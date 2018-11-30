@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 307x21
-          text run at (0,0) width 307: "Testcase for bug 5538 - distilled from "
+        RenderText {#text} at (0,0) size 305x21
+          text run at (0,0) width 305: "Testcase for bug 5538 - distilled from "
         RenderInline {A} at (0,0) size 117x21 [color=#0000EE]
-          RenderText {#text} at (307,0) size 117x21
-            text run at (307,0) width 117: "www.fool.com"
+          RenderText {#text} at (304,0) size 117x21
+            text run at (304,0) width 117: "www.fool.com"
       RenderTable {TABLE} at (0,40) size 600x90
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x54
           RenderText {#text} at (0,0) size 471x17
             text run at (0,0) width 471: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
-          RenderBR {BR} at (471,14) size 0x0
+          RenderBR {BR} at (470,14) size 1x0
           RenderText {#text} at (0,18) size 384x17
             text run at (0,18) width 384: "removing <MAP> element in second row it looks OK to me:"
           RenderBR {BR} at (384,32) size 0x0

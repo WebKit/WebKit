@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 449x99
                   RenderTableRow {TR} at (0,2) size 449x95
                     RenderTableCell {TD} at (2,2) size 445x95 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (2,2) size 201x17
-                        text run at (2,2) width 201: "Mozilla To Be Dually-Licensed"
-                      RenderBR {BR} at (203,16) size 0x0
+                      RenderText {#text} at (2,2) size 200x17
+                        text run at (2,2) width 200: "Mozilla To Be Dually-Licensed"
+                      RenderBR {BR} at (201,16) size 1x0
                       RenderText {#text} at (2,35) size 205x17
                         text run at (2,35) width 205: "Plans are underway to make the "
                       RenderInline {FONT} at (0,0) size 99x36 [color=#0000FF]
@@ -23,13 +23,13 @@ layer at (0,0) size 800x600
                         text run at (306,35) width 134: " code available under"
                         text run at (2,57) width 11: "a "
                         text run at (13,57) width 154: "dual MPL/GPL license. "
-                        text run at (167,57) width 241: "See the for more info. We're gathering"
-                        text run at (2,75) width 258: "contributor input now, in the newsgroup."
-                      RenderBR {BR} at (260,89) size 0x0
+                        text run at (166,57) width 241: "See the for more info. We're gathering"
+                        text run at (2,75) width 257: "contributor input now, in the newsgroup."
+                      RenderBR {BR} at (258,89) size 1x0
             RenderTableCell {TD} at (458,25) size 323x59 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 317x54
+              RenderText {#text} at (2,2) size 316x54
                 text run at (2,3) width 266: "This status update contains information on"
-                text run at (2,21) width 317: "MailNews, XML/DOM, XPToolkit, Architecture,"
+                text run at (2,21) width 316: "MailNews, XML/DOM, XPToolkit, Architecture,"
                 text run at (2,39) width 201: "Bidi, Necko/Imglib, and more..."
       RenderBlock (anonymous) at (0,111) size 784x49
         RenderBR {BR} at (0,0) size 0x17

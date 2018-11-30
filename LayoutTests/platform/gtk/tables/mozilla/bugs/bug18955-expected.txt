@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
                 text run at (412,20) width 72: "are actually"
                 text run at (2,38) width 296: "fighting each other instead of just the parents.\" "
                 text run at (298,38) width 195: "-- Children are doing anything,"
-                text run at (2,56) width 215: "including breaking the law, to get "
-                text run at (217,56) width 264: "their grubby hands on some trading cards,"
+                text run at (2,56) width 214: "including breaking the law, to get "
+                text run at (215,56) width 265: "their grubby hands on some trading cards,"
                 text run at (2,74) width 95: "observe police."
           RenderTableRow {TR} at (0,98) size 504x94
             RenderTableCell {TD} at (2,98) size 272x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
@@ -30,12 +30,12 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 196x89
                 text run at (2,2) width 32: "Sat., "
                 text run at (34,2) width 90: "Dec 11, 1999 "
-                text run at (124,2) width 71: "Gay Union"
+                text run at (123,2) width 72: "Gay Union"
                 text run at (2,20) width 196: "Kibosh Hawaii Supreme Court"
                 text run at (2,38) width 62: "slams the "
                 text run at (64,38) width 111: "door on same-sex"
                 text run at (2,56) width 169: "marriages. All eyes look to"
-                text run at (2,74) width 60: "Vermont."
+                text run at (2,74) width 59: "Vermont."
       RenderBlock (anonymous) at (0,248) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,282) size 784x18
@@ -56,9 +56,9 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 196x89
                 text run at (2,2) width 32: "Sat., "
                 text run at (34,2) width 90: "Dec 11, 1999 "
-                text run at (124,2) width 71: "Gay Union"
+                text run at (123,2) width 72: "Gay Union"
                 text run at (2,20) width 196: "Kibosh Hawaii Supreme Court"
                 text run at (2,38) width 62: "slams the "
                 text run at (64,38) width 111: "door on same-sex"
                 text run at (2,56) width 169: "marriages. All eyes look to"
-                text run at (2,74) width 60: "Vermont."
+                text run at (2,74) width 59: "Vermont."

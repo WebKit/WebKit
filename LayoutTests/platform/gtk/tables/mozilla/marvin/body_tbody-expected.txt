@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TH} at (231,2) size 86x20 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 84x17
                 text run at (1,1) width 84: "Windows 95"
-            RenderTableCell {TH} at (319,2) size 93x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TH} at (318,2) size 94x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 91x17
                 text run at (1,1) width 91: "Windows NT"
           RenderTableRow {TR} at (0,24) size 414x20
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (231,24) size 86x20 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (319,24) size 93x20 [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (318,24) size 94x20 [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,46) size 414x20
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (231,46) size 86x20 [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (319,46) size 93x20 [r=2 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (318,46) size 94x20 [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,68) size 414x20
@@ -55,6 +55,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (231,68) size 86x20 [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (319,68) size 93x20 [r=3 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (318,68) size 94x20 [r=3 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"

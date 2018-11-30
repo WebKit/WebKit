@@ -4,8 +4,8 @@ layer at (0,0) size 800x376
   RenderBlock {HTML} at (0,0) size 800x377
     RenderBody {BODY} at (8,22) size 784x347
       RenderBlock {H5} at (0,0) size 784x16
-        RenderText {#text} at (0,0) size 208x15
-          text run at (0,0) width 208: "table - color, tbodies color, row color"
+        RenderText {#text} at (0,0) size 206x15
+          text run at (0,0) width 206: "table - color, tbodies color, row color"
       RenderTable {TABLE} at (0,38) size 187x309 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (41,41) size 105x164 [bgcolor=#FF0000]
           RenderTableRow {TR} at (0,40) size 105x22 [bgcolor=#FFFF00]

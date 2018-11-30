@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 767x35
-          text run at (0,0) width 767: "This tests to see if HTMLEmbedElement.getSVGDocument() and HTMLObjectElement.getSVGDocument() work. You"
+        RenderText {#text} at (0,0) size 766x35
+          text run at (0,0) width 766: "This tests to see if HTMLEmbedElement.getSVGDocument() and HTMLObjectElement.getSVGDocument() work. You"
           text run at (0,18) width 300: "should see SUCCESS printed twice below this:"
       RenderBlock (anonymous) at (0,52) size 784x58
         RenderEmbeddedObject {EMBED} at (0,0) size 85x20

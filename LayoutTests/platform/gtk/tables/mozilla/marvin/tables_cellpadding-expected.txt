@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 779x53
-          text run at (0,0) width 600: "CELLPADDING controls the padding in pixels between the border of each cells and the cell's "
-          text run at (600,0) width 179: "contents.The first table has a"
+        RenderText {#text} at (0,0) size 778x53
+          text run at (0,0) width 599: "CELLPADDING controls the padding in pixels between the border of each cells and the cell's "
+          text run at (598,0) width 180: "contents.The first table has a"
           text run at (0,18) width 364: "cellpadding of 8 pixels. The second table is not using cell "
           text run at (364,18) width 379: "padding. Notice the difference. There should be a larger gap"
           text run at (0,36) width 199: "between the cell border and it's "
           text run at (199,36) width 161: "contents in the first table. "
-        RenderBR {BR} at (360,50) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,54) size 0x17
       RenderTable {TABLE} at (0,72) size 258x82 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 254x78

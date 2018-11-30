@@ -22,14 +22,14 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 230x17 [color=#E91C05]
                     RenderText {#text} at (23,7) size 230x17
                       text run at (23,7) width 230: "elcome to Pacific Shore Properties"
-                    RenderBR {BR} at (253,21) size 0x0
+                    RenderBR {BR} at (252,21) size 1x0
                 RenderInline {FONT} at (0,0) size 362x15
                   RenderText {#text} at (0,27) size 362x15
                     text run at (0,27) width 362: "Pacific Shore Properties is situated on beautiful Mayne Island."
               RenderBlock {P} at (5,63) size 761x45
-                RenderInline {FONT} at (0,0) size 742x45
-                  RenderText {#text} at (0,0) size 742x30
-                    text run at (0,0) width 742: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver"
+                RenderInline {FONT} at (0,0) size 740x45
+                  RenderText {#text} at (0,0) size 740x30
+                    text run at (0,0) width 740: "Mayne Island is one of the southern Gulf Islands, off the coast of British Columbia, Canada, between Vancouver and Vancouver"
                     text run at (0,15) width 39: "Island."
                   RenderBR {BR} at (39,27) size 0x0
                   RenderText {#text} at (0,30) size 86x15

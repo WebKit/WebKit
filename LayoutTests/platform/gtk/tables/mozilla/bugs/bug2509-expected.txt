@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 398x140
           RenderTableRow {TR} at (0,2) size 398x22
             RenderTableCell {TD} at (2,2) size 304x22 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 229x17
-                text run at (2,2) width 229: "What's New on WebDeveloper.com"
+              RenderText {#text} at (2,2) size 227x17
+                text run at (2,2) width 227: "What's New on WebDeveloper.com"
             RenderTableCell {TD} at (308,2) size 88x22 [border: (1px solid #0000FF)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 32x17
                 text run at (2,2) width 32: "umm"

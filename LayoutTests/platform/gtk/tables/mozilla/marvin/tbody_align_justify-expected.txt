@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 671x35
-          text run at (0,0) width 671: "The TBODY element labels the body area of a table. In this test, the TBODY text has an attribute value of"
-          text run at (0,18) width 632: "ALIGN=JUSTIFY. ALIGN-JUSTIFY should attempt to justify text within all cells of the TBODY."
+        RenderText {#text} at (0,0) size 670x35
+          text run at (0,0) width 670: "The TBODY element labels the body area of a table. In this test, the TBODY text has an attribute value of"
+          text run at (0,18) width 628: "ALIGN=JUSTIFY. ALIGN-JUSTIFY should attempt to justify text within all cells of the TBODY."
       RenderTable {TABLE} at (0,52) size 688x76 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 686x26
           RenderTableRow {TR} at (0,2) size 686x22

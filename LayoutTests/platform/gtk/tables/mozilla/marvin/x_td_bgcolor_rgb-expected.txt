@@ -279,8 +279,8 @@ layer at (0,0) size 785x1634
               RenderText {#text} at (2,2) size 132x17
                 text run at (2,2) width 132: "table table table table"
       RenderBlock {p} at (0,1122) size 769x18
-        RenderText {#text} at (0,0) size 278x17
-          text run at (0,0) width 278: "Yellow table with a white body background"
+        RenderText {#text} at (0,0) size 277x17
+          text run at (0,0) width 277: "Yellow table with a white body background"
       RenderTable {table} at (0,1156) size 418x52 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 416x50
           RenderTableRow {tr} at (0,2) size 416x22
@@ -354,8 +354,8 @@ layer at (0,0) size 785x1634
               RenderText {#text} at (2,2) size 132x17
                 text run at (2,2) width 132: "table table table table"
       RenderBlock {p} at (0,1428) size 769x18
-        RenderText {#text} at (0,0) size 259x17
-          text run at (0,0) width 259: "Teal table with a white body background"
+        RenderText {#text} at (0,0) size 258x17
+          text run at (0,0) width 258: "Teal table with a white body background"
       RenderTable {table} at (0,1462) size 410x46
         RenderTableSection (anonymous) at (0,0) size 410x46
           RenderTableRow {tr} at (0,2) size 410x20

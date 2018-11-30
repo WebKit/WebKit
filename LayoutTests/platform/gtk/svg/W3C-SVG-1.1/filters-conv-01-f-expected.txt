@@ -2,8 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (30,45) size 417x181
-      RenderSVGContainer {g} at (30,45) size 417x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+    RenderSVGContainer {g} at (30,45) size 416x181
+      RenderSVGContainer {g} at (30,45) size 416x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceFilter {filter} [id="convolve1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feConvolveMatrix order="width=3 height=3" kernelMatrix="[0.11, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11, 0.11]" divisor="1.00" bias="0.00" target="(1,1)" edgeMode="NONE" kernelUnitLength="(1,1)" preserveAlpha="0"]
@@ -23,7 +23,7 @@ layer at (0,0) size 480x360
           RenderSVGResourceFilter {filter} [id="convolve6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feConvolveMatrix order="width=1 height=3" kernelMatrix="[0.33, 0.33, 0.33]" divisor="1.00" bias="0.00" target="(0,1)" edgeMode="NONE" kernelUnitLength="(1,1)" preserveAlpha="0"]
               [SourceGraphic]
-        RenderSVGContainer {g} at (30,45) size 417x181
+        RenderSVGContainer {g} at (30,45) size 416x181
           RenderSVGText {text} at (10,5) size 66x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 66x18
               chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 10 width 66.00: "Blur (3x3)"
@@ -54,9 +54,9 @@ layer at (0,0) size 480x360
           RenderSVGContainer {g} at (180,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,93.00)}]
             RenderSVGImage {image} at (180,163) size 50x63
               [filter="convolve5"] RenderSVGResourceFilter {filter} at (10,30) size 50x63
-          RenderSVGText {text} at (10,5) size 117x19 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 117x18
-              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 117.00: "Vertical blur (1x3)"
+          RenderSVGText {text} at (10,5) size 116x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 116x18
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 115.23: "Vertical blur (1x3)"
           RenderSVGContainer {g} at (330,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
             RenderSVGImage {image} at (330,163) size 50x63
               [filter="convolve6"] RenderSVGResourceFilter {filter} at (10,30) size 50x63

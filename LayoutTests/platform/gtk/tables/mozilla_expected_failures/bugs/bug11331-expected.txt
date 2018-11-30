@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (337,14) size 0x0
           RenderText {#text} at (0,18) size 169x17
             text run at (0,18) width 169: "The only difference is that:"
-          RenderBR {BR} at (169,32) size 0x0
-          RenderText {#text} at (0,36) size 252x17
-            text run at (0,36) width 252: "yellow table has CELLPADDING=\"0\""
-          RenderBR {BR} at (252,50) size 0x0
-          RenderText {#text} at (0,54) size 241x17
-            text run at (0,54) width 241: "grey table has CELLPADDING=\"1\"."
+          RenderBR {BR} at (168,32) size 1x0
+          RenderText {#text} at (0,36) size 251x17
+            text run at (0,36) width 251: "yellow table has CELLPADDING=\"0\""
+          RenderBR {BR} at (250,50) size 1x0
+          RenderText {#text} at (0,54) size 240x17
+            text run at (0,54) width 240: "grey table has CELLPADDING=\"1\"."
         RenderTable {TABLE} at (0,72) size 40x37 [bgcolor=#FFFF00]
           RenderTableSection {TBODY} at (0,0) size 40x37
             RenderTableRow {TR} at (0,2) size 40x33

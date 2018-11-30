@@ -2,9 +2,9 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (31,25) size 327x404
-    RenderSVGText {text} at (110,25) size 230x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 229x18
-        chunk 1 (middle anchor) text run 1 at (110.50,40.00) startOffset 0 endOffset 33 width 229.00: "Text Decoration with dx, dy tests"
+    RenderSVGText {text} at (111,25) size 228x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 228x18
+        chunk 1 (middle anchor) text run 1 at (111.39,40.00) startOffset 0 endOffset 33 width 227.23: "Text Decoration with dx, dy tests"
     RenderSVGContainer {g} at (31,60) size 327x369 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
       RenderSVGText {text} at (31,10) size 127x54 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 83x17
@@ -24,198 +24,198 @@ layer at (0,0) size 450x500
         RenderSVGTSpan {tspan} at (0,0) size 30x17
           RenderSVGInlineText {#text} at (0,36) size 30x17
             chunk 1 text run 1 at (231.00,60.00) startOffset 0 endOffset 5 width 30.00: "lines"
-      RenderSVGText {text} at (31,81) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,100.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,95.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,95.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,105.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,111) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,130.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,125.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,125.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,135.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,141) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,160.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,155.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,155.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,165.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,176) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,10) size 33x17
-          chunk 1 text run 1 at (31.00,200.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,5) size 24x17
-            chunk 1 text run 1 at (64.00,195.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,5) size 4x17
-          chunk 1 text run 1 at (88.00,195.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,0) size 35x17
-            chunk 1 text run 1 at (92.00,190.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,81) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (231.00,100.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (264.00,95.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (288.00,95.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (292.00,105.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,111) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (231.00,130.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (264.00,125.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (288.00,125.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (292.00,135.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,141) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (231.00,160.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (264.00,155.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (288.00,155.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (292.00,165.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,176) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,10) size 33x17
-          chunk 1 text run 1 at (231.00,200.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,5) size 24x17
-            chunk 1 text run 1 at (264.00,195.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,5) size 4x17
-          chunk 1 text run 1 at (288.00,195.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,0) size 35x17
-            chunk 1 text run 1 at (292.00,190.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,221) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,240.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,235.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,235.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,245.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,251) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,270.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,265.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,265.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,275.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,281) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,5) size 33x17
-          chunk 1 text run 1 at (31.00,300.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,0) size 24x17
-            chunk 1 text run 1 at (64.00,295.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,0) size 4x17
-          chunk 1 text run 1 at (88.00,295.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,10) size 35x17
-            chunk 1 text run 1 at (92.00,305.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (31,306) size 96x28 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,10) size 33x17
-          chunk 1 text run 1 at (31.00,330.00) startOffset 0 endOffset 5 width 33.00: "Text "
-        RenderSVGTSpan {tspan} at (0,0) size 24x17
-          RenderSVGInlineText {#text} at (33,5) size 24x17
-            chunk 1 text run 1 at (64.00,325.00) startOffset 0 endOffset 4 width 24.00: "that"
-        RenderSVGInlineText {#text} at (57,5) size 4x17
-          chunk 1 text run 1 at (88.00,325.00) startOffset 0 endOffset 1 width 4.00: " "
-        RenderSVGTSpan {tspan} at (0,0) size 35x17
-          RenderSVGInlineText {#text} at (61,0) size 35x17
-            chunk 1 text run 1 at (92.00,320.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,221) size 96x28 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 96x27
-          RenderSVGInlineText {#text} at (0,5) size 33x17
-            chunk 1 text run 1 at (231.00,240.00) startOffset 0 endOffset 5 width 33.00: "Text "
-          RenderSVGTSpan {tspan} at (0,0) size 24x17
-            RenderSVGInlineText {#text} at (33,0) size 24x17
-              chunk 1 text run 1 at (264.00,235.00) startOffset 0 endOffset 4 width 24.00: "that"
-          RenderSVGInlineText {#text} at (57,0) size 4x17
-            chunk 1 text run 1 at (288.00,235.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 35x17
-            RenderSVGInlineText {#text} at (61,10) size 35x17
-              chunk 1 text run 1 at (292.00,245.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,251) size 96x28 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 96x27
-          RenderSVGInlineText {#text} at (0,5) size 33x17
-            chunk 1 text run 1 at (231.00,270.00) startOffset 0 endOffset 5 width 33.00: "Text "
-          RenderSVGTSpan {tspan} at (0,0) size 24x17
-            RenderSVGTSpan {tspan} at (0,0) size 24x17
-              RenderSVGInlineText {#text} at (33,0) size 24x17
-                chunk 1 text run 1 at (264.00,265.00) startOffset 0 endOffset 4 width 24.00: "that"
-          RenderSVGInlineText {#text} at (57,0) size 4x17
-            chunk 1 text run 1 at (288.00,265.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 35x17
-            RenderSVGInlineText {#text} at (61,10) size 35x17
-              chunk 1 text run 1 at (292.00,275.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,281) size 96x28 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 96x27
-          RenderSVGInlineText {#text} at (0,5) size 33x17
-            chunk 1 text run 1 at (231.00,300.00) startOffset 0 endOffset 5 width 33.00: "Text "
-          RenderSVGTSpan {tspan} at (0,0) size 24x17
-            RenderSVGInlineText {#text} at (33,0) size 24x17
-              chunk 1 text run 1 at (264.00,295.00) startOffset 0 endOffset 4 width 24.00: "that"
-          RenderSVGInlineText {#text} at (57,0) size 4x17
-            chunk 1 text run 1 at (288.00,295.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 35x17
+      RenderSVGText {text} at (31,81) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,100.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,95.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,95.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,105.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,111) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,130.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,125.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,125.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,135.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,141) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,160.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,155.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,155.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,165.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,176) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,10) size 32x17
+          chunk 1 text run 1 at (31.00,200.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,5) size 24x17
+            chunk 1 text run 1 at (62.34,195.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,5) size 4x17
+          chunk 1 text run 1 at (86.34,195.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,0) size 35x17
+            chunk 1 text run 1 at (90.34,190.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,81) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (231.00,100.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (262.34,95.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (286.34,95.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (290.34,105.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,111) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (231.00,130.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (262.34,125.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (286.34,125.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (290.34,135.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,141) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (231.00,160.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (262.34,155.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (286.34,155.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (290.34,165.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,176) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,10) size 32x17
+          chunk 1 text run 1 at (231.00,200.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,5) size 24x17
+            chunk 1 text run 1 at (262.34,195.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,5) size 4x17
+          chunk 1 text run 1 at (286.34,195.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,0) size 35x17
+            chunk 1 text run 1 at (290.34,190.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,221) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,240.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,235.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,235.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,245.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,251) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,270.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,265.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,265.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,275.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,281) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,5) size 32x17
+          chunk 1 text run 1 at (31.00,300.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,0) size 24x17
+            chunk 1 text run 1 at (62.34,295.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,0) size 4x17
+          chunk 1 text run 1 at (86.34,295.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,10) size 35x17
+            chunk 1 text run 1 at (90.34,305.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (31,306) size 95x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,10) size 32x17
+          chunk 1 text run 1 at (31.00,330.00) startOffset 0 endOffset 5 width 31.34: "Text "
+        RenderSVGTSpan {tspan} at (0,0) size 25x17
+          RenderSVGInlineText {#text} at (31,5) size 24x17
+            chunk 1 text run 1 at (62.34,325.00) startOffset 0 endOffset 4 width 24.00: "that"
+        RenderSVGInlineText {#text} at (55,5) size 4x17
+          chunk 1 text run 1 at (86.34,325.00) startOffset 0 endOffset 1 width 4.00: " "
+        RenderSVGTSpan {tspan} at (0,0) size 36x17
+          RenderSVGInlineText {#text} at (59,0) size 35x17
+            chunk 1 text run 1 at (90.34,320.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,221) size 95x28 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x27
+          RenderSVGInlineText {#text} at (0,5) size 32x17
+            chunk 1 text run 1 at (231.00,240.00) startOffset 0 endOffset 5 width 31.34: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 25x17
+            RenderSVGInlineText {#text} at (31,0) size 24x17
+              chunk 1 text run 1 at (262.34,235.00) startOffset 0 endOffset 4 width 24.00: "that"
+          RenderSVGInlineText {#text} at (55,0) size 4x17
+            chunk 1 text run 1 at (286.34,235.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (59,10) size 35x17
+              chunk 1 text run 1 at (290.34,245.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,251) size 95x28 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x27
+          RenderSVGInlineText {#text} at (0,5) size 32x17
+            chunk 1 text run 1 at (231.00,270.00) startOffset 0 endOffset 5 width 31.34: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 25x17
+            RenderSVGTSpan {tspan} at (0,0) size 25x17
+              RenderSVGInlineText {#text} at (31,0) size 24x17
+                chunk 1 text run 1 at (262.34,265.00) startOffset 0 endOffset 4 width 24.00: "that"
+          RenderSVGInlineText {#text} at (55,0) size 4x17
+            chunk 1 text run 1 at (286.34,265.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (59,10) size 35x17
+              chunk 1 text run 1 at (290.34,275.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,281) size 95x28 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x27
+          RenderSVGInlineText {#text} at (0,5) size 32x17
+            chunk 1 text run 1 at (231.00,300.00) startOffset 0 endOffset 5 width 31.34: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 25x17
+            RenderSVGInlineText {#text} at (31,0) size 24x17
+              chunk 1 text run 1 at (262.34,295.00) startOffset 0 endOffset 4 width 24.00: "that"
+          RenderSVGInlineText {#text} at (55,0) size 4x17
+            chunk 1 text run 1 at (286.34,295.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
             RenderSVGInlineText {#text} at (0,0) size 0x0
-            RenderSVGTSpan {tspan} at (0,0) size 35x17
-              RenderSVGInlineText {#text} at (61,10) size 35x17
-                chunk 1 text run 1 at (292.00,305.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (231,311) size 96x28 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 96x27
-          RenderSVGInlineText {#text} at (0,5) size 33x17
-            chunk 1 text run 1 at (231.00,330.00) startOffset 0 endOffset 5 width 33.00: "Text "
-          RenderSVGTSpan {tspan} at (0,0) size 63x27
-            RenderSVGTSpan {tspan} at (0,0) size 63x27
-              RenderSVGInlineText {#text} at (33,0) size 28x17
-                chunk 1 text run 1 at (264.00,325.00) startOffset 0 endOffset 5 width 28.00: "that "
-              RenderSVGTSpan {tspan} at (0,0) size 35x17
-                RenderSVGTSpan {tspan} at (0,0) size 35x17
-                  RenderSVGInlineText {#text} at (61,10) size 35x17
-                    chunk 1 text run 1 at (292.00,335.00) startOffset 0 endOffset 6 width 35.00: "shifts"
-      RenderSVGText {text} at (131,346) size 96x33 contains 1 chunk(s)
-        RenderSVGTSpan {tspan} at (0,0) size 96x32
-          RenderSVGInlineText {#text} at (0,10) size 33x17
-            chunk 1 text run 1 at (131.00,370.00) startOffset 0 endOffset 5 width 33.00: "Text "
-          RenderSVGTSpan {tspan} at (0,0) size 24x17
-            RenderSVGInlineText {#text} at (33,0) size 24x17
-              chunk 1 text run 1 at (164.00,360.00) startOffset 0 endOffset 4 width 24.00: "that"
-          RenderSVGInlineText {#text} at (57,0) size 4x17
-            chunk 1 text run 1 at (188.00,360.00) startOffset 0 endOffset 1 width 4.00: " "
-          RenderSVGTSpan {tspan} at (0,0) size 35x17
-            RenderSVGInlineText {#text} at (61,15) size 35x17
-              chunk 1 text run 1 at (192.00,375.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+            RenderSVGTSpan {tspan} at (0,0) size 36x17
+              RenderSVGInlineText {#text} at (59,10) size 35x17
+                chunk 1 text run 1 at (290.34,305.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (231,311) size 95x28 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x27
+          RenderSVGInlineText {#text} at (0,5) size 32x17
+            chunk 1 text run 1 at (231.00,330.00) startOffset 0 endOffset 5 width 31.34: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 64x27
+            RenderSVGTSpan {tspan} at (0,0) size 64x27
+              RenderSVGInlineText {#text} at (31,0) size 28x17
+                chunk 1 text run 1 at (262.34,325.00) startOffset 0 endOffset 5 width 28.00: "that "
+              RenderSVGTSpan {tspan} at (0,0) size 36x17
+                RenderSVGTSpan {tspan} at (0,0) size 36x17
+                  RenderSVGInlineText {#text} at (59,10) size 35x17
+                    chunk 1 text run 1 at (290.34,335.00) startOffset 0 endOffset 6 width 35.00: "shifts"
+      RenderSVGText {text} at (131,346) size 95x33 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x32
+          RenderSVGInlineText {#text} at (0,10) size 32x17
+            chunk 1 text run 1 at (131.00,370.00) startOffset 0 endOffset 5 width 31.34: "Text "
+          RenderSVGTSpan {tspan} at (0,0) size 25x17
+            RenderSVGInlineText {#text} at (31,0) size 24x17
+              chunk 1 text run 1 at (162.34,360.00) startOffset 0 endOffset 4 width 24.00: "that"
+          RenderSVGInlineText {#text} at (55,0) size 4x17
+            chunk 1 text run 1 at (186.34,360.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 36x17
+            RenderSVGInlineText {#text} at (59,15) size 35x17
+              chunk 1 text run 1 at (190.34,375.00) startOffset 0 endOffset 6 width 35.00: "shifts"

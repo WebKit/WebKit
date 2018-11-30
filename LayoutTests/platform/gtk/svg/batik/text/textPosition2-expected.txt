@@ -4,8 +4,8 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 449x498
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGText {text} at (172,15) size 106x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 106x18
-        chunk 1 (middle anchor) text run 1 at (172.00,30.00) startOffset 0 endOffset 15 width 106.00: "Text Position 2"
+      RenderSVGInlineText {#text} at (0,0) size 105x18
+        chunk 1 (middle anchor) text run 1 at (172.89,30.00) startOffset 0 endOffset 15 width 104.23: "Text Position 2"
     RenderSVGContainer {g} at (50,58) size 399x296
       RenderSVGText {text} at (50,58) size 53x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 53x27
@@ -32,7 +32,7 @@ layer at (0,0) size 450x500
           chunk 1 text run 1 at (130.00,140.00) startOffset 0 endOffset 1 width 12.00: "k"
       RenderSVGText {text} at (50,150) size 175x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 175x12
-          chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 35 width 175.00: "<text x=\"50 70 90 110 130\" y=\"140\">"
+          chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 35 width 174.26: "<text x=\"50 70 90 110 130\" y=\"140\">"
       RenderSVGText {text} at (240,118) size 133x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 133x27
           chunk 1 text run 1 at (240.00,140.00) startOffset 0 endOffset 1 width 16.00: "B"
@@ -72,7 +72,7 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (130.00,260.00) startOffset 0 endOffset 1 width 12.00: "k"
       RenderSVGText {text} at (50,270) size 184x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 184x12
-          chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 36 width 184.00: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
+          chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 36 width 183.26: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
       RenderSVGText {text} at (240,238) size 133x28 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 133x27
           RenderSVGInlineText {#text} at (0,0) size 133x27

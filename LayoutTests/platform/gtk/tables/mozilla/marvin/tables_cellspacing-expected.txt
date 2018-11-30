@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 776x53
-          text run at (0,0) width 304: "CELLSPACING controls the distance in pixels "
-          text run at (304,0) width 472: "between each cell in the table. The first table has a cellspacing of 15 pixels;"
+        RenderText {#text} at (0,0) size 775x53
+          text run at (0,0) width 303: "CELLSPACING controls the distance in pixels "
+          text run at (302,0) width 473: "between each cell in the table. The first table has a cellspacing of 15 pixels;"
           text run at (0,18) width 250: "the second table isn't using cellspacing. "
           text run at (250,18) width 492: "Notice the difference here. The first table should be rendered with a wider gap"
           text run at (0,36) width 116: "between the cells. "
-        RenderBR {BR} at (116,50) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
       RenderTable {TABLE} at (0,54) size 258x85
         RenderTableSection {TBODY} at (0,0) size 258x85
           RenderTableRow {TR} at (0,15) size 258x20

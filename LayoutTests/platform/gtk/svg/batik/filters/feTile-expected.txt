@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 448x498
     RenderSVGContainer {g} at (0,25) size 384x354
-      RenderSVGText {text} at (187,25) size 76x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 75x18
-          chunk 1 (middle anchor) text run 1 at (187.50,40.00) startOffset 0 endOffset 11 width 75.00: "feTile Test"
+      RenderSVGText {text} at (188,25) size 74x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 73x18
+          chunk 1 (middle anchor) text run 1 at (188.68,40.00) startOffset 0 endOffset 11 width 72.63: "feTile Test"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceLinearGradient {linearGradient} [id="tileFill"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
@@ -49,7 +49,7 @@ layer at (0,0) size 450x500
         RenderSVGRect {rect} at (19,299) size 102x52 [stroke={[type=SOLID] [color=#000000]}] [x=-12.50] [y=-7.25] [width=100.00] [height=50.00]
         RenderSVGText {text} at (-34,-37) size 143x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 142x18
-            chunk 1 (middle anchor) text run 1 at (-33.50,-22.25) startOffset 0 endOffset 24 width 142.00: "tile_3 (top left offset)"
+            chunk 1 (middle anchor) text run 1 at (-33.36,-22.25) startOffset 0 endOffset 24 width 141.71: "tile_3 (top left offset)"
         RenderSVGText {text} at (-37,-25) size 149x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 149x18
             chunk 1 (middle anchor) text run 1 at (-37.00,-10.25) startOffset 0 endOffset 26 width 149.00: "9 tiles, 1 full, 8 partial"
@@ -82,7 +82,7 @@ layer at (0,0) size 450x500
       RenderSVGContainer {g} at (224,270) size 142x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(257.50,307.25)}]
         RenderSVGText {text} at (-34,-37) size 143x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 142x18
-            chunk 1 (middle anchor) text run 1 at (-33.50,-22.25) startOffset 0 endOffset 24 width 142.00: "tile_3 (top left offset)"
+            chunk 1 (middle anchor) text run 1 at (-33.36,-22.25) startOffset 0 endOffset 24 width 141.71: "tile_3 (top left offset)"
         RenderSVGText {text} at (2,-25) size 71x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 70x18
             chunk 1 (middle anchor) text run 1 at (2.50,-10.25) startOffset 0 endOffset 8 width 70.00: "skewed Y"

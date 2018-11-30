@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 430x17
-          text run at (0,0) width 430: "Slider drawing with no source. The controls should render correctly."
+        RenderText {#text} at (0,0) size 429x17
+          text run at (0,0) width 429: "Slider drawing with no source. The controls should render correctly."
       RenderBlock (anonymous) at (0,34) size 784x152
         RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 302x152

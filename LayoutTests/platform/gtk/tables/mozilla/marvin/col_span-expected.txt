@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 768x35
-          text run at (0,0) width 768: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction with the"
-          text run at (0,18) width 101: "SPAN attribute."
+        RenderText {#text} at (0,0) size 767x35
+          text run at (0,0) width 767: "The COL element specifies attributes for a table column. In this test case, the COL element is used in conjunction with the"
+          text run at (0,18) width 100: "SPAN attribute."
       RenderTable {TABLE} at (0,52) size 560x52 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -19,6 +19,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,26) size 423x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 124x17
                 text run at (2,2) width 124: "This is column one."
-            RenderTableCell {TD} at (427,26) size 129x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (426,26) size 130x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 125x17
                 text run at (2,2) width 125: "This is column two."

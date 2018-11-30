@@ -5,14 +5,18 @@ layer at (0,0) size 800x440
     RenderBody {BODY} at (8,8) size 784x424
       RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
       RenderBlock {H3} at (0,20) size 784x23
-        RenderText {#text} at (0,0) size 62x21
-          text run at (0,0) width 62: "Table 1"
+        RenderText {#text} at (0,0) size 61x21
+          text run at (0,0) width 61: "Table 1"
       RenderBlock {PRE} at (0,61) size 784x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 168: "<COLGROUP width=\"1*\">"
+          text run at (168,15) width 0: " "
           text run at (0,30) width 168: "<COLGROUP width=\"1*\">"
+          text run at (168,30) width 0: " "
           text run at (0,45) width 168: "<COLGROUP width=\"3*\">"
+          text run at (168,45) width 0: " "
       RenderTable {TABLE} at (0,134) size 500x77 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
@@ -50,13 +54,16 @@ layer at (0,0) size 800x440
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {HR} at (0,218) size 784x3 [border: (1px inset #000000)]
       RenderBlock {H3} at (0,239) size 784x23
-        RenderText {#text} at (0,0) size 62x21
-          text run at (0,0) width 62: "Table 2"
+        RenderText {#text} at (0,0) size 61x21
+          text run at (0,0) width 61: "Table 2"
       RenderBlock {PRE} at (0,279) size 784x46
         RenderText {#text} at (0,0) size 224x45
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 224: "<COLGROUP span=2 width=\"1*\">"
+          text run at (224,15) width 0: " "
           text run at (0,30) width 168: "<COLGROUP width=\"3*\">"
+          text run at (168,30) width 0: " "
       RenderTable {TABLE} at (0,337) size 500x77 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0

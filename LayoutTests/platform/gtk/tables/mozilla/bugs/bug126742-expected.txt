@@ -83,4 +83,4 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 68x15 [color=#0000EE]
                       RenderText {#text} at (358,-1) size 68x17
                         text run at (358,0) width 36: "Office "
-                        text run at (394,0) width 32: "Hours"
+                        text run at (393,0) width 33: "Hours"

@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (33,222) size 651x143
       RenderSVGText {text} at (81,133) size 298x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 135x21
-          chunk 1 (middle anchor) text run 1 at (81.20,150.00) startOffset 0 endOffset 15 width 135.00: "dirRTL ubNone \""
+          chunk 1 (middle anchor) text run 1 at (81.70,150.00) startOffset 0 endOffset 15 width 134.01: "dirRTL ubNone \""
         RenderSVGTSpan {tspan} at (0,0) size 152x21
-          RenderSVGInlineText {#text} at (135,0) size 152x21
-            chunk 1 (middle anchor) text run 1 at (216.20,150.00) startOffset 0 endOffset 12 width 100.20 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
-            chunk 1 (middle anchor) text run 1 at (316.40,150.00) startOffset 0 endOffset 5 width 51.00: "\x{60C} W3C"
-        RenderSVGInlineText {#text} at (286,0) size 12x21
-          chunk 1 (middle anchor) text run 1 at (367.40,150.00) startOffset 0 endOffset 2 width 11.40: "\"!"
+          RenderSVGInlineText {#text} at (134,0) size 152x21
+            chunk 1 (middle anchor) text run 1 at (215.70,150.00) startOffset 0 endOffset 12 width 100.20 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
+            chunk 1 (middle anchor) text run 1 at (315.90,150.00) startOffset 0 endOffset 5 width 51.00: "\x{60C} W3C"
+        RenderSVGInlineText {#text} at (285,0) size 12x21
+          chunk 1 (middle anchor) text run 1 at (366.90,150.00) startOffset 0 endOffset 2 width 11.40: "\"!"
       RenderSVGText {text} at (20,170) size 86x13 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 86x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 85.20: "Reference graphic:"

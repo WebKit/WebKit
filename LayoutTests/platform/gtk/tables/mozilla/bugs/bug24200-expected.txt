@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (1,1) size 641x199
             RenderTableRow {TR} at (0,0) size 641x22
               RenderTableCell {TD} at (0,0) size 641x22 [border: (2px solid #FF0000)] [r=0 c=0 rs=1 cs=2]
-                RenderText {#text} at (3,3) size 177x17
-                  text run at (3,3) width 177: "parent table, 1st row, 1st col"
+                RenderText {#text} at (3,3) size 176x17
+                  text run at (3,3) width 176: "parent table, 1st row, 1st col"
             RenderTableRow {TR} at (0,22) size 641x177
               RenderTableCell {TD} at (0,22) size 156x177 [border: (1px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
                 RenderBlock {FORM} at (3,2) size 152x157

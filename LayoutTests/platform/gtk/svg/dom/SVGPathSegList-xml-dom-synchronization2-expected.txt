@@ -5,7 +5,7 @@ layer at (0,0) size 600x500
     RenderSVGPath {path} at (46,103) size 128x122 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 50 150 L 95 107 L 145 157 L 169 221 L 100 200 Z"]
     RenderSVGText {text} at (10,5) size 344x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 344x18
-        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 52 width 344.00: "Right after loading, a segment is added to the path."
+        chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 52 width 343.71: "Right after loading, a segment is added to the path."
     RenderSVGText {text} at (10,25) size 493x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 493x18
         chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 72 width 493.00: "The path and its attribute should be updated to include the new segment."

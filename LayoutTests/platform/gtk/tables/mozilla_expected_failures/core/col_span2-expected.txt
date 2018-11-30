@@ -565,9 +565,9 @@ layer at (0,0) size 785x5451
                 text run at (2,2) width 27: "auto"
       RenderBlock (anonymous) at (0,2213) size 769x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 165x17
-          text run at (0,18) width 165: "PERCENT COLSPANS "
-        RenderBR {BR} at (165,32) size 0x0
+        RenderText {#text} at (0,18) size 164x17
+          text run at (0,18) width 164: "PERCENT COLSPANS "
+        RenderBR {BR} at (163,32) size 1x0
       RenderTable {TABLE} at (0,2249) size 500x61 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 498x59
           RenderTableRow {TR} at (0,5) size 498x22
@@ -1025,12 +1025,12 @@ layer at (0,0) size 785x5451
               RenderText {#text} at (739,5) size 24x17
                 text run at (739,5) width 24: "edit"
           RenderTableRow {TR} at (0,28) size 767x28
-            RenderTableCell {TD} at (0,28) size 460x28 [bgcolor=#DCDCDC] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderText {#text} at (5,5) size 163x17
-                text run at (5,5) width 163: "Top Stories from Reuters "
-            RenderTableCell {TD} at (459,28) size 309x28 [bgcolor=#DCDCDC] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (196,5) size 107x17
-                text run at (196,5) width 107: "Jun 11 12:30pm "
+            RenderTableCell {TD} at (0,28) size 459x28 [bgcolor=#DCDCDC] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderText {#text} at (5,5) size 162x17
+                text run at (5,5) width 162: "Top Stories from Reuters "
+            RenderTableCell {TD} at (458,28) size 310x28 [bgcolor=#DCDCDC] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (197,5) size 107x17
+                text run at (197,5) width 107: "Jun 11 12:30pm "
       RenderBlock (anonymous) at (0,4227) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,4245) size 200x34 [bgcolor=#FFFF00] [border: (1px outset #808080)]

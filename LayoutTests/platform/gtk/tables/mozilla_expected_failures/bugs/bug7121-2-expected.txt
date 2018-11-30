@@ -13,5 +13,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 279x15
                   text run at (1,1) width 279: "Copyright \x{A9} 1998-1999 The Mozilla Organization."
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (289,2) size 2x20 [bgcolor=#000000] [r=0 c=16 rs=1 cs=15]
+            RenderTableCell {TD} at (288,2) size 3x20 [bgcolor=#000000] [r=0 c=16 rs=1 cs=15]
               RenderBR {BR} at (1,1) size 0x17

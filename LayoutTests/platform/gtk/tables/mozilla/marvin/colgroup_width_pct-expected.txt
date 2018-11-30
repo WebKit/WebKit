@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (174,2) size 116x17
                 text run at (174,2) width 116: "Airport Location"
             RenderTableCell {TH} at (468,2) size 313x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=3]
-              RenderText {#text} at (75,2) size 163x17
-                text run at (75,2) width 163: "Car Rental Information"
+              RenderText {#text} at (75,2) size 162x17
+                text run at (75,2) width 162: "Car Rental Information"
           RenderTableRow {TR} at (0,26) size 782x40
             RenderTableCell {TH} at (2,35) size 154x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (48,2) size 58x17
@@ -106,8 +106,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "USA"
             RenderTableCell {TD} at (158,164) size 308x22 [border: (1px inset #808080)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 68x17
-                text run at (2,2) width 68: "New York"
+              RenderText {#text} at (2,2) size 67x17
+                text run at (2,2) width 67: "New York"
             RenderTableCell {TD} at (468,164) size 104x22 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 21x17
                 text run at (2,2) width 21: "yes"

@@ -4,8 +4,8 @@ layer at (0,0) size 785x686
   RenderBlock {HTML} at (0,0) size 785x686
     RenderBody {BODY} at (8,16) size 769x660
       RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 386x17
-          text run at (0,0) width 386: "Test passes if the content of the three black boxes is identical."
+        RenderText {#text} at (0,0) size 385x17
+          text run at (0,0) width 385: "Test passes if the content of the three black boxes is identical."
       RenderBlock {DIV} at (10,34) size 298x202 [border: (5px solid #000000)]
       RenderBlock {DIV} at (10,246) size 298x202 [border: (5px solid #000000)]
       RenderBlock {DIV} at (10,458) size 298x202 [border: (5px solid #000000)]

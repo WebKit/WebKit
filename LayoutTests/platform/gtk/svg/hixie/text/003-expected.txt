@@ -4,23 +4,23 @@ layer at (0,0) size 800x414
   RenderBlock {HTML} at (0,0) size 800x414
     RenderBody {BODY} at (8,16) size 784x382
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 608x17
-          text run at (0,0) width 608: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
+        RenderText {#text} at (0,0) size 607x17
+          text run at (0,0) width 607: "The following two blocks should look identical (to the pixel), and they should both say \"PASS\":"
       RenderBlock {P} at (0,34) size 784x166
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
           layer at (0,0) size 778x156
-            RenderSVGRoot {svg} at (0,0) size 375x156
+            RenderSVGRoot {svg} at (0,0) size 360x156
               RenderSVGText {text} at (0,-1) size 3x3 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 3x2
-                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.40: "PASS"
+                  chunk 1 text run 1 at (0.00,0.80) startOffset 0 endOffset 4 width 2.31: "PASS"
       RenderBlock {P} at (0,216) size 784x166
         RenderEmbeddedObject {OBJECT} at (0,0) size 784x162 [border: (3px inset #000080)]
           layer at (0,0) size 778x156
             RenderView at (0,0) size 778x156
           layer at (0,0) size 778x156
-            RenderSVGRoot {svg} at (0,0) size 375x156
-              RenderSVGText {text} at (0,-94) size 2404x1111 contains 1 chunk(s)
-                RenderSVGInlineText {#text} at (0,0) size 2404x1111
-                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2403.60: "PASS"
+            RenderSVGRoot {svg} at (0,0) size 360x156
+              RenderSVGText {text} at (0,-94) size 2312x1111 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 2312x1111
+                  chunk 1 text run 1 at (0.00,800.00) startOffset 0 endOffset 4 width 2311.57: "PASS"

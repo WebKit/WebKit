@@ -4,8 +4,8 @@ layer at (0,0) size 800x276
   RenderBlock {HTML} at (0,0) size 800x276
     RenderBody {BODY} at (8,16) size 784x252
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 312x17
-          text run at (0,0) width 312: "Test passes if there is a square and a circle below."
+        RenderText {#text} at (0,0) size 310x17
+          text run at (0,0) width 310: "Test passes if there is a square and a circle below."
       RenderBlock {DIV} at (0,34) size 102x102 [border: (1px solid #00000000)]
         RenderBlock {DIV} at (1,1) size 106x106 [border: (3px solid #000000)]
       RenderBlock {DIV} at (0,146) size 106x106 [border: (3px solid #000000)]

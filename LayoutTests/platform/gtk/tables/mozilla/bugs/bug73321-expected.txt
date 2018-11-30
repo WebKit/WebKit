@@ -4,13 +4,13 @@ layer at (0,0) size 785x1325
   RenderBlock {HTML} at (0,0) size 785x1325
     RenderBody {BODY} at (8,8) size 769x1309 [bgcolor=#555555]
       RenderBlock {H1} at (16,37) size 737x102 [bgcolor=#CCCCCC]
-        RenderText {#text} at (85,32) size 163x36
-          text run at (85,32) width 163: "Simplified "
-        RenderInline {A} at (0,0) size 162x36 [color=#0000EE]
-          RenderText {#text} at (248,32) size 162x36
-            text run at (248,32) width 162: "Linux.com"
-        RenderText {#text} at (410,32) size 242x36
-          text run at (410,32) width 242: " Table Testcase"
+        RenderText {#text} at (87,32) size 164x36
+          text run at (87,32) width 164: "Simplified "
+        RenderInline {A} at (0,0) size 163x36 [color=#0000EE]
+          RenderText {#text} at (250,32) size 163x36
+            text run at (250,32) width 163: "Linux.com"
+        RenderText {#text} at (412,32) size 238x36
+          text run at (412,32) width 238: " Table Testcase"
       RenderTable {TABLE} at (16,159) size 737x1134
         RenderTableSection {TBODY} at (0,0) size 737x1134
           RenderTableRow {TR} at (0,2) size 737x382
@@ -132,8 +132,8 @@ layer at (0,0) size 785x1325
                   text run at (0,195) width 444: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
                   text run at (0,210) width 108: "blah blah blah blah"
               RenderBlock {H2} at (5,795) size 449x19
-                RenderText {#text} at (0,0) size 59x17
-                  text run at (0,0) width 59: "Tuneup"
+                RenderText {#text} at (0,0) size 58x17
+                  text run at (0,0) width 58: "Tuneup"
               RenderBlock {P} at (5,826) size 449x226
                 RenderText {#text} at (0,0) size 444x225
                   text run at (0,0) width 444: "blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"

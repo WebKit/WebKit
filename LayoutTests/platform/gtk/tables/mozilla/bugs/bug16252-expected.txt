@@ -19,10 +19,10 @@ layer at (0,0) size 800x600
                           RenderTableCell {TD} at (0,0) size 6x22 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,2) size 0x17
                           RenderTableCell {TD} at (6,1) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
-                            RenderInline {FONT} at (0,0) size 246x15
-                              RenderInline {B} at (0,0) size 246x15
-                                RenderText {#text} at (2,1) size 246x17
-                                  text run at (2,2) width 246: "CHAMBERLAIN'S CAREER STATISTICS"
+                            RenderInline {FONT} at (0,0) size 245x15
+                              RenderInline {B} at (0,0) size 245x15
+                                RenderText {#text} at (2,1) size 245x17
+                                  text run at (2,2) width 245: "CHAMBERLAIN'S CAREER STATISTICS"
                         RenderTableRow {TR} at (0,22) size 260x261
                           RenderTableCell {TD} at (0,141) size 6x23 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,122) size 0x17
@@ -35,9 +35,9 @@ layer at (0,0) size 800x600
                                       RenderText {#text} at (2,2) size 22x11
                                         text run at (2,2) width 22: "Year"
                                   RenderTableCell {TD} at (31,0) size 71x15 [r=0 c=1 rs=1 cs=1]
-                                    RenderInline {FONT} at (0,0) size 26x11
-                                      RenderText {#text} at (2,2) size 26x11
-                                        text run at (2,2) width 26: "Team"
+                                    RenderInline {FONT} at (0,0) size 25x11
+                                      RenderText {#text} at (2,2) size 25x11
+                                        text run at (2,2) width 25: "Team"
                                   RenderTableCell {TD} at (101,0) size 29x15 [r=0 c=2 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 16x11
                                       RenderText {#text} at (11,2) size 16x11
@@ -209,9 +209,9 @@ layer at (0,0) size 800x600
                                       RenderText {#text} at (2,2) size 27x11
                                         text run at (2,2) width 27: "64-65"
                                   RenderTableCell {TD} at (31,90) size 71x15 [r=6 c=1 rs=1 cs=1]
-                                    RenderInline {FONT} at (0,0) size 45x11
-                                      RenderText {#text} at (2,2) size 45x11
-                                        text run at (2,2) width 45: "S.F.-Phila"
+                                    RenderInline {FONT} at (0,0) size 44x11
+                                      RenderText {#text} at (2,2) size 44x11
+                                        text run at (2,2) width 44: "S.F.-Phila"
                                   RenderTableCell {TD} at (101,90) size 29x15 [r=6 c=2 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 13x11
                                       RenderText {#text} at (14,2) size 13x11
@@ -466,9 +466,9 @@ layer at (0,0) size 800x600
                                         text run at (3,2) width 22: "13.2"
                                 RenderTableRow {TR} at (0,225) size 250x15 [bgcolor=#FFFFFF]
                                   RenderTableCell {TD} at (0,225) size 102x15 [r=15 c=0 rs=1 cs=2]
-                                    RenderInline {FONT} at (0,0) size 28x11
-                                      RenderText {#text} at (2,2) size 28x11
-                                        text run at (2,2) width 28: "Totals"
+                                    RenderInline {FONT} at (0,0) size 27x11
+                                      RenderText {#text} at (2,2) size 27x11
+                                        text run at (2,2) width 27: "Totals"
                                   RenderTableCell {TD} at (101,225) size 29x15 [r=15 c=2 rs=1 cs=1]
                                     RenderInline {FONT} at (0,0) size 25x11
                                       RenderText {#text} at (2,2) size 25x11
@@ -498,7 +498,7 @@ layer at (0,0) size 800x600
                       text run at (0,72) width 164: "1959 through 1973, when"
                       text run at (0,90) width 106: "he played for the"
                       text run at (0,108) width 165: "Philadelphia (later the San"
-                      text run at (0,126) width 152: "Francisco) Warriors, the"
+                      text run at (0,126) width 151: "Francisco) Warriors, the"
                       text run at (0,144) width 158: "76ers and the Lakers. He"
                       text run at (0,162) width 176: "scored 31,419 points during"
                       text run at (0,180) width 162: "his career, averaging 30.1"
@@ -517,5 +517,5 @@ layer at (0,0) size 800x600
                   RenderBlock {P} at (0,390) size 440x54
                     RenderText {#text} at (0,0) size 439x53
                       text run at (0,0) width 439: "One of his most famous records is the 100 points he scored in a single"
-                      text run at (0,18) width 428: "game in the Philadelphia Warriors' 169-147 defeat of the New York"
-                      text run at (0,36) width 267: "Knicks on March 2, 1962, in Hershey, Pa."
+                      text run at (0,18) width 426: "game in the Philadelphia Warriors' 169-147 defeat of the New York"
+                      text run at (0,36) width 266: "Knicks on March 2, 1962, in Hershey, Pa."

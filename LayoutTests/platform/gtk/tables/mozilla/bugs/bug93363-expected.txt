@@ -48,5 +48,5 @@ layer at (0,0) size 800x600
                                   text run at (0,72) width 128: "in a P that's nowrap."
       RenderBlock (anonymous) at (0,260) size 784x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 325x17
-          text run at (0,18) width 325: "Tables have a thick border, cells have a thin border."
+        RenderText {#text} at (0,18) size 323x17
+          text run at (0,18) width 323: "Tables have a thick border, cells have a thin border."

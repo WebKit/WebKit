@@ -4,9 +4,9 @@ layer at (0,0) size 800x140
   RenderBlock {html} at (0,0) size 800x140
     RenderBody {body} at (8,16) size 784x116
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 515x17
+        RenderText {#text} at (0,0) size 514x17
           text run at (0,0) width 415: "There should be rules between all columns (and only columns) in "
-          text run at (415,0) width 100: "the table below."
+          text run at (415,0) width 99: "the table below."
       RenderTable {table} at (0,34) size 184x82 [border: none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

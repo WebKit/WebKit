@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 42x17
                 text run at (0,0) width 42: "Empty"
       RenderBlock {P} at (0,110) size 784x18
-        RenderText {#text} at (0,0) size 377x17
-          text run at (0,0) width 377: "If we fill either empty out with text, the problem goes away."
+        RenderText {#text} at (0,0) size 376x17
+          text run at (0,0) width 376: "If we fill either empty out with text, the problem goes away."
       RenderTable {TABLE} at (0,144) size 566x74 [bgcolor=#00FFFF]
         RenderTableSection {TBODY} at (0,0) size 566x74
           RenderTableRow {TR} at (0,0) size 566x54
@@ -65,8 +65,8 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 181: "Empty - this has lots and lots"
                 text run at (0,18) width 121: "and lots of text in it"
       RenderBlock {P} at (0,360) size 784x18
-        RenderText {#text} at (0,0) size 464x17
-          text run at (0,0) width 464: "Taking away either the cellpadding=0 or cellspacing=0 fixes the problem."
+        RenderText {#text} at (0,0) size 463x17
+          text run at (0,0) width 463: "Taking away either the cellpadding=0 or cellspacing=0 fixes the problem."
       RenderTable {TABLE} at (0,394) size 566x70 [bgcolor=#00FFFF]
         RenderTableSection {TBODY} at (0,0) size 566x70
           RenderTableRow {TR} at (0,2) size 566x42

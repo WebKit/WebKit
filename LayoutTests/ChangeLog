@@ -2,6 +2,12 @@
 
         Unreviewed GTK+ gardening. Stop running tests without complex text enforced
 
+        Rebaseline tests. Part 3.
+
+2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Stop running tests without complex text enforced
+
         Rebaseline tests. Part 2.
 
 2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>

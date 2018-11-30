@@ -4,8 +4,8 @@ layer at (0,0) size 785x1356
   RenderBlock {HTML} at (0,0) size 785x1357
     RenderBody {BODY} at (8,8) size 769x1341
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 397x36
-          text run at (0,0) width 397: "Example 6: Table Stress Test"
+        RenderText {#text} at (0,0) size 391x36
+          text run at (0,0) width 391: "Example 6: Table Stress Test"
       RenderBlock {PRE} at (0,58) size 769x16 [color=#FF0000]
         RenderText {#text} at (0,0) size 272x15
           text run at (0,0) width 272: "Resize document for maximum effect"
@@ -99,7 +99,7 @@ layer at (0,0) size 785x1356
                                                             RenderTableCell {TD} at (34,102) size 448x40 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                                                               RenderText {#text} at (2,2) size 441x35
                                                                 text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                                                                text run at (396,2) width 47: "enough"
+                                                                text run at (395,2) width 48: "enough"
                                                                 text run at (2,20) width 67: "for testing."
                                                             RenderTableCell {TD} at (483,111) size 31x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                                                               RenderText {#text} at (2,2) size 26x17
@@ -115,7 +115,7 @@ layer at (0,0) size 785x1356
                                                     RenderTableCell {TD} at (34,154) size 490x40 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                                                       RenderText {#text} at (2,2) size 463x35
                                                         text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                                                        text run at (396,2) width 69: "enough for"
+                                                        text run at (395,2) width 70: "enough for"
                                                         text run at (2,20) width 45: "testing."
                                                     RenderTableCell {TD} at (525,163) size 31x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                                                       RenderText {#text} at (2,2) size 26x17
@@ -131,7 +131,7 @@ layer at (0,0) size 785x1356
                                             RenderTableCell {TD} at (34,206) size 531x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                                               RenderText {#text} at (2,2) size 512x17
                                                 text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                                                text run at (396,2) width 118: "enough for testing."
+                                                text run at (395,2) width 119: "enough for testing."
                                             RenderTableCell {TD} at (566,206) size 32x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                                               RenderText {#text} at (2,2) size 26x17
                                                 text run at (2,2) width 26: "Cell"
@@ -146,7 +146,7 @@ layer at (0,0) size 785x1356
                                     RenderTableCell {TD} at (34,240) size 570x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                                       RenderText {#text} at (2,2) size 512x17
                                         text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                                        text run at (396,2) width 118: "enough for testing."
+                                        text run at (395,2) width 119: "enough for testing."
                                     RenderTableCell {TD} at (605,240) size 35x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                                       RenderText {#text} at (2,2) size 26x17
                                         text run at (2,2) width 26: "Cell"
@@ -161,7 +161,7 @@ layer at (0,0) size 785x1356
                             RenderTableCell {TD} at (34,274) size 610x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 512x17
                                 text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                                text run at (396,2) width 118: "enough for testing."
+                                text run at (395,2) width 119: "enough for testing."
                             RenderTableCell {TD} at (645,274) size 37x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 26x17
                                 text run at (2,2) width 26: "Cell"
@@ -176,7 +176,7 @@ layer at (0,0) size 785x1356
                     RenderTableCell {TD} at (34,308) size 650x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 512x17
                         text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                        text run at (396,2) width 118: "enough for testing."
+                        text run at (395,2) width 119: "enough for testing."
                     RenderTableCell {TD} at (685,308) size 39x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 26x17
                         text run at (2,2) width 26: "Cell"
@@ -191,7 +191,7 @@ layer at (0,0) size 785x1356
             RenderTableCell {TD} at (34,342) size 689x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 512x17
                 text run at (2,2) width 394: "Cell, and stuff to test out table cell layout. This should be long "
-                text run at (396,2) width 118: "enough for testing."
+                text run at (395,2) width 119: "enough for testing."
             RenderTableCell {TD} at (724,342) size 42x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x17
                 text run at (2,2) width 26: "Cell"

@@ -9,7 +9,7 @@ layer at (0,0) size 800x92
             RenderTableCell {td} at (2,2) size 311x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 267x17
                 text run at (2,2) width 267: "This thead should have a lime background"
-            RenderTableCell {td} at (315,2) size 311x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (314,2) size 312x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 267x17
                 text run at (2,2) width 267: "This thead should have a lime background"
         RenderTableSection {tfoot} at (1,51) size 628x24
@@ -17,7 +17,7 @@ layer at (0,0) size 800x92
             RenderTableCell {td} at (2,0) size 311x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 300x17
                 text run at (2,2) width 300: "This tfoot should NOT have a lime background"
-            RenderTableCell {td} at (315,0) size 311x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (314,0) size 312x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 300x17
                 text run at (2,2) width 300: "This tfoot should NOT have a lime background"
         RenderTableSection {tbody} at (1,27) size 628x24
@@ -25,6 +25,6 @@ layer at (0,0) size 800x92
             RenderTableCell {td} at (2,0) size 311x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 307x17
                 text run at (2,2) width 307: "This tbody should NOT have a lime background"
-            RenderTableCell {td} at (315,0) size 311x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {td} at (314,0) size 312x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 307x17
                 text run at (2,2) width 307: "This tbody should NOT have a lime background"

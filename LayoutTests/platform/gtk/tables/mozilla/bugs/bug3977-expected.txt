@@ -22,8 +22,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 452x18
-                RenderText {#text} at (0,0) size 162x17
-                  text run at (0,0) width 162: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 161x17
+                  text run at (0,0) width 161: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 452x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
@@ -40,9 +40,9 @@ layer at (0,0) size 785x929
                 text run at (208,3) width 62: "text links"
       RenderBlock {HR} at (0,267) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,285) size 769x18
-        RenderInline {B} at (0,0) size 471x17
-          RenderText {#text} at (0,0) size 471x17
-            text run at (0,0) width 471: "Now, nuke the IMG (two of which are colspan=3) -- the table lines up."
+        RenderInline {B} at (0,0) size 470x17
+          RenderText {#text} at (0,0) size 470x17
+            text run at (0,0) width 470: "Now, nuke the IMG (two of which are colspan=3) -- the table lines up."
       RenderTable {TABLE} at (0,319) size 590x179 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 588x177
           RenderTableRow {TR} at (0,2) size 588x22
@@ -62,8 +62,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 446x18
-                RenderText {#text} at (0,0) size 162x17
-                  text run at (0,0) width 162: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 161x17
+                  text run at (0,0) width 161: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 446x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
@@ -102,16 +102,16 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 455x18
-                RenderText {#text} at (0,0) size 162x17
-                  text run at (0,0) width 162: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 161x17
+                  text run at (0,0) width 161: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 455x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
       RenderBlock {HR} at (0,741) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,759) size 769x18
-        RenderInline {B} at (0,0) size 520x17
-          RenderText {#text} at (0,0) size 520x17
-            text run at (0,0) width 520: "Simpler comparison -- nuke the IMG (replace with text) -- tables line up now."
+        RenderInline {B} at (0,0) size 519x17
+          RenderText {#text} at (0,0) size 519x17
+            text run at (0,0) width 519: "Simpler comparison -- nuke the IMG (replace with text) -- tables line up now."
       RenderTable {TABLE} at (0,793) size 590x120 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 588x118
           RenderTableRow {TR} at (0,2) size 588x22
@@ -131,8 +131,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 446x18
-                RenderText {#text} at (0,0) size 162x17
-                  text run at (0,0) width 162: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 161x17
+                  text run at (0,0) width 161: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 446x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."

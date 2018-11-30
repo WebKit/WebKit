@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 240x582
           RenderTableRow {TR} at (0,0) size 240x562
             RenderTableCell {TD} at (0,271) size 240x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 223x17
-                text run at (1,1) width 223: "Table cell without height restriction"
+              RenderText {#text} at (1,1) size 222x17
+                text run at (1,1) width 222: "Table cell without height restriction"
           RenderTableRow {TR} at (0,562) size 240x20
             RenderTableCell {TD} at (0,562) size 240x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 238x17

@@ -4,14 +4,14 @@ layer at (0,0) size 785x2368
   RenderBlock {HTML} at (0,0) size 785x2369
     RenderBody {BODY} at (8,21) size 769x2340
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 541x36
-          text run at (0,0) width 541: "Problems with COLSPAN and WIDTH"
+        RenderText {#text} at (0,0) size 539x36
+          text run at (0,0) width 539: "Problems with COLSPAN and WIDTH"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 254x17
           text run at (0,0) width 254: "Each block of tables should be identical."
       RenderBlock {H2} at (0,96) size 769x28
-        RenderText {#text} at (0,0) size 129x26
-          text run at (0,0) width 129: "Sized Tables"
+        RenderText {#text} at (0,0) size 127x26
+          text run at (0,0) width 127: "Sized Tables"
       RenderBlock {P} at (0,143) size 769x37
         RenderText {#text} at (0,0) size 732x35
           text run at (0,0) width 732: "The following tables have width=400, which should make them the same width as the red lines which are caused by"
@@ -295,8 +295,8 @@ layer at (0,0) size 785x2368
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,1357) size 406x7 [border: (3px solid #FF0000)]
       RenderBlock {H2} at (0,1383) size 769x28
-        RenderText {#text} at (0,0) size 230x26
-          text run at (0,0) width 230: "Tables Without Width"
+        RenderText {#text} at (0,0) size 227x26
+          text run at (0,0) width 227: "Tables Without Width"
       RenderBlock {P} at (0,1430) size 769x37
         RenderText {#text} at (0,0) size 753x35
           text run at (0,0) width 753: "The following tables have no width. They should still be the same size, by virtue of them having a 400 pixel cell and no"

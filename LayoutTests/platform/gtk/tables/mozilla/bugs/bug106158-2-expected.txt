@@ -21,5 +21,5 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 440x24
                   RenderTableRow {TR} at (0,2) size 440x20
                     RenderTableCell {TD} at (2,2) size 436x20 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (1,1) size 128x17
-                        text run at (1,1) width 128: "Shop Till You Drop"
+                      RenderText {#text} at (1,1) size 126x17
+                        text run at (1,1) width 126: "Shop Till You Drop"

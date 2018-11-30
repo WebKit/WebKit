@@ -58,15 +58,15 @@ layer at (0,0) size 800x600
                       text run at (279,0) width 22: "cell"
                 RenderListItem {LI} at (40,162) size 624x18
                   RenderListMarker at (-17,0) size 7x17: bullet
-                  RenderInline {A} at (0,0) size 289x17 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 289x17
-                      text run at (0,0) width 289: "A 713k HTML document packed full of links"
+                  RenderInline {A} at (0,0) size 288x17 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 288x17
+                      text run at (0,0) width 288: "A 713k HTML document packed full of links"
                 RenderListItem {LI} at (40,180) size 624x18
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
                     RenderText {#text} at (0,0) size 307x17
                       text run at (0,0) width 273: "Extraordinarily long HTML doc (approx 1 "
-                      text run at (273,0) width 34: "Meg)"
+                      text run at (272,0) width 35: "Meg)"
                 RenderListItem {LI} at (40,198) size 624x18
                   RenderListMarker at (-17,0) size 7x17: bullet
                   RenderInline {A} at (0,0) size 278x17 [color=#0000EE]
@@ -74,10 +74,10 @@ layer at (0,0) size 800x600
                       text run at (0,0) width 278: "Another large HTML doc, with colored text"
                 RenderListItem {LI} at (40,216) size 624x18
                   RenderListMarker at (-17,0) size 7x17: bullet
-                  RenderInline {A} at (0,0) size 470x17 [color=#0000EE]
-                    RenderText {#text} at (0,0) size 470x17
-                      text run at (0,0) width 329: "A relatively large (150k) document with an average "
-                      text run at (329,0) width 141: "mix of HTML content"
+                  RenderInline {A} at (0,0) size 469x17 [color=#0000EE]
+                    RenderText {#text} at (0,0) size 469x17
+                      text run at (0,0) width 328: "A relatively large (150k) document with an average "
+                      text run at (327,0) width 142: "mix of HTML content"
             RenderTableCell {TD} at (671,2) size 54x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 33x17
                 text run at (2,2) width 33: "foo 1"

@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 145x17
-          text run at (0,0) width 145: "Testcase distilled from "
+        RenderText {#text} at (0,0) size 144x17
+          text run at (0,0) width 144: "Testcase distilled from "
         RenderInline {A} at (0,0) size 166x17 [color=#0000EE]
-          RenderText {#text} at (145,0) size 166x17
-            text run at (145,0) width 166: "http://www.microsoft.com"
-        RenderBR {BR} at (311,14) size 0x0
-        RenderText {#text} at (0,18) size 589x17
-          text run at (0,18) width 589: "The problem seems to be that the last cell in each row have an \"excessive\" COLSPAN value."
-        RenderBR {BR} at (589,32) size 0x0
+          RenderText {#text} at (143,0) size 166x17
+            text run at (143,0) width 166: "http://www.microsoft.com"
+        RenderBR {BR} at (308,14) size 1x0
+        RenderText {#text} at (0,18) size 588x17
+          text run at (0,18) width 588: "The problem seems to be that the last cell in each row have an \"excessive\" COLSPAN value."
+        RenderBR {BR} at (587,32) size 1x0
         RenderText {#text} at (0,36) size 394x17
           text run at (0,36) width 394: "I have added BORDER=1 to make the cell boundaries visible."
       RenderTable {TABLE} at (0,70) size 784x86 [border: (1px outset #808080)]
@@ -35,20 +35,20 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x20
             RenderTableCell {TD} at (0,64) size 783x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=4]
-              RenderText {#text} at (1,1) size 699x17
+              RenderText {#text} at (1,1) size 698x17
                 text run at (1,1) width 62: "  Home  | "
                 text run at (63,1) width 124: "  Events/Training  | "
-                text run at (187,1) width 85: "  Subscribe  | "
-                text run at (272,1) width 128: "  About Microsoft  | "
-                text run at (400,1) width 119: "  US/Worldwide  | "
-                text run at (519,1) width 96: "  Downloads  | "
-                text run at (615,1) width 85: "  MSN.com  |"
+                text run at (186,1) width 86: "  Subscribe  | "
+                text run at (271,1) width 129: "  About Microsoft  | "
+                text run at (399,1) width 119: "  US/Worldwide  | "
+                text run at (517,1) width 97: "  Downloads  | "
+                text run at (613,1) width 86: "  MSN.com  |"
       RenderBlock {P} at (0,172) size 784x36
-        RenderText {#text} at (0,0) size 651x17
-          text run at (0,0) width 651: "The following table is exactly as above, but I have removed COLSPAN for the last cell in row 1 and 2,"
-        RenderBR {BR} at (651,14) size 0x0
-        RenderText {#text} at (0,18) size 385x17
-          text run at (0,18) width 385: "and changed COLSPAN=4 to COLSPAN=3 in the last row."
+        RenderText {#text} at (0,0) size 650x17
+          text run at (0,0) width 650: "The following table is exactly as above, but I have removed COLSPAN for the last cell in row 1 and 2,"
+        RenderBR {BR} at (649,14) size 1x0
+        RenderText {#text} at (0,18) size 382x17
+          text run at (0,18) width 382: "and changed COLSPAN=4 to COLSPAN=3 in the last row."
       RenderTable {TABLE} at (0,224) size 784x86 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x84
           RenderTableRow {TR} at (0,0) size 782x22
@@ -69,11 +69,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,64) size 782x20
             RenderTableCell {TD} at (0,64) size 783x20 [bgcolor=#6699CC] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
-              RenderText {#text} at (1,1) size 699x17
+              RenderText {#text} at (1,1) size 698x17
                 text run at (1,1) width 62: "  Home  | "
                 text run at (63,1) width 124: "  Events/Training  | "
-                text run at (187,1) width 85: "  Subscribe  | "
-                text run at (272,1) width 128: "  About Microsoft  | "
-                text run at (400,1) width 119: "  US/Worldwide  | "
-                text run at (519,1) width 96: "  Downloads  | "
-                text run at (615,1) width 85: "  MSN.com  |"
+                text run at (186,1) width 86: "  Subscribe  | "
+                text run at (271,1) width 129: "  About Microsoft  | "
+                text run at (399,1) width 119: "  US/Worldwide  | "
+                text run at (517,1) width 97: "  Downloads  | "
+                text run at (613,1) width 86: "  MSN.com  |"

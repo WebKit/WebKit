@@ -7,9 +7,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 113x36
           RenderTableRow {TR} at (0,0) size 113x36
             RenderTableCell {TD} at (0,0) size 113x36 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 66x17
-                text run at (0,0) width 66: "Left Table"
-              RenderBR {BR} at (66,14) size 0x0
+              RenderText {#text} at (0,0) size 65x17
+                text run at (0,0) width 65: "Left Table"
+              RenderBR {BR} at (64,14) size 1x0
               RenderText {#text} at (0,18) size 113x17
                 text run at (0,18) width 113: "ALIGN=\"LEFT\""
               RenderBR {BR} at (113,32) size 0x0
@@ -17,9 +17,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 113x36
           RenderTableRow {TR} at (0,0) size 113x36
             RenderTableCell {TD} at (0,0) size 113x36 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 82x17
-                text run at (0,0) width 82: "Center Table"
-              RenderBR {BR} at (82,14) size 0x0
+              RenderText {#text} at (0,0) size 81x17
+                text run at (0,0) width 81: "Center Table"
+              RenderBR {BR} at (80,14) size 1x0
               RenderText {#text} at (0,18) size 113x17
                 text run at (0,18) width 113: "ALIGN=\"LEFT\""
               RenderBR {BR} at (113,32) size 0x0
@@ -27,9 +27,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 113x36
           RenderTableRow {TR} at (0,0) size 113x36
             RenderTableCell {TD} at (0,0) size 113x36 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 75x17
-                text run at (0,0) width 75: "Right Table"
-              RenderBR {BR} at (75,14) size 0x0
+              RenderText {#text} at (0,0) size 74x17
+                text run at (0,0) width 74: "Right Table"
+              RenderBR {BR} at (73,14) size 1x0
               RenderText {#text} at (0,18) size 113x17
                 text run at (0,18) width 113: "ALIGN=\"LEFT\""
               RenderBR {BR} at (113,32) size 0x0

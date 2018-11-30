@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
       RenderListItem {LI} at (0,36) size 784x490
         RenderBlock (anonymous) at (0,0) size 784x18
           RenderListMarker at (-1,0) size 7x17: bullet
-          RenderText {#text} at (14,0) size 181x17
-            text run at (14,0) width 181: "\"width:x%\" works correctly."
+          RenderText {#text} at (14,0) size 180x17
+            text run at (14,0) width 180: "\"width:x%\" works correctly."
         RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
         RenderTable {TABLE} at (0,36) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100

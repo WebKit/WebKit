@@ -4,6 +4,6 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (54,54) size 746x546
     RenderSVGForeignObject {foreignObject} at (10,10) size 480x360
       RenderBlock {xhtml:div} at (0,0) size 480x18
-        RenderText {#text} at (0,0) size 244x17
-          text run at (0,0) width 244: "You should only see this string ONCE"
+        RenderText {#text} at (0,0) size 243x17
+          text run at (0,0) width 243: "You should only see this string ONCE"
     RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,-35.86)}]

@@ -11,5 +11,5 @@ layer at (0,0) size 800x594
           RenderSVGContainer {g} at (8,79) size 502x506 [transform={m=((400.00,0.00)(0.00,400.00)) t=(0.00,0.00)}]
             RenderSVGText {text} at (0,0) size 1x1 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 1x1
-                chunk 1 (middle anchor) text run 1 at (0.38,0.50) startOffset 0 endOffset 12 width 0.25: "Test passed."
+                chunk 1 (middle anchor) text run 1 at (0.38,0.50) startOffset 0 endOffset 12 width 0.24: "Test passed."
         RenderText {#text} at (0,0) size 0x0

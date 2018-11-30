@@ -67,7 +67,7 @@ layer at (0,0) size 480x360
       RenderSVGRect {rect} at (35,207) size 102x91 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
       RenderSVGText {text} at (46,188) size 77x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 77x12
-          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 77.00: "viewTarget, should"
+          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 76.12: "viewTarget, should"
       RenderSVGText {text} at (46,197) size 73x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 73x12
           chunk 1 text run 1 at (46.00,206.00) startOffset 0 endOffset 17 width 73.00: "highlight polygon"

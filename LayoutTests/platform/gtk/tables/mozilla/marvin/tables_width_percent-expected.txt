@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 763x35
-          text run at (0,0) width 693: "This test case shows how WIDTH can set the width of the table to a fixed size using PERCENT. PERCENT "
-          text run at (693,0) width 70: "is based on"
+        RenderText {#text} at (0,0) size 762x35
+          text run at (0,0) width 692: "This test case shows how WIDTH can set the width of the table to a fixed size using PERCENT. PERCENT "
+          text run at (691,0) width 71: "is based on"
           text run at (0,18) width 444: "the percentage of the space between the current left and right margins. "
-          text run at (444,18) width 253: "This first table has a width of 80 percent"
+          text run at (443,18) width 254: "This first table has a width of 80 percent"
       RenderTable {TABLE} at (0,36) size 628x46
         RenderTableSection {TBODY} at (0,0) size 628x46
           RenderTableRow {TR} at (0,2) size 628x20

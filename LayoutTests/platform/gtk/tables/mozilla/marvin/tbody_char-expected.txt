@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 770x35
-          text run at (0,0) width 770: "The TBODY element defines the table body within a table. In this test, the numbers contained in the TBODY cells should"
+        RenderText {#text} at (0,0) size 769x35
+          text run at (0,0) width 769: "The TBODY element defines the table body within a table. In this test, the numbers contained in the TBODY cells should"
           text run at (0,18) width 167: "align on the decimal point."
       RenderTable {TABLE} at (0,52) size 526x100 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 524x26

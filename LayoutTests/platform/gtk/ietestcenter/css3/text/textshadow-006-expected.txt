@@ -4,9 +4,9 @@ layer at (0,0) size 800x76
   RenderBlock {HTML} at (0,0) size 800x76
     RenderBody {BODY} at (8,16) size 784x52
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 298x17
-          text run at (0,0) width 298: "Test passes if there is green visible on the page."
+        RenderText {#text} at (0,0) size 297x17
+          text run at (0,0) width 297: "Test passes if there is green visible on the page."
       RenderBlock {DIV} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 66x17
-          text run at (0,0) width 66: "Filler Text"
+        RenderText {#text} at (0,0) size 65x17
+          text run at (0,0) width 65: "Filler Text"
       RenderBlock {DIV} at (0,52) size 784x0

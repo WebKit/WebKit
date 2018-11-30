@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 741x35
           text run at (0,0) width 741: "It should never be the case that deleting a tbody causes a rebuild of the cell map since cells cannot span out of tbodies."
           text run at (0,18) width 150: "However, this is a bug. "
-        RenderBR {BR} at (150,32) size 0x0
+        RenderBR {BR} at (149,32) size 1x0
         RenderBR {BR} at (0,36) size 0x17
         RenderText {#text} at (0,54) size 214x17
           text run at (0,54) width 214: "The 2 tables should look the same"

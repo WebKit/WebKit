@@ -3,10 +3,10 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (5,3) size 363x287
-      RenderSVGText {text} at (5,3) size 363x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 363x45
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 363.00: "Test left-to-right text."
+    RenderSVGContainer {g} at (5,3) size 359x287
+      RenderSVGText {text} at (5,3) size 359x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 359x45
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 24 width 358.57: "Test left-to-right text."
       RenderSVGContainer {g} at (10,56) size 247x164
         RenderSVGText {text} at (10,56) size 235x24 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 235x23

@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (28,26) size 27x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (57,26) size 27x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (56,26) size 28x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,70) size 784x18
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (28,26) size 27x22 [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (57,26) size 27x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (56,26) size 28x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
       RenderBlock (anonymous) at (0,140) size 784x18

@@ -44,9 +44,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-69,45) size 138x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 137x18
             chunk 1 (middle anchor) text run 1 at (-68.50,60.00) startOffset 0 endOffset 21 width 137.00: "#4: from-to animation"
-        RenderSVGText {text} at (-67,60) size 134x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 133x18
-            chunk 1 (middle anchor) text run 1 at (-66.50,75.00) startOffset 0 endOffset 20 width 133.00: "compatible H/h, V/v,"
+        RenderSVGText {text} at (-66,60) size 132x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 132x18
+            chunk 1 (middle anchor) text run 1 at (-65.98,75.00) startOffset 0 endOffset 20 width 131.96: "compatible H/h, V/v,"
         RenderSVGText {text} at (-40,75) size 80x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 80x18
             chunk 1 (middle anchor) text run 1 at (-40.00,90.00) startOffset 0 endOffset 12 width 80.00: "L/l segments"

@@ -7,7 +7,7 @@ layer at (0,0) size 400x400
         chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 21 width 49.75: "SVG Performance test."
     RenderSVGText {text} at (10,90) size 33x7 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 33x6
-        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.75: "Test completed"
+        chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.29: "Test completed"
     RenderSVGRect {rect} at (0,0) size 400x400 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGText {text} at (9,37) size 3x7 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 3x6
@@ -44,7 +44,7 @@ layer at (0,0) size 400x400
         chunk 1 text run 1 at (77.00,37.00) startOffset 0 endOffset 2 width 1.00: "10"
     RenderSVGText {text} at (45,76) size 4x5 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 4x5
-        chunk 1 text run 1 at (45.00,80.00) startOffset 0 endOffset 2 width 4.00: "11"
+        chunk 1 text run 1 at (45.00,80.00) startOffset 0 endOffset 2 width 3.85: "11"
     RenderSVGText {text} at (27,76) size 4x5 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 4x5
         chunk 1 text run 1 at (27.00,80.00) startOffset 0 endOffset 2 width 4.00: "12"

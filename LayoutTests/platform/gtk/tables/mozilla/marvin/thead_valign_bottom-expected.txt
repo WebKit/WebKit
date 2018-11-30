@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 201x17
-          text run at (0,0) width 201: "THEAD VALIGN=BOTTOM"
+        RenderText {#text} at (0,0) size 199x17
+          text run at (0,0) width 199: "THEAD VALIGN=BOTTOM"
       RenderTable {TABLE} at (0,18) size 784x243 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 782x193
           RenderTableRow {TR} at (0,2) size 782x189

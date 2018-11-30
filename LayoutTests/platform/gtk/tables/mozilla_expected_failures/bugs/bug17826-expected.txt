@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (481,2) size 150x22 [border: (1px solid #FF0000)] [r=0 c=7 rs=1 cs=1]
               RenderText {#text} at (2,2) size 4x17
                 text run at (2,2) width 4: " "
-            RenderTableCell {TD} at (632,2) size 149x22 [border: (1px solid #FF0000)] [r=0 c=8 rs=2 cs=1]
+            RenderTableCell {TD} at (632,2) size 148x22 [border: (1px solid #FF0000)] [r=0 c=8 rs=2 cs=1]
               RenderText {#text} at (2,2) size 4x17
                 text run at (2,2) width 4: " "
           RenderTableRow {TR} at (0,26) size 782x22
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 75x17
                 text run at (2,2) width 75: "Search Tips"
           RenderTableRow {TR} at (0,50) size 782x22
-            RenderTableCell {TD} at (2,50) size 779x22 [border: (1px solid #FF0000)] [r=2 c=0 rs=1 cs=9]
+            RenderTableCell {TD} at (2,50) size 778x22 [border: (1px solid #FF0000)] [r=2 c=0 rs=1 cs=9]
               RenderText {#text} at (2,2) size 4x17
                 text run at (2,2) width 4: " "
       RenderBlock {P} at (0,92) size 784x36

@@ -392,8 +392,8 @@ layer at (0,0) size 785x2444
                 text run at (2,2) width 20: "bar"
       RenderBlock (anonymous) at (0,2052) size 769x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 233x17
-          text run at (0,18) width 233: "table - color, tbodies color, row color"
+        RenderText {#text} at (0,18) size 232x17
+          text run at (0,18) width 232: "table - color, tbodies color, row color"
       RenderTable {TABLE} at (0,2088) size 47x96 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (7,7) size 33x56 [bgcolor=#FF0000]
           RenderTableRow {TR} at (0,4) size 33x22 [bgcolor=#FFFF00]

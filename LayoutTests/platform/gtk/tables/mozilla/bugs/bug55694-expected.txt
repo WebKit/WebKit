@@ -25,24 +25,24 @@ layer at (0,0) size 800x600
         RenderInline {B} at (0,0) size 50x17
           RenderText {#text} at (260,0) size 50x17
             text run at (260,0) width 50: "relative"
-        RenderText {#text} at (310,0) size 82x17
-          text run at (310,0) width 82: " positioning. "
-        RenderBR {BR} at (392,14) size 0x0
+        RenderText {#text} at (309,0) size 83x17
+          text run at (309,0) width 83: " positioning. "
+        RenderBR {BR} at (391,14) size 1x0
         RenderText {#text} at (0,18) size 140x17
           text run at (0,18) width 140: "No width has been set"
-layer at (8,70) size 140x28
-  RenderBlock (positioned) {DIV} at (8,70) size 140x28 [bgcolor=#CCFFCC]
-    RenderTable {TABLE} at (0,0) size 140x28 [border: (1px outset #808080)]
-      RenderTableSection {TBODY} at (1,1) size 138x26
-        RenderTableRow {TR} at (0,2) size 138x22
-          RenderTableCell {TD} at (2,2) size 134x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (2,2) size 130x17
-              text run at (2,2) width 130: "Table width = 100%"
+layer at (8,70) size 139x28
+  RenderBlock (positioned) {DIV} at (8,70) size 139x28 [bgcolor=#CCFFCC]
+    RenderTable {TABLE} at (0,0) size 139x28 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 137x26
+        RenderTableRow {TR} at (0,2) size 137x22
+          RenderTableCell {TD} at (2,2) size 133x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (2,2) size 129x17
+              text run at (2,2) width 129: "Table width = 100%"
 layer at (8,200) size 784x28
   RenderBlock (relative positioned) {DIV} at (0,192) size 784x28 [bgcolor=#CC0066]
     RenderTable {TABLE} at (0,0) size 784x28 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 782x26
         RenderTableRow {TR} at (0,2) size 782x22
           RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (2,2) size 130x17
-              text run at (2,2) width 130: "Table width = 100%"
+            RenderText {#text} at (2,2) size 129x17
+              text run at (2,2) width 129: "Table width = 100%"

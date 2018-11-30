@@ -20,9 +20,9 @@ layer at (0,0) size 800x600
         chunk 1 text run 1 at (0.00,33.00) startOffset 0 endOffset 25 width 175.80: "no markers and no dashes."
     RenderSVGPath {path} at (49,65) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M 30 40 L 80 40 L 80 90 L 30 90 Z"]
     RenderSVGEllipse {circle} at (265,65) size 70x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [cx=180.00] [cy=60.00] [r=20.00]
-    RenderSVGText {text} at (0,95) size 295x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 295x18
-        chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 45 width 294.60: "The circle should be opaque green, no filter,"
-    RenderSVGText {text} at (0,115) size 112x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 112x18
-        chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 17 width 111.60: "green stop color."
+    RenderSVGText {text} at (0,95) size 294x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 294x18
+        chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 45 width 293.95: "The circle should be opaque green, no filter,"
+    RenderSVGText {text} at (0,115) size 111x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 111x18
+        chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 17 width 110.71: "green stop color."

@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
-          RenderText {#text} at (53,0) size 60x17
-            text run at (53,0) width 60: "bug 8121"
-        RenderText {#text} at (113,0) size 289x17
-          text run at (113,0) width 289: ": REGRESSION: 404s are not displayed and "
-        RenderInline {A} at (0,0) size 60x17 [color=#0000EE]
-          RenderText {#text} at (402,0) size 60x17
-            text run at (402,0) width 60: "bug 7739"
-        RenderText {#text} at (462,0) size 772x35
-          text run at (462,0) width 310: ": REGRESSION: Assertion failure loading acid2"
-          text run at (0,18) width 298: "test in -[WebCoreFrameBridge installInFrame:]"
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {A} at (0,0) size 61x17 [color=#0000EE]
+          RenderText {#text} at (51,0) size 61x17
+            text run at (51,0) width 61: "bug 8121"
+        RenderText {#text} at (111,0) size 290x17
+          text run at (111,0) width 290: ": REGRESSION: 404s are not displayed and "
+        RenderInline {A} at (0,0) size 61x17 [color=#0000EE]
+          RenderText {#text} at (400,0) size 61x17
+            text run at (400,0) width 61: "bug 7739"
+        RenderText {#text} at (460,0) size 771x35
+          text run at (460,0) width 311: ": REGRESSION: Assertion failure loading acid2"
+          text run at (0,18) width 297: "test in -[WebCoreFrameBridge installInFrame:]"
       RenderBlock {P} at (0,52) size 784x36
         RenderText {#text} at (0,0) size 774x35
           text run at (0,0) width 163: "Here is an invalid iframe. "

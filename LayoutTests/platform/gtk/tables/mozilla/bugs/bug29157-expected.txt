@@ -28,5 +28,5 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 52x17
                 text run at (2,2) width 52: "cell data"
       RenderBlock (anonymous) at (0,76) size 784x18
-        RenderText {#text} at (0,0) size 186x17
-          text run at (0,0) width 186: "[object HTMLTableElement]"
+        RenderText {#text} at (0,0) size 184x17
+          text run at (0,0) width 184: "[object HTMLTableElement]"

@@ -10,12 +10,12 @@ layer at (0,0) size 800x600
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 782x26
           RenderTableRow {TR} at (0,2) size 782x22
-            RenderTableCell {TD} at (2,2) size 31x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x17
-                text run at (2,2) width 27: "Test"
-            RenderTableCell {TD} at (35,2) size 78x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x17
-                text run at (2,2) width 27: "Test"
-            RenderTableCell {TD} at (114,2) size 666x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 27x17
-                text run at (2,2) width 27: "Test"
+            RenderTableCell {TD} at (2,2) size 30x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 26x17
+                text run at (2,2) width 26: "Test"
+            RenderTableCell {TD} at (33,2) size 79x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 26x17
+                text run at (2,2) width 26: "Test"
+            RenderTableCell {TD} at (113,2) size 667x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 26x17
+                text run at (2,2) width 26: "Test"

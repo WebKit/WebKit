@@ -4,8 +4,8 @@ layer at (0,0) size 800x160
   RenderBlock {HTML} at (0,0) size 800x160
     RenderBody {BODY} at (8,16) size 784x136
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 412x17
-          text run at (0,0) width 412: "Test passes if there is a box with sharp or rounded corners below."
+        RenderText {#text} at (0,0) size 410x17
+          text run at (0,0) width 410: "Test passes if there is a box with sharp or rounded corners below."
       RenderTable {DIV} at (0,34) size 102x102 [border: (1px none #000000)]
         RenderTableSection (anonymous) at (1,1) size 99x99
           RenderTableRow {DIV} at (0,0) size 99x99 [border: (3px solid #008000)]

@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,4) size 628x74
+  RenderSVGRoot {svg} at (0,4) size 624x74
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="myfilter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feGaussianBlur stdDeviation="3.00, 3.00"]
           [SourceGraphic]
-    RenderSVGText {text} at (4,10) size 567x62 contains 1 chunk(s)
-      [filter="myfilter"] RenderSVGResourceFilter {filter} at (-52.70,4.89) size 680.40x73.11
-      RenderSVGInlineText {#text} at (0,0) size 567x61
-        [filter="myfilter"] RenderSVGResourceFilter {filter} at (-52.70,4.90) size 680.40x73.09
-        chunk 1 text run 1 at (4.00,60.00) startOffset 0 endOffset 26 width 567.00: "This text should be blury."
+    RenderSVGText {text} at (4,10) size 564x62 contains 1 chunk(s)
+      [filter="myfilter"] RenderSVGResourceFilter {filter} at (-52.34,4.89) size 676.13x73.11
+      RenderSVGInlineText {#text} at (0,0) size 564x61
+        [filter="myfilter"] RenderSVGResourceFilter {filter} at (-52.34,4.90) size 676.11x73.09
+        chunk 1 text run 1 at (4.00,60.00) startOffset 0 endOffset 26 width 563.43: "This text should be blury."

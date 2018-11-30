@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (10,25) size 435x355
     RenderSVGText {text} at (130,25) size 190x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 190x18
-        chunk 1 (middle anchor) text run 1 at (130.00,40.00) startOffset 0 endOffset 26 width 190.00: "Test of xml:space handling"
+      RenderSVGInlineText {#text} at (0,0) size 189x18
+        chunk 1 (middle anchor) text run 1 at (130.89,40.00) startOffset 0 endOffset 26 width 188.23: "Test of xml:space handling"
     RenderSVGContainer {g} at (10,55) size 435x325
       RenderSVGText {text} at (10,55) size 40x25 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 40x25

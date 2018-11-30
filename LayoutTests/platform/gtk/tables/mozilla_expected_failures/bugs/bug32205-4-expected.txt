@@ -9,15 +9,15 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x36
         RenderText {#text} at (0,0) size 735x35
           text run at (0,0) width 211: "The table A below has two cells. "
-          text run at (211,0) width 395: "Cell A1 contains an invisible image to make the cell fairly tall. "
-          text run at (606,0) width 129: "Cell A2 has a height"
+          text run at (210,0) width 396: "Cell A1 contains an invisible image to make the cell fairly tall. "
+          text run at (605,0) width 130: "Cell A2 has a height"
           text run at (0,18) width 338: "attribute of 100%, and contains another table, table B."
       RenderBlock {P} at (0,86) size 784x36
         RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 221: "Table B has two cells, B1 and B2. "
-          text run at (221,0) width 255: "B1 has a fixed pixel height of 30 pixels. "
-          text run at (476,0) width 164: "B2 has a height of 100%. "
-          text run at (640,0) width 130: "In IE, this causes B2"
+          text run at (0,0) width 220: "Table B has two cells, B1 and B2. "
+          text run at (219,0) width 256: "B1 has a fixed pixel height of 30 pixels. "
+          text run at (474,0) width 165: "B2 has a height of 100%. "
+          text run at (638,0) width 131: "In IE, this causes B2"
           text run at (0,18) width 784: "to stretch to fill the entire height of cell A2, while in Netscape 6 / Gecko, it seems to have no impact on the height of cell A2."
       RenderBlock {P} at (0,138) size 784x208
         RenderTable {TABLE} at (0,0) size 127x208 [border: (1px outset #808080)]

@@ -45,8 +45,8 @@ layer at (0,0) size 480x360
           [feImage image-size="100.00x100.00"]
       RenderSVGContainer {g} at (10,15) size 420x280 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
         RenderSVGText {text} at (63,-15) size 354x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 354x18
-            chunk 1 (middle anchor) text run 1 at (63.00,0.00) startOffset 0 endOffset 47 width 354.00: "Test preserveAspectRatio on an feImage element."
+          RenderSVGInlineText {#text} at (0,0) size 353x18
+            chunk 1 (middle anchor) text run 1 at (63.89,0.00) startOffset 0 endOffset 47 width 352.23: "Test preserveAspectRatio on an feImage element."
         RenderSVGText {text} at (15,21) size 50x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x11
             chunk 1 (middle anchor) text run 1 at (15.00,30.00) startOffset 0 endOffset 13 width 50.00: "Raster to fit"
@@ -55,12 +55,12 @@ layer at (0,0) size 480x360
             [filter="default"] RenderSVGResourceFilter {filter} at (0,0) size 40x40
         RenderSVGText {text} at (13,101) size 45x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x11
-            chunk 1 (middle anchor) text run 1 at (13.50,110.00) startOffset 0 endOffset 10 width 44.00: "Viewport 1"
+            chunk 1 (middle anchor) text run 1 at (13.58,110.00) startOffset 0 endOffset 10 width 43.84: "Viewport 1"
         RenderSVGContainer {g} at (10,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
           RenderSVGRect {rect} at (10,150) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (13,171) size 45x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 44x11
-            chunk 1 (middle anchor) text run 1 at (13.50,180.00) startOffset 0 endOffset 10 width 44.00: "Viewport 2"
+            chunk 1 (middle anchor) text run 1 at (13.58,180.00) startOffset 0 endOffset 10 width 43.84: "Viewport 2"
         RenderSVGContainer {g} at (20,220) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
           RenderSVGRect {rect} at (20,220) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (120,51) size 120x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]

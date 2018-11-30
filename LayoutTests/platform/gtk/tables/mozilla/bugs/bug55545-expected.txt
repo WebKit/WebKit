@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
                     RenderTableCell {TH} at (2,7) size 61x20 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 59x17
                         text run at (1,1) width 59: "User ID:"
-                    RenderTableCell {TD} at (65,2) size 377x30 [r=0 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (64,2) size 378x30 [r=0 c=1 rs=1 cs=1]
                       RenderTextControl {INPUT} at (3,3) size 371x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
                       RenderText {#text} at (0,0) size 0x0
 layer at (82,19) size 365x18

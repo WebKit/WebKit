@@ -4,8 +4,8 @@ layer at (0,0) size 800x272
   RenderBlock {html} at (0,0) size 800x272
     RenderBody {body} at (8,16) size 784x248
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 129x17
-          text run at (0,0) width 129: "TD VALIGN=TOP"
+        RenderText {#text} at (0,0) size 127x17
+          text run at (0,0) width 127: "TD VALIGN=TOP"
       RenderTable {table} at (0,34) size 657x214 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 655x212
           RenderTableRow {tr} at (0,2) size 655x208

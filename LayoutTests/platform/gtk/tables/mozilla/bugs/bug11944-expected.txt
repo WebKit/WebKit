@@ -10,8 +10,8 @@ layer at (0,0) size 785x637
               RenderText {#text} at (2,2) size 72x17
                 text run at (2,2) width 72: "cell content"
       RenderBlock {P} at (0,166) size 769x18
-        RenderText {#text} at (0,0) size 615x17
-          text run at (0,0) width 615: "The following two tables demostrates the bug with TD and TABLE both having height specified."
+        RenderText {#text} at (0,0) size 614x17
+          text run at (0,0) width 614: "The following two tables demostrates the bug with TD and TABLE both having height specified."
       RenderTable {TABLE} at (0,200) size 256x210 [border: (20px outset #808080)]
         RenderTableSection {TBODY} at (20,20) size 216x170
           RenderTableRow {TR} at (0,10) size 216x150

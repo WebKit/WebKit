@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x556
   RenderBlock {HTML} at (0,0) size 800x556
     RenderBody {BODY} at (8,8) size 784x540
-      RenderText {#text} at (0,0) size 781x35
-        text run at (0,0) width 781: "Test for wkbug.com/112054. This test passes if the green star has orange markers pointing outside only and the blue star has"
-        text run at (0,18) width 230: "orange markers pointing inside only."
-      RenderBR {BR} at (230,18) size 0x17
+      RenderText {#text} at (0,0) size 780x35
+        text run at (0,0) width 780: "Test for wkbug.com/112054. This test passes if the green star has orange markers pointing outside only and the blue star has"
+        text run at (0,18) width 229: "orange markers pointing inside only."
+      RenderBR {BR} at (228,18) size 1x17
       RenderSVGRoot {svg} at (15,51) size 394x206
         RenderSVGResourceMarker {marker} [id="marker"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=auto]
           RenderSVGPath {path} at (8,44) size 5x6 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 0 L 4 0 L 2 5 L 0 0 Z"]

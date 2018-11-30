@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 483x130
         RenderBlock {CAPTION} at (0,0) size 483x18
-          RenderText {#text} at (47,0) size 389x17
-            text run at (47,0) width 389: "Communicator 4.5 Installers for Mac and Windows Platforms"
+          RenderText {#text} at (47,0) size 388x17
+            text run at (47,0) width 388: "Communicator 4.5 Installers for Mac and Windows Platforms"
         RenderTableSection {TFOOT} at (0,108) size 483x22
           RenderTableRow {TR} at (0,0) size 483x20
             RenderTableCell {TD} at (2,0) size 185x20 [r=0 c=0 rs=1 cs=1]
@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TH} at (300,2) size 86x20 [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 84x17
                 text run at (1,1) width 84: "Windows 95"
-            RenderTableCell {TH} at (388,2) size 93x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TH} at (387,2) size 94x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 91x17
                 text run at (1,1) width 91: "Windows NT"
           RenderTableRow {TR} at (0,24) size 483x20
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (300,24) size 86x20 [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (388,24) size 93x20 [r=1 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (387,24) size 94x20 [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,46) size 483x20
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (300,46) size 86x20 [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (388,46) size 93x20 [r=2 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (387,46) size 94x20 [r=2 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
           RenderTableRow {TR} at (0,68) size 483x20
@@ -60,6 +60,6 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (300,68) size 86x20 [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (388,68) size 93x20 [r=3 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (387,68) size 94x20 [r=3 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x17
                 text run at (1,1) width 21: "yes"

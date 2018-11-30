@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
         RenderTableSection {TBODY} at (1,27) size 60x24
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X1"
-            RenderTableCell {TD} at (31,0) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,0) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X2"
       RenderBlock (anonymous) at (0,70) size 784x18
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c11"
-            RenderTableCell {TD} at (31,2) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,2) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 23x17
                 text run at (2,2) width 23: "c12"
         RenderTableSection {TBODY} at (1,27) size 60x24
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,0) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X1"
-            RenderTableCell {TD} at (31,0) size 27x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (30,0) size 28x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 20x17
                 text run at (2,2) width 20: "X2"
       RenderBlock (anonymous) at (0,140) size 784x18

@@ -26,11 +26,11 @@ layer at (0,0) size 785x668
                     text run at (4,34) width 41: "Stocks"
                 RenderBR {BR} at (45,46) size 0x0
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {A} at (0,0) size 74x17
-                RenderInline {FONT} at (0,0) size 74x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,49) size 74x15
-                    text run at (4,49) width 74: "Tech Stocks"
-                RenderBR {BR} at (78,61) size 0x0
+              RenderInline {A} at (0,0) size 73x17
+                RenderInline {FONT} at (0,0) size 73x15 [color=#FFFFFF]
+                  RenderText {#text} at (4,49) size 73x15
+                    text run at (4,49) width 73: "Tech Stocks"
+                RenderBR {BR} at (76,61) size 1x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 117x17
                 RenderInline {FONT} at (0,0) size 117x15 [color=#FFFFFF]
@@ -48,7 +48,7 @@ layer at (0,0) size 785x668
                 RenderInline {FONT} at (0,0) size 79x15 [color=#FFFFFF]
                   RenderText {#text} at (4,94) size 79x15
                     text run at (4,94) width 79: "World Indices"
-                RenderBR {BR} at (83,106) size 0x0
+                RenderBR {BR} at (82,106) size 1x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 88x17
                 RenderInline {FONT} at (0,0) size 88x15 [color=#FFFFFF]
@@ -61,7 +61,7 @@ layer at (0,0) size 785x668
                 RenderInline {FONT} at (0,0) size 91x15 [color=#FFFFFF]
                   RenderText {#text} at (4,124) size 91x15
                     text run at (4,124) width 91: "U.S. Treasuries"
-                RenderBR {BR} at (95,136) size 0x0
+                RenderBR {BR} at (94,136) size 1x0
               RenderText {#text} at (0,0) size 0x0
               RenderInline {A} at (0,0) size 62x17
                 RenderInline {FONT} at (0,0) size 62x15 [color=#FFFFFF]
@@ -149,7 +149,7 @@ layer at (0,0) size 785x668
                 RenderInline {FONT} at (0,0) size 94x15 [color=#FFFFFF]
                   RenderText {#text} at (4,370) size 94x15
                     text run at (4,370) width 94: "Wealth Manager"
-                RenderBR {BR} at (98,382) size 0x0
+                RenderBR {BR} at (97,382) size 1x0
               RenderText {#text} at (0,0) size 0x0
               RenderBR {BR} at (4,385) size 0x17
               RenderInline {FONT} at (0,0) size 124x15 [color=#FFFFFF]
@@ -206,11 +206,11 @@ layer at (0,0) size 785x668
               RenderBR {BR} at (4,559) size 0x17
               RenderImage {IMG} at (4,577) size 140x1
               RenderBR {BR} at (144,578) size 0x0
-              RenderInline {A} at (0,0) size 74x17
-                RenderInline {FONT} at (0,0) size 74x15 [color=#FFFFFF]
-                  RenderText {#text} at (4,578) size 74x15
-                    text run at (4,578) width 74: "To Advertise"
-                RenderBR {BR} at (78,590) size 0x0
+              RenderInline {A} at (0,0) size 73x17
+                RenderInline {FONT} at (0,0) size 73x15 [color=#FFFFFF]
+                  RenderText {#text} at (4,578) size 73x15
+                    text run at (4,578) width 73: "To Advertise"
+                RenderBR {BR} at (76,590) size 1x0
               RenderBR {BR} at (4,593) size 0x17
             RenderTableCell {TD} at (148,0) size 486x24 [bgcolor=#660000] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=3]
               RenderImage {IMG} at (10,4) size 466x16
@@ -236,7 +236,7 @@ layer at (0,0) size 785x668
                     RenderInline {SPAN} at (0,0) size 143x11
                       RenderText {#text} at (16,0) size 143x11
                         text run at (16,0) width 143: "Tue, 27 Jul 1999, 2:47pm EDT"
-                      RenderBR {BR} at (159,9) size 0x0
+                      RenderBR {BR} at (158,9) size 1x0
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {FONT} at (0,0) size 105x15 [color=#000000]
                   RenderInline {B} at (0,0) size 105x15
@@ -331,7 +331,7 @@ layer at (0,0) size 785x668
               RenderInline {FONT} at (0,0) size 292x75
                 RenderInline {SPAN} at (0,0) size 292x75
                   RenderText {#text} at (4,129) size 292x75
-                    text run at (4,129) width 285: "Bloomberg's Top Financial News is now available"
+                    text run at (4,129) width 284: "Bloomberg's Top Financial News is now available"
                     text run at (4,144) width 235: "for download on your Rocket eBook. Get"
                     text run at (4,159) width 292: "tomorrow's news today with Bloomberg's summary"
                     text run at (4,174) width 233: "of the day's top stories. Bloomberg daily"
@@ -349,10 +349,10 @@ layer at (0,0) size 785x668
                 RenderInline {SPAN} at (0,0) size 294x45
                   RenderText {#text} at (4,219) size 294x45
                     text run at (4,219) width 165: "Get tomorrow's news today. "
-                    text run at (169,219) width 125: "FREE weekday email"
+                    text run at (168,219) width 126: "FREE weekday email"
                     text run at (4,234) width 294: "report of the top stories in business & finance from"
-                    text run at (4,249) width 205: "BLOOMBERG NEWS at 5pm EST."
-              RenderBR {BR} at (209,261) size 0x0
+                    text run at (4,249) width 204: "BLOOMBERG NEWS at 5pm EST."
+              RenderBR {BR} at (207,261) size 1x0
               RenderInline {A} at (0,0) size 179x17
                 RenderInline {FONT} at (0,0) size 179x15
                   RenderInline {SPAN} at (0,0) size 179x15
@@ -360,30 +360,30 @@ layer at (0,0) size 785x668
                       RenderInline {U} at (0,0) size 179x15
                         RenderText {#text} at (4,264) size 179x15
                           text run at (4,264) width 179: "Bloomberg Year 2000 Letters"
-              RenderBR {BR} at (183,276) size 0x0
+              RenderBR {BR} at (182,276) size 1x0
               RenderInline {FONT} at (0,0) size 284x30
                 RenderInline {SPAN} at (0,0) size 284x30
                   RenderText {#text} at (4,279) size 284x30
                     text run at (4,279) width 284: "For Y2K information on BLOOMBERG, download"
                     text run at (4,294) width 147: "our customer letters now."
-              RenderBR {BR} at (151,306) size 0x0
+              RenderBR {BR} at (150,306) size 1x0
       RenderBlock {P} at (0,633) size 769x11
-        RenderInline {FONT} at (0,0) size 424x11
-          RenderText {#text} at (0,0) size 197x11
-            text run at (0,0) width 197: "\x{A9}1999 Bloomberg L.P. All rights reserved. "
+        RenderInline {FONT} at (0,0) size 422x11
+          RenderText {#text} at (0,0) size 196x11
+            text run at (0,0) width 196: "\x{A9}1999 Bloomberg L.P. All rights reserved. "
           RenderInline {A} at (0,0) size 77x11
-            RenderText {#text} at (197,0) size 77x11
-              text run at (197,0) width 77: "Terms of Service"
-          RenderText {#text} at (274,0) size 6x11
-            text run at (274,0) width 6: ", "
-          RenderInline {A} at (0,0) size 63x11
-            RenderText {#text} at (280,0) size 63x11
-              text run at (280,0) width 63: "Privacy Policy"
-          RenderText {#text} at (343,0) size 24x11
-            text run at (343,0) width 24: " and "
-          RenderInline {A} at (0,0) size 54x11
-            RenderText {#text} at (367,0) size 54x11
-              text run at (367,0) width 54: "Trademarks"
-          RenderText {#text} at (421,0) size 3x11
-            text run at (421,0) width 3: "."
+            RenderText {#text} at (195,0) size 77x11
+              text run at (195,0) width 77: "Terms of Service"
+          RenderText {#text} at (271,0) size 7x11
+            text run at (271,0) width 7: ", "
+          RenderInline {A} at (0,0) size 64x11
+            RenderText {#text} at (277,0) size 64x11
+              text run at (277,0) width 64: "Privacy Policy"
+          RenderText {#text} at (340,0) size 25x11
+            text run at (340,0) width 25: " and "
+          RenderInline {A} at (0,0) size 55x11
+            RenderText {#text} at (364,0) size 55x11
+              text run at (364,0) width 55: "Trademarks"
+          RenderText {#text} at (418,0) size 4x11
+            text run at (418,0) width 4: "."
         RenderText {#text} at (0,0) size 0x0

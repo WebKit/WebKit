@@ -36,9 +36,9 @@ layer at (0,0) size 785x1000
         RenderText {#text} at (277,0) size 753x71
           text run at (277,0) width 386: ", so you can see that the CSS spec isn't quite being followed. "
           text run at (663,0) width 90: "The CSS spec"
-          text run at (0,18) width 752: "says that the align=center carries down as text-align and never acts to move blocks. You're not moving the block for the"
+          text run at (0,18) width 751: "says that the align=center carries down as text-align and never acts to move blocks. You're not moving the block for the"
           text run at (0,36) width 403: "table (above), but you're not doing the text-align inside it either. "
-          text run at (403,36) width 335: "In quirks mode you should do the former, in standard"
+          text run at (402,36) width 335: "In quirks mode you should do the former, in standard"
           text run at (0,54) width 101: "mode, the latter."
       RenderTable {TABLE} at (0,276) size 231x138 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 229x136
@@ -62,8 +62,8 @@ layer at (0,0) size 785x1000
         RenderTableSection {TBODY} at (1,1) size 298x26
           RenderTableRow {TR} at (0,2) size 298x22
             RenderTableCell {TD} at (2,2) size 294x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 104x17
-                text run at (2,2) width 104: "Data of Table 1!"
+              RenderText {#text} at (2,2) size 103x17
+                text run at (2,2) width 103: "Data of Table 1!"
       RenderBlock (anonymous) at (0,460) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,478) size 300x28 [border: (1px outset #808080)]
@@ -75,21 +75,21 @@ layer at (0,0) size 785x1000
       RenderBlock (anonymous) at (0,506) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,524) size 769x26 [border: (1px solid #000000)]
-        RenderTable {TABLE} at (329,1) size 111x24
-          RenderTableSection {TBODY} at (0,0) size 110x24
-            RenderTableRow {TR} at (0,2) size 110x20
-              RenderTableCell {TD} at (2,2) size 106x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 104x17
-                  text run at (1,1) width 104: "Data of Table 3!"
+        RenderTable {TABLE} at (330,1) size 109x24
+          RenderTableSection {TBODY} at (0,0) size 109x24
+            RenderTableRow {TR} at (0,2) size 109x20
+              RenderTableCell {TD} at (2,2) size 105x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 103x17
+                  text run at (1,1) width 103: "Data of Table 3!"
       RenderBlock (anonymous) at (0,550) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {DIV} at (0,568) size 769x26 [border: (1px solid #000000)]
-        RenderTable {TABLE} at (1,1) size 110x24
-          RenderTableSection {TBODY} at (0,0) size 110x24
-            RenderTableRow {TR} at (0,2) size 110x20
-              RenderTableCell {TD} at (2,2) size 106x20 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 104x17
-                  text run at (1,1) width 104: "Data of Table 4!"
+        RenderTable {TABLE} at (1,1) size 109x24
+          RenderTableSection {TBODY} at (0,0) size 109x24
+            RenderTableRow {TR} at (0,2) size 109x20
+              RenderTableCell {TD} at (2,2) size 105x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 103x17
+                  text run at (1,1) width 103: "Data of Table 4!"
       RenderBlock (anonymous) at (0,594) size 769x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,612) size 769x48
@@ -145,9 +145,9 @@ layer at (0,0) size 785x1000
       RenderBlock {P} at (0,924) size 769x18
         RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
-        RenderInline {A} at (0,0) size 128x17 [color=#0000EE]
-          RenderText {#text} at (60,0) size 128x17
-            text run at (60,0) width 128: "Strict Mode Version"
+        RenderInline {A} at (0,0) size 127x17 [color=#0000EE]
+          RenderText {#text} at (60,0) size 127x17
+            text run at (60,0) width 127: "Strict Mode Version"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,958) size 769x18
         RenderText {#text} at (0,0) size 19x17

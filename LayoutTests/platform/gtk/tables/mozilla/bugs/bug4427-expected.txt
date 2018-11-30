@@ -87,14 +87,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,20) size 71x17
                 text run at (2,20) width 71: "Joe Banker"
               RenderBR {BR} at (73,34) size 0x0
-              RenderText {#text} at (2,38) size 131x17
-                text run at (2,38) width 131: "4633 Ocean Avenue"
-              RenderBR {BR} at (133,52) size 0x0
+              RenderText {#text} at (2,38) size 130x17
+                text run at (2,38) width 130: "4633 Ocean Avenue"
+              RenderBR {BR} at (131,52) size 1x0
               RenderText {#text} at (2,56) size 176x17
                 text run at (2,56) width 101: "San Francisco,  "
                 text run at (103,56) width 31: "CA  "
-                text run at (134,56) width 44: "94132 "
-              RenderBR {BR} at (178,70) size 0x0
+                text run at (133,56) width 45: "94132 "
+              RenderBR {BR} at (0,0) size 0x0
             RenderTableCell {TD} at (252,1) size 25x5 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderImage {IMG} at (2,2) size 20x1
             RenderTableCell {TD} at (277,1) size 148x38 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
@@ -118,14 +118,14 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 175x35
                 text run at (2,2) width 166: "FORECLOSURES AAA"
                 text run at (2,20) width 175: "HOMES UP TO 50% OFF"
-              RenderBR {BR} at (177,34) size 0x0
+              RenderBR {BR} at (176,34) size 1x0
               RenderText {#text} at (2,38) size 128x17
                 text run at (2,38) width 128: "Real Estate Services"
               RenderBR {BR} at (130,52) size 0x0
               RenderText {#text} at (2,56) size 75x17
                 text run at (2,56) width 31: "CA  "
-                text run at (33,56) width 44: "00000 "
-              RenderBR {BR} at (77,70) size 0x0
+                text run at (32,56) width 45: "00000 "
+              RenderBR {BR} at (0,0) size 0x0
               RenderText {#text} at (2,74) size 99x17
                 text run at (2,74) width 99: "(000) 000-0000"
             RenderTableCell {TD} at (252,102) size 25x5 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]

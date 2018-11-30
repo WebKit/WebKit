@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,23) size 652x324
-      RenderSVGText {text} at (75,14) size 391x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 391x14
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 74 width 390.60: "Test dynamically changing 'href' attribute through href animated property."
+    RenderSVGContainer {g} at (125,23) size 648x324
+      RenderSVGText {text} at (75,14) size 389x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 389x14
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 74 width 388.38: "Test dynamically changing 'href' attribute through href animated property."
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGText {text} at (0,-91) size 172x113 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,74) size 11x21

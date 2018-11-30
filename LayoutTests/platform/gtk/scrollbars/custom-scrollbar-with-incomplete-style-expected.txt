@@ -4,8 +4,8 @@ layer at (0,0) size 787x1410
   RenderBlock {HTML} at (0,0) size 787x1410
     RenderBody {BODY} at (8,8) size 771x1389
       RenderBlock {H2} at (0,0) size 771x54
-        RenderText {#text} at (0,0) size 737x53
-          text run at (0,0) width 737: "It's OK if nothing drawn for a scrollbar (for an outermost frame and an"
+        RenderText {#text} at (0,0) size 736x53
+          text run at (0,0) width 736: "It's OK if nothing drawn for a scrollbar (for an outermost frame and an"
           text run at (0,27) width 228: "element with overlow)"
       RenderBlock {P} at (0,73) size 771x19
         RenderText {#text} at (0,0) size 579x17

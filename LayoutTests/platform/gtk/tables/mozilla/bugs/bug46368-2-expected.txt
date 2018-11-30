@@ -14,8 +14,8 @@ layer at (0,0) size 800x600
                 text run at (101,17) width 149: " code available under a "
                 text run at (250,17) width 27: "dual"
                 text run at (2,39) width 123: "MPL/GPL license. "
-                text run at (125,39) width 137: "See the for more info."
-              RenderBR {BR} at (262,53) size 0x0
+                text run at (124,39) width 138: "See the for more info."
+              RenderBR {BR} at (261,53) size 1x0
             RenderTableCell {TD} at (308,20) size 472x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 241x18
                 text run at (2,3) width 241: "foo bar foo bar foo bar foo bar foo bar"

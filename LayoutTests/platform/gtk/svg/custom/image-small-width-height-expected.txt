@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 11 width 60.50: "Beta 3, an "
           RenderSVGInlineText {#cdata-section} at (60,30) size 39x11
             chunk 1 text run 1 at (60.50,30.00) startOffset 0 endOffset 7 width 38.50: "<image>"
-          RenderSVGInlineText {#text} at (99,30) size 83x11
+          RenderSVGInlineText {#text} at (98,30) size 83x11
             chunk 1 text run 1 at (99.00,30.00) startOffset 0 endOffset 15 width 82.50: " tag with width"
         RenderSVGInlineText {#text} at (181,30) size 6x11
           chunk 1 text run 1 at (181.50,30.00) startOffset 0 endOffset 1 width 5.50: " "
@@ -36,16 +36,16 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 176x11
           RenderSVGInlineText {#text} at (0,60) size 22x11
             chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 4 width 22.00: "The "
-          RenderSVGInlineText {#cdata-section} at (22,60) size 39x11
+          RenderSVGInlineText {#cdata-section} at (21,60) size 39x11
             chunk 1 text run 1 at (22.00,60.00) startOffset 0 endOffset 7 width 38.50: "<image>"
           RenderSVGInlineText {#text} at (60,60) size 116x11
             chunk 1 text run 1 at (60.50,60.00) startOffset 0 endOffset 21 width 115.50: " tag on the right has"
-        RenderSVGInlineText {#text} at (176,60) size 6x11
+        RenderSVGInlineText {#text} at (175,60) size 6x11
           chunk 1 text run 1 at (176.00,60.00) startOffset 0 endOffset 1 width 5.50: " "
         RenderSVGTSpan {tspan} at (0,0) size 143x11
           RenderSVGInlineText {#text} at (0,75) size 143x11
             chunk 1 text run 1 at (0.00,75.00) startOffset 0 endOffset 26 width 143.00: "a width and height of 0.5."
-        RenderSVGInlineText {#text} at (143,75) size 6x11
+        RenderSVGInlineText {#text} at (142,75) size 6x11
           chunk 1 text run 1 at (143.00,75.00) startOffset 0 endOffset 1 width 5.50: " "
         RenderSVGTSpan {tspan} at (0,0) size 50x11
           RenderSVGInlineText {#text} at (0,90) size 50x11

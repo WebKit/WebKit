@@ -92,9 +92,9 @@ layer at (0,0) size 785x663
       RenderBlock {P} at (0,440) size 769x57
         RenderText {#text} at (0,0) size 357x17
           text run at (0,0) width 357: "This is an example rendering for the previous table from "
-        RenderInline {A} at (0,0) size 700x35 [color=#0000EE]
-          RenderText {#text} at (357,0) size 700x35
-            text run at (357,0) width 343: "http://www.w3.org/TR/REC-CSS2/images/tbl-border-"
+        RenderInline {A} at (0,0) size 699x35 [color=#0000EE]
+          RenderText {#text} at (357,0) size 699x35
+            text run at (357,0) width 342: "http://www.w3.org/TR/REC-CSS2/images/tbl-border-"
             text run at (0,18) width 68: "conflict.gif"
         RenderText {#text} at (68,18) size 8x17
           text run at (68,18) width 8: ": "

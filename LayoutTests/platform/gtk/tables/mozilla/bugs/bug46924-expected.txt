@@ -25,8 +25,8 @@ layer at (0,0) size 800x256
           RenderTableRow {TR} at (0,2) size 782x22 [bgcolor=#C0C0C0]
             RenderTableCell {TD} at (2,2) size 778x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
       RenderBlock {DIV} at (0,134) size 784x36
-        RenderText {#text} at (0,0) size 771x35
-          text run at (0,0) width 771: "ILLEGAL example: TFOOT after TBODY -- THIS IS PROHIBITED BY HTML 4.01 STRICT AND SHOULD NOT"
+        RenderText {#text} at (0,0) size 769x35
+          text run at (0,0) width 769: "ILLEGAL example: TFOOT after TBODY -- THIS IS PROHIBITED BY HTML 4.01 STRICT AND SHOULD NOT"
           text run at (0,18) width 442: "WORK IN STRICT MODE. Please fix or reenable transitional mode."
       RenderTable {TABLE} at (0,170) size 784x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x26

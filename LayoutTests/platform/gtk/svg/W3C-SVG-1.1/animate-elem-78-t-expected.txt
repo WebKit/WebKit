@@ -34,7 +34,7 @@ layer at (0,0) size 480x360
             chunk 1 (end anchor) text run 1 at (-78.00,120.00) startOffset 0 endOffset 17 width 78.00: "stroke-miterlimit"
         RenderSVGText {text} at (-82,129) size 82x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 82x14
-            chunk 1 (end anchor) text run 1 at (-82.00,140.00) startOffset 0 endOffset 17 width 82.00: "stroke-dashoffset"
+            chunk 1 (end anchor) text run 1 at (-81.78,140.00) startOffset 0 endOffset 17 width 81.78: "stroke-dashoffset"
         RenderSVGText {text} at (-34,149) size 34x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 34x14
             chunk 1 (end anchor) text run 1 at (-34.00,160.00) startOffset 0 endOffset 7 width 34.00: "display"

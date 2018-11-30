@@ -23,7 +23,7 @@ layer at (0,0) size 785x1299
           RenderListMarker at (-20,0) size 16x17: "2"
           RenderText {#text} at (0,0) size 669x17
             text run at (0,0) width 430: "If specified heights are insufficient (because the content is too large) "
-            text run at (430,0) width 239: "then the entire table will be expanded."
+            text run at (429,0) width 240: "then the entire table will be expanded."
         RenderListItem {LI} at (40,36) size 729x36
           RenderListMarker at (-20,0) size 16x17: "3"
           RenderText {#text} at (0,0) size 720x35
@@ -33,26 +33,26 @@ layer at (0,0) size 785x1299
       RenderBlock {P} at (0,192) size 769x18
         RenderText {#text} at (0,0) size 506x17
           text run at (0,0) width 469: "This following table ought to give the desired results (small title line, large "
-          text run at (469,0) width 37: "body)"
+          text run at (468,0) width 38: "body)"
       RenderBlock {P} at (0,226) size 769x18
         RenderText {#text} at (0,0) size 111x17
           text run at (0,0) width 111: "It is specifiable as"
       RenderBlock {BLOCKQUOTE} at (40,260) size 689x54
         RenderBlock {P} at (0,0) size 689x54
-          RenderText {#text} at (0,0) size 115x17
-            text run at (0,0) width 115: "Table height: 200 "
-          RenderBR {BR} at (115,14) size 0x0
+          RenderText {#text} at (0,0) size 114x17
+            text run at (0,0) width 114: "Table height: 200 "
+          RenderBR {BR} at (113,14) size 1x0
           RenderText {#text} at (0,18) size 129x17
             text run at (0,18) width 129: "First Row : 1 or 1% "
-          RenderInline {I} at (0,0) size 217x17
-            RenderText {#text} at (129,18) size 217x17
-              text run at (129,18) width 217: "(i.e. expand to minimum required)"
-          RenderBR {BR} at (346,32) size 0x0
+          RenderInline {I} at (0,0) size 216x17
+            RenderText {#text} at (129,18) size 216x17
+              text run at (129,18) width 216: "(i.e. expand to minimum required)"
+          RenderBR {BR} at (344,32) size 1x0
           RenderText {#text} at (0,36) size 170x17
             text run at (0,36) width 170: "Second Row : unspecified "
-          RenderInline {I} at (0,0) size 307x17
-            RenderText {#text} at (170,36) size 307x17
-              text run at (170,36) width 307: "(i.e. table height - height of other rows+borders)"
+          RenderInline {I} at (0,0) size 306x17
+            RenderText {#text} at (170,36) size 306x17
+              text run at (170,36) width 306: "(i.e. table height - height of other rows+borders)"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,330) size 88x200 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 86x198
@@ -71,9 +71,9 @@ layer at (0,0) size 785x1299
         RenderText {#text} at (0,0) size 406x17
           text run at (0,0) width 406: "A second attempt is to specify heights that do add up to the total."
       RenderBlock {P} at (0,614) size 769x54
-        RenderText {#text} at (0,0) size 115x17
-          text run at (0,0) width 115: "Table height: 200 "
-        RenderBR {BR} at (115,14) size 0x0
+        RenderText {#text} at (0,0) size 114x17
+          text run at (0,0) width 114: "Table height: 200 "
+        RenderBR {BR} at (113,14) size 1x0
         RenderText {#text} at (0,18) size 87x17
           text run at (0,18) width 87: "First Row : 1 "
         RenderBR {BR} at (87,32) size 0x0
@@ -99,7 +99,7 @@ layer at (0,0) size 785x1299
       RenderBlock {P} at (0,997) size 769x18
         RenderText {#text} at (0,0) size 628x17
           text run at (0,0) width 437: "A related bug is the the height of a row that is not specified explicitly "
-          text run at (437,0) width 191: "cannot be used by its children."
+          text run at (436,0) width 192: "cannot be used by its children."
       RenderBlock {P} at (0,1031) size 769x36
         RenderText {#text} at (0,0) size 709x35
           text run at (0,0) width 489: "This example is a table of height 200 with a single row of unspecified height. "

@@ -9,9 +9,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 791x35
             text run at (0,0) width 791: "This test tests that getPresentationAttribute succesfully returns SVG presentation attributes, but not ones that are defined in the"
             text run at (0,18) width 380: "inline style and not non SVG css properties like border. See "
-          RenderInline {a} at (0,0) size 71x17 [color=#0000EE]
-            RenderText {#text} at (380,18) size 71x17
-              text run at (380,18) width 71: "Bug 13976"
-          RenderText {#text} at (451,18) size 4x17
-            text run at (451,18) width 4: "."
+          RenderInline {a} at (0,0) size 72x17 [color=#0000EE]
+            RenderText {#text} at (379,18) size 72x17
+              text run at (379,18) width 72: "Bug 13976"
+          RenderText {#text} at (450,18) size 5x17
+            text run at (450,18) width 5: "."
     RenderSVGRect {rect} at (10,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=100.00] [height=100.00]

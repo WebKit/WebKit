@@ -19,19 +19,19 @@ layer at (0,0) size 800x600
               RenderSVGInlineText {#text} at (0,0) size 18x18
                 chunk 1 text run 1 at (105.00,52.00) startOffset 0 endOffset 2 width 17.92: "50"
             RenderSVGPath {line} at (77,30) size 2x13 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=55.00] [x2=100.00] [y2=38.50]
-    RenderSVGContainer {g} at (77,233) size 350x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,300.00)}]
-      RenderSVGContainer {g} at (77,233) size 350x26
+    RenderSVGContainer {g} at (77,233) size 348x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,300.00)}]
+      RenderSVGContainer {g} at (77,233) size 348x26
         RenderSVGRect {rect} at (77,233) size 182x26 [stroke={[type=SOLID] [color=#696969] [stroke width=1.50]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=230.00] [height=30.00]
-        RenderSVGViewportContainer {svg} at (77,240) size 350x15
-          RenderSVGContainer {g} at (77,240) size 350x15
-            RenderSVGText {text} at (5,8) size 441x18 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 441x18
-                chunk 1 text run 1 at (5.00,22.00) startOffset 0 endOffset 66 width 440.32: "This is a transformed textbox with a very, very, very long content"
+        RenderSVGViewportContainer {svg} at (77,240) size 348x15
+          RenderSVGContainer {g} at (77,240) size 348x15
+            RenderSVGText {text} at (5,8) size 439x18 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 439x18
+                chunk 1 text run 1 at (5.00,22.00) startOffset 0 endOffset 66 width 438.04: "This is a transformed textbox with a very, very, very long content"
             RenderSVGPath {line} at (77,241) size 2x13 [stroke={[type=SOLID] [color=#FF0000] [stroke width=1.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=25.00] [x2=0.00] [y2=8.50]
     RenderSVGContainer {g} at (78,28) size 657x257
-      RenderSVGText {text} at (100,216) size 66x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 66x18
-          chunk 1 text run 1 at (100.00,230.00) startOffset 0 endOffset 10 width 65.28: "ResultText"
+      RenderSVGText {text} at (100,216) size 65x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 65x18
+          chunk 1 text run 1 at (100.00,230.00) startOffset 0 endOffset 10 width 64.21: "ResultText"
       RenderSVGText {text} at (170,36) size 312x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 312x18
           chunk 1 text run 1 at (170.00,50.00) startOffset 0 endOffset 53 width 311.04: "This textbox (textbox 2) only accepts up to 5 digits."

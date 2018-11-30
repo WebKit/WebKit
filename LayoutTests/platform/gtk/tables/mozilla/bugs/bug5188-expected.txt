@@ -3,32 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 624x153
-        RenderTableSection {TBODY} at (0,0) size 624x153
+      RenderTable {TABLE} at (0,0) size 624x135
+        RenderTableSection {TBODY} at (0,0) size 624x135
           RenderTableRow {TR} at (0,2) size 624x60
             RenderTableCell {TD} at (2,2) size 150x1 [r=0 c=0 rs=2 cs=1]
               RenderImage {IMG} at (0,0) size 150x1
             RenderTableCell {TD} at (154,2) size 469x60 [r=0 c=1 rs=1 cs=2]
               RenderImage {IMG} at (0,0) size 468x60
-          RenderTableRow {TR} at (0,64) size 624x87
-            RenderTableCell {TD} at (154,64) size 298x87 [r=1 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (0,0) size 298x87
-                RenderTableSection {TBODY} at (0,0) size 298x87
+          RenderTableRow {TR} at (0,64) size 624x69
+            RenderTableCell {TD} at (154,64) size 298x69 [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 298x69
+                RenderTableSection {TBODY} at (0,0) size 298x69
                   RenderTableRow {TR} at (0,0) size 298x9
                     RenderTableCell {TD} at (0,0) size 298x9 [r=0 c=0 rs=1 cs=2]
                       RenderImage {IMG} at (3,3) size 126x3
                       RenderText {#text} at (0,0) size 0x0
-                  RenderTableRow {TR} at (0,9) size 298x78
+                  RenderTableRow {TR} at (0,9) size 298x60
                     RenderTableCell {TD} at (0,9) size 149x42 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (3,3) size 130x35
                         text run at (3,3) width 130: "New WidgetMasters"
-                        text run at (3,21) width 81: "every Week!"
-                    RenderTableCell {TD} at (148,9) size 150x78 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (3,3) size 138x71
+                        text run at (3,21) width 80: "every Week!"
+                    RenderTableCell {TD} at (148,9) size 150x60 [r=1 c=1 rs=1 cs=1]
+                      RenderText {#text} at (3,3) size 143x53
                         text run at (3,3) width 115: "WidgetMaster can"
                         text run at (3,21) width 138: "build your company a"
-                        text run at (3,39) width 45: "custom"
-                        text run at (3,57) width 94: "WidgetMaster!"
+                        text run at (3,39) width 143: "custom WidgetMaster!"
             RenderTableCell {TD} at (453,64) size 170x22 [r=1 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (0,0) size 26x22 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 24x20

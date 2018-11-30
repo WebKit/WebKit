@@ -35,9 +35,9 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (350,22) size 45x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 45x23
             chunk 1 text run 1 at (350.00,40.00) startOffset 0 endOffset 5 width 45.00: "never"
-    RenderSVGText {text} at (15,150) size 287x32 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 287x32
-        chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 287.00: "Test of Eventbase targets."
+    RenderSVGText {text} at (15,150) size 285x32 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 285x32
+        chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 284.54: "Test of Eventbase targets."
     RenderSVGText {text} at (15,228) size 342x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 342x20
         chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 342.00: "Note that clicking rect D should give no result."

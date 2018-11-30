@@ -7,8 +7,8 @@ layer at (0,0) size 785x585
         RenderText {#text} at (0,0) size 342x17
           text run at (0,0) width 342: "This test passes if both of the circles have sharp edges."
       RenderBlock {P} at (0,34) size 769x18
-        RenderText {#text} at (0,0) size 440x17
-          text run at (0,0) width 440: "To run manually, use full-page zoom to increase the page scale factor."
+        RenderText {#text} at (0,0) size 437x17
+          text run at (0,0) width 437: "To run manually, use full-page zoom to increase the page scale factor."
       RenderBlock (anonymous) at (0,68) size 769x132
         RenderImage {IMG} at (0,0) size 128x128
         RenderText {#text} at (128,114) size 4x17

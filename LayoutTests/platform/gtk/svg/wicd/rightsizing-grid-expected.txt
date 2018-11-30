@@ -277,7 +277,7 @@ layer at (0,0) size 785x1435
             text run at (640,54) width 116: "sticked together to"
             text run at (640,72) width 121: "build one rectangle"
             text run at (0,542) width 33: "grid. "
-            text run at (33,542) width 718: "You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should"
+            text run at (33,542) width 717: "You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should"
             text run at (0,560) width 239: "look like in these sample screenshots: "
           RenderInline {a} at (0,0) size 33x17 [color=#0000EE]
             RenderText {#text} at (239,560) size 33x17
@@ -295,8 +295,8 @@ layer at (0,0) size 785x1435
           RenderText {#text} at (371,560) size 4x17
             text run at (371,560) width 4: "."
         RenderBlock {p} at (0,1323) size 769x37
-          RenderText {#text} at (0,0) size 750x35
-            text run at (0,0) width 750: "The test is successful, if all SVG elements resize exacly dependend on the width of the browser window, but keep their"
+          RenderText {#text} at (0,0) size 749x35
+            text run at (0,0) width 749: "The test is successful, if all SVG elements resize exacly dependend on the width of the browser window, but keep their"
             text run at (0,18) width 622: "aspect ratio and relative position. The complete grid should always show a perfect rectangle object."
         RenderBlock {p} at (0,1375) size 769x37
           RenderBR {br} at (0,0) size 0x17

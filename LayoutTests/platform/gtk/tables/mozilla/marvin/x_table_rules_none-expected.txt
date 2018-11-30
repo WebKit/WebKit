@@ -4,9 +4,9 @@ layer at (0,0) size 800x140
   RenderBlock {html} at (0,0) size 800x140
     RenderBody {body} at (8,16) size 784x116
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 479x17
+        RenderText {#text} at (0,0) size 478x17
           text run at (0,0) width 402: "There should be no rules between any rows and columns in the "
-          text run at (402,0) width 77: "table below."
+          text run at (402,0) width 76: "table below."
       RenderTable {table} at (0,34) size 182x82 [border: none]
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0

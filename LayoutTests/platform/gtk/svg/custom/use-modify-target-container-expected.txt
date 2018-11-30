@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (245,40) size 130x40
         RenderSVGRect {rect} at (245,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
         RenderSVGEllipse {circle} at (290,40) size 40x40 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
-    RenderSVGText {text} at (30,61) size 148x12 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 148x12
-        chunk 1 text run 1 at (30.00,70.00) startOffset 0 endOffset 35 width 148.00: "You should shapes _above_ this text"
+    RenderSVGText {text} at (30,61) size 147x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 147x12
+        chunk 1 text run 1 at (30.00,70.00) startOffset 0 endOffset 35 width 147.00: "You should shapes _above_ this text"

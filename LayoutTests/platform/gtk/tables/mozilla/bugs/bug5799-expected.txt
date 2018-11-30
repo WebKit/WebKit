@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (352,14) size 0x0
         RenderText {#text} at (0,18) size 255x17
           text run at (0,18) width 255: "The cells are competing with each other."
-        RenderBR {BR} at (255,32) size 0x0
+        RenderBR {BR} at (254,32) size 1x0
       RenderTable {TABLE} at (0,176) size 338x36 [border: (5px outset #808080)]
         RenderTableSection {TBODY} at (5,5) size 328x26
           RenderTableRow {TR} at (0,2) size 328x22

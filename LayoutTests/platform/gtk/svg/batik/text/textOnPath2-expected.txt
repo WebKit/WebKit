@@ -3,23 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (29,25) size 421x456
     RenderSVGText {text} at (107,25) size 236x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 236x18
-        chunk 1 (middle anchor) text run 1 at (107.00,40.00) startOffset 0 endOffset 34 width 236.00: "Text on Path with trailing <tspan>"
+      RenderSVGInlineText {#text} at (0,0) size 235x18
+        chunk 1 (middle anchor) text run 1 at (107.89,40.00) startOffset 0 endOffset 34 width 234.23: "Text on Path with trailing <tspan>"
     RenderSVGRect {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=50.00] [width=390.00] [height=20.00]
     RenderSVGRect {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=70.00] [width=390.00] [height=120.00]
     RenderSVGText {text} at (40,51) size 319x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 319x16
-        chunk 1 text run 1 at (40.00,64.00) startOffset 0 endOffset 55 width 319.00: "Text with embedded textPath and multiple trailing tspan"
+        chunk 1 text run 1 at (40.00,64.00) startOffset 0 endOffset 55 width 318.02: "Text with embedded textPath and multiple trailing tspan"
     RenderSVGRect {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=195.00] [width=390.00] [height=20.00]
     RenderSVGRect {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=215.00] [width=390.00] [height=120.00]
     RenderSVGText {text} at (40,196) size 177x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 177x16
-        chunk 1 text run 1 at (40.00,209.00) startOffset 0 endOffset 30 width 177.00: "textPath has startOffset=\"10%\""
+        chunk 1 text run 1 at (40.00,209.00) startOffset 0 endOffset 30 width 176.75: "textPath has startOffset=\"10%\""
     RenderSVGRect {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=30.00] [y=340.00] [width=390.00] [height=20.00]
     RenderSVGRect {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=30.00] [y=360.00] [width=390.00] [height=120.00]
     RenderSVGText {text} at (40,341) size 230x17 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 230x16
-        chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 230.00: "textPath with startOffset and text-anchor"
+        chunk 1 text run 1 at (40.00,354.00) startOffset 0 endOffset 41 width 229.75: "textPath with startOffset and text-anchor"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
     RenderSVGContainer {g} at (50,66) size 400x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
@@ -71,7 +71,7 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (260,36) size 51x18
             chunk 1 text run 1 at (270.78,-66.97) startOffset 0 endOffset 9 width 51.00: "all with "
         RenderSVGInlineText {#text} at (311,36) size 91x18
-          chunk 1 text run 1 at (321.78,-66.97) startOffset 0 endOffset 16 width 91.00: "different links."
+          chunk 1 text run 1 at (321.78,-66.97) startOffset 0 endOffset 16 width 90.71: "different links."
     RenderSVGContainer {g} at (50,211) size 400x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
       RenderSVGContainer {use} at (139,235) size 142x95
         RenderSVGPath {path} at (139,235) size 142x95 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
@@ -121,11 +121,11 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (272,59) size 51x18
             chunk 1 text run 1 at (282.96,-44.00) startOffset 0 endOffset 9 width 51.00: "all with "
         RenderSVGInlineText {#text} at (323,59) size 91x18
-          chunk 1 text run 1 at (333.96,-44.00) startOffset 0 endOffset 16 width 91.00: "different links."
+          chunk 1 text run 1 at (333.96,-44.00) startOffset 0 endOffset 16 width 90.71: "different links."
     RenderSVGContainer {g} at (50,356) size 400x123 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
       RenderSVGContainer {use} at (139,380) size 142x95
         RenderSVGPath {path} at (139,380) size 142x95 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-      RenderSVGText {text} at (10,-119) size 418x123 contains 1 chunk(s)
+      RenderSVGText {text} at (10,-119) size 417x123 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,103) size 87x18
           chunk 1 text run 1 at (10.00,0.00) startOffset 0 endOffset 14 width 87.00: "This is simple"
         RenderSVGTextPath {textPath} at (0,0) size 162x86
@@ -171,4 +171,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (275,66) size 51x18
             chunk 1 text run 1 at (285.21,-37.01) startOffset 0 endOffset 9 width 51.00: "all with "
         RenderSVGInlineText {#text} at (326,66) size 91x18
-          chunk 1 text run 1 at (336.21,-37.01) startOffset 0 endOffset 16 width 91.00: "different links."
+          chunk 1 text run 1 at (336.21,-37.01) startOffset 0 endOffset 16 width 90.71: "different links."

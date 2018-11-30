@@ -2,7 +2,7 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (90,9) size 341x281
+    RenderSVGContainer {g} at (90,9) size 340x281
       RenderSVGText {text} at (169,9) size 142x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 142x14
           chunk 1 (middle anchor) text run 1 at (169.00,20.00) startOffset 0 endOffset 27 width 142.00: "Filters: feSpecularLighting"
@@ -43,10 +43,10 @@ layer at (0,0) size 480x360
         RenderSVGResourceFilter {filter} [id="lightingColorC"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feSpecularLighting surfaceScale="10.00" specualConstant="1.00" specularExponent="1.00"]
             [SourceGraphic]
-      RenderSVGContainer {g} at (90,30) size 291x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
-        RenderSVGText {text} at (90,10) size 291x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 291x18
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 291.00: "Various values for surfaceScale: 1, 10 and -10"
+      RenderSVGContainer {g} at (90,30) size 290x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
+        RenderSVGText {text} at (90,10) size 290x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 290x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 289.23: "Various values for surfaceScale: 1, 10 and -10"
         RenderSVGContainer {g} at (90,50) size 280x30
           RenderSVGRect {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -57,10 +57,10 @@ layer at (0,0) size 480x360
           [filter="surfaceScaleB"] RenderSVGResourceFilter {filter} at (205,30) size 50x30
         RenderSVGImage {image} at (320,50) size 50x30
           [filter="surfaceScaleC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
-      RenderSVGContainer {g} at (90,100) size 305x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
-        RenderSVGText {text} at (90,10) size 305x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 305x18
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 305.00: "Various values for specularConstants: 0, 1 and 2"
+      RenderSVGContainer {g} at (90,100) size 304x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+        RenderSVGText {text} at (90,10) size 304x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 304x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 303.23: "Various values for specularConstants: 0, 1 and 2"
         RenderSVGContainer {g} at (90,120) size 280x30
           RenderSVGRect {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -71,10 +71,10 @@ layer at (0,0) size 480x360
           [filter="specularConstantB"] RenderSVGResourceFilter {filter} at (205,30) size 50x30
         RenderSVGImage {image} at (320,120) size 50x30
           [filter="specularConstantC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
-      RenderSVGContainer {g} at (90,170) size 310x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-        RenderSVGText {text} at (90,10) size 310x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 310x18
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 310.00: "Various values for specularExponents: 1, 2 and 4"
+      RenderSVGContainer {g} at (90,170) size 309x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+        RenderSVGText {text} at (90,10) size 309x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 309x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 308.23: "Various values for specularExponents: 1, 2 and 4"
         RenderSVGContainer {g} at (90,190) size 280x30
           RenderSVGRect {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
@@ -85,10 +85,10 @@ layer at (0,0) size 480x360
           [filter="specularExponentB"] RenderSVGResourceFilter {filter} at (205,30) size 50x30
         RenderSVGImage {image} at (320,190) size 50x30
           [filter="specularExponentC"] RenderSVGResourceFilter {filter} at (320,30) size 50x30
-      RenderSVGContainer {g} at (90,240) size 341x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
-        RenderSVGText {text} at (90,10) size 341x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 341x18
-            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 341.00: "Various values for lighting color: red, yellow and blue"
+      RenderSVGContainer {g} at (90,240) size 340x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
+        RenderSVGText {text} at (90,10) size 340x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 340x18
+            chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 339.23: "Various values for lighting color: red, yellow and blue"
         RenderSVGContainer {g} at (90,260) size 280x30
           RenderSVGRect {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
           RenderSVGRect {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]

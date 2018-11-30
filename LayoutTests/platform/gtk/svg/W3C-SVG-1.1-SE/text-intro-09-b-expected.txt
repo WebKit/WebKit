@@ -7,10 +7,10 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,24) size 316x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 316x19
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 45 width 316.00: "unicode-bidi=\"bidi-override\" direction=\"ltr\"."
-      RenderSVGContainer {g} at (10,63) size 402x21
-        RenderSVGText {text} at (10,63) size 402x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 402x20
-            chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 402.00 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
+      RenderSVGContainer {g} at (10,63) size 401x21
+        RenderSVGText {text} at (10,63) size 401x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 401x20
+            chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 400.74 LTR override: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
       RenderSVGText {text} at (10,124) size 316x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 316x19
           chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 45 width 316.00: "unicode-bidi=\"bidi-override\" direction=\"rtl\"."
@@ -21,12 +21,12 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,224) size 274x20 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 274x19
           chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 38 width 274.00: "unicode-bidi=\"normal\" direction=\"rtl\"."
-      RenderSVGContainer {g} at (10,263) size 402x21
-        RenderSVGText {text} at (10,263) size 402x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 402x20
+      RenderSVGContainer {g} at (10,263) size 401x21
+        RenderSVGText {text} at (10,263) size 401x21 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 401x20
             chunk 1 (end anchor) text run 1 at (10.00,280.00) startOffset 0 endOffset 12 width 93.00: "is in Hebrew"
             chunk 1 (end anchor) text run 1 at (103.00,280.00) startOffset 0 endOffset 40 width 276.00 RTL: " \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" "
-            chunk 1 (end anchor) text run 1 at (379.00,280.00) startOffset 0 endOffset 4 width 33.00: "Text"
+            chunk 1 (end anchor) text run 1 at (379.00,280.00) startOffset 0 endOffset 4 width 31.74: "Text"
     RenderSVGContainer {g} at (10,314) size 231x33
       RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x32

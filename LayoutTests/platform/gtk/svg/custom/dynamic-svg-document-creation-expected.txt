@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 631: "SVGDocument's rootElement first child: [object SVGGElement] should be: [object SVGGElement]"
           RenderBlock {div} at (0,108) size 800x54
             RenderText {#text} at (0,0) size 796x53
-              text run at (0,0) width 752: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><g"
+              text run at (0,0) width 749: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><g"
               text run at (0,18) width 796: "transform=\"translate(-50, -50)\"><path id=\"path\" onclick=\"mouseHandler(evt)\" fill=\"#FF0000\" stroke=\"#00C000\" d=\"M 250"
               text run at (0,36) width 699: "130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100 -55\"/></g></svg>"
           RenderBlock {div} at (0,162) size 800x18
