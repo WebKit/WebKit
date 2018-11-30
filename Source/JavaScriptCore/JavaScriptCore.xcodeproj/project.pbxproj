@@ -4780,6 +4780,19 @@
 		FE318FDD1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ECMAScriptSpecInternalFunctions.cpp; sourceTree = "<group>"; };
 		FE318FDE1CAC8C5300DFCC54 /* ECMAScriptSpecInternalFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECMAScriptSpecInternalFunctions.h; sourceTree = "<group>"; };
 		FE3422111D6B818C0032BE88 /* ThrowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrowScope.h; sourceTree = "<group>"; };
+		FE35C2F021B1E6C5000F4CA8 /* Template.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Template.rb; sourceTree = "<group>"; };
+		FE35C2F121B1E6C6000F4CA8 /* Fits.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Fits.rb; sourceTree = "<group>"; };
+		FE35C2F221B1E6C6000F4CA8 /* GeneratedFile.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = GeneratedFile.rb; sourceTree = "<group>"; };
+		FE35C2F321B1E6C6000F4CA8 /* Assertion.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Assertion.rb; sourceTree = "<group>"; };
+		FE35C2F421B1E6C6000F4CA8 /* Section.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Section.rb; sourceTree = "<group>"; };
+		FE35C2F521B1E6C6000F4CA8 /* DSL.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = DSL.rb; sourceTree = "<group>"; };
+		FE35C2F621B1E6C6000F4CA8 /* Opcode.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Opcode.rb; sourceTree = "<group>"; };
+		FE35C2F721B1E6C7000F4CA8 /* Argument.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Argument.rb; sourceTree = "<group>"; };
+		FE35C2F821B1E6C7000F4CA8 /* main.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = main.rb; sourceTree = "<group>"; };
+		FE35C2F921B1E6C7000F4CA8 /* Type.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Type.rb; sourceTree = "<group>"; };
+		FE35C2FA21B1E6C7000F4CA8 /* Options.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Options.rb; sourceTree = "<group>"; };
+		FE35C2FB21B1E6C7000F4CA8 /* OpcodeGroup.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = OpcodeGroup.rb; sourceTree = "<group>"; };
+		FE35C2FC21B1E6C7000F4CA8 /* Metadata.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = Metadata.rb; sourceTree = "<group>"; };
 		FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDollarVM.cpp; sourceTree = "<group>"; };
 		FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDollarVM.h; sourceTree = "<group>"; };
 		FE3A06A31C10B70800390FDD /* JITBitOrGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITBitOrGenerator.cpp; sourceTree = "<group>"; };
@@ -5040,6 +5053,7 @@
 				E3FF752D1D9CE9EA00C7E16D /* domjit */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				0FEA09FC1705137F00BB722C /* ftl */,
+				FE35C2EF21B1E650000F4CA8 /* generator */,
 				142E312A134FF0A600AFADB5 /* heap */,
 				A5BA15DF1823409200A82E69 /* inspector */,
 				1429D77A0ED20D7300B89619 /* interpreter */,
@@ -8231,6 +8245,26 @@
 				E35070891DC49BB60089BCD6 /* DOMJITSignature.h */,
 			);
 			path = domjit;
+			sourceTree = "<group>";
+		};
+		FE35C2EF21B1E650000F4CA8 /* generator */ = {
+			isa = PBXGroup;
+			children = (
+				FE35C2F721B1E6C7000F4CA8 /* Argument.rb */,
+				FE35C2F321B1E6C6000F4CA8 /* Assertion.rb */,
+				FE35C2F521B1E6C6000F4CA8 /* DSL.rb */,
+				FE35C2F121B1E6C6000F4CA8 /* Fits.rb */,
+				FE35C2F221B1E6C6000F4CA8 /* GeneratedFile.rb */,
+				FE35C2F821B1E6C7000F4CA8 /* main.rb */,
+				FE35C2FC21B1E6C7000F4CA8 /* Metadata.rb */,
+				FE35C2F621B1E6C6000F4CA8 /* Opcode.rb */,
+				FE35C2FB21B1E6C7000F4CA8 /* OpcodeGroup.rb */,
+				FE35C2FA21B1E6C7000F4CA8 /* Options.rb */,
+				FE35C2F421B1E6C6000F4CA8 /* Section.rb */,
+				FE35C2F021B1E6C5000F4CA8 /* Template.rb */,
+				FE35C2F921B1E6C7000F4CA8 /* Type.rb */,
+			);
+			path = generator;
 			sourceTree = "<group>";
 		};
 		FEF347512036291300B7C0EF /* offlineasm */ = {

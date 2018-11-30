@@ -1,3 +1,14 @@
+2018-11-30  Mark Lam  <mark.lam@apple.com>
+
+        Add the generator directory to the Xcode project.
+        https://bugs.webkit.org/show_bug.cgi?id=192252
+
+        Reviewed by Michael Saboff.
+
+        This is so that we can work with these bytecode class generator files easily in Xcode.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO
