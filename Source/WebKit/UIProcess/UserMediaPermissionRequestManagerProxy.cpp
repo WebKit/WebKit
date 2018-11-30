@@ -163,7 +163,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
     if (!request)
         return;
 
-    auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(request->topLevelDocumentSecurityOrigin());
+    auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin());
     if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIDHashSalt)))
         m_grantedRequests.append(request.releaseNonNull());
 #else
@@ -362,7 +362,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
 
         syncWithWebCorePrefs();
 
-        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(pendingRequest.value()->topLevelDocumentSecurityOrigin());
+        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(pendingRequest.value()->userMediaDocumentSecurityOrigin(), pendingRequest.value()->topLevelDocumentSecurityOrigin());
         RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(localUserRequest), WTFMove(deviceIDHashSalt));
     };
 
@@ -399,7 +399,7 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
 void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
 #if ENABLE(MEDIA_STREAM)
-    auto completionHandler = [this, topOrigin = topLevelDocumentOrigin.copyRef()](uint64_t userMediaID, bool originHasPersistentAccess) {
+    auto completionHandler = [this, requestOrigin = userMediaDocumentOrigin.copyRef(), topOrigin = topLevelDocumentOrigin.copyRef()](uint64_t userMediaID, bool originHasPersistentAccess) {
         auto pendingRequest = m_pendingDeviceRequests.take(userMediaID);
         if (!pendingRequest)
             return;
@@ -414,7 +414,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
             return !device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone);
         });
 
-        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(topOrigin.get());
+        auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(requestOrigin.get(), topOrigin.get());
         m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, WTFMove(devices), WTFMove(deviceIDHashSalt), WTFMove(originHasPersistentAccess)), m_page.pageID());
     };
 

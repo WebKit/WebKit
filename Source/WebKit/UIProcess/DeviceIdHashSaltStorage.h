@@ -38,7 +38,7 @@ public:
     static Ref<DeviceIdHashSaltStorage> create();
     ~DeviceIdHashSaltStorage() = default;
 
-    const String& deviceIdHashSaltForOrigin(const WebCore::SecurityOrigin&);
+    const String& deviceIdHashSaltForOrigin(const WebCore::SecurityOrigin& documentOrigin, const WebCore::SecurityOrigin& parentOrigin);
 
     void getDeviceIdHashSaltOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&&);
     void deleteDeviceIdHashSaltForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
@@ -46,13 +46,15 @@ public:
 
 private:
     struct HashSaltForOrigin {
-        HashSaltForOrigin(WebCore::SecurityOriginData&& securityOrigin, String&& deviceIdHashSalt)
-            : documentOrigin(securityOrigin)
+        HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, String&& deviceIdHashSalt)
+            : documentOrigin(WTFMove(documentOrigin))
+            , parentOrigin(WTFMove(parentOrigin))
             , deviceIdHashSalt(WTFMove(deviceIdHashSalt))
             , lastTimeUsed(WallTime::now())
         { };
 
         WebCore::SecurityOriginData documentOrigin;
+        WebCore::SecurityOriginData parentOrigin;
         String deviceIdHashSalt;
         WallTime lastTimeUsed;
     };

@@ -1,25 +1,11 @@
  
  
 
-Tests that mediaDevices.enumerateDevices returns the same value for a device ID in all subframes.
+Tests that mediaDevices.enumerateDevices returns the same ids for devices in the same frame/subframe .
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS : device id 1 is not unique
-PASS : device id 2 is not unique
-PASS : device id 3 is not unique
-PASS : device id 4 is not unique
-PASS : device id 5 is not unique
-PASS : device id 6 is not unique
-PASS : device id 7 is not unique
-PASS : device id 8 is not unique
-PASS : device id 9 is not unique
-PASS : device id 10 is not unique
-PASS : device id 11 is not unique
-PASS : device id 12 is not unique
-
-PASS : device IDs are not unique
 
 PASS successfullyParsed is true
 

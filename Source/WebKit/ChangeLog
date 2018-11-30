@@ -1,3 +1,22 @@
+2018-11-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] DeviceIdHashSaltStorage should use iframe and top level documents
+        https://bugs.webkit.org/show_bug.cgi?id=192182
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin): Key off of request and top 
+        level documents.
+        (WebKit::DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins): Ditto.
+        * UIProcess/DeviceIdHashSaltStorage.h:
+        (WebKit::DeviceIdHashSaltStorage::HashSaltForOrigin::HashSaltForOrigin):
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Pass both documents.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Ditto.
+
 2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238713.

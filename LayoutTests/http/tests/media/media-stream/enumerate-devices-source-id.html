@@ -6,8 +6,6 @@
         </style>
         <script src="../../../../resources/js-test-pre.js"></script>
         <script>
-            var frameInfos = [];
-            var idCounts = { };
             window.jsTestIsAsync = true;
 
             if (window.testRunner)
@@ -15,34 +13,39 @@
 
             function setup()
             {
-                description("Tests that mediaDevices.enumerateDevices returns the same value for a device ID in all subframes.");
+                description("Tests that mediaDevices.enumerateDevices returns the same ids for devices in the same frame/subframe .");
             }
 
-            function handler(event) 
+            let map = { };
+            function checkID(origin, device)
             {
-                event.data.deviceIds.forEach(function(id) {
-                    frameInfos.push({origin : event.data.origin, deviceId : id});
-                    let count = idCounts[id] || 0;
-                    idCounts[id] = ++count;
-                });
+                let origins = `${document.origin}-${origin}`;
 
-                if (frameInfos.length != 12)
+                if (!map[origins])
+                    map[origins] = { };
+
+                let originInfo = map[origins];
+                if (!originInfo[device.deviceId])
+                    originInfo[device.deviceId] = device.kind;
+                
+                if (originInfo[device.deviceId] != device.kind)
+                    testFailed(`: duplicate device IDs for ${device.kind} and ${originInfo[device.deviceId]} in ${origin}/${document.origin}`);
+
+                if (Object.keys(originInfo).length > 4)
+                    testFailed(`: more then four unique device IDs in ${origin}/${document.origin}`);
+            }
+
+            let eventCount = 0;
+            async function handler(event) 
+            {
+                event.data.devices.forEach(device => { checkID(event.data.origin, device); });
+
+                if (++eventCount != 6)
                     return;
 
-                var success = true;
-                for (var i = 0; i < frameInfos.length; i++) {
-                    var deviceId = frameInfos[i].deviceId;
-                    let count = idCounts[deviceId] || 0;
-                    if (!count) {
-                        testFailed(`: device id ${i + 1} is unique`);
-                        success = false;
-                    } else
-                        testPassed(`: device id ${i + 1} is not unique`);
-                }
-
-                debug('');
-                if (success)
-                    testPassed(`: device IDs are not unique`);
+                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                devices.forEach(device => checkID(document.origin, device));
 
                 debug('');
                 finishJSTest();
@@ -53,11 +56,11 @@
         </script> 
     </head>
     <body onload="setup()">
-        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?1"></iframe>
         <br>
-        <iframe allow="camera;microphone" src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://127.0.0.1:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?2"></iframe>
         <br>
-        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html"></iframe>
+        <iframe allow="camera;microphone" src="http://localhost:8000/media/media-stream/resources/enumerate-devices-source-id-frame.html?3"></iframe>
         <div id="console"></div>
         <script src="../../../../resources/js-test-post.js"></script>
     </body>

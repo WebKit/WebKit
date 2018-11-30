@@ -1,3 +1,14 @@
+2018-11-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] DeviceIdHashSaltStorage should use iframe and top level documents
+        https://bugs.webkit.org/show_bug.cgi?id=192182
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/media/media-stream/enumerate-devices-source-id-expected.txt:
+        * http/tests/media/media-stream/enumerate-devices-source-id.html:
+        * http/tests/media/media-stream/resources/enumerate-devices-source-id-frame.html:
+
 2018-11-29  Christopher Reid  <chris.reid@sony.com>
 
         [Win] listDirectory in FileSystemWin.cpp should not skip all directories

@@ -46,20 +46,21 @@ Ref<DeviceIdHashSaltStorage> DeviceIdHashSaltStorage::create()
     return adoptRef(*new DeviceIdHashSaltStorage());
 }
 
-const String& DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& documentOrigin)
+const String& DeviceIdHashSaltStorage::deviceIdHashSaltForOrigin(const SecurityOrigin& documentOrigin, const SecurityOrigin& parentOrigin)
 {
-    auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(documentOrigin.toRawString(), [&documentOrigin] () {
+    auto origins = makeString(documentOrigin.toRawString(), parentOrigin.toRawString());
+    auto& deviceIdHashSalt = m_deviceIdHashSaltForOrigins.ensure(origins, [&documentOrigin, &parentOrigin] () {
         uint64_t randomData[randomDataSize];
         cryptographicallyRandomValues(reinterpret_cast<unsigned char*>(randomData), sizeof(randomData));
 
         StringBuilder builder;
         builder.reserveCapacity(hashSaltSize);
         for (int i = 0; i < randomDataSize; i++)
-            appendUnsigned64AsHex(randomData[0], builder);
+            appendUnsigned64AsHex(randomData[i], builder);
 
         String deviceIdHashSalt = builder.toString();
 
-        return std::make_unique<HashSaltForOrigin>(documentOrigin.data().isolatedCopy(), WTFMove(deviceIdHashSalt));
+        return std::make_unique<HashSaltForOrigin>(documentOrigin.data().isolatedCopy(), parentOrigin.data().isolatedCopy(), WTFMove(deviceIdHashSalt));
     }).iterator->value;
 
     deviceIdHashSalt->lastTimeUsed = WallTime::now();
@@ -71,8 +72,10 @@ void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(
 {
     HashSet<SecurityOriginData> origins;
 
-    for (auto& hashSaltForOrigin : m_deviceIdHashSaltForOrigins)
+    for (auto& hashSaltForOrigin : m_deviceIdHashSaltForOrigins) {
         origins.add(hashSaltForOrigin.value->documentOrigin);
+        origins.add(hashSaltForOrigin.value->parentOrigin);
+    }
 
     RunLoop::main().dispatch([origins = WTFMove(origins), completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(WTFMove(origins));
@@ -82,7 +85,7 @@ void DeviceIdHashSaltStorage::getDeviceIdHashSaltOrigins(CompletionHandler<void(
 void DeviceIdHashSaltStorage::deleteDeviceIdHashSaltForOrigins(const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
 {
     m_deviceIdHashSaltForOrigins.removeIf([&origins](auto& keyAndValue) {
-        return origins.contains(keyAndValue.value->documentOrigin);
+        return origins.contains(keyAndValue.value->documentOrigin) || origins.contains(keyAndValue.value->parentOrigin);
     });
 
     RunLoop::main().dispatch(WTFMove(completionHandler));

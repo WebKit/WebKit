@@ -10,35 +10,31 @@
                 document.getElementById("console").innerHTML += msg + "<br>";
             }
 
-            function test(event)
+            async function test(event)
             {
-                navigator.mediaDevices.enumerateDevices()
-                    .then(function(devices) {
-                        var result = {
-                            origin: document.origin, 
-                            deviceIds: [devices[0].deviceId, devices[1].deviceId]
-                        };
+                await navigator.mediaDevices.getUserMedia({video: true, audio: true });
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                let result = {
+                    origin: document.origin, 
+                    devices: devices.map(device => { return {deviceId: device.deviceId, kind: device.kind} }),
+                };
 
-                        parent.postMessage(result, "*");
-                    })
-                    .catch(function(err) {
-                        log(`enumerateDevices failed: ${err.name} - ${err.message}`);
-                    });
+                parent.postMessage(result, "*");
                 
-                var parentPage = document.referrer.split('/').pop();
+                let parentPage = document.referrer.split('/').pop();
                 if (parentPage != "enumerate-devices-source-id.html")
                     return;
 
-                var iframe = document.createElement('iframe');
+                let iframe = document.createElement('iframe');
                 iframe.src = location.href;
                 document.body.appendChild(iframe);
             }
 
             function handler(event) 
             {
-                var result = {
-                    origin: `${event.data.origin} in ${document.origin}`, 
-                    deviceIds: event.data.deviceIds
+                let result = {
+                    origin: `${event.data.origin}`, 
+                    devices: event.data.devices
                 };
 
                 parent.postMessage(result, "*");
