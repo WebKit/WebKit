@@ -1,3 +1,19 @@
+2018-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Overflow scrolling layers need to be self-painting
+        https://bugs.webkit.org/show_bug.cgi?id=192201
+
+        Reviewed by Dean Jackson.
+        
+        Overflow scrolling layers paint their contents, so need to be self-painting in the RenderLayer sense.
+        
+        Without this change, the overflow in the testcase doesn't get any compositing layers.
+
+        Test: compositing/scrolling/overflow-scrolling-layers-are-self-painting.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+
 2018-11-29  Christopher Reid  <chris.reid@sony.com>
 
         [Win] listDirectory in FileSystemWin.cpp should not skip all directories

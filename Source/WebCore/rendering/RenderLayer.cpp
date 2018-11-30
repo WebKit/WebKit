@@ -6120,6 +6120,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         return true;
 
     return hasOverlayScrollbars()
+        || canUseCompositedScrolling()
         || renderer().isTableRow()
         || renderer().isCanvas()
         || renderer().isVideo()

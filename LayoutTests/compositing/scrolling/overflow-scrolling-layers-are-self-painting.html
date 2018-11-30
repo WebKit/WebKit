@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .scroller {
+            overflow: scroll;
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+        }
+        .contents {
+            height: 2000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            internals.settings.setAsyncOverflowScrollingEnabled(true);            
+        }
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
+            
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+<pre id="layer-tree"></pre>
+</body>
+</html>
