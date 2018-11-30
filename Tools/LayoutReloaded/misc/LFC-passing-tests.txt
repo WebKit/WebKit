@@ -66,6 +66,7 @@ fast/block/block-only/body-height-with-non-auto-html-height-quirk.html
 fast/block/block-only/body-height-with-non-auto-html-height-quirk2.html
 fast/block/block-only/body-height-with-auto-html-height-quirk.html
 fast/block/block-only/body-height-with-auto-html-height-quirk2.html
+fast/block/block-only/collapsed-margin-with-min-height.html
 fast/block/basic/inline-content-with-floating-image.html
 fast/block/basic/inline-content-with-floating-images2.html
 fast/inline/simple-intruding-float1.html
@@ -100,6 +101,10 @@ fast/block/basic/009.html
 fast/block/basic/012.html
 fast/block/margin-collapse/002.html
 fast/block/margin-collapse/003.html
+fast/block/margin-collapse/026.html
+fast/block/margin-collapse/027.html
+fast/block/margin-collapse/039.html
+fast/block/margin-collapse/040.html
 fast/block/positioning/004.html
 fast/block/positioning/005.html
 fast/block/positioning/006.html
@@ -141,3 +146,4 @@ fast/block/positioning/049.html
 fast/block/positioning/052.html
 fast/block/positioning/054.html
 fast/block/inside-inlines/basic-float-intrusion.html
+fast/block/inside-inlines/crash-on-first-line-change.html

@@ -1,3 +1,13 @@
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Compute min/maxHeight margins only when they are needed.
+        https://bugs.webkit.org/show_bug.cgi?id=192223
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/block-only/collapsed-margin-with-min-height-expected.txt: Added.
+        * fast/block/block-only/collapsed-margin-with-min-height.html: Added.
+
 2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Stop running tests without complex text enforced

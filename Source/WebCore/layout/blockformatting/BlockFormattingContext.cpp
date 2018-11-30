@@ -354,15 +354,21 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
 
     auto heightAndMargin = compute({ });
     if (auto maxHeight = Geometry::computedMaxHeight(layoutState, layoutBox)) {
-        auto maxHeightAndMargin = compute(maxHeight);
-        if (heightAndMargin.height > maxHeightAndMargin.height)
-            heightAndMargin = maxHeightAndMargin;
+        if (heightAndMargin.height > *maxHeight) {
+            auto maxHeightAndMargin = compute(maxHeight);
+            // Used height should remain the same.
+            ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || maxHeightAndMargin.height == *maxHeight);
+            heightAndMargin = { *maxHeight, maxHeightAndMargin.margin, maxHeightAndMargin.collapsedMargin };
+        }
     }
 
     if (auto minHeight = Geometry::computedMinHeight(layoutState, layoutBox)) {
-        auto minHeightAndMargin = compute(minHeight);
-        if (heightAndMargin.height < minHeightAndMargin.height)
-            heightAndMargin = minHeightAndMargin;
+        if (heightAndMargin.height < *minHeight) {
+            auto minHeightAndMargin = compute(minHeight);
+            // Used height should remain the same.
+            ASSERT((layoutState.inQuirksMode() && (layoutBox.isBodyBox() || layoutBox.isDocumentBox())) || minHeightAndMargin.height == *minHeight);
+            heightAndMargin = { *minHeight, minHeightAndMargin.margin, minHeightAndMargin.collapsedMargin };
+        }
     }
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
