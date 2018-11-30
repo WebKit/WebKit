@@ -31,10 +31,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PaymentCoordinatorClientAdditions.h>
-#endif
-
 namespace WebCore {
 
 class PaymentMerchantSession;
@@ -66,11 +62,6 @@ public:
 
 protected:
     virtual ~PaymentCoordinatorClient() = default;
-
-#if defined(PAYMENTCOORDINATORCLIENT_ADDITIONS)
-PAYMENTCOORDINATORCLIENT_ADDITIONS
-#undef PAYMENTCOORDINATORCLIENT_ADDITIONS
-#endif
 };
 
 }

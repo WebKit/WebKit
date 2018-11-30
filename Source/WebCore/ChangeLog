@@ -1,5 +1,17 @@
 2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r238713.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "[Cocoa] Add some WKA extension points"
+        https://bugs.webkit.org/show_bug.cgi?id=192131
+        https://trac.webkit.org/changeset/238713
+
+2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r238680.
 
         Caused existing webrtc layout tests to fail an assertion.

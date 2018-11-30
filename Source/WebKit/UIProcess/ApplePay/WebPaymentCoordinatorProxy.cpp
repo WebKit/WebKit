@@ -44,7 +44,6 @@ WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPageProxy& webPageProx
     , m_merchantValidationState(MerchantValidationState::Idle)
 {
     m_webPageProxy.process().addMessageReceiver(Messages::WebPaymentCoordinatorProxy::messageReceiverName(), m_webPageProxy.pageID(), *this);
-    finishConstruction(*this);
 }
 
 WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()

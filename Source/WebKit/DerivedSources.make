@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2017 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -290,12 +290,6 @@ all : WebAutomationSessionProxyScriptSource.h
 
 # WebPreferences generation
 
-WEB_PREFERENCES_INPUT_FILES = \
-    $(WebKit2)/Shared/WebPreferences.yaml \
-    $(ADDITIONAL_WEB_PREFERENCES_INPUT_FILES) \
-#
-WEB_PREFERENCES_COMBINED_INPUT_FILE = WebPreferencesCombined.yaml
-
 WEB_PREFERENCES_TEMPLATES = \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb \
     $(WebKit2)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb \
@@ -308,10 +302,7 @@ WEB_PREFERENCES_TEMPLATES = \
 WEB_PREFERENCES_FILES = $(basename $(notdir $(WEB_PREFERENCES_TEMPLATES)))
 WEB_PREFERENCES_PATTERNS = $(subst .,%,$(WEB_PREFERENCES_FILES))
 
-all : $(WEB_PREFERENCES_FILES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
+all : $(WEB_PREFERENCES_FILES)
 
-$(WEB_PREFERENCES_COMBINED_INPUT_FILE) : $(WEB_PREFERENCES_INPUT_FILES)
-	cat $^ > $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
-
-$(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
-	$(RUBY) $< --input $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
+$(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WebKit2)/Shared/WebPreferences.yaml
+	$(RUBY) $< --input $(WebKit2)/Shared/WebPreferences.yaml

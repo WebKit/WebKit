@@ -96,10 +96,6 @@ private:
     HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingOpenPaymentSetupCallbacks;
 
     std::optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPaymentCoordinatorAdditions.h>
-#endif
 };
 
 }

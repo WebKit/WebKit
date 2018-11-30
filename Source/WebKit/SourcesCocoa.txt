@@ -62,7 +62,6 @@ Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
 Platform/cocoa/SharedMemoryCocoa.cpp
 Platform/cocoa/WKCrashReporter.mm
-Platform/cocoa/WebKitAdditions.mm @no-unify
 
 Platform/foundation/LoggingFoundation.mm
 
