@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithm.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "ScriptExecutionContext.h"
 

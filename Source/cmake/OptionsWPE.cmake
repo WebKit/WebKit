@@ -95,7 +95,7 @@ if (ENABLE_ACCELERATED_2D_CANVAS)
     find_package(CairoGL 1.10.2 REQUIRED COMPONENTS cairo-egl)
 endif ()
 
-if (ENABLE_SUBTLE_CRYPTO)
+if (ENABLE_WEB_CRYPTO)
     find_package(Libtasn1 REQUIRED)
     if (NOT LIBTASN1_FOUND)
         message(FATAL_ERROR "libtasn1 is required to enable Web Crypto API support.")

@@ -1,3 +1,19 @@
+2018-11-30  Don Olmstead  <don.olmstead@sony.com>
+
+        Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO
+        https://bugs.webkit.org/show_bug.cgi?id=192197
+
+        Reviewed by Jiewen Tan.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2018-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Move USE_CFNETWORK_IGNORE_HSTS to its proper place

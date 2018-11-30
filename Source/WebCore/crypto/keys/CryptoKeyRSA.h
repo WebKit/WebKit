@@ -29,7 +29,7 @@
 #include "ExceptionOr.h"
 #include <wtf/Function.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 typedef struct _CCRSACryptor *CCRSACryptorRef;
@@ -97,4 +97,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRSA, CryptoKeyClass::RSA)
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

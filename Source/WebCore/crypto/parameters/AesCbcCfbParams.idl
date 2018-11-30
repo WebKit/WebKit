@@ -27,7 +27,7 @@
 // https://www.w3.org/TR/WebCryptoAPI/#dfn-AesCbcParams, and
 // https://www.w3.org/TR/2014/CR-WebCryptoAPI-20141211/#dfn-AesCfbParams
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmAesCbcCfbParams
 ] dictionary AesCbcCfbParams : CryptoAlgorithmParameters {
     // The initialization vector. MUST be 16 bytes.

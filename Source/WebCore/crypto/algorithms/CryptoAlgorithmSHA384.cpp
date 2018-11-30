@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmSHA384.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/CryptoDigest.h>
@@ -62,4 +62,4 @@ void CryptoAlgorithmSHA384::digest(Vector<uint8_t>&& message, VectorCallback&& c
 
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

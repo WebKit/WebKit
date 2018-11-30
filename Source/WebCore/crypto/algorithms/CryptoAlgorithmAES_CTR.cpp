@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_CTR.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
@@ -202,4 +202,4 @@ ExceptionOr<size_t> CryptoAlgorithmAES_CTR::getKeyLength(const CryptoAlgorithmPa
 
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

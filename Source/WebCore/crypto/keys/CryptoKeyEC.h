@@ -29,7 +29,7 @@
 #include "CryptoKeyPair.h"
 #include "ExceptionOr.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #if OS(DARWIN) && !PLATFORM(GTK)
 typedef struct _CCECCryptor *CCECCryptorRef;
@@ -105,4 +105,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyEC, CryptoKeyClass::EC)
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

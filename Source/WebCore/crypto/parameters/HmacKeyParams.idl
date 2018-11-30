@@ -29,7 +29,7 @@ typedef (object or DOMString) HashAlgorithmIdentifier;
 // https://www.w3.org/TR/WebCryptoAPI/#hmac-importparams, and
 // https://www.w3.org/TR/WebCryptoAPI/#hmac-keygen-params
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmHmacKeyParams
 ] dictionary HmacKeyParams : CryptoAlgorithmParameters {
     // The inner hash function to use.

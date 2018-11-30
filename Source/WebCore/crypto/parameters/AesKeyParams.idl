@@ -27,7 +27,7 @@
 // https://www.w3.org/TR/WebCryptoAPI/#aes-derivedkey-params, and
 // https://www.w3.org/TR/WebCryptoAPI/#aes-keygen-params
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmAesKeyParams
 ] dictionary AesKeyParams : CryptoAlgorithmParameters {
     // The length, in bits, of the key.

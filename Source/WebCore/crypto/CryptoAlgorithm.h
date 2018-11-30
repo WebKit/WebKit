@@ -38,7 +38,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 namespace WebCore {
 
@@ -84,4 +84,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

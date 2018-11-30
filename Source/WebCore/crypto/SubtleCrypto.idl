@@ -28,7 +28,7 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
 typedef (object or DOMString) AlgorithmIdentifier;
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface SubtleCrypto {

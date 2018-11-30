@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CommonCryptoDERUtilities.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 namespace WebCore {
 
@@ -74,4 +74,4 @@ size_t bytesNeededForEncodedLength(size_t length)
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

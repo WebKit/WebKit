@@ -44,7 +44,7 @@ namespace WebCore {
 
 Crypto::Crypto(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     , m_subtle(SubtleCrypto::create(context))
 #endif
 {
@@ -67,7 +67,7 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
     return { };
 }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 SubtleCrypto& Crypto::subtle()
 {

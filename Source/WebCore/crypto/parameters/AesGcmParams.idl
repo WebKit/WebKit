@@ -23,7 +23,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmAesGcmParams
 ] dictionary AesGcmParams : CryptoAlgorithmParameters {
     // The initialization vector to use. May be up to 2^64-1 bytes long.

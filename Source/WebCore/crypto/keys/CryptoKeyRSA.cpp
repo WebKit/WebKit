@@ -30,7 +30,7 @@
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 namespace WebCore {
 
@@ -150,4 +150,4 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

@@ -26,7 +26,7 @@
 typedef DOMString NamedCurve;
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     JSGenerateToJSObject
 ] dictionary CryptoEcKeyAlgorithm : CryptoKeyAlgorithm {
     // The named curve that the key uses

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyRSAComponents.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 namespace WebCore {
 
@@ -90,4 +90,4 @@ CryptoKeyRSAComponents::~CryptoKeyRSAComponents() = default;
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

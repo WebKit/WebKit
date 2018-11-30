@@ -27,7 +27,7 @@
 
 #include <wtf/Vector.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 // FIXME: <rdar://problem/31618371>
 // The following constants and functions are for customized DER implementations.
@@ -53,4 +53,4 @@ size_t bytesNeededForEncodedLength(size_t);
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

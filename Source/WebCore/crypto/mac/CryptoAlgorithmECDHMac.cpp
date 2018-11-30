@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmECDH.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CommonCryptoUtilities.h"
 #include "CryptoKeyEC.h"
@@ -45,4 +45,4 @@ std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const Cry
 
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

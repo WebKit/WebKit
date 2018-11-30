@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     JSGenerateToJSObject
 ] dictionary CryptoAesKeyAlgorithm : CryptoKeyAlgorithm {
     // The length, in bits, of the key.

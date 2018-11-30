@@ -27,7 +27,7 @@
 
 #include <pal/crypto/CryptoDigest.h>
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithm.h"
 
@@ -53,4 +53,4 @@ static std::optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoA
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

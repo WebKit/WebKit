@@ -47,14 +47,14 @@ public:
 
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     SubtleCrypto& subtle();
 #endif
 
 private:
     Crypto(ScriptExecutionContext*);
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     Ref<SubtleCrypto> m_subtle;
 #endif
 };

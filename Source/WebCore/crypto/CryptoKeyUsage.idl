@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
 ] enum CryptoKeyUsage {
     "encrypt",
     "decrypt",

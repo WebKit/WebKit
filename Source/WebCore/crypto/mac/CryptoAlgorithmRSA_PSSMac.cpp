@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmRSA_PSS.h"
 
-#if ENABLE(SUBTLE_CRYPTO) && HAVE(RSA_PSS)
+#if ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)
 
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmRsaPssParams.h"
@@ -93,4 +93,4 @@ ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRs
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO) && HAVE(RSA_PSS)
+#endif // ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)

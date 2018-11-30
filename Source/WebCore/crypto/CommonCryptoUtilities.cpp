@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CommonCryptoUtilities.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #if !HAVE(CCRSAGetCRTComponents)
 
@@ -179,4 +179,4 @@ CCBigNum CCBigNum::inverse(const CCBigNum& modulus) const
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

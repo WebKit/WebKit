@@ -26,7 +26,7 @@
 typedef (object or DOMString) HashAlgorithmIdentifier;
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmRsaHashedImportParams
 ] dictionary RsaHashedImportParams : CryptoAlgorithmParameters {
     // The hash algorithm to use

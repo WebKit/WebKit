@@ -161,7 +161,7 @@ private:
     bool isJSExecutionForbidden() const final;
     SecurityOrigin& topOrigin() const final { return m_topOrigin.get(); }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     // The following two functions are side effects of providing extra protection to serialized
     // CryptoKey data that went through the structured clone algorithm to local storage such as
     // IndexedDB. They don't provide any proctection against communications between mainThread

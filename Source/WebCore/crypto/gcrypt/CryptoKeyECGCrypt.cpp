@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyEC.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoKeyPair.h"
 #include "GCryptUtilities.h"
@@ -741,4 +741,4 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

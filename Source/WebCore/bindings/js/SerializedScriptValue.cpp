@@ -147,7 +147,7 @@ enum SerializationTag {
     MapObjectTag = 30,
     NonMapPropertiesTag = 31,
     NonSetPropertiesTag = 32,
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     CryptoKeyTag = 33,
 #endif
     SharedArrayBufferTag = 34,
@@ -204,7 +204,7 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 
 }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 const uint32_t currentKeyFormatVersion = 1;
 
@@ -478,7 +478,7 @@ protected:
     MarkedArgumentBuffer m_gcBuffer;
 };
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 static bool wrapCryptoKey(ExecState* exec, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
     ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromExecState(exec);
@@ -1039,7 +1039,7 @@ private:
                 recordObject(obj);
                 return success;
             }
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
             if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
                 write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
@@ -1128,7 +1128,7 @@ private:
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     void write(CryptoKeyClassSubtag tag)
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
@@ -1265,7 +1265,7 @@ private:
         write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
     }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     void write(CryptoAlgorithmIdentifier algorithm)
     {
         switch (algorithm) {
@@ -2169,7 +2169,7 @@ private:
         return true;
     }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     bool read(CryptoAlgorithmIdentifier& result)
     {
         uint8_t algorithmTag;
@@ -2969,7 +2969,7 @@ private:
             m_gcBuffer.appendWithCrashOnOverflow(arrayBufferView);
             return arrayBufferView;
         }
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
         case CryptoKeyTag: {
             Vector<uint8_t> wrappedKey;
             if (!read(wrappedKey)) {

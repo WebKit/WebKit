@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "ContextDestructionObserver.h"
 #include "CryptoKeyFormat.h"

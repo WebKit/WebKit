@@ -23,7 +23,7 @@
 */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmAesCtrParams
 ] dictionary AesCtrParams : CryptoAlgorithmParameters {
     // The initial value of the counter block. counter MUST be 16 bytes

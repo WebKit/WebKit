@@ -27,7 +27,7 @@
 
 #include "CryptoAlgorithm.h"
 
-#if ENABLE(SUBTLE_CRYPTO) && HAVE(RSA_PSS)
+#if ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)
 
 namespace WebCore {
 
@@ -56,4 +56,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO) && HAVE(RSA_PSS)
+#endif // ENABLE(WEB_CRYPTO) && HAVE(RSA_PSS)

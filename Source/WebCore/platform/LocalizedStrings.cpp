@@ -1023,7 +1023,7 @@ String useBlockedPlugInContextMenuTitle()
     return formatLocalizedString(WEB_UI_STRING("Show in blocked plug-in", "Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin"));
 }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName)
 {

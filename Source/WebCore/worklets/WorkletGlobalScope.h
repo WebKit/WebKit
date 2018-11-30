@@ -114,7 +114,7 @@ private:
     EventTarget* errorEventTarget() final { return this; }
     EventQueue& eventQueue() const final { ASSERT_NOT_REACHED(); return m_eventQueue; }
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return false; }
     bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) final { RELEASE_ASSERT_NOT_REACHED(); return false; }
 #endif

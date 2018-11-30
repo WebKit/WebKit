@@ -19,7 +19,7 @@ list(APPEND PAL_SOURCES
     unix/LoggingUnix.cpp
 )
 
-if (ENABLE_SUBTLE_CRYPTO)
+if (ENABLE_WEB_CRYPTO)
     list(APPEND PAL_PUBLIC_HEADERS
         crypto/tasn1/Utilities.h
     )

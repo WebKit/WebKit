@@ -345,9 +345,6 @@ my @features = (
     { option => "service-worker", desc => "Toggle Service Worker support",
       define => "ENABLE_SERVICE_WORKER", value => \$serviceWorkerSupport },
 
-    { option => "subtle-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
-      define => "ENABLE_SUBTLE_CRYPTO", value => \$subtleCrypto },
-
     { option => "svg-fonts", desc => "Toggle SVG Fonts support",
       define => "ENABLE_SVG_FONTS", value => \$svgFontsSupport },
 

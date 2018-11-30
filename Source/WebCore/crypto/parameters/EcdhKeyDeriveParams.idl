@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmEcdhKeyDeriveParams,
 ] dictionary EcdhKeyDeriveParams : CryptoAlgorithmParameters {
     // We should rename this to public once https://bugs.webkit.org/show_bug.cgi?id=169333 is fixed.

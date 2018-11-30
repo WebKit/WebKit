@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmRegistry.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmAES_CBC.h"
 #include "CryptoAlgorithmAES_CFB.h"
@@ -77,4 +77,4 @@ void CryptoAlgorithmRegistry::platformRegisterAlgorithms()
 
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

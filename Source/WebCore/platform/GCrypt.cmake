@@ -1,4 +1,4 @@
-if (ENABLE_SUBTLE_CRYPTO)
+if (ENABLE_WEB_CRYPTO)
     list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
         "platform/SourcesGCrypt.txt"
     )

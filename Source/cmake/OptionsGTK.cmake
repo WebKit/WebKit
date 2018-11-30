@@ -257,7 +257,7 @@ if (ENABLE_INTROSPECTION)
     endif ()
 endif ()
 
-if (ENABLE_SUBTLE_CRYPTO)
+if (ENABLE_WEB_CRYPTO)
     find_package(Libtasn1 REQUIRED)
     if (NOT LIBTASN1_FOUND)
         message(FATAL_ERROR "libtasn1 is required to enable Web Crypto API support.")

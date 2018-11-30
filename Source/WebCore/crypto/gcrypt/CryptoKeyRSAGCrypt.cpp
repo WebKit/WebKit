@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyRSA.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyPair.h"
@@ -718,4 +718,4 @@ std::unique_ptr<CryptoKeyRSAComponents> CryptoKeyRSA::exportData() const
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

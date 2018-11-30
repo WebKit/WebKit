@@ -225,7 +225,7 @@ public:
     DatabaseContext* databaseContext() { return m_databaseContext.get(); }
     void setDatabaseContext(DatabaseContext*);
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) = 0;
     virtual bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) = 0;
 #endif

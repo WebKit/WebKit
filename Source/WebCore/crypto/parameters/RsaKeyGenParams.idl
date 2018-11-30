@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmRsaKeyGenParams
 ] dictionary RsaKeyGenParams : CryptoAlgorithmParameters {
     // The length, in bits, of the RSA modulus

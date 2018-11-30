@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyRaw.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmRegistry.h"
 
@@ -47,4 +47,4 @@ auto CryptoKeyRaw::algorithm() const -> KeyAlgorithm
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

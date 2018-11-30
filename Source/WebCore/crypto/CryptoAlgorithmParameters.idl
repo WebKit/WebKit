@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=SUBTLE_CRYPTO,
+    Conditional=WEB_CRYPTO,
 ] dictionary CryptoAlgorithmParameters {
     required DOMString name;
 };

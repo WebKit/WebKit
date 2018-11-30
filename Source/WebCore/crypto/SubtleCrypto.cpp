@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SubtleCrypto.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmRegistry.h"

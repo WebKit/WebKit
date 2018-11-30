@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoAlgorithmRSAES_PKCS1_v1_5.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmRsaKeyGenParams.h"
 #include "CryptoKeyPair.h"
@@ -188,4 +188,4 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey(CryptoKeyFormat format, Ref<Cryp
 
 }
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

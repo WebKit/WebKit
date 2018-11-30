@@ -31,6 +31,6 @@
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface Crypto {
-    [Conditional=SUBTLE_CRYPTO] readonly attribute SubtleCrypto subtle;
+    [Conditional=WEB_CRYPTO] readonly attribute SubtleCrypto subtle;
     [MayThrowException] ArrayBufferView getRandomValues([ReturnValue] ArrayBufferView array);
 };

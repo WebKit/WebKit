@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CryptoKeyHMAC.h"
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 #include "CryptoAlgorithmHmacKeyParams.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -150,4 +150,4 @@ auto CryptoKeyHMAC::algorithm() const -> KeyAlgorithm
 
 } // namespace WebCore
 
-#endif // ENABLE(SUBTLE_CRYPTO)
+#endif // ENABLE(WEB_CRYPTO)

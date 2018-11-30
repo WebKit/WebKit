@@ -1169,7 +1169,7 @@ void WebChromeClient::focusedContentMediaElementDidChange(uint64_t elementID)
 
 #endif
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
 
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {

@@ -302,7 +302,7 @@ namespace WebCore {
 
     WEBCORE_EXPORT String useBlockedPlugInContextMenuTitle();
 
-#if ENABLE(SUBTLE_CRYPTO)
+#if ENABLE(WEB_CRYPTO)
     String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);
     String webCryptoMasterKeyKeychainComment();
 #endif
