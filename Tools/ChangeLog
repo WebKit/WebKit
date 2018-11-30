@@ -1,3 +1,18 @@
+2018-11-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r238445)[Buildbot] Unknown builder 'GTK Linux 32-bit Release' in scheduler 'trunk'
+        https://bugs.webkit.org/show_bug.cgi?id=192143
+
+        Reviewed by Philippe Normand.
+
+        Buildbot can't start since r238445.
+
+        > Configuration Errors:
+        >   Unknown builder 'GTK Linux 32-bit Release' in scheduler 'trunk'
+        >   Unknown builder 'GTK Linux ARM Release' in scheduler 'trunk'
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Removed deprecated builders.
+
 2018-11-29  David Quesada  <david_quesada@apple.com>
 
         Add SPI to publish NSProgress on active downloads

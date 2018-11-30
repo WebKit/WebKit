@@ -421,7 +421,7 @@
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
-                      "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
+                      "builderNames": ["GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)",
                                        "GTK Linux 64-bit Release Debian Stable (Build)", "GTK Linux 64-bit Release Ubuntu LTS (Build)",
                                        "JSCOnly Linux AArch64 Release",
                                        "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Thumb2 SoftFP Release",
