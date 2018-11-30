@@ -1697,6 +1697,62 @@ editing/undo/undo-deleteWord.html [ Pass Failure ]
 ###########################   End Editing Failures   ###########################
 ################################################################################
 
+################################################################################
+######################        Storage Issues              ######################
+################################################################################
+
+# TODO These tests failures need to be investigated
+
+# Text diff failures
+storage/domstorage/localstorage/blocked-file-access.html [ Failure ]
+storage/indexeddb/modern/date-basic-private.html [ Failure ]
+storage/indexeddb/modern/date-basic.html [ Failure ]
+storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
+storage/indexeddb/modern/get-keyrange.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
+storage/indexeddb/wasm-exceptions.html [ Failure ]
+
+# TODO Exclude WebSQL tests:
+webkit.org/b/116559 storage/websql/ [ Skip ]
+
+# Crashing indexeddb tests
+storage/indexeddb/modern/autoincrement-abort.html [ Crash Pass ]
+storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html [ Crash Pass ]
+storage/indexeddb/modern/objectstore-cursor-advance-failures-private.html [ Crash Pass ]
+storage/indexeddb/invalid-keys.html [ Crash Pass ]
+storage/indexeddb/modern/idbobjectstore-get-failures.html [ Crash Pass ]
+storage/indexeddb/modern/workers-disabled.html [ Crash Pass ]
+storage/indexeddb/modern/workers-enable.html [ Crash  Pass ]
+[ Debug ] storage/indexeddb/key-type-array-private.html [ Crash ]
+[ Debug ] storage/indexeddb/key-type-array.html [ Crash ]
+
+# Flaky timeouts
+storage/indexeddb/clone-exception.html [ Timeout Pass ]
+storage/indexeddb/modern/objectstore-rename-1.html [ Timeout Pass ]
+storage/websql/open-database-creation-callback.html [ Timeout Pass ]
+storage/websql/statement-error-callback.html [ Timeout Pass ]
+storage/websql/transaction-error-callback-isolated-world.html [ Timeout Pass ]
+storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
+
+# Flaky tests
+storage/indexeddb/modern/leak-1.html [ Skip ]
+storage/indexeddb/modern/index-rename-1.html [ Skip ]
+storage/indexeddb/objectstore-basics.html [ Skip ]
+storage/indexeddb/objectstore-basics-workers.html [ Skip ]
+storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Skip ]
+storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Skip ]
+storage/indexeddb/metadata.html [ Skip ]
+storage/indexeddb/database-odd-names.html [ Skip ]
+storage/indexeddb/lazy-index-population.html [ Skip ]
+storage/indexeddb/transaction-basics.html [ Skip ]
+storage/indexeddb/intversion-revert-on-abort.html [ Skip ]
+storage/indexeddb/version-change-abort.html [ Skip ]
+
+################################################################################
+###########################   End Storage Issuess   ############################
+################################################################################
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1785,7 +1841,6 @@ scrollbars [ Skip ]
 scrollingcoordinator [ Skip ]
 security [ Skip ]
 sputnik [ Skip ]
-storage [ Skip ]
 svg [ Skip ]
 tables [ Skip ]
 transitions [ Skip ]

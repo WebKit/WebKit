@@ -1,3 +1,14 @@
+2018-11-29  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] listDirectory in FileSystemWin.cpp should not skip all directories
+        https://bugs.webkit.org/show_bug.cgi?id=192042
+
+        Reviewed by Fujii Hironori.
+
+        Enable storage tests on WinCairo and adding initial test expectations.
+
+        * platform/wincairo/TestExpectations:
+
 2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238680.

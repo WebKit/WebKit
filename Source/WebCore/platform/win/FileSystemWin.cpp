@@ -523,7 +523,8 @@ Vector<String> listDirectory(const String& directory, const String& filter)
         return entries;
 
     do {
-        if (walker.data().dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        if (walker.data().dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
+            && (!wcscmp(walker.data().cFileName, L".") || !wcscmp(walker.data().cFileName, L"..")))
             continue;
 
         entries.append(directory + "\\" + reinterpret_cast<const UChar*>(walker.data().cFileName));

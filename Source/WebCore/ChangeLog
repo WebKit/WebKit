@@ -1,3 +1,20 @@
+2018-11-29  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] listDirectory in FileSystemWin.cpp should not skip all directories
+        https://bugs.webkit.org/show_bug.cgi?id=192042
+
+        Reviewed by Fujii Hironori.
+
+        Covered by existing tests.
+
+        listDirectory is not returning any child directories which is causing
+        ASSERT(diskUsage >= databaseFileSize) in SQLiteIDBBackingStore.cpp to fail.
+
+        Change listDirectory in FileSystemWin to match FileSystemPOSIX's behavior.
+        listDirectory should only skip the current and previous directories.
+
+        * platform/win/FileSystemWin.cpp:
+
 2018-11-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238713.
