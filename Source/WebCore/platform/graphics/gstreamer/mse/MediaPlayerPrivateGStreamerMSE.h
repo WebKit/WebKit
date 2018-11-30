@@ -86,7 +86,7 @@ public:
     static bool supportsAllCodecs(const Vector<String>& codecs);
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void attemptToDecryptWithInstance(CDMInstance&) final;
+    void attemptToDecryptWithLocalInstance() final;
 #endif
 
 private:

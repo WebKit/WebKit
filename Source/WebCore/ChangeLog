@@ -1,3 +1,46 @@
+2018-11-30  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] CDMInstance should be shipped as a GstContext to the decryptors
+        https://bugs.webkit.org/show_bug.cgi?id=192075
+
+        Reviewed by Philippe Normand.
+
+        So far, we were shipping the CDMInstance in an event to the
+        decryptors and they were requesting it with bus messages when it
+        was not found. Now we ship it with a GstContext that is set to the
+        pipeline and read from the decryptors, which is now always
+        available.
+
+        As a consequence of changing this flow, the attemptToDecrypt one
+        was affected as well because it was tied to CDMInstance
+        shipment. A workaround was added: when the decryptors send the
+        waitingForKey, an attemptToDecrypt will be performed. A FIXME was
+        added for this. A subconsequence is that
+        attemptToDecryptWithInstance is reworked to rely always in
+        attemptToDecryptWithLocal instance, the former becomes final and
+        the latter virtual.
+
+        This is a rework, no new tests needed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceAttached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cdmInstanceDetached):
+        (WebCore::MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance):
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchCDMInstance): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkit_media_common_encryption_decrypt_class_init):
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+        (webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable):
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler):
+        (webKitMediaCommonEncryptionDecryptorSetContext):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithLocalInstance):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance): Deleted.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Compute min/maxHeight margins only when they are needed.

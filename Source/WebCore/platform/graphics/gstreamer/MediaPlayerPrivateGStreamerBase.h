@@ -150,9 +150,8 @@ public:
     void cdmInstanceDetached(CDMInstance&) override;
     void dispatchDecryptionKey(GstBuffer*);
     void handleProtectionEvent(GstEvent*);
-    void attemptToDecryptWithLocalInstance();
-    void attemptToDecryptWithInstance(CDMInstance&) override;
-    void dispatchCDMInstance();
+    virtual void attemptToDecryptWithLocalInstance();
+    void attemptToDecryptWithInstance(CDMInstance&) final;
     void initializationDataEncountered(InitData&&);
     void setWaitingForKey(bool);
     bool waitingForKey() const override;

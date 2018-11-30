@@ -1197,23 +1197,48 @@ void MediaPlayerPrivateGStreamerBase::initializationDataEncountered(InitData&& i
 
 void MediaPlayerPrivateGStreamerBase::cdmInstanceAttached(CDMInstance& instance)
 {
-    if (m_cdmInstance != &instance) {
-        m_cdmInstance = &instance;
-        GST_DEBUG_OBJECT(pipeline(), "CDM instance %p set", m_cdmInstance.get());
-        m_protectionCondition.notifyAll();
+    ASSERT(isMainThread());
+
+    if (m_cdmInstance == &instance)
+        return;
+
+    if (!m_pipeline) {
+        GST_ERROR("no pipeline yet");
+        ASSERT_NOT_REACHED();
+        return;
     }
+
+    m_cdmInstance = &instance;
+
+    GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-instance", FALSE));
+    GstStructure* contextStructure = gst_context_writable_structure(context.get());
+    gst_structure_set(contextStructure, "cdm-instance", G_TYPE_POINTER, m_cdmInstance.get(), nullptr);
+    gst_element_set_context(GST_ELEMENT(m_pipeline.get()), context.get());
+
+    GST_DEBUG_OBJECT(m_pipeline.get(), "CDM instance %p dispatched as context", m_cdmInstance.get());
+
+    m_protectionCondition.notifyAll();
 }
 
 void MediaPlayerPrivateGStreamerBase::cdmInstanceDetached(CDMInstance& instance)
 {
-#ifdef NDEBUG
-    UNUSED_PARAM(instance);
-#endif
-    if (m_cdmInstance == &instance) {
-        GST_DEBUG_OBJECT(pipeline(), "detaching CDM instance %p", m_cdmInstance.get());
-        m_cdmInstance = nullptr;
-        m_protectionCondition.notifyAll();
+    ASSERT(isMainThread());
+
+    if (m_cdmInstance != &instance) {
+        GST_WARNING("passed CDMInstance %p is different from stored one %p", &instance, m_cdmInstance.get());
+        ASSERT_NOT_REACHED();
+        return;
     }
+
+    ASSERT(m_pipeline);
+
+    GST_DEBUG_OBJECT(m_pipeline.get(), "detaching CDM instance %p, setting empty context", m_cdmInstance.get());
+    m_cdmInstance = nullptr;
+
+    GRefPtr<GstContext> context = adoptGRef(gst_context_new("drm-cdm-instance", FALSE));
+    gst_element_set_context(GST_ELEMENT(m_pipeline.get()), context.get());
+
+    m_protectionCondition.notifyAll();
 }
 
 void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(CDMInstance& instance)
@@ -1225,8 +1250,7 @@ void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithInstance(CDMInstance& 
 
 void MediaPlayerPrivateGStreamerBase::attemptToDecryptWithLocalInstance()
 {
-    bool eventHandled = gst_element_send_event(pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
-        gst_structure_new("attempt-to-decrypt", "cdm-instance", G_TYPE_POINTER, m_cdmInstance.get(), nullptr)));
+    bool eventHandled = gst_element_send_event(pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, gst_structure_new_empty("attempt-to-decrypt")));
     GST_DEBUG("attempting to decrypt, event handled %s", boolForPrinting(eventHandled));
 }
 
@@ -1235,13 +1259,6 @@ void MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey(GstBuffer* buffer)
     bool eventHandled = gst_element_send_event(pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
         gst_structure_new("drm-cipher", "key", GST_TYPE_BUFFER, buffer, nullptr)));
     GST_TRACE("emitted decryption cipher key on pipeline, event handled %s", boolForPrinting(eventHandled));
-}
-
-void MediaPlayerPrivateGStreamerBase::dispatchCDMInstance()
-{
-    // This function dispatches the CDMInstance in GStreamer playback pipeline.
-    if (m_cdmInstance)
-        m_player->attemptToDecryptWithInstance(const_cast<CDMInstance&>(*m_cdmInstance.get()));
 }
 
 void MediaPlayerPrivateGStreamerBase::handleProtectionEvent(GstEvent* event)

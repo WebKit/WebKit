@@ -31,10 +31,12 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 
+using WebCore::CDMInstance;
+
 #define WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_MEDIA_CENC_DECRYPT, WebKitMediaCommonEncryptionDecryptPrivate))
 struct _WebKitMediaCommonEncryptionDecryptPrivate {
     GRefPtr<GstEvent> protectionEvent;
-    RefPtr<WebCore::CDMInstance> cdmInstance;
+    RefPtr<CDMInstance> cdmInstance;
     bool keyReceived;
     bool waitingForKey { false };
     Lock mutex;
@@ -42,12 +44,13 @@ struct _WebKitMediaCommonEncryptionDecryptPrivate {
 };
 
 static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstElement*, GstStateChange transition);
+static void webKitMediaCommonEncryptionDecryptorSetContext(GstElement*, GstContext*);
 static void webKitMediaCommonEncryptionDecryptorFinalize(GObject*);
 static GstCaps* webkitMediaCommonEncryptionDecryptTransformCaps(GstBaseTransform*, GstPadDirection, GstCaps*, GstCaps*);
 static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseTransform*, GstBuffer*);
 static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform*, GstEvent*);
 static gboolean webkitMediaCommonEncryptionDecryptorQueryHandler(GstBaseTransform*, GstPadDirection, GstQuery*);
-
+static bool webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt*);
 
 GST_DEBUG_CATEGORY_STATIC(webkit_media_common_encryption_decrypt_debug_category);
 #define GST_CAT_DEFAULT webkit_media_common_encryption_decrypt_debug_category
@@ -65,6 +68,7 @@ static void webkit_media_common_encryption_decrypt_class_init(WebKitMediaCommonE
 
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
     elementClass->change_state = GST_DEBUG_FUNCPTR(webKitMediaCommonEncryptionDecryptorChangeState);
+    elementClass->set_context = GST_DEBUG_FUNCPTR(webKitMediaCommonEncryptionDecryptorSetContext);
 
     GstBaseTransformClass* baseTransformClass = GST_BASE_TRANSFORM_CLASS(klass);
     baseTransformClass->transform_ip = GST_DEBUG_FUNCPTR(webkitMediaCommonEncryptionDecryptTransformInPlace);
@@ -209,7 +213,6 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
         // Send "drm-cdm-instance-needed" message to the player to resend the CDMInstance if available and inform we are waiting for key.
         priv->waitingForKey = true;
         gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-waiting-for-key")));
-        gst_element_post_message(GST_ELEMENT(self), gst_message_new_element(GST_OBJECT(self), gst_structure_new_empty("drm-cdm-instance-needed")));
 
         priv->condition.waitFor(priv->mutex, Seconds(5), [priv] {
             return priv->keyReceived;
@@ -299,6 +302,32 @@ static GstFlowReturn webkitMediaCommonEncryptionDecryptTransformInPlace(GstBaseT
     return GST_FLOW_OK;
 }
 
+static bool webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(WebKitMediaCommonEncryptionDecrypt* self)
+{
+    WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
+
+    ASSERT(priv->mutex.isLocked());
+
+    if (!priv->cdmInstance) {
+        GRefPtr<GstContext> context = adoptGRef(gst_element_get_context(GST_ELEMENT(self), "drm-cdm-instance"));
+        // According to the GStreamer documentation, if we can't find the context, we should run a downstream query, then an upstream one and then send a bus
+        // message. In this case that does not make a lot of sense since only the app (player) answers it, meaning that no query is going to solve it. A message
+        // could be helpful but the player sets the context as soon as it gets the CDMInstance and if it does not have it, we have no way of asking for one as it is
+        // something provided by crossplatform code. This means that we won't be able to answer the bus request in any way either. Summing up, neither queries nor bus
+        // requests are useful here.
+        if (context) {
+            const GValue* value = gst_structure_get_value(gst_context_get_structure(context.get()), "cdm-instance");
+            priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
+            if (priv->cdmInstance)
+                GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmInstance.get());
+            else
+                GST_TRACE_OBJECT(self, "former instance was detached");
+        }
+    }
+
+    GST_TRACE_OBJECT(self, "CDMInstance available %s", boolForPrinting(priv->cdmInstance.get()));
+    return priv->cdmInstance;
+}
 
 static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransform* trans, GstEvent* event)
 {
@@ -306,7 +335,6 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
     WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
     gboolean result = FALSE;
-
 
     switch (GST_EVENT_TYPE(event)) {
     case GST_EVENT_CUSTOM_DOWNSTREAM_OOB: {
@@ -316,14 +344,12 @@ static gboolean webkitMediaCommonEncryptionDecryptSinkEventHandler(GstBaseTransf
         // preferred system ID context is set, any future protection
         // events will not be handled by the demuxer, so the must be
         // handled in here.
-        const GstStructure* structure = gst_event_get_structure(event);
-        gst_structure_get(structure, "cdm-instance", G_TYPE_POINTER, &priv->cdmInstance, nullptr);
-        if (!priv->cdmInstance) {
-            GST_ERROR_OBJECT(self, "No CDM instance received");
+        LockHolder locker(priv->mutex);
+        if (!webkitMediaCommonEncryptionDecryptIsCDMInstanceAvailable(self)) {
+            GST_ERROR_OBJECT(self, "No CDM instance available");
             result = FALSE;
             break;
         }
-        GST_DEBUG_OBJECT(self, "received a cdm instance %p", priv->cdmInstance.get());
 
         if (klass->handleKeyResponse(self, event)) {
             GST_DEBUG_OBJECT(self, "key received");
@@ -372,6 +398,22 @@ static GstStateChangeReturn webKitMediaCommonEncryptionDecryptorChangeState(GstE
     // Add post-transition code here.
 
     return result;
+}
+
+static void webKitMediaCommonEncryptionDecryptorSetContext(GstElement* element, GstContext* context)
+{
+    WebKitMediaCommonEncryptionDecrypt* self = WEBKIT_MEDIA_CENC_DECRYPT(element);
+    WebKitMediaCommonEncryptionDecryptPrivate* priv = WEBKIT_MEDIA_CENC_DECRYPT_GET_PRIVATE(self);
+
+    if (gst_context_has_context_type(context, "drm-cdm-instance")) {
+        const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "cdm-instance");
+        LockHolder locker(priv->mutex);
+        priv->cdmInstance = value ? reinterpret_cast<CDMInstance*>(g_value_get_pointer(value)) : nullptr;
+        GST_DEBUG_OBJECT(self, "received new CDMInstance %p", priv->cdmInstance.get());
+        return;
+    }
+
+    GST_ELEMENT_CLASS(parent_class)->set_context(element, context);
 }
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)

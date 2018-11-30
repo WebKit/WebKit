@@ -1329,12 +1329,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         else if (gst_structure_has_name(structure, "drm-waiting-for-key")) {
             GST_DEBUG_OBJECT(pipeline(), "drm-waiting-for-key message from %s", GST_MESSAGE_SRC_NAME(message));
             setWaitingForKey(true);
+            // FIXME: The decryptors should be able to attempt to decrypt after being created and linked in a pipeline but currently they are not and current
+            // architecture does not make this very easy. Fortunately, the arch will change soon and it does not pay off to fix this now with something that could be
+            // more convoluted. In the meantime, force attempt to decrypt when they get blocked.
+            attemptToDecryptWithLocalInstance();
         } else if (gst_structure_has_name(structure, "drm-key-received")) {
             GST_DEBUG_OBJECT(pipeline(), "drm-key-received message from %s", GST_MESSAGE_SRC_NAME(message));
             setWaitingForKey(false);
-        } else if (gst_structure_has_name(structure, "drm-cdm-instance-needed")) {
-            GST_DEBUG_OBJECT(pipeline(), "drm-cdm-instance-needed message from %s", GST_MESSAGE_SRC_NAME(message));
-            dispatchCDMInstance();
         }
 #endif
         else if (gst_structure_has_name(structure, "http-headers")) {
