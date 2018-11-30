@@ -1,3 +1,25 @@
+2018-11-29  Tim Horton  <timothy_horton@apple.com>
+
+        Inform clients when editable image attachment backing data changes
+        https://bugs.webkit.org/show_bug.cgi?id=192206
+        <rdar://problem/46350277>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[AttachmentUpdateObserver init]):
+        (-[AttachmentUpdateObserver dataInvalidated]):
+        (-[AttachmentUpdateObserver _webView:didInvalidateDataForAttachment:]):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::expectAttachmentInvalidation):
+        (webViewForTestingAttachments):
+        (TestWebKitAPI::forEachViewInHierarchy):
+        (TestWebKitAPI::findEditableImageCanvas):
+        (TestWebKitAPI::drawSquareInEditableImage):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/PencilKitTestSPI.h: Added.
+        Add a test ensuring that we get an invalidation callback when an editable image is changed.
+
 2018-11-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r238445)[Buildbot] Unknown builder 'GTK Linux 32-bit Release' in scheduler 'trunk'

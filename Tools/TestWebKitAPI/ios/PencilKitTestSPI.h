@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,38 @@
 
 #pragma once
 
-#include "PageClient.h"
-#include <wtf/WeakObjCPtr.h>
+#import <wtf/Platform.h>
 
-@class WKWebView;
+#if HAVE(PENCILKIT)
 
-namespace API {
-class Attachment;
-}
+#if USE(APPLE_INTERNAL_SDK)
 
-namespace WebKit {
+#import <PencilKit/PencilKit.h>
 
-class PageClientImplCocoa : public PageClient {
-public:
-    PageClientImplCocoa(WKWebView *webView)
-        : m_webView(webView) { }
-    void isPlayingAudioWillChange() final;
-    void isPlayingAudioDidChange() final;
+#import <PencilKit/PKDrawing_Private.h>
+#import <PencilKit/PKStroke_Private.h>
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(API::Attachment&, const String& source) final;
-    void didRemoveAttachment(API::Attachment&) final;
-    void didInvalidateDataForAttachment(API::Attachment&) final;
-    NSFileWrapper *allocFileWrapperInstance() const final;
-    NSSet *serializableFileWrapperClasses() const final;
-#endif
+#else
 
-protected:
-    WeakObjCPtr<WKWebView> m_webView;
-};
+typedef NSInteger PKInkType;
 
-}
+@interface PKInk : NSObject
++ (PKInk *)inkWithType:(PKInkType)type color:(UIColor *)color weight:(CGFloat)weight;
+@end
+
+@interface PKStroke : NSObject
+- (id)_initWithPath:(CGPathRef)path ink:(PKInk *)ink inputScale:(CGFloat)inputScale;
+@end
+
+@interface PKDrawing : NSObject
+- (PKStroke *)_addStroke:(PKStroke *)stroke;
+@property (nonatomic, readonly) NSArray<PKStroke *> *_allStrokes;
+@end
+
+@interface PKCanvasView : UIView
+@property (nonatomic, copy) PKDrawing *drawing;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // HAVE(PENCILKIT)

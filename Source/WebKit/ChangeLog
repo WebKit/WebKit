@@ -1,3 +1,27 @@
+2018-11-29  Tim Horton  <timothy_horton@apple.com>
+
+        Inform clients when editable image attachment backing data changes
+        https://bugs.webkit.org/show_bug.cgi?id=192206
+        <rdar://problem/46350277>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/APIAttachmentCocoa.mm:
+        (API::Attachment::invalidateGeneratedFileWrapper):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didInvalidateDataForAttachment:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::didInvalidateDataForAttachment):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didInvalidateDataForAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didInvalidateDataForAttachment):
+        * UIProcess/WebPageProxy.h:
+        Plumb file-wrapper-invalidation through from APIAttachment to WKUIDelegate.
+
 2018-11-29  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] DeviceIdHashSaltStorage should use iframe and top level documents

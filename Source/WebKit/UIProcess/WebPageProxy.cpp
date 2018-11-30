@@ -8115,6 +8115,11 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
     }
 }
 
+void WebPageProxy::didInvalidateDataForAttachment(API::Attachment& attachment)
+{
+    pageClient().didInvalidateDataForAttachment(attachment);
+}
+
 WebPageProxy::ShouldUpdateAttachmentAttributes WebPageProxy::willUpdateAttachmentAttributes(const API::Attachment& attachment)
 {
 #if HAVE(PENCILKIT)

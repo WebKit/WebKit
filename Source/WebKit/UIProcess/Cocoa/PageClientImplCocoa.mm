@@ -66,6 +66,15 @@ void PageClientImplCocoa::didRemoveAttachment(API::Attachment& attachment)
 #endif
 }
 
+void PageClientImplCocoa::didInvalidateDataForAttachment(API::Attachment& attachment)
+{
+#if WK_API_ENABLED
+    [m_webView _didInvalidateDataForAttachment:attachment];
+#else
+    UNUSED_PARAM(attachment);
+#endif
+}
+
 NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance() const
 {
 #if WK_API_ENABLED

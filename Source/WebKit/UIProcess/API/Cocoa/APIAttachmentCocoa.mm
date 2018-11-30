@@ -64,6 +64,7 @@ void Attachment::invalidateGeneratedFileWrapper()
 {
     ASSERT(m_fileWrapperGenerator);
     m_fileWrapper = nil;
+    m_webPage->didInvalidateDataForAttachment(*this);
 }
 
 WTF::String Attachment::mimeType() const
@@ -193,6 +194,7 @@ void Attachment::setFileWrapperGenerator(Function<RetainPtr<NSFileWrapper>(void)
 {
     m_fileWrapperGenerator = WTFMove(fileWrapperGenerator);
     m_fileWrapper = nil;
+    m_webPage->didInvalidateDataForAttachment(*this);
 }
 
 } // namespace API

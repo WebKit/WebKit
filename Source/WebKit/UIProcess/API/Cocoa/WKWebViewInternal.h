@@ -181,6 +181,7 @@ class URL;
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;
+- (void)_didInvalidateDataForAttachment:(API::Attachment&)attachment;
 #endif
 
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;

@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "DragAndDropSimulator.h"
+#import "PencilKitTestSPI.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
@@ -47,11 +48,13 @@
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
 @property (nonatomic, readonly) NSArray *removed;
+@property (nonatomic, readonly) NSArray *dataInvalidated;
 @end
 
 @implementation AttachmentUpdateObserver {
     RetainPtr<NSMutableArray<_WKAttachment *>> _inserted;
     RetainPtr<NSMutableArray<_WKAttachment *>> _removed;
+    RetainPtr<NSMutableArray<_WKAttachment *>> _dataInvalidated;
     RetainPtr<NSMutableDictionary<NSString *, NSString *>> _identifierToSourceMap;
 }
 
@@ -60,6 +63,7 @@
     if (self = [super init]) {
         _inserted = adoptNS([[NSMutableArray alloc] init]);
         _removed = adoptNS([[NSMutableArray alloc] init]);
+        _dataInvalidated = adoptNS([[NSMutableArray alloc] init]);
         _identifierToSourceMap = adoptNS([[NSMutableDictionary alloc] init]);
     }
     return self;
@@ -73,6 +77,11 @@
 - (NSArray<_WKAttachment *> *)removed
 {
     return _removed.get();
+}
+
+- (NSArray<_WKAttachment *> *)dataInvalidated
+{
+    return _dataInvalidated.get();
 }
 
 - (NSString *)sourceForIdentifier:(NSString *)identifier
@@ -90,6 +99,11 @@
 - (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment
 {
     [_removed addObject:attachment];
+}
+
+- (void)_webView:(WKWebView *)webView didInvalidateDataForAttachment:(_WKAttachment *)attachment
+{
+    [_dataInvalidated addObject:attachment];
 }
 
 @end
@@ -126,6 +140,14 @@ public:
         EXPECT_TRUE(insertedAttachmentsMatch);
     }
 
+    void expectAttachmentInvalidation(NSArray<_WKAttachment *> *dataInvalidated)
+    {
+        BOOL invalidatedAttachmentsMatch = [[NSSet setWithArray:observer().dataInvalidated] isEqual:[NSSet setWithArray:dataInvalidated]];
+        if (!invalidatedAttachmentsMatch)
+            NSLog(@"Expected attachments with invalidated data: %@ to match %@.", observer().dataInvalidated, dataInvalidated);
+        EXPECT_TRUE(invalidatedAttachmentsMatch);
+    }
+
     void expectSourceForIdentifier(NSString *expectedSource, NSString *identifier)
     {
         NSString *observedSource = [observer() sourceForIdentifier:identifier];
@@ -153,6 +175,7 @@ static NSString *attachmentEditingTestMarkup = @"<meta name='viewport' content='
 static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize, WKWebViewConfiguration *configuration)
 {
     configuration._attachmentElementEnabled = YES;
+    configuration._editableImagesEnabled = YES;
     WKPreferencesSetCustomPasteboardDataEnabled((__bridge WKPreferencesRef)[configuration preferences], YES);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration]);
@@ -1777,6 +1800,76 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
     [dragAndDropSimulator endDataTransfer];
 }
+
+#if HAVE(PENCILKIT)
+static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
+{
+    BOOL stop = NO;
+    mapFunction(view, &stop);
+    if (stop)
+        return YES;
+
+    for (UIView *subview in view.subviews) {
+        stop = forEachViewInHierarchy(subview, mapFunction);
+        if (stop)
+            break;
+    }
+    return stop;
+}
+
+static PKCanvasView *findEditableImageCanvas(WKWebView *webView)
+{
+    Class pkCanvasViewClass = NSClassFromString(@"PKCanvasView");
+    __block PKCanvasView *canvasView = nil;
+    forEachViewInHierarchy(webView.window, ^(UIView *subview, BOOL *stop) {
+        if (![subview isKindOfClass:pkCanvasViewClass])
+            return;
+
+        canvasView = (PKCanvasView *)subview;
+        *stop = YES;
+    });
+    return canvasView;
+}
+
+static void drawSquareInEditableImage(WKWebView *webView)
+{
+    Class pkDrawingClass = NSClassFromString(@"PKDrawing");
+    Class pkInkClass = NSClassFromString(@"PKInk");
+    Class pkStrokeClass = NSClassFromString(@"PKStroke");
+
+    PKCanvasView *canvasView = findEditableImageCanvas(webView);
+    RetainPtr<PKDrawing> drawing = canvasView.drawing ?: adoptNS([[pkDrawingClass alloc] init]);
+    RetainPtr<CGPathRef> path = adoptCF(CGPathCreateWithRect(CGRectMake(0, 0, 50, 50), NULL));
+    RetainPtr<PKInk> ink = [pkInkClass inkWithType:0 color:UIColor.greenColor weight:100.0];
+    RetainPtr<PKStroke> stroke = adoptNS([[pkStrokeClass alloc] _initWithPath:path.get() ink:ink.get() inputScale:1]);
+    [drawing _addStroke:stroke.get()];
+
+    [canvasView setDrawing:drawing.get()];
+}
+
+TEST(WKAttachmentTestsIOS, EditableImageAttachmentDataInvalidation)
+{
+    auto webView = webViewForTestingAttachments();
+
+    RetainPtr<_WKAttachment> attachment;
+
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        EXPECT_TRUE([webView _synchronouslyExecuteEditCommand:@"InsertEditableImage" argument:nil]);
+        EXPECT_EQ(observer.observer().inserted.count, 1LU);
+        attachment = observer.observer().inserted.firstObject;
+    }
+
+    [webView waitForNextPresentationUpdate];
+
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        drawSquareInEditableImage(webView.get());
+        observer.expectAttachmentInvalidation(@[ attachment.get() ]);
+    }
+}
+
+#endif // HAVE(PENCILKIT)
 
 #endif // PLATFORM(IOS_FAMILY)
 

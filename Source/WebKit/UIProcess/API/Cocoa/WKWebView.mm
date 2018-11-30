@@ -1314,6 +1314,13 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         [uiDelegate _webView:self didRemoveAttachment:wrapper(attachment)];
 }
 
+- (void)_didInvalidateDataForAttachment:(API::Attachment&)attachment
+{
+    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:didInvalidateDataForAttachment:)])
+        [uiDelegate _webView:self didInvalidateDataForAttachment:wrapper(attachment)];
+}
+
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #pragma mark iOS-specific methods
