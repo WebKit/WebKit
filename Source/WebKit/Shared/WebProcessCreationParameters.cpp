@@ -57,9 +57,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaCacheDirectoryExtensionHandle;
     encoder << javaScriptConfigurationDirectory;
     encoder << javaScriptConfigurationDirectoryExtensionHandle;
-#if PLATFORM(MAC)
-    encoder << uiProcessCookieStorageIdentifier;
-#endif
 #if PLATFORM(IOS_FAMILY)
     encoder << cookieStorageDirectoryExtensionHandle;
     encoder << containerCachesDirectoryExtensionHandle;
@@ -220,10 +217,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     parameters.javaScriptConfigurationDirectoryExtensionHandle = WTFMove(*javaScriptConfigurationDirectoryExtensionHandle);
 
-#if PLATFORM(MAC)
-    if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
-        return false;
-#endif
 #if PLATFORM(IOS_FAMILY)
     
     std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;

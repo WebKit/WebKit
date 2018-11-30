@@ -220,11 +220,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     }
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-#if PLATFORM(MAC)
-    ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
-    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
-    parameters.uiProcessCookieStorageIdentifier = identifyingDataFromCookieStorage([[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]);
-#endif
 #if ENABLE(MEDIA_STREAM)
     // Allow microphone access if either preference is set because WebRTC requires microphone access.
     bool mediaDevicesEnabled = m_defaultPageGroup->preferences().mediaDevicesEnabled();
