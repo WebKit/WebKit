@@ -747,6 +747,8 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t
 
 void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint64_t requestID)
 {
+    SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
+
     auto& frame = m_page->focusController().focusedOrMainFrame();
 
     auto pointInDocument = frame.view()->rootViewToContents(point);
@@ -771,8 +773,8 @@ void WebPage::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, uint6
 
     auto range = Range::create(*frame.document(), position, position);
     frame.selection().setSelectedRange(range.ptr(), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
-    frame.editor().insertEditableImage();
-    resetAssistedNodeForFrame(m_mainFrame.get());
+    auto image = frame.editor().insertEditableImage();
+    frame.document()->setFocusedElement(image.get());
 }
 
 void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint& position)
@@ -2055,6 +2057,8 @@ static inline bool isAssistableElement(Element& node)
         return true;
     if (is<HTMLTextAreaElement>(node))
         return true;
+    if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(node).hasEditableImageAttribute())
+        return true;
     if (is<HTMLInputElement>(node)) {
         HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
@@ -2519,6 +2523,9 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         information.value = element.value();
         information.valueAsNumber = element.valueAsNumber();
         information.autofillFieldName = WebCore::toAutofillFieldName(element.autofillData().fieldName);
+    } else if (is<HTMLImageElement>(*m_assistedNode) && downcast<HTMLImageElement>(*m_assistedNode).hasEditableImageAttribute()) {
+        information.elementType = InputType::Drawing;
+        information.embeddedViewID = downcast<HTMLImageElement>(*m_assistedNode).editableImageViewID();
     } else if (m_assistedNode->hasEditableStyle()) {
         information.elementType = InputType::ContentEditable;
         if (is<HTMLElement>(*m_assistedNode)) {

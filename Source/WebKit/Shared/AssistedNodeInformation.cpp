@@ -97,6 +97,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << placeholder;
     encoder << label;
     encoder << ariaLabel;
+    encoder << embeddedViewID;
     encoder << assistedNodeIdentifier;
 #if ENABLE(DATALIST_ELEMENT)
     encoder << hasSuggestions;
@@ -208,6 +209,9 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
         return false;
 
     if (!decoder.decode(result.ariaLabel))
+        return false;
+
+    if (!decoder.decode(result.embeddedViewID))
         return false;
 
     if (!decoder.decode(result.assistedNodeIdentifier))

@@ -23,23 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #if HAVE(PENCILKIT)
 
-#import "RemoteLayerTreeHost.h"
-#import "RemoteLayerTreeViews.h"
+#import "PencilKitSPI.h"
+#import <wtf/SoftLinking.h>
 
-OBJC_CLASS PKCanvasView;
-
-@interface WKDrawingView : WKEmbeddedView <WKNativelyInteractible>
-
-- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy;
-
-- (NSData *)PNGRepresentation;
-- (void)loadDrawingFromPNGRepresentation:(NSData *)PNGData;
-
-@property (nonatomic, readonly) PKCanvasView *canvasView;
-
-@end
-
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, PencilKit);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKCanvasView);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKDrawing);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKImageRenderer);
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKInlineInkPicker);
 
 #endif // HAVE(PENCILKIT)

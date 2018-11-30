@@ -1,3 +1,24 @@
+2018-11-29  Tim Horton  <timothy_horton@apple.com>
+
+        Make drawing tools available when an editable image is focused
+        https://bugs.webkit.org/show_bug.cgi?id=192172
+        <rdar://problem/30337960>
+
+        Reviewed by Dean Jackson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertEditableImage):
+        * editing/Editor.h:
+        * editing/InsertEditableImageCommand.cpp:
+        (WebCore::InsertEditableImageCommand::insertEditableImage):
+        (WebCore::InsertEditableImageCommand::doApply):
+        * editing/InsertEditableImageCommand.h:
+        Add InsertEditableImageCommand::insertEditableImage, which returns the
+        inserted image element.
+
+        * html/HTMLImageElement.h:
+        Make HTMLImageElement focusable if it is editable.
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][Quirk] Body and html height stretching.

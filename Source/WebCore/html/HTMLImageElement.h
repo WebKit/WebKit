@@ -56,6 +56,9 @@ public:
     WEBCORE_EXPORT int naturalHeight() const;
     const AtomicString& currentSrc() const { return m_currentSrc; }
 
+    bool supportsFocus() const override;
+    bool isFocusable() const override;
+
     bool isServerMap() const;
 
     const AtomicString& altText() const;
@@ -115,8 +118,8 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
 #endif
 
-    GraphicsLayer::EmbeddedViewID editableImageViewID() const;
-    bool hasEditableImageAttribute() const;
+    WEBCORE_EXPORT GraphicsLayer::EmbeddedViewID editableImageViewID() const;
+    WEBCORE_EXPORT bool hasEditableImageAttribute() const;
 
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = 0);

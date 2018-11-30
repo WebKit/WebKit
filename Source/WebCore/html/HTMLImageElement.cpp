@@ -291,6 +291,20 @@ bool HTMLImageElement::canStartSelection() const
     return false;
 }
 
+bool HTMLImageElement::supportsFocus() const
+{
+    if (hasEditableImageAttribute())
+        return true;
+    return HTMLElement::supportsFocus();
+}
+
+bool HTMLImageElement::isFocusable() const
+{
+    if (hasEditableImageAttribute())
+        return true;
+    return HTMLElement::isFocusable();
+}
+
 void HTMLImageElement::didAttachRenderers()
 {
     if (!is<RenderImage>(renderer()))

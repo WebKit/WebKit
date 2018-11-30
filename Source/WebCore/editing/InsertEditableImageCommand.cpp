@@ -31,6 +31,13 @@
 
 namespace WebCore {
 
+RefPtr<HTMLImageElement> InsertEditableImageCommand::insertEditableImage(Document& document)
+{
+    RefPtr<InsertEditableImageCommand> insertCommand = create(document);
+    insertCommand->apply();
+    return insertCommand->m_imageElement;
+}
+
 InsertEditableImageCommand::InsertEditableImageCommand(Document& document)
     : CompositeEditCommand(document)
 {
@@ -41,14 +48,14 @@ void InsertEditableImageCommand::doApply()
     if (endingSelection().isNone())
         return;
 
-    auto imgElement = HTMLImageElement::create(document());
-    imgElement->setAttributeWithoutSynchronization(x_apple_editable_imageAttr, emptyAtom());
-    imgElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
-    imgElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("300px", AtomicString::ConstructFromLiteral));
-    imgElement->setAttributeWithoutSynchronization(styleAttr, AtomicString("display: block", AtomicString::ConstructFromLiteral));
+    m_imageElement = HTMLImageElement::create(document());
+    m_imageElement->setAttributeWithoutSynchronization(x_apple_editable_imageAttr, emptyAtom());
+    m_imageElement->setAttributeWithoutSynchronization(widthAttr, AtomicString("100%", AtomicString::ConstructFromLiteral));
+    m_imageElement->setAttributeWithoutSynchronization(heightAttr, AtomicString("300px", AtomicString::ConstructFromLiteral));
+    m_imageElement->setAttributeWithoutSynchronization(styleAttr, AtomicString("display: block", AtomicString::ConstructFromLiteral));
 
-    insertNodeAt(imgElement.copyRef(), endingSelection().start());
-    setEndingSelection(visiblePositionAfterNode(imgElement.get()));
+    insertNodeAt(*m_imageElement, endingSelection().start());
+    setEndingSelection(visiblePositionAfterNode(*m_imageElement));
 }
 
 }

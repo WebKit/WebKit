@@ -4251,9 +4251,9 @@ String Editor::clientReplacementURLForResource(Ref<SharedBuffer>&& resourceData,
     return { };
 }
 
-void Editor::insertEditableImage()
+RefPtr<HTMLImageElement> Editor::insertEditableImage()
 {
-    InsertEditableImageCommand::create(document())->apply();
+    return InsertEditableImageCommand::insertEditableImage(document());
 }
 
 } // namespace WebCore

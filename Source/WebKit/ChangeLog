@@ -1,3 +1,76 @@
+2018-11-29  Tim Horton  <timothy_horton@apple.com>
+
+        Make drawing tools available when an editable image is focused
+        https://bugs.webkit.org/show_bug.cgi?id=192172
+        <rdar://problem/30337960>
+
+        Reviewed by Dean Jackson.
+
+        * Platform/spi/ios/PencilKitSPI.h:
+        Add some more SPI.
+
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        (WebKit::AssistedNodeInformation::decode):
+        * Shared/AssistedNodeInformation.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleStylusSingleTapAtPoint):
+        (WebKit::isAssistableElement):
+        (WebKit::WebPage::getAssistedNodeInformation):
+        Plumb the assisted node's embedded view ID, if available.
+        Also add a new input type for drawings, and use it when appropriate.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/_WKFocusedElementInfo.h:
+        Add WKInputTypeDrawing.
+
+        * UIProcess/ios/PencilKitSoftLink.h: Added.
+        * UIProcess/ios/PencilKitSoftLink.mm: Added.
+        Pull soft-linking out into its own file, to fix unified sources.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithAssistedNodeInformation:isUserInitiated:userObject:]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView requiresAccessoryView]):
+        Install a keyboard when a drawing is focused.
+        Also, deduplicate one "curretUserInterfaceIdiomIsPad"; just fall through.
+
+        (-[WKContentView inputView]):
+        Make a WKInkPickerControl when a drawing is focused.
+
+        (-[WKContentView textInputTraits]):
+        (isAssistableInputType):
+        * UIProcess/ios/WKDrawingView.h:
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView initWithEmbeddedViewID:webPageProxy:]):
+        (-[WKDrawingView PNGRepresentation]):
+        (-[WKDrawingView loadDrawingFromPNGRepresentation:]):
+        Adopt PencilKitSoftLink.
+
+        (-[WKDrawingView canvasView]):
+        Expose the internal canvas view for use by WKInkPickerControl.
+
+        * UIProcess/ios/WKInkPickerControl.h: Copied from Source/WebKit/Platform/spi/ios/PencilKitSPI.h.
+        * UIProcess/ios/WKInkPickerControl.mm: Added.
+        (-[WKInkPickerView initWithFrame:drawingView:]):
+        (-[WKInkPickerView didPickInk]):
+        (-[WKInkPickerView inlineInkPickerDidToggleRuler:]):
+        (-[WKInkPickerView inlineInkPicker:didSelectTool:]):
+        (-[WKInkPickerView inlineInkPicker:didSelectColor:]):
+        (-[WKInkPickerView inkPickerSize]):
+        (-[WKInkPickerView layoutSubviews]):
+        (-[WKInkPickerView sizeThatFits:]):
+        (-[WKInkPickerView viewControllerForPopoverPresentationFromInlineInkPicker:]):
+        (-[WKInkPickerControl initWithDrawingView:]):
+        (-[WKInkPickerControl beginEditing]):
+        (-[WKInkPickerControl endEditing]):
+        (-[WKInkPickerControl assistantView]):
+        Install and hook up a PKInlineInkPicker.
+        Center it in the keyboard.
+        Plumb changes through to the canvas view.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-11-29  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add logging for some sandbox entries.

@@ -29,6 +29,7 @@
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/Color.h>
+#include <WebCore/GraphicsLayer.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/URL.h>
@@ -55,6 +56,7 @@ enum class InputType {
     Week,
     Time,
     Select,
+    Drawing,
 #if ENABLE(INPUT_TYPE_COLOR)
     Color
 #endif
@@ -126,6 +128,7 @@ struct AssistedNodeInformation {
     String placeholder;
     String label;
     String ariaLabel;
+    WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID;
 #if ENABLE(DATALIST_ELEMENT)
     bool hasSuggestions { false };
 #if ENABLE(INPUT_TYPE_COLOR)

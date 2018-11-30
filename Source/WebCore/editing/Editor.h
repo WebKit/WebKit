@@ -532,7 +532,7 @@ public:
 #endif
 #endif
 
-    WEBCORE_EXPORT void insertEditableImage();
+    WEBCORE_EXPORT RefPtr<HTMLImageElement> insertEditableImage();
 
 private:
     Document& document() const;

@@ -25,19 +25,13 @@
 
 #if HAVE(PENCILKIT)
 
-#import "RemoteLayerTreeHost.h"
-#import "RemoteLayerTreeViews.h"
+#import "WKFormPeripheral.h"
 
-OBJC_CLASS PKCanvasView;
+OBJC_CLASS WKDrawingView;
 
-@interface WKDrawingView : WKEmbeddedView <WKNativelyInteractible>
+@interface WKInkPickerControl : NSObject <WKFormPeripheral>
 
-- (instancetype)initWithEmbeddedViewID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID webPageProxy:(WebKit::WebPageProxy&)webPageProxy;
-
-- (NSData *)PNGRepresentation;
-- (void)loadDrawingFromPNGRepresentation:(NSData *)PNGData;
-
-@property (nonatomic, readonly) PKCanvasView *canvasView;
+- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView;
 
 @end
 

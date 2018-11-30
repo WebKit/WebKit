@@ -28,19 +28,64 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <PencilKit/PencilKit.h>
+#import <PencilKit/PKCanvasView_Private.h>
 #import <PencilKit/PKDrawing_Private.h>
+#import <PencilKit/PKInlineInkPicker.h>
+#import <PencilKit/PKInlineInkPicker_Private.h>
 
 #else
+
+#import <UIKit/UIKit.h>
+
+@class PKCanvasView;
+@class PKDrawing;
+@class PKInk;
+@class PKInlineInkPicker;
+
+typedef NSString * PKInkIdentifier;
+
+@protocol PKCanvasViewDelegate
+@optional
+- (void)drawingDidChange:(PKCanvasView *)canvasView;
+@end
+
+@protocol PKInlineInkPickerDelegate <NSObject>
+@optional
+- (void)inlineInkPicker:(PKInlineInkPicker *)inlineInkPicker didSelectTool:(PKInkIdentifier)identifer;
+- (void)inlineInkPickerDidToggleRuler:(PKInlineInkPicker *)inlineInkPicker;
+- (void)inlineInkPicker:(PKInlineInkPicker *)inlineInkPicker didSelectColor:(UIColor *)color;
+- (UIViewController *)viewControllerForPopoverPresentationFromInlineInkPicker:(PKInlineInkPicker *)inlineInkPicker;
+@end
 
 @interface PKCanvasView : UIView
 
 @property (nonatomic, getter=isFingerDrawingEnabled) BOOL fingerDrawingEnabled;
+@property (nonatomic) BOOL rulerEnabled;
+@property (nonatomic, copy) PKDrawing *drawing;
+@property (nonatomic, strong) PKInk *ink;
+@property (nonatomic, weak) NSObject<PKCanvasViewDelegate> *drawingDelegate;
+
+@end
+
+@interface PKInlineInkPicker : UIControl
+
+@property (nonatomic, copy) PKInk *selectedInk;
+- (void)setSelectedInk:(PKInk *)selectedInk animated:(BOOL)animated;
+@property (nonatomic, weak) id<PKInlineInkPickerDelegate> delegate;
 
 @end
 
 @interface PKDrawing : NSObject
 
+- (instancetype)initWithData:(NSData *)data error:(NSError **)error;
 - (NSData *)serialize;
+
+@end
+
+@interface PKImageRenderer : NSObject
+
+- (instancetype)initWithSize:(CGSize)size scale:(CGFloat)scale renderQueue:(dispatch_queue_t)renderQueue;
+- (void)renderDrawing:(PKDrawing *)drawing completion:(void(^)(UIImage *image))completionBlock;
 
 @end
 

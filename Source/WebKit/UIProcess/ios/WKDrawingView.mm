@@ -29,14 +29,9 @@
 #if HAVE(PENCILKIT)
 
 #import "EditableImageController.h"
-#import "PencilKitSPI.h"
+#import "PencilKitSoftLink.h"
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(PencilKit);
-SOFT_LINK_CLASS(PencilKit, PKCanvasView);
-SOFT_LINK_CLASS(PencilKit, PKDrawing);
-SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
 
 @interface WKDrawingView () <PKCanvasViewDelegate>
 @end
@@ -58,7 +53,7 @@ SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
 
     _webPageProxy = makeWeakPtr(webPageProxy);
 
-    _pencilView = adoptNS([allocPKCanvasViewInstance() initWithFrame:CGRectZero]);
+    _pencilView = adoptNS([WebKit::allocPKCanvasViewInstance() initWithFrame:CGRectZero]);
 
     [_pencilView setFingerDrawingEnabled:NO];
     [_pencilView setUserInteractionEnabled:YES];
@@ -92,7 +87,7 @@ SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
         _renderQueue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKDrawingView.Rendering", DISPATCH_QUEUE_SERIAL));
 
     if (!_renderer)
-        _renderer = adoptNS([allocPKImageRendererInstance() initWithSize:self.bounds.size scale:self.window.screen.scale renderQueue:_renderQueue.get()]);
+        _renderer = adoptNS([WebKit::allocPKImageRendererInstance() initWithSize:self.bounds.size scale:self.window.screen.scale renderQueue:_renderQueue.get()]);
 
     auto* drawing = [_pencilView drawing];
 
@@ -145,7 +140,7 @@ SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
     if (!base64Drawing)
         return;
     RetainPtr<NSData> drawingData = adoptNS([[NSData alloc] initWithBase64EncodedString:base64Drawing options:0]);
-    RetainPtr<PKDrawing> drawing = adoptNS([allocPKDrawingInstance() initWithData:drawingData.get() error:nil]);
+    RetainPtr<PKDrawing> drawing = adoptNS([WebKit::allocPKDrawingInstance() initWithData:drawingData.get() error:nil]);
     [_pencilView setDrawing:drawing.get()];
 }
 
@@ -161,6 +156,11 @@ SOFT_LINK_CLASS(PencilKit, PKImageRenderer);
     auto& page = *_webPageProxy;
 
     page.editableImageController().invalidateAttachmentForEditableImage(self.embeddedViewID);
+}
+
+- (PKCanvasView *)canvasView
+{
+    return _pencilView.get();
 }
 
 @end

@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "EditableImageController.h"
 #import "EditingRange.h"
 #import "InputViewUpdateDeferrer.h"
 #import "Logging.h"
@@ -46,6 +47,7 @@
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKImagePreviewViewController.h"
+#import "WKInkPickerControl.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
 #import "WKPreviewActionItemIdentifiers.h"
@@ -487,6 +489,9 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         break;
     case WebKit::InputType::Select:
         _type = WKInputTypeSelect;
+        break;
+    case WebKit::InputType::Drawing:
+        _type = WKInputTypeDrawing;
         break;
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
@@ -1352,12 +1357,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 #if ENABLE(INPUT_TYPE_COLOR)
     case InputType::Color:
 #endif
-        return !currentUserInterfaceIdiomIsPad();
     case InputType::Date:
     case InputType::Month:
     case InputType::DateTimeLocal:
     case InputType::Time:
         return !currentUserInterfaceIdiomIsPad();
+    case InputType::Drawing:
+        return YES;
     default:
         return !_assistedNodeInformation.isReadOnly;
     }
@@ -1406,6 +1412,14 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         case InputType::Color:
             _inputPeripheral = adoptNS([[WKFormColorControl alloc] initWithView:self]);
             break;
+#endif
+        case InputType::Drawing:
+#if HAVE(PENCILKIT)
+            _inputPeripheral = adoptNS([[WKInkPickerControl alloc] initWithDrawingView:_page->editableImageController().editableImage(_assistedNodeInformation.embeddedViewID)->drawingView.get()]);
+            break;
+#else
+            ASSERT_NOT_REACHED();
+            return [[UIView new] autorelease];
 #endif
         default:
             _inputPeripheral = adoptNS([[WKFormInputControl alloc] initWithView:self]);
@@ -2189,6 +2203,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Color:
 #endif
         return !currentUserInterfaceIdiomIsPad();
+    case InputType::Drawing:
+        return YES;
     }
 }
 
@@ -3769,6 +3785,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         case InputType::Week:
         case InputType::Time:
         case InputType::Select:
+        case InputType::Drawing:
 #if ENABLE(INPUT_TYPE_COLOR)
         case InputType::Color:
 #endif
@@ -4297,6 +4314,7 @@ static bool isAssistableInputType(InputType type)
     case InputType::Week:
     case InputType::Time:
     case InputType::Select:
+    case InputType::Drawing:
 #if ENABLE(INPUT_TYPE_COLOR)
     case InputType::Color:
 #endif

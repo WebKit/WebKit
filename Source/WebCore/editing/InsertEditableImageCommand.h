@@ -36,11 +36,15 @@ public:
         return adoptRef(*new InsertEditableImageCommand(document));
     }
 
+    static RefPtr<HTMLImageElement> insertEditableImage(Document&);
+
 private:
     InsertEditableImageCommand(Document&);
 
     void doApply() override;
     EditAction editingAction() const final { return EditAction::InsertEditableImage; }
+
+    RefPtr<HTMLImageElement> m_imageElement;
 };
 
 } // namespace WebCore
