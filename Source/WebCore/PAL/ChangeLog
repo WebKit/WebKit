@@ -1,3 +1,13 @@
+2018-12-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Modernize version check for _suppressedAutoAddedHTTPHeaders
+        https://bugs.webkit.org/show_bug.cgi?id=192175
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cf/CFNetworkSPI.h: Curiously, it was forward declared twice, for no
+        apparent reason.
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO

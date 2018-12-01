@@ -59,13 +59,6 @@ WTF_EXTERN_C_END
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 #import <CFNetwork/CFNSURLConnection.h>
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101302
-@interface NSURLSessionConfiguration ()
-@property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
-@end
-#endif
-
 #endif
 
 #else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
@@ -186,7 +179,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if PLATFORM(IOS_FAMILY)
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+#if HAVE(CFNETWORK_WITH_AUTO_ADDED_HTTP_HEADER_SUPPRESSION_SUPPORT)
 @property (nullable, copy) NSSet *_suppressedAutoAddedHTTPHeaders;
 #endif
 #if PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 60000
