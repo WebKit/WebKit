@@ -1,3 +1,14 @@
+2018-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Heap.h refers to the non-existent HeapStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=187882
+
+        Reviewed by Keith Miller.
+        
+        Just remove the "friend class HeapStatistics".
+
+        * heap/Heap.h:
+
 2018-11-29  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Keep TypeMaybeBigInt small

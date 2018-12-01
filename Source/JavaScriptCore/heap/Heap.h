@@ -404,7 +404,6 @@ private:
     friend class StochasticSpaceTimeMutatorScheduler;
     friend class SweepingScope;
     friend class IncrementalSweeper;
-    friend class HeapStatistics;
     friend class VM;
     friend class WeakSet;
 
