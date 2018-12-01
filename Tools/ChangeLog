@@ -1,5 +1,20 @@
 2018-11-30  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Support unicode in MeteredStream
+        https://bugs.webkit.org/show_bug.cgi?id=192260
+
+        Reviewed by Stephanie Lewis.
+
+        It's possible that the test runner returns unicode characters to be logged when
+        running layout tests.
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.write): Message written to metered stream should be unicode.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest.test_unicode):
+
+2018-11-30  Jonathan Bedard  <jbedard@apple.com>
+
         REGRESSION (r238749): run-api-tests dies with AttributeError: 'IOSSimulatorPort' object has no attribute 'DEFAULT_DEVICE_CLASS'
         https://bugs.webkit.org/show_bug.cgi?id=192257
         <rdar://problem/46384671>
