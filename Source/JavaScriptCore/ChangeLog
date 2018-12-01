@@ -1,3 +1,20 @@
+2018-11-29  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Keep TypeMaybeBigInt small
+        https://bugs.webkit.org/show_bug.cgi?id=192203
+
+        Reviewed by Saam Barati.
+
+        As BigInt is being implemented, more and more bytecodes start returning BigInt.
+        It means that ResultType of these bytecodes include TypeMaybeBigInt. However,
+        TypeMaybeBigInt was large number 0x20, leading to wide instruction since ResultType
+        easily becomes larger than 32 (e.g. TypeInt32 | TypeMaybeBigInt == 33).
+
+        This patch sorts the numbers of TypeMaybeXXX based on the frequency of appearance in
+        the code.
+
+        * parser/ResultType.h:
+
 2018-11-30  Dean Jackson  <dino@apple.com>
 
         Try to fix Windows build by using strcmp instead of strcasecmp.
