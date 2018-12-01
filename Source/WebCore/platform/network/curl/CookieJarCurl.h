@@ -26,13 +26,13 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class NetworkStorageSession;
-class URL;
 enum class IncludeSecureCookies : bool;
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
