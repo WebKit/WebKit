@@ -1,3 +1,33 @@
+2018-12-01  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Move URL tests from TestWebKitAPI to TestWTF
+        https://bugs.webkit.org/show_bug.cgi?id=192275
+
+        Reviewed by Keith Miller.
+
+        Since URL is moved from WebCore to WTF, we also move tests for them from TestWebKitAPI (TestWebCore) to TestWTF.
+        But we still have some tests in TestWebCore since only WebCore implements TextEncoding. That part is now decoupled
+        from URLParser tests and new URLParserTextEncoding.cpp is created.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/URL.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/URL.cpp.
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WTF/URLParser.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/URLParser.cpp.
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WTF/cocoa/URLExtras.mm: Renamed from Tools/TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/URLParserTextEncoding.cpp: Added.
+        (TestWebKitAPI::ExpectedParts::isInvalid const):
+        (TestWebKitAPI::eq):
+        (TestWebKitAPI::insertTabAtLocation):
+        (TestWebKitAPI::invalidParts):
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::TEST_F):
+
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed LFC passing test list update.

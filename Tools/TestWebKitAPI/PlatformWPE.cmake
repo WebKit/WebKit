@@ -58,15 +58,15 @@ add_executable(TestWebCore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/MIMETypeRegistry.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileMonitor.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/FileSystem.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParserTextEncoding.cpp
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})

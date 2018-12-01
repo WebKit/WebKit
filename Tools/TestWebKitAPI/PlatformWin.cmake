@@ -58,8 +58,7 @@ set(TestWebCoreLib_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/TransformationMatrix.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParserTextEncoding.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/DIBPixelData.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/win/LinkedFonts.cpp
 )

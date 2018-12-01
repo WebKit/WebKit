@@ -63,7 +63,7 @@ static NSURL *literalURL(const char* literal)
     return WTF::URLWithData(literalAsData(literal), nil);
 }
 
-TEST(WebCore, URLExtras)
+TEST(WTF_URLExtras, URLExtras)
 {
     EXPECT_STREQ("http://site.com", originalDataAsString(literalURL("http://site.com")));
     EXPECT_STREQ("http://%77ebsite.com", originalDataAsString(literalURL("http://%77ebsite.com")));
@@ -72,7 +72,7 @@ TEST(WebCore, URLExtras)
     EXPECT_STREQ("http://%77ebsite.com", userVisibleString(literalURL("http://%77ebsite.com")));
 }
     
-TEST(WebCore, URLExtras_Spoof)
+TEST(WTF_URLExtras, URLExtras_Spoof)
 {
     Vector<String> punycodedSpoofHosts = {
         "xn--cfa45g", // U+0131, U+0307
@@ -108,7 +108,7 @@ TEST(WebCore, URLExtras_Spoof)
     }
 }
 
-TEST(WebCore, URLExtras_NotSpoofed)
+TEST(WTF_URLExtras, URLExtras_NotSpoofed)
 {
     // Valid mixtures of Armenian and other scripts
     EXPECT_STREQ("https://en.wikipedia.org/wiki/.\u0570\u0561\u0575", userVisibleString(literalURL("https://en.wikipedia.org/wiki/.\u0570\u0561\u0575")));
@@ -122,7 +122,7 @@ TEST(WebCore, URLExtras_NotSpoofed)
     EXPECT_STREQ("https://\u0551\u0535and!$^&*()-~+={}or<>,.?\u0575\u0543.biz", userVisibleString(literalURL("https://\u0551\u0535and!$^&*()-~+={}or<>,.?\u0575\u0543.biz")));
 }
 
-TEST(WebCore, URLExtras_DivisionSign)
+TEST(WTF_URLExtras, URLExtras_DivisionSign)
 {
     // Selected the division sign as an example of a non-ASCII character that is allowed in host names, since it's a lookalike character.
 
@@ -160,7 +160,7 @@ TEST(WTF, URLExtras_Solidus)
     EXPECT_STREQ("site.com/othersite.org", [WTF::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
 }
 
-TEST(WebCore, URLExtras_Space)
+TEST(WTF_URLExtras, URLExtras_Space)
 {
     // Selected ideographic space, which looks like the ASCII space, which is not allowed unescaped.
 
@@ -179,12 +179,12 @@ TEST(WebCore, URLExtras_Space)
     EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WTF::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
 }
 
-TEST(WebCore, URLExtras_File)
+TEST(WTF_URLExtras, URLExtras_File)
 {
     EXPECT_STREQ("file:///%E2%98%83", [[WTF::URLWithUserTypedString(@"file:///☃", nil) absoluteString] UTF8String]);
 }
 
-TEST(WebCore, URLExtras_ParsingError)
+TEST(WTF_URLExtras, URLExtras_ParsingError)
 {
     // Expect IDN failure.
     NSURL *url = WTF::URLWithUserTypedString(@"http://.com", nil);
@@ -194,7 +194,7 @@ TEST(WebCore, URLExtras_ParsingError)
     EXPECT_TRUE(encodedHostName == nil);
 }
 
-TEST(WebCore, URLExtras_Nil)
+TEST(WTF_URLExtras, URLExtras_Nil)
 {
     NSURL *url1 = WTF::URLWithUserTypedString(nil, nil);
     EXPECT_TRUE(url1 == nil);

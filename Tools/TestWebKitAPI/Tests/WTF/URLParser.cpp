@@ -25,18 +25,16 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
-#include <WebCore/TextEncoding.h>
 #include <wtf/MainThread.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
-
 namespace TestWebKitAPI {
 
-class URLParserTest : public testing::Test {
+class WTF_URLParser : public testing::Test {
 public:
-    void SetUp() final {
+    void SetUp() final
+    {
         WTF::initializeMainThread();
     }
 };
@@ -211,55 +209,7 @@ static void shouldFail(const String& urlString, const String& baseString)
     checkRelativeURL(urlString, baseString, {"", "", "", "", 0, "", "", "", urlString});
 }
 
-static void checkURL(const String& urlString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
-{
-    auto url = URL({ }, urlString, encoding);
-    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
-    EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
-    EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
-    EXPECT_TRUE(eq(parts.path, url.path()));
-    EXPECT_TRUE(eq(parts.query, url.query()));
-    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url.string()));
-    
-    if (testTabs == TestTabs::No)
-        return;
-    
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkURL(urlStringWithTab, encoding,
-            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
-            TestTabs::No);
-    }
-}
-
-static void checkURL(const String& urlString, const String& baseURLString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
-{
-    auto url = URL(URL({ }, baseURLString), urlString, encoding);
-    EXPECT_TRUE(eq(parts.protocol, url.protocol()));
-    EXPECT_TRUE(eq(parts.user, url.user()));
-    EXPECT_TRUE(eq(parts.password, url.pass()));
-    EXPECT_TRUE(eq(parts.host, url.host()));
-    EXPECT_EQ(parts.port, url.port().value_or(0));
-    EXPECT_TRUE(eq(parts.path, url.path()));
-    EXPECT_TRUE(eq(parts.query, url.query()));
-    EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
-    EXPECT_TRUE(eq(parts.string, url.string()));
-    
-    if (testTabs == TestTabs::No)
-        return;
-    
-    for (size_t i = 0; i < urlString.length(); ++i) {
-        String urlStringWithTab = insertTabAtLocation(urlString, i);
-        checkURL(urlStringWithTab, baseURLString, encoding,
-            parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
-            TestTabs::No);
-    }
-}
-
-TEST_F(URLParserTest, Basic)
+TEST_F(WTF_URLParser, Basic)
 {
     checkURL("http://user:pass@webkit.org:123/path?query#fragment", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "fragment", "http://user:pass@webkit.org:123/path?query#fragment"});
     checkURL("http://user:pass@webkit.org:123/path?query", {"http", "user", "pass", "webkit.org", 123, "/path", "query", "", "http://user:pass@webkit.org:123/path?query"});
@@ -514,7 +464,7 @@ static void testUserPass(const String& value, const String& encoded)
     testUserPass(value, value, encoded);
 }
 
-TEST_F(URLParserTest, Credentials)
+TEST_F(WTF_URLParser, Credentials)
 {
     auto validSurrogate = utf16String<3>({0xD800, 0xDD55, '\0'});
     auto invalidSurrogate = utf16String<3>({0xD800, 'A', '\0'});
@@ -536,7 +486,7 @@ TEST_F(URLParserTest, Credentials)
     testUserPass(invalidSurrogate, replacementA, "%EF%BF%BDA");
 }
 
-TEST_F(URLParserTest, ParseRelative)
+TEST_F(WTF_URLParser, ParseRelative)
 {
     checkRelativeURL("/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "webkit.org", 0, "/index.html", "", "", "http://webkit.org/index.html"});
     checkRelativeURL("http://whatwg.org/index.html", "http://webkit.org/path1/path2/", {"http", "", "", "whatwg.org", 0, "/index.html", "", "", "http://whatwg.org/index.html"});
@@ -639,7 +589,7 @@ TEST_F(URLParserTest, ParseRelative)
 }
 
 // These are differences between the new URLParser and the old URL::parse which make URLParser more standards compliant.
-TEST_F(URLParserTest, ParserDifferences)
+TEST_F(WTF_URLParser, ParserDifferences)
 {
     checkURLDifferences("http://127.0.1",
         {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
@@ -1126,7 +1076,7 @@ TEST_F(URLParserTest, ParserDifferences)
         {"http", "", "", "xn--5mkc", 0, "/", "", "", "http://xn--5mkc/"});
 }
 
-TEST_F(URLParserTest, DefaultPort)
+TEST_F(WTF_URLParser, DefaultPort)
 {
     checkURL("FtP://host:21/", {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"});
     checkURL("ftp://host:21/", {"ftp", "", "", "host", 0, "/", "", "", "ftp://host/"});
@@ -1219,7 +1169,7 @@ TEST_F(URLParserTest, DefaultPort)
     checkURL("http://example.com:0000000000000080", {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
 }
 
-TEST_F(URLParserTest, ParserFailures)
+TEST_F(WTF_URLParser, ParserFailures)
 {
     shouldFail("    ");
     shouldFail("  \a  ");
@@ -1278,7 +1228,7 @@ TEST_F(URLParserTest, ParserFailures)
 }
 
 // These are in the spec but not in the web platform tests.
-TEST_F(URLParserTest, AdditionalTests)
+TEST_F(WTF_URLParser, AdditionalTests)
 {
     checkURL("about:\a\aabc", {"about", "", "", "", 0, "%07%07abc", "", "", "about:%07%07abc"});
     checkURL("notspecial:\t\t\n\t", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
@@ -1316,42 +1266,6 @@ TEST_F(URLParserTest, AdditionalTests)
         {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
     
     // FIXME: Write more invalid surrogate pair tests based on feedback from https://bugs.webkit.org/show_bug.cgi?id=162105
-}
-
-TEST_F(URLParserTest, QueryEncoding)
-{
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), nullptr, {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D")}, testTabsValueForSurrogatePairs);
-
-    TextEncoding latin1(String("latin1"));
-    checkURL("http://host/?query with%20spaces", &latin1, {"http", "", "", "host", 0, "/", "query%20with%20spaces", "", "http://host/?query%20with%20spaces"});
-    checkURL("http://host/?query", &latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
-    checkURL("http://host/?\tquery", &latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
-    checkURL("http://host/?q\tuery", &latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
-    checkURL("http://host/?query with SpAcEs#fragment", &latin1, {"http", "", "", "host", 0, "/", "query%20with%20SpAcEs", "fragment", "http://host/?query%20with%20SpAcEs#fragment"});
-    checkURL("http://host/?que\rry\t\r\n#fragment", &latin1, {"http", "", "", "host", 0, "/", "query", "fragment", "http://host/?query#fragment"});
-
-    TextEncoding unrecognized(String("unrecognized invalid encoding name"));
-    checkURL("http://host/?query", &unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
-    checkURL("http://host/?", &unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
-
-    TextEncoding iso88591(String("ISO-8859-1"));
-    String withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
-    checkURL(makeString("ws://host/path?", withUmlauts), &iso88591, {"ws", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "ws://host/path?%C3%9C%D0%B0%D1%91"});
-    checkURL(makeString("wss://host/path?", withUmlauts), &iso88591, {"wss", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "wss://host/path?%C3%9C%D0%B0%D1%91"});
-    checkURL(makeString("asdf://host/path?", withUmlauts), &iso88591, {"asdf", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "asdf://host/path?%C3%9C%D0%B0%D1%91"});
-    checkURL(makeString("https://host/path?", withUmlauts), &iso88591, {"https", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "https://host/path?%DC%26%231072%3B%26%231105%3B"});
-    checkURL(makeString("gopher://host/path?", withUmlauts), &iso88591, {"gopher", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "gopher://host/path?%DC%26%231072%3B%26%231105%3B"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "ws://example.com/", &iso88591, {"ws", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "ws://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "wss://example.com/", &iso88591, {"wss", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "wss://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "asdf://example.com/", &iso88591, {"asdf", "", "", "example.com", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "asdf://example.com/path?%C3%9C%D0%B0%D1%91#fragment"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "https://example.com/", &iso88591, {"https", "", "", "example.com", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "https://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"});
-    checkURL(makeString("/path?", withUmlauts, "#fragment"), "gopher://example.com/", &iso88591, {"gopher", "", "", "example.com", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "gopher://example.com/path?%DC%26%231072%3B%26%231105%3B#fragment"});
-    checkURL(makeString("gopher://host/path?", withUmlauts, "#fragment"), "asdf://example.com/?doesntmatter", &iso88591, {"gopher", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "fragment", "gopher://host/path?%DC%26%231072%3B%26%231105%3B#fragment"});
-    checkURL(makeString("asdf://host/path?", withUmlauts, "#fragment"), "http://example.com/?doesntmatter", &iso88591, {"asdf", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "fragment", "asdf://host/path?%C3%9C%D0%B0%D1%91#fragment"});
-
-    checkURL("http://host/pa'th?qu'ery#fr'agment", nullptr, {"http", "", "", "host", 0, "/pa'th", "qu%27ery", "fr'agment", "http://host/pa'th?qu%27ery#fr'agment"});
-    checkURL("asdf://host/pa'th?qu'ery#fr'agment", nullptr, {"asdf", "", "", "host", 0, "/pa'th", "qu'ery", "fr'agment", "asdf://host/pa'th?qu'ery#fr'agment"});
-    // FIXME: Add more tests with other encodings and things like non-ascii characters, emoji and unmatched surrogate pairs.
 }
 
 } // namespace TestWebKitAPI

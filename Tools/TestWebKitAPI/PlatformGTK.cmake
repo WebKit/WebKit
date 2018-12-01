@@ -87,6 +87,7 @@ add_executable(TestWebCore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/glib/UtilitiesGLib.cpp
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/AbortableTaskQueue.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/CSSParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/ComplexTextController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/DNS.cpp
@@ -97,14 +98,12 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/LayoutUnit.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/MIMETypeRegistry.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SampleMap.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SecurityOrigin.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParserTextEncoding.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/UserAgentQuirks.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SampleMap.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebCore/AbortableTaskQueue.cpp
 )
 
 target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})

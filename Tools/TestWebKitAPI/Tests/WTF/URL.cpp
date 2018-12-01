@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-class URLTest : public testing::Test {
+class WTF_URL : public testing::Test {
 public:
     virtual void SetUp()
     {
@@ -39,7 +39,7 @@ public:
     }
 };
 
-TEST_F(URLTest, URLConstructorDefault)
+TEST_F(WTF_URL, URLConstructorDefault)
 {
     URL kurl;
 
@@ -48,7 +48,7 @@ TEST_F(URLTest, URLConstructorDefault)
     EXPECT_FALSE(kurl.isValid());
 }
 
-TEST_F(URLTest, URLConstructorConstChar)
+TEST_F(WTF_URL, URLConstructorConstChar)
 {
     URL kurl({ }, "http://username:password@www.example.com:8080/index.html?var=val#fragment");
 
@@ -74,7 +74,7 @@ static URL createURL(const char* urlAsString)
     return URL({ }, urlAsString);
 };
 
-TEST_F(URLTest, URLProtocolHostAndPort)
+TEST_F(WTF_URL, URLProtocolHostAndPort)
 {
     auto url = createURL("http://username:password@www.example.com:8080/index.html?var=val#fragment");
     EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
@@ -116,7 +116,7 @@ TEST_F(URLTest, URLProtocolHostAndPort)
     EXPECT_EQ(String("asdf://"), url.protocolHostAndPort());
 }
 
-TEST_F(URLTest, URLDataURIStringSharing)
+TEST_F(WTF_URL, URLDataURIStringSharing)
 {
     URL baseURL({ }, "http://www.webkit.org/");
     String threeApples = "data:text/plain;charset=utf-8;base64,76O/76O/76O/";
@@ -125,7 +125,7 @@ TEST_F(URLTest, URLDataURIStringSharing)
     EXPECT_EQ(threeApples.impl(), url.string().impl());
 }
 
-TEST_F(URLTest, URLSetQuery)
+TEST_F(WTF_URL, URLSetQuery)
 {
     URL url = createURL("http://www.webkit.org/?test");
     URL url1 = createURL("http://www.webkit.org/");
@@ -157,7 +157,7 @@ TEST_F(URLTest, URLSetQuery)
     EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier3.string());
 }
 
-TEST_F(URLTest, URLSetFragmentIdentifier)
+TEST_F(WTF_URL, URLSetFragmentIdentifier)
 {
     URL url = createURL("http://www.webkit.org/#newFragment%C3%83%C2%A5");
     URL url1 = createURL("http://www.webkit.org/");
@@ -186,7 +186,7 @@ TEST_F(URLTest, URLSetFragmentIdentifier)
     EXPECT_EQ(urlWithQuery.string(), urlWithQuery3.string());
 }
 
-TEST_F(URLTest, URLRemoveQueryAndFragmentIdentifier)
+TEST_F(WTF_URL, URLRemoveQueryAndFragmentIdentifier)
 {
     URL url = createURL("http://www.webkit.org/");
     URL url1 = createURL("http://www.webkit.org/?");
@@ -210,7 +210,7 @@ TEST_F(URLTest, URLRemoveQueryAndFragmentIdentifier)
     EXPECT_EQ(url.string(), url5.string());
 }
 
-TEST_F(URLTest, EqualIgnoringFragmentIdentifier)
+TEST_F(WTF_URL, EqualIgnoringFragmentIdentifier)
 {
     struct TestCase {
         const char* url1;
@@ -261,7 +261,7 @@ TEST_F(URLTest, EqualIgnoringFragmentIdentifier)
     }
 }
 
-TEST_F(URLTest, EqualIgnoringQueryAndFragment)
+TEST_F(WTF_URL, EqualIgnoringQueryAndFragment)
 {
     struct TestCase {
         const char* url1;
@@ -312,7 +312,7 @@ TEST_F(URLTest, EqualIgnoringQueryAndFragment)
     }
 }
 
-TEST_F(URLTest, ProtocolIsInHTTPFamily)
+TEST_F(WTF_URL, ProtocolIsInHTTPFamily)
 {
     EXPECT_FALSE(WTF::protocolIsInHTTPFamily({ }));
     EXPECT_FALSE(WTF::protocolIsInHTTPFamily(""));
@@ -330,7 +330,7 @@ TEST_F(URLTest, ProtocolIsInHTTPFamily)
     EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https://!@#$%^&*()"));
 }
 
-TEST_F(URLTest, HostIsIPAddress)
+TEST_F(WTF_URL, HostIsIPAddress)
 {
     EXPECT_FALSE(URL::hostIsIPAddress({ }));
     EXPECT_FALSE(URL::hostIsIPAddress(""));
@@ -370,7 +370,7 @@ TEST_F(URLTest, HostIsIPAddress)
     EXPECT_TRUE(URL::hostIsIPAddress("::123.45.67.89"));
 }
 
-TEST_F(URLTest, HostIsMatchingDomain)
+TEST_F(WTF_URL, HostIsMatchingDomain)
 {
     URL url = createURL("http://www.webkit.org");
 

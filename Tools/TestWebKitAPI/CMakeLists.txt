@@ -176,6 +176,8 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ThreadMessages.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Threading.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Time.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/URL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/UniqueArray.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/UniqueRef.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Variant.cpp
