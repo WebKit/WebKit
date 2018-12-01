@@ -99,13 +99,12 @@ module DSL
 
     def self.write_bytecodes(bytecode_list, bytecodes_filename)
         GeneratedFile::create(bytecodes_filename, bytecode_list) do |template|
-            template.prefix = "#pragma once"
+            template.prefix = "#pragma once\n"
             num_opcodes = @sections.map(&:opcodes).flatten.size
             template.body = <<-EOF
-                #{@sections.map { |s| s.header_helpers(num_opcodes) }.join("\n")}
-
-                #define FOR_EACH_BYTECODE_STRUCT(macro) \\
-                #{opcodes_for(:emit_in_structs_file).map { |op| "macro(#{op.capitalized_name}) \\" }.join("\n")}
+#{@sections.map { |s| s.header_helpers(num_opcodes) }.join("\n")}
+#define FOR_EACH_BYTECODE_STRUCT(macro) \\
+#{opcodes_for(:emit_in_structs_file).map { |op| "    macro(#{op.capitalized_name}) \\" }.join("\n")}
             EOF
         end
     end

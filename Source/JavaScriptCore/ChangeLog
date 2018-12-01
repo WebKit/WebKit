@@ -1,5 +1,17 @@
 2018-11-30  Mark Lam  <mark.lam@apple.com>
 
+        Fix the bytecode code generator scripts to pretty print Bytecodes.h.
+        https://bugs.webkit.org/show_bug.cgi?id=192258
+
+        Reviewed by Keith Miller.
+
+        This makes Bytecodes.h more human readable.
+
+        * generator/DSL.rb:
+        * generator/Section.rb:
+
+2018-11-30  Mark Lam  <mark.lam@apple.com>
+
         Add the generator directory to the Xcode project.
         https://bugs.webkit.org/show_bug.cgi?id=192252
 

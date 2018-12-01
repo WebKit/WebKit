@@ -61,7 +61,7 @@ class Section
       out = StringIO.new
       if config[:emit_in_h_file]
           out.write("#define FOR_EACH_#{config[:macro_name_component]}_ID(macro) \\\n")
-          opcodes.each { |opcode| out.write("macro(#{opcode.name}, #{opcode.length}) \\\n") }
+          opcodes.each { |opcode| out.write("    macro(#{opcode.name}, #{opcode.length}) \\\n") }
           out << "\n"
 
           out.write("#define NUMBER_OF_#{config[:macro_name_component]}_IDS #{opcodes.length}\n")
@@ -77,7 +77,7 @@ class Section
                   break
               end
 
-              out.write("macro(sizeof(#{opcodes[i].capitalized_name}::Metadata))\\\n")
+              out.write("    macro(sizeof(#{opcodes[i].capitalized_name}::Metadata))\\\n")
               i += 1
           end
           out << "\n"
@@ -90,14 +90,12 @@ class Section
                   break
               end
 
-              out.write("macro(alignof(#{opcodes[i].capitalized_name}::Metadata))\\\n")
+              out.write("    macro(alignof(#{opcodes[i].capitalized_name}::Metadata))\\\n")
               i += 1
           end
-          out << "\n"
       end
 
       if config[:emit_opcode_id_string_values_in_h_file]
-          out << "\n"
           opcodes.each { |opcode|
               out.write("#define #{opcode.name}_value_string \"#{opcode.id}\"\n")
           }
