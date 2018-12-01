@@ -858,7 +858,7 @@ function initializeStatusPage() {
         }
 
         container.appendChild(descriptionContainer);
-=
+
         function getMostSpecificProperty(categoryObject, specificationObject, attributeName)
         {
             // The url in the specification object is more specific, so use it if present.
