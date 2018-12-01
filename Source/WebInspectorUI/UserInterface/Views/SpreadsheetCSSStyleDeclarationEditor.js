@@ -290,15 +290,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return false;
         };
 
-        for (let cssProperty of this._style.properties) {
-            if (propertiesMatch(cssProperty)) {
-                let propertyView = cssProperty.__propertyView;
-                if (propertyView) {
-                    propertyView.highlight();
-
-                    if (cssProperty.editable)
-                        propertyView.valueTextField.startEditing();
-                }
+        for (let i = 0; i < this._propertyViews.length; ++i) {
+            if (propertiesMatch(this._propertyViews[i].property)) {
+                this.selectProperties(i, i);
                 return true;
             }
         }

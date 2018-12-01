@@ -43,11 +43,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._nameTextField = null;
         this._valueTextField = null;
 
-        if (!this._readOnly) {
-            // This is only needed to navigate from Computed to the corresponding property in the Styles panel.
-            this._property.__propertyView = this;
-        }
-
         this._selected = false;
         this._hasInvalidVariableValue = false;
 
@@ -99,8 +94,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     detached()
     {
-        this._property.__propertyView = null;
-
         if (this._nameTextField)
             this._nameTextField.detached();
 
@@ -114,11 +107,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._nameTextField.element.blur();
         else if (this._valueTextField && this._valueTextField.editing)
             this._valueTextField.element.blur();
-    }
-
-    highlight()
-    {
-        this._element.classList.add("highlighted");
     }
 
     remove(replacement = null)

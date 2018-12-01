@@ -145,14 +145,6 @@
     color: hsl(0, 0%, 50%) !important;
 }
 
-.spreadsheet-style-declaration-editor .property.highlighted {
-    animation: style-property-highlight 2s;
-}
-
-@keyframes style-property-highlight {
-    from { background-color: yellow; }
-}
-
 .spreadsheet-style-declaration-editor .property:not(.disabled) .token-link {
     color: var(--syntax-highlight-link-color);
 }

@@ -1,3 +1,21 @@
+2018-11-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Jumping from Computed to Styles should select property
+        https://bugs.webkit.org/show_bug.cgi?id=192198
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property.highlighted): Deleted.
+        (@keyframes style-property-highlight): Deleted.
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.highlightProperty):
+        Remove unnecessary `__propertyView` property.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.detached):
+        (WI.SpreadsheetStyleProperty.prototype.highlight): Deleted.
+
 2018-11-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION(r238599): Multiple Selection: selecting a breakpoint will change the selection to it's parent on the first click
