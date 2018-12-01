@@ -26,7 +26,6 @@ import os
 
 from webkitpy.api_tests.runner import Runner
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
@@ -129,7 +128,7 @@ class Manager(object):
 
     def _initialize_devices(self):
         if 'simulator' in self._port.port_name:
-            SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string(self._port.DEFAULT_DEVICE_CLASS), allow_incomplete_match=True), self.host, simulator_ui=False)
+            SimulatedDeviceManager.initialize_devices(DeviceRequest(self._port.DEFAULT_DEVICE_TYPE, allow_incomplete_match=True), self.host, simulator_ui=False)
         elif 'device' in self._port.port_name:
             raise RuntimeError('Running api tests on {} is not supported'.format(self._port.port_name))
 

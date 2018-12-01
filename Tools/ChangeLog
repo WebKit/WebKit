@@ -1,3 +1,16 @@
+2018-11-30  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r238749): run-api-tests dies with AttributeError: 'IOSSimulatorPort' object has no attribute 'DEFAULT_DEVICE_CLASS'
+        https://bugs.webkit.org/show_bug.cgi?id=192257
+        <rdar://problem/46384671>
+
+        Reviewed by Stephanie Lewis.
+
+        Follow-up fix for r238749.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager._initialize_devices): Use DEFAULT_DEVICE_TYPE instead of DEFAULT_DEVICE_CLASS.
+
 2018-11-30  Chris Dumez  <cdumez@apple.com>
 
         [PSON] We are sometimes swapping processes even though there is an opened window with an opener link to us
