@@ -2,6 +2,12 @@
 
         Fix Windows build.
 
+        * WebView.cpp:
+
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build.
+
         * WebCoreSupport/WebFrameLoaderClient.h:
 
 2018-11-30  Alex Christensen  <achristensen@webkit.org>

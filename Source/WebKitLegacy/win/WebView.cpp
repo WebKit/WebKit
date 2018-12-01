@@ -186,8 +186,8 @@
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
-#include <WebCore/CFURLExtras.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
+#include <wtf/cf/CFURLExtras.h>
 #elif USE(CURL)
 #include <WebCore/CurlCacheManager.h>
 #endif
