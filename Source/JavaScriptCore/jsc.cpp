@@ -2579,7 +2579,7 @@ static bool isMJSFile(char *filename)
     filename = strrchr(filename, '.');
 
     if (filename)
-        return !strcasecmp(filename, ".mjs");
+        return !strcmp(filename, ".mjs");
 
     return false;
 }

@@ -1,3 +1,10 @@
+2018-11-30  Dean Jackson  <dino@apple.com>
+
+        Try to fix Windows build by using strcmp instead of strcasecmp.
+
+        * jsc.cpp:
+        (isMJSFile):
+
 2018-11-30  Mark Lam  <mark.lam@apple.com>
 
         Fix the bytecode code generator scripts to pretty print Bytecodes.h.
