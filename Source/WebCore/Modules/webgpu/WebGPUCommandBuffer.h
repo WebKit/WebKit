@@ -27,13 +27,14 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUCommandBuffer.h"
+
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class GPUCommandBuffer;
 class WebGPURenderPassEncoder;
 
 struct WebGPURenderPassDescriptor;
@@ -43,6 +44,7 @@ public:
     static RefPtr<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
 
     const GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
+
     RefPtr<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
 
 private:

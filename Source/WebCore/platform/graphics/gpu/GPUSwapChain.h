@@ -30,7 +30,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS CALayer;
 OBJC_CLASS CAMetalLayer;
+OBJC_PROTOCOL(CAMetalDrawable);
 
 namespace WebCore {
 
@@ -39,7 +41,8 @@ class GPUTexture;
 
 enum class GPUTextureFormatEnum;
 
-using PlatformSwapLayer = CAMetalLayer;
+using PlatformDrawableSmartPtr = RetainPtr<CAMetalDrawable>;
+using PlatformLayer = CALayer;
 using PlatformSwapLayerSmartPtr = RetainPtr<CAMetalLayer>;
 
 class GPUSwapChain : public RefCounted<GPUSwapChain> {
@@ -52,12 +55,13 @@ public:
     RefPtr<GPUTexture> getNextTexture();
     void present();
 
-    PlatformSwapLayer* platformLayer() const { return m_platformSwapLayer.get(); }
+    PlatformLayer* platformLayer() const;
 
 private:
     GPUSwapChain(PlatformSwapLayerSmartPtr&&);
 
     PlatformSwapLayerSmartPtr m_platformSwapLayer;
+    PlatformDrawableSmartPtr m_currentDrawable;
 };
 
 } // namespace WebCore

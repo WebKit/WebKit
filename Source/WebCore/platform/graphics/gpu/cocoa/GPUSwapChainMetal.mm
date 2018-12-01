@@ -124,8 +124,12 @@ RefPtr<GPUTexture> GPUSwapChain::getNextTexture()
 {
     RetainPtr<MTLTexture> mtlTexture;
 
-    if (auto drawable = retainPtr([m_platformSwapLayer nextDrawable]))
-        mtlTexture = retainPtr([drawable texture]);
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    m_currentDrawable = retainPtr([m_platformSwapLayer nextDrawable]);
+    mtlTexture = retainPtr([m_currentDrawable texture]);
+
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlTexture) {
         LOG(WebGPU, "GPUSwapChain::getNextTexture(): Unable to get next MTLTexture!");
@@ -137,7 +141,13 @@ RefPtr<GPUTexture> GPUSwapChain::getNextTexture()
 
 void GPUSwapChain::present()
 {
-    // FIXME: Unimplemented stub.
+    [m_currentDrawable present];
+    m_currentDrawable = nullptr;
+}
+
+PlatformLayer* GPUSwapChain::platformLayer() const
+{
+    return m_platformSwapLayer.get();
 }
 
 } // namespace WebCore

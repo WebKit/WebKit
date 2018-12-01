@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPUCommandBuffer.h"
 #import "GPUDevice.h"
 #import "Logging.h"
 
@@ -69,9 +70,10 @@ GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
 {
 }
 
-void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&&)
+void GPUQueue::submit(Vector<Ref<const GPUCommandBuffer>>&& buffers)
 {
-    // FIXME: Missing implementation.
+    for (auto& buffer : buffers)
+        [buffer->platformCommandBuffer() commit];
 }
 
 String GPUQueue::label() const

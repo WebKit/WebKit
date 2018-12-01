@@ -1,3 +1,28 @@
+2018-11-30  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] WebGPUQueue::submit and WebGPURenderingContext::present() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=192254
+
+        Reviewed by Dean Jackson.
+
+        Final plumbing to render onto an HTMLCanvasElement with WebGPU. Also added ref-test that draws 
+        a green square onto a canvas using WebGPU; reference uses 2D canvas.
+
+        Test: webgpu/simple-triangle-strip.html
+
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        * Modules/webgpu/WebGPUSwapChain.h: Needs to override platformLayer() for CanvasBasedRenderingContext.
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/graphics/gpu/GPUSwapChain.h:
+        (WebCore::GPUSwapChain::metalLayer const): Renamed from platformLayer. 
+        (WebCore::GPUSwapChain::platformLayer const): Deleted.
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::submit):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::getNextTexture): Returns the texture of the swap layer's next drawable. 
+        (WebCore::GPUSwapChain::present): Presents the last-returned drawable from getNextTexture, and frees it.
+        (WebCore::GPUSwapChain::platformLayer const):
+
 2018-11-30  Zalan Bujtas  <zalan@apple.com>
 
         Can’t use RalphLauren.com on iPad because hover menus don’t stay up

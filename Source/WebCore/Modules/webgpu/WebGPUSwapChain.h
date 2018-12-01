@@ -61,6 +61,7 @@ protected:
     }
 
     const char* activeDOMObjectName() const override { return "WebGPUSwapChain"; }
+    PlatformLayer* platformLayer() const final { return m_swapChain->platformLayer(); };
 
 private:
     // GPUBasedRenderingContext

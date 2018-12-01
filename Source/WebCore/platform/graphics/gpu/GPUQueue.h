@@ -30,6 +30,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_PROTOCOL(MTLCommandQueue);
 

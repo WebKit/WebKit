@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="simple-triangle-strip-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script>
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct Vertex
+{
+    float4 position [[position]];
+};
+
+vertex Vertex vertex_main(uint vid [[vertex_id]])
+{
+    Vertex v;
+    switch (vid) {
+    case 0:
+        v.position = float4(-1, 1, 0, 1);
+        break;
+    case 1:
+        v.position = float4(-1, -1, 0, 1);
+        break;
+    case 2:
+        v.position = float4(1, 1, 0, 1);
+        break;
+    default:
+        v.position = float4(1, -1, 0, 1);
+    }
+    return v;
+}
+
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return float4(0.0, 1.0, 0.0, 1.0);
+}
+`
+
+async function getBasicDevice() {
+    // FIXME: requestAdapter should take a WebGPUAdapterDescriptor.
+    const adapter = await window.webgpu.requestAdapter({});
+    const device = adapter.createDevice();
+    return device;
+}
+
+function createBasicContext(canvas, device) {
+    const context = canvas.getContext("webgpu");
+    // FIXME: Implement and specify a WebGPUTextureUsageEnum.
+    context.configure({ device: device, format:"B8G8R8A8Unorm", width: canvas.width, height: canvas.height });
+    return context;
+}
+
+function createBasicPipeline(shaderModule, device) {
+    vertexStageDescriptor = {
+        module: shaderModule, 
+        stage: WebGPUShaderStage.VERTEX, 
+        entryPoint: "vertex_main" 
+    };
+
+    fragmentStageDescriptor = {
+        module: shaderModule,
+        stage: WebGPUShaderStage.FRAGMENT,
+        entryPoint: "fragment_main"
+    };
+
+    pipelineDescriptor = {
+        stages: [vertexStageDescriptor, fragmentStageDescriptor],
+        primitiveTopology: "triangleStrip"
+    };
+
+    return device.createRenderPipeline(pipelineDescriptor);
+}
+
+function beginBasicRenderPass(context, commandBuffer) {
+    const basicAttachment = {
+        attachment: context.getNextTexture().createDefaultTextureView(),
+        clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }
+    }
+
+    // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
+    return commandBuffer.beginRenderPass({ colorAttachments : [basicAttachment] });
+}
+
+function encodeBasicCommands(renderPassEncoder, renderPipeline) {
+    renderPassEncoder.setPipeline(renderPipeline);
+    renderPassEncoder.draw(4, 1, 0, 0);
+    return renderPassEncoder.endPass();
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    const pipeline = createBasicPipeline(shaderModule, device);
+    const commandBuffer = device.createCommandBuffer();
+    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline);
+    const queue = device.getQueue();
+
+    queue.submit([endCommandBuffer]);
+    context.present();
+}
+
+test();
+</script>

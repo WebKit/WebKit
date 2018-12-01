@@ -140,7 +140,7 @@ function render() {
     // FIXME: Default a loadOp, and storeOp in the implementation for now.
     const colorAttachmentDescriptor = {
         attachment : textureView,
-        clearColor : { r:0.35, g:0.65, b:0.85, a:1.0 }
+        clearColor : { r: 0.35, g: 0.65, b: 0.85, a: 1.0 }
     }
 
     let renderPassDescriptor = {
@@ -163,5 +163,12 @@ function render() {
         return;
     }
 
-    // FIXME: Rest of rendering commands to follow.
+    const queue = defaultDevice.getQueue();
+    if (!queue) {
+        testFailed("Unable to create default WebGPUQueue!");
+        return;
+    }
+    queue.submit([commandBufferEnd]);
+
+    context.present();
 }
