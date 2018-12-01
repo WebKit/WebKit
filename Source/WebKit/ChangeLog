@@ -1,3 +1,13 @@
+2018-11-30  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add more logging of sandbox call entries.
+        https://bugs.webkit.org/show_bug.cgi?id=192261
+        rdar://problem/45772445
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Editable images should always return some data, even if the canvas doesn't have a size yet
