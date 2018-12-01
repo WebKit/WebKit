@@ -1,3 +1,9 @@
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed LFC passing test list update.
+
+        * LayoutReloaded/misc/LFC-passing-tests.txt:
+
 2018-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Move URL from WebCore to WTF
