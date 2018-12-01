@@ -50,12 +50,12 @@ public:
     static const UIDNA& internationalDomainNameTranscoder();
     static bool isInUserInfoEncodeSet(UChar);
 
+    static std::optional<uint16_t> defaultPortForProtocol(StringView);
+
 private:
     URLParser(const String&, const URL& = { }, const URLTextEncoding* = nullptr);
     URL result() { return m_url; }
 
-    static std::optional<uint16_t> defaultPortForProtocol(StringView);
-    friend std::optional<uint16_t> defaultPortForProtocol(StringView);
     friend class URL;
 
     URL m_url;
