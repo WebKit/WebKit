@@ -1,3 +1,14 @@
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        Can’t use RalphLauren.com on iPad because hover menus don’t stay up
+        https://bugs.webkit.org/show_bug.cgi?id=192236
+        <rdar://problem/45792118>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/events/touch/ios/hover-when-style-change-is-async-expected.txt: Added.
+        * fast/events/touch/ios/hover-when-style-change-is-async.html: Added.
+
 2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         ShadowRoot should have styleSheets property

@@ -1,3 +1,35 @@
+2018-11-30  Zalan Bujtas  <zalan@apple.com>
+
+        Can’t use RalphLauren.com on iPad because hover menus don’t stay up
+        https://bugs.webkit.org/show_bug.cgi?id=192236
+        <rdar://problem/45792118>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch introduces asynchronous content change observation.
+        1. Start observing synchronous content change and timer install as the result of dispatching mouseMoved event.
+        2. Start observing synchronous content change and style recalc schedule as the result of a timer callback (installed at #1).
+        3. Start observing synchronous content change as the result of a style recalc (scheduled at #2).
+
+        This patch also extends the timeout value from 100ms to 250ms. Certain content prefer longer timeouts (see http://briancherne.github.io/jquery-hoverIntent/ for details).  
+
+        Test: fast/events/touch/ios/hover-when-style-change-is-async.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateStyleIfNeeded):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * platform/ios/wak/WKContentObservation.cpp:
+        (WKStartObservingStyleRecalcScheduling):
+        (WKStopObservingStyleRecalcScheduling):
+        (WKIsObservingStyleRecalcScheduling):
+        (WKSetShouldObserveNextStyleRecalc):
+        (WKShouldObserveNextStyleRecalc):
+        (WKSetObservedContentChange):
+        * platform/ios/wak/WKContentObservation.h:
+
 2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         ShadowRoot should have styleSheets property

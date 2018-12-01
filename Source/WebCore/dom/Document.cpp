@@ -264,6 +264,7 @@
 #include "Navigator.h"
 #include "NavigatorGeolocation.h"
 #include "WKContentObservation.h"
+#include "WKContentObservationInternal.h"
 #endif
 
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -1794,6 +1795,11 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
+#if PLATFORM(IOS_FAMILY)
+    if (WKIsObservingStyleRecalcScheduling())
+        WKSetObservedContentChange(WKContentIndeterminateChange);
+#endif
+
     // FIXME: Why on earth is this here? This is clearly misplaced.
     invalidateAccessKeyMap();
 
@@ -2028,10 +2034,29 @@ bool Document::updateStyleIfNeeded()
             return false;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    auto observingContentChange = WKShouldObserveNextStyleRecalc();
+    if (observingContentChange) {
+        WKSetShouldObserveNextStyleRecalc(false);
+        WKStartObservingContentChanges();
+    }
+#endif
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
 
     resolveStyle();
+
+#if PLATFORM(IOS_FAMILY)
+    if (observingContentChange) {
+        WKStopObservingContentChanges();
+
+        auto inDeterminedState = WKObservedContentChange() == WKContentVisibilityChange || !WebThreadCountOfObservedDOMTimers();  
+        if (inDeterminedState) {
+            if (auto* page = this->page())
+                page->chrome().client().observedContentChange(*frame());
+        }
+    }
+#endif
     return true;
 }
 

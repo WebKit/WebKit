@@ -222,7 +222,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
 #if PLATFORM(IOS_FAMILY)
     if (WKIsObservingDOMTimerScheduling() && is<Document>(context)) {
         bool didDeferTimeout = context.activeDOMObjectsAreSuspended();
-        if (!didDeferTimeout && timeout <= 100_ms && singleShot) {
+        if (!didDeferTimeout && timeout <= 250_ms && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
             WebThreadAddObservedDOMTimer(timer);
         }
@@ -341,18 +341,16 @@ void DOMTimer::fired()
     context.removeTimeout(m_timeoutId);
 
 #if PLATFORM(IOS_FAMILY)
-    bool shouldReportLackOfChanges;
-    bool shouldBeginObservingChanges;
+    auto isObversingLastTimer = false;
+    auto shouldBeginObservingChanges = false;
     if (is<Document>(context)) {
-        shouldReportLackOfChanges = WebThreadCountOfObservedDOMTimers() == 1;
+        isObversingLastTimer = WebThreadCountOfObservedDOMTimers() == 1;
         shouldBeginObservingChanges = WebThreadContainsObservedDOMTimer(this);
-    } else {
-        shouldReportLackOfChanges = false;
-        shouldBeginObservingChanges = false;
     }
 
     if (shouldBeginObservingChanges) {
         WKStartObservingContentChanges();
+        WKStartObservingStyleRecalcScheduling();
         WebThreadRemoveObservedDOMTimer(this);
     }
 #endif
@@ -366,12 +364,19 @@ void DOMTimer::fired()
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldBeginObservingChanges) {
+        WKStopObservingStyleRecalcScheduling();
         WKStopObservingContentChanges();
 
-        if (WKObservedContentChange() == WKContentVisibilityChange || shouldReportLackOfChanges) {
-            Document& document = downcast<Document>(context);
-            if (Page* page = document.page())
+        auto observedContentChange = WKObservedContentChange();
+        // Check if the timer callback triggered either a sync or async style update.
+        auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObversingLastTimer && observedContentChange == WKContentNoChange);  
+        if (inDeterminedState) {
+            auto& document = downcast<Document>(context);
+            if (auto* page = document.page())
                 page->chrome().client().observedContentChange(*document.frame());
+        } else if (observedContentChange == WKContentIndeterminateChange) {
+            // An async style recalc has been scheduled. Let's observe it.
+            WKSetShouldObserveNextStyleRecalc(true);
         }
     }
 #endif

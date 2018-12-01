@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>This test that we trigger hover when the content change is async.</title>
+<script src="../../../../resources/basic-gestures.js"></script>
+<style>
+#tapthis {
+    width: 400px;
+    height: 400px;
+    border: 1px solid green;
+}
+
+#hiddenFirst {
+    visibility: hidden;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+}
+</style>
+<script>
+async function test() {
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    let rect = tapthis.getBoundingClientRect();
+    let x = rect.left + rect.width / 2;
+    let y = rect.top + rect.height / 2;
+
+    await tapAtPoint(x, y);
+}
+</script>
+</head>
+<body onload="test()">
+<div id=tapthis>PASS if no 'clicked' text is shown below.</div>
+<div id=hiddenFirst></div>
+<pre id=result></pre>
+<script>
+tapthis.addEventListener("mouseover", function( event ) {
+    // 1. Install a timer on hover
+    setTimeout(function() {
+        // 2. Trigger a non-forcing style change
+        hiddenFirst.style.visibility = "visible";
+        // 3. Install a timer for style recalc
+        setTimeout(function() {
+            document.body.offsetHeight;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 10);
+    }, 0);
+}, false);
+
+hiddenFirst.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+
+tapthis.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked";
+}, false);
+</script>
+</body>
+</html>

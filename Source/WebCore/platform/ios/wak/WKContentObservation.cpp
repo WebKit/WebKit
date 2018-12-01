@@ -37,7 +37,8 @@
 WKContentChange _WKContentChange                    = WKContentNoChange;
 bool            _WKObservingContentChanges          = false;
 bool            _WKObservingDOMTimerScheduling      = false;
-
+bool            _WKObservingStyleRecalScheduling    = false;
+bool            _WKObservingNextStyleRecalc         = false;
 
 bool WKObservingContentChanges(void)
 {
@@ -71,6 +72,31 @@ bool WKIsObservingDOMTimerScheduling(void)
     return _WKObservingDOMTimerScheduling;
 }
 
+void WKStartObservingStyleRecalcScheduling(void)
+{
+    _WKObservingStyleRecalScheduling = true;
+}
+
+void WKStopObservingStyleRecalcScheduling(void)
+{
+    _WKObservingStyleRecalScheduling = false;
+}
+
+bool WKIsObservingStyleRecalcScheduling(void)
+{
+    return _WKObservingStyleRecalScheduling;
+}
+
+void WKSetShouldObserveNextStyleRecalc(bool observe)
+{
+    _WKObservingNextStyleRecalc = observe;
+}
+
+bool WKShouldObserveNextStyleRecalc(void)
+{
+    return _WKObservingNextStyleRecalc;
+}
+
 WKContentChange WKObservedContentChange(void)
 {
     return _WKContentChange;
@@ -84,8 +110,9 @@ void WKSetObservedContentChange(WKContentChange change)
 
     if (change == WKContentVisibilityChange) {
         _WKContentChange = change;
-        // Don't need to listen to DOM timers anymore.
+        // Don't need to listen to DOM timers/style recalcs anymore.
         WebThreadClearObservedDOMTimers();
+        _WKObservingNextStyleRecalc = false;
         return;
     }
 
