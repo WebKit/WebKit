@@ -1,3 +1,14 @@
+2018-12-01  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Build opus decoder support in libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=192226
+
+        Reviewed by Philippe Normand.
+
+        Somehow that was overlooked at some point (it used to work).
+
+        * CMakeLists.txt:
+
 2018-11-27  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Use LibWebRTC provided vp8 decoders and encoders
