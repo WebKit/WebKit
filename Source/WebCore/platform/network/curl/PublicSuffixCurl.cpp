@@ -28,8 +28,8 @@
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 
-#include "URL.h"
 #include <libpsl.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

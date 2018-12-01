@@ -31,9 +31,9 @@
 #include "CookieRequestHeaderFieldProxy.h"
 #include "NetworkStorageSession.h"
 #include "NotImplemented.h"
-#include "URL.h"
 
 #include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
