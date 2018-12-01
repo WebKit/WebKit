@@ -1,3 +1,14 @@
+2018-11-30  Youenn Fablet  <youenn@apple.com>
+
+        Test that CSS subresource loading are exposed to resource timing in case of a CORS loaded CSS stylesheet but not imported stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=192232
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/security/cross-origin-clean-css-resource-timing-expected.txt: Added.
+        * http/tests/security/cross-origin-clean-css-resource-timing.html: Added.
+        * http/tests/security/resources/loading-subresources.php: Added.
+
 2018-11-30  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline test after https://trac.webkit.org/changeset/238725/webkit
