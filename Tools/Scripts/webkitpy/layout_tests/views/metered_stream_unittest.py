@@ -108,10 +108,6 @@ class RegularTest(unittest.TestCase):
         self.logger.info('foo %s %d', 'bar', 2)
         self.assertEqual(self.buflist, ['foo bar 2\n'])
 
-    def test_unicode(self):
-        self.logger.info(u'\u2713')
-        self.assertEqual(self.buflist[-1][-2:], u'\u2713\n')
-
 
 class TtyTest(RegularTest):
     verbose = False

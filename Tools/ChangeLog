@@ -1,3 +1,15 @@
+2018-12-01  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, rolling out r238764.
+
+        Breaks existing layout tests
+
+        Reverted changeset:
+
+        "webkitpy: Support unicode in MeteredStream"
+        https://bugs.webkit.org/show_bug.cgi?id=192260
+        https://trac.webkit.org/changeset/238764
+
 2018-12-01  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         Move URL tests from TestWebKitAPI to TestWTF
