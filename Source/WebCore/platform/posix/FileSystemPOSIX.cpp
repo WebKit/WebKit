@@ -37,6 +37,7 @@
 #include <libgen.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/statvfs.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
@@ -381,7 +382,45 @@ Vector<String> listDirectory(const String& path, const String& filter)
     return entries;
 }
 
-#if !OS(DARWIN) || PLATFORM(GTK)
+#if !PLATFORM(COCOA)
+String stringFromFileSystemRepresentation(const char* path)
+{
+    if (!path)
+        return String();
+
+    return String::fromUTF8(path);
+}
+
+CString fileSystemRepresentation(const String& path)
+{
+    return path.utf8();
+}
+
+bool moveFile(const String& oldPath, const String& newPath)
+{
+    auto oldFilename = fileSystemRepresentation(oldPath);
+    if (oldFilename.isNull())
+        return false;
+
+    auto newFilename = fileSystemRepresentation(newPath);
+    if (newFilename.isNull())
+        return false;
+
+    return rename(oldFilename.data(), newFilename.data()) != -1;
+}
+
+bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
+{
+    struct statvfs fileSystemStat;
+    if (statvfs(fileSystemRepresentation(path).data(), &fileSystemStat)) {
+        freeSpace = fileSystemStat.f_bavail * fileSystemStat.f_frsize;
+        return true;
+    }
+    return false;
+}
+#endif
+
+#if !OS(DARWIN)
 String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     char buffer[PATH_MAX];
