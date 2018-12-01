@@ -1,3 +1,18 @@
+2018-12-01  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Call instrinsicWidthConstraints on the correct formatting state.
+        https://bugs.webkit.org/show_bug.cgi?id=192274
+
+        Reviewed by Antti Koivisto.
+
+        When we call intrinsic width on a formatting context root, we need to use the formatting state
+        that this root constructs and not the one it lives in.
+
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::instrinsicWidthConstraints const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::instrinsicWidthConstraints const): it's the caller's responsiblitiy to store the intrinsic values.
+
 2018-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build.

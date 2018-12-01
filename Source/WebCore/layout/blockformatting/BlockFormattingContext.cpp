@@ -413,12 +413,13 @@ FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsic
             auto skipDescendants = formattingState.instrinsicWidthConstraints(childBox) || !Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox) || childBox.establishesFormattingContext();
 
             if (skipDescendants) {
+                InstrinsicWidthConstraints instrinsicWidthConstraints;
                 if (!Geometry::instrinsicWidthConstraintsNeedChildrenWidth(childBox))
-                    formattingState.setInstrinsicWidthConstraints(childBox, Geometry::instrinsicWidthConstraints(layoutState, childBox));
+                    instrinsicWidthConstraints = Geometry::instrinsicWidthConstraints(layoutState, childBox);
                 else if (childBox.establishesFormattingContext())
-                    formattingState.setInstrinsicWidthConstraints(childBox, formattingState.formattingContext(childBox)->instrinsicWidthConstraints());
+                    instrinsicWidthConstraints = layoutState.createFormattingStateForFormattingRootIfNeeded(childBox).formattingContext(childBox)->instrinsicWidthConstraints();
+                formattingState.setInstrinsicWidthConstraints(childBox, instrinsicWidthConstraints);
 
-                ASSERT(formattingState.instrinsicWidthConstraints(childBox));
                 queue.removeLast();
                 if (!childBox.nextInFlowOrFloatingSibling())
                     break;

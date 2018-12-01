@@ -549,9 +549,7 @@ FormattingContext::InstrinsicWidthConstraints InlineFormattingContext::instrinsi
         return maxContentLogicalRight;
     };
 
-    auto instrinsicWidthConstraints = FormattingContext::InstrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
-    formattingStateForRoot.setInstrinsicWidthConstraints(root(), instrinsicWidthConstraints);
-    return instrinsicWidthConstraints;
+    return FormattingContext::InstrinsicWidthConstraints { maximumLineWidth(0), maximumLineWidth(LayoutUnit::max()) };
 }
 
 }
