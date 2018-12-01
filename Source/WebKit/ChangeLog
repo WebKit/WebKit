@@ -1,3 +1,23 @@
+2018-12-01  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] process-swapping may occur even though opener has handle to openee
+        https://bugs.webkit.org/show_bug.cgi?id=192277
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::openedByDOMWithOpener const):
+        (API::Navigation::openedViaWindowOpenWithOpener const): Deleted.
+        (API::Navigation::opener const): Deleted.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2018-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize version check for _suppressedAutoAddedHTTPHeaders

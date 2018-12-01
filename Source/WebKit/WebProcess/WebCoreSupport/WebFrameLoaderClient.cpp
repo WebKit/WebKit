@@ -873,8 +873,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.isRedirect = !redirectResponse.isNull();
     navigationActionData.treatAsSameOriginNavigation = navigationAction.treatAsSameOriginNavigation();
     navigationActionData.hasOpenedFrames = navigationAction.hasOpenedFrames();
-    navigationActionData.openedViaWindowOpenWithOpener = navigationAction.openedViaWindowOpenWithOpener();
-    navigationActionData.opener = navigationAction.opener();
+    navigationActionData.openedByDOMWithOpener = navigationAction.openedByDOMWithOpener();
     if (auto& requester = navigationAction.requester())
         navigationActionData.requesterOrigin = requester->securityOrigin().data();
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();

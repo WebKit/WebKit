@@ -1,3 +1,14 @@
+2018-12-01  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] process-swapping may occur even though opener has handle to openee
+        https://bugs.webkit.org/show_bug.cgi?id=192277
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-12-01  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r238764.

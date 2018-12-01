@@ -106,8 +106,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         loader->setTriggeringAction(NavigationAction { action });
     }
 
-    if (m_frame.page() && m_frame.page()->openedViaWindowOpenWithOpener())
-        action.setOpenedViaWindowOpenWithOpener();
+    if (m_frame.page() && m_frame.page()->openedByDOMWithOpener())
+        action.setOpenedByDOMWithOpener();
     action.setHasOpenedFrames(m_frame.loader().hasOpenedFrames());
 
     // Don't ask more than once for the same request or if we are loading an empty URL.

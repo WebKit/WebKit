@@ -2157,14 +2157,8 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 
     // FIXME: We should support process swap when a window has been opened via window.open() without 'noopener'.
     // The issue is that the opener has a handle to the WindowProxy.
-    if (navigation.openedViaWindowOpenWithOpener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
-        reason = "Browsing context been opened via window.open() without 'noopener'"_s;
-        return page.process();
-    }
-
-    // FIXME: We should support process swap when a window has an opener.
-    if (navigation.opener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
-        reason = "Browsing context has an opener"_s;
+    if (navigation.openedByDOMWithOpener() && !m_configuration->processSwapsOnWindowOpenWithOpener()) {
+        reason = "Browsing context been opened by DOM without 'noopener'"_s;
         return page.process();
     }
 

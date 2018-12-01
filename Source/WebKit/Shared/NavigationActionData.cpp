@@ -47,8 +47,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << isRedirect;
     encoder << treatAsSameOriginNavigation;
     encoder << hasOpenedFrames;
-    encoder << openedViaWindowOpenWithOpener;
-    encoder << opener;
+    encoder << openedByDOMWithOpener;
     encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
     encoder.encodeEnum(lockHistory);
@@ -112,19 +111,14 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
     if (!hasOpenedFrames)
         return std::nullopt;
 
-    std::optional<bool> openedViaWindowOpenWithOpener;
-    decoder >> openedViaWindowOpenWithOpener;
-    if (!openedViaWindowOpenWithOpener)
-        return std::nullopt;
-
-    std::optional<std::optional<std::pair<uint64_t, uint64_t>>> opener;
-    decoder >> opener;
-    if (!opener)
+    std::optional<bool> openedByDOMWithOpener;
+    decoder >> openedByDOMWithOpener;
+    if (!openedByDOMWithOpener)
         return std::nullopt;
 
     std::optional<WebCore::SecurityOriginData> requesterOrigin;
     decoder >> requesterOrigin;
-    if (!opener)
+    if (!requesterOrigin)
         return std::nullopt;
 
     std::optional<std::optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
@@ -147,7 +141,7 @@ std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& d
 
     return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
-        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedViaWindowOpenWithOpener, WTFMove(*opener), WTFMove(*requesterOrigin),
+        WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, WTFMove(*requesterOrigin),
         WTFMove(*targetBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory) }};
 }
 

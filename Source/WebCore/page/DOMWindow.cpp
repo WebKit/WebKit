@@ -2237,10 +2237,9 @@ ExceptionOr<RefPtr<Frame>> DOMWindow::createWindow(const String& urlString, cons
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
-    if (!windowFeatures.noopener) {
+    if (!windowFeatures.noopener)
         newFrame->loader().setOpener(&openerFrame);
-        newFrame->page()->setOpenedViaWindowOpenWithOpener();
-    }
+
     if (created)
         newFrame->page()->setOpenedByDOM();
 

@@ -1048,8 +1048,11 @@ void FrameLoader::setOpener(Frame* opener)
         auto& openerFrameLoader = m_opener == &m_frame ? *this : m_opener->loader();
         openerFrameLoader.m_openedFrames.remove(&m_frame);
     }
-    if (opener)
+    if (opener) {
         opener->loader().m_openedFrames.add(&m_frame);
+        if (auto* page = m_frame.page())
+            page->setOpenedByDOMWithOpener();
+    }
     m_opener = opener;
 
     if (m_frame.document())
@@ -1477,13 +1480,6 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
 
     if (lockHistory == LockHistory::Yes && m_documentLoader)
         loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
-
-    if (auto* opener = this->opener()) {
-        auto pageID = opener->loader().client().pageID();
-        auto frameID = opener->loader().client().frameID();
-        if (pageID && frameID)
-            action.setOpener(std::make_pair(*pageID, *frameID));
-    }
 
     loader->setTriggeringAction(WTFMove(action));
     if (m_documentLoader)

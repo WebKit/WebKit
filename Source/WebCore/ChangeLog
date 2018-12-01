@@ -1,3 +1,40 @@
+2018-12-01  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] process-swapping may occur even though opener has handle to openee
+        https://bugs.webkit.org/show_bug.cgi?id=192277
+
+        Reviewed by Antti Koivisto.
+
+        Process-swapping may occur even though opener has handle to openee, which is not Web-compatible. The reason
+        is that we rely on the window not having an opener to process-swap. However, the opener can be disowned,
+        which does not mean that the opener doesn't still have a handle to its openee.
+
+        To address the issue:
+        - Renamed openedViaWindowOpenWithOpener flag to openedByDOMWithOpener
+        - Make sure this flag gets set if an opener have ever been set for the browsing context
+        - Do not process-swap if this flag is set
+        - Drop opener from NavigationAction since it does not provide meaningful information to decide whether
+          to process-swap or not.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setOpener):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::openedByDOMWithOpener const):
+        (WebCore::NavigationAction::setOpenedByDOMWithOpener):
+        (WebCore::NavigationAction::setOpener): Deleted.
+        (WebCore::NavigationAction::opener const): Deleted.
+        (WebCore::NavigationAction::openedViaWindowOpenWithOpener const): Deleted.
+        (WebCore::NavigationAction::setOpenedViaWindowOpenWithOpener): Deleted.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+        * page/Page.h:
+        (WebCore::Page::openedByDOMWithOpener const):
+        (WebCore::Page::setOpenedByDOMWithOpener):
+        (WebCore::Page::openedViaWindowOpenWithOpener const): Deleted.
+        (WebCore::Page::setOpenedViaWindowOpenWithOpener): Deleted.
+
 2018-12-01  Christopher Reid  <chris.reid@sony.com>
 
         Add generic implementations to FileSystemPOSIX.cpp
