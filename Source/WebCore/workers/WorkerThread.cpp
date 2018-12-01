@@ -33,7 +33,7 @@
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "ThreadGlobalData.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
 #include <utility>

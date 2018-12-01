@@ -77,7 +77,7 @@ void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourc
     auto whitelist = toImpl(whitelistedURLPatterns);
     auto blacklist = toImpl(blacklistedURLPatterns);
 
-    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::UserContentWorld::normalWorld());
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? WTF::blankURL() :  URL(URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::UserContentWorld::normalWorld());
 
     toImpl(pageGroupRef)->userContentController().addUserStyleSheet(userStyleSheet.get());
 }
@@ -98,7 +98,7 @@ void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef
     auto whitelist = toImpl(whitelistedURLPatterns);
     auto blacklist = toImpl(blacklistedURLPatterns);
     
-    auto url = baseURLString.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURLString);
+    auto url = baseURLString.isEmpty() ? WTF::blankURL() :  URL(URL(), baseURLString);
     Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { WTFMove(source), WTFMove(url), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames) }, API::UserContentWorld::normalWorld());
     toImpl(pageGroupRef)->userContentController().addUserScript(userScript.get(), InjectUserScriptImmediately::No);
 }

@@ -26,10 +26,10 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 static bool didFinishTest;
 static bool didFailProvisionalLoad;
@@ -51,7 +51,7 @@ static bool didFailProvisionalLoad;
     EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
 
     static char literal[] = "https://www.example.com$/";
-    NSURL *failedURL = WebCore::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+    NSURL *failedURL = WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
     EXPECT_TRUE([error.userInfo[@"NSErrorFailingURLKey"] isEqual:failedURL]);
 
     didFailProvisionalLoad = true;

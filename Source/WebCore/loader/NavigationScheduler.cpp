@@ -366,7 +366,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
 {
     if (!shouldScheduleNavigation())
         return false;
-    if (protocolIsJavaScript(url))
+    if (WTF::protocolIsJavaScript(url))
         return true;
     return NavigationDisabler::isNavigationAllowed(m_frame);
 }

@@ -32,8 +32,8 @@
 #import "EventHandler.h"
 #import "HitTestResult.h"
 #import "Range.h"
-#import "WebCoreNSURLExtras.h"
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -44,7 +44,7 @@ namespace WebCore {
 
 String Internals::userVisibleString(const DOMURL& url)
 {
-    return WebCore::userVisibleString(url.href());
+    return WTF::userVisibleString(url.href());
 }
 
 bool Internals::userPrefersReducedMotion() const

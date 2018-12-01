@@ -30,10 +30,10 @@
 
 #import "HTTPCookieAcceptPolicy.h"
 #import <WebCore/Cookie.h>
-#import <WebCore/URL.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URL.h>
 #import <wtf/WeakObjCPtr.h>
 
 static NSArray<NSHTTPCookie *> *coreCookiesToNSCookies(const Vector<WebCore::Cookie>& coreCookies)

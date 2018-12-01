@@ -59,7 +59,6 @@
 #import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "TextureCacheCV.h"
-#import "URL.h"
 #import "VideoFullscreenLayerManagerObjC.h"
 #import "VideoTextureCopierCV.h"
 #import "VideoTrackPrivateAVFObjC.h"
@@ -81,6 +80,7 @@
 #import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OSObjectPtr.h>
+#import <wtf/URL.h>
 #import <wtf/text/CString.h>
 
 #if ENABLE(AVF_CAPTIONS)

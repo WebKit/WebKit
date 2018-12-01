@@ -28,7 +28,7 @@
 #include <WebCore/Node.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/SharedBuffer.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

@@ -100,7 +100,6 @@ class ResourceResponse;
 class SecurityOrigin;
 class SharedBuffer;
 class SubstituteData;
-class URL;
 class Widget;
 
 enum class LockBackForwardList : bool;

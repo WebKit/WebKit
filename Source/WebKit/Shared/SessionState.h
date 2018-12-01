@@ -34,8 +34,8 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SerializedScriptValue.h>
-#include <WebCore/URL.h>
 #include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -148,7 +148,7 @@ struct BackForwardListState {
 struct SessionState {
     BackForwardListState backForwardListState;
     uint64_t renderTreeSize;
-    WebCore::URL provisionalURL;
+    URL provisionalURL;
 };
 
 } // namespace WebKit

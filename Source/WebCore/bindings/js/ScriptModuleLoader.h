@@ -27,10 +27,10 @@
 
 #include "CachedModuleScriptLoader.h"
 #include "CachedModuleScriptLoaderClient.h"
-#include "URL.h"
-#include "URLHash.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 
 namespace JSC {
 

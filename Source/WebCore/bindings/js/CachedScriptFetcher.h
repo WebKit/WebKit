@@ -33,7 +33,6 @@ namespace WebCore {
 
 class CachedScript;
 class Document;
-class URL;
 
 class CachedScriptFetcher : public JSC::ScriptFetcher {
 public:

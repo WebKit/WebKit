@@ -27,10 +27,10 @@
 
 #include "ApplicationCacheResourceLoader.h"
 #include "DOMApplicationCache.h"
-#include "URL.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

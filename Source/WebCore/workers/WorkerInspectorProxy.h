@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include "WorkerThread.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>

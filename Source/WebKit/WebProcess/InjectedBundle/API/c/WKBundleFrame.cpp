@@ -165,7 +165,7 @@ WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frameRef)
 
 bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef)
 {
-    return toImpl(frameRef)->allowsFollowingLink(WebCore::URL(WebCore::URL(), toWTFString(urlRef)));
+    return toImpl(frameRef)->allowsFollowingLink(URL(URL(), toWTFString(urlRef)));
 }
 
 bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef frameRef)
@@ -210,12 +210,12 @@ bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frameRef, double* 
 
 WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frameRef, WKURLRef urlRef)
 {
-    return toCopiedAPI(toImpl(frameRef)->suggestedFilenameForResourceWithURL(WebCore::URL(WebCore::URL(), toWTFString(urlRef))));
+    return toCopiedAPI(toImpl(frameRef)->suggestedFilenameForResourceWithURL(URL(URL(), toWTFString(urlRef))));
 }
 
 WKStringRef WKBundleFrameCopyMIMETypeForResourceWithURL(WKBundleFrameRef frameRef, WKURLRef urlRef)
 {
-    return toCopiedAPI(toImpl(frameRef)->mimeTypeForResourceWithURL(WebCore::URL(WebCore::URL(), toWTFString(urlRef))));
+    return toCopiedAPI(toImpl(frameRef)->mimeTypeForResourceWithURL(URL(URL(), toWTFString(urlRef))));
 }
 
 bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frameRef)

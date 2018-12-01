@@ -318,7 +318,7 @@ void InspectorFrontendHost::killText(const String& text, bool shouldPrependToKil
 
 void InspectorFrontendHost::openInNewTab(const String& url)
 {
-    if (WebCore::protocolIsJavaScript(url))
+    if (WTF::protocolIsJavaScript(url))
         return;
 
     if (m_client)

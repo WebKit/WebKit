@@ -45,7 +45,6 @@ class IntRect;
 class ProtectionSpace;
 class ResourceError;
 class ResourceResponse;
-class URL;
 }
 
 namespace WebKit {
@@ -75,8 +74,8 @@ public:
     WebPageProxy* originatingPage() const;
     void setOriginatingPage(WebPageProxy*);
 
-    void setRedirectChain(Vector<WebCore::URL>&& redirectChain) { m_redirectChain = WTFMove(redirectChain); }
-    const Vector<WebCore::URL>& redirectChain() const { return m_redirectChain; }
+    void setRedirectChain(Vector<URL>&& redirectChain) { m_redirectChain = WTFMove(redirectChain); }
+    const Vector<URL>& redirectChain() const { return m_redirectChain; }
 
     void setWasUserInitiated(bool value) { m_wasUserInitiated = value; }
     bool wasUserInitiated() const { return m_wasUserInitiated; }
@@ -96,7 +95,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void publishProgress(const WebCore::URL&);
+    void publishProgress(const URL&);
 #endif
 
 private:
@@ -130,7 +129,7 @@ private:
     uint64_t m_bytesLoaded { 0 };
 
     WeakPtr<WebPageProxy> m_originatingPage;
-    Vector<WebCore::URL> m_redirectChain;
+    Vector<URL> m_redirectChain;
     bool m_wasUserInitiated { true };
 };
 

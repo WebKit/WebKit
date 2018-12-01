@@ -53,7 +53,6 @@ class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
-class URL;
 }
 
 namespace WebKit {
@@ -105,7 +104,7 @@ public:
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
     String name() const;
-    WebCore::URL url() const;
+    URL url() const;
     WebCore::CertificateInfo certificateInfo() const;
     String innerText() const;
     bool isFrameSet() const;
@@ -139,11 +138,11 @@ public:
     
     unsigned pendingUnloadCount() const;
     
-    bool allowsFollowingLink(const WebCore::URL&) const;
+    bool allowsFollowingLink(const URL&) const;
 
     String provisionalURL() const;
-    String suggestedFilenameForResourceWithURL(const WebCore::URL&) const;
-    String mimeTypeForResourceWithURL(const WebCore::URL&) const;
+    String suggestedFilenameForResourceWithURL(const URL&) const;
+    String mimeTypeForResourceWithURL(const URL&) const;
 
     void setTextDirection(const String&);
 

@@ -29,8 +29,8 @@
 
 #include <WebCore/FileHandle.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/URLParser.h>
 #include <wtf/Function.h>
+#include <wtf/URLParser.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -82,7 +82,7 @@ public:
     WebCore::FileHandle openCacheFile(const String&, WebCore::FileSystem::FileOpenMode);
 
     String requestToPath(const WebCore::ResourceRequest&);
-    static String urlIdentifyingCommonDomain(const WebCore::URL&);
+    static String urlIdentifyingCommonDomain(const URL&);
 
 private:
     Manager() = default;
@@ -90,7 +90,7 @@ private:
 
     Resource* findExactMatch(const WebCore::ResourceRequest&);
     Resource* findBestFuzzyMatch(const WebCore::ResourceRequest&);
-    int fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLParser::URLEncodedForm& requestParameters, const WebCore::URL& resourceURL, const WebCore::URLParser::URLEncodedForm& resourceParameters);
+    int fuzzyMatchURLs(const URL& requestURL, const WTF::URLParser::URLEncodedForm& requestParameters, const URL& resourceURL, const WTF::URLParser::URLEncodedForm& resourceParameters);
 
     void loadResources();
 

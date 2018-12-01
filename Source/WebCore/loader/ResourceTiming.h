@@ -28,7 +28,7 @@
 #include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "ServerTiming.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

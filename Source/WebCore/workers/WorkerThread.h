@@ -39,7 +39,6 @@ class SessionID;
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
-class URL;
 class NotificationClient;
 class SecurityOrigin;
 class SocketProvider;

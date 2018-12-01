@@ -31,12 +31,12 @@
 #include "NetworkCaptureLogging.h"
 #include "NetworkCaptureResource.h"
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/URL.h>
 #include <algorithm>
 #include <iterator>
 #include <limits>
 #include <wtf/MD5.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -146,7 +146,7 @@ Resource* Manager::findBestFuzzyMatch(const WebCore::ResourceRequest& request)
 
     Resource* bestMatch = nullptr;
     int bestScore = kMinMatch;
-    const auto& requestParameters = WebCore::URLParser::parseURLEncodedForm(url.query());
+    const auto& requestParameters = WTF::URLParser::parseURLEncodedForm(url.query());
     for (auto iResource = lower; iResource != upper; ++iResource) {
         int thisScore = fuzzyMatchURLs(url, requestParameters, iResource->url(), iResource->queryParameters());
         // TODO: Consider ignoring any matches < 0 as being too different.
@@ -165,7 +165,7 @@ Resource* Manager::findBestFuzzyMatch(const WebCore::ResourceRequest& request)
 // TODO: Convert to an interface based on ResourceRequest so that we can do
 // deeper matching.
 
-int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLParser::URLEncodedForm& requestParameters, const WebCore::URL& resourceURL, const WebCore::URLParser::URLEncodedForm& resourceParameters)
+int Manager::fuzzyMatchURLs(const URL& requestURL, const WTF::URLParser::URLEncodedForm& requestParameters, const URL& resourceURL, const WTF::URLParser::URLEncodedForm& resourceParameters)
 {
     // TODO: consider requiring that any trailing suffixes (e.g., ".js",
     // ".png", ".css", ".html", etc.) should be an exact match.
@@ -419,7 +419,7 @@ String Manager::hashToPath(const String& hash)
     return path;
 }
 
-String Manager::urlIdentifyingCommonDomain(const WebCore::URL& url)
+String Manager::urlIdentifyingCommonDomain(const URL& url)
 {
     return url.protocolHostAndPort();
 }

@@ -31,9 +31,9 @@
 #include "ContentSecurityPolicyDirectiveNames.h"
 #include "ParsingUtilities.h"
 #include "TextEncoding.h"
-#include "URL.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

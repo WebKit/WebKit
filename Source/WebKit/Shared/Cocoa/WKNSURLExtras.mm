@@ -26,12 +26,10 @@
 #import "config.h"
 #import "WKNSURLExtras.h"
 
-#import <WebCore/CFURLExtras.h>
-#import <WebCore/URL.h>
+#import <wtf/URL.h>
+#import <wtf/cf/CFURLExtras.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
-
-using namespace WebCore;
 
 @implementation NSURL (WKExtras)
 
@@ -50,7 +48,7 @@ using namespace WebCore;
 - (String)_web_originalDataAsWTFString
 {
     CString originalData;
-    getURLBytes((__bridge CFURLRef)self, originalData);
+    WTF::getURLBytes((__bridge CFURLRef)self, originalData);
     return String::fromUTF8(originalData);
 }
 

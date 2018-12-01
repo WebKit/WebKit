@@ -1,3 +1,557 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        A URL is a low-level concept that does not depend on other classes in WebCore.
+        We are starting to use URLs in JavaScriptCore for modules.
+        I need URL and URLParser in a place with fewer dependencies for rdar://problem/44119696
+
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/ApplePayValidateMerchantEvent.h:
+        * Modules/applepay/PaymentCoordinator.cpp:
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        * Modules/applepay/PaymentSession.h:
+        * Modules/applicationmanifest/ApplicationManifest.h:
+        * Modules/beacon/NavigatorBeacon.cpp:
+        * Modules/cache/DOMCache.cpp:
+        * Modules/fetch/FetchLoader.h:
+        * Modules/mediasession/MediaSessionMetadata.h:
+        * Modules/mediasource/MediaSourceRegistry.cpp:
+        * Modules/mediasource/MediaSourceRegistry.h:
+        * Modules/mediastream/MediaStream.cpp:
+        * Modules/mediastream/MediaStreamRegistry.cpp:
+        * Modules/mediastream/MediaStreamRegistry.h:
+        * Modules/navigatorcontentutils/NavigatorContentUtilsClient.h:
+        * Modules/notifications/Notification.h:
+        * Modules/paymentrequest/MerchantValidationEvent.h:
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/plugins/PluginReplacement.h:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CachedModuleScriptLoader.h:
+        * bindings/js/CachedScriptFetcher.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptModuleLoader.h:
+        * bindings/js/ScriptSourceCode.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForPingLoad):
+        (WebCore::ContentExtensions::applyBlockedStatusToRequest):
+        * contentextensions/ContentExtensionsBackend.h:
+        * css/CSSValue.h:
+        * css/StyleProperties.h:
+        * css/StyleResolver.h:
+        * css/StyleSheet.h:
+        * css/StyleSheetContents.h:
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        (WTF::HashTraits<WebCore::CSSParserContext>::constructDeletedValue):
+        * css/parser/CSSParserIdioms.h:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::setDataFromItemList):
+        * dom/Document.cpp:
+        (WebCore::Document::setURL):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::completeURL const):
+        (WebCore::Document::ensureTemplateDocument):
+        * dom/Document.h:
+        (WebCore::Document::urlForBindings const):
+        * dom/Element.cpp:
+        (WebCore::Element::isJavaScriptURLAttribute const):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::parserContextForElement):
+        * dom/Node.cpp:
+        (WebCore::Node::baseURI const):
+        * dom/Node.h:
+        * dom/ScriptElement.h:
+        * dom/ScriptExecutionContext.h:
+        * dom/SecurityContext.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteboardWriterURL):
+        * editing/Editor.h:
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendQuotedURLAttributeValue):
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::userVisibleString):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::WebContentReader::readWebArchive):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::plainTextFromPasteboard):
+        (WebCore::Editor::writeImageToPasteboard):
+        * editing/markup.cpp:
+        (WebCore::removeSubresourceURLAttributes):
+        (WebCore::createFragmentFromMarkup):
+        * editing/markup.h:
+        * fileapi/AsyncFileStream.cpp:
+        * fileapi/AsyncFileStream.h:
+        * fileapi/Blob.h:
+        * fileapi/BlobURL.cpp:
+        * fileapi/BlobURL.h:
+        * fileapi/File.h:
+        * fileapi/FileReaderLoader.h:
+        * fileapi/ThreadableBlobRegistry.h:
+        * history/CachedFrame.h:
+        * history/HistoryItem.h:
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.h:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::archiveResourceURL):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed const):
+        (WebCore::HTMLFrameElementBase::openURL):
+        (WebCore::HTMLFrameElementBase::setLocation):
+        * html/HTMLInputElement.h:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WTF::LogArgument<URL>::toString):
+        (WTF::LogArgument<WebCore::URL>::toString): Deleted.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::allowedToLoadFrameURL):
+        * html/ImageBitmap.h:
+        * html/MediaFragmentURIParser.h:
+        * html/PublicURLManager.cpp:
+        * html/PublicURLManager.h:
+        * html/URLInputType.cpp:
+        * html/URLRegistry.h:
+        * html/URLSearchParams.cpp:
+        (WebCore::URLSearchParams::URLSearchParams):
+        (WebCore::URLSearchParams::toString const):
+        (WebCore::URLSearchParams::updateURL):
+        (WebCore::URLSearchParams::updateFromAssociatedURL):
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::setHost):
+        (WebCore::URLUtils<T>::setPort):
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::semicolonSeparatedValueContainsJavaScriptURL):
+        (WebCore::XSSAuditor::filterScriptToken):
+        (WebCore::XSSAuditor::filterObjectToken):
+        (WebCore::XSSAuditor::filterParamToken):
+        (WebCore::XSSAuditor::filterEmbedToken):
+        (WebCore::XSSAuditor::filterFormToken):
+        (WebCore::XSSAuditor::filterInputToken):
+        (WebCore::XSSAuditor::filterButtonToken):
+        (WebCore::XSSAuditor::eraseDangerousAttributesIfInjected):
+        (WebCore::XSSAuditor::isLikelySafeResource):
+        * html/parser/XSSAuditor.h:
+        * html/parser/XSSAuditorDelegate.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::openInNewTab):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        * inspector/agents/InspectorNetworkAgent.h:
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorWorkerAgent.h:
+        * loader/ApplicationManifestLoader.h:
+        * loader/CookieJar.h:
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::serverRedirectSourceForHistory const):
+        * loader/DocumentWriter.h:
+        * loader/FormSubmission.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::createWindow):
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::currentItemShouldBeReplaced const):
+        (WebCore::HistoryController::initializeItem):
+        * loader/LinkLoader.h:
+        * loader/LoadTiming.h:
+        * loader/LoaderStrategy.h:
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::checkFormForMixedContent const):
+        * loader/MixedContentChecker.h:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation const):
+        * loader/NavigationScheduler.h:
+        * loader/PingLoader.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/ResourceLoadInfo.h:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::requestStorageAccessUnderOpener):
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.h:
+        * loader/ResourceLoader.h:
+        * loader/ResourceTiming.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+        * loader/SubframeLoader.h:
+        * loader/SubstituteData.h:
+        * loader/appcache/ApplicationCache.h:
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        * loader/appcache/ApplicationCacheStorage.h:
+        * loader/appcache/ManifestParser.cpp:
+        * loader/appcache/ManifestParser.h:
+        * loader/archive/ArchiveResourceCollection.h:
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/cache/CachedResource.cpp:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedStyleSheetClient.h:
+        * loader/cache/MemoryCache.h:
+        * loader/icon/IconLoader.h:
+        * loader/mac/LoaderNSURLExtras.mm:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/ChromeClient.h:
+        * page/ClientOrigin.h:
+        * page/ContextMenuClient.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isInsecureScriptAccess):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/DragController.h:
+        * page/EventSource.h:
+        * page/Frame.h:
+        * page/FrameView.h:
+        * page/History.h:
+        * page/Location.cpp:
+        (WebCore::Location::url const):
+        (WebCore::Location::reload):
+        * page/Location.h:
+        * page/Page.h:
+        * page/PageSerializer.h:
+        * page/Performance.h:
+        * page/PerformanceResourceTiming.cpp:
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::create):
+        * page/SecurityOrigin.h:
+        * page/SecurityOriginData.h:
+        * page/SecurityOriginHash.h:
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::shouldInheritSecurityOriginFromOwner):
+        * page/SecurityPolicy.h:
+        * page/SettingsBase.h:
+        * page/ShareData.h:
+        * page/SocketProvider.h:
+        * page/UserContentProvider.h:
+        * page/UserContentURLPattern.cpp:
+        * page/UserContentURLPattern.h:
+        * page/UserScript.h:
+        * page/UserStyleSheet.h:
+        * page/VisitedLinkStore.h:
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyClient.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::portMatches const):
+        * page/csp/ContentSecurityPolicySource.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        * page/csp/ContentSecurityPolicySourceList.h:
+        * page/csp/ContentSecurityPolicySourceListDirective.cpp:
+        * platform/ContentFilterUnblockHandler.h:
+        * platform/ContextMenuItem.h:
+        * platform/Cookie.h:
+        * platform/CookiesStrategy.h:
+        * platform/DragData.h:
+        * platform/DragImage.h:
+        * platform/FileStream.h:
+        * platform/LinkIcon.h:
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles):
+        * platform/Pasteboard.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PasteboardWriterData.cpp:
+        (WebCore::PasteboardWriterData::setURLData):
+        (WebCore::PasteboardWriterData::setURL): Deleted.
+        * platform/PasteboardWriterData.h:
+        * platform/PlatformPasteboard.h:
+        * platform/PromisedAttachmentInfo.h:
+        * platform/SSLKeyGenerator.h:
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::isBuiltinScheme):
+        * platform/SharedBuffer.h:
+        * platform/SharedStringHash.cpp:
+        * platform/SharedStringHash.h:
+        * platform/SourcesSoup.txt:
+        * platform/UserAgent.h:
+        * platform/UserAgentQuirks.cpp:
+        * platform/UserAgentQuirks.h:
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::willSendRequest):
+        * platform/glib/SSLKeyGeneratorGLib.cpp: Copied from Source/WebCore/page/ShareData.h.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/glib/UserAgentGLib.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageObserver.h:
+        * platform/graphics/ImageSource.cpp:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcSetUri):
+        * platform/graphics/iso/ISOVTTCue.cpp:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        * platform/gtk/DragImageGtk.cpp:
+        * platform/gtk/PasteboardGtk.cpp:
+        * platform/gtk/PlatformPasteboardGtk.cpp:
+        * platform/gtk/SelectionData.h:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+        * platform/ios/QuickLook.h:
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asPlainText const):
+        * platform/mac/DragImageMac.mm:
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::FileSystem::setMetadataURL):
+        * platform/mac/PasteboardMac.mm:
+        * platform/mac/PasteboardWriter.mm:
+        (WebCore::createPasteboardWriter):
+        * platform/mac/PlatformPasteboardMac.mm:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::decodeHostName):
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        * platform/mac/WebCoreNSURLExtras.h:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isArmenianLookalikeCharacter): Deleted.
+        (WebCore::isArmenianScriptCharacter): Deleted.
+        (WebCore::isASCIIDigitOrValidHostCharacter): Deleted.
+        (WebCore::isLookalikeCharacter): Deleted.
+        (WebCore::whiteListIDNScript): Deleted.
+        (WebCore::readIDNScriptWhiteListFile): Deleted.
+        (WebCore::allCharactersInIDNScriptWhiteList): Deleted.
+        (WebCore::isSecondLevelDomainNameAllowedByTLDRules): Deleted.
+        (WebCore::isRussianDomainNameCharacter): Deleted.
+        (WebCore::allCharactersAllowedByTLDRules): Deleted.
+        (WebCore::mapHostNameWithRange): Deleted.
+        (WebCore::hostNameNeedsDecodingWithRange): Deleted.
+        (WebCore::hostNameNeedsEncodingWithRange): Deleted.
+        (WebCore::decodeHostNameWithRange): Deleted.
+        (WebCore::encodeHostNameWithRange): Deleted.
+        (WebCore::decodeHostName): Deleted.
+        (WebCore::encodeHostName): Deleted.
+        (WebCore::collectRangesThatNeedMapping): Deleted.
+        (WebCore::collectRangesThatNeedEncoding): Deleted.
+        (WebCore::collectRangesThatNeedDecoding): Deleted.
+        (WebCore::applyHostNameFunctionToMailToURLString): Deleted.
+        (WebCore::applyHostNameFunctionToURLString): Deleted.
+        (WebCore::mapHostNames): Deleted.
+        (WebCore::stringByTrimmingWhitespace): Deleted.
+        (WebCore::URLByTruncatingOneCharacterBeforeComponent): Deleted.
+        (WebCore::URLByRemovingResourceSpecifier): Deleted.
+        (WebCore::URLWithData): Deleted.
+        (WebCore::dataWithUserTypedString): Deleted.
+        (WebCore::URLWithUserTypedString): Deleted.
+        (WebCore::URLWithUserTypedStringDeprecated): Deleted.
+        (WebCore::hasQuestionMarkOnlyQueryString): Deleted.
+        (WebCore::dataForURLComponentType): Deleted.
+        (WebCore::URLByRemovingComponentAndSubsequentCharacter): Deleted.
+        (WebCore::URLByRemovingUserInfo): Deleted.
+        (WebCore::originalURLData): Deleted.
+        (WebCore::createStringWithEscapedUnsafeCharacters): Deleted.
+        (WebCore::userVisibleString): Deleted.
+        (WebCore::isUserVisibleURL): Deleted.
+        (WebCore::rangeOfURLScheme): Deleted.
+        (WebCore::looksLikeAbsoluteURL): Deleted.
+        * platform/mediastream/MediaEndpointConfiguration.h:
+        * platform/network/BlobPart.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.h:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/CookieRequestHeaderFieldProxy.h:
+        * platform/network/CredentialStorage.cpp:
+        * platform/network/CredentialStorage.h:
+        * platform/network/DataURLDecoder.cpp:
+        * platform/network/DataURLDecoder.h:
+        * platform/network/FormData.h:
+        * platform/network/ProxyServer.h:
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::didReceiveResponse):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::redirectedRequest const):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/SocketStreamHandle.h:
+        * platform/network/cf/DNSResolveQueueCFNet.cpp:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        * platform/network/cf/ProxyServerCFNet.cpp:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        * platform/network/curl/CookieJarCurlDatabase.cpp: Added.
+        (WebCore::cookiesForSession):
+        (WebCore::CookieJarCurlDatabase::setCookiesFromDOM const):
+        (WebCore::CookieJarCurlDatabase::setCookiesFromHTTPResponse const):
+        (WebCore::CookieJarCurlDatabase::cookiesForDOM const):
+        (WebCore::CookieJarCurlDatabase::cookieRequestHeaderFieldValue const):
+        (WebCore::CookieJarCurlDatabase::cookiesEnabled const):
+        (WebCore::CookieJarCurlDatabase::getRawCookies const):
+        (WebCore::CookieJarCurlDatabase::deleteCookie const):
+        (WebCore::CookieJarCurlDatabase::getHostnamesWithCookies const):
+        (WebCore::CookieJarCurlDatabase::deleteCookiesForHostnames const):
+        (WebCore::CookieJarCurlDatabase::deleteAllCookies const):
+        (WebCore::CookieJarCurlDatabase::deleteAllCookiesModifiedSince const):
+        * platform/network/curl/CookieJarDB.cpp:
+        * platform/network/curl/CookieUtil.h:
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlProxySettings.h:
+        * platform/network/curl/CurlResponse.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        * platform/network/curl/ProxyServerCurl.cpp:
+        * platform/network/curl/SocketStreamHandleImplCurl.cpp:
+        * platform/network/mac/ResourceErrorMac.mm:
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        * platform/network/soup/ProxyServerSoup.cpp:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        * platform/network/soup/SoupNetworkSession.cpp:
+        * platform/network/soup/SoupNetworkSession.h:
+        * platform/text/TextEncoding.h:
+        * platform/win/BString.cpp:
+        * platform/win/BString.h:
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::markupToCFHTML):
+        * platform/win/ClipboardUtilitiesWin.h:
+        * platform/win/DragImageWin.cpp:
+        * platform/win/PasteboardWin.cpp:
+        * plugins/PluginData.h:
+        * rendering/HitTestResult.h:
+        * rendering/RenderAttachment.cpp:
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI const):
+        * svg/SVGURIReference.cpp:
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.h:
+        * svg/graphics/SVGImageForContainer.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        * testing/Internals.mm:
+        (WebCore::Internals::userVisibleString):
+        * testing/MockContentFilter.cpp:
+        (WebCore::MockContentFilter::willSendRequest):
+        * testing/MockPaymentCoordinator.cpp:
+        * testing/js/WebCoreTestSupport.cpp:
+        * workers/AbstractWorker.h:
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerInspectorProxy.h:
+        * workers/WorkerLocation.h:
+        * workers/WorkerScriptLoader.h:
+        * workers/WorkerThread.cpp:
+        * workers/WorkerThread.h:
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerClientData.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/ServiceWorkerContextData.h:
+        * workers/service/ServiceWorkerData.h:
+        * workers/service/ServiceWorkerJobData.h:
+        * workers/service/ServiceWorkerRegistrationKey.cpp:
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::constructDeletedValue):
+        * worklets/WorkletGlobalScope.h:
+        * xml/XMLHttpRequest.h:
+
 2018-11-30  Chris Dumez  <cdumez@apple.com>
 
         Drop unused Cross-Origin-Window-Policy from HTTPHeaderNames.in

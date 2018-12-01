@@ -99,7 +99,7 @@ void Download::platformDestroyDownload()
 #endif
 }
 
-void Download::publishProgress(const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+void Download::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
 #if WK_API_ENABLED
     ASSERT(!m_progress);

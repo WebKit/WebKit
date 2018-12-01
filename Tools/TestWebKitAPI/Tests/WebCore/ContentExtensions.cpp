@@ -38,10 +38,10 @@
 #include <WebCore/NFA.h>
 #include <WebCore/NFAToDFA.h>
 #include <WebCore/ResourceLoadInfo.h>
-#include <WebCore/URL.h>
 #include <WebCore/URLFilterParser.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

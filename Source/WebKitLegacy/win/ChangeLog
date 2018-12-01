@@ -1,3 +1,42 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        * MarshallingHelpers.cpp:
+        * MarshallingHelpers.h:
+        * Plugins/PluginDatabase.cpp:
+        * Plugins/PluginDatabase.h:
+        * Plugins/PluginDatabaseWin.cpp:
+        * Plugins/PluginStream.h:
+        * Plugins/PluginView.h:
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp:
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPluginInfoProvider.cpp:
+        (WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebCoreSupport/WebPluginInfoProvider.h:
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        * WebDataSource.cpp:
+        * WebDownload.h:
+        * WebElementPropertyBag.cpp:
+        * WebFrame.h:
+        * WebHistory.cpp:
+        * WebHistory.h:
+        * WebHistoryItem.cpp:
+        * WebResource.cpp:
+        (WebResource::WebResource):
+        * WebResource.h:
+        * WebSecurityOrigin.cpp:
+        * WebURLResponse.cpp:
+        (WebURLResponse::createInstance):
+        * WebUserContentURLPattern.cpp:
+        * WebView.h:
+
 2018-11-28  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead code from an earlier attempt at implementing safe browsing

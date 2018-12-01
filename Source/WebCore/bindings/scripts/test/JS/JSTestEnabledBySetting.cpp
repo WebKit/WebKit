@@ -31,13 +31,13 @@
 #include "JSTestSubObj.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
-#include "URL.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
+#include <wtf/URL.h>
 
 #if ENABLE(TEST_FEATURE)
 #include "JSDOMConvertStrings.h"

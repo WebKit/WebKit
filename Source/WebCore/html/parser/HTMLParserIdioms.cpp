@@ -27,9 +27,9 @@
 
 #include "Decimal.h"
 #include "QualifiedName.h"
-#include "URL.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/URL.h>
 #include <wtf/dtoa.h>
 
 namespace WebCore {

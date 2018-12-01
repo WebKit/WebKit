@@ -31,11 +31,11 @@
 
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
-#include "URL.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -142,7 +142,7 @@ bool SecurityPolicy::shouldInheritSecurityOriginFromOwner(const URL& url)
     //
     // Note: We generalize this to invalid URLs because we treat such URLs as about:blank.
     //
-    return url.isEmpty() || equalIgnoringASCIICase(url.string(), blankURL()) || equalLettersIgnoringASCIICase(url.string(), "about:srcdoc");
+    return url.isEmpty() || equalIgnoringASCIICase(url.string(), WTF::blankURL()) || equalLettersIgnoringASCIICase(url.string(), "about:srcdoc");
 }
 
 void SecurityPolicy::setLocalLoadPolicy(LocalLoadPolicy policy)

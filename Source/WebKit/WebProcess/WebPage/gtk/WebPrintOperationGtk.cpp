@@ -40,9 +40,9 @@
 #include <WebCore/PlatformContextCairo.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/URL.h>
 #include <gtk/gtk.h>
 #include <memory>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -454,13 +454,13 @@ bool WebPrintOperationGtk::currentPageIsLastPageOfSheet() const
     return (m_numberUp < 2 || !((m_pagePosition + 1) % m_numberUp) || m_pagePosition == m_numberOfPagesToPrint - 1);
 }
 
-WebCore::URL WebPrintOperationGtk::frameURL() const
+URL WebPrintOperationGtk::frameURL() const
 {
     if (!m_printContext)
-        return WebCore::URL();
+        return URL();
 
     WebCore::DocumentLoader* documentLoader = m_printContext->frame()->loader().documentLoader();
-    return documentLoader ? documentLoader->url() : WebCore::URL();
+    return documentLoader ? documentLoader->url() : URL();
 }
 
 void WebPrintOperationGtk::rotatePageIfNeeded()

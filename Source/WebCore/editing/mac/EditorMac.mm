@@ -52,11 +52,11 @@
 #import "RuntimeEnabledFeatures.h"
 #import "StyleProperties.h"
 #import "WebContentReader.h"
-#import "WebCoreNSURLExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <AppKit/AppKit.h>
 #import <pal/system/Sound.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
 
@@ -253,7 +253,7 @@ String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
     // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
     // all the same cases we handle well in the URL code for creating an NSURL.
     if (text.isURL)
-        string = userVisibleString([NSURL URLWithString:string]);
+        string = WTF::userVisibleString([NSURL URLWithString:string]);
 
     // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
     return [(NSString *)string precomposedStringWithCanonicalMapping];
@@ -272,7 +272,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
-    pasteboardImage.url.userVisibleForm = userVisibleString(pasteboardImage.url.url);
+    pasteboardImage.url.userVisibleForm = WTF::userVisibleString(pasteboardImage.url.url);
     pasteboardImage.resourceData = cachedImage->resourceBuffer();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 

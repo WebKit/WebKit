@@ -33,7 +33,7 @@
 #include "WebView.h"
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 #if ENABLE(NOTIFICATIONS)
 

@@ -1,3 +1,434 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        * NetworkProcess/Cookies/WebCookieManager.cpp:
+        * NetworkProcess/Cookies/WebCookieManager.h:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::publishDownloadProgress):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::publishProgress):
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        (WebKit::Download::publishProgress):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::registerBlobURLForSlice):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+        (WebKit::NetworkBlobRegistry::blobSize):
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/NetworkLoadChecker.h:
+        (WebKit::NetworkLoadChecker::setContentExtensionController):
+        (WebKit::NetworkLoadChecker::url const):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::writeBlobToFilePath):
+        (WebKit::NetworkProcess::publishDownloadProgress):
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::logBlockedCookieInformation):
+        (WebKit::logCookieInformationInternal):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::create):
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp:
+        (WebKit::NetworkCache::Statistics::recordRetrievedCachedEntry):
+        (WebKit::NetworkCache::Statistics::recordRevalidationSuccess):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::firstPartyForCookies const):
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        (WebKit::NetworkCapture::Request::operator WebCore::ResourceRequest const):
+        (WebKit::NetworkCapture::Response::operator WebCore::ResourceResponse const):
+        (WebKit::NetworkCapture::Error::operator WebCore::ResourceError const):
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::findBestFuzzyMatch):
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        (WebKit::NetworkCapture::Manager::urlIdentifyingCommonDomain):
+        * NetworkProcess/capture/NetworkCaptureManager.h:
+        * NetworkProcess/capture/NetworkCaptureResource.cpp:
+        (WebKit::NetworkCapture::Resource::url):
+        (WebKit::NetworkCapture::Resource::queryParameters):
+        * NetworkProcess/capture/NetworkCaptureResource.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::openCFURLRef):
+        (WebKit::replacedNSWorkspace_launchApplicationAtURL_options_configuration_error):
+        * Shared/API/APIURL.h:
+        (API::URL::create):
+        (API::URL::equals):
+        (API::URL::URL):
+        (API::URL::url const):
+        (API::URL::parseURLIfNecessary const):
+        * Shared/API/APIUserContentURLPattern.h:
+        (API::UserContentURLPattern::matchesURL const):
+        * Shared/API/c/WKURLRequest.cpp:
+        * Shared/API/c/WKURLResponse.cpp:
+        * Shared/API/c/cf/WKURLCF.mm:
+        (WKURLCreateWithCFURL):
+        (WKURLCopyCFURL):
+        * Shared/API/glib/WebKitURIRequest.cpp:
+        * Shared/API/glib/WebKitURIResponse.cpp:
+        * Shared/APIWebArchiveResource.mm:
+        (API::WebArchiveResource::WebArchiveResource):
+        * Shared/AssistedNodeInformation.h:
+        * Shared/Cocoa/WKNSURLExtras.mm:
+        (-[NSURL _web_originalDataAsWTFString]):
+        (): Deleted.
+        * Shared/SessionState.h:
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::itemIsInSameDocument const):
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebErrors.h:
+        * Shared/WebHitTestResultData.cpp:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        (IPC::decode):
+        * Shared/gtk/WebErrorsGtk.cpp:
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::appendRedirectionURL):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::takeRedirectChain):
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::signedPublicKeyAndChallengeString):
+        (API::NavigationClient::contentRuleListNotification):
+        (API::NavigationClient::webGLLoadPolicy const):
+        (API::NavigationClient::resolveWebGLLoadPolicy const):
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::saveDataToFileInDownloadsFolder):
+        * UIProcess/API/APIUserScript.cpp:
+        (API::UserScript::generateUniqueURL):
+        * UIProcess/API/APIUserScript.h:
+        * UIProcess/API/APIUserStyleSheet.cpp:
+        (API::UserStyleSheet::generateUniqueURL):
+        * UIProcess/API/APIUserStyleSheet.h:
+        * UIProcess/API/C/WKOpenPanelResultListener.cpp:
+        (filePathsFromFileURLs):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadPlainTextStringWithUserData):
+        (WKPageSetPageUIClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupAddUserScript):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsPrevalentResourceForDebugMode):
+        (WKWebsiteDataStoreSetStatisticsLastSeen):
+        (WKWebsiteDataStoreSetStatisticsPrevalentResource):
+        (WKWebsiteDataStoreSetStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsVeryPrevalentResource):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubresourceUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        (WKWebsiteDataStoreSetStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreIsStatisticsHasHadUserInteraction):
+        (WKWebsiteDataStoreSetStatisticsGrandfathered):
+        (WKWebsiteDataStoreIsStatisticsGrandfathered):
+        (WKWebsiteDataStoreSetStatisticsSubframeUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUnderTopFrameOrigin):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsSubresourceUniqueRedirectFrom):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectTo):
+        (WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom):
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.mm:
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript _initWithSource:injectionTime:forMainFrameOnly:legacyWhitelist:legacyBlacklist:associatedURL:userContentWorld:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:]):
+        (-[WKWebViewConfiguration urlSchemeHandlerForURLScheme:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (-[_WKApplicationManifest initWithCoder:]):
+        (+[_WKApplicationManifest applicationManifestFromJSON:manifestURL:documentURL:]):
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+        * UIProcess/API/glib/IconDatabase.cpp:
+        * UIProcess/API/glib/WebKitCookieManager.cpp:
+        (webkit_cookie_manager_get_cookies):
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp:
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp:
+        (webkit_security_origin_new_for_uri):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_plain_text):
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::showPaymentUI):
+        (WebKit::WebPaymentCoordinatorProxy::validateMerchant):
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentRequest):
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::domainByAddingDotPrefixIfNeeded):
+        (WebKit::WebAutomationSession::addSingleCookie):
+        (WebKit::WebAutomationSession::deleteAllCookies):
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::didFinish):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::webGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::resolveWebGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::contentRuleListNotification):
+        (WebKit::NavigationState::NavigationClient::willPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::didPerformClientRedirect):
+        (WebKit::NavigationState::NavigationClient::signedPublicKeyAndChallengeString):
+        * UIProcess/Cocoa/SafeBrowsingResultCocoa.mm: Copied from Source/WebKit/WebProcess/Network/WebSocketProvider.h.
+        (WebKit::SafeBrowsingResult::SafeBrowsingResult):
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm:
+        (WebKit::reportAnErrorURL):
+        (WebKit::malwareDetailsURL):
+        (WebKit::safeBrowsingDetailsText):
+        (WebKit::SafeBrowsingWarning::SafeBrowsingWarning):
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource finish:]):
+        (WebKit::SystemPreviewController::finish):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::saveDataToFileInDownloadsFolder):
+        (WebKit::requestUserMediaAuthorizationForDevices):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning initWithFrame:safeBrowsingWarning:completionHandler:]):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        (WebKit::WebViewImpl::writeToURLForFilePromiseProvider):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::publishProgress):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::setRedirectChain):
+        (WebKit::DownloadProxy::redirectChain const):
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::didStartProvisionalLoad):
+        (WebKit::FrameLoadState::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoadState::didSameDocumentNotification):
+        (WebKit::FrameLoadState::setUnreachableURL):
+        * UIProcess/FrameLoadState.h:
+        (WebKit::FrameLoadState::url const):
+        (WebKit::FrameLoadState::setURL):
+        (WebKit::FrameLoadState::provisionalURL const):
+        (WebKit::FrameLoadState::unreachableURL const):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::writeBlobToFilePath):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::showSafeBrowsingWarning):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::hasOnlySecureContent):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        * UIProcess/SafeBrowsingResult.h: Copied from Source/WebKit/UIProcess/SystemPreviewController.h.
+        (WebKit::SafeBrowsingResult::create):
+        (WebKit::SafeBrowsingResult::url const):
+        (WebKit::SafeBrowsingResult::provider const):
+        (WebKit::SafeBrowsingResult::isPhishing const):
+        (WebKit::SafeBrowsingResult::isMalware const):
+        (WebKit::SafeBrowsingResult::isUnwantedSoftware const):
+        (WebKit::SafeBrowsingResult::isKnownToBeUnsafe const):
+        * UIProcess/SafeBrowsingWarning.h:
+        (WebKit::SafeBrowsingWarning::create):
+        * UIProcess/SuspendedPageProxy.cpp:
+        * UIProcess/SystemPreviewController.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url const):
+        (WebKit::WebFrameProxy::provisionalURL const):
+        (WebKit::WebFrameProxy::unreachableURL const):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebOpenPanelResultListenerProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadDataWithNavigation):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::contentRuleListNotification):
+        (WebKit::WebPageProxy::processDidTerminate):
+        (WebKit::WebPageProxy::signedPublicKeyAndChallengeString):
+        (WebKit::WebPageProxy::setURLSchemeHandlerForScheme):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::tryPrewarmWithDomainInformation):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/ios/DragDropInteractionState.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:shareElementWithURL:rect:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        * UIProcess/ios/WKLegacyPDFView.mm:
+        (-[WKLegacyPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView actionSheetAssistant:shareElementWithURL:rect:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _updateLocationInfo]):
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::decodeLegacySessionState):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::showSafeBrowsingWarning):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::showPaymentUI):
+        (WebKit::WebPaymentCoordinator::validateMerchant):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::doRetrieveRecords):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp:
+        (WebKit::BlobRegistryProxy::registerFileBlobURL):
+        * WebProcess/FileAPI/BlobRegistryProxy.h:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::willLoadDataRequest):
+        (API::InjectedBundle::PageLoaderClient::userAgentForURL const):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameAllowsFollowingLink):
+        (WKBundleFrameCopySuggestedFilenameForResourceWithURL):
+        (WKBundleFrameCopyMIMETypeForResourceWithURL):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageHasLocalDataForURL):
+        * WebProcess/InjectedBundle/API/gtk/DOM/ConvertToUTF8String.cpp:
+        (convertToUTF8String):
+        * WebProcess/InjectedBundle/API/gtk/DOM/ConvertToUTF8String.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/Network/WebSocketProvider.h:
+        * WebProcess/Network/WebSocketStream.cpp:
+        (WebKit::WebSocketStream::WebSocketStream):
+        * WebProcess/Network/WebSocketStream.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performURLRequest):
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::webVisiblePluginInfo):
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::signedPublicKeyAndChallengeString const):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::readURLFromPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::allowsFollowingLink const):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURLInFrame):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::dumpHistoryForTesting):
+        (WebKit::WebPage::sendCSPViolationReport):
+        (WebKit::WebPage::addUserScript):
+        (WebKit::WebPage::addUserStyleSheet):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::frameURL const):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::sendPrewarmInformation):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::activePagesOrigins):
+
 2018-11-30  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add more logging of sandbox call entries.

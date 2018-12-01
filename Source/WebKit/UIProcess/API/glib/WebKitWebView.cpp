@@ -66,12 +66,12 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <jsc/JSCContextPrivate.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/URL.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -2647,7 +2647,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(plainText), plainText ? strlen(plainText) : 0 }, "text/plain"_s, "UTF-8"_s, blankURL().string());
+    getPage(webView).loadData({ reinterpret_cast<const uint8_t*>(plainText), plainText ? strlen(plainText) : 0 }, "text/plain"_s, "UTF-8"_s, WTF::blankURL().string());
 }
 
 /**

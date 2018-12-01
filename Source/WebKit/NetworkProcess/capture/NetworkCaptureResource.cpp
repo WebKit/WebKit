@@ -41,7 +41,7 @@ Resource::Resource(const String& eventFilePath)
 {
 }
 
-const WebCore::URL& Resource::url()
+const URL& Resource::url()
 {
     if (!m_url.isValid()) {
         auto events = eventStream();
@@ -52,8 +52,7 @@ const WebCore::URL& Resource::url()
             DEBUG_LOG_ERROR("Event stream does not have a requestSent event: file = " STRING_SPECIFIER, DEBUG_STR(m_eventFilePath));
         else {
             auto requestSentEvent = WTF::get<RequestSentEvent>(*event);
-            WebCore::URLParser parser(requestSentEvent.request.url);
-            m_url = parser.result();
+            m_url = URL({ }, requestSentEvent.request.url);
         }
     }
 
@@ -68,10 +67,10 @@ const String& Resource::urlIdentifyingCommonDomain()
     return m_urlIdentifyingCommonDomain;
 }
 
-WebCore::URLParser::URLEncodedForm Resource::queryParameters()
+WTF::URLParser::URLEncodedForm Resource::queryParameters()
 {
     if (!m_queryParameters)
-        m_queryParameters = WebCore::URLParser::parseURLEncodedForm(url().query());
+        m_queryParameters = WTF::URLParser::parseURLEncodedForm(url().query());
 
     return *m_queryParameters;
 }

@@ -28,11 +28,11 @@
 
 #if USE(CFURLCONNECTION)
 
-#include "URL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

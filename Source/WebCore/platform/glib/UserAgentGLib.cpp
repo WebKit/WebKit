@@ -27,9 +27,9 @@
 #include "config.h"
 #include "UserAgent.h"
 
-#include "URL.h"
 #include "UserAgentQuirks.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
 #if OS(UNIX)

@@ -49,7 +49,6 @@ class ProtectionSpace;
 class ResourceRequest;
 enum class ShouldSample : bool;
 class SecurityOrigin;
-class URL;
 struct SecurityOriginData;
 }
 
@@ -88,7 +87,7 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
-    void writeBlobToFilePath(const WebCore::URL&, const String& path, CompletionHandler<void(bool)>&&);
+    void writeBlobToFilePath(const URL&, const String& path, CompletionHandler<void(bool)>&&);
 
     void processReadyToSuspend();
     

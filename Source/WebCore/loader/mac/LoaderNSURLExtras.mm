@@ -30,11 +30,11 @@
 #import "config.h"
 #import "LoaderNSURLExtras.h"
 
-#import <wtf/Assertions.h>
-#import <wtf/Vector.h>
-#import "URL.h"
 #import "LocalizedStrings.h"
 #import "MIMETypeRegistry.h"
+#import <wtf/Assertions.h>
+#import <wtf/URL.h>
+#import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

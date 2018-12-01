@@ -36,7 +36,6 @@
 namespace WebCore {
 class ContentSecurityPolicy;
 class HTTPHeaderMap;
-class URL;
 }
 
 namespace WebKit {
@@ -51,7 +50,7 @@ public:
 private:
     ~PingLoad();
 
-    const WebCore::URL& currentURL() const;
+    const URL& currentURL() const;
     WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;

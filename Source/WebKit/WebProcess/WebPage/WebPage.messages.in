@@ -28,7 +28,7 @@ messages -> WebPage LegacyReceiver {
     SetDrawsBackground(bool drawsBackground)
 
     AddConsoleMessage(uint64_t frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, uint64_t requestID)
-    SendCSPViolationReport(uint64_t frameID, WebCore::URL reportURL, IPC::FormDataReference reportData)
+    SendCSPViolationReport(uint64_t frameID, URL reportURL, IPC::FormDataReference reportData)
     EnqueueSecurityPolicyViolationEvent(uint64_t frameID, WebCore::SecurityPolicyViolationEvent::Init eventInit)
 
 #if PLATFORM(COCOA)
@@ -148,7 +148,7 @@ messages -> WebPage LegacyReceiver {
     GoToBackForwardItem(uint64_t navigationID, struct WebCore::BackForwardItemIdentifier backForwardItemID, enum:uint8_t WebCore::FrameLoadType backForwardType, enum:bool WebCore::ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
     TryRestoreScrollPosition()
 
-    LoadURLInFrame(WebCore::URL url, uint64_t frameID)
+    LoadURLInFrame(URL url, uint64_t frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)

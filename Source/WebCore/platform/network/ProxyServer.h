@@ -23,15 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProxyServer_h
-#define ProxyServer_h
+#pragma once
 
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class URL;
 class NetworkingContext;
 
 // Represents a single proxy server.
@@ -75,5 +73,3 @@ WEBCORE_EXPORT Vector<ProxyServer> proxyServersForURL(const URL&);
 WEBCORE_EXPORT String toString(const Vector<ProxyServer>&);
     
 } // namespace WebCore
-
-#endif // ProxyServer_h

@@ -58,7 +58,6 @@ class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class TextResourceDecoder;
-class URL;
 class WebSocket;
 
 struct WebSocketFrame;

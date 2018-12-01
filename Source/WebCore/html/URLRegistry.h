@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class URL;
 class SecurityOrigin;
 class URLRegistry;
 

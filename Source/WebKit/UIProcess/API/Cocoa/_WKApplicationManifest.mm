@@ -54,9 +54,9 @@
         WTF::String(name),
         WTF::String(shortName),
         WTF::String(description),
-        WebCore::URL(scopeURL),
+        URL(scopeURL),
         static_cast<WebCore::ApplicationManifest::Display>(display),
-        WebCore::URL(startURL)
+        URL(startURL)
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
@@ -83,7 +83,7 @@
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
 {
-    auto manifest = WebCore::ApplicationManifestParser::parse(WTF::String(json), WebCore::URL(manifestURL), WebCore::URL(documentURL));
+    auto manifest = WebCore::ApplicationManifestParser::parse(WTF::String(json), URL(manifestURL), URL(documentURL));
     return wrapper(API::ApplicationManifest::create(manifest));
 }
 

@@ -106,7 +106,7 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCo
     if (response.isHTTP09()) {
         auto url = response.url();
         std::optional<uint16_t> port = url.port();
-        if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
+        if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             completionHandler(PolicyAction::Ignore);
             cancel();
             m_client->didCompleteWithError({ String(), 0, url, "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9." });

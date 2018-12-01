@@ -33,7 +33,6 @@ namespace WebCore {
 
 typedef uint64_t SharedStringHash;
 class Page;
-class URL;
 
 class VisitedLinkStore : public RefCounted<VisitedLinkStore> {
 public:

@@ -31,10 +31,10 @@
 #include "PluginModuleInfo.h"
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/URL.h>
 #include <algorithm>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

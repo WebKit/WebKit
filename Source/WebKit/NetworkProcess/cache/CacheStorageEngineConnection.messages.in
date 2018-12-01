@@ -31,7 +31,7 @@ messages -> CacheStorageEngineConnection {
     ClearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, struct WebCore::ClientOrigin origin);
     EngineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier);
 
-    RetrieveRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL url);
+    RetrieveRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, URL url);
     DeleteMatchingRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options);
     PutRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record);
 }

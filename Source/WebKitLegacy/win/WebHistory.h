@@ -33,8 +33,7 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
-    class URL;
-    class PageGroup;
+class PageGroup;
 }
 
 //-----------------------------------------------------------------------------
@@ -78,7 +77,7 @@ public:
 
     // WebHistory
     static WebHistory* sharedHistory();
-    void visitedURL(const WebCore::URL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
+    void visitedURL(const URL&, const WTF::String& title, const WTF::String& httpMethod, bool wasFailure, bool increaseVisitCount);
     void addVisitedLinksToVisitedLinkStore(WebVisitedLinkStore&);
 
     COMPtr<IWebHistoryItem> itemForURLString(const WTF::String&) const;

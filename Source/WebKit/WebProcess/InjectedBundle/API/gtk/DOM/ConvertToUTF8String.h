@@ -23,13 +23,9 @@
 
 #include <wtf/Forward.h>
 
-namespace WebCore {
-class URL;
-}
-
 typedef char gchar;
 
 gchar* convertToUTF8String(WTF::String const& s);
-gchar* convertToUTF8String(WebCore::URL const& s);
+gchar* convertToUTF8String(URL const& s);
 
 #endif /* ConvertToUTF8String_h */

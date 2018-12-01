@@ -35,10 +35,10 @@
 #import "PlatformStrategies.h"
 #import "RuntimeEnabledFeatures.h"
 #import "SharedBuffer.h"
-#import "URL.h"
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <wtf/URL.h>
 #import <wtf/text/StringHash.h>
 
 @interface NSAttributedString (NSAttributedStringKitAdditions)

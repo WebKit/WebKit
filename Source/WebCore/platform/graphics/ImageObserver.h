@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageObserver_h
-#define ImageObserver_h
+#pragma once
 
 #include "ImageTypes.h"
 
@@ -32,7 +31,6 @@ namespace WebCore {
 
 class Image;
 class IntRect;
-class URL;
 
 // Interface for notification about changes to an image, including decoding,
 // drawing, and animating.
@@ -54,5 +52,3 @@ public:
 };
 
 }
-
-#endif

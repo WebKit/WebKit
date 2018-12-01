@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class Page;
-class URL;
 
 typedef String ErrorString;
 

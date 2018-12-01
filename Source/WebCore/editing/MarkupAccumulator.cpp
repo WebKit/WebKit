@@ -35,7 +35,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "ProcessingInstruction.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -295,7 +295,7 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
     const String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
     UChar quoteChar = '"';
     String strippedURLString = resolvedURLString.stripWhiteSpace();
-    if (protocolIsJavaScript(strippedURLString)) {
+    if (WTF::protocolIsJavaScript(strippedURLString)) {
         // minimal escaping for javascript urls
         if (strippedURLString.contains('"')) {
             if (strippedURLString.contains('\''))

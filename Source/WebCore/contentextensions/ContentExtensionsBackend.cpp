@@ -41,7 +41,7 @@
 #include "FrameLoaderClient.h"
 #include "Page.h"
 #include "ResourceLoadInfo.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "UserContentController.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -194,7 +194,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
             break;
         case ContentExtensions::ActionType::MakeHTTPS: {
             if ((url.protocolIs("http") || url.protocolIs("ws"))
-                && (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol())))
+                && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                 willMakeHTTPS = true;
             break;
         }
@@ -244,7 +244,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
             willBlockCookies = true;
             break;
         case ContentExtensions::ActionType::MakeHTTPS:
-            if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol())))
+            if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                 willMakeHTTPS = true;
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
@@ -275,12 +275,12 @@ void applyBlockedStatusToRequest(const BlockedStatus& status, Page* page, Resour
     if (status.madeHTTPS) {
         const URL& originalURL = request.url();
         ASSERT(originalURL.protocolIs("http"));
-        ASSERT(!originalURL.port() || isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
+        ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
 
         URL newURL = originalURL;
         newURL.setProtocol("https");
         if (originalURL.port())
-            newURL.setPort(defaultPortForProtocol("https").value());
+            newURL.setPort(WTF::defaultPortForProtocol("https").value());
         request.setURL(newURL);
     }
 }

@@ -27,8 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import <WebCore/URL.h>
 #import <wtf/MainThread.h>
+#import <wtf/URL.h>
 
 WebPaymentCoordinatorClient::WebPaymentCoordinatorClient()
 {
@@ -67,7 +67,7 @@ void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&,
     });
 }
 
-bool WebPaymentCoordinatorClient::showPaymentUI(const WebCore::URL&, const Vector<WebCore::URL>&, const WebCore::ApplePaySessionPaymentRequest&)
+bool WebPaymentCoordinatorClient::showPaymentUI(const URL&, const Vector<URL>&, const WebCore::ApplePaySessionPaymentRequest&)
 {
     return false;
 }

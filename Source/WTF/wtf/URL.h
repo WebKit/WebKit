@@ -34,7 +34,7 @@ typedef const struct __CFURL* CFURLRef;
 #endif
 
 #if USE(SOUP)
-#include "GUniquePtrSoup.h"
+#include <wtf/glib/GUniquePtrSoup.h>
 #endif
 
 #if USE(FOUNDATION)
@@ -43,9 +43,6 @@ OBJC_CLASS NSURL;
 
 namespace WTF {
 class TextStream;
-}
-
-namespace WebCore {
 
 class URLTextEncoding {
 public:
@@ -55,7 +52,7 @@ public:
 
 struct URLHash;
 
-class URL {
+class WTF_EXPORT_PRIVATE URL {
 public:
     // Generates a URL which contains a null string.
     URL() { invalidate(); }
@@ -70,10 +67,10 @@ public:
     // FIXME: If the base URL is invalid, this always creates an invalid
     // URL. Instead I think it would be better to treat all invalid base URLs
     // the same way we treate null and empty base URLs.
-    WEBCORE_EXPORT URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
+    URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
 
-    WEBCORE_EXPORT static URL fakeURLWithRelativePart(const String&);
-    WEBCORE_EXPORT static URL fileURLWithFileSystemPath(const String&);
+    static URL fakeURLWithRelativePart(const String&);
+    static URL fileURLWithFileSystemPath(const String&);
 
     String strippedForUseAsReferrer() const;
 
@@ -84,7 +81,7 @@ public:
     // Makes a deep copy. Helpful only if you need to use a URL on another
     // thread. Since the underlying StringImpl objects are immutable, there's
     // no other reason to ever prefer isolatedCopy() over plain old assignment.
-    WEBCORE_EXPORT URL isolatedCopy() const;
+    URL isolatedCopy() const;
 
     bool isNull() const;
     bool isEmpty() const;
@@ -99,20 +96,20 @@ public:
 
     const String& string() const { return m_string; }
 
-    WEBCORE_EXPORT String stringCenterEllipsizedToLength(unsigned length = 1024) const;
+    String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
-    WEBCORE_EXPORT StringView protocol() const;
-    WEBCORE_EXPORT StringView host() const;
-    WEBCORE_EXPORT std::optional<uint16_t> port() const;
-    WEBCORE_EXPORT String hostAndPort() const;
-    WEBCORE_EXPORT String protocolHostAndPort() const;
-    WEBCORE_EXPORT String user() const;
-    WEBCORE_EXPORT String pass() const;
-    WEBCORE_EXPORT String path() const;
-    WEBCORE_EXPORT String lastPathComponent() const;
-    WEBCORE_EXPORT String query() const;
-    WEBCORE_EXPORT String fragmentIdentifier() const;
-    WEBCORE_EXPORT bool hasFragmentIdentifier() const;
+    StringView protocol() const;
+    StringView host() const;
+    std::optional<uint16_t> port() const;
+    String hostAndPort() const;
+    String protocolHostAndPort() const;
+    String user() const;
+    String pass() const;
+    String path() const;
+    String lastPathComponent() const;
+    String query() const;
+    String fragmentIdentifier() const;
+    bool hasFragmentIdentifier() const;
 
     bool hasUsername() const;
     bool hasPassword() const;
@@ -122,27 +119,28 @@ public:
 
     // Unlike user() and pass(), these functions don't decode escape sequences.
     // This is necessary for accurate round-tripping, because encoding doesn't encode '%' characters.
-    WEBCORE_EXPORT String encodedUser() const;
-    WEBCORE_EXPORT String encodedPass() const;
+    String encodedUser() const;
+    String encodedPass() const;
 
-    WEBCORE_EXPORT String baseAsString() const;
+    String baseAsString() const;
 
-    WEBCORE_EXPORT String fileSystemPath() const;
+    String fileSystemPath() const;
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
-    WEBCORE_EXPORT bool protocolIs(const char*) const;
+    bool protocolIs(const char*) const;
     bool protocolIs(StringView) const;
     bool protocolIsBlob() const { return protocolIs("blob"); }
     bool protocolIsData() const { return protocolIs("data"); }
-    WEBCORE_EXPORT bool protocolIsAbout() const;
+    bool protocolIsAbout() const;
     bool protocolIsInHTTPFamily() const;
-    WEBCORE_EXPORT bool isLocalFile() const;
+    bool isLocalFile() const;
+    bool isBlankURL() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
-    WEBCORE_EXPORT bool isMatchingDomain(const String&) const;
+    bool isMatchingDomain(const String&) const;
 
-    WEBCORE_EXPORT bool setProtocol(const String&);
+    bool setProtocol(const String&);
     void setHost(const String&);
 
     void removePort();
@@ -156,19 +154,19 @@ public:
 
     // If you pass an empty path for HTTP or HTTPS URLs, the resulting path
     // will be "/".
-    WEBCORE_EXPORT void setPath(const String&);
+    void setPath(const String&);
 
     // The query may begin with a question mark, or, if not, one will be added
     // for you. Setting the query to the empty string will leave a "?" in the
     // URL (with nothing after it). To clear the query, pass a null string.
-    WEBCORE_EXPORT void setQuery(const String&);
+    void setQuery(const String&);
 
-    WEBCORE_EXPORT void setFragmentIdentifier(StringView);
-    WEBCORE_EXPORT void removeFragmentIdentifier();
+    void setFragmentIdentifier(StringView);
+    void removeFragmentIdentifier();
 
-    WEBCORE_EXPORT void removeQueryAndFragmentIdentifier();
+    void removeQueryAndFragmentIdentifier();
 
-    WEBCORE_EXPORT static bool hostIsIPAddress(StringView);
+    static bool hostIsIPAddress(StringView);
 
     unsigned pathStart() const;
     unsigned pathEnd() const;
@@ -177,8 +175,8 @@ public:
     operator const String&() const { return string(); }
 
 #if USE(CF)
-    WEBCORE_EXPORT URL(CFURLRef);
-    WEBCORE_EXPORT RetainPtr<CFURLRef> createCFURL() const;
+    URL(CFURLRef);
+    RetainPtr<CFURLRef> createCFURL() const;
 #endif
 
 #if USE(SOUP)
@@ -187,8 +185,8 @@ public:
 #endif
 
 #if USE(FOUNDATION)
-    WEBCORE_EXPORT URL(NSURL*);
-    WEBCORE_EXPORT operator NSURL*() const;
+    URL(NSURL*);
+    operator NSURL*() const;
 #endif
 #ifdef __OBJC__
     operator NSString*() const { return string(); }
@@ -204,14 +202,14 @@ public:
 
 private:
     friend class URLParser;
-    WEBCORE_EXPORT void invalidate();
+    void invalidate();
     static bool protocolIs(const String&, const char*);
     void copyToBuffer(Vector<char, 512>& buffer) const;
     unsigned hostStart() const;
 
-    WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
-    WEBCORE_EXPORT friend bool protocolHostAndPortAreEqual(const URL&, const URL&);
-    WEBCORE_EXPORT friend bool hostsAreEqual(const URL&, const URL&);
+    friend WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+    friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
+    friend WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
     String m_string;
 
@@ -261,36 +259,36 @@ std::optional<URL> URL::decode(Decoder& decoder)
     return URL(URL(), string);
 }
 
-WEBCORE_EXPORT bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
-WEBCORE_EXPORT bool equalIgnoringQueryAndFragment(const URL&, const URL&);
-WEBCORE_EXPORT bool protocolHostAndPortAreEqual(const URL&, const URL&);
-WEBCORE_EXPORT bool hostsAreEqual(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool equalIgnoringQueryAndFragment(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
+WTF_EXPORT_PRIVATE bool hostsAreEqual(const URL&, const URL&);
 
-WEBCORE_EXPORT const URL& blankURL();
+WTF_EXPORT_PRIVATE const URL& blankURL();
 
 // Functions to do URL operations on strings.
 // These are operations that aren't faster on a parsed URL.
 // These are also different from the URL functions in that they don't require the string to be a valid and parsable URL.
 // This is especially important because valid javascript URLs are not necessarily considered valid by URL.
 
-WEBCORE_EXPORT bool protocolIs(const String& url, const char* protocol);
-WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
-bool protocolIsJavaScript(StringView url);
-WEBCORE_EXPORT bool protocolIsInHTTPFamily(const String& url);
+WTF_EXPORT_PRIVATE bool protocolIs(const String& url, const char* protocol);
+WTF_EXPORT_PRIVATE bool protocolIsJavaScript(const String& url);
+WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
+WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(const String& url);
 
-std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
-WEBCORE_EXPORT bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
-WEBCORE_EXPORT bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
+WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
+WTF_EXPORT_PRIVATE bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
+WTF_EXPORT_PRIVATE bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
 
-WEBCORE_EXPORT void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
-WEBCORE_EXPORT void clearDefaultPortForProtocolMapForTesting();
+WTF_EXPORT_PRIVATE void registerDefaultPortForProtocolForTesting(uint16_t port, const String& protocol);
+WTF_EXPORT_PRIVATE void clearDefaultPortForProtocolMapForTesting();
 
-bool isValidProtocol(const String&);
+WTF_EXPORT_PRIVATE bool isValidProtocol(const String&);
 
-String mimeTypeFromDataURL(const String& url);
+WTF_EXPORT_PRIVATE String mimeTypeFromDataURL(const String& url);
 
 // FIXME: This is a wrong concept to expose, different parts of a URL need different escaping per the URL Standard.
-WEBCORE_EXPORT String encodeWithURLEscapeSequences(const String&);
+WTF_EXPORT_PRIVATE String encodeWithURLEscapeSequences(const String&);
 
 // Inlines.
 
@@ -387,11 +385,9 @@ inline unsigned URL::pathAfterLastSlash() const
     return m_pathAfterLastSlash;
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
+WTF_EXPORT_PRIVATE WTF::TextStream& operator<<(WTF::TextStream&, const URL&);
 
-} // namespace WebCore
+template<> struct DefaultHash<URL>;
+template<> struct HashTraits<URL>;
 
-namespace WTF {
-template<> struct DefaultHash<WebCore::URL>;
-template<> struct HashTraits<WebCore::URL>;
 } // namespace WTF

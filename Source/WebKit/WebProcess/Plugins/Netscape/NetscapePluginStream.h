@@ -36,10 +36,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
-class URL;
-}
-
 namespace WebKit {
 
 class NetscapePlugin;
@@ -55,8 +51,8 @@ public:
     uint64_t streamID() const { return m_streamID; }
     const NPStream* npStream() const { return &m_npStream; }
 
-    void willSendRequest(const WebCore::URL& requestURL, const WebCore::URL& redirectResponseURL, int redirectResponseStatus);
-    void didReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength,
+    void willSendRequest(const URL& requestURL, const URL& redirectResponseURL, int redirectResponseStatus);
+    void didReceiveResponse(const URL& responseURL, uint32_t streamLength,
                             uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void didReceiveData(const char* bytes, int length);
     void didFinishLoading();

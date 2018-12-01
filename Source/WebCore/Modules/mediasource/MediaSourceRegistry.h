@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class URL;
 class MediaSource;
 
 class MediaSourceRegistry final : public URLRegistry {

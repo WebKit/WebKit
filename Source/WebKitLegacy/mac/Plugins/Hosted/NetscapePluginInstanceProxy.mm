@@ -58,7 +58,6 @@
 #import <WebCore/ProxyServer.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
-#import <WebCore/URL.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
@@ -66,6 +65,7 @@
 #import <utility>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefCountedLeakCounter.h>
+#import <wtf/URL.h>
 #import <wtf/text/CString.h>
 
 extern "C" {

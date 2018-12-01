@@ -108,7 +108,7 @@ void MixedContentChecker::checkFormForMixedContent(SecurityOrigin& securityOrigi
 {
     // Unconditionally allow javascript: URLs as form actions as some pages do this and it does not introduce
     // a mixed content issue.
-    if (protocolIsJavaScript(url))
+    if (WTF::protocolIsJavaScript(url))
         return;
 
     if (!isMixedContent(securityOrigin, url))

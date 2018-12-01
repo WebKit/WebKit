@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include <WebCore/URL.h>
 #include <WebCore/UserAgent.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

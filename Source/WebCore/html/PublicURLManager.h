@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class URL;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class URLRegistry;

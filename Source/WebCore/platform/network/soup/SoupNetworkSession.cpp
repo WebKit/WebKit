@@ -31,7 +31,6 @@
 
 #include "AuthenticationChallenge.h"
 #include "FileSystem.h"
-#include "GUniquePtrSoup.h"
 #include "Logging.h"
 #include "SoupNetworkProxySettings.h"
 #include <glib/gstdio.h>
@@ -39,6 +38,7 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 

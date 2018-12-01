@@ -53,7 +53,6 @@ OBJC_CLASS WKInspectorViewController;
 
 namespace WebCore {
 class CertificateInfo;
-class URL;
 }
 
 namespace WebKit {
@@ -157,7 +156,7 @@ public:
     static String inspectorPageURL();
     static String inspectorTestPageURL();
     static String inspectorBaseURL();
-    static bool isMainOrTestInspectorPage(const WebCore::URL&);
+    static bool isMainOrTestInspectorPage(const URL&);
 
     static const unsigned minimumWindowWidth;
     static const unsigned minimumWindowHeight;

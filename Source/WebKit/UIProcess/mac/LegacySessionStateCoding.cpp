@@ -1133,7 +1133,7 @@ bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& s
     }
 
     if (auto provisionalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(sessionStateDictionary, provisionalURLKey))) {
-        sessionState.provisionalURL = WebCore::URL(WebCore::URL(), provisionalURLString);
+        sessionState.provisionalURL = URL(URL(), provisionalURLString);
         if (!sessionState.provisionalURL.isValid())
             return false;
     }

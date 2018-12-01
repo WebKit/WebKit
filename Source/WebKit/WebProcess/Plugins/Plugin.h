@@ -23,16 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Plugin_h
-#define Plugin_h
+#pragma once
 
 #include <WebCore/FindOptions.h>
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/URL.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -53,15 +52,15 @@ class Decoder;
 }
 
 namespace WebCore {
-    class AffineTransform;
-    class FloatPoint;
-    class GraphicsContext;
-    class IntPoint;
-    class IntRect;
-    class IntSize;
-    class FloatPoint;
-    class Scrollbar;
-    class SharedBuffer;
+class AffineTransform;
+class FloatPoint;
+class GraphicsContext;
+class IntPoint;
+class IntRect;
+class IntSize;
+class FloatPoint;
+class Scrollbar;
+class SharedBuffer;
 }
 
 namespace WebKit {
@@ -82,7 +81,7 @@ enum PluginType {
 class Plugin : public ThreadSafeRefCounted<Plugin> {
 public:
     struct Parameters {
-        WebCore::URL url;
+        URL url;
         Vector<String> names;
         Vector<String> values;
         String mimeType;
@@ -167,10 +166,10 @@ public:
     virtual void didEvaluateJavaScript(uint64_t requestID, const String& result) = 0;
 
     // Tells the plug-in that a stream may send an HTTP request.
-    virtual void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatusCode) = 0;
+    virtual void streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& responseURL, int responseStatusCode) = 0;
 
     // Tells the plug-in that a stream has received its HTTP response.
-    virtual void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, 
+    virtual void streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, 
                                           uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that a stream did receive data.
@@ -183,7 +182,7 @@ public:
     virtual void streamDidFail(uint64_t streamID, bool wasCancelled) = 0;
 
     // Tells the plug-in that the manual stream has received its HTTP response.
-    virtual void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, 
+    virtual void manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength, 
                                                 uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) = 0;
 
     // Tells the plug-in that the manual stream did receive data.
@@ -323,5 +322,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ToValueTypeName) \
 static bool isType(const WebKit::Plugin& plugin) { return plugin.type() == WebKit::SpecificPluginType; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // Plugin_h

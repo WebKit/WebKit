@@ -244,7 +244,7 @@ static bool isSemicolonSeparatedAttribute(const HTMLToken::Attribute& attribute)
 static bool semicolonSeparatedValueContainsJavaScriptURL(StringView semicolonSeparatedValue)
 {
     for (auto value : semicolonSeparatedValue.split(';')) {
-        if (protocolIsJavaScript(value))
+        if (WTF::protocolIsJavaScript(value))
             return true;
     }
     return false;
@@ -440,9 +440,9 @@ bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
 
     bool didBlockScript = false;
     if (m_wasScriptTagFoundInRequest) {
-        didBlockScript |= eraseAttributeIfInjected(request, srcAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
-        didBlockScript |= eraseAttributeIfInjected(request, SVGNames::hrefAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
-        didBlockScript |= eraseAttributeIfInjected(request, XLinkNames::hrefAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, srcAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, SVGNames::hrefAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, XLinkNames::hrefAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
     }
 
     return didBlockScript;
@@ -455,7 +455,7 @@ bool XSSAuditor::filterObjectToken(const FilterTokenRequest& request)
 
     bool didBlockScript = false;
     if (isContainedInRequest(canonicalizedSnippetForTagName(request))) {
-        didBlockScript |= eraseAttributeIfInjected(request, dataAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, dataAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
         didBlockScript |= eraseAttributeIfInjected(request, typeAttr);
         didBlockScript |= eraseAttributeIfInjected(request, classidAttr);
     }
@@ -475,7 +475,7 @@ bool XSSAuditor::filterParamToken(const FilterTokenRequest& request)
     if (!HTMLParamElement::isURLParameter(String(nameAttribute.value)))
         return false;
 
-    return eraseAttributeIfInjected(request, valueAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+    return eraseAttributeIfInjected(request, valueAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
 }
 
 bool XSSAuditor::filterEmbedToken(const FilterTokenRequest& request)
@@ -486,7 +486,7 @@ bool XSSAuditor::filterEmbedToken(const FilterTokenRequest& request)
     bool didBlockScript = false;
     if (isContainedInRequest(canonicalizedSnippetForTagName(request))) {
         didBlockScript |= eraseAttributeIfInjected(request, codeAttr, String(), TruncationStyle::SrcLikeAttribute);
-        didBlockScript |= eraseAttributeIfInjected(request, srcAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+        didBlockScript |= eraseAttributeIfInjected(request, srcAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
         didBlockScript |= eraseAttributeIfInjected(request, typeAttr);
     }
     return didBlockScript;
@@ -538,7 +538,7 @@ bool XSSAuditor::filterFormToken(const FilterTokenRequest& request)
     ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, formTag));
 
-    return eraseAttributeIfInjected(request, actionAttr, blankURL().string());
+    return eraseAttributeIfInjected(request, actionAttr, WTF::blankURL().string());
 }
 
 bool XSSAuditor::filterInputToken(const FilterTokenRequest& request)
@@ -546,7 +546,7 @@ bool XSSAuditor::filterInputToken(const FilterTokenRequest& request)
     ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, inputTag));
 
-    return eraseAttributeIfInjected(request, formactionAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+    return eraseAttributeIfInjected(request, formactionAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
 }
 
 bool XSSAuditor::filterButtonToken(const FilterTokenRequest& request)
@@ -554,7 +554,7 @@ bool XSSAuditor::filterButtonToken(const FilterTokenRequest& request)
     ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, buttonTag));
 
-    return eraseAttributeIfInjected(request, formactionAttr, blankURL().string(), TruncationStyle::SrcLikeAttribute);
+    return eraseAttributeIfInjected(request, formactionAttr, WTF::blankURL().string(), TruncationStyle::SrcLikeAttribute);
 }
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& request)
@@ -567,7 +567,7 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& re
         bool isInlineEventHandler = isNameOfInlineEventHandler(attribute.name);
         // FIXME: It would be better if we didn't create a new String for every attribute in the document.
         String strippedValue = stripLeadingAndTrailingHTMLSpaces(String(attribute.value));
-        bool valueContainsJavaScriptURL = (!isInlineEventHandler && protocolIsJavaScript(strippedValue)) || (isSemicolonSeparatedAttribute(attribute) && semicolonSeparatedValueContainsJavaScriptURL(strippedValue));
+        bool valueContainsJavaScriptURL = (!isInlineEventHandler && WTF::protocolIsJavaScript(strippedValue)) || (isSemicolonSeparatedAttribute(attribute) && semicolonSeparatedValueContainsJavaScriptURL(strippedValue));
         if (!isInlineEventHandler && !valueContainsJavaScriptURL)
             continue;
         if (!isContainedInRequest(canonicalize(snippetFromAttribute(request, attribute), TruncationStyle::ScriptLikeAttribute)))
@@ -732,7 +732,7 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
     // Give empty URLs and about:blank a pass. Making a resourceURL from an
     // empty string below will likely later fail the "no query args test" as
     // it inherits the document's query args.
-    if (url.isEmpty() || url == blankURL().string())
+    if (url.isEmpty() || url == WTF::blankURL().string())
         return true;
 
     // If the resource is loaded from the same host as the enclosing page, it's

@@ -34,8 +34,8 @@
 #include "MockPaymentMethod.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
-#include "URL.h"
 #include <wtf/RunLoop.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

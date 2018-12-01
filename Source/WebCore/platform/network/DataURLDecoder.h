@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataURLDecoder_h
-#define DataURLDecoder_h
-
+#pragma once
 
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
@@ -38,7 +36,6 @@
 namespace WebCore {
 
 class SharedBuffer;
-class URL;
 
 namespace DataURLDecoder {
 
@@ -61,5 +58,3 @@ void decode(const URL&, const ScheduleContext&, DecodeCompletionHandler&&);
 }
 
 }
-
-#endif

@@ -38,8 +38,8 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/SharedBuffer.h>
-#include <WebCore/URL.h>
 #include <utility>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 #if PLUGIN_ARCHITECTURE(UNIX)

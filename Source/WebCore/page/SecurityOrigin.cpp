@@ -31,7 +31,7 @@
 
 #include "BlobURL.h"
 #include "FileSystem.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "SchemeRegistry.h"
 #include "SecurityPolicy.h"
 #include "TextEncoding.h"
@@ -148,7 +148,7 @@ SecurityOrigin::SecurityOrigin(const URL& url)
     // document.domain starts as m_data.host, but can be set by the DOM.
     m_domain = m_data.host;
 
-    if (m_data.port && isDefaultPortForProtocol(m_data.port.value(), m_data.protocol))
+    if (m_data.port && WTF::isDefaultPortForProtocol(m_data.port.value(), m_data.protocol))
         m_data.port = std::nullopt;
 
     // By default, only local SecurityOrigins can load local resources.
@@ -516,7 +516,7 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
 {
     String decodedHost = decodeURLEscapeSequences(host);
     auto origin = create(URL(URL(), protocol + "://" + host + "/"));
-    if (port && !isDefaultPortForProtocol(*port, protocol))
+    if (port && !WTF::isDefaultPortForProtocol(*port, protocol))
         origin->m_data.port = port;
     return origin;
 }

@@ -47,7 +47,6 @@ class Page;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;
-class URL;
 
 struct ResourceLoadStatistics;
 

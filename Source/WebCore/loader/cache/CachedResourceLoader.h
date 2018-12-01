@@ -57,7 +57,6 @@ class DocumentLoader;
 class Frame;
 class ImageLoader;
 class Settings;
-class URL;
 
 template <typename T>
 using ResourceErrorOr = Expected<T, ResourceError>;

@@ -37,7 +37,6 @@
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
 #import "SharedBuffer.h"
-#import "URL.h"
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -45,6 +44,7 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/URL.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 

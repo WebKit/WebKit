@@ -36,7 +36,6 @@ WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applica
 String systemMarketingVersionForUserAgentString();
 String userAgentBundleVersion();
 #else
-class URL;
 
 WEBCORE_EXPORT String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
 WEBCORE_EXPORT String standardUserAgentForURL(const URL&);

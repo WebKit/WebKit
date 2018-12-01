@@ -50,7 +50,7 @@ messages -> NetworkProcess LegacyReceiver {
     ResumeDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, IPC::DataReference resumeData, String path, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     CancelDownload(WebKit::DownloadID downloadID)
 #if PLATFORM(COCOA)
-    PublishDownloadProgress(WebKit::DownloadID downloadID, WebCore::URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
 
     ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
@@ -80,9 +80,9 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-    WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle) -> (bool success) Async
+    WriteBlobToFilePath(URL blobURL, String path, WebKit::SandboxExtension::Handle handle) -> (bool success) Async
 
-    PreconnectTo(WebCore::URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
+    PreconnectTo(URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<String> domainsToBlock, uint64_t contextId)

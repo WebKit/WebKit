@@ -34,7 +34,7 @@ using namespace WebCore;
 
 // WebResource ---------------------------------------------------------------------
 
-WebResource::WebResource(IStream* data, const WebCore::URL& url, const WTF::String& mimeType, const WTF::String& textEncodingName, const WTF::String& frameName)
+WebResource::WebResource(IStream* data, const WTF::URL& url, const WTF::String& mimeType, const WTF::String& textEncodingName, const WTF::String& frameName)
     : m_data(data)
     , m_url(url)
     , m_mimeType(mimeType)

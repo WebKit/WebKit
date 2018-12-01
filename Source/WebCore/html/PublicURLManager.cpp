@@ -26,7 +26,7 @@
 
 #include "config.h"
 #include "PublicURLManager.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "URLRegistry.h"
 #include <wtf/text/StringHash.h>
 

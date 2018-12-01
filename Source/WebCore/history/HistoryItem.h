@@ -54,7 +54,6 @@ class FormData;
 class HistoryItem;
 class Image;
 class ResourceRequest;
-class URL;
 enum class PruningReason;
 
 WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem&);

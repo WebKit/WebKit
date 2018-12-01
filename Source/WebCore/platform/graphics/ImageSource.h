@@ -38,7 +38,6 @@ namespace WebCore {
 class BitmapImage;
 class GraphicsContext;
 class ImageDecoder;
-class URL;
 
 class ImageSource : public ThreadSafeRefCounted<ImageSource> {
     friend class BitmapImage;

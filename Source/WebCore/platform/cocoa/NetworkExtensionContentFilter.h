@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkExtensionContentFilter_h
-#define NetworkExtensionContentFilter_h
+#pragma once
 
 #include "PlatformContentFilter.h"
 #include <objc/NSObjCRuntime.h>
@@ -38,8 +37,6 @@ OBJC_CLASS NEFilterSource;
 OBJC_CLASS NSData;
 
 namespace WebCore {
-
-class URL;
 
 class NetworkExtensionContentFilter final : public PlatformContentFilter {
     friend std::unique_ptr<NetworkExtensionContentFilter> std::make_unique<NetworkExtensionContentFilter>();
@@ -69,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // NetworkExtensionContentFilter_h

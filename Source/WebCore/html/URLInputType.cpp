@@ -36,7 +36,7 @@
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "LocalizedStrings.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

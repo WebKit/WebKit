@@ -34,7 +34,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "Timer.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "WebSocketChannelClient.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>

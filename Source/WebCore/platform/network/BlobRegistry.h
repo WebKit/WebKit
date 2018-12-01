@@ -38,7 +38,6 @@ namespace WebCore {
 class BlobDataFileReference;
 class BlobPart;
 class BlobRegistry;
-class URL;
 
 WEBCORE_EXPORT BlobRegistry& blobRegistry();
 

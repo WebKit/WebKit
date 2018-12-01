@@ -32,9 +32,7 @@
 #import "Image.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
-#import "URL.h"
 #import "UTIUtilities.h"
-#import "WebCoreNSURLExtras.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIColor.h>
@@ -44,6 +42,8 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/URL.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/StringHash.h>
 
 #define PASTEBOARD_SUPPORTS_ITEM_PROVIDERS (PLATFORM(IOS_FAMILY) && !(PLATFORM(WATCHOS) || PLATFORM(APPLETV)))
@@ -420,7 +420,7 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
     auto& pasteboardURL = pasteboardImage.url;
     if (NSURL *nsURL = pasteboardURL.url) {
 #if NSURL_SUPPORTS_TITLE
-        nsURL._title = pasteboardURL.title.isEmpty() ? userVisibleString(pasteboardURL.url) : (NSString *)pasteboardURL.title;
+        nsURL._title = pasteboardURL.title.isEmpty() ? WTF::userVisibleString(pasteboardURL.url) : (NSString *)pasteboardURL.title;
 #endif
         [representationsToRegister addRepresentingObject:nsURL];
     }

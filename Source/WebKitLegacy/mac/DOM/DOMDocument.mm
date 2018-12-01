@@ -82,12 +82,12 @@
 #import <WebCore/Text.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TreeWalker.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/XPathExpression.h>
 #import <WebCore/XPathNSResolver.h>
 #import <WebCore/XPathResult.h>
 #import <wtf/GetPtr.h>
+#import <wtf/URL.h>
 
 #define IMPL static_cast<WebCore::Document*>(reinterpret_cast<WebCore::Node*>(_internal))
 

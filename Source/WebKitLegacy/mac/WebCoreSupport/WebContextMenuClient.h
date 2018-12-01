@@ -50,7 +50,7 @@ public:
 
     void contextMenuDestroyed() override;
 
-    void downloadURL(const WebCore::URL&) override;
+    void downloadURL(const URL&) override;
     void searchWithGoogle(const WebCore::Frame*) override;
     void lookUpInDictionary(WebCore::Frame*) override;
     bool isSpeaking() override;

@@ -48,7 +48,6 @@ namespace WebCore {
 class Color;
 class SelectionData;
 class SharedBuffer;
-class URL;
 struct PasteboardCustomData;
 struct PasteboardImage;
 struct PasteboardItemInfo;

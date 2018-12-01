@@ -76,7 +76,7 @@ void PendingDownload::cancel()
 }
 
 #if PLATFORM(COCOA)
-void PendingDownload::publishProgress(const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtension)
+void PendingDownload::publishProgress(const URL& url, SandboxExtension::Handle&& sandboxExtension)
 {
     ASSERT(!m_progressURL.isValid());
     m_progressURL = url;

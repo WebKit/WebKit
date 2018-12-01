@@ -41,9 +41,9 @@
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "SoupNetworkSession.h"
-#include "URL.h"
 #include <gio/gio.h>
 #include <glib.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>

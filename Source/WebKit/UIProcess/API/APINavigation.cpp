@@ -76,7 +76,7 @@ void Navigation::setCurrentRequest(ResourceRequest&& request, ProcessIdentifier 
     m_currentRequestProcessIdentifier = processIdentifier;
 }
 
-void Navigation::appendRedirectionURL(const WebCore::URL& url)
+void Navigation::appendRedirectionURL(const WTF::URL& url)
 {
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != url)
         m_redirectChain.append(url);

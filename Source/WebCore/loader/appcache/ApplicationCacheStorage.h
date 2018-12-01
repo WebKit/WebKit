@@ -38,7 +38,6 @@ class ApplicationCache;
 class ApplicationCacheGroup;
 class ApplicationCacheHost;
 class ApplicationCacheResource;
-class URL;
 class SecurityOrigin;
 class SharedBuffer;
 template<typename> class StorageIDJournal;

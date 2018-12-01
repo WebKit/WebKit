@@ -34,10 +34,10 @@
 #import "ResourceResponse.h"
 #import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
-#import "URL.h"
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/URL.h>
 #import <wtf/threads/BinarySemaphore.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
@@ -118,7 +118,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
 
     URL modifiedRequestURL { URL(), modifiedRequestURLString.get() };
     if (!modifiedRequestURL.isValid()) {
-        LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a WebCore::URL.\n", modifiedRequestURLString.get());
+        LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a  URL.\n", modifiedRequestURLString.get());
         return;
     }
 

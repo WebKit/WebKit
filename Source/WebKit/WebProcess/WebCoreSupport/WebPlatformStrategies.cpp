@@ -60,9 +60,9 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/StorageNamespace.h>
 #include <WebCore/SubframeLoader.h>
-#include <WebCore/URL.h>
 #include <pal/SessionID.h>
 #include <wtf/Atomics.h>
+#include <wtf/URL.h>
 
 #if PLATFORM(MAC)
 #include "StringUtilities.h"
@@ -364,7 +364,7 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(in
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }
 
-WebCore::URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& pasteboardName, String& title)
+URL WebPlatformStrategies::readURLFromPasteboard(int index, const String& pasteboardName, String& title)
 {
     String urlString;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadURLFromPasteboard(index, pasteboardName), Messages::WebPasteboardProxy::ReadURLFromPasteboard::Reply(urlString, title), 0);

@@ -27,9 +27,9 @@
 #pragma once
 
 #include "StoredCredentialsPolicy.h"
-#include "URLHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

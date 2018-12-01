@@ -38,7 +38,7 @@
 #include "LoadTiming.h"
 #include "ResourceResponse.h"
 #include "ResourceTiming.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

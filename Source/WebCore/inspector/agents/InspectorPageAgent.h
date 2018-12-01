@@ -49,7 +49,6 @@ class InspectorOverlay;
 class Page;
 class RenderObject;
 class SharedBuffer;
-class URL;
 
 typedef String ErrorString;
 

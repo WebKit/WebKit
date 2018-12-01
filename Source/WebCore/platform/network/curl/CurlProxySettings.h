@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 #define kCURLAUTH_DIGEST_IE    (((unsigned long) 1) << 4)

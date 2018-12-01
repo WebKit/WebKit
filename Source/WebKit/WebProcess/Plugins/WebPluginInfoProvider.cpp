@@ -115,7 +115,7 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<V
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const WebCore::URL& url)
+Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const URL& url)
 {
     std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
     auto plugins = pluginInfo(page, supportedPluginIdentifiers);

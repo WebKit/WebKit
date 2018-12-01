@@ -32,10 +32,10 @@
 #import <WebCore/DragData.h>
 #import <WebCore/Path.h>
 #import <WebCore/TextIndicator.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebItemProviderPasteboard.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URL.h>
 #import <wtf/Vector.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ struct DragSourceState {
     std::optional<WebCore::TextIndicatorData> indicatorData;
     std::optional<WebCore::Path> visiblePath;
     String linkTitle;
-    WebCore::URL linkURL;
+    URL linkURL;
     bool possiblyNeedsDragPreviewUpdate { true };
 
     NSInteger itemIdentifier { 0 };

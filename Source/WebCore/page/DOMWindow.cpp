@@ -101,7 +101,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "SuddenTermination.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "UserGestureIndicator.h"
 #include "VisualViewport.h"
 #include "WebKitPoint.h"
@@ -2186,7 +2186,7 @@ String DOMWindow::crossDomainAccessErrorMessage(const DOMWindow& activeWindow, I
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString)
 {
-    if (!protocolIsJavaScript(urlString))
+    if (!WTF::protocolIsJavaScript(urlString))
         return false;
 
     // If this DOMWindow isn't currently active in the Frame, then there's no

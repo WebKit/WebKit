@@ -1615,7 +1615,7 @@ bool WebViewImpl::resignFirstResponder()
     return true;
 }
 
-void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
@@ -4103,7 +4103,7 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
         return;
     }
 
-    WebCore::URL blobURL { info.blobURL };
+    URL blobURL { info.blobURL };
     if (blobURL.isEmpty()) {
         completionHandler(webKitUnknownError());
         return;

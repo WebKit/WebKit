@@ -28,8 +28,8 @@
 #include "WTFStringUtilities.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

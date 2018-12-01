@@ -36,8 +36,8 @@
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginData.h"
-#include "URL.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

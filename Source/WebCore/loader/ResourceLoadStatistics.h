@@ -26,10 +26,10 @@
 #pragma once
 
 #include "CanvasActivityRecord.h"
-#include "URL.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

@@ -28,7 +28,7 @@
 
 #include "APIURLResponse.h"
 #include "WKAPICast.h"
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 using namespace WebKit;
 

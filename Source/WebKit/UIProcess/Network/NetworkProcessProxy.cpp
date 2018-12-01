@@ -560,7 +560,7 @@ void NetworkProcessProxy::sendProcessDidResume()
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
 
-void NetworkProcessProxy::writeBlobToFilePath(const WebCore::URL& url, const String& path, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkProcessProxy::writeBlobToFilePath(const URL& url, const String& path, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!canSendMessage()) {
         completionHandler(false);

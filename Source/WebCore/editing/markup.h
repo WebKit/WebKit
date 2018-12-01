@@ -41,7 +41,6 @@ class DocumentFragment;
 class Element;
 class Frame;
 class HTMLElement;
-class URL;
 class Node;
 class Page;
 class QualifiedName;

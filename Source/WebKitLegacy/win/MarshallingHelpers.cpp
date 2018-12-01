@@ -28,9 +28,9 @@
 
 #include <WebCore/BString.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/URL.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

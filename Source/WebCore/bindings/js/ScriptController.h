@@ -60,7 +60,6 @@ class LoadableModuleScript;
 class ModuleFetchParameters;
 class ScriptSourceCode;
 class SecurityOrigin;
-class URL;
 class Widget;
 struct ExceptionDetails;
 

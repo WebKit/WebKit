@@ -34,9 +34,9 @@
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ResourceHandleClient.h>
-#include <WebCore/URL.h>
 #include <sal.h>
 #include <wtf/RefPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -190,7 +190,7 @@ public:
     HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result);
     HRESULT canProvideDocumentSource(bool* result);
 
-    WebCore::URL url() const;
+    URL url() const;
 
     WebView* webView() const;
     void setWebView(WebView*);
@@ -213,7 +213,7 @@ protected:
     class WebFramePrivate;
     WebFramePrivate* d;
     bool m_quickRedirectComing { false };
-    WebCore::URL m_originalRequestURL;
+    URL m_originalRequestURL;
     bool m_inPrintingMode { false };
 
     Vector<WebCore::IntRect> m_pageRects;

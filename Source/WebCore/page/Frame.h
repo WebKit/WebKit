@@ -89,7 +89,6 @@ class RenderWidget;
 class ScriptController;
 class SecurityOrigin;
 class Settings;
-class URL;
 class VisiblePosition;
 class Widget;
 

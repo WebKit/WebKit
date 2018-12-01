@@ -56,8 +56,6 @@ typedef void* DragDataRef;
 
 namespace WebCore {
 
-class URL;
-
 enum DragApplicationFlags {
     DragApplicationNone = 0,
     DragApplicationIsModal = 1,

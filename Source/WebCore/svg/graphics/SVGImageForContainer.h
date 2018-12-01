@@ -30,7 +30,7 @@
 #include "FloatSize.h"
 #include "Image.h"
 #include "SVGImage.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

@@ -40,7 +40,6 @@ class RenderStyle;
 class RenderTreePosition;
 class Settings;
 class ShadowRoot;
-class URL;
 
 class PluginReplacement : public RefCounted<PluginReplacement> {
 public:

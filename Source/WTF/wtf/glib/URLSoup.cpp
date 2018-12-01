@@ -27,13 +27,12 @@
 
 #if USE(SOUP)
 
-#include "URL.h"
-
-#include "URLParser.h"
 #include <libsoup/soup.h>
+#include <wtf/URL.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
+namespace WTF {
 
 URL::URL(SoupURI* soupURI)
 {
@@ -71,6 +70,6 @@ bool URL::hostIsIPAddress(StringView host)
     return !host.isEmpty() && g_hostname_is_ip_address(host.utf8().data());
 }
 
-} // namespace WebCore
+} // namespace WTF
 
 #endif

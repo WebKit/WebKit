@@ -30,7 +30,7 @@
 
 namespace API {
 
-WebCore::URL UserStyleSheet::generateUniqueURL()
+WTF::URL UserStyleSheet::generateUniqueURL()
 {
     static uint64_t identifier;
 

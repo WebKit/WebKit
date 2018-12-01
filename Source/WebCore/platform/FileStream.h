@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-class URL;
-
 // All methods are synchronous.
 class FileStream {
 public:

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserScript_h
-#define APIUserScript_h
+#pragma once
 
 #include "APIObject.h"
 #include "APIUserContentWorld.h"
@@ -35,7 +34,7 @@ namespace API {
 
 class UserScript final : public ObjectImpl<Object::Type::UserScript>, public Identified<UserScript> {
 public:
-    static WebCore::URL generateUniqueURL();
+    static WTF::URL generateUniqueURL();
 
     static Ref<UserScript> create(WebCore::UserScript userScript, API::UserContentWorld& world)
     {
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIUserScript_h

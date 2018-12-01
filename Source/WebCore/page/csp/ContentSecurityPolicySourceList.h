@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class ContentSecurityPolicy;
-class URL;
 
 class ContentSecurityPolicySourceList {
 public:

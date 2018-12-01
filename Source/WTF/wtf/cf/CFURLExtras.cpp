@@ -26,10 +26,10 @@
 #include "config.h"
 #include "CFURLExtras.h"
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
-namespace WebCore {
+namespace WTF {
 
 RetainPtr<CFURLRef> createCFURLFromBuffer(const char* data, size_t size, CFURLRef baseURL)
 {

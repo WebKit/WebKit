@@ -38,9 +38,9 @@
 #import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKWebsiteDataStoreConfiguration.h"
-#import <WebCore/URL.h>
 #import <WebKit/ServiceWorkerProcessProxy.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/URL.h>
 
 @implementation WKWebsiteDataStore
 

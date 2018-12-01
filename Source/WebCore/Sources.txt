@@ -1584,8 +1584,6 @@ platform/Theme.cpp
 platform/ThreadGlobalData.cpp
 platform/ThreadTimers.cpp
 platform/Timer.cpp
-platform/URL.cpp
-platform/URLParser.cpp
 platform/UserActivity.cpp
 platform/WebCoreCrossThreadCopier.cpp
 platform/WebGLStateTracker.cpp

@@ -25,8 +25,8 @@
 
 #import "config.h"
 
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/Vector.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
@@ -50,17 +50,17 @@ static const char* dataAsString(NSData *data)
 
 static const char* originalDataAsString(NSURL *URL)
 {
-    return dataAsString(WebCore::originalURLData(URL));
+    return dataAsString(WTF::originalURLData(URL));
 }
 
 static const char* userVisibleString(NSURL *URL)
 {
-    return [WebCore::userVisibleString(URL) UTF8String];
+    return [WTF::userVisibleString(URL) UTF8String];
 }
 
 static NSURL *literalURL(const char* literal)
 {
-    return WebCore::URLWithData(literalAsData(literal), nil);
+    return WTF::URLWithData(literalAsData(literal), nil);
 }
 
 TEST(WebCore, URLExtras)
@@ -127,8 +127,8 @@ TEST(WebCore, URLExtras_DivisionSign)
     // Selected the division sign as an example of a non-ASCII character that is allowed in host names, since it's a lookalike character.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.xn--comothersite-kjb.org", originalDataAsString(WebCore::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
-    EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(WebCore::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
+    EXPECT_STREQ("http://site.xn--comothersite-kjb.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
+    EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xC3\xB7othersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
     EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", originalDataAsString(literalURL("http://site.com\xC3\xB7othersite.org")));
@@ -137,17 +137,17 @@ TEST(WebCore, URLExtras_DivisionSign)
     EXPECT_STREQ("http://site.com\xC3\xB7othersite.org", userVisibleString(literalURL("http://site.com%C3%B7othersite.org")));
 
     // Separate functions that deal with just a host name on its own.
-    EXPECT_STREQ("site.xn--comothersite-kjb.org", [WebCore::encodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
-    EXPECT_STREQ("site.com\xC3\xB7othersite.org", [WebCore::decodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
+    EXPECT_STREQ("site.xn--comothersite-kjb.org", [WTF::encodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
+    EXPECT_STREQ("site.com\xC3\xB7othersite.org", [WTF::decodeHostName(@"site.com\xC3\xB7othersite.org") UTF8String]);
 }
 
-TEST(WebCore, URLExtras_Solidus)
+TEST(WTF, URLExtras_Solidus)
 {
     // Selected full width solidus, which looks like the solidus, which is the character that indicates the end of the host name.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.com/othersite.org", originalDataAsString(WebCore::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
-    EXPECT_STREQ("http://site.com/othersite.org", userVisibleString(WebCore::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
+    EXPECT_STREQ("http://site.com/othersite.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
+    EXPECT_STREQ("http://site.com/othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xEF\xBC\x8Fothersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
     EXPECT_STREQ("http://site.com\xEF\xBC\x8Fothersite.org", originalDataAsString(literalURL("http://site.com\xEF\xBC\x8Fothersite.org")));
@@ -156,8 +156,8 @@ TEST(WebCore, URLExtras_Solidus)
     EXPECT_STREQ("http://site.com%EF%BC%8Fothersite.org", userVisibleString(literalURL("http://site.com%EF%BC%8Fothersite.org")));
 
     // Separate functions that deal with just a host name on its own.
-    EXPECT_STREQ("site.com/othersite.org", [WebCore::encodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
-    EXPECT_STREQ("site.com/othersite.org", [WebCore::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
+    EXPECT_STREQ("site.com/othersite.org", [WTF::encodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
+    EXPECT_STREQ("site.com/othersite.org", [WTF::decodeHostName(@"site.com\xEF\xBC\x8Fothersite.org") UTF8String]);
 }
 
 TEST(WebCore, URLExtras_Space)
@@ -165,8 +165,8 @@ TEST(WebCore, URLExtras_Space)
     // Selected ideographic space, which looks like the ASCII space, which is not allowed unescaped.
 
     // Code path similar to the one used when typing in a URL.
-    EXPECT_STREQ("http://site.com%20othersite.org", originalDataAsString(WebCore::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
-    EXPECT_STREQ("http://site.com%20othersite.org", userVisibleString(WebCore::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
+    EXPECT_STREQ("http://site.com%20othersite.org", originalDataAsString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
+    EXPECT_STREQ("http://site.com%20othersite.org", userVisibleString(WTF::URLWithUserTypedString(@"http://site.com\xE3\x80\x80othersite.org", nil)));
 
     // Code paths similar to the ones used for URLs found in webpages or HTTP responses.
     EXPECT_STREQ("http://site.com\xE3\x80\x80othersite.org", originalDataAsString(literalURL("http://site.com\xE3\x80\x80othersite.org")));
@@ -175,31 +175,31 @@ TEST(WebCore, URLExtras_Space)
     EXPECT_STREQ("http://site.com%E3%80%80othersite.org", userVisibleString(literalURL("http://site.com%E3%80%80othersite.org")));
 
     // Separate functions that deal with just a host name on its own.
-    EXPECT_STREQ("site.com othersite.org", [WebCore::encodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
-    EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WebCore::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
+    EXPECT_STREQ("site.com othersite.org", [WTF::encodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
+    EXPECT_STREQ("site.com\xE3\x80\x80othersite.org", [WTF::decodeHostName(@"site.com\xE3\x80\x80othersite.org") UTF8String]);
 }
 
 TEST(WebCore, URLExtras_File)
 {
-    EXPECT_STREQ("file:///%E2%98%83", [[WebCore::URLWithUserTypedString(@"file:///☃", nil) absoluteString] UTF8String]);
+    EXPECT_STREQ("file:///%E2%98%83", [[WTF::URLWithUserTypedString(@"file:///☃", nil) absoluteString] UTF8String]);
 }
 
 TEST(WebCore, URLExtras_ParsingError)
 {
     // Expect IDN failure.
-    NSURL *url = WebCore::URLWithUserTypedString(@"http://.com", nil);
+    NSURL *url = WTF::URLWithUserTypedString(@"http://.com", nil);
     EXPECT_TRUE(url == nil);
 
-    NSString *encodedHostName = WebCore::encodeHostName(@"http://.com");
+    NSString *encodedHostName = WTF::encodeHostName(@"http://.com");
     EXPECT_TRUE(encodedHostName == nil);
 }
 
 TEST(WebCore, URLExtras_Nil)
 {
-    NSURL *url1 = WebCore::URLWithUserTypedString(nil, nil);
+    NSURL *url1 = WTF::URLWithUserTypedString(nil, nil);
     EXPECT_TRUE(url1 == nil);
 
-    NSURL *url2 = WebCore::URLWithUserTypedStringDeprecated(nil, nil);
+    NSURL *url2 = WTF::URLWithUserTypedStringDeprecated(nil, nil);
     EXPECT_TRUE(url2 == nil);
 }
 

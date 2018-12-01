@@ -33,7 +33,6 @@
 #include <wtf/HashSet.h>
 
 namespace WebCore {
-class URL;
 struct Cookie;
 }
 

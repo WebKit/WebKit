@@ -26,7 +26,7 @@
 #pragma once
 
 #include "SecurityOriginData.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

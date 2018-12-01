@@ -38,7 +38,7 @@
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
 #include "Timer.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "WritingMode.h"
 
 namespace WebCore {

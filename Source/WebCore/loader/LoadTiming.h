@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
-
-class URL;
 
 class LoadTiming {
 public:

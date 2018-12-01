@@ -32,7 +32,7 @@
 
 #include "BlobResourceHandle.h"
 #include "FileError.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Forward.h>

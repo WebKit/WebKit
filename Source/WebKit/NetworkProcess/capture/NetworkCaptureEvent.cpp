@@ -36,9 +36,9 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <WebCore/URLParser.h>
 #include <wtf/Assertions.h>
 #include <wtf/Brigand.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -81,8 +81,7 @@ Request::Request(const WebCore::ResourceRequest& request)
 
 Request::operator WebCore::ResourceRequest() const
 {
-    WebCore::URLParser parser(url);
-    WebCore::ResourceRequest request(parser.result(), referrer, static_cast<WebCore::ResourceRequestCachePolicy>(policy));
+    WebCore::ResourceRequest request(URL({ }, url), referrer, static_cast<WebCore::ResourceRequestCachePolicy>(policy));
     request.setHTTPMethod(method);
 
     for (const auto& header : headers)
@@ -118,8 +117,7 @@ Response::Response(const WebCore::ResourceResponse& response)
 
 Response::operator WebCore::ResourceResponse() const
 {
-    WebCore::URLParser parser(url);
-    WebCore::ResourceResponse response(parser.result(), mimeType, expectedLength, textEncodingName);
+    WebCore::ResourceResponse response(URL({ }, url), mimeType, expectedLength, textEncodingName);
     response.setHTTPVersion(version);
     response.setHTTPStatusCode(status);
     response.setHTTPStatusText(reason);
@@ -152,8 +150,7 @@ Error::Error(const WebCore::ResourceError& error)
 
 Error::operator WebCore::ResourceError() const
 {
-    WebCore::URLParser parser(failingURL);
-    WebCore::ResourceError error(domain, errorCode, parser.result(), localizedDescription, static_cast<WebCore::ResourceError::Type>(type));
+    WebCore::ResourceError error(domain, errorCode, URL({ }, failingURL), localizedDescription, static_cast<WebCore::ResourceError::Type>(type));
 
     return error;
 }

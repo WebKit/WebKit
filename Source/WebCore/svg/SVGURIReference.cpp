@@ -25,7 +25,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "SVGAttributeOwnerProxy.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "XLinkNames.h"
 
 namespace WebCore {

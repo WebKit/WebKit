@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class Document;
-class URL;
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
 

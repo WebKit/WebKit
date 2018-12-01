@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class ContentSecurityPolicy;
-class URL;
 struct SecurityOriginData;
 
 class ContentSecurityPolicySource {

@@ -38,7 +38,6 @@ class HTMLMediaElement;
 class Image;
 class Node;
 class Scrollbar;
-class URL;
 
 enum class HitTestProgress { Stop, Continue };
 

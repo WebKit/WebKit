@@ -37,7 +37,6 @@ namespace WebCore {
 
 class DocumentLoader;
 class ResourceRequest;
-class URL;
 
 struct ResourceLoadInfo;
 

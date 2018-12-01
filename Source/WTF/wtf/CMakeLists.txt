@@ -240,6 +240,9 @@ set(WTF_PUBLIC_HEADERS
     TinyPtrSet.h
     TriState.h
     TypeCasts.h
+    URL.h
+    URLHash.h
+    URLParser.h
     UUID.h
     UnalignedAccess.h
     Unexpected.h
@@ -394,6 +397,8 @@ set(WTF_SOURCES
     Threading.cpp
     TimeWithDynamicClockType.cpp
     TimingScope.cpp
+    URL.cpp
+    URLParser.cpp
     UUID.cpp
     WTFAssertions.cpp
     WallTime.cpp

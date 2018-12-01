@@ -187,7 +187,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/mac/FFTFrameMac.cpp
     platform/audio/mac/MediaSessionManagerMac.mm
 
-    platform/cf/CFURLExtras.cpp
     platform/cf/FileSystemCF.cpp
     platform/cf/KeyedDecoderCF.cpp
     platform/cf/KeyedEncoderCF.cpp
@@ -195,7 +194,6 @@ list(APPEND WebCore_SOURCES
     platform/cf/MediaAccessibilitySoftLink.cpp
     platform/cf/RunLoopObserver.cpp
     platform/cf/SharedBufferCF.cpp
-    platform/cf/URLCF.cpp
 
     platform/cocoa/ContentFilterUnblockHandlerCocoa.mm
     platform/cocoa/CoreVideoSoftLink.cpp
@@ -397,7 +395,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/SuddenTermination.mm
     platform/mac/ThemeMac.mm
     platform/mac/ThreadCheck.mm
-    platform/mac/URLMac.mm
     platform/mac/UserActivityMac.mm
     platform/mac/ValidationBubbleMac.mm
     platform/mac/WebCoreFullScreenPlaceholderView.mm

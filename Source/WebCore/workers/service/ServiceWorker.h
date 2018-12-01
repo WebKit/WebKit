@@ -31,9 +31,9 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "ServiceWorkerData.h"
-#include "URL.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
 
 namespace JSC {
 class JSValue;

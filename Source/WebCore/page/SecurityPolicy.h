@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class SecurityOrigin;
-class URL;
 
 class SecurityPolicy {
 public:

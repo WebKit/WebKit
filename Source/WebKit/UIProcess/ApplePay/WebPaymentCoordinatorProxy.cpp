@@ -106,11 +106,11 @@ void WebPaymentCoordinatorProxy::showPaymentUI(const String& originatingURLStrin
 
     m_state = State::Activating;
 
-    WebCore::URL originatingURL(WebCore::URL(), originatingURLString);
+    URL originatingURL(URL(), originatingURLString);
 
-    Vector<WebCore::URL> linkIconURLs;
+    Vector<URL> linkIconURLs;
     for (const auto& linkIconURLString : linkIconURLStrings)
-        linkIconURLs.append(WebCore::URL(WebCore::URL(), linkIconURLString));
+        linkIconURLs.append(URL(URL(), linkIconURLString));
 
     platformShowPaymentUI(originatingURL, linkIconURLs, paymentRequest, [this](bool result) {
         ASSERT(m_state == State::Activating);
@@ -225,7 +225,7 @@ void WebPaymentCoordinatorProxy::didCancelPaymentSession()
     didReachFinalState();
 }
 
-void WebPaymentCoordinatorProxy::validateMerchant(const WebCore::URL& url)
+void WebPaymentCoordinatorProxy::validateMerchant(const URL& url)
 {
     ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
 

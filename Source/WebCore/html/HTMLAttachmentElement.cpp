@@ -38,10 +38,10 @@
 #include "MIMETypeRegistry.h"
 #include "RenderAttachment.h"
 #include "SharedBuffer.h"
-#include "URLParser.h"
 #include <pal/FileSizeFormatter.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
+#include <wtf/URLParser.h>
 
 #if PLATFORM(COCOA)
 #include "UTIUtilities.h"
@@ -88,7 +88,7 @@ const String& HTMLAttachmentElement::getAttachmentIdentifier(HTMLImageElement& i
 
 URL HTMLAttachmentElement::archiveResourceURL(const String& identifier)
 {
-    auto resourceURL = URLParser("applewebdata://attachment/"_s).result();
+    auto resourceURL = URL({ }, "applewebdata://attachment/"_s);
     resourceURL.setPath(identifier);
     return resourceURL;
 }

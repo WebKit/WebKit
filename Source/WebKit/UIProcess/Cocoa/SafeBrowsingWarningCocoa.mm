@@ -81,14 +81,14 @@ static void addLinkAndReplace(NSMutableAttributedString *string, NSString *toRep
     [string replaceCharactersInRange:[string.string rangeOfString:toReplace] withAttributedString:stringWithLink];
 }
 
-static NSURL *reportAnErrorURL(const WebCore::URL& url, SSBServiceLookupResult *result)
+static NSURL *reportAnErrorURL(const URL& url, SSBServiceLookupResult *result)
 {
-    return WebCore::URL({ }, makeString(reportAnErrorBase(result), "&url=", encodeWithURLEscapeSequences(url), "&hl=", defaultLanguage()));
+    return URL({ }, makeString(reportAnErrorBase(result), "&url=", encodeWithURLEscapeSequences(url), "&hl=", defaultLanguage()));
 }
 
-static NSURL *malwareDetailsURL(const WebCore::URL& url, SSBServiceLookupResult *result)
+static NSURL *malwareDetailsURL(const URL& url, SSBServiceLookupResult *result)
 {
-    return WebCore::URL({ }, makeString(malwareDetailsBase(result), "&site=", url.host(), "&hl=", defaultLanguage()));
+    return URL({ }, makeString(malwareDetailsBase(result), "&site=", url.host(), "&hl=", defaultLanguage()));
 }
 
 static NSString *safeBrowsingTitleText(SSBServiceLookupResult *result)
@@ -112,7 +112,7 @@ static NSString *safeBrowsingWarningText(SSBServiceLookupResult *result)
     return WEB_UI_NSSTRING(@"This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.", "Unwanted software warning");
 }
 
-static NSMutableAttributedString *safeBrowsingDetailsText(const WebCore::URL& url, SSBServiceLookupResult *result)
+static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBServiceLookupResult *result)
 {
     if (result.isPhishing) {
         NSString *phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");
@@ -149,7 +149,7 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const WebCore::URL& ur
     return malwareOrUnwantedSoftwareDetails(WEB_UI_NSSTRING(@"Warnings are shown for websites where harmful software has been detected. You can check %the-status-of-site% on the %safeBrowsingProvider% diagnostic page.", "Unwanted software warning description"), @"%the-status-of-site%", false);
 }
 
-SafeBrowsingWarning::SafeBrowsingWarning(const WebCore::URL& url, SSBServiceLookupResult *result)
+SafeBrowsingWarning::SafeBrowsingWarning(const URL& url, SSBServiceLookupResult *result)
     : m_title(safeBrowsingTitleText(result))
     , m_warning(safeBrowsingWarningText(result))
     , m_details(safeBrowsingDetailsText(url, result))

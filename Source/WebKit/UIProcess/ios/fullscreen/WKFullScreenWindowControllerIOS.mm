@@ -45,12 +45,12 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/ViewportArguments.h>
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 using namespace WebKit;
@@ -947,7 +947,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if (LinkPresentationLibrary())
         domain = [url _lp_simplifiedDisplayString];
     else
-        domain = userVisibleString(url);
+        domain = WTF::userVisibleString(url);
 #endif
 
     NSString *text = nil;

@@ -34,7 +34,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "NavigationScheduler.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -47,11 +47,11 @@ Location::Location(DOMWindow& window)
 inline const URL& Location::url() const
 {
     if (!frame())
-        return blankURL();
+        return WTF::blankURL();
 
     const URL& url = frame()->document()->url();
     if (!url.isValid())
-        return blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
+        return WTF::blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
     return url;
 }
@@ -258,7 +258,7 @@ void Location::reload(DOMWindow& activeWindow)
         return;
     }
 
-    if (protocolIsJavaScript(targetDocument.url()))
+    if (WTF::protocolIsJavaScript(targetDocument.url()))
         return;
 
     frame->navigationScheduler().scheduleRefresh(activeDocument);

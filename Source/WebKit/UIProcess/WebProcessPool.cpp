@@ -87,7 +87,6 @@
 #include <WebCore/Process.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/URLParser.h>
 #include <pal/SessionID.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
@@ -95,6 +94,7 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/URLParser.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -2361,7 +2361,7 @@ void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomai
     *value = prewarmInformation;
 }
 
-void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const WebCore::URL& url)
+void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const URL& url)
 {
     auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(toRegistrableDomain(url));
     if (!prewarmInformation)

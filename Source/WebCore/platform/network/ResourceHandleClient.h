@@ -44,7 +44,6 @@ OBJC_CLASS NSCachedURLResponse;
 namespace WebCore {
 class AuthenticationChallenge;
 class Credential;
-class URL;
 class ProtectionSpace;
 class ResourceHandle;
 class ResourceError;

@@ -38,7 +38,6 @@ class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
 class PaymentSession;
-class URL;
 enum class PaymentAuthorizationStatus;
 struct PaymentAuthorizationResult;
 struct PaymentMethodUpdate;

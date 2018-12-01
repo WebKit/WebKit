@@ -605,7 +605,7 @@ void WebLoaderStrategy::didFinishPingLoad(uint64_t pingLoadIdentifier, ResourceE
         completionHandler(WTFMove(error), WTFMove(response));
 }
 
-void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const WebCore::URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
+void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
     uint64_t preconnectionIdentifier = generateLoadIdentifier();
     auto addResult = m_preconnectCompletionHandlers.add(preconnectionIdentifier, WTFMove(completionHandler));

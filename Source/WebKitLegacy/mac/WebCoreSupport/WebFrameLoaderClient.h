@@ -107,7 +107,7 @@ private:
     void dispatchDidDispatchOnloadEvents() final;
     void dispatchDidReceiveServerRedirectForProvisionalLoad() final;
     void dispatchDidCancelClientRedirect() final;
-    void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, WallTime fireDate, WebCore::LockBackForwardList) final;
+    void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate, WebCore::LockBackForwardList) final;
     void dispatchDidChangeLocationWithinPage() final;
     void dispatchDidPushStateWithinPage() final;
     void dispatchDidReplaceStateWithinPage() final;
@@ -158,8 +158,8 @@ private:
     bool shouldGoToHistoryItem(WebCore::HistoryItem&) const final;
 
     void didDisplayInsecureContent() final;
-    void didRunInsecureContent(WebCore::SecurityOrigin&, const WebCore::URL&) final;
-    void didDetectXSS(const WebCore::URL&, bool didBlockEntirePage) final;
+    void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
+    void didDetectXSS(const URL&, bool didBlockEntirePage) final;
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) final;
@@ -176,7 +176,7 @@ private:
 
     bool shouldFallBack(const WebCore::ResourceError&) final;
 
-    WTF::String userAgent(const WebCore::URL&) final;
+    WTF::String userAgent(const URL&) final;
     
     void savePlatformDataToCachedFrame(WebCore::CachedFrame*) final;
     void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*) final;
@@ -205,30 +205,30 @@ private:
     Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) final;
     void updateCachedDocumentLoader(WebCore::DocumentLoader&) final { }
 
-    void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&) final;
+    void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement&,
+    RefPtr<WebCore::Frame> createFrame(const URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement&,
         const WTF::String& referrer) final;
-    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const WebCore::URL&,
-        const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool) final;
+    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
+    const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool) final;
     void recreatePlugin(WebCore::Widget*) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
 #if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(const WebCore::URL&) const final;
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const WebCore::URL&) const final;
+    WebCore::WebGLLoadPolicy webGLPolicyForURL(const URL&) const final;
+    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const final;
 #endif
 
-    RefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement&, const WebCore::URL& baseURL,
+    RefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement&, const URL& baseURL,
         const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues) final;
     
-    WebCore::ObjectContentType objectContentType(const WebCore::URL&, const WTF::String& mimeType) final;
+    WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) final;
     WTF::String overrideMediaType() const final;
     
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
 
 #if PLATFORM(IOS_FAMILY)
-    bool shouldLoadMediaElementURL(const WebCore::URL&) const final;
+    bool shouldLoadMediaElementURL(const URL&) const final;
 #endif
 
     RemoteAXObjectRef accessibilityRemoteObject() final { return 0; }
@@ -241,7 +241,7 @@ private:
 
     Ref<WebCore::FrameNetworkingContext> createNetworkingContext() final;
 
-    bool shouldPaintBrokenImage(const WebCore::URL&) const final;
+    bool shouldPaintBrokenImage(const URL&) const final;
 
 #if USE(QUICK_LOOK)
     RefPtr<WebCore::PreviewLoaderClient> createPreviewLoaderClient(const String& fileName, const String& uti) final;

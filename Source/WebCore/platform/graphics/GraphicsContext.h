@@ -65,6 +65,12 @@ typedef unsigned char UInt8;
 #endif
 #endif
 
+// X11 header defines "None" as constant in macro and breakes the PaintInvalidationReasons enum's "None".
+// As a workaround, we explicitly undef X11's None here.
+#if defined(None)
+#undef None
+#endif
+
 namespace WebCore {
 
 #if USE(WINGDI)
@@ -81,7 +87,6 @@ class GraphicsContextPlatformPrivate;
 class ImageBuffer;
 class IntRect;
 class RoundedRect;
-class URL;
 class GraphicsContext3D;
 class Path;
 class TextRun;

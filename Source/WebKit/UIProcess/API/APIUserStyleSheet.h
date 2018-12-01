@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIUserStyleSheet_h
-#define APIUserStyleSheet_h
+#pragma once
 
 #include "APIObject.h"
 #include "APIUserContentWorld.h"
@@ -35,7 +34,7 @@ namespace API {
 
 class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<UserStyleSheet> {
 public:
-    static WebCore::URL generateUniqueURL();
+    static WTF::URL generateUniqueURL();
 
     static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::UserContentWorld& world)
     {
@@ -55,5 +54,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIUserStyleSheet_h

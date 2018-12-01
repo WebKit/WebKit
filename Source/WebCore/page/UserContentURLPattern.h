@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class URL;
-
 class UserContentURLPattern {
 public:
     UserContentURLPattern() : m_invalid(true), m_matchSubdomains(false) { }

@@ -43,6 +43,7 @@ class StringView;
 class TextPosition;
 class TextStream;
 class UniquedStringImpl;
+class URL;
 class WallTime;
 
 struct FastMalloc;
@@ -112,6 +113,7 @@ using WTF::StringImpl;
 using WTF::StringView;
 using WTF::TextPosition;
 using WTF::TextStream;
+using WTF::URL;
 using WTF::Variant;
 using WTF::Vector;
 

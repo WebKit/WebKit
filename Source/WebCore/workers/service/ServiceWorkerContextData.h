@@ -29,11 +29,11 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
-#include "URL.h"
-#include "URLHash.h"
 #include "WorkerType.h"
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 
 #if ENABLE(SERVICE_WORKER)
 

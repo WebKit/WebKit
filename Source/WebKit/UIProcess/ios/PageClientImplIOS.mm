@@ -472,7 +472,7 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
 {
 }
 
-void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&& completionHandler)
+void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (auto webView = m_webView.get())
         [webView _showSafeBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];

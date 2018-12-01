@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class URL;
-
 // Returns strings representing key sizes that may be used
 // for the <keygen> tag. The first string is displayed as the default
 // key size in the <keygen> menu.

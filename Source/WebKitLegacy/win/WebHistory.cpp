@@ -36,12 +36,12 @@
 #include "WebVisitedLinkStore.h"
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/URL.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
 #include <functional>
 #include <wtf/DateMath.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 #if USE(CF)

@@ -35,7 +35,7 @@ public:
 
     virtual void contextMenuDestroyed();
 
-    virtual void downloadURL(const WebCore::URL&);
+    virtual void downloadURL(const URL&);
     virtual void searchWithGoogle(const WebCore::Frame*);
     virtual void lookUpInDictionary(WebCore::Frame*);
     virtual void speak(const WTF::String&);

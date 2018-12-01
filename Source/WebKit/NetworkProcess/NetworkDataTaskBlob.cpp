@@ -48,9 +48,9 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
-#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

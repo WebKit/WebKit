@@ -41,7 +41,7 @@
 #include "NetworkingContext.h"
 #include "Page.h"
 #include "RealtimeMediaSource.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

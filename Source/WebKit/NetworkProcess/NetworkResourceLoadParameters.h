@@ -65,7 +65,7 @@ public:
     Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    WebCore::URL mainDocumentURL;
+    URL mainDocumentURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
 };

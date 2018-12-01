@@ -29,9 +29,9 @@
     void DeleteAllCookies(PAL::SessionID sessionID)
 
     void SetCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
-    void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, WebCore::URL url, WebCore::URL mainDocumentURL, WebKit::CallbackID callbackID)
+    void SetCookies(PAL::SessionID sessionID, Vector<WebCore::Cookie> cookies, URL url, URL mainDocumentURL, WebKit::CallbackID callbackID)
     void GetAllCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
-    void GetCookies(PAL::SessionID sessionID, WebCore::URL url, WebKit::CallbackID callbackID)
+    void GetCookies(PAL::SessionID sessionID, URL url, WebKit::CallbackID callbackID)
     void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
     void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, WebKit::CallbackID callbackID)
 

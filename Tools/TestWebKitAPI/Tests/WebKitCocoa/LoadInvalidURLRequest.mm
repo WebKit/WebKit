@@ -28,10 +28,10 @@
 #if WK_API_ENABLED
 
 #import "PlatformUtilities.h"
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 static bool didFinishTest;
 static bool didFailProvisionalLoad;
@@ -39,7 +39,7 @@ static const char literal[] = "https://www.example.com<>/";
 
 static NSURL *literalURL(const char* literal)
 {
-    return WebCore::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+    return WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
 }
 
 @interface LoadInvalidURLNavigationActionDelegate : NSObject <WKNavigationDelegate>

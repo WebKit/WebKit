@@ -42,7 +42,6 @@ class Element;
 class FloatRect;
 class HitTestResult;
 class Range;
-class URL;
 
 enum DataDetectorTypes {
     DataDetectorTypeNone = 0,

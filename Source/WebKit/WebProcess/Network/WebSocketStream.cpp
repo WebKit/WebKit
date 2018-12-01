@@ -70,7 +70,7 @@ Ref<WebSocketStream> WebSocketStream::create(const URL& url, SocketStreamHandleC
     return adoptRef(*new WebSocketStream(url, client, sessionID, credentialPartition));
 }
 
-WebSocketStream::WebSocketStream(const WebCore::URL& url, WebCore::SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& cachePartition)
+WebSocketStream::WebSocketStream(const URL& url, WebCore::SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& cachePartition)
     : SocketStreamHandle(url, client)
     , m_client(client)
 {

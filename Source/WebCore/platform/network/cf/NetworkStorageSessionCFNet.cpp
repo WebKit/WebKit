@@ -40,12 +40,12 @@
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CookiesStrategy.h"
 #include "NotImplemented.h"
-#include "URL.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <windows.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/URL.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 

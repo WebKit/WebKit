@@ -292,7 +292,7 @@ static String cachedEntryReuseFailureToDiagnosticKey(UseDecision decision)
 
 void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request, UseDecision decision)
 {
-    WebCore::URL requestURL = request.url();
+    URL requestURL = request.url();
     if (decision == UseDecision::Use) {
         LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s is in the cache and is used", webPageID, requestURL.string().ascii().data());
         NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::retrievalKey(), WebCore::DiagnosticLoggingResultPass, WebCore::ShouldSample::Yes);
@@ -312,7 +312,7 @@ void Statistics::recordRetrievedCachedEntry(uint64_t webPageID, const Key& key, 
 
 void Statistics::recordRevalidationSuccess(uint64_t webPageID, const Key& key, const WebCore::ResourceRequest& request)
 {
-    WebCore::URL requestURL = request.url();
+    URL requestURL = request.url();
     LOG(NetworkCache, "(NetworkProcess) webPageID %" PRIu64 ": %s was successfully revalidated", webPageID, requestURL.string().ascii().data());
 
     NetworkProcess::singleton().logDiagnosticMessageWithResult(webPageID, WebCore::DiagnosticLoggingKeys::networkCacheKey(), WebCore::DiagnosticLoggingKeys::revalidatingKey(), WebCore::DiagnosticLoggingResultPass, WebCore::ShouldSample::Yes);

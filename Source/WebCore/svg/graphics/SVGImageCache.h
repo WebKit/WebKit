@@ -33,7 +33,6 @@ class LayoutSize;
 class SVGImage;
 class SVGImageForContainer;
 class RenderObject;
-class URL;
 
 class SVGImageCache {
     WTF_MAKE_FAST_ALLOCATED;

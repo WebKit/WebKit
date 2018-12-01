@@ -34,12 +34,12 @@
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "Image.h"
-#include "URL.h"
 #include "StringTruncator.h"
 #include "TextIndicator.h"
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 

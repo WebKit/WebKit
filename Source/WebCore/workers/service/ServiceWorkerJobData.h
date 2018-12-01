@@ -34,7 +34,7 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerRegistrationOptions.h"
 #include "ServiceWorkerTypes.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

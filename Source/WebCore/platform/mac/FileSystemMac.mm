@@ -28,8 +28,8 @@
 
 #if PLATFORM(MAC)
 
-#import "WebCoreNSURLExtras.h"
 #import <pal/spi/mac/MetadataSPI.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,7 +52,7 @@ void FileSystem::setMetadataURL(const String& path, const String& metadataURLStr
 {
     String urlString;
     if (NSURL *url = URLWithUserTypedString(metadataURLString, nil))
-        urlString = userVisibleString(URLByRemovingUserInfo(url));
+        urlString = WTF::userVisibleString(WTF::URLByRemovingUserInfo(url));
     else
         urlString = metadataURLString;
 

@@ -43,7 +43,6 @@ namespace WebCore {
 class HTTPHeaderMap;
 class IntRect;
 class ProtectionSpace;
-class URL;
 }
 
 namespace WebKit {

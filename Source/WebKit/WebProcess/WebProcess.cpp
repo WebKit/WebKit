@@ -114,12 +114,12 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Settings.h>
-#include <WebCore/URLParser.h>
 #include <WebCore/UserGestureIndicator.h>
 #include <wtf/Language.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
 
 #if !OS(WINDOWS)
@@ -1499,7 +1499,7 @@ void WebProcess::processDidResume()
 #endif
 }
 
-void WebProcess::sendPrewarmInformation(const WebCore::URL& url)
+void WebProcess::sendPrewarmInformation(const URL& url)
 {
     auto registrableDomain = toRegistrableDomain(url);
     if (registrableDomain.isEmpty())

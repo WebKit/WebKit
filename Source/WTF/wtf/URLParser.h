@@ -25,37 +25,38 @@
 
 #pragma once
 
-#include "URL.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/URL.h>
 
 struct UIDNA;
 
-namespace WebCore {
+namespace WTF {
 
 template<typename CharacterType> class CodePointIterator;
 
 class URLParser {
 public:
-    WEBCORE_EXPORT URLParser(const String&, const URL& = { }, const URLTextEncoding* = nullptr);
-    URL result() { return m_url; }
-
-    WEBCORE_EXPORT static bool allValuesEqual(const URL&, const URL&);
-    WEBCORE_EXPORT static bool internalValuesConsistent(const URL&);
+    WTF_EXPORT_PRIVATE static bool allValuesEqual(const URL&, const URL&);
+    WTF_EXPORT_PRIVATE static bool internalValuesConsistent(const URL&);
     
-    typedef Vector<WTF::KeyValuePair<String, String>> URLEncodedForm;
-    WEBCORE_EXPORT static URLEncodedForm parseURLEncodedForm(StringView);
-    static String serialize(const URLEncodedForm&);
+    using URLEncodedForm = Vector<WTF::KeyValuePair<String, String>>;
+    WTF_EXPORT_PRIVATE static URLEncodedForm parseURLEncodedForm(StringView);
+    WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
+
+    WTF_EXPORT_PRIVATE static bool isSpecialScheme(const String& scheme);
+    WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(const String& scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
     static bool isInUserInfoEncodeSet(UChar);
 
-    WEBCORE_EXPORT static bool isSpecialScheme(const String& scheme);
-    WEBCORE_EXPORT static std::optional<String> maybeCanonicalizeScheme(const String& scheme);
-
 private:
+    URLParser(const String&, const URL& = { }, const URLTextEncoding* = nullptr);
+    URL result() { return m_url; }
+
     static std::optional<uint16_t> defaultPortForProtocol(StringView);
     friend std::optional<uint16_t> defaultPortForProtocol(StringView);
+    friend class URL;
 
     URL m_url;
     Vector<LChar> m_asciiBuffer;

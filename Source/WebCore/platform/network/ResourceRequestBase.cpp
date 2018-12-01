@@ -151,7 +151,7 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
         request.m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);
     }
 
-    if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WebCore::protocolIs(request.httpReferrer(), "https"))
+    if (shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && WTF::protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();
 
     if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))

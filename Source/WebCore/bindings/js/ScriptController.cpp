@@ -589,7 +589,7 @@ JSValue ScriptController::executeScript(const ScriptSourceCode& sourceCode, Exce
 
 bool ScriptController::executeIfJavaScriptURL(const URL& url, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL)
 {
-    if (!protocolIsJavaScript(url))
+    if (!WTF::protocolIsJavaScript(url))
         return false;
 
     if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url(), eventHandlerPosition().m_line))

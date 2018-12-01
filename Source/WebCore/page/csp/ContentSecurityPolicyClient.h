@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class FormData;
-class URL;
 
 struct CSPInfo {
     String documentURI;

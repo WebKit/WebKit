@@ -26,9 +26,9 @@
 #pragma once
 
 #include "LinkIconType.h"
-#include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

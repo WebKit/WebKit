@@ -40,7 +40,6 @@ typedef struct _GtkPageRange GtkPageRange;
 namespace WebCore {
 class PrintContext;
 class ResourceError;
-class URL;
 };
 
 namespace WebKit {
@@ -97,7 +96,7 @@ protected:
     void printPagesDone();
     void printDone(const WebCore::ResourceError&);
     void sendPrintFinished(const WebCore::ResourceError&);
-    WebCore::URL frameURL() const;
+    URL frameURL() const;
 
     WebPage* m_webPage;
     GRefPtr<GtkPrintSettings> m_printSettings;

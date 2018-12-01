@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "URL.h"
 #include <pal/text/UnencodableHandling.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class TextEncoding : public URLTextEncoding {
+class TextEncoding : public WTF::URLTextEncoding {
 public:
     TextEncoding() = default;
     WEBCORE_EXPORT TextEncoding(const char* name);

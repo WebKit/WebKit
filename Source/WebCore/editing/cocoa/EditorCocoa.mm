@@ -52,11 +52,11 @@
 #import "Settings.h"
 #import "Text.h"
 #import "WebContentReader.h"
-#import "WebCoreNSURLExtras.h"
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
 
@@ -184,7 +184,7 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
 
 String Editor::userVisibleString(const URL& url)
 {
-    return WebCore::userVisibleString(url);
+    return WTF::userVisibleString(url);
 }
 
 RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)

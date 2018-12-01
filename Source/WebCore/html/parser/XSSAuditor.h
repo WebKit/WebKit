@@ -27,7 +27,7 @@
 
 #include "HTMLToken.h"
 #include "HTTPParsers.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "SuffixTree.h"
 #include "TextEncoding.h"
 

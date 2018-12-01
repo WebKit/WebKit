@@ -38,7 +38,6 @@ namespace WebCore {
 class LowPowerModeNotifier;
 class ResourceRequest;
 class SharedBuffer;
-class URL;
 }
 
 namespace WebKit {

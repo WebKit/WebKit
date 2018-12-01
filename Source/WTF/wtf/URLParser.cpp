@@ -24,21 +24,20 @@
  */
 
 #include "config.h"
-#include "URLParser.h"
+#include <wtf/URLParser.h>
 
-#include "Logging.h"
-#include "RuntimeApplicationChecks.h"
 #include <array>
 #include <mutex>
 #include <unicode/uidna.h>
+#include <unicode/utf8.h>
 #include <unicode/utypes.h>
 
-namespace WebCore {
+namespace WTF {
 
 #define URL_PARSER_DEBUGGING 0
 
 #if URL_PARSER_DEBUGGING
-#define URL_PARSER_LOG(...) LOG(URLParser, __VA_ARGS__)
+#define URL_PARSER_LOG(...) WTFLogAlways(__VA_ARGS__)
 #else
 #define URL_PARSER_LOG(...)
 #endif
@@ -431,7 +430,7 @@ ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool&
 
 bool URLParser::isInUserInfoEncodeSet(UChar c)
 {
-    return WebCore::isInUserInfoEncodeSet(c);
+    return WTF::isInUserInfoEncodeSet(c);
 }
 
 template<typename CharacterType, URLParser::ReportSyntaxViolation reportSyntaxViolation>
@@ -2087,10 +2086,10 @@ void URLParser::parseAuthority(CodePointIterator<CharacterType> iterator)
             appendToASCIIBuffer(':');
             break;
         }
-        utf8PercentEncode<WebCore::isInUserInfoEncodeSet>(iterator);
+        utf8PercentEncode<WTF::isInUserInfoEncodeSet>(iterator);
     }
     for (; !iterator.atEnd(); advance(iterator))
-        utf8PercentEncode<WebCore::isInUserInfoEncodeSet>(iterator);
+        utf8PercentEncode<WTF::isInUserInfoEncodeSet>(iterator);
     m_url.m_passwordEnd = currentPosition(iterator);
     if (!m_url.m_userEnd)
         m_url.m_userEnd = m_url.m_passwordEnd;
@@ -2923,4 +2922,4 @@ bool URLParser::internalValuesConsistent(const URL& url)
         && url.m_queryEnd <= url.m_string.length();
 }
 
-} // namespace WebCore
+} // namespace WTF

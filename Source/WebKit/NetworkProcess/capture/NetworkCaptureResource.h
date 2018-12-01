@@ -29,9 +29,9 @@
 
 #include "NetworkCaptureEvent.h"
 #include <WebCore/FileSystem.h>
-#include <WebCore/URL.h>
-#include <WebCore/URLParser.h>
 #include <wtf/Optional.h>
+#include <wtf/URL.h>
+#include <wtf/URLParser.h>
 
 namespace WebKit {
 namespace NetworkCapture {
@@ -55,16 +55,16 @@ public:
 public:
     Resource(const String& eventFilePath);
 
-    const WebCore::URL& url();
+    const URL& url();
     const String& urlIdentifyingCommonDomain();
-    WebCore::URLParser::URLEncodedForm queryParameters();
+    WTF::URLParser::URLEncodedForm queryParameters();
     EventStream eventStream();
 
 private:
     String m_eventFilePath;
-    WebCore::URL m_url;
+    URL m_url;
     String m_urlIdentifyingCommonDomain;
-    std::optional<WebCore::URLParser::URLEncodedForm> m_queryParameters;
+    std::optional<WTF::URLParser::URLEncodedForm> m_queryParameters;
 };
 
 } // namespace NetworkCapture

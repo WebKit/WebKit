@@ -29,8 +29,8 @@
 
 #include <WebCore/IntRect.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 
 #if USE(QUICK_LOOK)
 OBJC_CLASS QLPreviewController;
@@ -50,7 +50,7 @@ public:
 
     void start(const String& mimeType, const WebCore::IntRect&);
     void updateProgress(float);
-    void finish(WebCore::URL);
+    void finish(URL);
     void cancel();
     void fail(const WebCore::ResourceError&);
 

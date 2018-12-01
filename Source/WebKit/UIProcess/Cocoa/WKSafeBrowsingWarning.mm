@@ -29,7 +29,7 @@
 #import "PageClient.h"
 #import "SafeBrowsingWarning.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/URL.h>
+#import <wtf/URL.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Language.h>
 
@@ -229,7 +229,7 @@ static void setBackground(ViewType *view, ColorType *color)
 
 @implementation WKSafeBrowsingWarning
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     if (!(self = [super initWithFrame:frame])) {
         completionHandler(WebKit::ContinueUnsafeLoad::Yes);

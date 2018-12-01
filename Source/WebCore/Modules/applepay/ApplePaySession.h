@@ -48,7 +48,6 @@ class Payment;
 class PaymentContact;
 class PaymentCoordinator;
 class PaymentMethod;
-class URL;
 enum class PaymentAuthorizationStatus;
 struct ApplePayLineItem;
 struct ApplePayPaymentRequest;

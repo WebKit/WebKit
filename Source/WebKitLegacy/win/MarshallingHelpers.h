@@ -30,15 +30,14 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
-    class IntRect;
-    class URL;
+class IntRect;
 }
 
 class MarshallingHelpers
 {
 public:
-    static WebCore::URL BSTRToKURL(BSTR);
-    static BSTR URLToBSTR(const WebCore::URL&);
+    static URL BSTRToKURL(BSTR);
+    static BSTR URLToBSTR(const URL&);
     static CFURLRef PathStringToFileCFURLRef(const WTF::String&);
     static WTF::String FileCFURLRefToPathString(CFURLRef fileURL);
     static CFURLRef BSTRToCFURLRef(BSTR);

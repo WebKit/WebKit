@@ -21,12 +21,12 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "URLHash.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

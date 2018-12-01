@@ -91,7 +91,6 @@
 #import <WebCore/ShareData.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/VisibleSelection.h>
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -102,6 +101,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(DRAG_SUPPORT)
@@ -5105,7 +5105,7 @@ static bool isAssistableInputType(InputType type)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
     if (_textSelectionAssistant)
-        [_textSelectionAssistant showShareSheetFor:userVisibleString(url) fromRect:boundingRect];
+        [_textSelectionAssistant showShareSheetFor:WTF::userVisibleString(url) fromRect:boundingRect];
 }
 
 #if HAVE(APP_LINKS)
@@ -6397,7 +6397,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
     NSURL *targetURL = controller.previewData[UIPreviewDataLink];
     URL coreTargetURL = targetURL;
-    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (WebCore::protocolIsInHTTPFamily(coreTargetURL) || WebCore::protocolIs(coreTargetURL, "data"));
+    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (WTF::protocolIsInHTTPFamily(coreTargetURL) || WTF::protocolIs(coreTargetURL, "data"));
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
         _highlightLongPressCanClick = NO;

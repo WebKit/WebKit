@@ -63,7 +63,6 @@
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
@@ -74,6 +73,7 @@
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <stdio.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -494,7 +494,7 @@ static RetainPtr<NSArray<NSString *>> activePagesOrigins(const HashMap<uint64_t,
             continue;
 
         if (NSURL *originAsURL = origin(*page))
-            [activeOrigins addObject:userVisibleString(originAsURL)];
+            [activeOrigins addObject:WTF::userVisibleString(originAsURL)];
     }
 
     return activeOrigins;

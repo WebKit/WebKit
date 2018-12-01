@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +22,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef URLHash_h
-#define URLHash_h
+#include "config.h"
 
-#include "URL.h"
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include "NotImplemented.h"
+#include <wtf/Forward.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
-    struct URLHash {
-        static unsigned hash(const URL& key)
-        {
-            return key.string().impl()->hash();
-        }
+void getSupportedKeySizes(Vector<String>&)
+{
+    notImplemented();
+}
 
-        static bool equal(const URL& a, const URL& b)
-        {
-            return StringHash::equal(a.string(), b.string());
-        }
-
-        static const bool safeToCompareToEmptyOrDeleted = false;
-    };
+String signedPublicKeyAndChallengeString(unsigned, const String&, const URL&)
+{
+    notImplemented();
+    return { };
+}
 
 } // namespace WebCore
-
-namespace WTF {
-
-// URLHash is the default hash for String
-template<> struct DefaultHash<WebCore::URL> {
-    using Hash = WebCore::URLHash;
-};
-
-template<> struct HashTraits<WebCore::URL> : SimpleClassHashTraits<WebCore::URL> { };
-
-} // namespace WTF
-
-#endif // URLHash_h

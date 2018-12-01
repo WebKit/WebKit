@@ -37,7 +37,6 @@ class DOMWrapperWorld;
 class ResourceError;
 class ResourceRequest;
 class SharedBuffer;
-class URL;
 }
 
 namespace WebKit {
@@ -56,7 +55,7 @@ public:
     virtual ~PageLoaderClient() = default;
 
     virtual void willLoadURLRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, API::Object*) { }
-    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Object*) { }
+    virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WTF::URL&, API::Object*) { }
 
     virtual void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
@@ -95,7 +94,7 @@ public:
     virtual void featuresUsedInPage(WebKit::WebPage&, const Vector<WTF::String>&) { }
 
     virtual void willDestroyFrame(WebKit::WebPage&, WebKit::WebFrame&) { }
-    virtual WTF::String userAgentForURL(WebKit::WebFrame&, const WebCore::URL&) const { return WTF::String(); }
+    virtual WTF::String userAgentForURL(WebKit::WebFrame&, const WTF::URL&) const { return WTF::String(); }
 
     virtual OptionSet<WebCore::LayoutMilestone> layoutMilestones() const { return { }; }
 };

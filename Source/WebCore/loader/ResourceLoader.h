@@ -52,7 +52,6 @@ class Frame;
 class FrameLoader;
 class NetworkLoadMetrics;
 class PreviewLoader;
-class URL;
 
 class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:

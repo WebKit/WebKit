@@ -32,7 +32,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/InputMode.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -123,7 +123,7 @@ struct AssistedNodeInformation {
     bool acceptsAutofilledLoginCredentials { false };
     bool isAutofillableUsernameField { false };
     bool elementIsTransparent { false };
-    WebCore::URL representingPageURL;
+    URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
     String placeholder;
     String label;

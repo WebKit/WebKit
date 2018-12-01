@@ -34,7 +34,7 @@
 #include "Image.h"
 #include "ImageBitmap.h"
 #include "OffscreenCanvas.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "SecurityOrigin.h"
 
 namespace WebCore {

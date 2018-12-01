@@ -1142,7 +1142,7 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, 
 
 #endif
 
-String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const WebCore::URL& url) const
+String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const
 {
     SEL selector = @selector(signedPublicKeyAndChallengeStringForWebView:);
     if ([[m_webView UIDelegate] respondsToSelector:selector])

@@ -8,10 +8,12 @@ list(APPEND WTF_LIBRARIES
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
+    cf/CFURLExtras.h
     cf/TypeCastsCF.h
 
     cocoa/Entitlements.h
     cocoa/MachSendRight.h
+    cocoa/NSURLExtras.h
     cocoa/SoftLinking.h
 
     darwin/WeakLinking.h
@@ -37,8 +39,10 @@ list(APPEND WTF_SOURCES
     SchedulePairCF.cpp
     SchedulePairMac.mm
 
+    cf/CFURLExtras.cpp
     cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
+    cf/URLCF.cpp
 
     cocoa/AutodrainedPool.cpp
     cocoa/CPUTimeCocoa.cpp
@@ -47,6 +51,8 @@ list(APPEND WTF_SOURCES
     cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp
     cocoa/MemoryPressureHandlerCocoa.mm
+    cocoa/NSURLExtras.mm
+    cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
     mac/DeprecatedSymbolsUsedBySafari.mm

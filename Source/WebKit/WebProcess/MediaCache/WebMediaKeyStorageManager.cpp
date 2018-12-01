@@ -30,7 +30,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

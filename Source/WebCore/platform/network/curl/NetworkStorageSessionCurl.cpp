@@ -36,10 +36,10 @@
 #include "FileSystem.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
-#include "URL.h"
 
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

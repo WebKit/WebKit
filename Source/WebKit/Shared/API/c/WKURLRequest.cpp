@@ -29,7 +29,7 @@
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
 #include "WKData.h"
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 using namespace WebKit;

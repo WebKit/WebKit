@@ -35,7 +35,7 @@ messages -> WebSWServerToContextConnection {
     FindClientByIdentifier(uint64_t requestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientIdentifier clientIdentifier);
     MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);
     Claim(uint64_t claimRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier);
-    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, WebCore::URL scriptURL, String script, WebCore::URL responseURL, String mimeType);
+    SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, String script, URL responseURL, String mimeType);
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -27,7 +27,7 @@
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

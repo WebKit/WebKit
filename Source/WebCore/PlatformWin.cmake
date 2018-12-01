@@ -249,12 +249,10 @@ if (USE_CF)
     list(APPEND WebCore_SOURCES
         loader/archive/cf/LegacyWebArchive.cpp
 
-        platform/cf/CFURLExtras.cpp
         platform/cf/FileSystemCF.cpp
         platform/cf/KeyedDecoderCF.cpp
         platform/cf/KeyedEncoderCF.cpp
         platform/cf/SharedBufferCF.cpp
-        platform/cf/URLCF.cpp
 
         platform/cf/win/CertificateCFWin.cpp
 

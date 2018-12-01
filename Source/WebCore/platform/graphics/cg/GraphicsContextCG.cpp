@@ -41,10 +41,10 @@
 #include "ShadowBlur.h"
 #include "SubimageCacheWithTimer.h"
 #include "Timer.h"
-#include "URL.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
 #define USE_DRAW_PATH_DIRECT (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))

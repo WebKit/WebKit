@@ -37,7 +37,6 @@ class Document;
 class Payment;
 class PaymentContact;
 class PaymentMethod;
-class URL;
 
 class PaymentSession : public virtual PaymentSessionBase {
 public:

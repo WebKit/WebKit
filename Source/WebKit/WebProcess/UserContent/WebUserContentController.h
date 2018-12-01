@@ -57,10 +57,10 @@ public:
     UserContentControllerIdentifier identifier() { return m_identifier; }
 
     void addUserScript(InjectedBundleScriptWorld&, WebCore::UserScript&&);
-    void removeUserScriptWithURL(InjectedBundleScriptWorld&, const WebCore::URL&);
+    void removeUserScriptWithURL(InjectedBundleScriptWorld&, const URL&);
     void removeUserScripts(InjectedBundleScriptWorld&);
     void addUserStyleSheet(InjectedBundleScriptWorld&, WebCore::UserStyleSheet&&);
-    void removeUserStyleSheetWithURL(InjectedBundleScriptWorld&, const WebCore::URL&);
+    void removeUserStyleSheetWithURL(InjectedBundleScriptWorld&, const URL&);
     void removeUserStyleSheets(InjectedBundleScriptWorld&);
     void removeAllUserContent();
 

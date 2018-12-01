@@ -24,11 +24,11 @@
 
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
-#include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
 #include "WebKitSoupRequestGeneric.h"
+#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

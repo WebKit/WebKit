@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class URL;
-
 typedef uint64_t SharedStringHash;
 
 // Use the low 32-bits of the 64-bit SharedStringHash as the key for HashSets.

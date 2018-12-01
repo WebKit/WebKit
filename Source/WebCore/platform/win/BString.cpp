@@ -26,8 +26,8 @@
 #include "config.h"
 #include "BString.h"
 
-#include "URL.h"
 #include <windows.h>
+#include <wtf/URL.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringView.h>
 

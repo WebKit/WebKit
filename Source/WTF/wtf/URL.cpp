@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 #include "URLParser.h"
 #include <stdio.h>
@@ -46,8 +46,7 @@
 // so many allocations, or change this to use StringBuffer instead.
 
 
-namespace WebCore {
-using namespace WTF;
+namespace WTF {
 
 typedef Vector<char, 512> CharBuffer;
 typedef Vector<UChar, 512> UCharBuffer;
@@ -807,7 +806,7 @@ bool protocolIs(const String& url, const char* protocol)
 
 inline bool URL::protocolIs(const String& string, const char* protocol)
 {
-    return WebCore::protocolIsInternal(string, protocol);
+    return WTF::protocolIsInternal(string, protocol);
 }
 
 #ifndef NDEBUG
@@ -1107,4 +1106,4 @@ bool URL::hostIsIPAddress(StringView host)
 }
 #endif
 
-} // namespace WebCore
+} // namespace WTF

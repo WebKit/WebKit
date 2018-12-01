@@ -37,7 +37,6 @@ namespace WebCore {
 
 class Archive;
 class ArchiveResource;
-class URL;
 
 class ArchiveResourceCollection {
     WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection);

@@ -156,7 +156,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response, CompletionH
     if (response.isHTTP09()) {
         auto url = response.url();
         std::optional<uint16_t> port = url.port();
-        if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {
+        if (port && !WTF::isDefaultPortForProtocol(port.value(), url.protocol())) {
             cancel();
             String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";
             d->m_client->didFail(this, { String(), 0, url, message });

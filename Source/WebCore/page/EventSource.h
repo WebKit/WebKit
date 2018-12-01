@@ -34,7 +34,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "ThreadableLoaderClient.h"
 #include "Timer.h"
 #include <wtf/Vector.h>

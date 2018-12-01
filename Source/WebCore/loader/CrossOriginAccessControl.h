@@ -40,7 +40,6 @@ class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
-class URL;
 
 struct ResourceLoaderOptions;
 

@@ -42,7 +42,6 @@ class DOMWrapperWorld;
 class DocumentLoader;
 class Page;
 class ResourceRequest;
-class URL;
 class UserMessageHandlerDescriptor;
 class UserScript;
 class UserStyleSheet;

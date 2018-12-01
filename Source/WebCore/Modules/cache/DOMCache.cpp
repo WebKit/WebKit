@@ -33,7 +33,7 @@
 #include "JSFetchResponse.h"
 #include "ReadableStreamChunk.h"
 #include "ScriptExecutionContext.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 
 namespace WebCore {

@@ -63,7 +63,7 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url)
 {
-    URL baseURL { blankURL() };
+    URL baseURL { WTF::blankURL() };
     URL completeURL { baseURL, url };
     if (!completeURL.isValid())
         return Exception { TypeError };

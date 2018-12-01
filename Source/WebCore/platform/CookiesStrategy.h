@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class NetworkStorageSession;
-class URL;
 
 struct Cookie;
 struct SameSiteInfo;

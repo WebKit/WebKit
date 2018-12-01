@@ -134,7 +134,7 @@ void Engine::retrieveCaches(PAL::SessionID sessionID, WebCore::ClientOrigin&& or
 }
 
 
-void Engine::retrieveRecords(PAL::SessionID sessionID, uint64_t cacheIdentifier, WebCore::URL&& url, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void Engine::retrieveRecords(PAL::SessionID sessionID, uint64_t cacheIdentifier, URL&& url, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
     from(sessionID, [cacheIdentifier, url = WTFMove(url), callback = WTFMove(callback)](auto& engine) mutable {
         engine.retrieveRecords(cacheIdentifier, WTFMove(url), WTFMove(callback));
@@ -247,7 +247,7 @@ void Engine::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t update
     });
 }
 
-void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&& url, RecordsCallback&& callback)
+void Engine::retrieveRecords(uint64_t cacheIdentifier, URL&& url, RecordsCallback&& callback)
 {
     readCache(cacheIdentifier, [url = WTFMove(url), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.has_value()) {

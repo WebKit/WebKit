@@ -56,7 +56,6 @@ class ResourceRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class TextEncoding;
-class URL;
 struct ContentSecurityPolicyClient;
 
 typedef Vector<std::unique_ptr<ContentSecurityPolicyDirectiveList>> CSPDirectiveListVector;

@@ -39,9 +39,9 @@
 #include "Logging.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
-#include "URL.h"
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

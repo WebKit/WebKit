@@ -102,8 +102,8 @@ public:
     WebKit::WebBackForwardListItem* fromItem() const { return m_fromItem.get(); }
     std::optional<WebCore::FrameLoadType> backForwardFrameLoadType() const { return m_backForwardFrameLoadType; }
 
-    void appendRedirectionURL(const WebCore::URL&);
-    Vector<WebCore::URL> takeRedirectChain() { return WTFMove(m_redirectChain); }
+    void appendRedirectionURL(const WTF::URL&);
+    Vector<WTF::URL> takeRedirectChain() { return WTFMove(m_redirectChain); }
 
     bool wasUserInitiated() const { return !!m_lastNavigationAction.userGestureTokenIdentifier; }
 
@@ -152,7 +152,7 @@ private:
     WebCore::ResourceRequest m_originalRequest;
     WebCore::ResourceRequest m_currentRequest;
     std::optional<WebCore::ProcessIdentifier> m_currentRequestProcessIdentifier;
-    Vector<WebCore::URL> m_redirectChain;
+    Vector<WTF::URL> m_redirectChain;
 
     RefPtr<WebKit::WebBackForwardListItem> m_targetItem;
     RefPtr<WebKit::WebBackForwardListItem> m_fromItem;

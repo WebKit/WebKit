@@ -41,7 +41,6 @@
 namespace WebCore  {
 
 class CachedResource;
-class URL;
 class ResourceRequest;
 class ResourceResponse;
 class ScriptExecutionContext;

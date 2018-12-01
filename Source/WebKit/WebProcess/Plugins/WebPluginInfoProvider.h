@@ -46,7 +46,7 @@ private:
     WebPluginInfoProvider();
 
     Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
-    Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const WebCore::URL&) final;
+    Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const URL&) final;
     void refreshPlugins() override;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

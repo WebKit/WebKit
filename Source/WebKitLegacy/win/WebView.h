@@ -463,7 +463,7 @@ public:
 
     // Convenient to be able to violate the rules of COM here for easy movement to the frame.
     WebFrame* topLevelFrame() const { return m_mainFrame; }
-    const WTF::String& userAgentForKURL(const WebCore::URL& url);
+    const WTF::String& userAgentForKURL(const URL& url);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
@@ -502,7 +502,7 @@ public:
     bool onGetObject(WPARAM, LPARAM, LRESULT&) const;
     static STDMETHODIMP AccessibleObjectFromWindow(HWND, DWORD objectID, REFIID, void** ppObject);
 
-    void downloadURL(const WebCore::URL&);
+    void downloadURL(const URL&);
 
     void flushPendingGraphicsLayerChangesSoon();
     void setRootChildLayer(WebCore::GraphicsLayer*);

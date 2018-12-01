@@ -27,9 +27,9 @@
 
 #include "CSSParserMode.h"
 #include "TextEncoding.h"
-#include "URL.h"
-#include "URLHash.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -87,7 +87,7 @@ WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 struct CSSParserContextHash {
     static unsigned hash(const CSSParserContext& key)
     {
-        auto hash = URLHash::hash(key.baseURL);
+        auto hash = WTF::URLHash::hash(key.baseURL);
         if (!key.charset.isEmpty())
             hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0
@@ -121,7 +121,7 @@ struct CSSParserContextHash {
 
 namespace WTF {
 template<> struct HashTraits<WebCore::CSSParserContext> : GenericHashTraits<WebCore::CSSParserContext> {
-    static void constructDeletedValue(WebCore::CSSParserContext& slot) { new (NotNull, &slot.baseURL) WebCore::URL(WTF::HashTableDeletedValue); }
+    static void constructDeletedValue(WebCore::CSSParserContext& slot) { new (NotNull, &slot.baseURL) URL(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const WebCore::CSSParserContext& value) { return value.baseURL.isHashTableDeletedValue(); }
     static WebCore::CSSParserContext emptyValue() { return WebCore::CSSParserContext(WebCore::HTMLStandardMode); }
 };

@@ -39,7 +39,6 @@
 #include "PlaybackPipeline.h"
 #include "SourceBufferPrivateGStreamer.h"
 #include "TimeRanges.h"
-#include "URL.h"
 #include "VideoTrackPrivateGStreamer.h"
 
 #include <fnmatch.h>
@@ -52,6 +51,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/URL.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 

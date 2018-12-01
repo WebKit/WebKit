@@ -33,7 +33,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionRect.h>
 #include <WebCore/TextIndicator.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -60,8 +60,8 @@ struct InteractionInformationAtPosition {
     bool preventTextInteraction { false };
 #endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
-    WebCore::URL url;
-    WebCore::URL imageURL;
+    URL url;
+    URL imageURL;
     String title;
     String idAttribute;
     WebCore::IntRect bounds;

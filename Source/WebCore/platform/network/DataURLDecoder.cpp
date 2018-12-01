@@ -30,9 +30,9 @@
 #include "HTTPParsers.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
-#include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
+#include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/Base64.h>
 

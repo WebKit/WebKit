@@ -23,8 +23,8 @@
 #include "PasteboardHelper.h"
 #include "SelectionData.h"
 #include "SharedBuffer.h"
-#include "URL.h"
 #include <gtk/gtk.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

@@ -31,7 +31,7 @@
 #pragma once
 
 #include "CookieRequestHeaderFieldProxy.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"

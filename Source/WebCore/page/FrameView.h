@@ -53,7 +53,6 @@ class Element;
 class FloatSize;
 class Frame;
 class HTMLFrameOwnerElement;
-class URL;
 class Node;
 class Page;
 class RenderBox;

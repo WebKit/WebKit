@@ -38,7 +38,6 @@ interface IWebDesktopNotificationPresenter;
 
 namespace WebCore {
 class Document;
-class URL;
 }
 
 class WebDesktopNotificationsDelegate : public WebCore::NotificationClient {

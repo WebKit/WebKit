@@ -40,7 +40,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
-#import <WebCore/WebCoreNSURLExtras.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebKit {
 using namespace WebCore;

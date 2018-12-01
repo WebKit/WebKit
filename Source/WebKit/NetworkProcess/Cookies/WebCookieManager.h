@@ -40,7 +40,6 @@
 #endif
 
 namespace WebCore {
-class URL;
 struct Cookie;
 }
 
@@ -78,9 +77,9 @@ private:
     void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CallbackID);
 
     void setCookie(PAL::SessionID, const WebCore::Cookie&, CallbackID);
-    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, CallbackID);
+    void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const URL&, const URL& mainDocumentURL, CallbackID);
     void getAllCookies(PAL::SessionID, CallbackID);
-    void getCookies(PAL::SessionID, const WebCore::URL&, CallbackID);
+    void getCookies(PAL::SessionID, const URL&, CallbackID);
 
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(CallbackID);

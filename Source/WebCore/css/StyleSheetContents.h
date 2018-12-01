@@ -22,10 +22,10 @@
 
 #include "CSSParserContext.h"
 #include "CachePolicy.h"
-#include "URL.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>

@@ -27,8 +27,8 @@
 #include "WebErrors.h"
 
 #include "APIError.h"
-#include <WebCore/URL.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

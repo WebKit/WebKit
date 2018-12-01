@@ -28,7 +28,7 @@
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

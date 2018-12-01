@@ -32,7 +32,7 @@
 
 #include "FormState.h"
 #include "FrameLoaderTypes.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

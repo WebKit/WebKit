@@ -27,9 +27,9 @@
 #include "ISOVTTCue.h"
 
 #include "Logging.h"
-#include "URL.h"
 #include <JavaScriptCore/DataView.h>
 #include <wtf/JSONValues.h>
+#include <wtf/URL.h>
 
 using JSC::DataView;
 

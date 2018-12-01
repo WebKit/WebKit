@@ -33,7 +33,6 @@ namespace WebCore {
 
 class ContextMenu;
 class Image;
-class URL;
 
 enum ContextMenuAction {
     ContextMenuItemTagNoAction,

@@ -636,7 +636,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         switch (shouldContinue) {
         case ShouldContinue::ForSuspension:
             // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
-            request = { blankURL() };
+            request = { WTF::blankURL() };
             break;
         case ShouldContinue::No:
             stopLoadingForPolicyChange();
@@ -1682,7 +1682,7 @@ bool DocumentLoader::maybeLoadEmpty()
         return false;
 
     if (m_request.url().isEmpty() && !frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
-        m_request.setURL(blankURL());
+        m_request.setURL(WTF::blankURL());
         if (isLoadingMainResource())
             frameLoader()->client().dispatchDidChangeProvisionalURL();
     }

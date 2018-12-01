@@ -27,8 +27,8 @@
 
 #include "APIObject.h"
 
-#include <WebCore/URL.h>
 #include <WebCore/UserContentURLPattern.h>
+#include <wtf/URL.h>
 
 namespace API {
 
@@ -42,7 +42,7 @@ public:
     const WTF::String& host() const { return m_pattern.host(); }
     const WTF::String& scheme() const { return m_pattern.scheme(); }
     bool isValid() const { return m_pattern.isValid(); };
-    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WebCore::URL({ }, url)); }
+    bool matchesURL(const WTF::String& url) const { return m_pattern.matches(WTF::URL({ }, url)); }
     bool matchesSubdomains() const { return m_pattern.matchSubdomains(); }
 
     const WTF::String& patternString() const { return m_patternString; }

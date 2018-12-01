@@ -31,15 +31,11 @@
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 
-namespace WebCore {
-class URL;
-}
-
 namespace WebKit {
 class WebPageProxy;
 class WebPaymentCoordinatorProxy;
 
-RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy&, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
+RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
 
 }
 

@@ -33,7 +33,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

@@ -31,11 +31,11 @@
 #import "CookieStorageObserver.h"
 #import "CookiesStrategy.h"
 #import "SameSiteInfo.h"
-#import "URL.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Optional.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/URL.h>
 #import <wtf/text/StringBuilder.h>
 
 @interface NSURL ()

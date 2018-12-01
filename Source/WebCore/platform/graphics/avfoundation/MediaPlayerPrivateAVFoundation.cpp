@@ -39,7 +39,6 @@
 #include "PlatformLayer.h"
 #include "PlatformTimeRanges.h"
 #include "Settings.h"
-#include "URL.h"
 #include <CoreMedia/CoreMedia.h>
 #include <JavaScriptCore/DataView.h>
 #include <JavaScriptCore/HeapInlines.h>
@@ -49,6 +48,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

@@ -26,11 +26,11 @@
 #include "config.h"
 #include "SchemeRegistry.h"
 
-#include "URLParser.h"
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URLParser.h>
 
 #if ENABLE(CONTENT_FILTERING)
 #include "ContentFilter.h"
@@ -551,7 +551,7 @@ bool SchemeRegistry::isUserExtensionScheme(const String& scheme)
 
 bool SchemeRegistry::isBuiltinScheme(const String& scheme)
 {
-    return !scheme.isNull() && (allBuiltinSchemes().contains(scheme) || URLParser::isSpecialScheme(scheme));
+    return !scheme.isNull() && (allBuiltinSchemes().contains(scheme) || WTF::URLParser::isSpecialScheme(scheme));
 }
 
 } // namespace WebCore

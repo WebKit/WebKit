@@ -25,11 +25,9 @@
 
 #include "config.h"
 #include "WTFStringUtilities.h"
-#include <WebCore/URL.h>
-#include <WebCore/URLParser.h>
 #include <wtf/MainThread.h>
-
-using namespace WebCore;
+#include <wtf/URL.h>
+#include <wtf/URLParser.h>
 
 namespace TestWebKitAPI {
 
@@ -73,8 +71,7 @@ TEST_F(URLTest, URLConstructorConstChar)
 
 static URL createURL(const char* urlAsString)
 {
-    URLParser parser(urlAsString);
-    return parser.result();
+    return URL({ }, urlAsString);
 };
 
 TEST_F(URLTest, URLProtocolHostAndPort)
@@ -317,20 +314,20 @@ TEST_F(URLTest, EqualIgnoringQueryAndFragment)
 
 TEST_F(URLTest, ProtocolIsInHTTPFamily)
 {
-    EXPECT_FALSE(protocolIsInHTTPFamily({}));
-    EXPECT_FALSE(protocolIsInHTTPFamily(""));
-    EXPECT_FALSE(protocolIsInHTTPFamily("a"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("ab"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("abc"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("abcd"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("abcde"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("abcdef"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("abcdefg"));
-    EXPECT_TRUE(protocolIsInHTTPFamily("http:"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("http"));
-    EXPECT_TRUE(protocolIsInHTTPFamily("https:"));
-    EXPECT_FALSE(protocolIsInHTTPFamily("https"));
-    EXPECT_TRUE(protocolIsInHTTPFamily("https://!@#$%^&*()"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily({ }));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily(""));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("a"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("ab"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abc"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcd"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcde"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdef"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("abcdefg"));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("http:"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("http"));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https:"));
+    EXPECT_FALSE(WTF::protocolIsInHTTPFamily("https"));
+    EXPECT_TRUE(WTF::protocolIsInHTTPFamily("https://!@#$%^&*()"));
 }
 
 TEST_F(URLTest, HostIsIPAddress)

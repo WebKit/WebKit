@@ -28,11 +28,11 @@
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 
-#import "URL.h"
-#import "WebCoreNSURLExtras.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
+#import <wtf/URL.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ String topPrivatelyControlledDomain(const String& domain)
 
 String decodeHostName(const String& domain)
 {
-    return decodeHostName((NSString *)(domain));
+    return WTF::decodeHostName(domain);
 }
 
 }

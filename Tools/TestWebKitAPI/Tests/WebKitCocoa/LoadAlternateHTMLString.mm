@@ -30,9 +30,9 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 static bool isDone;
 static int provisionalLoadCount;
@@ -110,7 +110,7 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
         [webView setNavigationDelegate:delegate.get()];
 
         char literal[] = "https://www.example.com<>/";
-        NSURL* targetURL = WebCore::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
+        NSURL* targetURL = WTF::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
         [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
         [webView loadRequest:[NSURLRequest requestWithURL:targetURL]];
 

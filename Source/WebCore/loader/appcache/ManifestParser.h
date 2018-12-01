@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class URL;
-
 struct Manifest {
     Vector<URL> onlineWhitelistedURLs;
     HashSet<String> explicitURLs;

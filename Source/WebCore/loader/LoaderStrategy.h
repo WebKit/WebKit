@@ -51,7 +51,6 @@ class ResourceResponse;
 class SecurityOrigin;
 class SharedBuffer;
 class SubresourceLoader;
-class URL;
 
 struct FetchOptions;
 

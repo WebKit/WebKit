@@ -30,11 +30,11 @@
 #include "ImageDecoder.h"
 #include "ImageObserver.h"
 #include "Logging.h"
-#include "URL.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/URL.h>
 
 #if USE(DIRECT2D)
 #include "GraphicsContext.h"

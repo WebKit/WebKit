@@ -46,7 +46,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFMediaTime_SummaryProvider WTF::MediaTime')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFOptionSet_SummaryProvider -x "^WTF::OptionSet<.+>$"')
 
-    debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
+    debugger.HandleCommand('type summary add -F lldb_webkit.WTFURL_SummaryProvider WTF::URL')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreColor_SummaryProvider WebCore::Color')
 
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutUnit_SummaryProvider WebCore::LayoutUnit')
@@ -138,8 +138,8 @@ def WebCoreColor_SummaryProvider(valobj, dict):
     return "{ %s }" % provider.to_string()
 
 
-def WebCoreURL_SummaryProvider(valobj, dict):
-    provider = WebCoreURLProvider(valobj, dict)
+def WTFURL_SummaryProvider(valobj, dict):
+    provider = WTFURLProvider(valobj, dict)
     return "{ %s }" % provider.to_string()
 
 
@@ -600,8 +600,8 @@ class WebCoreFloatRectProvider:
         return WebCoreFloatSizeProvider(self.valobj.GetChildMemberWithName('m_size'), dict).get_height()
 
 
-class WebCoreURLProvider:
-    "Print a WebCore::URL"
+class WTFURLProvider:
+    "Print a WTF::URL"
     def __init__(self, valobj, dict):
         self.valobj = valobj
 

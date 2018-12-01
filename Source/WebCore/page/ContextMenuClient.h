@@ -31,29 +31,28 @@
 
 namespace WebCore {
 
-    class Frame;
-    class URL;
+class Frame;
 
-    class ContextMenuClient {
-    public:
-        virtual ~ContextMenuClient() = default;
-        virtual void contextMenuDestroyed() = 0;
-        
-        virtual void downloadURL(const URL& url) = 0;
-        virtual void searchWithGoogle(const Frame*) = 0;
-        virtual void lookUpInDictionary(Frame*) = 0;
-        virtual bool isSpeaking() = 0;
-        virtual void speak(const String&) = 0;
-        virtual void stopSpeaking() = 0;
+class ContextMenuClient {
+public:
+    virtual ~ContextMenuClient() = default;
+    virtual void contextMenuDestroyed() = 0;
+    
+    virtual void downloadURL(const URL&) = 0;
+    virtual void searchWithGoogle(const Frame*) = 0;
+    virtual void lookUpInDictionary(Frame*) = 0;
+    virtual bool isSpeaking() = 0;
+    virtual void speak(const String&) = 0;
+    virtual void stopSpeaking() = 0;
 
 #if PLATFORM(COCOA)
-        virtual void searchWithSpotlight() = 0;
+    virtual void searchWithSpotlight() = 0;
 #endif
 
 #if USE(ACCESSIBILITY_CONTEXT_MENUS)
-        virtual void showContextMenu() = 0;
+    virtual void showContextMenu() = 0;
 #endif
-    };
+};
 
 } // namespace WebCore
 

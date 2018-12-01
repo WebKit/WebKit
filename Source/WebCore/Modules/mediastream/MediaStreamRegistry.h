@@ -36,7 +36,6 @@ namespace WebCore {
 
 class MediaStream;
 class MediaStreamPrivate;
-class URL;
 
 class MediaStreamRegistry final : public URLRegistry {
 public:

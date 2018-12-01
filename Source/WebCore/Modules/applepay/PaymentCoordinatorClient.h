@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class PaymentMerchantSession;
-class URL;
 struct PaymentAuthorizationResult;
 struct PaymentMethodUpdate;
 struct ShippingContactUpdate;

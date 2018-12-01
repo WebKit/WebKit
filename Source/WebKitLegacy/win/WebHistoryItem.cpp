@@ -32,8 +32,8 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

@@ -32,11 +32,11 @@
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
-#include "URL.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

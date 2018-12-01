@@ -35,10 +35,10 @@
 #include "MIMETypeRegistry.h"
 #include "SVGImage.h"
 #include "SharedBuffer.h"
-#include "URL.h"
 #include <math.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
 #if USE(CG)

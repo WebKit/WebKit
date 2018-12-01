@@ -38,9 +38,9 @@
 #import <WebCore/MediaError.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TimeRanges.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
+#import <wtf/URL.h>
 
 #define IMPL static_cast<WebCore::HTMLMediaElement*>(reinterpret_cast<WebCore::Node*>(_internal))
 

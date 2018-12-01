@@ -4551,7 +4551,7 @@ sub GenerateImplementation
     if (NeedsImplementationClass($interface) && !$interface->extendedAttributes->{CustomHeapSnapshot}) {
         AddToImplIncludes("<JavaScriptCore/HeapSnapshotBuilder.h>");
         AddToImplIncludes("ScriptExecutionContext.h");
-        AddToImplIncludes("URL.h");
+        AddToImplIncludes("<wtf/URL.h>");
         push(@implContent, "void ${className}::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)\n");
         push(@implContent, "{\n");
         push(@implContent, "    auto* thisObject = jsCast<${className}*>(cell);\n");
@@ -4563,7 +4563,7 @@ sub GenerateImplementation
     }
 
     if ($indexedGetterOperation) {
-        $implIncludes{"URL.h"} = 1 if $indexedGetterOperation->type->name eq "DOMString";
+        $implIncludes{"<wtf/URL.h>"} = 1 if $indexedGetterOperation->type->name eq "DOMString";
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;

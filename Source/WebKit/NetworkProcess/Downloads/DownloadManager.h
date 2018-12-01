@@ -86,7 +86,7 @@ public:
 
     void cancelDownload(DownloadID);
 #if PLATFORM(COCOA)
-    void publishDownloadProgress(DownloadID, const WebCore::URL&, SandboxExtension::Handle&&);
+    void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
     
     Download* download(DownloadID downloadID) { return m_downloads.get(downloadID); }

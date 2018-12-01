@@ -26,11 +26,11 @@
 #import "config.h"
 #import "ResourceError.h"
 
-#import "URL.h"
 #import <CoreFoundation/CFError.h>
 #import <Foundation/Foundation.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
 
 @interface NSError (WebExtras)

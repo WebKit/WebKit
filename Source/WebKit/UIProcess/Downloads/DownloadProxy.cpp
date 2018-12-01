@@ -102,7 +102,7 @@ void DownloadProxy::setOriginatingPage(WebPageProxy* page)
 }
 
 #if PLATFORM(COCOA)
-void DownloadProxy::publishProgress(const WebCore::URL& URL)
+void DownloadProxy::publishProgress(const URL& URL)
 {
     if (!m_processPool)
         return;

@@ -24,18 +24,14 @@
  */
 
 #include "config.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 #include "CFURLExtras.h"
 #include "URLParser.h"
 #include <CoreFoundation/CFURL.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "RuntimeApplicationChecks.h"
-#endif
-
-namespace WebCore {
+namespace WTF {
 
 URL::URL(CFURLRef url)
 {

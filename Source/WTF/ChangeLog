@@ -1,3 +1,80 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/URL.cpp: Renamed from Source/WebCore/platform/URL.cpp.
+        (WTF::URL::protocolIs):
+        * wtf/URL.h: Renamed from Source/WebCore/platform/URL.h.
+        * wtf/URLHash.h: Renamed from Source/WebCore/platform/URLHash.h.
+        (WTF::URLHash::hash):
+        (WTF::URLHash::equal):
+        * wtf/URLParser.cpp: Renamed from Source/WebCore/platform/URLParser.cpp.
+        (WTF::URLParser::isInUserInfoEncodeSet):
+        (WTF::URLParser::parseAuthority):
+        * wtf/URLParser.h: Renamed from Source/WebCore/platform/URLParser.h.
+        (WTF::URLParser::URLParser):
+        (WTF::URLParser::result):
+        * wtf/cf/CFURLExtras.cpp: Renamed from Source/WebCore/platform/cf/CFURLExtras.cpp.
+        * wtf/cf/CFURLExtras.h: Renamed from Source/WebCore/platform/cf/CFURLExtras.h.
+        * wtf/cf/URLCF.cpp: Renamed from Source/WebCore/platform/cf/URLCF.cpp.
+        * wtf/cocoa/NSURLExtras.h: Copied from Source/WebCore/loader/archive/ArchiveResourceCollection.h.
+        * wtf/cocoa/NSURLExtras.mm: Copied from Source/WebCore/platform/mac/WebCoreNSURLExtras.mm.
+        (WTF::isArmenianLookalikeCharacter):
+        (WTF::isArmenianScriptCharacter):
+        (WTF::isASCIIDigitOrValidHostCharacter):
+        (WTF::isLookalikeCharacter):
+        (WTF::whiteListIDNScript):
+        (WTF::readIDNScriptWhiteListFile):
+        (WTF::allCharactersInIDNScriptWhiteList):
+        (WTF::isSecondLevelDomainNameAllowedByTLDRules):
+        (WTF::isRussianDomainNameCharacter):
+        (WTF::allCharactersAllowedByTLDRules):
+        (WTF::mapHostNameWithRange):
+        (WTF::hostNameNeedsDecodingWithRange):
+        (WTF::hostNameNeedsEncodingWithRange):
+        (WTF::decodeHostNameWithRange):
+        (WTF::encodeHostNameWithRange):
+        (WTF::decodeHostName):
+        (WTF::encodeHostName):
+        (WTF::collectRangesThatNeedMapping):
+        (WTF::collectRangesThatNeedEncoding):
+        (WTF::collectRangesThatNeedDecoding):
+        (WTF::applyHostNameFunctionToMailToURLString):
+        (WTF::applyHostNameFunctionToURLString):
+        (WTF::mapHostNames):
+        (WTF::stringByTrimmingWhitespace):
+        (WTF::URLByTruncatingOneCharacterBeforeComponent):
+        (WTF::URLByRemovingResourceSpecifier):
+        (WTF::URLWithData):
+        (WTF::dataWithUserTypedString):
+        (WTF::URLWithUserTypedString):
+        (WTF::URLWithUserTypedStringDeprecated):
+        (WTF::hasQuestionMarkOnlyQueryString):
+        (WTF::dataForURLComponentType):
+        (WTF::URLByRemovingComponentAndSubsequentCharacter):
+        (WTF::URLByRemovingUserInfo):
+        (WTF::originalURLData):
+        (WTF::createStringWithEscapedUnsafeCharacters):
+        (WTF::userVisibleString):
+        (WTF::isUserVisibleURL):
+        (WTF::rangeOfURLScheme):
+        (WTF::looksLikeAbsoluteURL):
+        * wtf/cocoa/URLCocoa.mm: Renamed from Source/WebCore/platform/mac/URLMac.mm.
+        (WTF::URL::URL):
+        (WTF::URL::createCFURL const):
+        * wtf/glib/GUniquePtrSoup.h: Renamed from Source/WebCore/platform/network/soup/GUniquePtrSoup.h.
+        * wtf/glib/URLSoup.cpp: Renamed from Source/WebCore/platform/soup/URLSoup.cpp.
+
 2018-11-30  Alexey Proskuryakov  <ap@apple.com>
 
         Move USE_CFNETWORK_IGNORE_HSTS to its proper place

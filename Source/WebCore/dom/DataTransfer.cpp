@@ -43,10 +43,10 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StaticPasteboard.h"
-#include "URLParser.h"
 #include "WebContentReader.h"
 #include "WebCorePasteboardFileReader.h"
 #include "markup.h"
+#include <wtf/URLParser.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -255,7 +255,7 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
     if (type == "text/html")
         sanitizedData = sanitizeMarkup(data);
     else if (type == "text/uri-list") {
-        auto url = URLParser(data).result();
+        auto url = URL({ }, data);
         if (url.isValid())
             sanitizedData = url.string();
     } else if (type == "text/plain")

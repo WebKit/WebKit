@@ -75,7 +75,7 @@ public:
     void resume(const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancel();
 #if PLATFORM(COCOA)
-    void publishProgress(const WebCore::URL&, SandboxExtension::Handle&&);
+    void publishProgress(const URL&, SandboxExtension::Handle&&);
 #endif
 
     DownloadID downloadID() const { return m_downloadID; }

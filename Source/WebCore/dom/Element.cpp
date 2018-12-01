@@ -1720,7 +1720,7 @@ bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 
 bool Element::isJavaScriptURLAttribute(const Attribute& attribute) const
 {
-    return isURLAttribute(attribute) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+    return isURLAttribute(attribute) && WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
 }
 
 void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const

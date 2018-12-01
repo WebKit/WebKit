@@ -41,12 +41,12 @@
 #import "Page.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
-#import "URL.h"
 #import "WebKitNSImageExtras.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>
 #import <pal/spi/cocoa/URLFormattingSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/URL.h>
 
 #if !HAVE(URL_FORMATTING) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)

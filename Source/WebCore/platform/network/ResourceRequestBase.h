@@ -31,7 +31,7 @@
 #include "FormData.h"
 #include "HTTPHeaderMap.h"
 #include "IntRect.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "ResourceLoadPriority.h"
 
 namespace WebCore {

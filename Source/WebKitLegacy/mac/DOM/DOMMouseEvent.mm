@@ -36,9 +36,9 @@
 #import <WebCore/MouseEvent.h>
 #import <WebCore/Node.h>
 #import <WebCore/ThreadCheck.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
+#import <wtf/URL.h>
 
 #define IMPL static_cast<WebCore::MouseEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
 

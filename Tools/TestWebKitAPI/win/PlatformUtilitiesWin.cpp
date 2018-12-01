@@ -28,7 +28,7 @@
 
 #include <Shlwapi.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/text/win/WCharStringExtras.h>
 
 namespace TestWebKitAPI {
@@ -52,7 +52,7 @@ WKStringRef createInjectedBundlePath()
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
     String filename = String::format("..\\..\\..\\Tools\\TestWebKitAPI\\Tests\\WebKit\\%s.%s", resource, extension);
-    auto url = WebCore::URL::fileURLWithFileSystemPath(WebCore::FileSystem::pathByAppendingComponent(moduleDirectory(), filename));
+    auto url = URL::fileURLWithFileSystemPath(WebCore::FileSystem::pathByAppendingComponent(moduleDirectory(), filename));
     return WKURLCreateWithUTF8CString(url.string().utf8().data());
 }
 

@@ -38,7 +38,6 @@ namespace WebCore {
     class Element;
     class Frame;
     class IntSize;
-    class URL;
     class PluginDatabaseClient;
     class PluginPackage;
 

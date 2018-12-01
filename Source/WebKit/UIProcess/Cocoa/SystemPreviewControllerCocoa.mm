@@ -105,7 +105,7 @@ SOFT_LINK_CLASS(QuickLook, QLItem);
         [_item setPreviewItemProviderProgress:@(progress)];
 }
 
-- (void)finish:(WebCore::URL)url
+- (void)finish:(URL)url
 {
     if (self.completionHandler)
         self.completionHandler((NSURL*)url, nil);
@@ -221,7 +221,7 @@ void SystemPreviewController::updateProgress(float progress)
         [m_qlPreviewControllerDataSource setProgress:progress];
 }
 
-void SystemPreviewController::finish(WebCore::URL url)
+void SystemPreviewController::finish(URL url)
 {
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource finish:url];

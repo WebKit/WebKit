@@ -37,8 +37,8 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
-#include "URL.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -71,7 +71,7 @@ bool HTMLFrameElementBase::isURLAllowed(const URL& completeURL) const
     if (completeURL.isEmpty())
         return true;
 
-    if (protocolIsJavaScript(completeURL)) {
+    if (WTF::protocolIsJavaScript(completeURL)) {
         RefPtr<Document> contentDoc = this->contentDocument();
         if (contentDoc && !ScriptController::canAccessFromCurrentOrigin(contentDoc->frame()))
             return false;
@@ -90,7 +90,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
         return;
 
     if (m_URL.isEmpty())
-        m_URL = blankURL().string();
+        m_URL = WTF::blankURL().string();
 
     RefPtr<Frame> parentFrame = document().frame();
     if (!parentFrame)
@@ -179,7 +179,7 @@ void HTMLFrameElementBase::setLocation(const String& str)
 
 void HTMLFrameElementBase::setLocation(JSC::ExecState& state, const String& newLocation)
 {
-    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(newLocation))) {
+    if (WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(newLocation))) {
         if (!BindingSecurity::shouldAllowAccessToNode(state, contentDocument()))
             return;
     }

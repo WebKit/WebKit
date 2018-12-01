@@ -34,7 +34,7 @@
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
-#import <WebCore/URL.h>
+#import <wtf/URL.h>
 
 using namespace WebCore;
 

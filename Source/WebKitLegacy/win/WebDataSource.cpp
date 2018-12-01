@@ -43,7 +43,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

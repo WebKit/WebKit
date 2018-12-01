@@ -33,8 +33,8 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

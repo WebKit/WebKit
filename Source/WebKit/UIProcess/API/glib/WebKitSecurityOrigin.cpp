@@ -21,7 +21,7 @@
 #include "WebKitSecurityOrigin.h"
 
 #include "WebKitSecurityOriginPrivate.h"
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 /**
@@ -110,7 +110,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOrigin::create(WebCore::URL(WebCore::URL(), String::fromUTF8(uri))));
+    return webkitSecurityOriginCreate(WebCore::SecurityOrigin::create(URL(URL(), String::fromUTF8(uri))));
 }
 
 /**

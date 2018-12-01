@@ -35,9 +35,9 @@
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>
-#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)

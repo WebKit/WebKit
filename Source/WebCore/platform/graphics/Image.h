@@ -68,7 +68,6 @@ class FloatSize;
 class GraphicsContext;
 class GraphicsContextImpl;
 class SharedBuffer;
-class URL;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.

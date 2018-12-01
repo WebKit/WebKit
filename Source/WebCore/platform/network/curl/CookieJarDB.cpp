@@ -29,9 +29,9 @@
 #include "FileSystem.h"
 #include "Logging.h"
 #include "SQLiteFileSystem.h"
-#include "URL.h"
 
 #include <wtf/MonotonicTime.h>
+#include <wtf/URL.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"

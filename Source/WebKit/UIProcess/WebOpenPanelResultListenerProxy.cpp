@@ -29,7 +29,7 @@
 #include "APIArray.h"
 #include "APIString.h"
 #include "WebPageProxy.h"
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {

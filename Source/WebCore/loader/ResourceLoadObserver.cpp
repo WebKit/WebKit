@@ -40,7 +40,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -224,7 +224,7 @@ void ResourceLoadObserver::requestStorageAccessUnderOpener(const String& domainI
     auto openerPrimaryDomain = primaryDomain(openerUrl);
     if (domainInNeedOfStorageAccess != openerPrimaryDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
-        && !equalIgnoringASCIICase(openerUrl.string(), blankURL())) {
+        && !equalIgnoringASCIICase(openerUrl.string(), WTF::blankURL())) {
         m_requestStorageAccessUnderOpenerCallback(domainInNeedOfStorageAccess, openerPageID, openerPrimaryDomain);
         // Remember user interaction-based requests since they don't need to be repeated.
         openerDocument.setHasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess);

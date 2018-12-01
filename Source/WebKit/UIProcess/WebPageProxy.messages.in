@@ -34,8 +34,8 @@ messages -> WebPageProxy {
     UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, String mimeType, String pluginURLString, String pluginspageAttributeURLString, String frameURLString, String pageURLString)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(WEBGL)
-    WebGLPolicyForURL(WebCore::URL url) -> (uint32_t loadPolicy) Delayed
-    ResolveWebGLPolicyForURL(WebCore::URL url) -> (uint32_t loadPolicy) Delayed
+    WebGLPolicyForURL(URL url) -> (uint32_t loadPolicy) Delayed
+    ResolveWebGLPolicyForURL(URL url) -> (uint32_t loadPolicy) Delayed
 #endif // ENABLE(WEBGL)
     DidChangeViewportProperties(struct WebCore::ViewportAttributes attributes)
     DidReceiveEvent(uint32_t type, bool handled)
@@ -125,11 +125,11 @@ messages -> WebPageProxy {
     DidCreateWindow(uint64_t frameID, struct WebCore::GlobalWindowIdentifier windowIdentifier)
 
     # Frame load messages
-    DidStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::URL url, WebCore::URL unreachableURL, WebKit::UserData userData)
+    DidStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
     DidReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceRequest request, WebKit::UserData userData)
     WillPerformClientRedirectForFrame(uint64_t frameID, String url, double delay, enum:bool WebCore::LockBackForwardList lockBackForwardList)
     DidCancelClientRedirectForFrame(uint64_t frameID)
-    DidChangeProvisionalURLForFrame(uint64_t frameID, uint64_t navigationID, WebCore::URL url)
+    DidChangeProvisionalURLForFrame(uint64_t frameID, uint64_t navigationID, URL url)
     DidFailProvisionalLoadForFrame(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, String provisionalURL, WebCore::ResourceError error, WebKit::UserData userData)
     DidCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, String mimeType, bool hasCustomContentProvider, uint32_t loadType, WebCore::CertificateInfo certificateInfo, bool containsPluginDocument, std::optional<WebCore::HasInsecureContent> forcedHasInsecureContent, WebKit::UserData userData)
     DidFailLoadForFrame(uint64_t frameID, uint64_t navigationID, WebCore::ResourceError error, WebKit::UserData userData)
@@ -142,7 +142,7 @@ messages -> WebPageProxy {
     DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)
     DidRunInsecureContentForFrame(uint64_t frameID, WebKit::UserData userData)
     DidDetectXSSForFrame(uint64_t frameID, WebKit::UserData userData)
-    DidSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t type, WebCore::URL url, WebKit::UserData userData)
+    DidSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t type, URL url, WebKit::UserData userData)
     DidChangeMainDocument(uint64_t frameID);
     DidDestroyNavigation(uint64_t navigationID)
 
@@ -428,7 +428,7 @@ messages -> WebPageProxy {
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) LegacySync
 
-    SavePDFToFileInDownloadsFolder(String suggestedFilename, WebCore::URL originatingURL, IPC::DataReference data)
+    SavePDFToFileInDownloadsFolder(String suggestedFilename, URL originatingURL, IPC::DataReference data)
 
 #if PLATFORM(COCOA)
     SavePDFToTemporaryFolderAndOpenWithNativeApplication(String suggestedFilename, String originatingURLString, IPC::DataReference data, String pdfUUID)
@@ -488,7 +488,7 @@ messages -> WebPageProxy {
 
     DidResignInputElementStrongPasswordAppearance(WebKit::UserData userData)
 
-    ContentRuleListNotification(WebCore::URL url, Vector<String> identifiers, Vector<String> notifications)
+    ContentRuleListNotification(URL url, Vector<String> identifiers, Vector<String> notifications)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     AddPlaybackTargetPickerClient(uint64_t contextId)
@@ -544,6 +544,6 @@ messages -> WebPageProxy {
     SerializedAttachmentDataForIdentifiers(Vector<String> identifiers) -> (Vector<WebCore::SerializedAttachmentData> seralizedData) LegacySync
 #endif
 
-    SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, WebCore::URL url) -> (String result) LegacySync
+    SignedPublicKeyAndChallengeString(unsigned keySizeIndex, String challengeString, URL url) -> (String result) LegacySync
 
 }

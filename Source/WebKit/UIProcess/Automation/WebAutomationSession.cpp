@@ -44,10 +44,10 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
 #include <WebCore/MIMETypeRegistry.h>
-#include <WebCore/URL.h>
 #include <algorithm>
 #include <wtf/HashMap.h>
 #include <wtf/Optional.h>
+#include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -669,7 +669,7 @@ void WebAutomationSession::navigateBrowsingContext(const String& handle, const S
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'pageLoadStrategy' is invalid.");
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->loadRequest(WebCore::URL(WebCore::URL(), url));
+    page->loadRequest(URL(URL(), url));
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy.value(), pageLoadTimeout, WTFMove(callback));
 }
 
@@ -1297,7 +1297,7 @@ static String domainByAddingDotPrefixIfNeeded(String domain)
     if (domain[0] != '.') {
         // RFC 2965: If an explicitly specified value does not start with a dot, the user agent supplies a leading dot.
         // Assume that any host that ends with a digit is trying to be an IP address.
-        if (!WebCore::URL::hostIsIPAddress(domain))
+        if (!URL::hostIsIPAddress(domain))
             return makeString('.', domain);
     }
     
@@ -1310,7 +1310,7 @@ void WebAutomationSession::addSingleCookie(const String& browsingContextHandle, 
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebCore::URL activeURL = WebCore::URL(WebCore::URL(), page->pageLoadState().activeURL());
+    URL activeURL = URL(URL(), page->pageLoadState().activeURL());
     ASSERT(activeURL.isValid());
 
     WebCore::Cookie cookie;
@@ -1367,7 +1367,7 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebCore::URL activeURL = WebCore::URL(WebCore::URL(), page->pageLoadState().activeURL());
+    URL activeURL = URL(URL(), page->pageLoadState().activeURL());
     ASSERT(activeURL.isValid());
 
     WebCookieManagerProxy* cookieManager = m_processPool->supplement<WebCookieManagerProxy>();

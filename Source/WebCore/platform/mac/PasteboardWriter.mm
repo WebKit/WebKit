@@ -63,10 +63,10 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
         }
     }
 
-    if (auto& url = data.url()) {
-        NSURL *cocoaURL = url->url;
-        NSString *userVisibleString = url->userVisibleForm;
-        NSString *title = (NSString *)url->title;
+    if (auto& urlData = data.urlData()) {
+        NSURL *cocoaURL = urlData->url;
+        NSString *userVisibleString = urlData->userVisibleForm;
+        NSString *title = (NSString *)urlData->title;
         if (!title.length) {
             title = cocoaURL.path.lastPathComponent;
             if (!title.length)
@@ -74,7 +74,7 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
         }
 
         // WebURLsWithTitlesPboardType.
-        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ cocoaURL.absoluteString ] ], @[ url->title.stripWhiteSpace() ], nil]);
+        auto paths = adoptNS([[NSArray alloc] initWithObjects:@[ @[ cocoaURL.absoluteString ] ], @[ urlData->title.stripWhiteSpace() ], nil]);
         [pasteboardItem setPropertyList:paths.get() forType:toUTI(@"WebURLsWithTitlesPboardType").get()];
 
         // NSURLPboardType.

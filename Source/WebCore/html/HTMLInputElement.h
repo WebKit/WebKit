@@ -44,7 +44,6 @@ class Icon;
 class InputType;
 class ListAttributeTargetObserver;
 class RadioButtonGroups;
-class URL;
 
 struct DateTimeChooserParameters;
 

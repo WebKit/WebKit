@@ -45,9 +45,9 @@
 #include "PlatformCALayerClient.h"
 #include "PlatformCALayerWin.h"
 #include "TimeRanges.h"
-#include "URL.h"
 #include "WebCoreAVCFResourceLoader.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/URL.h>
 
 #include <AVFoundationCF/AVCFPlayerItem.h>
 #if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)

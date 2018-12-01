@@ -62,9 +62,9 @@
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
+#import <wtf/URL.h>
 
 extern "C" {
     bool CGContextGetAllowsFontSmoothing(CGContextRef context);

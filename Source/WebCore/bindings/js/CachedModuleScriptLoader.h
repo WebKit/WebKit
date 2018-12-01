@@ -40,7 +40,6 @@ class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
 class ModuleFetchParameters;
-class URL;
 
 class CachedModuleScriptLoader final : public RefCounted<CachedModuleScriptLoader>, private CachedResourceClient {
 public:

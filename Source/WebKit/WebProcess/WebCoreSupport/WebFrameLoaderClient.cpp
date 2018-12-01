@@ -739,7 +739,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     }
 
     // For suspension loads to about:blank, no need to ask the SuspendedPageProxy.
-    if (request.url() == blankURL() && webPage->isSuspended()) {
+    if (request.url() == WTF::blankURL() && webPage->isSuspended()) {
         function(PolicyAction::Use);
         return;
     }
@@ -1795,7 +1795,7 @@ bool WebFrameLoaderClient::allowScript(bool enabledPerSettings)
     return !pluginView || !pluginView->shouldAllowScripting();
 }
 
-bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore::URL& url)
+bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const URL& url)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

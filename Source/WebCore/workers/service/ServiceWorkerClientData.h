@@ -30,7 +30,7 @@
 #include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerClientType.h"
 #include "ServiceWorkerTypes.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

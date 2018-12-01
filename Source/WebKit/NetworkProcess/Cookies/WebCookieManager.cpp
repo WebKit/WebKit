@@ -33,8 +33,8 @@
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieStorage.h>
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/URL.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

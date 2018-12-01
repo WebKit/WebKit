@@ -29,9 +29,9 @@
 #import <Security/SecAsn1Templates.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SSLKeyGenerator.h>
-#import <WebCore/URL.h>
 #import <wtf/MainThread.h>
 #import <wtf/Scope.h>
+#import <wtf/URL.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
@@ -69,7 +69,7 @@ const SecAsn1Template signedPublicKeyAndChallengeTemplate[] {
     { 0, 0, 0, 0 }
 };
 
-const WebCore::URL url = WebCore::URL(WebCore::URL(), "http://www.webkit.org/");
+const URL url = URL(URL(), "http://www.webkit.org/");
 
 class SSLKeyGeneratorTest : public testing::Test {
 public:

@@ -37,7 +37,6 @@ namespace WebCore {
 class SecurityOrigin;
 class SecurityOriginPolicy;
 class ContentSecurityPolicy;
-class URL;
 
 enum SandboxFlag {
     // See http://www.whatwg.org/specs/web-apps/current-work/#attr-iframe-sandbox for a list of the sandbox flags.

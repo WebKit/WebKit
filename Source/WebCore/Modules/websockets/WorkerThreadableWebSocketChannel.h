@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class URL;
 class ScriptExecutionContext;
 class ThreadableWebSocketChannelClientWrapper;
 class WorkerGlobalScope;

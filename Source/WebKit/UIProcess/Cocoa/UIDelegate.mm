@@ -52,8 +52,8 @@
 #import "_WKHitTestResultInternal.h"
 #import <WebCore/FontAttributes.h>
 #import <WebCore/SecurityOriginData.h>
-#import <WebCore/URL.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/URL.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <AVFoundation/AVCaptureDevice.h>
@@ -233,7 +233,7 @@ void UIDelegate::UIClient::createNewPage(WebPageProxy& page, Ref<API::FrameInfo>
 
     auto userInitiatedActivity = page.process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
     bool shouldOpenAppLinks = !hostsAreEqual(sourceFrameInfo->request().url(), request.url());
-    auto apiNavigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), WebCore::URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
+    auto apiNavigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
@@ -789,7 +789,7 @@ void UIDelegate::UIClient::showPage(WebPageProxy*)
     [(id <WKUIDelegatePrivate>)delegate _showWebView:m_uiDelegate.m_webView];
 }
     
-void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const WebCore::URL& originatingURL, API::Data& data)
+void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const WTF::String& suggestedFilename, const WTF::String& mimeType, const URL& originatingURL, API::Data& data)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL)
         return;
@@ -867,8 +867,8 @@ static void requestUserMediaAuthorizationForDevices(const WebFrameProxy& frame, 
     });
 
     const WebFrameProxy* mainFrame = frame.page()->mainFrame();
-    WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
-    WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
+    URL requestFrameURL(URL(), frame.url());
+    URL mainFrameURL(URL(), mainFrame->url());
 
     _WKCaptureDevices devices = 0;
     if (request.requiresAudioCapture())
@@ -984,8 +984,8 @@ bool UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebPageProxy& page,
 
     WKWebView *webView = m_uiDelegate.m_webView;
     const WebFrameProxy* mainFrame = frame.page()->mainFrame();
-    WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
-    WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
+    URL requestFrameURL(URL(), frame.url());
+    URL mainFrameURL(URL(), mainFrame->url());
 
     auto decisionHandler = BlockPtr<void(NSString*, BOOL)>::fromCallable([protectedRequest = makeRef(request)](NSString*, BOOL authorized) {
         protectedRequest->setUserMediaAccessInfo(authorized);

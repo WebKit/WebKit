@@ -24,19 +24,19 @@
  */
 
 #import "config.h"
-#import "URL.h"
+#import <wtf/URL.h>
 
 #import "CFURLExtras.h"
-#import "URLParser.h"
-#import "WebCoreNSURLExtras.h"
+#import "NSURLExtras.h"
 #import <wtf/ObjCRuntimeExtras.h>
+#import <wtf/URLParser.h>
 #import <wtf/text/CString.h>
 
-@interface NSString (WebCoreNSURLExtras)
+@interface NSString (WTFNSURLExtras)
 - (BOOL)_web_looksLikeIPAddress;
 @end
 
-namespace WebCore {
+namespace WTF {
 
 URL::URL(NSURL *url)
 {
@@ -47,7 +47,7 @@ URL::URL(NSURL *url)
 
     // FIXME: Why is it OK to ignore base URL here?
     CString urlBytes;
-    getURLBytes((__bridge CFURLRef)url, urlBytes);
+    WTF::getURLBytes((__bridge CFURLRef)url, urlBytes);
     URLParser parser(urlBytes.data());
     *this = parser.result();
 }
@@ -73,15 +73,15 @@ RetainPtr<CFURLRef> URL::createCFURL() const
 
     // Fast path if the input data is 8-bit to avoid copying into a temporary buffer.
     if (LIKELY(m_string.is8Bit()))
-        cfURL = createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
+        cfURL = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(m_string.characters8()), m_string.length());
     else {
         // Slower path.
-        URLCharBuffer buffer;
+        WTF::URLCharBuffer buffer;
         copyToBuffer(buffer);
-        cfURL = createCFURLFromBuffer(buffer.data(), buffer.size());
+        cfURL = WTF::createCFURLFromBuffer(buffer.data(), buffer.size());
     }
 
-    if (protocolIsInHTTPFamily() && !isCFURLSameOrigin(cfURL.get(), *this))
+    if (protocolIsInHTTPFamily() && !WTF::isCFURLSameOrigin(cfURL.get(), *this))
         return nullptr;
 
     return cfURL;

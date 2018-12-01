@@ -1528,9 +1528,9 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
     pasteboard.write(pasteboardURL);
 }
 
-PasteboardWriterData::URL Editor::pasteboardWriterURL(const URL& url, const String& title)
+PasteboardWriterData::URLData Editor::pasteboardWriterURL(const URL& url, const String& title)
 {
-    PasteboardWriterData::URL result;
+    PasteboardWriterData::URLData result;
 
     result.url = url;
     result.title = title;

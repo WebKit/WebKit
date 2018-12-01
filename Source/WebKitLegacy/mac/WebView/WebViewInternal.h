@@ -57,7 +57,6 @@ class KeyboardEvent;
 class Page;
 class RenderBox;
 class TextIndicator;
-class URL;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
 }

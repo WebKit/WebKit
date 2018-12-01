@@ -41,10 +41,10 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/text/WTFString.h>
 #import <wtf/threads/BinarySemaphore.h>
 
@@ -306,7 +306,7 @@ static const CGFloat presentationElementRectPadding = 15;
         if (isJavaScriptURL)
             titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
         else {
-            titleString = WebCore::userVisibleString(targetURL);
+            titleString = WTF::userVisibleString(targetURL);
             titleIsURL = YES;
         }
     } else

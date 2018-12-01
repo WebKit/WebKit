@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CFURLExtras_h
-#define CFURLExtras_h
+#import "config.h"
+#import "SafeBrowsingResult.h"
 
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
+#import "SafeBrowsingSPI.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class URL;
-typedef Vector<char, 512> URLCharBuffer;
-
-WEBCORE_EXPORT RetainPtr<CFURLRef> createCFURLFromBuffer(const char*, size_t, CFURLRef baseURL = 0);
-WEBCORE_EXPORT void getURLBytes(CFURLRef, URLCharBuffer&);
-WEBCORE_EXPORT void getURLBytes(CFURLRef, CString&);
-
-bool isCFURLSameOrigin(CFURLRef, const URL&);
+#if HAVE(SAFE_BROWSING)
+SafeBrowsingResult::SafeBrowsingResult(URL&& url, SSBServiceLookupResult *result)
+    : m_url(WTFMove(url))
+    , m_provider([result provider])
+    , m_isPhishing([result isPhishing])
+    , m_isMalware([result isMalware])
+    , m_isUnwantedSoftware([result isUnwantedSoftware])
+    , m_isKnownToBeUnsafe([result isKnownToBeUnsafe])
+{
+}
+#endif
 
 }
-
-#endif // CFURLExtras_h

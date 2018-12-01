@@ -29,7 +29,7 @@
 
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "WorkerType.h"
 
 namespace WebCore {

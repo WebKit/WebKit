@@ -44,7 +44,6 @@ class IntRect;
 class IntSize;
 class PendingImageBitmap;
 class ScriptExecutionContext;
-class URL;
 struct ImageBitmapOptions;
 
 class ImageBitmap : public ScriptWrappable, public RefCounted<ImageBitmap> {

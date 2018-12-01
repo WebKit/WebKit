@@ -1720,7 +1720,7 @@ bool PDFPlugin::handlesPageScaleFactor() const
 void PDFPlugin::clickedLink(NSURL *url)
 {
     URL coreURL = url;
-    if (protocolIsJavaScript(coreURL))
+    if (WTF::protocolIsJavaScript(coreURL))
         return;
 
     Frame* frame = webFrame()->coreFrame();

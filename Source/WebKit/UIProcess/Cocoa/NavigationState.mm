@@ -70,9 +70,9 @@
 #import <WebCore/SSLKeyGenerator.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
-#import <WebCore/URL.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/URL.h>
 
 #if HAVE(APP_LINKS)
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -397,7 +397,7 @@ inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy poli
     return WebCore::WebGLAllowCreation;
 }
 
-void NavigationState::NavigationClient::webGLLoadPolicy(WebPageProxy&, const WebCore::URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
+void NavigationState::NavigationClient::webGLLoadPolicy(WebPageProxy&, const URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL) {
         completionHandler(WebGLAllowCreation);
@@ -414,7 +414,7 @@ void NavigationState::NavigationClient::webGLLoadPolicy(WebPageProxy&, const Web
     }).get()];
 }
 
-void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
+void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, const URL& url, CompletionHandler<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL) {
         completionHandler(WebGLAllowCreation);
@@ -593,7 +593,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     }
 }
 
-void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, WebCore::URL&& url, Vector<String>&& listIdentifiers, Vector<String>&& notifications)
+void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, URL&& url, Vector<String>&& listIdentifiers, Vector<String>&& notifications)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications)
         return;
@@ -704,7 +704,7 @@ void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& 
     if (!navigationDelegate)
         return;
 
-    WebCore::URL url(WebCore::URL(), urlString);
+    URL url(URL(), urlString);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView willPerformClientRedirectToURL:url delay:delay];
 }
@@ -718,8 +718,8 @@ void NavigationState::NavigationClient::didPerformClientRedirect(WebPageProxy& p
     if (!navigationDelegate)
         return;
 
-    WebCore::URL sourceURL(WebCore::URL(), sourceURLString);
-    WebCore::URL destinationURL(WebCore::URL(), destinationURLString);
+    URL sourceURL(URL(), sourceURLString);
+    URL destinationURL(URL(), destinationURLString);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView didPerformClientRedirectFromURL:sourceURL toURL:destinationURL];
 }
@@ -992,7 +992,7 @@ RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebPageP
     return API::Data::createWithoutCopying(data);
 }
 
-RefPtr<API::String> NavigationState::NavigationClient::signedPublicKeyAndChallengeString(WebPageProxy& page, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const WebCore::URL& url)
+RefPtr<API::String> NavigationState::NavigationClient::signedPublicKeyAndChallengeString(WebPageProxy& page, unsigned keySizeIndex, const RefPtr<API::String>& challengeString, const URL& url)
 {
     // WebKitTestRunner uses C API. Hence, no SPI is provided to override the following function.
     return API::String::create(WebCore::signedPublicKeyAndChallengeString(keySizeIndex, challengeString->string(), url));

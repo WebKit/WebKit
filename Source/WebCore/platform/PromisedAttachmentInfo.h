@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class SharedBuffer;
-class URL;
 
 struct PromisedAttachmentInfo {
     URL blobURL;

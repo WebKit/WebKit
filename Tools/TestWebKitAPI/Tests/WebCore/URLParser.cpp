@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WTFStringUtilities.h"
 #include <WebCore/TextEncoding.h>
-#include <WebCore/URLParser.h>
 #include <wtf/MainThread.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
@@ -102,7 +102,7 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, TestTa
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
 
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
 
     if (testTabs == TestTabs::No)
         return;
@@ -129,7 +129,7 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
     
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
     
     if (testTabs == TestTabs::No)
         return;
@@ -158,7 +158,7 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
     
     if (testTabs == TestTabs::No)
         return;
@@ -187,7 +187,7 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(eq(partsNew.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(partsNew.string, url.string()));
     
-    EXPECT_TRUE(URLParser::internalValuesConsistent(url));
+    EXPECT_TRUE(WTF::URLParser::internalValuesConsistent(url));
     
     if (testTabs == TestTabs::No)
         return;
@@ -213,8 +213,7 @@ static void shouldFail(const String& urlString, const String& baseString)
 
 static void checkURL(const String& urlString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    URLParser parser(urlString, { }, encoding);
-    auto url = parser.result();
+    auto url = URL({ }, urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));
@@ -238,9 +237,7 @@ static void checkURL(const String& urlString, const TextEncoding* encoding, cons
 
 static void checkURL(const String& urlString, const String& baseURLString, const TextEncoding* encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
-    URLParser baseParser(baseURLString, { }, encoding);
-    URLParser parser(urlString, baseParser.result(), encoding);
-    auto url = parser.result();
+    auto url = URL(URL({ }, baseURLString), urlString, encoding);
     EXPECT_TRUE(eq(parts.protocol, url.protocol()));
     EXPECT_TRUE(eq(parts.user, url.user()));
     EXPECT_TRUE(eq(parts.password, url.pass()));

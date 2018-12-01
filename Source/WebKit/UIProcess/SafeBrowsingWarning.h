@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +39,7 @@ namespace WebKit {
 class SafeBrowsingWarning : public RefCounted<SafeBrowsingWarning> {
 public:
 #if HAVE(SAFE_BROWSING)
-    static Ref<SafeBrowsingWarning> create(const WebCore::URL& url, SSBServiceLookupResult *result)
+    static Ref<SafeBrowsingWarning> create(const URL& url, SSBServiceLookupResult *result)
     {
         return adoptRef(*new SafeBrowsingWarning(url, result));
     }
@@ -62,7 +62,7 @@ public:
     
 private:
 #if HAVE(SAFE_BROWSING)
-    SafeBrowsingWarning(const WebCore::URL&, SSBServiceLookupResult *);
+    SafeBrowsingWarning(const URL&, SSBServiceLookupResult *);
 #endif
 #if PLATFORM(COCOA)
     SafeBrowsingWarning(String&&, String&&, RetainPtr<NSAttributedString>&&);

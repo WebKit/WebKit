@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include "Logging.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>

@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include <WebCore/URL.h>
 #include <WebCore/YouTubePluginReplacement.h>
 #include <wtf/MainThread.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

@@ -28,8 +28,8 @@
 
 #include "PluginPackage.h"
 #include <WebCore/Frame.h>
-#include <WebCore/URL.h>
 #include <stdlib.h>
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)

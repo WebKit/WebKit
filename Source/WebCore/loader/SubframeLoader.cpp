@@ -77,14 +77,14 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     // Support for <frame src="javascript:string">
     URL scriptURL;
     URL url;
-    if (protocolIsJavaScript(urlString)) {
+    if (WTF::protocolIsJavaScript(urlString)) {
         scriptURL = completeURL(urlString); // completeURL() encodes the URL.
-        url = blankURL();
+        url = WTF::blankURL();
     } else
         url = completeURL(urlString);
 
     if (shouldConvertInvalidURLsToBlank() && !url.isValid())
-        url = blankURL();
+        url = WTF::blankURL();
 
     bool hasExistingFrame = ownerElement.contentFrame();
     Frame* frame = loadOrRedirectSubframe(ownerElement, url, frameName, lockHistory, lockBackForwardList);
@@ -94,7 +94,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const Str
     // If we create a new subframe then an empty document is loaded into it synchronously and may
     // cause script execution (say, via a DOM load event handler) that can do anything, including
     // navigating the subframe. We only want to evaluate scriptURL if the frame has not been navigated.
-    bool canExecuteScript = hasExistingFrame || (frame->loader().documentLoader() && frame->loader().documentLoader()->originalURL() == blankURL());
+    bool canExecuteScript = hasExistingFrame || (frame->loader().documentLoader() && frame->loader().documentLoader()->originalURL() == WTF::blankURL());
     if (!scriptURL.isEmpty() && canExecuteScript && ownerElement.isURLAllowed(scriptURL))
         frame->script().executeIfJavaScriptURL(scriptURL);
 

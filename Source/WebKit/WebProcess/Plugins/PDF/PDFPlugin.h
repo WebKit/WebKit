@@ -135,12 +135,12 @@ private:
     void frameDidFinishLoading(uint64_t requestID) final;
     void frameDidFail(uint64_t requestID, bool wasCancelled) final;
     void didEvaluateJavaScript(uint64_t requestID, const String& result) final;
-    void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) final { }
-    void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) final;
+    void streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& responseURL, int responseStatus) final { }
+    void streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) final;
     void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) final;
     void streamDidFinishLoading(uint64_t streamID) final;
     void streamDidFail(uint64_t streamID, bool wasCancelled) final;
-    void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) final;
+    void manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) final;
     void manualStreamDidReceiveData(const char* bytes, int length) final;
     void manualStreamDidFinishLoading() final;
     void manualStreamDidFail(bool wasCancelled) final;
@@ -306,7 +306,7 @@ private:
 
     WebCore::IntSize m_size;
 
-    WebCore::URL m_sourceURL;
+    URL m_sourceURL;
 
     String m_suggestedFilename;
     RetainPtr<CFMutableDataRef> m_data;

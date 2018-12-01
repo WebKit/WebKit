@@ -1,3 +1,13 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2018-11-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Reduce the use of WKSI library calls: CoreAnimation

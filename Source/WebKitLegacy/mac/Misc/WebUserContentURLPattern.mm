@@ -24,8 +24,8 @@
 
 #import "WebUserContentURLPattern.h"
 
-#import <WebCore/URL.h>
 #import <WebCore/UserContentURLPattern.h>
+#import <wtf/URL.h>
 
 using namespace WebCore;
 

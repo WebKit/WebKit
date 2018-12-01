@@ -119,13 +119,13 @@
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
-#include "URL.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <dom/ScriptDisallowedScope.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/URL.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
@@ -423,7 +423,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
         return;
     }
 
-    if (protocolIsJavaScript(submission->action())) {
+    if (WTF::protocolIsJavaScript(submission->action())) {
         if (!m_frame.document()->contentSecurityPolicy()->allowFormAction(URL(submission->action())))
             return;
         m_isExecutingJavaScriptFormAction = true;
@@ -701,7 +701,7 @@ void FrameLoader::receivedFirstData()
     if (!parseHTTPRefresh(documentLoader.response().httpHeaderField(HTTPHeaderName::Refresh), delay, urlString))
         return;
     auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
-    if (!protocolIsJavaScript(completedURL))
+    if (!WTF::protocolIsJavaScript(completedURL))
         m_frame.navigationScheduler().scheduleRedirect(document, delay, completedURL);
     else {
         auto message = "Refused to refresh " + document.url().stringCenterEllipsizedToLength() + " to a javascript: URL";
@@ -1555,7 +1555,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     // Only the first iframe navigation or the first iframe navigation after about:blank should be reported.
     // https://www.w3.org/TR/resource-timing-2/#resources-included-in-the-performanceresourcetiming-interface
-    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != blankURL())
+    if (m_shouldReportResourceTimingToParentFrame && !m_previousURL.isNull() && m_previousURL != WTF::blankURL())
         m_shouldReportResourceTimingToParentFrame = false;
 
     // Log main frame navigation types.
@@ -3372,7 +3372,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             // For example, using a Back/Forward load to load about blank would cause the current HistoryItem's url to be
             // overwritten with 'about:blank', which we do not want.
             m_loadType = FrameLoadType::Standard;
-            m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ blankURL() });
+            m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ WTF::blankURL() });
         }
 
         m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
@@ -3924,7 +3924,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     created = false;
 
     // FIXME: Provide line number information with respect to the opener's document.
-    if (protocolIsJavaScript(request.resourceRequest().url()) && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url(), { }))
+    if (WTF::protocolIsJavaScript(request.resourceRequest().url()) && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url(), { }))
         return nullptr;
 
     if (!request.frameName().isEmpty() && !equalIgnoringASCIICase(request.frameName(), "_blank")) {

@@ -635,7 +635,7 @@ gboolean webKitMediaSrcSetUri(GstURIHandler* handler, const gchar* uri, GError**
         return TRUE;
     }
 
-    WebCore::URL url(WebCore::URL(), uri);
+    URL url(URL(), uri);
 
     priv->location = GUniquePtr<gchar>(g_strdup(url.string().utf8().data()));
     GST_OBJECT_UNLOCK(source);

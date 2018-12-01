@@ -58,7 +58,6 @@ class Document;
 class Element;
 class Frame;
 class FrameView;
-class URL;
 class KeyframeList;
 class KeyframeValue;
 class MediaQueryEvaluator;

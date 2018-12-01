@@ -41,7 +41,6 @@
 namespace WebCore {
 
 class Document;
-class URL;
 class LinkPreloadResourceClient;
 
 struct LinkRelAttribute;

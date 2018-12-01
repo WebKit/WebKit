@@ -32,7 +32,7 @@
 
 #include "BlobPropertyBag.h"
 #include "ScriptWrappable.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "URLRegistry.h"
 #include <wtf/Variant.h>
 

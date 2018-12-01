@@ -160,7 +160,7 @@ void DownloadManager::cancelDownload(DownloadID downloadID)
 }
 
 #if PLATFORM(COCOA)
-void DownloadManager::publishDownloadProgress(DownloadID downloadID, const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+void DownloadManager::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     if (auto* download = m_downloads.get(downloadID))
         download->publishProgress(url, WTFMove(sandboxExtensionHandle));

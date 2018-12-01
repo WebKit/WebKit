@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class Document;
-class URL;
 
 class History final : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
 public:

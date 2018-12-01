@@ -613,7 +613,7 @@ bool HistoryController::currentItemShouldBeReplaced() const
     //  "If the browsing context's session history contains only one Document,
     //   and that was the about:blank Document created when the browsing context
     //   was created, then the navigation must be done with replacement enabled."
-    return m_currentItem && !m_previousItem && equalIgnoringASCIICase(m_currentItem->urlString(), blankURL());
+    return m_currentItem && !m_previousItem && equalIgnoringASCIICase(m_currentItem->urlString(), WTF::blankURL());
 }
 
 void HistoryController::clearPreviousItem()
@@ -652,9 +652,9 @@ void HistoryController::initializeItem(HistoryItem& item)
     // Later we may want to learn to live with nil for URL.
     // See bug 3368236 and related bugs for more information.
     if (url.isEmpty()) 
-        url = blankURL();
+        url = WTF::blankURL();
     if (originalURL.isEmpty())
-        originalURL = blankURL();
+        originalURL = WTF::blankURL();
     
     StringWithDirection title = documentLoader->title();
 

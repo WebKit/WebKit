@@ -33,7 +33,7 @@
 #import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
-#import <WebCore/URL.h>
+#import <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

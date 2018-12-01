@@ -74,7 +74,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
     return plugins;
 }
 
-Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(WebCore::Page& page, const WebCore::URL&)
+Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(WebCore::Page& page, const URL&)
 {
     std::optional<Vector<SupportedPluginIdentifier>> supportedPluginIdentifiers;
     return pluginInfo(page, supportedPluginIdentifiers);

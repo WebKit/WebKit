@@ -39,7 +39,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ParsedContentRange.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include "ResourceError.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"

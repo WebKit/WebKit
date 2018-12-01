@@ -236,7 +236,7 @@ public:
     void registerURLSchemeServiceWorkersCanHandle(const String&);
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&);
 
-    void preconnectToServer(const WebCore::URL&);
+    void preconnectToServer(const URL&);
 
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
 
@@ -541,7 +541,7 @@ private:
     void addProcessToOriginCacheSet(WebPageProxy&);
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
-    void tryPrewarmWithDomainInformation(WebProcessProxy&, const WebCore::URL&);
+    void tryPrewarmWithDomainInformation(WebProcessProxy&, const URL&);
 
     void updateMaxSuspendedPageCount();
 

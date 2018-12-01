@@ -38,7 +38,6 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
-class URL;
 class WebGLObject;
 
 class CanvasRenderingContext : public ScriptWrappable {

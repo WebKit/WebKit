@@ -31,7 +31,7 @@
 #include "APIUserInitiatedAction.h"
 #include "NavigationActionData.h"
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 namespace API {
 
@@ -47,7 +47,7 @@ public:
     std::optional<WTF::String> targetFrameName() const { return m_targetFrameName; }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
-    const WebCore::URL& originalURL() const { return !m_originalURL.isNull() ? m_originalURL : m_request.url(); }
+    const WTF::URL& originalURL() const { return !m_originalURL.isNull() ? m_originalURL : m_request.url(); }
 
     WebCore::NavigationType navigationType() const { return m_navigationActionData.navigationType; }
     WebKit::WebEvent::Modifiers modifiers() const { return m_navigationActionData.modifiers; }
@@ -66,7 +66,7 @@ public:
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }
 
 private:
-    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation)
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction, API::Navigation* mainFrameNavigation)
         : m_sourceFrame(sourceFrame)
         , m_targetFrame(targetFrame)
         , m_targetFrameName(targetFrameName)
@@ -79,7 +79,7 @@ private:
     {
     }
 
-    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, std::optional<WTF::String> targetFrameName, WebCore::ResourceRequest&& request, const WTF::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
         : NavigationAction(WTFMove(navigationActionData), sourceFrame, targetFrame, targetFrameName, WTFMove(request), originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction), nullptr)
     {
     }
@@ -89,7 +89,7 @@ private:
     std::optional<WTF::String> m_targetFrameName;
 
     WebCore::ResourceRequest m_request;
-    WebCore::URL m_originalURL;
+    WTF::URL m_originalURL;
 
     bool m_shouldOpenAppLinks;
 

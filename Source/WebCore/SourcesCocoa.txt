@@ -180,7 +180,6 @@ platform/audio/mac/AudioSessionMac.cpp
 platform/audio/mac/CARingBuffer.cpp
 platform/audio/mac/FFTFrameMac.cpp
 
-platform/cf/CFURLExtras.cpp
 platform/cf/FileSystemCF.cpp
 platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
@@ -188,7 +187,6 @@ platform/cf/MainThreadSharedTimerCF.cpp
 platform/cf/MediaAccessibilitySoftLink.cpp
 platform/cf/RunLoopObserver.cpp
 platform/cf/SharedBufferCF.cpp
-platform/cf/URLCF.cpp
 
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreVideoSoftLink.cpp
@@ -467,7 +465,6 @@ platform/mac/StringUtilities.mm
 platform/mac/SuddenTermination.mm
 platform/mac/ThemeMac.mm
 platform/mac/ThreadCheck.mm @no-unify
-platform/mac/URLMac.mm
 platform/mac/UserActivityMac.mm
 platform/mac/UserAgentMac.mm
 platform/mac/ValidationBubbleMac.mm

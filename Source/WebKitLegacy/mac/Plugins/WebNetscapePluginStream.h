@@ -72,7 +72,7 @@ public:
 
     void cancelLoadAndDestroyStreamWithError(NSError *);
 
-    void setRequestURL(const WebCore::URL& requestURL) { m_requestURL = requestURL; }
+    void setRequestURL(const URL& requestURL) { m_requestURL = requestURL; }
 
     void start();
     void stop();
@@ -103,7 +103,7 @@ private:
     bool wantsAllStreams() const override;
 
     RetainPtr<NSMutableData> m_deliveryData;
-    WebCore::URL m_requestURL;
+    URL m_requestURL;
     RetainPtr<NSURL> m_responseURL;
     CString m_mimeType;
 

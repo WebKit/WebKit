@@ -96,7 +96,6 @@ class StickyPositionViewportConstraints;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
-class URL;
 
 struct CacheQueryOptions;
 struct CompositionUnderline;

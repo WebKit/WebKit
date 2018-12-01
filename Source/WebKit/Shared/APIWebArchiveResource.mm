@@ -30,8 +30,8 @@
 
 #include "APIData.h"
 #include <WebCore/ArchiveResource.h>
-#include <WebCore/URL.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 
 namespace API {
 using namespace WebCore;
@@ -46,8 +46,8 @@ Ref<WebArchiveResource> WebArchiveResource::create(RefPtr<ArchiveResource>&& arc
     return adoptRef(*new WebArchiveResource(WTFMove(archiveResource)));
 }
 
-WebArchiveResource::WebArchiveResource(API::Data* data, const String& URL, const String& MIMEType, const String& textEncoding)
-    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->bytes(), data->size()), WebCore::URL(WebCore::URL(), URL), MIMEType, textEncoding, String()))
+WebArchiveResource::WebArchiveResource(API::Data* data, const String& url, const String& MIMEType, const String& textEncoding)
+    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->bytes(), data->size()), WTF::URL(WTF::URL(), url), MIMEType, textEncoding, String()))
 {
 }
 

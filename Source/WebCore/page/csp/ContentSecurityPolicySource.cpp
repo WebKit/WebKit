@@ -30,7 +30,7 @@
 #include "ContentSecurityPolicy.h"
 #include "SecurityOriginData.h"
 #include "TextEncoding.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -101,14 +101,14 @@ bool ContentSecurityPolicySource::portMatches(const URL& url) const
     if (port == m_port)
         return true;
 
-    if ((m_port && isDefaultPortForProtocol(m_port.value(), "http")) && ((!port && url.protocolIs("https")) || (port && isDefaultPortForProtocol(port.value(), "https"))))
+    if ((m_port && WTF::isDefaultPortForProtocol(m_port.value(), "http")) && ((!port && url.protocolIs("https")) || (port && WTF::isDefaultPortForProtocol(port.value(), "https"))))
         return true;
 
     if (!port)
-        return isDefaultPortForProtocol(m_port.value(), url.protocol());
+        return WTF::isDefaultPortForProtocol(m_port.value(), url.protocol());
 
     if (!m_port)
-        return isDefaultPortForProtocol(port.value(), url.protocol());
+        return WTF::isDefaultPortForProtocol(port.value(), url.protocol());
 
     return false;
 }

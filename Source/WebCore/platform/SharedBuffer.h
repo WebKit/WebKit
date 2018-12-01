@@ -40,7 +40,7 @@
 #endif
 
 #if USE(SOUP)
-#include "GUniquePtrSoup.h"
+#include <wtf/glib/GUniquePtrSoup.h>
 #endif
 
 #if USE(GLIB)

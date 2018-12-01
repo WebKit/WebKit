@@ -35,9 +35,9 @@
 #import <WebCore/JSExecState.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/ThreadCheck.h>
-#import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
+#import <wtf/URL.h>
 
 #define IMPL static_cast<WebCore::Attr*>(reinterpret_cast<WebCore::Node*>(_internal))
 

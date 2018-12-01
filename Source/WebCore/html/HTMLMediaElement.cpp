@@ -170,8 +170,8 @@
 
 namespace WTF {
 template <>
-struct LogArgument<WebCore::URL> {
-    static String toString(const WebCore::URL& url)
+struct LogArgument<URL> {
+    static String toString(const URL& url)
     {
 #if !LOG_DISABLED
         static const unsigned maximumURLLengthForLogging = 512;

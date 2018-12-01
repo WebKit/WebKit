@@ -36,8 +36,8 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/Image.h>
-#include <WebCore/URL.h>
 #include <WebCore/RenderObject.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

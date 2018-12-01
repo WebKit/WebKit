@@ -29,7 +29,7 @@
 
 #include "PluginPackage.h"
 #include <WebCore/Frame.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/win/WCharStringExtras.h>
 

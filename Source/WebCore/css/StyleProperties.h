@@ -38,7 +38,6 @@ class CSSStyleDeclaration;
 class CachedResource;
 class Color;
 class ImmutableStyleProperties;
-class URL;
 class MutableStyleProperties;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;

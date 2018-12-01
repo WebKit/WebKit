@@ -164,7 +164,6 @@ class SelectionRect;
 class SharedBuffer;
 class SubstituteData;
 class TextCheckingRequest;
-class URL;
 class VisiblePosition;
 
 enum SyntheticClickType : int8_t;
@@ -323,7 +322,7 @@ public:
 #endif
 
     void addConsoleMessage(uint64_t frameID, MessageSource, MessageLevel, const String&, uint64_t requestID = 0);
-    void sendCSPViolationReport(uint64_t frameID, const WebCore::URL& reportURL, IPC::FormDataReference&&);
+    void sendCSPViolationReport(uint64_t frameID, const URL& reportURL, IPC::FormDataReference&&);
     void enqueueSecurityPolicyViolationEvent(uint64_t frameID, WebCore::SecurityPolicyViolationEvent::Init&&);
 
     // -- Called by the DrawingArea.
@@ -341,9 +340,9 @@ public:
     void didReplaceMultipartContent(const WebFrame&);
     void didFinishLoad(WebFrame*);
     void show();
-    String userAgent(const WebCore::URL&) const;
-    String userAgent(WebFrame*, const WebCore::URL&) const;
-    String platformUserAgent(const WebCore::URL&) const;
+    String userAgent(const URL&) const;
+    String userAgent(WebFrame*, const URL&) const;
+    String platformUserAgent(const URL&) const;
     WebCore::KeyboardUIMode keyboardUIMode();
 
     void didInsertMenuElement(WebCore::HTMLMenuElement&);
@@ -428,8 +427,8 @@ public:
 #endif
 
 #if ENABLE(WEBGL)
-    WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const WebCore::URL&);
-    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const WebCore::URL&);
+    WebCore::WebGLLoadPolicy webGLPolicyForURL(WebFrame*, const URL&);
+    WebCore::WebGLLoadPolicy resolveWebGLPolicyForURL(WebFrame*, const URL&);
 #endif
     
     enum class IncludePostLayoutDataHint { No, Yes };
@@ -706,7 +705,7 @@ public:
     WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
 #endif
 
-    bool hasLocalDataForURL(const WebCore::URL&);
+    bool hasLocalDataForURL(const URL&);
 
     static bool canHandleRequest(const WebCore::ResourceRequest&);
 
@@ -966,7 +965,7 @@ public:
     NSDictionary *dataDetectionContext() const { return m_dataDetectionContext.get(); }
 #endif
 
-    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const WebCore::URL& originatingURL, const uint8_t* data, unsigned long size);
+    void savePDFToFileInDownloadsFolder(const String& suggestedFilename, const URL& originatingURL, const uint8_t* data, unsigned long size);
 
 #if PLATFORM(COCOA)
     void savePDFToTemporaryFolderAndOpenWithNativeApplication(const String& suggestedFilename, const String& originatingURLString, const uint8_t* data, unsigned long size, const String& pdfUUID);
@@ -1192,7 +1191,7 @@ private:
 
     String sourceForFrame(WebFrame*);
 
-    void loadDataImpl(uint64_t navigationID, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const WebCore::URL& baseURL, const WebCore::URL& failingURL, const UserData&);
+    void loadDataImpl(uint64_t navigationID, Ref<WebCore::SharedBuffer>&&, const String& MIMEType, const String& encodingName, const URL& baseURL, const URL& failingURL, const UserData&);
 
     // Actions
     void tryClose();
@@ -1236,7 +1235,7 @@ private:
     static bool scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
     static bool logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
-    void loadURLInFrame(WebCore::URL&&, uint64_t frameID);
+    void loadURLInFrame(URL&&, uint64_t frameID);
 
     enum class WasRestoredByAPIRequest { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);

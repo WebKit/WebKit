@@ -28,13 +28,13 @@
 
 #include "CurlProxySettings.h"
 #include "CurlSSLHandle.h"
-#include "URL.h"
 
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 #include <wtf/Threading.h>
+#include <wtf/URL.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

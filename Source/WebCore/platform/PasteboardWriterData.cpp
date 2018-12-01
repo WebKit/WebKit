@@ -48,7 +48,7 @@ void PasteboardWriterData::setPlainText(PlainText plainText)
     m_plainText = WTFMove(plainText);
 }
 
-void PasteboardWriterData::setURL(URL url)
+void PasteboardWriterData::setURLData(URLData url)
 {
     ASSERT(!m_url);
 

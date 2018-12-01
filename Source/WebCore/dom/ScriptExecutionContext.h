@@ -68,7 +68,6 @@ class RejectedPromiseTracker;
 class ResourceRequest;
 class SecurityOrigin;
 class SocketProvider;
-class URL;
 
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;

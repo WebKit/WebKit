@@ -28,7 +28,7 @@
 #include "WebKitDLL.h"
 
 #include <WebCore/BString.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 

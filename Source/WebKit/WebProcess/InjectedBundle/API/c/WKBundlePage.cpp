@@ -65,9 +65,9 @@
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScriptExecutionContext.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/URL.h>
 #include <WebCore/WheelEventTestTrigger.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 
 using namespace WebKit;
 
@@ -434,7 +434,7 @@ void WKBundlePageSetFooterBanner(WKBundlePageRef pageRef, WKBundlePageBannerRef 
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
-    return toImpl(pageRef)->hasLocalDataForURL(WebCore::URL(WebCore::URL(), toWTFString(urlRef)));
+    return toImpl(pageRef)->hasLocalDataForURL(URL(URL(), toWTFString(urlRef)));
 }
 
 bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)

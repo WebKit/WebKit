@@ -1,3 +1,46 @@
+2018-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Move URL from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=190234
+
+        Reviewed by Keith Miller.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::createURL):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        * TestWebKitAPI/Tests/WebCore/YouTubePluginReplacement.cpp:
+        * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm:
+        (TestWebKitAPI::originalDataAsString):
+        (TestWebKitAPI::userVisibleString):
+        (TestWebKitAPI::literalURL):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadAlternateHTMLString.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+        (literalURL):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLWebFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        * TestWebKitAPI/Tests/mac/SSLKeyGenerator.mm:
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::createURLForResource):
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module):
+        (WTFURL_SummaryProvider):
+        (WTFURLProvider):
+        (WebCoreURL_SummaryProvider): Deleted.
+        (WebCoreURLProvider): Deleted.
+        (WebCoreURLProvider.__init__): Deleted.
+        (WebCoreURLProvider.to_string): Deleted.
+
 2018-11-30  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Support unicode in MeteredStream

@@ -30,8 +30,8 @@
 #include "ApplicationManifest.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "URL.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

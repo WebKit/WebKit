@@ -29,8 +29,8 @@
 #include "SuspendedPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include <WebCore/URL.h>
 #include <wtf/DebugUtilities.h>
+#include <wtf/URL.h>
 
 using namespace WebCore;
 
@@ -108,8 +108,8 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     if (mainFrameState.stateObjectData || otherMainFrameState.stateObjectData)
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;
 
-    WebCore::URL url = WebCore::URL({ }, mainFrameState.urlString);
-    WebCore::URL otherURL = WebCore::URL({ }, otherMainFrameState.urlString);
+    URL url = URL({ }, mainFrameState.urlString);
+    URL otherURL = URL({ }, otherMainFrameState.urlString);
 
     if ((url.hasFragmentIdentifier() || otherURL.hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url, otherURL))
         return mainFrameState.documentSequenceNumber == otherMainFrameState.documentSequenceNumber;

@@ -19,9 +19,9 @@
 #pragma once
 
 #include "Image.h"
-#include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

@@ -33,7 +33,6 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
-#include "GUniquePtrSoup.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
@@ -41,6 +40,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GUniquePtrSoup.h>
 
 #if USE(LIBSECRET)
 #include "GRefPtrGtk.h"

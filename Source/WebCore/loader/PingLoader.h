@@ -40,7 +40,6 @@ namespace WebCore {
 class FormData;
 class Frame;
 class HTTPHeaderMap;
-class URL;
 class ResourceRequest;
 
 enum class ViolationReportType {

@@ -38,7 +38,6 @@ namespace WebCore {
 
 class FileStreamClient;
 class FileStream;
-class URL;
 
 class WEBCORE_EXPORT AsyncFileStream {
 public:

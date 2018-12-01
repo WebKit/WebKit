@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentFilterUnblockHandler_h
-#define ContentFilterUnblockHandler_h
+#pragma once
 
 #if ENABLE(CONTENT_FILTERING)
 
-#include "URL.h"
 #include <functional>
 #include <wtf/RetainPtr.h>
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSCoder;
@@ -77,5 +76,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_FILTERING)
-
-#endif // ContentFilterUnblockHandler_h

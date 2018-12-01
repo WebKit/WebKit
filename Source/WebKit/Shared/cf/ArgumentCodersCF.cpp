@@ -31,9 +31,9 @@
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
-#include <WebCore/CFURLExtras.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/Vector.h>
+#include <wtf/cf/CFURLExtras.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
 #if USE(FOUNDATION)
@@ -599,8 +599,8 @@ void encode(Encoder& encoder, CFURLRef url)
     if (baseURL)
         encode(encoder, baseURL);
 
-    URLCharBuffer urlBytes;
-    getURLBytes(url, urlBytes);
+    WTF::URLCharBuffer urlBytes;
+    WTF::getURLBytes(url, urlBytes);
     IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(urlBytes.data()), urlBytes.size());
     encoder << dataReference;
 }
@@ -631,7 +631,7 @@ bool decode(Decoder& decoder, RetainPtr<CFURLRef>& result)
     }
 #endif
 
-    result = createCFURLFromBuffer(reinterpret_cast<const char*>(urlBytes.data()), urlBytes.size(), baseURL.get());
+    result = WTF::createCFURLFromBuffer(reinterpret_cast<const char*>(urlBytes.data()), urlBytes.size(), baseURL.get());
     return result;
 }
 

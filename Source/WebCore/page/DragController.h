@@ -29,7 +29,7 @@
 #include "DragImage.h"
 #include "IntPoint.h"
 #include "IntRect.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

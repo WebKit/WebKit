@@ -34,7 +34,6 @@ namespace WebCore {
 class ScriptExecutionContext;
 class SocketStreamHandle;
 class SocketStreamHandleClient;
-class URL;
 
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:

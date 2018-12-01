@@ -34,7 +34,6 @@
 namespace API {
 class Object;
 class String;
-class URL;
 
 template<> struct ClientTraits<WKBundlePageLoaderClientBase> {
     typedef std::tuple<WKBundlePageLoaderClientV0, WKBundlePageLoaderClientV1, WKBundlePageLoaderClientV2, WKBundlePageLoaderClientV3, WKBundlePageLoaderClientV4, WKBundlePageLoaderClientV5, WKBundlePageLoaderClientV6, WKBundlePageLoaderClientV7, WKBundlePageLoaderClientV8, WKBundlePageLoaderClientV9> Versions;
@@ -48,7 +47,7 @@ public:
     explicit InjectedBundlePageLoaderClient(const WKBundlePageLoaderClientBase*);
 
     void willLoadURLRequest(WebPage&, const WebCore::ResourceRequest&, API::Object*) override;
-    void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WebCore::URL&, API::Object*) override;
+    void willLoadDataRequest(WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const URL&, API::Object*) override;
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame&, RefPtr<API::Object>&) override;
@@ -86,7 +85,7 @@ public:
 
     void featuresUsedInPage(WebPage&, const Vector<WTF::String>&) override;
 
-    WTF::String userAgentForURL(WebFrame&, const WebCore::URL&) const override;
+    WTF::String userAgentForURL(WebFrame&, const URL&) const override;
 
     OptionSet<WebCore::LayoutMilestone> layoutMilestones() const override;
 };

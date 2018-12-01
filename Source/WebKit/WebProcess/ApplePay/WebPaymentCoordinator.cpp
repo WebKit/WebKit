@@ -36,7 +36,7 @@
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/PaymentCoordinator.h>
-#include <WebCore/URL.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
@@ -131,7 +131,7 @@ void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, c
     m_webPage.send(Messages::WebPaymentCoordinatorProxy::OpenPaymentSetup(merchantIdentifier, domainName, replyID));
 }
 
-bool WebPaymentCoordinator::showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
+bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     Vector<String> linkIconURLStrings;
     for (const auto& linkIconURL : linkIconURLs)
@@ -186,7 +186,7 @@ void WebPaymentCoordinator::paymentCoordinatorDestroyed()
 
 void WebPaymentCoordinator::validateMerchant(const String& validationURLString)
 {
-    paymentCoordinator().validateMerchant(WebCore::URL(WebCore::URL(), validationURLString));
+    paymentCoordinator().validateMerchant(URL(URL(), validationURLString));
 }
 
 void WebPaymentCoordinator::didAuthorizePayment(const WebCore::Payment& payment)

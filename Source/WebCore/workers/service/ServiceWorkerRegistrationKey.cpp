@@ -29,7 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "SecurityOrigin.h"
-#include "URLHash.h"
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

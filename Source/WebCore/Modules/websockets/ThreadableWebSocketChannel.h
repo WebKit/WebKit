@@ -40,7 +40,6 @@ class ArrayBuffer;
 namespace WebCore {
 
 class Blob;
-class URL;
 class ScriptExecutionContext;
 class SocketProvider;
 class WebSocketChannelClient;

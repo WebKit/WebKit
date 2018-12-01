@@ -41,11 +41,11 @@
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/DataDetection.h>
-#import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/cocoa/NSURLExtras.h>
 
 @interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate>
 @end
@@ -518,7 +518,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
     auto selectionAssistant = adoptNS([[UIWKSelectionAssistant alloc] initWithView:[_hostViewController view]]);
-    [selectionAssistant showShareSheetFor:WebCore::userVisibleString(url) fromRect:boundingRect];
+    [selectionAssistant showShareSheetFor:WTF::userVisibleString(url) fromRect:boundingRect];
 }
 
 #if HAVE(APP_LINKS)

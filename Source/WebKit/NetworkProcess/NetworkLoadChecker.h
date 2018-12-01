@@ -47,7 +47,7 @@ class NetworkCORSPreflightChecker;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {
 public:
-    NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, uint64_t pageID, uint64_t frameID, WebCore::HTTPHeaderMap&&, WebCore::URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics = false);
+    NetworkLoadChecker(WebCore::FetchOptions&&, PAL::SessionID, uint64_t pageID, uint64_t frameID, WebCore::HTTPHeaderMap&&, URL&&, RefPtr<WebCore::SecurityOrigin>&&, WebCore::PreflightPolicy, String&& referrer, bool shouldCaptureExtraNetworkLoadMetrics = false);
     ~NetworkLoadChecker();
 
     using RequestOrError = Expected<WebCore::ResourceRequest, WebCore::ResourceError>;
@@ -69,14 +69,14 @@ public:
 
     void setCSPResponseHeaders(WebCore::ContentSecurityPolicyResponseHeaders&& headers) { m_cspResponseHeaders = WTFMove(headers); }
 #if ENABLE(CONTENT_EXTENSIONS)
-    void setContentExtensionController(WebCore::URL&& mainDocumentURL, std::optional<UserContentControllerIdentifier> identifier)
+    void setContentExtensionController(URL&& mainDocumentURL, std::optional<UserContentControllerIdentifier> identifier)
     {
         m_mainDocumentURL = WTFMove(mainDocumentURL);
         m_userContentControllerIdentifier = identifier;
     }
 #endif
 
-    const WebCore::URL& url() const { return m_url; }
+    const URL& url() const { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
 
     WebCore::NetworkLoadInformation takeNetworkLoadInformation() { return WTFMove(m_loadInformation); }
@@ -95,7 +95,7 @@ private:
 
     void continueCheckingRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
 
-    bool doesNotNeedCORSCheck(const WebCore::URL&) const;
+    bool doesNotNeedCORSCheck(const URL&) const;
     void checkCORSRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
     void checkCORSRedirectedRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
     void checkCORSRequestWithPreflight(WebCore::ResourceRequest&&, ValidationHandler&&);
@@ -118,11 +118,11 @@ private:
     uint64_t m_frameID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
     WebCore::HTTPHeaderMap m_firstRequestHeaders; // Needed for CORS checks.
-    WebCore::URL m_url;
+    URL m_url;
     RefPtr<WebCore::SecurityOrigin> m_origin;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> m_cspResponseHeaders;
 #if ENABLE(CONTENT_EXTENSIONS)
-    WebCore::URL m_mainDocumentURL;
+    URL m_mainDocumentURL;
     std::optional<UserContentControllerIdentifier> m_userContentControllerIdentifier;
 #endif
 
@@ -131,7 +131,7 @@ private:
     bool m_isSimpleRequest { true };
     std::unique_ptr<WebCore::ContentSecurityPolicy> m_contentSecurityPolicy;
     size_t m_redirectCount { 0 };
-    WebCore::URL m_previousURL;
+    URL m_previousURL;
     WebCore::PreflightPolicy m_preflightPolicy;
     String m_dntHeaderValue;
     String m_referrer;

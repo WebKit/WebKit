@@ -27,8 +27,8 @@
 
 #include "CookiesStrategy.h"
 #include "SameSiteInfo.h"
-#include "URL.h"
 #include <pal/SessionID.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

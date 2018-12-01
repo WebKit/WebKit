@@ -35,10 +35,6 @@
 #import <UIKit/UIKit.h>
 #endif
 
-namespace WebCore {
-class URL;
-}
-
 namespace WebKit {
 class SafeBrowsingWarning;
 enum class ContinueUnsafeLoad : bool;
@@ -55,11 +51,11 @@ using RectType = CGRect;
 #endif
 {
 @package
-    CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)> _completionHandler;
+    CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     WeakObjCPtr<WKSafeBrowsingTextView> _details;
 }
 
-- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, WebCore::URL>&&)>&&)completionHandler;
+- (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 
 @end

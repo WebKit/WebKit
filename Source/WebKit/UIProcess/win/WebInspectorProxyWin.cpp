@@ -30,7 +30,6 @@
 #include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "APIPageConfiguration.h"
-#include "CFURLExtras.h"
 #include "PageClientImpl.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageGroup.h"
@@ -45,6 +44,7 @@
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebKit/WKPage.h>
+#include <wtf/cf/CFURLExtras.h>
 
 namespace WebKit {
 

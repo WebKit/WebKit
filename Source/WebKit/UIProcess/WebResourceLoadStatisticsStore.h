@@ -41,7 +41,6 @@ class WorkQueue;
 
 namespace WebCore {
 class ResourceRequest;
-class URL;
 struct ResourceLoadStatistics;
 }
 
@@ -83,28 +82,28 @@ public:
 
     void applicationWillTerminate();
 
-    void logFrameNavigation(const WebFrameProxy&, const WebCore::URL& pageURL, const WebCore::ResourceRequest&, const WebCore::URL& redirectURL);
-    void logUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
-    void clearUserInteraction(const WebCore::URL&, CompletionHandler<void()>&&);
-    void hasHadUserInteraction(const WebCore::URL&, CompletionHandler<void(bool)>&&);
-    void setLastSeen(const WebCore::URL&, Seconds, CompletionHandler<void()>&&);
-    void setPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
-    void setVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
+    void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
+    void logUserInteraction(const URL&, CompletionHandler<void()>&&);
+    void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
+    void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
+    void setLastSeen(const URL&, Seconds, CompletionHandler<void()>&&);
+    void setPrevalentResource(const URL&, CompletionHandler<void()>&&);
+    void setVeryPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
-    void isPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
-    void isVeryPrevalentResource(const WebCore::URL&, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubresourceUnder(const WebCore::URL& subresource, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsSubFrameUnder(const WebCore::URL& subFrame, const WebCore::URL& topFrame, CompletionHandler<void(bool)>&&);
-    void isRegisteredAsRedirectingTo(const WebCore::URL& hostRedirectedFrom, const WebCore::URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
-    void clearPrevalentResource(const WebCore::URL&, CompletionHandler<void()>&&);
-    void setGrandfathered(const WebCore::URL&, bool);
-    void isGrandfathered(const WebCore::URL&, CompletionHandler<void(bool)>&&);
-    void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
-    void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
-    void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
-    void setSubresourceUniqueRedirectFrom(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedFrom);
-    void setTopFrameUniqueRedirectTo(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedTo);
-    void setTopFrameUniqueRedirectFrom(const WebCore::URL& topFrameHostName, const WebCore::URL& hostNameRedirectedFrom);
+    void isPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
+    void isVeryPrevalentResource(const URL&, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubresourceUnder(const URL& subresource, const URL& topFrame, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsSubFrameUnder(const URL& subFrame, const URL& topFrame, CompletionHandler<void(bool)>&&);
+    void isRegisteredAsRedirectingTo(const URL& hostRedirectedFrom, const URL& hostRedirectedTo, CompletionHandler<void(bool)>&&);
+    void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
+    void setGrandfathered(const URL&, bool);
+    void isGrandfathered(const URL&, CompletionHandler<void(bool)>&&);
+    void setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame);
+    void setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame);
+    void setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo);
+    void setSubresourceUniqueRedirectFrom(const URL& subresource, const URL& hostNameRedirectedFrom);
+    void setTopFrameUniqueRedirectTo(const URL& topFrameHostName, const URL& hostNameRedirectedTo);
+    void setTopFrameUniqueRedirectFrom(const URL& topFrameHostName, const URL& hostNameRedirectedFrom);
     void scheduleCookieBlockingUpdate(CompletionHandler<void()>&&);
     void scheduleCookieBlockingUpdateForDomains(const Vector<String>& domainsToBlock, CompletionHandler<void()>&&);
     void scheduleClearBlockingStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
@@ -128,7 +127,7 @@ public:
     void resetParametersToDefaultValues(CompletionHandler<void()>&&);
 
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
-    void setPrevalentResourceForDebugMode(const WebCore::URL&, CompletionHandler<void()>&&);
+    void setPrevalentResourceForDebugMode(const URL&, CompletionHandler<void()>&&);
     
     void setStatisticsTestingCallback(WTF::Function<void(const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
     void logTestingEvent(const String&);

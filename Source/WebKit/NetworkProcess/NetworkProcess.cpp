@@ -76,13 +76,13 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/Settings.h>
-#include <WebCore/URLParser.h>
 #include <pal/SessionID.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
+#include <wtf/URLParser.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
@@ -478,7 +478,7 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 }
 
-void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, CompletionHandler<void(bool)>&& completionHandler)
+void NetworkProcess::writeBlobToFilePath(const URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto extension = SandboxExtension::create(WTFMove(handleForWriting));
     if (!extension) {
@@ -816,7 +816,7 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
 }
 
 #if PLATFORM(COCOA)
-void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const WebCore::URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
+void NetworkProcess::publishDownloadProgress(DownloadID downloadID, const URL& url, SandboxExtension::Handle&& sandboxExtensionHandle)
 {
     downloadManager().publishDownloadProgress(downloadID, url, WTFMove(sandboxExtensionHandle));
 }
@@ -1035,7 +1035,7 @@ void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, uint64_
         callback(String { cacheStorageDirectory }, quota);
 }
 
-void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+void NetworkProcess::preconnectTo(const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
 #if ENABLE(SERVER_PRECONNECT)
     NetworkLoadParameters parameters;

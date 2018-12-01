@@ -22,11 +22,15 @@ list(APPEND WTF_SOURCES
 
 if (USE_CF)
     list(APPEND WTF_PUBLIC_HEADERS
+        cf/CFURLExtras.h
         cf/TypeCastsCF.h
 
         text/cf/TextBreakIteratorCF.h
     )
     list(APPEND WTF_SOURCES
+        cf/CFURLExtras.cpp
+        cf/URLCF.cpp
+
         text/cf/AtomicStringImplCF.cpp
         text/cf/StringCF.cpp
         text/cf/StringImplCF.cpp

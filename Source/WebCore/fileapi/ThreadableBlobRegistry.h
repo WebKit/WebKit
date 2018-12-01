@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class BlobPart;
-class URL;
 class SecurityOrigin;
 
 class ThreadableBlobRegistry {

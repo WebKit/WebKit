@@ -36,6 +36,7 @@
 #import "PlatformStrategies.h"
 #import "RuntimeEnabledFeatures.h"
 #import "WebCoreNSURLExtras.h"
+#import <wtf/cocoa/NSURLExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -210,7 +211,7 @@ String DragData::asPlainText() const
     // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
     // all the same cases we handle well in the URL code for creating an NSURL.
     if (text.isURL)
-        return userVisibleString([NSURL URLWithString:string]);
+        return WTF::userVisibleString([NSURL URLWithString:string]);
 
     // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
     return [(NSString *)string precomposedStringWithCanonicalMapping];

@@ -58,7 +58,6 @@
 #import "Settings.h"
 #import "SocketProvider.h"
 #import "TypedElementDescendantIterator.h"
-#import "URLParser.h"
 #import "UTIUtilities.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
 #import "WebArchiveResourceWebResourceHandler.h"
@@ -66,6 +65,7 @@
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/URLParser.h>
 
 #if PLATFORM(MAC)
 #include "LocalDefaultSystemAppearance.h"
@@ -313,7 +313,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
 
         auto name = image.attributeWithoutSynchronization(HTMLNames::altAttr);
         if (name.isEmpty())
-            name = URLParser { resourceURLString }.result().lastPathComponent();
+            name = URL({ }, resourceURLString).lastPathComponent();
         if (name.isEmpty())
             name = AtomicString("media");
 
@@ -331,7 +331,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
         if (resource == urlToResourceMap.end())
             continue;
 
-        auto name = URLParser { resourceURLString }.result().lastPathComponent();
+        auto name = URL({ }, resourceURLString).lastPathComponent();
         if (name.isEmpty())
             name = AtomicString("file");
 
@@ -543,7 +543,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     String sanitizedMarkup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
-    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, blankURL(), DisallowScriptingAndPluginContent);
+    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, WTF::blankURL(), DisallowScriptingAndPluginContent);
 
     if (!fragment)
         return false;

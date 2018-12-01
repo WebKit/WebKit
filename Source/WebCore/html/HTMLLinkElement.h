@@ -36,7 +36,6 @@ namespace WebCore {
 
 class DOMTokenList;
 class HTMLLinkElement;
-class URL;
 struct MediaQueryParserContext;
 
 template<typename T> class EventSender;

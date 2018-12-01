@@ -31,7 +31,7 @@
 #include "FetchBodyConsumer.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
-#include "URL.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

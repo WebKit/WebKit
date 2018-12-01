@@ -50,7 +50,7 @@ public:
     void cancel();
 
 #if PLATFORM(COCOA)
-    void publishProgress(const WebCore::URL&, SandboxExtension::Handle&&);
+    void publishProgress(const URL&, SandboxExtension::Handle&&);
     void didBecomeDownload(const std::unique_ptr<Download>&);
 #endif
 
@@ -74,7 +74,7 @@ private:
     bool m_isAllowedToAskUserForCredentials;
 
 #if PLATFORM(COCOA)
-    WebCore::URL m_progressURL;
+    URL m_progressURL;
     SandboxExtension::Handle m_progressSandboxExtension;
 #endif
 };

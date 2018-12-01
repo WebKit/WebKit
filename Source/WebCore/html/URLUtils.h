@@ -174,7 +174,7 @@ void URLUtils<T>::setHost(const String& value)
             // requires setting the port to "0" if it is set to empty string.
             url.setHostAndPort(value.substring(0, separator + 1) + '0');
         } else {
-            if (isDefaultPortForProtocol(port, url.protocol()))
+            if (WTF::isDefaultPortForProtocol(port, url.protocol()))
                 url.setHostAndPort(value.substring(0, separator));
             else
                 url.setHostAndPort(value.substring(0, portEnd));
@@ -235,7 +235,7 @@ void URLUtils<T>::setPort(const String& value)
     // requires setting the port to "0" if it is set to empty string.
     // FIXME: http://url.spec.whatwg.org/ doesn't appear to require this; test what browsers do
     unsigned port = value.toUInt();
-    if (isDefaultPortForProtocol(port, url.protocol()))
+    if (WTF::isDefaultPortForProtocol(port, url.protocol()))
         url.removePort();
     else
         url.setPort(port);

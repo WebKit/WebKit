@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-class URL;
-
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
     enum Policy {

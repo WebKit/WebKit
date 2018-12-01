@@ -26,9 +26,9 @@
 #include "config.h"
 #include "UserContentURLPattern.h"
 
-#include "URL.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

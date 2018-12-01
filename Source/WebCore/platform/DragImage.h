@@ -57,7 +57,6 @@ class Image;
 class IntRect;
 class Node;
 class Range;
-class URL;
 
 #if PLATFORM(IOS_FAMILY)
 typedef RetainPtr<CGImageRef> DragImageRef;

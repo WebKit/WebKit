@@ -88,7 +88,6 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 class ShadowRoot;
 class TimerBase;
-class URL;
 #if ENABLE(WEBGL)
 class WebGLProgram;
 #endif

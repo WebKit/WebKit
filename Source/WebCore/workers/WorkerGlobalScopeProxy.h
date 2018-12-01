@@ -42,7 +42,6 @@ class SessionID;
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
-class URL;
 class Worker;
 
 // A proxy to talk to the worker context.

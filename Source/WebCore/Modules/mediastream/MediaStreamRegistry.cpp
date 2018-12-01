@@ -29,9 +29,9 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStream.h"
-#include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

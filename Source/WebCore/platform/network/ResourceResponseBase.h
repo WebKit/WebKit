@@ -31,8 +31,8 @@
 #include "HTTPHeaderMap.h"
 #include "NetworkLoadMetrics.h"
 #include "ParsedContentRange.h"
-#include "URL.h"
 #include <wtf/Markable.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {

@@ -28,8 +28,8 @@
 
 #import "WKAPICast.h"
 #import "WKNSURL.h"
-#import <WebCore/CFURLExtras.h>
 #import <objc/runtime.h>
+#import <wtf/cf/CFURLExtras.h>
 #import <wtf/text/CString.h>
 
 #if WK_API_ENABLED
@@ -56,7 +56,7 @@ WKURLRef WKURLCreateWithCFURL(CFURLRef cfURL)
 #endif
 
     CString urlBytes;
-    WebCore::getURLBytes(cfURL, urlBytes);
+    WTF::getURLBytes(cfURL, urlBytes);
 
     return WebKit::toCopiedURLAPI(urlBytes.data());
 }
@@ -69,5 +69,5 @@ CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
     // UTF-8 which uses less memory and is what WebKit clients might expect.
 
     CString buffer = WebKit::toImpl(URLRef)->string().utf8();
-    return WebCore::createCFURLFromBuffer(buffer.data(), buffer.length(), 0).leakRef();
+    return WTF::createCFURLFromBuffer(buffer.data(), buffer.length(), 0).leakRef();
 }

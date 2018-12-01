@@ -35,7 +35,6 @@ class Element;
 class LoadableModuleScript;
 class PendingScript;
 class ScriptSourceCode;
-class URL;
 
 class ScriptElement {
 public:

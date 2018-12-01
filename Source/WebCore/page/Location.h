@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class DOMWindow;
-class URL;
 
 class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
 public:

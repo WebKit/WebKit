@@ -23,9 +23,9 @@
 #include "Image.h"
 #include "TextFlags.h"
 #include "TextIndicator.h"
-#include "URL.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

@@ -215,11 +215,11 @@ static void carbonWindowHidden(WindowRef window)
 static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
 {
     String launchedURLString;
-    if (!PluginProcess::singleton().openURL(WebCore::URL(url).string(), status, launchedURLString))
+    if (!PluginProcess::singleton().openURL(URL(url).string(), status, launchedURLString))
         return false;
 
     if (!launchedURLString.isNull() && launchedURL)
-        *launchedURL = WebCore::URL(WebCore::URL(), launchedURLString).createCFURL().leakRef();
+        *launchedURL = URL(URL(), launchedURLString).createCFURL().leakRef();
     return true;
 }
 
@@ -399,7 +399,7 @@ static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_
         }
     }
 
-    if (PluginProcess::singleton().launchApplicationAtURL(WebCore::URL(url).string(), arguments)) {
+    if (PluginProcess::singleton().launchApplicationAtURL(URL(url).string(), arguments)) {
         if (error)
             *error = nil;
         return nil;

@@ -30,7 +30,7 @@
 
 namespace API {
 
-WebCore::URL UserScript::generateUniqueURL()
+WTF::URL UserScript::generateUniqueURL()
 {
     static uint64_t identifier;
 

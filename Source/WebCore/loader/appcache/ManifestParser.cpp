@@ -27,7 +27,7 @@
 #include "ManifestParser.h"
 
 #include "TextResourceDecoder.h"
-#include "URL.h"
+#include <wtf/URL.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 

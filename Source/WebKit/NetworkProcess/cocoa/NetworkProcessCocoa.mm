@@ -164,7 +164,7 @@ void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& s
 void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)
 {
     for (auto& hostName : hostNames) {
-        auto url = WebCore::URL({ }, makeString("https://", hostName));
+        auto url = URL({ }, makeString("https://", hostName));
         _CFNetworkResetHSTS(url.createCFURL().get(), session.platformSession());
     }
 }

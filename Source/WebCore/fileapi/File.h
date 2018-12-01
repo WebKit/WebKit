@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class URL;
-
 class File final : public Blob {
 public:
     struct PropertyBag : BlobPropertyBag {

@@ -87,12 +87,12 @@ private:
     void frameDidFinishLoading(uint64_t requestID) override;
     void frameDidFail(uint64_t requestID, bool wasCancelled) override;
     void didEvaluateJavaScript(uint64_t requestID, const String& result) override;
-    void streamWillSendRequest(uint64_t streamID, const WebCore::URL& requestURL, const WebCore::URL& responseURL, int responseStatus) override;
-    void streamDidReceiveResponse(uint64_t streamID, const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
+    void streamWillSendRequest(uint64_t streamID, const URL& requestURL, const URL& responseURL, int responseStatus) override;
+    void streamDidReceiveResponse(uint64_t streamID, const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers, const String& suggestedFileName) override;
     void streamDidReceiveData(uint64_t streamID, const char* bytes, int length) override;
     void streamDidFinishLoading(uint64_t streamID) override;
     void streamDidFail(uint64_t streamID, bool wasCancelled) override;
-    void manualStreamDidReceiveResponse(const WebCore::URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) override;
+    void manualStreamDidReceiveResponse(const URL& responseURL, uint32_t streamLength, uint32_t lastModifiedTime, const WTF::String& mimeType, const WTF::String& headers, const String& suggestedFileName) override;
     void manualStreamDidReceiveData(const char* bytes, int length) override;
     void manualStreamDidFinishLoading() override;
     void manualStreamDidFail(bool wasCancelled) override;

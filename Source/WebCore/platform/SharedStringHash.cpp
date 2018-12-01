@@ -24,7 +24,7 @@
 #include "config.h"
 #include "SharedStringHash.h"
 
-#include "URL.h"
+#include <wtf/URL.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>

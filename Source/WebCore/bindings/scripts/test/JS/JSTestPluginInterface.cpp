@@ -27,12 +27,12 @@
 #include "JSDOMWrapperCache.h"
 #include "JSPluginElementFunctions.h"
 #include "ScriptExecutionContext.h"
-#include "URL.h"
 #include <JavaScriptCore/FunctionPrototype.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
+#include <wtf/URL.h>
 
 
 namespace WebCore {

@@ -72,7 +72,7 @@ private:
     void matchAll(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerClientQueryOptions&, WebCore::ServiceWorkerClientsMatchAllCallback&&) final;
     void claim(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&) final;
     void skipWaiting(WebCore::ServiceWorkerIdentifier, Function<void()>&&) final;
-    void setScriptResource(WebCore::ServiceWorkerIdentifier, const WebCore::URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
+    void setScriptResource(WebCore::ServiceWorkerIdentifier, const URL&, const WebCore::ServiceWorkerContextData::ImportedScript&) final;
 
     // IPC messages.
     void serviceWorkerStartedWithMessage(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, const String& exceptionMessage) final;

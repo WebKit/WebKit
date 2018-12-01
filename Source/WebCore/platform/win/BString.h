@@ -40,8 +40,6 @@ typedef _Null_terminated_ wchar_t* BSTR;
 
 namespace WebCore {
 
-    class URL;
-
     class BString {
     public:
         BString();

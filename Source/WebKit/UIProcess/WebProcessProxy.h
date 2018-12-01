@@ -61,7 +61,6 @@ class PageConfiguration;
 
 namespace WebCore {
 class ResourceRequest;
-class URL;
 struct PluginInfo;
 struct SecurityOriginData;
 }
@@ -151,10 +150,10 @@ public:
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
     void assumeReadAccessToBaseURL(const String&);
-    bool hasAssumedReadAccessToURL(const WebCore::URL&) const;
+    bool hasAssumedReadAccessToURL(const URL&) const;
 
     bool checkURLReceivedFromWebProcess(const String&);
-    bool checkURLReceivedFromWebProcess(const WebCore::URL&);
+    bool checkURLReceivedFromWebProcess(const URL&);
 
     static bool fullKeyboardAccessEnabled();
 

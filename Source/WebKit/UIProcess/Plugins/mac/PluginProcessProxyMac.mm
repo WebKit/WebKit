@@ -34,12 +34,12 @@
 #import "SandboxUtilities.h"
 #import <QuartzCore/CARemoteLayerServer.h>
 #import <WebCore/FileSystem.h>
-#import <WebCore/URL.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <spawn.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/URL.h>
 #import <wtf/text/CString.h>
 
 @interface WKPlaceholderModalWindow : NSWindow 

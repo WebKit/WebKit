@@ -35,9 +35,9 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSource.h"
-#include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 

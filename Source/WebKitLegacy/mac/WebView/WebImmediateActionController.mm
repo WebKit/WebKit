@@ -256,17 +256,17 @@ using namespace WebCore;
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
     if (url && _hitTestResult.URLElement()) {
-        if (protocolIs(absoluteURLString, "mailto")) {
+        if (WTF::protocolIs(absoluteURLString, "mailto")) {
             _type = WebImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (protocolIs(absoluteURLString, "tel")) {
+        if (WTF::protocolIs(absoluteURLString, "tel")) {
             _type = WebImmediateActionTelLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (WebCore::protocolIsInHTTPFamily(absoluteURLString)) {
+        if (WTF::protocolIsInHTTPFamily(absoluteURLString)) {
             _type = WebImmediateActionLinkPreview;
 
             RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());

@@ -2508,7 +2508,7 @@ static NSURL *createUniqueWebDataURL()
     if (baseURL)
         baseURL = [baseURL absoluteURL];
     else {
-        baseURL = blankURL();
+        baseURL = WTF::blankURL();
         responseURL = createUniqueWebDataURL();
     }
     

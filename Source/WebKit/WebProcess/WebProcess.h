@@ -202,7 +202,7 @@ public:
     void cancelPrepareToSuspend();
     void processDidResume();
 
-    void sendPrewarmInformation(const WebCore::URL&);
+    void sendPrewarmInformation(const URL&);
 
     void isJITEnabled(CompletionHandler<void(bool)>&&);
 

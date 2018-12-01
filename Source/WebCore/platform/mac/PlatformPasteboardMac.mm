@@ -32,10 +32,10 @@
 #import "ColorMac.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "Pasteboard.h"
-#import "URL.h"
 #import "SharedBuffer.h"
 #import <wtf/HashCountedSet.h>
 #import <wtf/ListHashSet.h>
+#import <wtf/URL.h>
 #import <wtf/text/StringHash.h>
 
 namespace WebCore {

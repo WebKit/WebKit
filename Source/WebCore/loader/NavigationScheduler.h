@@ -41,7 +41,6 @@ class FormSubmission;
 class Frame;
 class ScheduledNavigation;
 class SecurityOrigin;
-class URL;
 
 enum class NewLoadInProgress : bool { No, Yes };
     

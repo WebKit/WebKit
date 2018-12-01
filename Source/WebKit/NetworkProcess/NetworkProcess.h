@@ -66,7 +66,6 @@ class ProtectionSpace;
 class ResourceError;
 class SWServer;
 class SecurityOrigin;
-class URL;
 enum class StoredCredentialsPolicy : bool;
 struct MessageWithMessagePorts;
 struct SecurityOriginData;
@@ -172,7 +171,7 @@ public:
     using CacheStorageParametersCallback = CompletionHandler<void(const String&, uint64_t quota)>;
     void cacheStorageParameters(PAL::SessionID, CacheStorageParametersCallback&&);
 
-    void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
+    void preconnectTo(const URL&, WebCore::StoredCredentialsPolicy);
 
     void setSessionIsControlledByAutomation(PAL::SessionID, bool);
     bool sessionIsControlledByAutomation(PAL::SessionID) const;
@@ -275,7 +274,7 @@ private:
     void resumeDownload(PAL::SessionID, DownloadID, const IPC::DataReference& resumeData, const String& path, SandboxExtension::Handle&&);
     void cancelDownload(DownloadID);
 #if PLATFORM(COCOA)
-    void publishDownloadProgress(DownloadID, const WebCore::URL&, SandboxExtension::Handle&&);
+    void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
@@ -290,7 +289,7 @@ private:
     void syncAllCookies();
     void didSyncAllCookies();
 
-    void writeBlobToFilePath(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, CompletionHandler<void(bool)>&&);
+    void writeBlobToFilePath(const URL&, const String& path, SandboxExtension::Handle&&, CompletionHandler<void(bool)>&&);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
