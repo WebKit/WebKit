@@ -1,3 +1,21 @@
+2018-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Editable images should always return some data, even if the canvas doesn't have a size yet
+        https://bugs.webkit.org/show_bug.cgi?id=192265
+        <rdar://problem/46385911>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView layoutSubviews]):
+        (emptyImage):
+        (-[WKDrawingView renderedDrawing]):
+        (-[WKDrawingView PNGRepresentation]):
+        Some clients strongly depend on there being some data in an image, even if
+        it's not of a usable size yet. We'll invalidate the attachment when the
+        canvas size changes, so it will eventually settle at a usable size (after
+        the first layer tree commit that includes the editable image).
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO
