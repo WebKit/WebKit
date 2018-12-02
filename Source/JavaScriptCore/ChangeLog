@@ -1,3 +1,25 @@
+2018-12-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "<<" and ">>"
+        https://bugs.webkit.org/show_bug.cgi?id=186233
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is introducing the support for BigInt into lshift and
+        rshift into LLint and Baseline layers.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createWithLength):
+        (JSC::JSBigInt::leftShift):
+        (JSC::JSBigInt::signedRightShift):
+        (JSC::JSBigInt::leftShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByAbsolute):
+        (JSC::JSBigInt::rightShiftByMaximum):
+        (JSC::JSBigInt::toShiftAmount):
+        * runtime/JSBigInt.h:
+
 2018-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Heap.h refers to the non-existent HeapStatistics

@@ -510,6 +510,28 @@ JSBigInt* JSBigInt::bitwiseXor(ExecState* exec, JSBigInt* x, JSBigInt* y)
     return absoluteAddOne(exec, result, SignOption::Signed);
 }
 
+JSBigInt* JSBigInt::leftShift(ExecState* exec, JSBigInt* x, JSBigInt* y)
+{
+    if (y->isZero() || x->isZero())
+        return x;
+
+    if (y->sign())
+        return rightShiftByAbsolute(exec, x, y);
+
+    return leftShiftByAbsolute(exec, x, y);
+}
+
+JSBigInt* JSBigInt::signedRightShift(ExecState* exec, JSBigInt* x, JSBigInt* y)
+{
+    if (y->isZero() || x->isZero())
+        return x;
+
+    if (y->sign())
+        return leftShiftByAbsolute(exec, x, y);
+
+    return rightShiftByAbsolute(exec, x, y);
+}
+
 #if USE(JSVALUE32_64)
 #define HAVE_TWO_DIGIT 1
 typedef uint64_t TwoDigit;
@@ -1268,6 +1290,139 @@ JSBigInt* JSBigInt::absoluteSubOne(ExecState* exec, JSBigInt* x, unsigned result
     return result->rightTrim(vm);
 }
 
+JSBigInt* JSBigInt::leftShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* y)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto optionalShift = toShiftAmount(y);
+    if (!optionalShift) {
+        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        return nullptr;
+    }
+
+    Digit shift = *optionalShift;
+    unsigned digitShift = static_cast<unsigned>(shift / digitBits);
+    unsigned bitsShift = static_cast<unsigned>(shift % digitBits);
+    unsigned length = x->length();
+    bool grow = bitsShift && (x->digit(length - 1) >> (digitBits - bitsShift));
+    int resultLength = length + digitShift + grow;
+    if (static_cast<unsigned>(resultLength) > maxLength) {
+        throwRangeError(exec, scope, "BigInt generated from this operation is too big"_s);
+        return nullptr;
+    }
+
+    JSBigInt* result = tryCreateWithLength(exec, resultLength);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!bitsShift) {
+        unsigned i = 0;
+        for (; i < digitShift; i++)
+            result->setDigit(i, 0ul);
+
+        for (; i < static_cast<unsigned>(resultLength); i++)
+            result->setDigit(i, x->digit(i - digitShift));
+    } else {
+        Digit carry = 0;
+        for (unsigned i = 0; i < digitShift; i++)
+            result->setDigit(i, 0ul);
+
+        for (unsigned i = 0; i < length; i++) {
+            Digit d = x->digit(i);
+            result->setDigit(i + digitShift, (d << bitsShift) | carry);
+            carry = d >> (digitBits - bitsShift);
+        }
+
+        if (grow)
+            result->setDigit(length + digitShift, carry);
+        else
+            ASSERT(!carry);
+    }
+
+    result->setSign(x->sign());
+    return result->rightTrim(vm);
+}
+
+JSBigInt* JSBigInt::rightShiftByAbsolute(ExecState* exec, JSBigInt* x, JSBigInt* y)
+{
+    VM& vm = exec->vm();
+    unsigned length = x->length();
+    bool sign = x->sign();
+    auto optionalShift = toShiftAmount(y);
+    if (!optionalShift)
+        return rightShiftByMaximum(vm, sign);
+
+    Digit shift = *optionalShift;
+    unsigned digitalShift = static_cast<unsigned>(shift / digitBits);
+    unsigned bitsShift = static_cast<unsigned>(shift % digitBits);
+    int resultLength = length - digitalShift;
+    if (resultLength <= 0)
+        return rightShiftByMaximum(vm, sign);
+
+    // For negative numbers, round down if any bit was shifted out (so that e.g.
+    // -5n >> 1n == -3n and not -2n). Check now whether this will happen and
+    // whether it can cause overflow into a new digit. If we allocate the result
+    // large enough up front, it avoids having to do a second allocation later.
+    bool mustRoundDown = false;
+    if (sign) {
+        const Digit mask = (static_cast<Digit>(1) << bitsShift) - 1;
+        if (x->digit(digitalShift) & mask)
+            mustRoundDown = true;
+        else {
+            for (unsigned i = 0; i < digitalShift; i++) {
+                if (x->digit(i)) {
+                    mustRoundDown = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // If bitsShift is non-zero, it frees up bits, preventing overflow.
+    if (mustRoundDown && !bitsShift) {
+        // Overflow cannot happen if the most significant digit has unset bits.
+        Digit msd = x->digit(length - 1);
+        bool roundingCanOverflow = !static_cast<Digit>(~msd);
+        if (roundingCanOverflow)
+            resultLength++;
+    }
+
+    ASSERT(static_cast<unsigned>(resultLength) <= length);
+    JSBigInt* result = createWithLengthUnchecked(vm, static_cast<unsigned>(resultLength));
+    if (!bitsShift) {
+        for (unsigned i = digitalShift; i < length; i++)
+            result->setDigit(i - digitalShift, x->digit(i));
+    } else {
+        Digit carry = x->digit(digitalShift) >> bitsShift;
+        unsigned last = length - digitalShift - 1;
+        for (unsigned i = 0; i < last; i++) {
+            Digit d = x->digit(i + digitalShift + 1);
+            result->setDigit(i, (d << (digitBits - bitsShift)) | carry);
+            carry = d >> bitsShift;
+        }
+        result->setDigit(last, carry);
+    }
+
+    if (sign) {
+        result->setSign(true);
+        if (mustRoundDown) {
+            // Since the result is negative, rounding down means adding one to
+            // its absolute value. This cannot overflow.
+            result = result->rightTrim(vm);
+            return absoluteAddOne(exec, result, SignOption::Signed);
+        }
+    }
+
+    return result->rightTrim(vm);
+}
+
+JSBigInt* JSBigInt::rightShiftByMaximum(VM& vm, bool sign)
+{
+    if (sign)
+        return createFrom(vm, -1);
+
+    return createZero(vm);
+}
+
 // Lookup table for the maximum number of bits required per character of a
 // base-N string representation of a number. To increase accuracy, the array
 // value is the actual value multiplied by 32. To generate this table:
@@ -1810,6 +1965,20 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
     }
 
     return ComparisonResult::Equal;
+}
+
+std::optional<JSBigInt::Digit> JSBigInt::toShiftAmount(JSBigInt* x)
+{
+    if (x->length() > 1)
+        return std::nullopt;
+    
+    Digit value = x->digit(0);
+    static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit");
+    
+    if (value > maxLengthBits)
+        return std::nullopt;
+
+    return value;
 }
 
 } // namespace JSC

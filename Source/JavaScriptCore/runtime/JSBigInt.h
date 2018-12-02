@@ -119,6 +119,9 @@ public:
     static JSBigInt* bitwiseOr(ExecState*, JSBigInt* x, JSBigInt* y);
     static JSBigInt* bitwiseXor(ExecState*, JSBigInt* x, JSBigInt* y);
 
+    static JSBigInt* leftShift(ExecState*, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* signedRightShift(ExecState*, JSBigInt* x, JSBigInt* y);
+
 private:
 
     using Digit = UCPURegister;
@@ -133,6 +136,7 @@ private:
     // raising it later is easier than lowering it.
     // Support up to 1 million bits.
     static constexpr unsigned maxLength = 1024 * 1024 / (sizeof(void*) * bitsPerByte);
+    static constexpr unsigned maxLengthBits = maxInt - sizeof(void*) * bitsPerByte - 1;
     
     static uint64_t calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign);
     
@@ -206,7 +210,14 @@ private:
     void inplaceMultiplyAdd(Digit multiplier, Digit part);
     static JSBigInt* absoluteAdd(ExecState*, JSBigInt* x, JSBigInt* y, bool resultSign);
     static JSBigInt* absoluteSub(VM&, JSBigInt* x, JSBigInt* y, bool resultSign);
-    
+
+    static JSBigInt* leftShiftByAbsolute(ExecState*, JSBigInt* x, JSBigInt* y);
+    static JSBigInt* rightShiftByAbsolute(ExecState*, JSBigInt* x, JSBigInt* y);
+
+    static JSBigInt* rightShiftByMaximum(VM&, bool sign);
+
+    static std::optional<Digit> toShiftAmount(JSBigInt* x);
+
     static size_t allocationSize(unsigned length);
     static size_t offsetOfData();
     Digit* dataStorage();

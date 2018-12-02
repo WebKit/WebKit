@@ -1,3 +1,20 @@
+2018-12-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement support for "<<" and ">>"
+        https://bugs.webkit.org/show_bug.cgi?id=186233
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-left-shift-general.js: Added.
+        * stress/big-int-left-shift-range-error.js: Added.
+        * stress/big-int-left-shift-type-error.js: Added.
+        * stress/big-int-left-shift-wrapped-value.js: Added.
+        * stress/big-int-right-shift-general.js: Added.
+        * stress/big-int-right-shift-type-error.js: Added.
+        * stress/big-int-right-shift-wrapped-value.js: Added.
+        * stress/left-shift-to-primitive-precedence.js: Added.
+        * stress/right-shift-to-primitive-precedence.js: Added.
+
 2018-11-30  Dean Jackson  <dino@apple.com>
 
         Add first-class support for .mjs files in jsc binary

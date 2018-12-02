@@ -653,22 +653,48 @@ SLOW_PATH_DECL(slow_path_lshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpLshift>();
-    int32_t a = GET_C(bytecode.lhs).jsValue().toInt32(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    uint32_t b = GET_C(bytecode.rhs).jsValue().toUInt32(exec);
-    RETURN(jsNumber(a << (b & 31)));
+    JSValue left = GET_C(bytecode.lhs).jsValue();
+    JSValue right = GET_C(bytecode.rhs).jsValue();
+    auto leftNumeric = left.toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = right.toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::leftShift(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            CHECK_EXCEPTION();
+            RETURN(result);
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in left shift operation."));
+    }
+
+    RETURN(jsNumber(WTF::get<int32_t>(leftNumeric) << (WTF::get<int32_t>(rightNumeric) & 31)));
 }
 
 SLOW_PATH_DECL(slow_path_rshift)
 {
     BEGIN();
     auto bytecode = pc->as<OpRshift>();
-    int32_t a = GET_C(bytecode.lhs).jsValue().toInt32(exec);
-    if (UNLIKELY(throwScope.exception()))
-        RETURN(JSValue());
-    uint32_t b = GET_C(bytecode.rhs).jsValue().toUInt32(exec);
-    RETURN(jsNumber(a >> (b & 31)));
+    JSValue left = GET_C(bytecode.lhs).jsValue();
+    JSValue right = GET_C(bytecode.rhs).jsValue();
+    auto leftNumeric = left.toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+    auto rightNumeric = right.toBigIntOrInt32(exec);
+    CHECK_EXCEPTION();
+
+    if (WTF::holds_alternative<JSBigInt*>(leftNumeric) || WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+        if (WTF::holds_alternative<JSBigInt*>(leftNumeric) && WTF::holds_alternative<JSBigInt*>(rightNumeric)) {
+            JSBigInt* result = JSBigInt::signedRightShift(exec, WTF::get<JSBigInt*>(leftNumeric), WTF::get<JSBigInt*>(rightNumeric));
+            CHECK_EXCEPTION();
+            RETURN(result);
+        }
+
+        THROW(createTypeError(exec, "Invalid mix of BigInt and other type in signed right shift operation."));
+    }
+
+    RETURN(jsNumber(WTF::get<int32_t>(leftNumeric) >> (WTF::get<int32_t>(rightNumeric) & 31)));
 }
 
 SLOW_PATH_DECL(slow_path_urshift)

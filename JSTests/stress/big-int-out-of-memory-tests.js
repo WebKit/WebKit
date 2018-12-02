@@ -5,19 +5,8 @@ function assert(a, message) {
         throw new Error(message);
 }
 
-function lshift(y) {
-    let out = 1n;
-    for (let i = 0; i < y; i++) {
-        out *= 340282366920938463463374607431768211456n;
-    }
-
-    return out;
-}
-
-let a = lshift(8064);
-for (let i = 0; i < 256; i++) {
-    a *= 18446744073709551615n;
-}
+let a = (1n << 1048575n) - 1n;
+a = (a << 1n) | 1n;
 
 try {
     let b = a + 1n;
