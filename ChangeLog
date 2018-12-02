@@ -1,3 +1,20 @@
+2018-12-01  Don Olmstead  <don.olmstead@sony.com>
+
+        Cleanup WebKit Features
+        https://bugs.webkit.org/show_bug.cgi?id=192262
+
+        Reviewed by Michael Catanzaro.
+
+        Removes unused ENABLE flags from the listing in WebKitFeatures.cmake
+        and any other associated code. Synced the options in FeatureList.pm to
+        the feature listing. Sorts the ENABLE flags.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2018-11-30  Don Olmstead  <don.olmstead@sony.com>
 
         Rename ENABLE_SUBTLE_CRYPTO to ENABLE_WEB_CRYPTO

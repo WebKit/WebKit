@@ -1,3 +1,16 @@
+2018-12-01  Don Olmstead  <don.olmstead@sony.com>
+
+        Cleanup WebKit Features
+        https://bugs.webkit.org/show_bug.cgi?id=192262
+
+        Reviewed by Michael Catanzaro.
+
+        Removes obsolete ENABLE options and variable names. Syncs the option's
+        descriptions with what is present in WebKitFeatures.cmake. Sorts the
+        options based on the associated define.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2018-12-01  Chris Dumez  <cdumez@apple.com>
 
         [PSON] process-swapping may occur even though opener has handle to openee
