@@ -1,5 +1,3 @@
-// To be skipped until we fix https://bugs.webkit.org/show_bug.cgi?id=192152
-//@ skip if $architecture == "arm" and $hostOS == "linux"
 function marsaglia(m_z, m_w, n) {
     var result;
     for (var i = 0; i < n; ++i) {

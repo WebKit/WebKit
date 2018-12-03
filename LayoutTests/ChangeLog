@@ -1,3 +1,14 @@
+2018-12-03  Guillaume Emont  <guijemont@igalia.com>
+
+        Gardening: unskip marsaglia.js on arm
+
+        Unreviewed Test Gardening.
+
+        Bug 192152 has been fixed by r238778, so this test should not time out
+        any more.
+
+        * js/slow-stress/script-tests/marsaglia.js:
+
 2018-12-03  Yacine Bandou  <yacine.bandou@softathome.com>
 
         [EME][ClearKey] Add layout test for dynamic change of key and video resolution
