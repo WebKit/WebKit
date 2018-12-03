@@ -108,16 +108,14 @@ long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
     return FileSystem::getFileSize(fileName, size) ? size : 0;
 }
 
-double SQLiteFileSystem::databaseCreationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
-    time_t time;
-    return FileSystem::getFileCreationTime(fileName, time) ? time : 0;
+    return FileSystem::getFileCreationTime(fileName);
 }
 
-double SQLiteFileSystem::databaseModificationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
-    time_t time;
-    return FileSystem::getFileModificationTime(fileName, time) ? time : 0;
+    return FileSystem::getFileModificationTime(fileName);
 }
 
 } // namespace WebCore

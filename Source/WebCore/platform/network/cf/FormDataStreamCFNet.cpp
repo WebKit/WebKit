@@ -145,9 +145,11 @@ static bool advanceCurrentStream(FormStreamFields* form)
             return true;
         }, [form] (const FormDataElement::EncodedFileData& fileData) {
             // Check if the file has been changed or not if required.
-            if (FileSystem::isValidFileTime(fileData.expectedFileModificationTime)) {
-                time_t fileModificationTime;
-                if (!FileSystem::getFileModificationTime(fileData.filename, fileModificationTime) || fileModificationTime != static_cast<time_t>(fileData.expectedFileModificationTime))
+            if (fileData.expectedFileModificationTime) {
+                auto fileModificationTime = FileSystem::getFileModificationTime(fileData.filename);
+                if (!fileModificationTime)
+                    return false;
+                if (fileModificationTime->secondsSinceEpoch().secondsAs<time_t>() != fileData.expectedFileModificationTime->secondsSinceEpoch().secondsAs<time_t>())
                     return false;
             }
             const String& path = fileData.shouldGenerateFile ? fileData.generatedFilename : fileData.filename;

@@ -1347,7 +1347,7 @@ void Page::userStyleSheetLocationChanged()
 
     m_didLoadUserStyleSheet = false;
     m_userStyleSheet = String();
-    m_userStyleSheetModificationTime = 0;
+    m_userStyleSheetModificationTime = std::nullopt;
 
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
@@ -1370,8 +1370,8 @@ const String& Page::userStyleSheet() const
     if (m_userStyleSheetPath.isEmpty())
         return m_userStyleSheet;
 
-    time_t modTime;
-    if (!FileSystem::getFileModificationTime(m_userStyleSheetPath, modTime)) {
+    auto modificationTime = FileSystem::getFileModificationTime(m_userStyleSheetPath);
+    if (!modificationTime) {
         // The stylesheet either doesn't exist, was just deleted, or is
         // otherwise unreadable. If we've read the stylesheet before, we should
         // throw away that data now as it no longer represents what's on disk.
@@ -1381,12 +1381,12 @@ const String& Page::userStyleSheet() const
 
     // If the stylesheet hasn't changed since the last time we read it, we can
     // just return the old data.
-    if (m_didLoadUserStyleSheet && modTime <= m_userStyleSheetModificationTime)
+    if (m_didLoadUserStyleSheet && (m_userStyleSheetModificationTime && modificationTime.value() <= m_userStyleSheetModificationTime.value()))
         return m_userStyleSheet;
 
     m_didLoadUserStyleSheet = true;
     m_userStyleSheet = String();
-    m_userStyleSheetModificationTime = modTime;
+    m_userStyleSheetModificationTime = modificationTime;
 
     // FIXME: It would be better to load this asynchronously to avoid blocking
     // the process, but we will first need to create an asynchronous loading

@@ -69,7 +69,7 @@ struct HTTPBody {
         String filePath;
         int64_t fileStart;
         std::optional<int64_t> fileLength;
-        std::optional<double> expectedFileModificationTime;
+        std::optional<WallTime> expectedFileModificationTime;
 
         // Blob.
         String blobURLString;

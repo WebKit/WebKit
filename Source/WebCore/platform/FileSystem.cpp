@@ -361,13 +361,5 @@ bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowS
     return metadata.value().type == FileMetadata::Type::Directory;
 }
 
-std::optional<WallTime> getFileModificationTime(const String& path)
-{
-    time_t modificationTime = 0;
-    if (!getFileModificationTime(path, modificationTime))
-        return std::nullopt;
-    return WallTime::fromRawSeconds(modificationTime);
-}
-
 } // namespace FileSystem
 } // namespace WebCore

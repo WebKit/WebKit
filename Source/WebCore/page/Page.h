@@ -811,7 +811,7 @@ private:
     String m_userStyleSheetPath;
     mutable String m_userStyleSheet;
     mutable bool m_didLoadUserStyleSheet { false };
-    mutable time_t m_userStyleSheetModificationTime { 0 };
+    mutable std::optional<WallTime> m_userStyleSheetModificationTime;
 
     String m_captionUserPreferencesStyleSheet;
 

@@ -79,7 +79,7 @@ Vector<SecurityOriginData> WebMediaKeyStorageManager::getMediaKeyOrigins()
     return results;
 }
 
-static void removeAllMediaKeyStorageForOriginPath(const String& originPath, double startDate, double endDate)
+static void removeAllMediaKeyStorageForOriginPath(const String& originPath, WallTime startDate, WallTime endDate)
 {
     Vector<String> mediaKeyPaths = FileSystem::listDirectory(originPath, "*");
 
@@ -89,10 +89,10 @@ static void removeAllMediaKeyStorageForOriginPath(const String& originPath, doub
         if (!FileSystem::fileExists(mediaKeyFile))
             continue;
 
-        time_t modTime;
-        FileSystem::getFileModificationTime(mediaKeyFile, modTime);
-
-        if (modTime < startDate || modTime > endDate)
+        auto modificationTime = FileSystem::getFileModificationTime(mediaKeyFile);
+        if (!modificationTime)
+            continue;
+        if (modificationTime.value() < startDate || modificationTime.value() > endDate)
             continue;
 
         FileSystem::deleteFile(mediaKeyFile);
@@ -108,10 +108,10 @@ void WebMediaKeyStorageManager::deleteMediaKeyEntriesForOrigin(const SecurityOri
         return;
 
     String originPath = mediaKeyStorageDirectoryForOrigin(originData);
-    removeAllMediaKeyStorageForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
+    removeAllMediaKeyStorageForOriginPath(originPath, -WallTime::infinity(), WallTime::infinity());
 }
 
-void WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates(double startDate, double endDate)
+void WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates(WallTime startDate, WallTime endDate)
 {
     if (m_mediaKeyStorageDirectory.isEmpty())
         return;
@@ -128,7 +128,7 @@ void WebMediaKeyStorageManager::deleteAllMediaKeyEntries()
 
     Vector<String> originPaths = FileSystem::listDirectory(m_mediaKeyStorageDirectory, "*");
     for (auto& originPath : originPaths)
-        removeAllMediaKeyStorageForOriginPath(originPath, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
+        removeAllMediaKeyStorageForOriginPath(originPath, -WallTime::infinity(), WallTime::infinity());
 }
 
 }

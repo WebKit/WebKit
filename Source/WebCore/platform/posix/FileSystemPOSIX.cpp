@@ -202,42 +202,39 @@ bool getFileSize(PlatformFileHandle handle, long long& result)
     return true;
 }
 
-bool getFileCreationTime(const String& path, time_t& result)
+std::optional<WallTime> getFileCreationTime(const String& path)
 {
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
+        return std::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return false;
+        return std::nullopt;
 
-    result = fileInfo.st_birthtime;
-    return true;
+    return WallTime::fromRawSeconds(fileInfo.st_birthtime);
 #else
     UNUSED_PARAM(path);
-    UNUSED_PARAM(result);
-    return false;
+    return std::nullopt;
 #endif
 }
 
-bool getFileModificationTime(const String& path, time_t& result)
+std::optional<WallTime> getFileModificationTime(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
+        return std::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return false;
+        return std::nullopt;
 
-    result = fileInfo.st_mtime;
-    return true;
+    return WallTime::fromRawSeconds(fileInfo.st_mtime);
 }
 
 static FileMetadata::Type toFileMetataType(struct stat fileInfo)
@@ -263,7 +260,7 @@ static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path,
     String filename = pathGetFileName(path);
     bool isHidden = !filename.isEmpty() && filename[0] == '.';
     return FileMetadata {
-        static_cast<double>(fileInfo.st_mtime),
+        WallTime::fromRawSeconds(fileInfo.st_mtime),
         fileInfo.st_size,
         isHidden,
         toFileMetataType(fileInfo)

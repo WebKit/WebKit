@@ -102,8 +102,11 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::databasesModifiedSince(W
     for (auto origin : databaseOrigins) {
         auto path = databasePath(origin);
         
-        auto modificationTime = WallTime::fromRawSeconds(SQLiteFileSystem::databaseModificationTime(path));
-        if (modificationTime >= time)
+        auto modificationTime = SQLiteFileSystem::databaseModificationTime(path);
+        if (!modificationTime)
+            continue;
+
+        if (modificationTime.value() >= time)
             databaseOriginsModified.append(origin);
     }
 
@@ -139,8 +142,8 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
 
         OriginDetails details;
         details.originIdentifier = origin.databaseIdentifier();
-        details.creationTime = WallTime::fromRawSeconds(SQLiteFileSystem::databaseCreationTime(path));
-        details.modificationTime = WallTime::fromRawSeconds(SQLiteFileSystem::databaseModificationTime(path));
+        details.creationTime = SQLiteFileSystem::databaseCreationTime(path);
+        details.modificationTime = SQLiteFileSystem::databaseModificationTime(path);
         result.uncheckedAppend(details);
     }
 

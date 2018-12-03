@@ -151,20 +151,19 @@ bool getFileSize(PlatformFileHandle, long long&)
     return false;
 }
 
-bool getFileCreationTime(const String&, time_t&)
+std::optional<WallTime> getFileCreationTime(const String&)
 {
     // FIXME: Is there a way to retrieve file creation time with Gtk on platforms that support it?
-    return false;
+    return std::nullopt;
 }
 
-bool getFileModificationTime(const String& path, time_t& modifiedTime)
+std::optional<WallTime> getFileModificationTime(const String& path)
 {
     GStatBuf statResult;
     if (!getFileStat(path, &statResult))
-        return false;
+        return std::nullopt;
 
-    modifiedTime = statResult.st_mtime;
-    return true;
+    return WallTime::fromRawSeconds(statResult.st_mtime);
 }
 
 static FileMetadata::Type toFileMetataType(GStatBuf statResult)
@@ -186,7 +185,7 @@ static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path,
     bool isHidden = !filename.isEmpty() && filename[0] == '.';
 
     return FileMetadata {
-        static_cast<double>(statResult.st_mtime),
+        WallTime::fromRawSeconds(statResult.st_mtime),
         statResult.st_size,
         isHidden,
         toFileMetataType(statResult)

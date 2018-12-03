@@ -271,7 +271,7 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
         if (hasFileLength)
             element.fileLength = fileLength;
         if (hasFileModificationTime)
-            element.expectedFileModificationTime = fileModificationTime;
+            element.expectedFileModificationTime = WallTime::fromRawSeconds(fileModificationTime);
         element.blobURLString = String::fromUTF8(blobURLString);
 
         httpBody.elements.uncheckedAppend(WTFMove(element));

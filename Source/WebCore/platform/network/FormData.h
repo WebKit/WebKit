@@ -45,7 +45,7 @@ struct FormDataElement {
         : data(WTFMove(data)) { }
     explicit FormDataElement(Vector<char>&& array)
         : data(WTFMove(array)) { }
-    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, double expectedFileModificationTime, bool shouldGenerateFile)
+    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime, bool shouldGenerateFile)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime, { }, shouldGenerateFile, false }) { }
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
@@ -71,7 +71,7 @@ struct FormDataElement {
         String filename;
         int64_t fileStart { 0 };
         int64_t fileLength { 0 };
-        double expectedFileModificationTime { 0 };
+        std::optional<WallTime> expectedFileModificationTime;
         String generatedFilename;
         bool shouldGenerateFile { false };
         bool ownsGeneratedFile { false };
@@ -116,7 +116,7 @@ struct FormDataElement {
             if (!fileLength)
                 return std::nullopt;
             
-            std::optional<double> expectedFileModificationTime;
+            std::optional<std::optional<WallTime>> expectedFileModificationTime;
             decoder >> expectedFileModificationTime;
             if (!expectedFileModificationTime)
                 return std::nullopt;
@@ -218,7 +218,7 @@ public:
 
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
-    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
+    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime, bool shouldGenerateFile = false);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
     Vector<char> flatten() const; // omits files

@@ -41,12 +41,14 @@ static uint64_t appendEncodedBlobItemToSoupMessageBody(SoupMessage* soupMessage,
         soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, blobItem.data().data()->data() + blobItem.offset(), blobItem.length());
         return blobItem.length();
     case BlobDataItem::Type::File: {
-        if (!FileSystem::isValidFileTime(blobItem.file()->expectedModificationTime()))
+        if (!blobItem.file()->expectedModificationTime())
             return 0;
 
-        time_t fileModificationTime;
-        if (!FileSystem::getFileModificationTime(blobItem.file()->path(), fileModificationTime)
-            || fileModificationTime != static_cast<time_t>(blobItem.file()->expectedModificationTime()))
+        auto fileModificationTime = FileSystem::getFileModificationTime(blobItem.file()->path());
+        if (!fileModificationTime)
+            return 0;
+
+        if (fileModificationTime->secondsSinceEpoch().secondsAs<time_t>() != blobItem.file()->expectedModificationTime()->secondsSinceEpoch().secondsAs<time_t>())
             return 0;
 
         if (RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(blobItem.file()->path())) {

@@ -1,3 +1,72 @@
+2018-12-03  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use WallTime for file time
+        https://bugs.webkit.org/show_bug.cgi?id=192287
+
+        Reviewed by Darin Adler.
+
+        This patch changes a type of file time from double to WallTime to use strongly typed file time.
+
+        No behavior change.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::details const):
+        * Modules/webdatabase/DatabaseDetails.h:
+        (WebCore::DatabaseDetails::DatabaseDetails):
+        (WebCore::DatabaseDetails::creationTime const):
+        (WebCore::DatabaseDetails::modificationTime const):
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::ProposedDatabase::ProposedDatabase):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::detailsForNameAndOrigin):
+        * fileapi/AsyncFileStream.cpp:
+        (WebCore::AsyncFileStream::getSize):
+        * fileapi/AsyncFileStream.h:
+        * fileapi/File.cpp:
+        (WebCore::File::lastModified const):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        (WebCore::Page::userStyleSheet const):
+        * page/Page.h:
+        * platform/FileMetadata.h:
+        * platform/FileStream.cpp:
+        (WebCore::FileStream::getSize):
+        * platform/FileStream.h:
+        * platform/FileSystem.cpp:
+        (WebCore::FileSystem::getFileModificationTime): Deleted.
+        * platform/FileSystem.h:
+        (WebCore::FileSystem::invalidFileTime): Deleted.
+        (WebCore::FileSystem::isValidFileTime): Deleted.
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::FileSystem::getFileCreationTime):
+        (WebCore::FileSystem::getFileModificationTime):
+        (WebCore::FileSystem::fileMetadataUsingFunction):
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::BlobDataFileReference):
+        (WebCore::BlobDataFileReference::expectedModificationTime):
+        * platform/network/BlobDataFileReference.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::appendFile):
+        (WebCore::FormData::appendFileRange):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (WebCore::FormDataElement::EncodedFileData::decode):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::advanceCurrentStream):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::appendEncodedBlobItemToSoupMessageBody):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::FileSystem::getFileCreationTime):
+        (WebCore::FileSystem::getFileModificationTime):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::databaseCreationTime):
+        (WebCore::SQLiteFileSystem::databaseModificationTime):
+        * platform/sql/SQLiteFileSystem.h:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::FileSystem::getFileModificationTime):
+        (WebCore::FileSystem::getFileCreationTime):
+        (WebCore::FileSystem::findDataToFileMetadata):
+
 2018-12-03  Dean Jackson  <dino@apple.com>
 
         Fix iOS Simulator Release test crashes.

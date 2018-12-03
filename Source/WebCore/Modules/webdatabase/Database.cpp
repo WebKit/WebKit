@@ -638,7 +638,7 @@ String Database::fileName() const
 DatabaseDetails Database::details() const
 {
     // This code path is only used for database quota delegate calls, so file dates are irrelevant and left uninitialized.
-    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0, 0, 0);
+    return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0, std::nullopt, std::nullopt);
 }
 
 void Database::disableAuthorizer()

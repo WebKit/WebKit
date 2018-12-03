@@ -27,6 +27,7 @@
 
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/HashSet.h>
+#include <wtf/Markable.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -57,8 +58,8 @@ public:
 
     struct OriginDetails {
         String originIdentifier;
-        WallTime creationTime;
-        WallTime modificationTime;
+        Markable<WallTime, WallTime::MarkableTraits> creationTime;
+        Markable<WallTime, WallTime::MarkableTraits> modificationTime;
     };
     Vector<OriginDetails> originDetails();
 

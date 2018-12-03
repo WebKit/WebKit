@@ -186,11 +186,11 @@ void FormData::appendData(const void* data, size_t size)
 
 void FormData::appendFile(const String& filename, bool shouldGenerateFile)
 {
-    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, FileSystem::invalidFileTime(), shouldGenerateFile));
+    m_elements.append(FormDataElement(filename, 0, BlobDataItem::toEndOfFile, std::nullopt, shouldGenerateFile));
     m_lengthInBytes = std::nullopt;
 }
 
-void FormData::appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile)
+void FormData::appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime, bool shouldGenerateFile)
 {
     m_elements.append(FormDataElement(filename, start, length, expectedModificationTime, shouldGenerateFile));
     m_lengthInBytes = std::nullopt;

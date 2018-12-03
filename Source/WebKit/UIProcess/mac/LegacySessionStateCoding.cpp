@@ -285,7 +285,7 @@ static void encodeFormDataElement(HistoryEntryDataEncoder& encoder, const HTTPBo
 
         encoder << element.fileStart;
         encoder << element.fileLength.value_or(-1);
-        encoder << element.expectedFileModificationTime.value_or(std::numeric_limits<double>::quiet_NaN());
+        encoder << element.expectedFileModificationTime.value_or(WallTime::nan()).secondsSinceEpoch().value();
         break;
 
     case HTTPBody::Element::Type::Blob:
@@ -827,11 +827,10 @@ static void decodeFormDataElement(HistoryEntryDataDecoder& decoder, HTTPBody::El
             formDataElement.fileLength = fileLength;
         }
 
-
         double expectedFileModificationTime;
         decoder >> expectedFileModificationTime;
-        if (expectedFileModificationTime != std::numeric_limits<double>::quiet_NaN())
-            formDataElement.expectedFileModificationTime = expectedFileModificationTime;
+        if (!std::isnan(expectedFileModificationTime))
+            formDataElement.expectedFileModificationTime = WallTime::fromRawSeconds(expectedFileModificationTime);
 
         break;
     }

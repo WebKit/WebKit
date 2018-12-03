@@ -112,11 +112,11 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
     if (!g_key_file_has_group(m_cacheFile.get(), pluginGroup.data()))
         return false;
 
-    time_t lastModified;
-    if (!WebCore::FileSystem::getFileModificationTime(pluginPath, lastModified))
+    auto lastModifiedTime = WebCore::FileSystem::getFileModificationTime(pluginPath);
+    if (!lastModifiedTime)
         return false;
     time_t cachedLastModified = static_cast<time_t>(g_key_file_get_uint64(m_cacheFile.get(), pluginGroup.data(), "mtime", nullptr));
-    if (lastModified != cachedLastModified)
+    if (lastModifiedTime->secondsSinceEpoch().secondsAs<time_t>() != cachedLastModified)
         return false;
 
     plugin.path = pluginPath;
@@ -140,12 +140,12 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
 
 void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginModuleInfo& plugin)
 {
-    time_t lastModified;
-    if (!WebCore::FileSystem::getFileModificationTime(pluginPath, lastModified))
+    auto lastModifiedTime = WebCore::FileSystem::getFileModificationTime(pluginPath);
+    if (!lastModifiedTime)
         return;
 
     CString pluginGroup = pluginPath.utf8();
-    g_key_file_set_uint64(m_cacheFile.get(), pluginGroup.data(), "mtime", static_cast<guint64>(lastModified));
+    g_key_file_set_uint64(m_cacheFile.get(), pluginGroup.data(), "mtime", lastModifiedTime->secondsSinceEpoch().secondsAs<guint64>());
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "name", plugin.info.name.utf8().data());
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "description", plugin.info.desc.utf8().data());
 

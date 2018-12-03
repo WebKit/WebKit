@@ -1622,11 +1622,11 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
     if (!decoder.decode(currentUsage))
         return false;
 
-    double creationTime;
+    std::optional<WallTime> creationTime;
     if (!decoder.decode(creationTime))
         return false;
 
-    double modificationTime;
+    std::optional<WallTime> modificationTime;
     if (!decoder.decode(modificationTime))
         return false;
 

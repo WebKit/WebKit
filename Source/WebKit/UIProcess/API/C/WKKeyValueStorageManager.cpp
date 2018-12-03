@@ -102,9 +102,9 @@ void WKKeyValueStorageManagerGetStorageDetailsByOrigin(WKKeyValueStorageManagerR
 
             detailsMap.set(toImpl(WKKeyValueStorageManagerGetOriginKey())->string(), origin);
             if (originDetails.creationTime)
-                detailsMap.set(toImpl(WKKeyValueStorageManagerGetCreationTimeKey())->string(), API::Double::create(originDetails.creationTime.secondsSinceEpoch().value()));
+                detailsMap.set(toImpl(WKKeyValueStorageManagerGetCreationTimeKey())->string(), API::Double::create(originDetails.creationTime->secondsSinceEpoch().value()));
             if (originDetails.modificationTime)
-                detailsMap.set(toImpl(WKKeyValueStorageManagerGetModificationTimeKey())->string(), API::Double::create(originDetails.modificationTime.secondsSinceEpoch().value()));
+                detailsMap.set(toImpl(WKKeyValueStorageManagerGetModificationTimeKey())->string(), API::Double::create(originDetails.modificationTime->secondsSinceEpoch().value()));
 
             result.uncheckedAppend(API::Dictionary::create(WTFMove(detailsMap)));
         }

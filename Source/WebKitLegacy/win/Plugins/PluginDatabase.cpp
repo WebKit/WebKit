@@ -125,9 +125,10 @@ bool PluginDatabase::refresh()
 
     auto pathsEnd = paths.end();
     for (auto it = paths.begin(); it != pathsEnd; ++it) {
-        time_t lastModified;
-        if (!FileSystem::getFileModificationTime(*it, lastModified))
+        auto lastModifiedTime = FileSystem::getFileModificationTime(*it);
+        if (!lastModifiedTime)
             continue;
+        time_t lastModified = lastModifiedTime->secondsSinceEpoch().secondsAs<time_t>();
 
         pathsWithTimes.add(*it, lastModified);
 

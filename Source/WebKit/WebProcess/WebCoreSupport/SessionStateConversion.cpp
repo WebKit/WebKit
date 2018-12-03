@@ -51,8 +51,7 @@ static HTTPBody toHTTPBody(const FormData& formData)
                 element.fileStart = fileData.fileStart;
                 if (fileData.fileLength != BlobDataItem::toEndOfFile)
                     element.fileLength = fileData.fileLength;
-                if (fileData.expectedFileModificationTime != FileSystem::invalidFileTime())
-                    element.expectedFileModificationTime = fileData.expectedFileModificationTime;
+                element.expectedFileModificationTime = fileData.expectedFileModificationTime;
             }, [&] (const FormDataElement::EncodedBlobData& blobData) {
                 element.blobURLString = blobData.url.string();
             }
@@ -129,7 +128,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
             break;
 
         case HTTPBody::Element::Type::File:
-            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.value_or(BlobDataItem::toEndOfFile), element.expectedFileModificationTime.value_or(FileSystem::invalidFileTime()));
+            formData->appendFileRange(element.filePath, element.fileStart, element.fileLength.value_or(BlobDataItem::toEndOfFile), element.expectedFileModificationTime);
             break;
 
         case HTTPBody::Element::Type::Blob:

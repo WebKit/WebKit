@@ -33,6 +33,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
     explicit AsyncFileStream(FileStreamClient&);
     ~AsyncFileStream();
 
-    void getSize(const String& path, double expectedModificationTime);
+    void getSize(const String& path, std::optional<WallTime> expectedModificationTime);
     void openForRead(const String& path, long long offset, long long length);
     void close();
     void read(char* buffer, int length);

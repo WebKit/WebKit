@@ -112,11 +112,11 @@ int64_t File::lastModified() const
     // FIXME: This does sync-i/o on the main thread and also recalculates every time the method is called.
     // The i/o should be performed on a background thread,
     // and the result should be cached along with an asynchronous monitor for changes to the file.
-    time_t modificationTime;
-    if (FileSystem::getFileModificationTime(m_path, modificationTime) && FileSystem::isValidFileTime(modificationTime))
-        result = modificationTime * msPerSecond;
+    auto modificationTime = FileSystem::getFileModificationTime(m_path);
+    if (modificationTime)
+        result = modificationTime->secondsSinceEpoch().millisecondsAs<int64_t>();
     else
-        result = WallTime::now().secondsSinceEpoch().milliseconds();
+        result = WallTime::now().secondsSinceEpoch().millisecondsAs<int64_t>();
 
     return WTF::timeClip(result);
 }

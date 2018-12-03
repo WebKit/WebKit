@@ -45,11 +45,11 @@ using namespace WebCore;
 static bool hasFileChangedSince(const String& path, WallTime since)
 {
     ASSERT(!RunLoop::isMain());
-    time_t modificationTime;
-    if (!FileSystem::getFileModificationTime(path, modificationTime))
+    auto modificationTime = FileSystem::getFileModificationTime(path);
+    if (!modificationTime)
         return true;
 
-    return WallTime::fromRawSeconds(modificationTime) > since;
+    return modificationTime.value() > since;
 }
 
 static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)

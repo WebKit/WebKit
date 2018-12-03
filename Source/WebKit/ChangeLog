@@ -1,3 +1,39 @@
+2018-12-03  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Use WallTime for file time
+        https://bugs.webkit.org/show_bug.cgi?id=192287
+
+        Reviewed by Darin Adler.
+
+        * Shared/SessionState.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DatabaseDetails>::decode):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerGetStorageDetailsByOrigin):
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp:
+        (decodeHTTPBody):
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp:
+        (WebKit::PluginInfoCache::getPluginInfo):
+        (WebKit::PluginInfoCache::updatePluginInfo):
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::hasFileChangedSince):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::databasesModifiedSince):
+        (WebKit::LocalStorageDatabaseTracker::originDetails):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::encodeFormDataElement):
+        (WebKit::decodeFormDataElement):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::removeAllMediaKeyStorageForOriginPath):
+        (WebKit::WebMediaKeyStorageManager::deleteMediaKeyEntriesForOrigin):
+        (WebKit::WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates):
+        (WebKit::WebMediaKeyStorageManager::deleteAllMediaKeyEntries):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.h:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toHTTPBody):
+        (WebKit::toFormData):
+
 2018-12-03  Darin Adler  <darin@apple.com>
 
         [Cocoa] Check message IDs when decoding Mach messages in IPC::Connection

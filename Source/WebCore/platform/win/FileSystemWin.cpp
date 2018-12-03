@@ -124,24 +124,26 @@ bool getFileSize(PlatformFileHandle fileHandle, long long& size)
     return getFileSizeFromByHandleFileInformationStructure(fileInformation, size);
 }
 
-bool getFileModificationTime(const String& path, time_t& time)
+std::optional<WallTime> getFileModificationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return false;
+        return std::nullopt;
 
+    time_t time = 0;
     getFileModificationTimeFromFindData(findData, time);
-    return true;
+    return WallTime::fromRawSeconds(time);
 }
 
-bool getFileCreationTime(const String& path, time_t& time)
+std::optional<WallTime> getFileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return false;
+        return std::nullopt;
 
+    time_t time = 0;
     getFileCreationTimeFromFindData(findData, time);
-    return true;
+    return WallTime::fromRawSeconds(time);
 }
 
 static String getFinalPathName(const String& path)
@@ -185,7 +187,7 @@ static std::optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findD
     getFileModificationTimeFromFindData(findData, modificationTime);
 
     return FileMetadata {
-        static_cast<double>(modificationTime),
+        WallTime::fromRawSeconds(modificationTime),
         length,
         static_cast<bool>(findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN),
         toFileMetadataType(findData)

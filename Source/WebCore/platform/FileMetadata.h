@@ -30,11 +30,13 @@
 
 #pragma once
 
+#include <wtf/WallTime.h>
+
 namespace WebCore {
 
 struct FileMetadata {
     // The last modification time of the file, in seconds.
-    double modificationTime;
+    WallTime modificationTime;
 
     // The length of the file in bytes.
     long long length;
