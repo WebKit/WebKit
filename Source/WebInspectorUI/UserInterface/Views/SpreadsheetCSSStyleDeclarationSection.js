@@ -102,9 +102,10 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         else if (!this._style.ownerRule)
             this._element.classList.add("selector-locked");
 
+        this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+
         if (this._style.editable) {
             this.element.addEventListener("click", this._handleClick.bind(this));
-            this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
             new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "S", this._save.bind(this), this._element);
             new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "S", this._save.bind(this), this._element);

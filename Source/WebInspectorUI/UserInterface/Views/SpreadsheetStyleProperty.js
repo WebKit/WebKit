@@ -50,15 +50,17 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
         property.addEventListener(WI.CSSProperty.Event.Changed, this.updateStatus, this);
 
-        if (this._isEditable()) {
+        if (!this._readOnly) {
             this._element.tabIndex = -1;
 
             this._element.addEventListener("blur", (event) => {
-                this._delegate.spreadsheetStylePropertyBlur(event, this);
+                if (this._delegate.spreadsheetStylePropertyBlur)
+                    this._delegate.spreadsheetStylePropertyBlur(event, this);
             });
 
             this._element.addEventListener("mouseenter", (event) => {
-                this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
+                if (this._delegate.spreadsheetStylePropertyMouseEnter)
+                    this._delegate.spreadsheetStylePropertyMouseEnter(event, this);
             });
 
             this._element.copyHandler = this;
@@ -90,6 +92,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._selected = value;
         this.updateStatus();
+    }
+
+    startEditingName()
+    {
+        if (!this._nameTextField)
+            return;
+
+        this._nameTextField.startEditing();
+    }
+
+    startEditingValue()
+    {
+        if (!this._valueTextField)
+            return;
+
+        this._valueTextField.startEditing();
     }
 
     detached()
