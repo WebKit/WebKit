@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="title content attribute should not affect the stylesheet's title inside a shadow tree">
+<link rel="help" href="https://html.spec.whatwg.org/#attr-style-title">
+<link rel="help" href="https://html.spec.whatwg.org/#attr-link-title">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+function testStyleElementWithTitleInShadowTree(mode) {
+    test(function () {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<style title="foo">div {width: 10px}</style><style title="bar">div {width: 20px}</style><div></div>';
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).width, '20px');
+    }, `title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testStyleElementWithTitleInShadowTree('open');
+testStyleElementWithTitleInShadowTree('closed');
+
+function testUpdatingTitleOnStyleElemenInShadowTree(mode) {
+    test(function () {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({mode});
+        shadowRoot.innerHTML = '<style>div {height: 10px}</style><style>div {height: 20px}</style><div></div>';
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        shadowRoot.children[0].setAttribute('title', 'foo');
+        shadowRoot.children[1].setAttribute('title', 'bar');
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).height, '20px');
+    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testUpdatingTitleOnStyleElemenInShadowTree('open');
+testUpdatingTitleOnStyleElemenInShadowTree('closed');
+
+function testSVGStyleElementWithTitleInShadowTree(mode) {
+    test(function () {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<svg><style title="foo">div {width: 10px}</style><style title="bar">div {width: 20px}</style></svg><div></div>';
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).width, '20px');
+    }, `title content attribute on a SVG style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testSVGStyleElementWithTitleInShadowTree('open');
+testSVGStyleElementWithTitleInShadowTree('closed');
+
+function testUpdatingTitleOnSVGStyleElemenInShadowTree(mode) {
+    test(function () {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const shadowRoot = host.attachShadow({mode});
+        shadowRoot.innerHTML = '<svg><style>div {height: 10px}</style><style>div {height: 20px}</style></svg><div></div>';
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        shadowRoot.firstChild.children[0].setAttribute('title', 'foo');
+        shadowRoot.firstChild.children[1].setAttribute('title', 'bar');
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).height, '20px');
+    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testUpdatingTitleOnSVGStyleElemenInShadowTree('open');
+testUpdatingTitleOnSVGStyleElemenInShadowTree('closed');
+
+function testLinkElementWithTitleInShadowTree(mode) {
+    promise_test(async function () {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<link rel="stylesheet" href="resources/green-div.css" title="foo"><link rel="stylesheet" href="resources/green-div.css" title="bar"><div></div>';
+        const promises = Promise.all(Array.from(shadowRoot.querySelectorAll('link')).map((link) => {
+            return new Promise((resolve) => link.addEventListener('load', resolve));
+        }));
+        document.body.appendChild(host);
+        await promises;
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).backgroundColor, 'rgb(0, 128, 0)');
+    }, `title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testLinkElementWithTitleInShadowTree('open');
+testLinkElementWithTitleInShadowTree('closed');
+
+function testUpdatingTitleOnLinkElementInShadowTree(mode) {
+    promise_test(async function () {
+        const host = document.createElement('div');
+        const shadowRoot = host.attachShadow({'mode': mode});
+        shadowRoot.innerHTML = '<link rel="stylesheet" href="resources/green-div.css" title="foo"><link rel="stylesheet" href="resources/green-div.css" title="bar"><div></div>';
+        const promises = Promise.all(Array.from(shadowRoot.querySelectorAll('link')).map((link) => {
+            return new Promise((resolve) => link.addEventListener('load', resolve));
+        }));
+        document.body.appendChild(host);
+        await promises;
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        shadowRoot.children[0].setAttribute('title', 'foo');
+        shadowRoot.children[1].setAttribute('title', 'bar');
+        assert_equals(shadowRoot.styleSheets.length, 2);
+        assert_equals(shadowRoot.styleSheets[0].title, null);
+        assert_equals(shadowRoot.styleSheets[1].title, null);
+        assert_equals(getComputedStyle(shadowRoot.querySelector('div')).backgroundColor, 'rgb(0, 128, 0)');
+    }, `Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of ${mode} mode`);
+}
+
+testUpdatingTitleOnLinkElementInShadowTree('open');
+testUpdatingTitleOnLinkElementInShadowTree('closed');
+
+</script>
+</body>
+</html>

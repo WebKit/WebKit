@@ -189,7 +189,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
             ASSERT(cachedSheet->isCacheable());
             m_sheet = CSSStyleSheet::createInline(*cachedSheet, element, m_startTextPosition);
             m_sheet->setMediaQueries(mediaQueries.releaseNonNull());
-            m_sheet->setTitle(element.title());
+            if (!element.isInShadowTree())
+                m_sheet->setTitle(element.title());
 
             sheetLoaded(element);
             element.notifyLoadedSheetAndAllCriticalSubresources(false);
@@ -203,7 +204,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     m_sheet = CSSStyleSheet::createInline(contents.get(), element, m_startTextPosition);
     m_sheet->setMediaQueries(mediaQueries.releaseNonNull());
-    m_sheet->setTitle(element.title());
+    if (!element.isInShadowTree())
+        m_sheet->setTitle(element.title());
 
     contents->parseString(text);
 

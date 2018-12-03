@@ -1,3 +1,27 @@
+2018-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        title attribute on style & link elements should be ignored inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=191297
+
+        Reviewed by Antti Koivisto.
+
+        Fixed the by not setting the stylesheet's title even when the title content attribute is present
+        or set on SVG/HTML style and link elements inside a shadow tree.
+
+        Test: fast/shadow-dom/stylesheet-title-in-shadow-tree.html
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::parseAttribute):
+
 2018-12-03  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Add logging channel for hover related content observation

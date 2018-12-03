@@ -94,7 +94,7 @@ String SVGStyleElement::title() const
 void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::titleAttr) {
-        if (sheet())
+        if (sheet() && !isInShadowTree())
             sheet()->setTitle(value);
         return;
     }

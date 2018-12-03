@@ -1,0 +1,14 @@
+
+PASS title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+PASS title content attribute on a SVG style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS title content attribute on a SVG style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+PASS title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of open mode 
+PASS Setting title content attribute on a HTML style element should not set the title of a stylesheet inside a shadow tree of closed mode 
+

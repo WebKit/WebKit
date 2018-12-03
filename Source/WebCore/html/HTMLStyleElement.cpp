@@ -78,7 +78,7 @@ Ref<HTMLStyleElement> HTMLStyleElement::create(Document& document)
 
 void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == titleAttr && sheet())
+    if (name == titleAttr && sheet() && !isInShadowTree())
         sheet()->setTitle(value);
     else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);

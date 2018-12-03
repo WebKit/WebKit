@@ -1,3 +1,19 @@
+2018-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        title attribute on style & link elements should be ignored inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=191297
+
+        Reviewed by Antti Koivisto.
+
+        Adde a W3C-style testharness.js test for a more comprehensive testing of the title content attribute
+        on HTML link and style elements and SVG style element inside a shadow tree.
+
+        * TestExpectations:
+        * fast/shadow-dom/resources/green-div.css: Added.
+        * fast/shadow-dom/resources/red-div.css: Added.
+        * fast/shadow-dom/stylesheet-title-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/stylesheet-title-in-shadow-tree.html: Added.
+
 2018-12-03  Truitt Savell  <tsavell@apple.com>
 
         Modify unexpected new line in test after https://trac.webkit.org/changeset/238765/webkit

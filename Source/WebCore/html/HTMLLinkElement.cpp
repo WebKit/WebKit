@@ -198,7 +198,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         return;
     }
     if (name == titleAttr) {
-        if (m_sheet)
+        if (m_sheet && !isInShadowTree())
             m_sheet->setTitle(value);
         return;
     }
@@ -401,7 +401,8 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
 
     m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);
     m_sheet->setMediaQueries(MediaQuerySet::create(m_media, context));
-    m_sheet->setTitle(title());
+    if (!isInShadowTree())
+        m_sheet->setTitle(title());
 
     if (!m_sheet->canAccessRules())
         m_sheet->contents().setAsOpaque();

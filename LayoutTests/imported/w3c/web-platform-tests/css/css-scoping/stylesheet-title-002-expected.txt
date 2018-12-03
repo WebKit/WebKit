@@ -1,3 +1,3 @@
 
-FAIL Title attribute in stylesheets not in the document tree is ignored assert_equals: expected 3 but got 2
+PASS Title attribute in stylesheets not in the document tree is ignored 
 

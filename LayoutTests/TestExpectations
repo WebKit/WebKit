@@ -2817,7 +2817,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-run-in-between-004
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-above-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-listitem-between-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-010.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scoping/shadow-disabled-sheet-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-run-in-between-003.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-contains-table-caption-001.xht [ ImageOnlyFailure ]

@@ -1,5 +1,16 @@
 2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        title attribute on style & link elements should be ignored inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=191297
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline the test case that's now passing.
+
+        * web-platform-tests/css/css-scoping/stylesheet-title-002-expected.txt:
+
+2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         ShadowRoot should have styleSheets property
         https://bugs.webkit.org/show_bug.cgi?id=191311
 
