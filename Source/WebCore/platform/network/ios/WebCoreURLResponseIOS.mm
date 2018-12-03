@@ -71,7 +71,8 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse, bool isMainResourceL
                 CFMutableStringRef mutableExtension = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, extension.get());
                 CFStringLowercase(mutableExtension, NULL);
                 extension = adoptCF(mutableExtension);
-                updatedMIMEType = (CFStringRef)CFDictionaryGetValue(extensionMap, extension.get());
+                if (auto newMIMEType = (CFStringRef)CFDictionaryGetValue(extensionMap, extension.get()))
+                    updatedMIMEType = newMIMEType;
             }
         }
     }

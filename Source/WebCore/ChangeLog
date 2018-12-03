@@ -1,3 +1,11 @@
+2018-12-03  Dean Jackson  <dino@apple.com>
+
+        Fix iOS Simulator Release test crashes.
+
+        * platform/network/ios/WebCoreURLResponseIOS.mm:
+        (WebCore::adjustMIMETypeIfNecessary): Check for null before using the
+        new MIME type.
+
 2018-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] 'devicechange' event when more capture device information are revealed.
