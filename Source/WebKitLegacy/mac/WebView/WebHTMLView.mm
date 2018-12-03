@@ -6082,13 +6082,19 @@ static BOOL writingDirectionKeyBindingsEnabled()
         WebEvent *event = platformEvent->event();
         if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
             return NO;
-        if (![[self _webView] isEditable] && event.isTabKey) 
+
+        WebView *webView = [self _webView];
+        if (!webView.isEditable && event.isTabKey)
             return NO;
-        
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+        if (event.type == WebEventKeyDown && [webView._UIKitDelegateForwarder handleKeyCommandForCurrentEvent])
+            return YES;
+#endif
+
         NSString *s = [event characters];
         if (!s.length)
             return NO;
-        WebView* webView = [self _webView];
         switch ([s characterAtIndex:0]) {
         case kWebBackspaceKey:
         case kWebDeleteKey:

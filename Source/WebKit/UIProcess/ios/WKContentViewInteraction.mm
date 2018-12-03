@@ -133,6 +133,14 @@
 
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+
+@interface UIKeyboardImpl (Staging)
+- (BOOL)handleKeyCommandForCurrentEvent;
+@end
+
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -3963,8 +3971,13 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return YES;
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+    if (event.type == WebEventKeyDown && [keyboard respondsToSelector:@selector(handleKeyCommandForCurrentEvent)] && [keyboard handleKeyCommandForCurrentEvent])
+        return YES;
+#endif
+
     NSString *characters = event.characters;
-    
     if (!characters.length)
         return NO;
 

@@ -1,3 +1,18 @@
+2018-12-03  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Do not handle key events that are key commands
+        https://bugs.webkit.org/show_bug.cgi?id=191608
+        <rdar://problem/46046013>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add default implementation of -handleKeyCommandForCurrentEvent that returns NO - the current
+        event was not handled as a key command.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate handleKeyCommandForCurrentEvent]):
+        * WebView/WebUIKitDelegate.h:
+
 2018-11-29  Zalan Bujtas  <zalan@apple.com>
 
         Rename *ObservedContentModifier(s) to *ObservedDOMTimer(s)

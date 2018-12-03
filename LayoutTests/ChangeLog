@@ -1,3 +1,21 @@
+2018-12-03  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Do not handle key events that are key commands
+        https://bugs.webkit.org/show_bug.cgi?id=191608
+        <rdar://problem/46046013>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests to ensure that we process key commands correctly.
+
+        * fast/events/ios/key-command-italic-dispatches-keydown-expected.txt: Added.
+        * fast/events/ios/key-command-italic-dispatches-keydown.html: Added.
+        * fast/events/ios/key-command-italic-expected.txt: Added.
+        * fast/events/ios/key-command-italic.html: Added.
+        * fast/events/ios/type-digits-holding-control-key-expected.txt: Added.
+        * fast/events/ios/type-digits-holding-control-key.html: Added.
+        * platform/ios-wk1/TestExpectations:
+
 2018-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         title attribute on style & link elements should be ignored inside a shadow tree

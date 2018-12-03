@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+#test {
+    border: 1px solid black;
+    height: 500px;
+    width: 500px;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="test" contenteditable="true">This text should be italicized.</div>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+let testElement;
+let event;
+let ignoredFirstKeyDownEvent = false;
+
+function shouldIgnoreKeyDownEvent(event)
+{
+    // When performing the test manually a person is not fast enough to press Command + I simultaneously.
+    // We receive a key down for Command followed by a key down for Command + I. So, we ignore the first
+    // event to normalize the test result.
+    if (window.testRunner || ignoredFirstKeyDownEvent)
+        return false;
+    ignoredFirstKeyDownEvent = true;
+    console.assert(event.key == "Meta");
+    return true;
+}
+
+function handleKeyDownEvent(event)
+{
+    if (shouldIgnoreKeyDownEvent(event))
+        return;
+
+    testElement.removeEventListener("keydown", handleKeyDownEvent, true);
+
+    shouldBeEqualToString("window.event.key", "i");
+    shouldBeTrue("window.event.metaKey");
+
+    // Remove the test element to make the output pretty.
+    document.body.removeChild(document.getElementById("test"));
+
+    finishJSTest();
+}
+
+function runTest()
+{
+    if (!window.testRunner)
+        return;
+    function handleFocus() {
+        window.getSelection().selectAllChildren(testElement);
+        UIHelper.keyDown("i", ["metaKey"]);
+    }
+    testElement.addEventListener("focus", handleFocus, { once: true });
+    UIHelper.activateElement(testElement);
+}
+
+description("Tests that pressing Command + I in a rich editing field dispatches a key down event. To run this test by hand, select all the text below and press Command + I.");
+
+testElement = document.getElementById("test");
+testElement.addEventListener("keydown", handleKeyDownEvent, true);
+
+runTest();
+</script>
+</body>
+</html>
