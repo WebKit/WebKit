@@ -226,8 +226,28 @@ sub combineOrStripResourcesForWebKitAdditions() {
     if (!defined $webInspectorUIAdditionsDir) {
         debugLog("Didn't define \$webInspectorUIAdditionsDir");
     } elsif (-d $webInspectorUIAdditionsDir) {
-        $combineWebKitAdditions = 1;
         debugLog("Found $webInspectorUIAdditionsDir");
+
+        opendir(DIR, $webInspectorUIAdditionsDir) || die "$!";
+        my @files = grep { !/^\.{1,2}$/ } readdir (DIR);
+        closedir(DIR);
+
+        # The WebKitAdditions/WebInspectorUI directory may exist without any files in it.
+        # Make sure that there is something to be processed in the directory before proceeding.
+        my $foundJSFile = 0;
+        my $foundCSSFile = 0;
+        foreach my $file (@files) {
+            my $path = File::Spec->catdir($$webInspectorUIAdditionsDir, $file);
+            next if -d $path;
+            if ($file =~ /\.js$/) {
+                debugLog("Found a JavaScript file to combine: $file");
+                $foundJSFile = 1;
+            } elsif ($file =~ /\.css$/) {
+                debugLog("Found a CSS file to combine: $file");
+                $foundCSSFile = 1;
+            }
+        }
+        $combineWebKitAdditions = 1 if $foundCSSFile or $foundJSFile;
     } else {
         debugLog("Didn't find $webInspectorUIAdditionsDir");
     }

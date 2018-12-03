@@ -1,3 +1,14 @@
+2018-11-30  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: resource combining should be more robust against missing WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=192255
+        <rdar://problem/46042879>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/copy-user-interface-resources.pl:
+        (combineOrStripResourcesForWebKitAdditions):
+
 2018-11-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Jumping from Computed to Styles should select property
