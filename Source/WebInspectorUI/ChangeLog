@@ -1,3 +1,33 @@
+2018-12-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION(r238599): Multiple Selection: restoring selection when opening WebInspector puts the TreeElement into a permanent selected state
+        https://bugs.webkit.org/show_bug.cgi?id=192091
+        <rdar://problem/46321795>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.prototype.didInsertItem):
+        Fix a bug where selected indexes were overwritten by the inserted index.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.insertChild):
+        Update the SelectionController with the newly inserted index before
+        attaching the TreeElement. Attaching the TreeElement can cause it to
+        become selected, which would add the index to the SelectionController,
+        only to have it immediately incremented by the call to `didInsertItem`.
+        Additionally, change `insertionIndex` to be the index of the inserted
+        item instead of the inserted item's previous sibling.
+
+        (WI.TreeOutline.prototype._rememberTreeElement):
+        (WI.TreeOutline.prototype._forgetTreeElement):
+        (WI.TreeOutline.prototype._indexOfTreeElement.previousElement): Deleted.
+        Eliminate TreeElement index caching, which could become stale and cause
+        the wrong index to be calculated. Additionally, instead of walking up the
+        parent chain to determine the index, start at the root and use existing
+        method `traverseNextTreeElement`.
+
 2018-12-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: test tree elements should start out collapsed

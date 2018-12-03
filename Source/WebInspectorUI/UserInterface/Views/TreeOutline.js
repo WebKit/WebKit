@@ -56,7 +56,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         this._cachedNumberOfDescendents = 0;
         this._selectionController = new WI.SelectionController(this);
-        this._treeElementIndexCache = new Map;
 
         this._itemWasSelectedByUser = false;
         this._processingSelectionChange = false;
@@ -295,6 +294,12 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
             child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
+        // Update the SelectionController before attaching the TreeElement.
+        // Attaching the TreeElement can cause it to become selected, and
+        // added to the SelectionController.
+        let insertionIndex = this.treeOutline._indexOfTreeElement(child) || 0;
+        this.treeOutline._selectionController.didInsertItem(insertionIndex);
+
         if (this._childrenListNode)
             child._attach();
 
@@ -303,9 +308,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         if (isFirstChild && this.expanded)
             this.expand();
-
-        let insertionIndex = this.treeOutline._indexOfTreeElement(child.previousSibling) || 0;
-        this.treeOutline._selectionController.didInsertItem(insertionIndex);
     }
 
     removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling)
@@ -395,9 +397,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     _rememberTreeElement(element)
     {
-        this._treeElementIndexCache.clear();
-        this._cachedNumberOfDescendents++;
-
         if (!this._knownTreeElements[element.identifier])
             this._knownTreeElements[element.identifier] = [];
 
@@ -408,19 +407,19 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         // add the element
         elements.push(element);
+        this._cachedNumberOfDescendents++;
     }
 
     _forgetTreeElement(element)
     {
-        this._treeElementIndexCache.clear();
-        this._cachedNumberOfDescendents--;
-
         if (this.selectedTreeElement === element) {
             element.deselect(true);
             this.selectedTreeElement = null;
         }
-        if (this._knownTreeElements[element.identifier])
+        if (this._knownTreeElements[element.identifier]) {
             this._knownTreeElements[element.identifier].remove(element, true);
+            this._cachedNumberOfDescendents--;
+        }
     }
 
     _forgetChildrenRecursive(parentElement)
@@ -993,34 +992,22 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     _indexOfTreeElement(treeElement)
     {
-        function previousElement(element) {
-            if (element.previousSibling) {
-                element = element.previousSibling;
-                if (element.children.length)
-                    element = element.children.lastValue;
-            } else
-                element = element.parent && element.parent.root ? null : element.parent;
-            return element;
-        }
+        const skipUnrevealed = false;
+        const stayWithin = null;
+        const dontPopulate = true;
 
         let index = 0;
-        let current = treeElement;
+        let current = this.children[0];
         while (current) {
-            let closestIndex = this._treeElementIndexCache.get(current);
-            if (!isNaN(closestIndex)) {
-                index += closestIndex;
-                break;
-            }
+            if (treeElement === current)
+                return index;
 
-            current = previousElement(current);
-            if (current)
-                index++;
+            current = current.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate);
+            ++index;
         }
 
-        if (!this._treeElementIndexCache.has(treeElement))
-            this._treeElementIndexCache.set(treeElement, index);
-
-        return index;
+        console.assert(false, "Unable to get index for tree element.", treeElement, treeOutline);
+        return NaN;
     }
 
     _treeElementAtIndex(index)

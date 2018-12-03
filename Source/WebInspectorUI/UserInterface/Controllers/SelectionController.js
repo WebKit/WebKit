@@ -203,8 +203,8 @@ WI.SelectionController = class SelectionController extends WI.Object
     {
         let current = this._selectedIndexes.lastIndex;
         while (current >= index) {
-            this._selectedIndexes.delete(index);
-            this._selectedIndexes.add(index + 1);
+            this._selectedIndexes.delete(current);
+            this._selectedIndexes.add(current + 1);
 
             current = this._selectedIndexes.indexLessThan(current);
         }
