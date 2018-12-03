@@ -220,6 +220,8 @@ private:
 
         growCapacity(alignedSize + size);
 
+        std::memset(m_buffer.get() + m_bufferSize, 0, alignedSize - m_bufferSize);
+
         m_bufferSize = alignedSize + size;
         m_bufferPointer = m_buffer.get() + m_bufferSize;
 

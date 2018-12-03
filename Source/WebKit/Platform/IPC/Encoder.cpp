@@ -168,6 +168,8 @@ uint8_t* Encoder::grow(unsigned alignment, size_t size)
     size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
     reserve(alignedSize + size);
 
+    std::memset(m_buffer + m_bufferSize, 0, alignedSize - m_bufferSize);
+
     m_bufferSize = alignedSize + size;
     m_bufferPointer = m_buffer + alignedSize + size;
     

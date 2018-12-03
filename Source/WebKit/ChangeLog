@@ -1,5 +1,21 @@
 2018-12-03  Darin Adler  <darin@apple.com>
 
+        Alignment padding needs to be zeroed out in IPC::Encoder
+        https://bugs.webkit.org/show_bug.cgi?id=192304
+
+        Reviewed by Chris Dumez.
+
+        Might be useful to make a regression test for this, but I couldn't find any
+        other tests for this code.
+
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::grow): Use std::memset to zero-fill padding bytes.
+
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataEncoder::grow): Ditto.
+
+2018-12-03  Darin Adler  <darin@apple.com>
+
         [Cocoa] Streamline sandbox code a tiny bit
         https://bugs.webkit.org/show_bug.cgi?id=192299
 
