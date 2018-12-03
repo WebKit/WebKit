@@ -1,3 +1,17 @@
+2018-12-03  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Streamline sandbox code a tiny bit
+        https://bugs.webkit.org/show_bug.cgi?id=192299
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/SandboxUtilities.mm:
+        (WebKit::processHasContainer): Removed separate function, just use the
+        pathForProcessContainer instead of repeating logic. This costs a tiny
+        bit of memory allocation overhead the first time this function is called,
+        but in return we can eliminate a second copy of the code to call
+        sandbox_container_path_for_pid.
+
 2018-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] 'devicechange' event when more capture device information are revealed.

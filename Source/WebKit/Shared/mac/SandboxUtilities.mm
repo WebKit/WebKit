@@ -47,23 +47,9 @@ bool connectedProcessIsSandboxed(xpc_connection_t connectionToParent)
     return sandbox_check_by_audit_token(token, nullptr, SANDBOX_FILTER_NONE);
 }
 
-static bool processHasContainer(pid_t pid)
-{
-    std::array<char, MAXPATHLEN> path;
-
-    if (sandbox_container_path_for_pid(pid, path.data(), path.size()))
-        return false;
-
-    if (!path[0])
-        return false;
-
-    return true;
-}
-
 bool processHasContainer()
 {
-    static bool hasContainer = processHasContainer(getpid());
-
+    static bool hasContainer = !pathForProcessContainer().isEmpty();
     return hasContainer;
 }
 
