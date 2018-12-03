@@ -56,8 +56,12 @@ class Opcode
 
     def print_args(&block)
         return if @args.nil?
-
         @args.map(&block).join "\n"
+    end
+
+    def print_members(prefix, &block)
+        return if @args.nil?
+        @args.map(&block).map { |arg| "#{prefix}#{arg}" }.join "\n"
     end
 
     def capitalized_name
@@ -76,33 +80,27 @@ class Opcode
         @args.map(&:name).unshift("").join(", ")
     end
 
-    def map_fields_with_size(size, &block)
+    def map_fields_with_size(prefix, size, &block)
         args = [Argument.new("opcodeID", :unsigned, 0)]
         args += @args.dup if @args
         unless @metadata.empty?
             args << @metadata.emitter_local
         end
-        args.map { |arg| block.call(arg, size) }
+        args.map { |arg| "#{prefix}#{block.call(arg, size)}" }
     end
 
     def struct
         <<-EOF
-        struct #{capitalized_name} : public Instruction {
-            #{opcodeID}
+struct #{capitalized_name} : public Instruction {
+    #{opcodeID}
 
-            #{emitter}
-
-            #{dumper}
-
-            #{constructors}
-
-            #{setters}
-
-            #{metadata_struct_and_accessor}
-
-            #{members}
-        };
-        EOF
+#{emitter}
+#{dumper}
+#{constructors}
+#{setters}#{metadata_struct_and_accessor}
+#{members}
+};
+EOF
     end
 
     def opcodeID
@@ -113,90 +111,92 @@ class Opcode
         op_wide = Argument.new("op_wide", :unsigned, 0)
         metadata_param = @metadata.empty? ? "" : ", #{@metadata.emitter_local.create_param}"
         metadata_arg = @metadata.empty? ? "" : ", #{@metadata.emitter_local.name}"
-        <<-EOF
-        static void emit(BytecodeGenerator* __generator#{typed_args})
-        {
-            __generator->recordOpcode(opcodeID);
-            #{@metadata.create_emitter_local}
-            emit<OpcodeSize::Narrow, NoAssert, false>(__generator#{untyped_args}#{metadata_arg}) || emit<OpcodeSize::Wide, Assert, false>(__generator#{untyped_args}#{metadata_arg});
-        }
+        <<-EOF.chomp
+    static void emit(BytecodeGenerator* gen#{typed_args})
+    {
+        gen->recordOpcode(opcodeID);#{@metadata.create_emitter_local}
+        emit<OpcodeSize::Narrow, NoAssert, false>(gen#{untyped_args}#{metadata_arg})
+            || emit<OpcodeSize::Wide, Assert, false>(gen#{untyped_args}#{metadata_arg});
+    }
+#{%{
+    template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
+    static bool emit(BytecodeGenerator* gen#{typed_args})
+    {#{@metadata.create_emitter_local}
+        return emit<size, shouldAssert>(gen#{untyped_args}#{metadata_arg});
+    }
+} unless @metadata.empty?}
+    template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
+    static bool emit(BytecodeGenerator* gen#{typed_args}#{metadata_param})
+    {
+        if (recordOpcode)
+            gen->recordOpcode(opcodeID);
+        bool didEmit = emitImpl<size>(gen#{untyped_args}#{metadata_arg});
+        if (shouldAssert == Assert)
+            ASSERT(didEmit);
+        return didEmit;
+    }
 
-        #{%{
-        template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
-        static bool emit(BytecodeGenerator* __generator#{typed_args})
-        {
-            #{@metadata.create_emitter_local}
-            return emit<size, shouldAssert>(__generator#{untyped_args}#{metadata_arg});
-        }
-        } unless @metadata.empty?}
-
-        template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
-        static bool emit(BytecodeGenerator* __generator#{typed_args}#{metadata_param})
-        {
-            if (recordOpcode)
-                __generator->recordOpcode(opcodeID);
-            bool didEmit = emitImpl<size>(__generator#{untyped_args}#{metadata_arg});
-            if (shouldAssert == Assert)
-                ASSERT(didEmit);
-            return didEmit;
-        }
-
-        private:
-        template<OpcodeSize size>
-        static bool emitImpl(BytecodeGenerator* __generator#{typed_args}#{metadata_param})
-        {
+private:
+    template<OpcodeSize size>
+    static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
+    {
+        if (size == OpcodeSize::Wide)
+            gen->alignWideOpcode();
+        if (#{map_fields_with_size("", "size", &:fits_check).join "\n            && "}
+            && (size == OpcodeSize::Wide ? #{op_wide.fits_check(Size::Narrow)} : true)) {
             if (size == OpcodeSize::Wide)
-                __generator->alignWideOpcode();
-            if (#{map_fields_with_size("size", &:fits_check).join " && "} && (size == OpcodeSize::Wide ? #{op_wide.fits_check(Size::Narrow)} : true)) {
-                if (size == OpcodeSize::Wide)
-                    #{op_wide.fits_write Size::Narrow}
-                #{map_fields_with_size("size", &:fits_write).join "\n"}
-                return true;
-            }
-            return false;
+                #{op_wide.fits_write Size::Narrow}
+#{map_fields_with_size("            ", "size", &:fits_write).join "\n"}
+            return true;
         }
-        public:
-        EOF
+        return false;
+    }
+
+public:
+EOF
     end
 
     def dumper
         <<-EOF
-        template<typename Block>
-        void dump(BytecodeDumper<Block>* __dumper, InstructionStream::Offset __location, bool __isWide)
-        {
-            __dumper->printLocationAndOp(__location, &"*#{@name}"[!__isWide]);
-            #{print_args { |arg|
-            <<-EOF
-                __dumper->dumpOperand(#{arg.name}, #{arg.index == 1});
-            EOF
-            }}
-        }
-        EOF
+    template<typename Block>
+    void dump(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, bool __isWide)
+    {
+        dumper->printLocationAndOp(__location, &"*#{@name}"[!__isWide]);
+#{print_args { |arg|
+<<-EOF.chomp
+        dumper->dumpOperand(#{arg.name}, #{arg.index == 1});
+EOF
+    }}
+    }
+EOF
     end
 
     def constructors
         fields = (@args || []) + (@metadata.empty? ? [] : [@metadata])
-        init = ->(size) { fields.empty?  ? "" : ": #{fields.map.with_index { |arg, i| arg.load_from_stream(i + 1, size) }.join ",\n" }" }
+        init = ->(size) { fields.empty?  ? "" : ": #{fields.map.with_index { |arg, i| arg.load_from_stream(i + 1, size) }.join "\n        , " }" }
 
         <<-EOF
-        #{capitalized_name}(const uint8_t* stream)
-            #{init.call("OpcodeSize::Narrow")}
-        { ASSERT_UNUSED(stream, stream[0] == opcodeID); }
+    #{capitalized_name}(const uint8_t* stream)
+        #{init.call("OpcodeSize::Narrow")}
+    {
+        ASSERT_UNUSED(stream, stream[0] == opcodeID);
+    }
 
-        #{capitalized_name}(const uint32_t* stream)
-            #{init.call("OpcodeSize::Wide")}
-        { ASSERT_UNUSED(stream, stream[0] == opcodeID); }
+    #{capitalized_name}(const uint32_t* stream)
+        #{init.call("OpcodeSize::Wide")}
+    {
+        ASSERT_UNUSED(stream, stream[0] == opcodeID);
+    }
 
-        static #{capitalized_name} decode(const uint8_t* stream)
-        {
-            if (*stream != op_wide)
-                return { stream };
+    static #{capitalized_name} decode(const uint8_t* stream)
+    {
+        if (*stream != op_wide)
+            return { stream };
 
-            auto wideStream = bitwise_cast<const uint32_t*>(stream + 1);
-            return { wideStream };
-        }
-
-        EOF
+        auto wideStream = bitwise_cast<const uint32_t*>(stream + 1);
+        return { wideStream };
+    }
+EOF
     end
 
     def setters
@@ -204,18 +204,15 @@ class Opcode
     end
 
     def metadata_struct_and_accessor
-        <<-EOF
-        #{@metadata.struct(self)}
-
-        #{@metadata.accessor}
-        EOF
+        <<-EOF.chomp
+#{@metadata.struct(self)}#{@metadata.accessor}
+EOF
     end
 
     def members
-        <<-EOF
-        #{print_args(&:field)}
-        #{@metadata.field}
-        EOF
+        <<-EOF.chomp
+#{print_members("    ", &:field)}#{@metadata.field("    ")}
+EOF
     end
 
     def set_entry_address(id)
@@ -248,22 +245,22 @@ class Opcode
     end
 
     def self.dump_bytecode(opcodes)
-        <<-EOF
-        template<typename Block>
-        static void dumpBytecode(BytecodeDumper<Block>* __dumper, InstructionStream::Offset __location, const Instruction* __instruction)
-        {
-            switch (__instruction->opcodeID()) {
-            #{opcodes.map { |op|
-                <<-EOF
-                case #{op.name}:
-                    __instruction->as<#{op.capitalized_name}>().dump(__dumper, __location, __instruction->isWide());
-                    break;
-                EOF
-            }.join "\n"}
-            default:
-                ASSERT_NOT_REACHED();
-            }
-        }
-        EOF
+        <<-EOF.chomp
+template<typename Block>
+static void dumpBytecode(BytecodeDumper<Block>* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
+{
+    switch (__instruction->opcodeID()) {
+#{opcodes.map { |op|
+        <<-EOF.chomp
+    case #{op.name}:
+        __instruction->as<#{op.capitalized_name}>().dump(dumper, __location, __instruction->isWide());
+        break;
+EOF
+    }.join "\n"}
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+EOF
     end
 end

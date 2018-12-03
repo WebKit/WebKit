@@ -1,3 +1,18 @@
+2018-12-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix the bytecode code generator scripts to pretty print BytecodeStructs.h and BytecodeIndices.h.
+        https://bugs.webkit.org/show_bug.cgi?id=192271
+
+        Reviewed by Keith Miller.
+
+        This makes the generated code style compliant and human readable.
+
+        * generator/Argument.rb:
+        * generator/DSL.rb:
+        * generator/Fits.rb:
+        * generator/Metadata.rb:
+        * generator/Opcode.rb:
+
 2018-12-02  Zalan Bujtas  <zalan@apple.com>
 
         Add a runtime feature flag for LayoutFormattingContext.

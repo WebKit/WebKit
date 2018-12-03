@@ -31,6 +31,6 @@ module Fits
     end
 
     def self.write(size, name, type)
-        "__generator->write(#{convert(size, name, type)});"
+        "gen->write(#{convert(size, name, type)});"
     end
 end

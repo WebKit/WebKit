@@ -60,24 +60,24 @@ class Argument
 
     def setter
         <<-EOF
-        template<typename Functor>
-        void set#{capitalized_name}(#{@type.to_s} value, Functor func)
-        {
-            if (isWide())
-                set#{capitalized_name}<OpcodeSize::Wide>(value, func);
-            else
-                set#{capitalized_name}<OpcodeSize::Narrow>(value, func);
-        }
+    template<typename Functor>
+    void set#{capitalized_name}(#{@type.to_s} value, Functor func)
+    {
+        if (isWide())
+            set#{capitalized_name}<OpcodeSize::Wide>(value, func);
+        else
+            set#{capitalized_name}<OpcodeSize::Narrow>(value, func);
+    }
 
-        template <OpcodeSize size, typename Functor>
-        void set#{capitalized_name}(#{@type.to_s} value, Functor func)
-        {
-            if (!#{Fits::check "size", "value", @type})
-                value = func();
-            auto* stream = bitwise_cast<typename TypeBySize<size>::type*>(reinterpret_cast<uint8_t*>(this) + #{@index} * size + PaddingBySize<size>::value);
-            *stream = #{Fits::convert "size", "value", @type};
-        }
-        EOF
+    template <OpcodeSize size, typename Functor>
+    void set#{capitalized_name}(#{@type.to_s} value, Functor func)
+    {
+        if (!#{Fits::check "size", "value", @type})
+            value = func();
+        auto* stream = bitwise_cast<typename TypeBySize<size>::type*>(reinterpret_cast<uint8_t*>(this) + #{@index} * size + PaddingBySize<size>::value);
+        *stream = #{Fits::convert "size", "value", @type};
+    }
+EOF
     end
 
     def capitalized_name

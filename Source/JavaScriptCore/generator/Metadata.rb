@@ -42,59 +42,59 @@ class Metadata
     def struct(op)
         return if empty?
 
-        def convertFields(fields)
+        def convertFields(prefix, fields)
             fields.map do |field, type|
                 if type.kind_of? Hash
-                    "union {\n#{convertFields(type)}\n};"
+                    "#{prefix}union {\n#{convertFields(prefix + '    ', type)}\n#{prefix}};"
                 else
-                    "#{type.to_s} #{field.to_s};"
+                    "#{prefix}#{type.to_s} #{field.to_s};"
                 end
             end.join("\n")
         end
 
-        fields = convertFields(@fields)
+        fields = convertFields("        ", @fields)
 
         inits = nil
         if @initializers && (not @initializers.empty?)
-            inits = ": " + @initializers.map do |metadata, arg|
+            inits = "\n            : " + @initializers.map do |metadata, arg|
                 "#{metadata}(__op.#{arg})"
-            end.join(", ")
+            end.join("\n            , ").concat("\n       ");
         end
 
         <<-EOF
-        struct Metadata {
-            WTF_MAKE_NONCOPYABLE(Metadata);
 
-        public:
-            Metadata(const #{op.capitalized_name}&#{" __op" if inits})
-            #{inits}
-            { }
+    struct Metadata {
+        WTF_MAKE_NONCOPYABLE(Metadata);
 
-            #{fields}
-        };
-        EOF
+    public:
+        Metadata(const #{op.capitalized_name}&#{" __op" if inits})#{inits} { }
+
+#{fields}
+    };
+EOF
     end
 
     def accessor
         return if empty?
 
         <<-EOF
-        Metadata& metadata(CodeBlock* codeBlock) const
-        {
-            return codeBlock->metadata<Metadata>(opcodeID, #{Metadata.field_name});
-        }
 
-        Metadata& metadata(ExecState* exec) const
-        {
-            return metadata(exec->codeBlock());
-        }
-        EOF
+    Metadata& metadata(CodeBlock* codeBlock) const
+    {
+        return codeBlock->metadata<Metadata>(opcodeID, #{Metadata.field_name});
+    }
+
+    Metadata& metadata(ExecState* exec) const
+    {
+        return metadata(exec->codeBlock());
+    }
+EOF
     end
 
-    def field
+    def field(prefix)
         return if empty?
 
-        "unsigned #{Metadata.field_name};"
+        "\n#{prefix}unsigned #{Metadata.field_name};"
     end
 
     def load_from_stream(index, size)
@@ -106,8 +106,9 @@ class Metadata
     def create_emitter_local
         return if empty?
 
-        <<-EOF
-        auto #{emitter_local.name} = __generator->addMetadataFor(opcodeID);
+        <<-EOF.chomp
+
+        auto #{emitter_local.name} = gen->addMetadataFor(opcodeID);
         EOF
     end
 

@@ -114,26 +114,24 @@ module DSL
             opcodes = opcodes_for(:emit_in_structs_file)
 
             template.prefix = <<-EOF
-            #pragma once
+#pragma once
 
-            #include "ArithProfile.h"
-            #include "BytecodeDumper.h"
-            #include "BytecodeGenerator.h"
-            #include "Fits.h"
-            #include "GetByIdMetadata.h"
-            #include "Instruction.h"
-            #include "Opcode.h"
-            #include "ToThisStatus.h"
+#include "ArithProfile.h"
+#include "BytecodeDumper.h"
+#include "BytecodeGenerator.h"
+#include "Fits.h"
+#include "GetByIdMetadata.h"
+#include "Instruction.h"
+#include "Opcode.h"
+#include "ToThisStatus.h"
 
-            namespace JSC {
-            EOF
+namespace JSC {
+EOF
 
             template.body = <<-EOF
-            #{opcodes.map(&:struct).join("\n")}
-
-            #{Opcode.dump_bytecode(opcodes)}
-            EOF
-
+#{opcodes.map(&:struct).join("\n")}
+#{Opcode.dump_bytecode(opcodes)}
+EOF
             template.suffix = "} // namespace JSC"
         end
     end
@@ -152,9 +150,9 @@ module DSL
         opcodes = opcodes_for(:emit_in_structs_file)
 
         GeneratedFile::create(indices_filename, bytecode_list) do |template|
-            template.prefix = "namespace JSC {"
+            template.prefix = "namespace JSC {\n"
             template.body = opcodes.map(&:struct_indices).join("\n")
-            template.suffix = "} // namespace JSC"
+            template.suffix = "\n} // namespace JSC"
         end
     end
 
