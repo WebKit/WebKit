@@ -256,6 +256,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     if (preference == "CSSCustomPropertiesAndValuesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSCustomPropertiesAndValuesEnabled(enabled);
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (preference == "LayoutFormattingContextEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setLayoutFormattingContextEnabled(enabled);
+#endif
+
 #if ENABLE(CSS_PAINTING_API)
     if (preference == "CSSPaintingAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setCSSPaintingAPIEnabled(enabled);

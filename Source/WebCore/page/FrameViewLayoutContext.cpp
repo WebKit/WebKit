@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "RenderElement.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 
@@ -55,6 +56,8 @@ namespace WebCore {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 static void layoutUsingFormattingContext(const RenderView& renderView)
 {
+    if (!RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextEnabled())
+        return;
     auto initialContainingBlock = Layout::TreeBuilder::createLayoutTree(renderView);
     auto layoutState = std::make_unique<Layout::LayoutState>(*initialContainingBlock, renderView.size());
     layoutState->setInQuirksMode(renderView.document().inQuirksMode());
@@ -208,7 +211,7 @@ void FrameViewLayoutContext::layout()
 #endif
         layoutRoot->layout();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    layoutUsingFormattingContext(*renderView());
+        layoutUsingFormattingContext(*renderView());
 #endif
         ++m_layoutCount;
 #if ENABLE(TEXT_AUTOSIZING)

@@ -1464,3 +1464,13 @@ DataListElementEnabled:
   category: internal
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(DATALIST_ELEMENT)
+
+LayoutFormattingContextEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Next-gen layout"
+  humanReadableDescription: "Enable next-gen layout"
+  category: internal
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
+

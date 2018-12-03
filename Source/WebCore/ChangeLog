@@ -1,3 +1,17 @@
+2018-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        Add a runtime feature flag for LayoutFormattingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=192280
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::layoutUsingFormattingContext):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLayoutFormattingContextEnabled):
+        (WebCore::RuntimeEnabledFeatures::layoutFormattingContextEnabled const):
+
 2018-12-01  Brent Fulgham  <bfulgham@apple.com>
 
         Lifetime of HTMLMediaElement is not properly handled in asynchronous actions

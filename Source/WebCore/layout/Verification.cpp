@@ -46,7 +46,7 @@ static bool areEssentiallyEqual(float a, LayoutUnit b)
     if (a == b.toFloat())
         return true;
 
-    return ::abs(a - b.toFloat()) <= 4 * LayoutUnit::epsilon();
+    return fabs(a - b.toFloat()) <= 4 * LayoutUnit::epsilon();
 }
 
 static bool outputMismatchingSimpleLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const Container& inlineFormattingRoot)

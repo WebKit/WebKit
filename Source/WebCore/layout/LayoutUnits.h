@@ -30,6 +30,7 @@
 #include "LayoutUnit.h"
 #include "LayoutPoint.h"
 #include "LayoutRect.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace Layout {

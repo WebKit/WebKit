@@ -1,3 +1,12 @@
+2018-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        Add a runtime feature flag for LayoutFormattingContext.
+        https://bugs.webkit.org/show_bug.cgi?id=192280
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-11-30  Alex Christensen  <achristensen@webkit.org>
 
         Move URL from WebCore to WTF

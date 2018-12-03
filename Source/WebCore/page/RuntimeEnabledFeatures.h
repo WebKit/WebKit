@@ -178,6 +178,11 @@ public:
     void setPointerEventsEnabled(bool isEnabled) { m_pointerEventsEnabled = isEnabled; }
     bool pointerEventsEnabled() const { return m_pointerEventsEnabled; }
 
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    void setLayoutFormattingContextEnabled(bool isEnabled) { m_layoutFormattingContextEnabled = isEnabled; }
+    bool layoutFormattingContextEnabled() const { return m_layoutFormattingContextEnabled; }
+#endif
+
 #if ENABLE(CSS_PAINTING_API)
     void setCSSPaintingAPIEnabled(bool isEnabled) { m_CSSPaintingAPIEnabled = isEnabled; }
     bool cssPaintingAPIEnabled() const { return m_CSSPaintingAPIEnabled; }
@@ -371,6 +376,10 @@ private:
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
     bool m_pointerEventsEnabled { false };
     bool m_webSQLEnabled { true };
+
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    bool m_layoutFormattingContextEnabled { false };
+#endif
 
 #if ENABLE(CSS_PAINTING_API)
     bool m_CSSPaintingAPIEnabled { false };

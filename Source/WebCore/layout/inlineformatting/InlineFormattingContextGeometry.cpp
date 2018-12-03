@@ -181,7 +181,9 @@ LayoutUnit InlineFormattingContext::Geometry::runWidth(const InlineContent& inli
     LayoutUnit width;
     auto startPosition = from;
     auto iterator = inlineContent.find(const_cast<InlineItem*>(&inlineItem));
+#if !ASSERT_DISABLED
     auto inlineItemEnd = inlineContent.end();
+#endif
     while (length) {
         ASSERT(iterator != inlineItemEnd);
         auto& currentInlineItem = **iterator;
