@@ -1,3 +1,12 @@
+2018-12-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Sync feature defines
+        https://bugs.webkit.org/show_bug.cgi?id=191167
+
+        Reviewed by Michael Catanzaro.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2018-12-01  Don Olmstead  <don.olmstead@sony.com>
 
         Cleanup WebKit Features
