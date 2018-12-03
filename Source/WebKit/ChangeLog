@@ -1,5 +1,21 @@
 2018-12-03  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Check descriptor types in createMessageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=192302
+
+        Reviewed by Chris Dumez.
+
+        Not sure how to construct a test case for Connection, so not adding any
+        tests at this time.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::createMessageDecoder): Check descriptor types and return nullptr if they
+        are incorrect. Retained the assertions to help with debugging.
+        (IPC::Connection::receiveSourceEventHandler): Ignore the message if no decoder
+        is created, which means the message is invalid.
+
+2018-12-03  Darin Adler  <darin@apple.com>
+
         Alignment padding needs to be zeroed out in IPC::Encoder
         https://bugs.webkit.org/show_bug.cgi?id=192304
 

@@ -438,29 +438,26 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
 
     for (mach_msg_size_t i = 0; i < numDescriptors; ++i) {
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
+        ASSERT(descriptor->type.type == MACH_MSG_PORT_DESCRIPTOR);
+        if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
+            return nullptr;
 
-        switch (descriptor->type.type) {
-        case MACH_MSG_PORT_DESCRIPTOR:
-            attachments[numDescriptors - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
-            descriptorData += sizeof(mach_msg_port_descriptor_t);
-            break;
-        default:
-            ASSERT(false && "Unhandled descriptor type");
-        }
+        attachments[numDescriptors - i - 1] = Attachment(descriptor->port.name, descriptor->port.disposition);
+        descriptorData += sizeof(mach_msg_port_descriptor_t);
     }
 
     if (messageBodyIsOOL) {
         mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
         ASSERT(descriptor->type.type == MACH_MSG_OOL_DESCRIPTOR);
+        if (descriptor->type.type != MACH_MSG_OOL_DESCRIPTOR)
+            return nullptr;
 
         uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
         size_t messageBodySize = descriptor->out_of_line.size;
 
-        auto decoder = std::make_unique<Decoder>(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
+        return std::make_unique<Decoder>(messageBody, messageBodySize, [](const uint8_t* buffer, size_t length) {
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer), length);
         }, WTFMove(attachments));
-
-        return decoder;
     }
 
     uint8_t* messageBody = descriptorData;
@@ -528,7 +525,8 @@ void Connection::receiveSourceEventHandler()
     }
 
     std::unique_ptr<Decoder> decoder = createMessageDecoder(header);
-    ASSERT(decoder);
+    if (!decoder)
+        return;
 
 #if PLATFORM(MAC)
     decoder->setImportanceAssertion(std::make_unique<ImportanceAssertion>(header));
