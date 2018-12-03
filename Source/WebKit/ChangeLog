@@ -1,3 +1,22 @@
+2018-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Swipe snapshot stays up too long swiping around on apple.com (waiting for first paint)
+        https://bugs.webkit.org/show_bug.cgi?id=192319
+        <rdar://problem/45928708>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::didStartProvisionalLoadForMainFrame):
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        In r236966, I reverted slightly too much of r232416.
+        We still need to defer requesting a presentation update callback until
+        after the provisional load starts. Otherwise, we could get the callback
+        while we're in the 'paused' state, and drop it on the floor. That would
+        then mean that we time out instead of promptly removing the snapshot.
+
 2018-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Update process assertions after swapping processes

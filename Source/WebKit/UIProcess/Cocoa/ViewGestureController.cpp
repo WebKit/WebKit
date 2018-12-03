@@ -148,6 +148,9 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
 void ViewGestureController::didStartProvisionalLoadForMainFrame()
 {
     m_snapshotRemovalTracker.resume();
+
+    if (auto provisionalLoadCallback = WTFMove(m_provisionalLoadCallback))
+        provisionalLoadCallback();
 }
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()

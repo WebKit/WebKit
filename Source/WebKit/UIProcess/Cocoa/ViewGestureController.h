@@ -312,6 +312,7 @@ private:
     bool m_isConnectedToProcess { false };
 
     SnapshotRemovalTracker m_snapshotRemovalTracker;
+    WTF::Function<void()> m_provisionalLoadCallback;
 };
 
 } // namespace WebKit

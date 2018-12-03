@@ -300,19 +300,6 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    if (auto drawingArea = m_webPageProxy.drawingArea()) {
-        uint64_t pageID = m_webPageProxy.pageID();
-        GestureID gestureID = m_currentGestureID;
-        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] (CallbackBase::Error error) {
-            if (auto gestureController = controllerForGesture(pageID, gestureID))
-                gestureController->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
-        });
-        drawingArea->hideContentUntilPendingUpdate();
-    } else {
-        removeSwipeSnapshot();
-        return;
-    }
-
     // FIXME: Should we wait for VisuallyNonEmptyLayout like we do on Mac?
     m_snapshotRemovalTracker.start(SnapshotRemovalTracker::RenderTreeSizeThreshold
         | SnapshotRemovalTracker::RepaintAfterNavigation
@@ -326,6 +313,22 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
         m_webPageProxy.didChangeBackgroundColor();
     }
+
+    uint64_t pageID = m_webPageProxy.pageID();
+    GestureID gestureID = m_currentGestureID;
+    m_provisionalLoadCallback = [this, pageID, gestureID] {
+        auto drawingArea = m_webPageProxy.drawingArea();
+        if (!drawingArea) {
+            removeSwipeSnapshot();
+            return;
+        }
+
+        drawingArea->dispatchAfterEnsuringDrawing([pageID, gestureID] (CallbackBase::Error error) {
+            if (auto gestureController = controllerForGesture(pageID, gestureID))
+                gestureController->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
+        });
+        drawingArea->hideContentUntilPendingUpdate();
+    };
 }
 
 void ViewGestureController::setRenderTreeSize(uint64_t renderTreeSize)
