@@ -170,11 +170,12 @@ private:
         return documentLoader->url().string().utf8();
     }
 
-    void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
+    void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, CompletionHandler<void(RefPtr<API::Object>&&)>&& completionHandler) override
     {
         if (!frame.isMainFrame())
-            return;
+            return completionHandler(nullptr);
         webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+        completionHandler(nullptr);
     }
 
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override

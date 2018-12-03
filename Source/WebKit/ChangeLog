@@ -1,3 +1,69 @@
+2018-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKWebProcessPlugInLoadDelegate SPI willStartProvisionalLoadForFrame with a completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=192272
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageLoaderClient.h:
+        (API::InjectedBundle::PageLoaderClient::didStartProvisionalLoadForFrame):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (ResourceLoadClient::ResourceLoadClient):
+        (ResourceLoadClient::loadDelegate const):
+        (ResourceLoadClient::pluginContextController const):
+        (PageLoaderClient::PageLoaderClient):
+        (PageLoaderClient::loadDelegate const):
+        (PageLoaderClient::pluginContextController const):
+        (PageLoaderClient::didStartProvisionalLoadForFrame):
+        (PageLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (PageLoaderClient::didFinishLoadForFrame):
+        (PageLoaderClient::globalObjectIsAvailableForFrame):
+        (PageLoaderClient::didRemoveFrameFromHierarchy):
+        (PageLoaderClient::didCommitLoadForFrame):
+        (PageLoaderClient::didFinishDocumentLoadForFrame):
+        (PageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (PageLoaderClient::didFailLoadWithErrorForFrame):
+        (PageLoaderClient::didSameDocumentNavigationForFrame):
+        (PageLoaderClient::didLayoutForFrame):
+        (PageLoaderClient::didReachLayoutMilestone):
+        (PageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame):
+        (PageLoaderClient::didHandleOnloadEventsForFrame):
+        (PageLoaderClient::userAgentForURL const):
+        (ResourceLoadClient::willSendRequestForFrame):
+        (ResourceLoadClient::didInitiateLoadForResource):
+        (ResourceLoadClient::didFinishLoadForResource):
+        (ResourceLoadClient::didFailLoadForResource):
+        (-[WKWebProcessPlugInBrowserContextController setLoadDelegate:]):
+        (didStartProvisionalLoadForFrame): Deleted.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): Deleted.
+        (didFinishLoadForFrame): Deleted.
+        (globalObjectIsAvailableForFrame): Deleted.
+        (didRemoveFrameFromHierarchy): Deleted.
+        (didCommitLoadForFrame): Deleted.
+        (didFinishDocumentLoadForFrame): Deleted.
+        (didFailProvisionalLoadWithErrorForFrame): Deleted.
+        (didFailLoadWithErrorForFrame): Deleted.
+        (didSameDocumentNavigationForFrame): Deleted.
+        (didLayoutForFrame): Deleted.
+        (didReachLayoutMilestone): Deleted.
+        (didFirstVisuallyNonEmptyLayoutForFrame): Deleted.
+        (didHandleOnloadEventsForFrame): Deleted.
+        (userAgentForURL): Deleted.
+        (setUpPageLoaderClient): Deleted.
+        (willSendRequestForFrame): Deleted.
+        (didInitiateLoadForResource): Deleted.
+        (didFinishLoadForResource): Deleted.
+        (didFailLoadForResource): Deleted.
+        (setUpResourceLoadClient): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2018-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Swipe snapshot stays up too long swiping around on apple.com (waiting for first paint)

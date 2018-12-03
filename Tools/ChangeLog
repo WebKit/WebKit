@@ -1,3 +1,14 @@
+2018-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKWebProcessPlugInLoadDelegate SPI willStartProvisionalLoadForFrame with a completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=192272
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ParserYieldTokenPlugIn.mm:
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:willStartProvisionalLoadForFrame:completionHandler:]):
+        (-[ParserYieldTokenPlugIn webProcessPlugInBrowserContextController:didCommitLoadForFrame:]):
+
 2018-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOSMac] Unable to upload non-image files using drag and drop in WKWebView

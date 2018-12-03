@@ -37,6 +37,8 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
 
+static bool willStartProvisionalLoadForFrameCalled = false;
+
 @interface ParserYieldTokenPlugIn : NSObject <WKWebProcessPlugIn, WKWebProcessPlugInLoadDelegate, ParserYieldTokenTestBundle>
 @end
 
@@ -64,8 +66,16 @@
         --_numberOfTokensToTakeAfterComittingLoad;
 }
 
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller willStartProvisionalLoadForFrame:(WKWebProcessPlugInFrame *)frame completionHandler:(void(^)(void))completionHandler
+{
+    willStartProvisionalLoadForFrameCalled = true;
+    completionHandler();
+}
+
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller didCommitLoadForFrame:(WKWebProcessPlugInFrame *)frame
 {
+    ASSERT(willStartProvisionalLoadForFrameCalled);
+
     _loadCommitted = YES;
     while (_numberOfTokensToTakeAfterComittingLoad) {
         [self takeDocumentParserTokenAfterCommittingLoad];

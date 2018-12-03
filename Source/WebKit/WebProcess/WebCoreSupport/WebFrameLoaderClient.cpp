@@ -457,11 +457,11 @@ void WebFrameLoaderClient::dispatchWillClose()
     notImplemented();
 }
 
-void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
+void WebFrameLoaderClient::dispatchDidStartProvisionalLoad(CompletionHandler<void()>&& completionHandler)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
-        return;
+        return completionHandler();
 
 #if ENABLE(FULLSCREEN_API)
     Element* documentElement = m_frame->coreFrame()->document()->documentElement();
@@ -473,16 +473,13 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame);
 
     WebDocumentLoader& provisionalLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().provisionalDocumentLoader());
-    auto& url = provisionalLoader.url();
-    RefPtr<API::Object> userData;
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(*webPage, *m_frame, userData);
-
-    auto& unreachableURL = provisionalLoader.unreachableURL();
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), provisionalLoader.navigationID(), url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(*webPage, *m_frame, [completionHandler = WTFMove(completionHandler), webPage = makeRef(*webPage), url = provisionalLoader.url(), unreachableURL = provisionalLoader.unreachableURL(), frameID = m_frame->frameID(), navigationID = provisionalLoader.navigationID()] (RefPtr<API::Object>&& userData) mutable {
+        // Notify the UIProcess.
+        webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(frameID, navigationID, url, unreachableURL, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        completionHandler();
+    });
 }
 
 static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.

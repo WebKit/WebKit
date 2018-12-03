@@ -91,7 +91,7 @@ public:
     void dispatchDidReplaceStateWithinPage() override;
     void dispatchDidPopStateWithinPage() override;
     void dispatchWillClose() override;
-    void dispatchDidStartProvisionalLoad() override;
+    void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&&) override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) override;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) override;

@@ -109,7 +109,7 @@ private:
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
     void dispatchWillClose() final;
-    void dispatchDidStartProvisionalLoad() final;
+    void dispatchDidStartProvisionalLoad(CompletionHandler<void()>&&) final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) final;
     void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) final;

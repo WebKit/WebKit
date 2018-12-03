@@ -1207,19 +1207,20 @@ void FrameLoader::started()
         frame->loader().m_isComplete = false;
 }
 
-void FrameLoader::prepareForLoadStart()
+void FrameLoader::prepareForLoadStart(CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("prepareForLoadStart: Starting frame load (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 
     m_progressTracker->progressStarted();
-    m_client.dispatchDidStartProvisionalLoad();
-
-    if (AXObjectCache::accessibilityEnabled()) {
-        if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
-            AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadType::Reload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
-            cache->frameLoadingEventNotification(&m_frame, loadingEvent);
+    m_client.dispatchDidStartProvisionalLoad([this, protectedFrame = makeRef(m_frame), completionHandler = WTFMove(completionHandler)] () mutable {
+        if (AXObjectCache::accessibilityEnabled()) {
+            if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache()) {
+                AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadType::Reload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
+                cache->frameLoadingEventNotification(&m_frame, loadingEvent);
+            }
         }
-    }
+        completionHandler();
+    });
 }
 
 void FrameLoader::setupForReplace()
@@ -3341,37 +3342,38 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    CompletionHandler<void()> completionHandler = [this, shouldContinue] {
+    CompletionHandler<void()> completionHandler = [this, protectedFrame = makeRef(m_frame), shouldContinue] () mutable {
         if (!m_provisionalDocumentLoader)
             return;
         
-        prepareForLoadStart();
-        
-        // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
-        // so we need to null check it again.
-        if (!m_provisionalDocumentLoader) {
-            RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Frame load canceled (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-            return;
-        }
-        
-        DocumentLoader* activeDocLoader = activeDocumentLoader();
-        if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
-            RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
-            return;
-        }
-        
-        m_loadingFromCachedPage = false;
+        prepareForLoadStart([this, protectedFrame = WTFMove(protectedFrame), shouldContinue] {
 
-        // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
-        if (shouldContinue == ShouldContinue::ForSuspension) {
-            // Make sure we do a standard load to about:blank instead of reusing whatever the load type was on process swap.
-            // For example, using a Back/Forward load to load about blank would cause the current HistoryItem's url to be
-            // overwritten with 'about:blank', which we do not want.
-            m_loadType = FrameLoadType::Standard;
-            m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ WTF::blankURL() });
-        }
+            // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
+            // so we need to null check it again.
+            if (!m_provisionalDocumentLoader) {
+                RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Frame load canceled (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+                return;
+            }
+            
+            DocumentLoader* activeDocLoader = activeDocumentLoader();
+            if (activeDocLoader && activeDocLoader->isLoadingMainResource()) {
+                RELEASE_LOG_IF_ALLOWED("dispatchWillSubmitForm completionHandler: Main frame already being loaded (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
+                return;
+            }
+            
+            m_loadingFromCachedPage = false;
 
-        m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
+            // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
+            if (shouldContinue == ShouldContinue::ForSuspension) {
+                // Make sure we do a standard load to about:blank instead of reusing whatever the load type was on process swap.
+                // For example, using a Back/Forward load to load about blank would cause the current HistoryItem's url to be
+                // overwritten with 'about:blank', which we do not want.
+                m_loadType = FrameLoadType::Standard;
+                m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ WTF::blankURL() });
+            }
+
+            m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
+        });
     };
     
     if (!formState) {
@@ -3514,20 +3516,20 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 
 void FrameLoader::loadProvisionalItemFromCachedPage()
 {
-    DocumentLoader* provisionalLoader = provisionalDocumentLoader();
-    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
+    prepareForLoadStart([this, protectedFrame = makeRef(m_frame)] {
+        DocumentLoader* provisionalLoader = provisionalDocumentLoader();
+        LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().stringCenterEllipsizedToLength().utf8().data());
 
-    prepareForLoadStart();
-
-    m_loadingFromCachedPage = true;
-
-    // Should have timing data from previous time(s) the page was shown.
-    ASSERT(provisionalLoader->timing().startTime());
-    provisionalLoader->resetTiming();
-    provisionalLoader->timing().markStartTime();
-
-    provisionalLoader->setCommitted(true);
-    commitProvisionalLoad();
+        m_loadingFromCachedPage = true;
+        
+        // Should have timing data from previous time(s) the page was shown.
+        ASSERT(provisionalLoader->timing().startTime());
+        provisionalLoader->resetTiming();
+        provisionalLoader->timing().markStartTime();
+        
+        provisionalLoader->setCommitted(true);
+        commitProvisionalLoad();
+    });
 }
 
 bool FrameLoader::shouldTreatURLAsSameAsCurrent(const URL& url) const

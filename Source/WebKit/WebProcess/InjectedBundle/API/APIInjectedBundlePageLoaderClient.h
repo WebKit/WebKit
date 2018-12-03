@@ -27,6 +27,7 @@
 
 #include "SameDocumentNavigationType.h"
 #include <WebCore/LayoutMilestone.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -57,7 +58,7 @@ public:
     virtual void willLoadURLRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, API::Object*) { }
     virtual void willLoadDataRequest(WebKit::WebPage&, const WebCore::ResourceRequest&, WebCore::SharedBuffer*, const WTF::String&, const WTF::String&, const WTF::URL&, API::Object*) { }
 
-    virtual void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
+    virtual void didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, CompletionHandler<void(RefPtr<API::Object>&&)>&& completionHandler) { completionHandler(nullptr); }
     virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
     virtual void didFailProvisionalLoadWithErrorForFrame(WebKit::WebPage&, WebKit::WebFrame&, const WebCore::ResourceError&, RefPtr<API::Object>&) { }
     virtual void didCommitLoadForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) { }
