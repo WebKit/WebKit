@@ -350,7 +350,7 @@ void DOMTimer::fired()
     }
 
     if (shouldBeginObservingChanges) {
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << timer << ") timer callback.");
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << this << ") timer callback.");
         WKStartObservingContentChanges();
         WKStartObservingStyleRecalcScheduling();
         WebThreadRemoveObservedDOMTimer(this);
@@ -366,7 +366,7 @@ void DOMTimer::fired()
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldBeginObservingChanges) {
-        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << timer << ") timer callback.");
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << this << ") timer callback.");
         WKStopObservingStyleRecalcScheduling();
         WKStopObservingContentChanges();
 

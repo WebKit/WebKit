@@ -1,3 +1,10 @@
+2018-12-03  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed build fix.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+
 2018-12-03  Jer Noble  <jer.noble@apple.com>
 
         Get rid of old, dead Mac video fullscreen code.
