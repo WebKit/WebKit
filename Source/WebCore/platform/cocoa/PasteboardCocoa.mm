@@ -162,7 +162,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
             if (item.preferredPresentationStyle != PasteboardItemPresentationStyle::Unspecified)
                 return item.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment;
 
-            return !item.suggestedFileName.isEmpty() || item.isNonTextType;
+            return !item.suggestedFileName.isEmpty() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });
     }
 #endif

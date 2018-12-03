@@ -154,6 +154,7 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
 #if PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
     info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
 #endif
+    info.containsFileURLAndFileUploadContent = itemProvider.web_containsFileURLAndFileUploadContent;
     info.suggestedFileName = itemProvider.suggestedName;
     for (NSString *typeIdentifier in itemProvider.registeredTypeIdentifiers) {
         CFStringRef cfTypeIdentifier = (CFStringRef)typeIdentifier;
@@ -530,6 +531,9 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
             if (domTypeAsString == "text/uri-list") {
                 BOOL ableToDetermineProtocolOfPasteboardURL = ![m_pasteboard isKindOfClass:[WebItemProviderPasteboard class]];
                 if (ableToDetermineProtocolOfPasteboardURL && stringForType(kUTTypeURL).isEmpty())
+                    continue;
+
+                if ([[m_pasteboard pasteboardTypes] containsObject:(__bridge NSString *)kUTTypeFileURL])
                     continue;
             }
             domPasteboardTypes.add(WTFMove(domTypeAsString));

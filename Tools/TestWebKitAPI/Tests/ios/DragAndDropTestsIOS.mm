@@ -1646,8 +1646,8 @@ TEST(DragAndDropTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 
     // File URLs should never be exposed directly to web content, so DataTransfer.getData should return an empty string here.
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-        @"dragover": @{ @"Files": @"", @"text/uri-list": @"" },
-        @"drop": @{ @"Files": @"", @"text/uri-list": @"" }
+        @"dragover": @{ @"Files": @"" },
+        @"drop": @{ @"Files": @"" }
     });
 }
 
@@ -1770,6 +1770,29 @@ TEST(DragAndDropTests, DataTransferSuppressGetDataDueToPresenceOfTextFile)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
     EXPECT_WK_STREQ("(FILE, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
     EXPECT_WK_STREQ("('hello.txt', text/plain)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
+}
+
+TEST(DragAndDropTests, DataTransferExposePlainTextWithFileURLAsFile)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer"];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    NSData *urlAsData = [@"file:///some/file/path.txt" dataUsingEncoding:NSUTF8StringEncoding];
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeFileURL withData:urlAsData];
+    [itemProvider registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypeURL withData:urlAsData];
+    [itemProvider registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
+
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointZero to:CGPointMake(50, 100)];
+
+    EXPECT_WK_STREQ("Files", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"htmlData.textContent"]);
+    EXPECT_WK_STREQ("(FILE, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("('text.txt', text/plain)", [webView stringByEvaluatingJavaScript:@"files.textContent"]);
 }
 
 TEST(DragAndDropTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)

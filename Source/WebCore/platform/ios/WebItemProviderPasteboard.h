@@ -37,6 +37,10 @@ typedef NS_ENUM(NSInteger, WebPreferredPresentationStyle) {
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface NSItemProvider (WebCoreExtras)
+@property (nonatomic, readonly) BOOL web_containsFileURLAndFileUploadContent;
+@end
+
 /*! A WebItemProviderRegistrar encapsulates a single call to register something to an item provider.
  @discussion Classes that implement this protocol each represent a different way of writing data to
  an item provider. Some examples include setting a chunk of data corresponding to a type identifier,

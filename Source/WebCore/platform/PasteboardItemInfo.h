@@ -41,6 +41,7 @@ struct PasteboardItemInfo {
     String contentTypeForFileUpload;
     String suggestedFileName;
     bool isNonTextType { false };
+    bool containsFileURLAndFileUploadContent { false };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -50,7 +51,7 @@ struct PasteboardItemInfo {
 template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
-    encoder << pathForFileUpload << contentTypeForFileUpload << suggestedFileName << isNonTextType;
+    encoder << pathForFileUpload << contentTypeForFileUpload << suggestedFileName << isNonTextType << containsFileURLAndFileUploadContent;
     encoder.encodeEnum(preferredPresentationStyle);
 }
 
@@ -68,6 +69,9 @@ std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
         return std::nullopt;
 
     if (!decoder.decode(result.isNonTextType))
+        return std::nullopt;
+
+    if (!decoder.decode(result.containsFileURLAndFileUploadContent))
         return std::nullopt;
 
     if (!decoder.decodeEnum(result.preferredPresentationStyle))

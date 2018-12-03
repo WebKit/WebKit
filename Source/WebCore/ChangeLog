@@ -1,3 +1,77 @@
+2018-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOSMac] Unable to upload non-image files using drag and drop in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=192283
+        <rdar://problem/46399461>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently on iOS, file URLs aren't generally written to the pasteboard during drag and drop unless the
+        application providing the data explicitly registers "public.file-url" to item providers. As such, our current
+        logic on iOS for handling drops does not attempt to prevent "public.file-url" from being advertised as the
+        "text/uri-list" MIME type in DataTransfer, though we do currently succeed in suppressing access to the file URL.
+
+        However, on iOSMac, the scenario in which file URLs are registered to item providers becomes pertinent when
+        uploading files from other macOS apps (e.g. Finder) into a WKWebView running in iOSMac. Furthermore, the
+        `preferredPresentationStyle` flag on `NSItemProvider` is unavailable in iOSMac; currently, this flag is our
+        primary cue on iOS that an item should be treated as an attachment rather than inline data. In order to support
+        file uploads in iOSMac, we make several adjustments to drop handling logic in iOS to handle the case where the
+        "public.file-url" type is registered. See below for more details.
+
+        Tests:  DragAndDropTests.DataTransferExposePlainTextWithFileURLAsFile
+                DragAndDropTests.DataTransferGetDataWhenDroppingImageWithFileURL
+
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Add a new flag that is set if and only if the item provider contains the "public.file-url" type, and also
+        contains some non-URL data type that conforms to one of the file types supported for file uploads (i.e.
+        "public.content", zip archives, and folders).
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+
+        Consider the pasteboard to contain files in the case where one or more of the items contains a file URL, along
+        with some other pasteboard data that can be represented as a file upload.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
+        If the pasteboard contains "public.file-url", don't consider "text/uri-list" to be one of the data types that's
+        safe to expose to the page. Our current behavior in this case is that we will advertise "text/uri-list" as a
+        pasteboard type in the DataTransfer, but if the page attempts to request this information, we simply return the
+        empty string. Instead, we shouldn't expose "text/uri-list" as a type in the first place.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Add a few more `__bridge`-ing casts where appropriate.
+
+        (typeConformsToTypes):
+
+        Move this further up the file so that it can be used in `NSItemProvider (WebCoreExtras)`.
+
+        (-[NSItemProvider web_containsFileURLAndFileUploadContent]):
+
+        Add a helper method on NSItemProvider to determine whether an item provider has a file URL, as well as a content
+        type suitable for file uploads.
+
+        (-[WebItemProviderLoadResult canBeRepresentedAsFileUpload]):
+
+        This currently always returns `NO` in iOSMac; instead, return `YES` on both iOS and iOSMac in the case where the
+        item provider contains a file URL and content which may be uploaded.
+
+        (-[WebItemProviderPasteboard preferredFileUploadURLAtIndex:fileType:]):
+        (-[WebItemProviderPasteboard typeIdentifiersToLoad:]):
+
+        Refactor this to take an `NSItemProvider` instead of a list of type identifiers, and bail out of loading data
+        for "public.url" if the item provider contains a file URL.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentifiers:]): Deleted.
+
 2018-12-02  Zalan Bujtas  <zalan@apple.com>
 
         Add a runtime feature flag for LayoutFormattingContext.

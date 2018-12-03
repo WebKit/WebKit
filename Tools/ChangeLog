@@ -1,3 +1,20 @@
+2018-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOSMac] Unable to upload non-image files using drag and drop in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=192283
+        <rdar://problem/46399461>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new API test to check that an item provider which contains plain text data and a file URL (but is not
+        marked as an attachment) is still treated as an attachment upon drop. Furthermore, verify that "text/uri-list"
+        does not expose the actual file URL written to the item provider.
+
+        Additionally, rebaseline an existing API test to remove an extraneous "text/uri-list" type that appears in
+        `DataTransfer.types`, but whose data is inaccessible via `getData` anyways.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+
 2018-12-01  Don Olmstead  <don.olmstead@sony.com>
 
         Cleanup WebKit Features

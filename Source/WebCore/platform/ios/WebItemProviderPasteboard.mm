@@ -53,6 +53,39 @@ typedef NSMutableDictionary<NSString *, NSURL *> TypeToFileURLMap;
 using WebCore::Pasteboard;
 using WebCore::PasteboardCustomData;
 
+static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
+{
+    for (NSString *conformsToType in conformsToTypes) {
+        if (UTTypeConformsTo((__bridge CFStringRef)type, (__bridge CFStringRef)conformsToType))
+            return YES;
+    }
+    return NO;
+}
+
+@implementation NSItemProvider (WebCoreExtras)
+
+- (BOOL)web_containsFileURLAndFileUploadContent
+{
+    BOOL containsFileURL = NO;
+    BOOL containsContentForFileUpload = NO;
+    for (NSString *identifier in self.registeredTypeIdentifiers) {
+        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL)) {
+            containsFileURL = YES;
+            continue;
+        }
+
+        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
+            continue;
+
+        containsContentForFileUpload |= typeConformsToTypes(identifier, Pasteboard::supportedFileUploadPasteboardTypes());
+        if (containsContentForFileUpload && containsFileURL)
+            return YES;
+    }
+    return NO;
+}
+
+@end
+
 @interface WebItemProviderDataRegistrar : NSObject <WebItemProviderRegistrar>
 - (instancetype)initWithData:(NSData *)data type:(NSString *)utiType;
 @property (nonatomic, readonly) NSString *typeIdentifier;
@@ -342,8 +375,11 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 - (BOOL)canBeRepresentedAsFileUpload
 {
+    if ([_itemProvider web_containsFileURLAndFileUploadContent])
+        return YES;
+
 #if PLATFORM(IOSMAC)
-    return false;
+    return NO;
 #else
     return [_itemProvider preferredPresentationStyle] != UIPreferredPresentationStyleInline;
 #endif
@@ -606,11 +642,11 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     NSItemProvider *itemProvider = [result itemProvider];
     for (NSString *registeredTypeIdentifier in itemProvider.registeredTypeIdentifiers) {
         // Search for the highest fidelity non-private type identifier we loaded from the item provider.
-        if (!UTTypeIsDeclared((CFStringRef)registeredTypeIdentifier) && !UTTypeIsDynamic((CFStringRef)registeredTypeIdentifier))
+        if (!UTTypeIsDeclared((__bridge CFStringRef)registeredTypeIdentifier) && !UTTypeIsDynamic((__bridge CFStringRef)registeredTypeIdentifier))
             continue;
 
         for (NSString *loadedTypeIdentifier in [result loadedTypeIdentifiers]) {
-            if (!UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, (CFStringRef)loadedTypeIdentifier))
+            if (!UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, (__bridge CFStringRef)loadedTypeIdentifier))
                 continue;
 
             if (outFileType)
@@ -630,16 +666,6 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
             [fileURLs addObjectsFromArray:[loadResult loadedFileURLs]];
     }
     return fileURLs;
-}
-
-static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
-{
-    // A type is considered appropriate to load if it conforms to one or more supported types.
-    for (NSString *conformsToType in conformsToTypes) {
-        if (UTTypeConformsTo((CFStringRef)type, (CFStringRef)conformsToType))
-            return YES;
-    }
-    return NO;
 }
 
 - (NSInteger)numberOfFiles
@@ -688,16 +714,18 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     return [fileManager linkItemAtURL:url toURL:destination error:nil] ? destination : nil;
 }
 
-- (NSArray<NSString *> *)typeIdentifiersToLoadForRegisteredTypeIdentifiers:(NSArray<NSString *> *)registeredTypeIdentifiers
+- (NSArray<NSString *> *)typeIdentifiersToLoad:(NSItemProvider *)itemProvider
 {
     auto typesToLoad = adoptNS([[NSMutableOrderedSet alloc] init]);
     NSString *highestFidelitySupportedType = nil;
     NSString *highestFidelityContentType = nil;
 
-    BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:(NSString *)kUTTypeFlatRTFD];
+    NSArray<NSString *> *registeredTypeIdentifiers = itemProvider.registeredTypeIdentifiers;
+    BOOL containsFile = itemProvider.web_containsFileURLAndFileUploadContent;
+    BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:(__bridge NSString *)kUTTypeFlatRTFD];
     // First, search for the highest fidelity supported type or the highest fidelity generic content type.
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
-        if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:(NSString *)kUTTypeRTFD]) {
+        if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:(__bridge NSString *)kUTTypeRTFD]) {
             // In the case where attachments are enabled and we're accepting all types of content using attachment
             // elements as a fallback representation, if the source writes attributed strings to the pasteboard with
             // com.apple.rtfd at a higher fidelity than com.apple.flat-rtfd, we'll end up loading only com.apple.rtfd
@@ -706,6 +734,9 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
             // regular web content isn't overridden by enabling attachment elements.
             continue;
         }
+
+        if (containsFile && UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeURL))
+            continue;
 
         if (!highestFidelitySupportedType && typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get()))
             highestFidelitySupportedType = registeredTypeIdentifier;
@@ -721,9 +752,9 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
         if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
             || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]
             || [registeredTypeIdentifier isEqualToString:customPasteboardDataUTI]
-            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeURL)
-            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeHTML)
-            || UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
+            || (!containsFile && UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeURL))
+            || UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypeHTML)
+            || UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, kUTTypePlainText))
             [typesToLoad addObject:registeredTypeIdentifier];
     }
 
@@ -746,7 +777,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     BOOL foundAnyDataToLoad = NO;
     RetainPtr<WebItemProviderPasteboard> protectedSelf = self;
     for (NSItemProvider *itemProvider in _itemProviders.get()) {
-        NSArray<NSString *> *typeIdentifiersToLoad = [protectedSelf typeIdentifiersToLoadForRegisteredTypeIdentifiers:itemProvider.registeredTypeIdentifiers];
+        NSArray<NSString *> *typeIdentifiersToLoad = [protectedSelf typeIdentifiersToLoad:itemProvider];
         foundAnyDataToLoad |= typeIdentifiersToLoad.count;
         [loadResults addObject:[WebItemProviderLoadResult loadResultWithItemProvider:itemProvider typesToLoad:typeIdentifiersToLoad]];
     }
