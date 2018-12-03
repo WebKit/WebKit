@@ -1,3 +1,56 @@
+2018-12-03  Keith Rollin  <krollin@apple.com>
+
+        Remove Network Capture
+        https://bugs.webkit.org/show_bug.cgi?id=192296
+        <rdar://problem/46408648>
+
+        Reviewed by Daniel Bates.
+
+        r209498 introduced an embedded record and replay facility for network
+        resource loading. This facility was added in order to support a new
+        implementation of the PLT and related performance tests. The PLT is
+        currenty taking a different direction, and so this record/replace
+        facility is no longer needed. Removing it as unused code.
+
+        * CMakeLists.txt:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::setDefersLoading):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::willPerformHTTPRedirection):
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        (WebKit::NetworkLoad::initializeForRecord): Deleted.
+        (WebKit::NetworkLoad::initializeForReplay): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::terminate):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp: Removed.
+        * NetworkProcess/capture/NetworkCaptureEvent.h: Removed.
+        * NetworkProcess/capture/NetworkCaptureLogging.h: Removed.
+        * NetworkProcess/capture/NetworkCaptureManager.cpp: Removed.
+        * NetworkProcess/capture/NetworkCaptureManager.h: Removed.
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp: Removed.
+        * NetworkProcess/capture/NetworkCaptureRecorder.h: Removed.
+        * NetworkProcess/capture/NetworkCaptureReplayer.cpp: Removed.
+        * NetworkProcess/capture/NetworkCaptureReplayer.h: Removed.
+        * NetworkProcess/capture/NetworkCaptureResource.cpp: Removed.
+        * NetworkProcess/capture/NetworkCaptureResource.h: Removed.
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp: Removed.
+        * NetworkProcess/capture/NetworkDataTaskReplay.h: Removed.
+        * NetworkProcess/capture/json.hpp: Removed.
+        * Sources.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+        * config.h:
+
 2018-12-02  Zalan Bujtas  <zalan@apple.com>
 
         Add a runtime feature flag for LayoutFormattingContext.

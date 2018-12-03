@@ -93,10 +93,6 @@
 #include "NetworkCache.h"
 #include "NetworkCacheCoders.h"
 
-#if ENABLE(NETWORK_CAPTURE)
-#include "NetworkCaptureManager.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include "NetworkSessionCocoa.h"
 #endif
@@ -299,12 +295,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         });
         memoryPressureHandler.install();
     }
-
-#if ENABLE(NETWORK_CAPTURE)
-    NetworkCapture::Manager::singleton().initialize(
-        parameters.recordReplayMode,
-        parameters.recordReplayCacheLocation);
-#endif
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
 
@@ -929,10 +919,6 @@ void NetworkProcess::logDiagnosticMessageWithValue(uint64_t webPageID, const Str
 
 void NetworkProcess::terminate()
 {
-#if ENABLE(NETWORK_CAPTURE)
-    NetworkCapture::Manager::singleton().terminate();
-#endif
-
     platformTerminate();
     ChildProcess::terminate();
 }

@@ -80,11 +80,6 @@ static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKi
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
-#if ENABLE(NETWORK_CAPTURE)
-static NSString * const WebKitRecordReplayModeDefaultsKey = @"WebKitRecordReplayMode";
-static NSString * const WebKitRecordReplayCacheLocationDefaultsKey = @"WebKitRecordReplayCacheLocation";
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -286,13 +281,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.storageAccessAPIEnabled = storageAccessAPIEnabled();
     parameters.suppressesConnectionTerminationOnSystemChange = m_configuration->suppressesConnectionTerminationOnSystemChange();
-
-#if ENABLE(NETWORK_CAPTURE)
-    parameters.recordReplayMode = [defaults stringForKey:WebKitRecordReplayModeDefaultsKey];
-    parameters.recordReplayCacheLocation = [defaults stringForKey:WebKitRecordReplayCacheLocationDefaultsKey];
-    if (parameters.recordReplayCacheLocation.isEmpty())
-        parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
-#endif
 
 #if ENABLE(PROXIMITY_NETWORKING)
     parameters.wirelessContextIdentifier = m_configuration->wirelessContextIdentifier();

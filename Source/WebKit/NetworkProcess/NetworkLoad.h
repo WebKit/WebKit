@@ -34,11 +34,6 @@
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(NETWORK_CAPTURE)
-#include "NetworkCaptureRecorder.h"
-#include "NetworkCaptureReplayer.h"
-#endif
-
 namespace WebKit {
 
 class NetworkLoad final : private NetworkDataTaskClient
@@ -71,10 +66,6 @@ public:
     String description() const;
 
 private:
-#if ENABLE(NETWORK_CAPTURE)
-    void initializeForRecord(NetworkSession&);
-    void initializeForReplay(NetworkSession&);
-#endif
     void initialize(NetworkSession&);
 
     // NetworkDataTaskClient
@@ -100,11 +91,6 @@ private:
     Seconds m_loadThrottleLatency;
 
     WebCore::ResourceRequest m_currentRequest; // Updated on redirects.
-
-#if ENABLE(NETWORK_CAPTURE)
-    std::unique_ptr<NetworkCapture::Recorder> m_recorder;
-    std::unique_ptr<NetworkCapture::Replayer> m_replayer;
-#endif
 };
 
 } // namespace WebKit

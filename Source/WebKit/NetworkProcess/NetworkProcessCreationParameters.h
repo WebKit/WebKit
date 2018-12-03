@@ -106,11 +106,6 @@ struct NetworkProcessCreationParameters {
     String cookiePersistentStorageFile;
 #endif
 
-#if ENABLE(NETWORK_CAPTURE)
-    String recordReplayMode;
-    String recordReplayCacheLocation;
-#endif
-
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
     Vector<String> urlSchemesRegisteredAsLocal;

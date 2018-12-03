@@ -12,7 +12,6 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/NetworkProcess/IndexedDB"
     "${WEBKIT_DIR}/NetworkProcess/ServiceWorker"
     "${WEBKIT_DIR}/NetworkProcess/cache"
-    "${WEBKIT_DIR}/NetworkProcess/capture"
     "${WEBKIT_DIR}/NetworkProcess/watchos"
     "${WEBKIT_DIR}/NetworkProcess/webrtc"
     "${WEBKIT_DIR}/Platform"

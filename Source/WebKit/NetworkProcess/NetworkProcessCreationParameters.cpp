@@ -90,10 +90,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #elif USE(CURL)
     encoder << cookiePersistentStorageFile;
 #endif
-#if ENABLE(NETWORK_CAPTURE)
-    encoder << recordReplayMode;
-    encoder << recordReplayCacheLocation;
-#endif
 
     encoder << urlSchemesRegisteredAsSecure;
     encoder << urlSchemesRegisteredAsBypassingContentSecurityPolicy;
@@ -221,13 +217,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #elif USE(CURL)
     if (!decoder.decode(result.cookiePersistentStorageFile))
-        return false;
-#endif
-
-#if ENABLE(NETWORK_CAPTURE)
-    if (!decoder.decode(result.recordReplayMode))
-        return false;
-    if (!decoder.decode(result.recordReplayCacheLocation))
         return false;
 #endif
 
