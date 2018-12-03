@@ -1,3 +1,29 @@
+2018-12-03  Yacine Bandou  <yacine.bandou@softathome.com>
+
+        [EME][ClearKey] Add layout test for dynamic change of key and video resolution
+        https://bugs.webkit.org/show_bug.cgi?id=191926
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+       Add new layout tests in order to test the playback of ClearKey encrypted video content with
+       a change of key and resolution during decoding.
+       The test starts by playing a ClearKey video with a resolution of 240p, then, in the third second,
+       the resolution of the video will change to 480p with a new ClearKey key.
+
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-240-0.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-240-1.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-240-2.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-240-3.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-480-0.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-480-4.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-480-5.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-480-6.mp4: Added.
+        * media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html: Added.
+        * media/encrypted-media/medias-enc.js:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-11-30  Youenn Fablet  <youenn@apple.com>
 
         Test that CSS subresource loading are exposed to resource timing in case of a CORS loaded CSS stylesheet but not imported stylesheets
