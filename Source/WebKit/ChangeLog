@@ -1,3 +1,9 @@
+2018-12-03  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unreviewed build fix.
+
+        * Platform/Logging.h:
+
 2018-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused NetworkProcessCreationParameters.diskCacheSizeOverride

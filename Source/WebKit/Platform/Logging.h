@@ -44,6 +44,7 @@ extern "C" {
     M(ActivityState) \
     M(BackForward) \
     M(CacheStorage) \
+    M(ContentObservation) \
     M(ContextMenu) \
     M(DragAndDrop) \
     M(Fullscreen) \
