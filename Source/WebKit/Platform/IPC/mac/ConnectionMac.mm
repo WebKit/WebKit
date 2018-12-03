@@ -72,11 +72,10 @@ namespace IPC {
 
 static const size_t inlineMessageMaxSize = 4096;
 
-// Message flags.
-enum {
-    MessageBodyIsOutOfLine = 1 << 0
-};
-    
+// Arbitrary message IDs that do not collide with Mach notification messages (used my initials).
+constexpr mach_msg_id_t inlineBodyMessageID = 0xdba0dba;
+constexpr mach_msg_id_t outOfLineBodyMessageID = 0xdba1dba;
+
 // ConnectionTerminationWatchdog does two things:
 // 1) It sets a watchdog timer to kill the peered process.
 // 2) On iOS, make the process runnable for the duration of the watchdog
@@ -316,7 +315,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
     header->msgh_size = messageSize;
     header->msgh_remote_port = m_sendPort;
     header->msgh_local_port = MACH_PORT_NULL;
-    header->msgh_id = 0;
+    header->msgh_id = inlineBodyMessageID;
 
     auto* messageData = reinterpret_cast<uint8_t*>(header + 1);
 
@@ -343,7 +342,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
         }
 
         if (messageBodyIsOOL) {
-            header->msgh_id |= MessageBodyIsOutOfLine;
+            header->msgh_id = outOfLineBodyMessageID;
 
             auto* descriptor = getDescriptorAndSkip(messageData);
             descriptor->out_of_line.address = encoder->buffer();
@@ -420,7 +419,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header)
         return std::make_unique<Decoder>(body, bodySize, nullptr, Vector<Attachment> { });
     }
 
-    bool messageBodyIsOOL = header->msgh_id & MessageBodyIsOutOfLine;
+    bool messageBodyIsOOL = header->msgh_id == outOfLineBodyMessageID;
 
     mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
     mach_msg_size_t numDescriptors = body->msgh_descriptor_count;
@@ -517,11 +516,13 @@ void Connection::receiveSourceEventHandler()
             connectionDidClose();
         return;
 
-    case MACH_NOTIFY_SEND_ONCE:
-        return;
-
-    default:
+    case inlineBodyMessageID:
+    case outOfLineBodyMessageID:
         break;
+
+    case MACH_NOTIFY_SEND_ONCE:
+    default:
+        return;
     }
 
     std::unique_ptr<Decoder> decoder = createMessageDecoder(header);

@@ -1,5 +1,20 @@
 2018-12-03  Darin Adler  <darin@apple.com>
 
+        [Cocoa] Check message IDs when decoding Mach messages in IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=192300
+        rdar://problem/46215523
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage): Use message IDs other than 0 and 1 for
+        the messages, as suggested by an expert at Apple.
+        (IPC::createMessageDecoder): Update for the new message IDs.
+        (IPC::Connection::receiveSourceEventHandler): Ignore messages with unexpected
+        message IDs.
+
+2018-12-03  Darin Adler  <darin@apple.com>
+
         [Cocoa] Check descriptor types in createMessageDecoder
         https://bugs.webkit.org/show_bug.cgi?id=192302
 
