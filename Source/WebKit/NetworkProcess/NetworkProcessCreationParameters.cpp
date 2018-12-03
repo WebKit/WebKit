@@ -42,7 +42,6 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
     encoder.encodeEnum(cacheModel);
-    encoder << diskCacheSizeOverride;
     encoder << canHandleHTTPSServerTrustEvaluation;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
@@ -115,8 +114,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
 {
     if (!decoder.decodeEnum(result.cacheModel))
-        return false;
-    if (!decoder.decode(result.diskCacheSizeOverride))
         return false;
     if (!decoder.decode(result.canHandleHTTPSServerTrustEvaluation))
         return false;

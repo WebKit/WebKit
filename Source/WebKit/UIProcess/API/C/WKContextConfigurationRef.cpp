@@ -200,11 +200,10 @@ void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfig
 
 int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration)
 {
-    return toImpl(configuration)->diskCacheSizeOverride();
+    return 0;
 }
 
 void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size)
 {
-    toImpl(configuration)->setDiskCacheSizeOverride(size);
 }
 

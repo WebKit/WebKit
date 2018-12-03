@@ -49,7 +49,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 // Network Process properties
 // FIXME: These should be be per-session/data store when we support multiple non-persistent sessions/data stores.
 
-@property (nonatomic) NSInteger diskCacheSizeOverride WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+@property (nonatomic) NSInteger diskCacheSizeOverride WK_API_DEPRECATED("Use [WKWebsiteDataStore nonPersistentDataStore] to limit disk cache size to 0", macosx(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
 @property (nonatomic, copy) NSArray *cachePartitionedURLSchemes;
 @property (nonatomic, copy) NSArray<NSString *> *alwaysRevalidatedURLSchemes WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));

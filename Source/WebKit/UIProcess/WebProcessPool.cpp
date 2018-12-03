@@ -481,7 +481,6 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     }
 
     parameters.cacheModel = cacheModel();
-    parameters.diskCacheSizeOverride = m_configuration->diskCacheSizeOverride();
     parameters.canHandleHTTPSServerTrustEvaluation = m_canHandleHTTPSServerTrustEvaluation;
 
     for (auto& scheme : globalURLSchemesWithCustomProtocolHandlers())

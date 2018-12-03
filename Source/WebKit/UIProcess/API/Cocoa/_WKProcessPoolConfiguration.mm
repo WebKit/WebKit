@@ -74,12 +74,11 @@
 
 - (NSInteger)diskCacheSizeOverride
 {
-    return _processPoolConfiguration->diskCacheSizeOverride();
+    return 0;
 }
 
 - (void)setDiskCacheSizeOverride:(NSInteger)size
 {
-    _processPoolConfiguration->setDiskCacheSizeOverride(size);
 }
 
 - (BOOL)diskCacheSpeculativeValidationEnabled

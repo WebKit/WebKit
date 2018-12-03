@@ -52,7 +52,6 @@ struct NetworkProcessCreationParameters {
     static bool decode(IPC::Decoder&, NetworkProcessCreationParameters&);
 
     CacheModel cacheModel { CacheModelDocumentViewer };
-    int64_t diskCacheSizeOverride { -1 };
     bool canHandleHTTPSServerTrustEvaluation { true };
 
     String diskCacheDirectory;

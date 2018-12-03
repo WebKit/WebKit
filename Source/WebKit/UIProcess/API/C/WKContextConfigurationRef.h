@@ -27,6 +27,7 @@
 #define WKContextConfigurationRef_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,8 +81,8 @@ WK_EXPORT void WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses(WKCon
 WK_EXPORT bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration);
 WK_EXPORT void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps);
 
-WK_EXPORT int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration);
-WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size);
+WK_EXPORT int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration) WK_C_API_DEPRECATED;
+WK_EXPORT void WKContextConfigurationSetDiskCacheSizeOverride(WKContextConfigurationRef configuration, int64_t size) WK_C_API_DEPRECATED;
     
 #ifdef __cplusplus
 }

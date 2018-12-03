@@ -298,7 +298,6 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     m_diskCacheIsDisabledForTesting = parameters.shouldUseTestingNetworkSession;
 
-    m_diskCacheSizeOverride = parameters.diskCacheSizeOverride;
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
     setCanHandleHTTPSServerTrustEvaluation(parameters.canHandleHTTPSServerTrustEvaluation);
@@ -864,9 +863,6 @@ void NetworkProcess::setCacheModel(uint32_t cm)
         diskFreeSize /= KB * 1000;
         calculateURLCacheSizes(cacheModel, diskFreeSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
     }
-
-    if (m_diskCacheSizeOverride >= 0)
-        urlCacheDiskCapacity = m_diskCacheSizeOverride;
 
     if (m_cache)
         m_cache->setCapacity(urlCacheDiskCapacity);

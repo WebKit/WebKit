@@ -76,9 +76,6 @@ public:
     WebKit::CacheModel cacheModel() const { return m_cacheModel; }
     void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; }
 
-    int64_t diskCacheSizeOverride() const { return m_diskCacheSizeOverride; }
-    void setDiskCacheSizeOverride(int64_t size) { m_diskCacheSizeOverride = size; }
-
     const WTF::String& applicationCacheDirectory() const { return m_applicationCacheDirectory; }
     void setApplicationCacheDirectory(const WTF::String& applicationCacheDirectory) { m_applicationCacheDirectory = applicationCacheDirectory; }
 
@@ -193,7 +190,6 @@ private:
     unsigned m_maximumProcessCount { 0 };
     bool m_diskCacheSpeculativeValidationEnabled { false };
     WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
-    int64_t m_diskCacheSizeOverride { -1 };
 
     WTF::String m_applicationCacheDirectory;
     WTF::String m_applicationCacheFlatFileSubdirectoryName;

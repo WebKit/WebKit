@@ -1,5 +1,36 @@
 2018-12-03  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused NetworkProcessCreationParameters.diskCacheSizeOverride
+        https://bugs.webkit.org/show_bug.cgi?id=192246
+
+        Reviewed by Chris Dumez.
+
+        The last use of this functionality was removed in rdar://problem/46344871
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setCacheModel):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationDiskCacheSizeOverride):
+        (WKContextConfigurationSetDiskCacheSizeOverride):
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration diskCacheSizeOverride]):
+        (-[_WKProcessPoolConfiguration setDiskCacheSizeOverride:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
+2018-12-03  Alex Christensen  <achristensen@webkit.org>
+
         Add WKWebProcessPlugInLoadDelegate SPI willStartProvisionalLoadForFrame with a completion handler
         https://bugs.webkit.org/show_bug.cgi?id=192272
 
