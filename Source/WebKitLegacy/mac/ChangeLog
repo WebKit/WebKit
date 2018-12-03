@@ -1,3 +1,21 @@
+2018-12-03  Jer Noble  <jer.noble@apple.com>
+
+        Get rid of old, dead Mac video fullscreen code.
+        https://bugs.webkit.org/show_bug.cgi?id=192315
+
+        Reviewed by Eric Carlson.
+
+        The Mac-only WebVideoFullscreenController and WebVideoFullscreenHUDWindowController depend upon QTKit, which
+        is no longer supported in the Mac port.
+
+        * WebView/WebVideoFullscreenController.h: Removed.
+        * WebView/WebVideoFullscreenController.mm: Removed.
+        * WebView/WebVideoFullscreenHUDWindowController.h: Removed.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Removed.
+        * WebView/WebView.mm:
+        (-[WebView _enterVideoFullscreenForVideoElement:mode:]):
+        (-[WebView _exitVideoFullscreen]):
+
 2018-12-03  Daniel Bates  <dabates@apple.com>
 
         [iOS] Do not handle key events that are key commands
