@@ -737,9 +737,13 @@ void WebPageProxy::reattachToWebProcess()
     finishAttachingToWebProcess();
 }
 
-bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std::optional<uint64_t> mainFrameID)
+bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std::optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
     if (!mainFrameID)
+        return false;
+
+    // If the client forced a swap then it may not be Web-compatible to suspend the previous page because other windows may have an opener link to the page.
+    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         return false;
 
     auto* currentItem = navigation.fromItem();
@@ -756,7 +760,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std
     return true;
 }
 
-void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigation& navigation, std::optional<uint64_t> mainFrameIDInPreviousProcess, ProcessSwapRequestedByClient processSwapRequestedByClient, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_isClosed);
     RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::swapToWebProcess\n", this);
@@ -770,11 +774,11 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
     }
 
     auto* destinationSuspendedPagePtr = destinationSuspendedPage.get();
-    auto doSwap = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), process = WTFMove(process), mainFrameIDInPreviousProcess, destinationSuspendedPage = WTFMove(destinationSuspendedPage), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto doSwap = [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), process = WTFMove(process), mainFrameIDInPreviousProcess, processSwapRequestedByClient, destinationSuspendedPage = WTFMove(destinationSuspendedPage), completionHandler = WTFMove(completionHandler)]() mutable {
         processDidTerminate(ProcessTerminationReason::NavigationSwap);
 
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-        bool didSuspendPreviousPage = suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess);
+        bool didSuspendPreviousPage = suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess, processSwapRequestedByClient);
         m_process->removeWebPage(*this, m_pageID);
 
         m_process = WTFMove(process);
@@ -792,7 +796,7 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
         }
 
         finishAttachingToWebProcess(didSuspendPreviousPage ? ShouldDelayAttachingDrawingArea::Yes : ShouldDelayAttachingDrawingArea::No);
-        completionHandler();
+        completionHandler(didSuspendPreviousPage);
     };
 
     if (destinationSuspendedPagePtr)
@@ -2623,7 +2627,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     receivedPolicyDecision(policyAction, navigation, WTFMove(data), WTFMove(sender));
 
     if (processForNavigation.ptr() != &process())
-        continueNavigationInNewProcess(*navigation, WTFMove(processForNavigation));
+        continueNavigationInNewProcess(*navigation, WTFMove(processForNavigation), processSwapRequestedByClient);
 }
 
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, std::optional<WebsitePoliciesData>&& websitePolicies, Ref<PolicyDecisionSender>&& sender)
@@ -2658,7 +2662,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     sender->send(action, navigation ? navigation->navigationID() : 0, downloadID, WTFMove(websitePolicies));
 }
 
-void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, Ref<WebProcessProxy>&& process)
+void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, Ref<WebProcessProxy>&& process, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
     LOG(Loading, "Continuing navigation %" PRIu64 " '%s' in a new web process", navigation.navigationID(), navigation.loggingString());
 
@@ -2668,7 +2672,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
 
     ASSERT(m_process.ptr() != process.ptr());
 
-    swapToWebProcess(WTFMove(process), navigation, mainFrameIDInPreviousProcess, [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), previousProcess = WTFMove(previousProcess), mainFrameIDInPreviousProcess, mainFrameURL = WTFMove(mainFrameURL)]() mutable {
+    swapToWebProcess(WTFMove(process), navigation, mainFrameIDInPreviousProcess, processSwapRequestedByClient, [this, protectedThis = makeRef(*this), navigation = makeRef(navigation), previousProcess = WTFMove(previousProcess), mainFrameIDInPreviousProcess, mainFrameURL = WTFMove(mainFrameURL)](bool didSuspendPreviousPage) mutable {
         if (auto* item = navigation->targetItem()) {
             LOG(Loading, "WebPageProxy %p continueNavigationInNewProcess to back item URL %s", this, item->url().utf8().data());
 
@@ -2726,8 +2730,12 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
         };
 
         bool isInitialNavigationInNewWindow = openedByDOM() && !hasCommittedAnyProvisionalLoads();
-        if (!isInitialNavigationInNewWindow || !mainFrameIDInPreviousProcess)
+        if (!m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() || !isInitialNavigationInNewWindow || !mainFrameIDInPreviousProcess) {
+            // There is no way we'll be able to return to the page in the previous page so close it.
+            if (!didSuspendPreviousPage)
+                previousProcess->send(Messages::WebPage::Close(), m_pageID);
             return;
+        }
 
         m_mainFrameWindowCreationHandler = [this, previousProcess = WTFMove(previousProcess), mainFrameIDInPreviousProcess = *mainFrameIDInPreviousProcess](const GlobalWindowIdentifier& windowIdentifier) {
             ASSERT(m_mainFrame);

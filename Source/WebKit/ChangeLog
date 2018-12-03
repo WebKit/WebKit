@@ -1,3 +1,30 @@
+2018-12-03  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Request by the client to process-swap is ignored if the window has an opener
+        https://bugs.webkit.org/show_bug.cgi?id=192267
+        <rdar://problem/46386886>
+
+        Reviewed by Brady Eidson.
+
+        If the client forces a process-swap, we should process-swap, even if the browsing
+        context has an opener (or openees). Previously, we would only bypass the cross-site
+        check, not the openee / openees checks.
+
+        The issue when doing so is that the openee still has a opener link to the window
+        in the old process. They would see that the window is still there and navigated
+        to 'about:blank' due to our page suspension logic. To address the issue, we no
+        longer suspend the old WebPage if the process swap was forced by the client and
+        we make sure that the old WebPage gets closed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-12-03  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelist files

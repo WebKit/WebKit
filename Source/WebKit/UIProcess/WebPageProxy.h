@@ -1411,7 +1411,7 @@ private:
     void updateThrottleState();
     void updateHiddenPageThrottlingAutoIncreases();
 
-    bool suspendCurrentPageIfPossible(API::Navigation&, std::optional<uint64_t> mainFrameID);
+    bool suspendCurrentPageIfPossible(API::Navigation&, std::optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient);
 
     enum class ResetStateReason {
         PageInvalidated,
@@ -1559,7 +1559,7 @@ private:
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
     void reattachToWebProcess();
-    void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&, std::optional<uint64_t> mainFrameIDInPreviousProcess, CompletionHandler<void()>&&);
+    void swapToWebProcess(Ref<WebProcessProxy>&&, API::Navigation&, std::optional<uint64_t> mainFrameIDInPreviousProcess, ProcessSwapRequestedByClient, CompletionHandler<void(bool)>&&);
 
     void finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea = ShouldDelayAttachingDrawingArea::No);
 
@@ -1878,7 +1878,7 @@ private:
 
     void reportPageLoadResult(const WebCore::ResourceError& = { });
 
-    void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&);
+    void continueNavigationInNewProcess(API::Navigation&, Ref<WebProcessProxy>&&, ProcessSwapRequestedByClient);
 
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();

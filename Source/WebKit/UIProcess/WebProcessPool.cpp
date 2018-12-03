@@ -2138,7 +2138,21 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
 {
     auto& targetURL = navigation.currentRequest().url();
 
-    if (!m_configuration->processSwapsOnNavigation() && processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
+    auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
+        if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
+            tryPrewarmWithDomainInformation(*process, targetURL);
+            return process.releaseNonNull();
+        }
+
+        return createNewWebProcess(page.websiteDataStore());
+    };
+
+    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes) {
+        reason = "Process swap was requested by the client"_s;
+        return createNewProcess();
+    }
+
+    if (!m_configuration->processSwapsOnNavigation()) {
         reason = "Feature is disabled"_s;
         return page.process();
     }
@@ -2186,31 +2200,28 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         }
     }
 
-    if (processSwapRequestedByClient == ProcessSwapRequestedByClient::No) {
-        if (navigation.treatAsSameOriginNavigation()) {
-            reason = "The treatAsSameOriginNavigation flag is set"_s;
-            return page.process();
-        }
+    if (navigation.treatAsSameOriginNavigation()) {
+        reason = "The treatAsSameOriginNavigation flag is set"_s;
+        return page.process();
+    }
 
-        bool isInitialLoadInNewWindowOpenedByDOM = page.openedByDOM() && !page.hasCommittedAnyProvisionalLoads();
-        URL sourceURL;
-        if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
-            sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
-        else
-            sourceURL = URL { { }, page.pageLoadState().url() };
+    bool isInitialLoadInNewWindowOpenedByDOM = page.openedByDOM() && !page.hasCommittedAnyProvisionalLoads();
+    URL sourceURL;
+    if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
+        sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
+    else
+        sourceURL = URL { { }, page.pageLoadState().url() };
 
-        if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
-            sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
-            RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
-        }
+    if (sourceURL.isEmpty() && page.configuration().relatedPage()) {
+        sourceURL = URL { { }, page.configuration().relatedPage()->pageLoadState().url() };
+        RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
+    }
 
-        if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || registrableDomainsAreEqual(sourceURL, targetURL)) {
-            reason = "Navigation is same-site"_s;
-            return page.process();
-        }
-        reason = "Navigation is cross-site"_s;
-    } else
-        reason = "Process swap was requested by the client"_s;
+    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || registrableDomainsAreEqual(sourceURL, targetURL)) {
+        reason = "Navigation is same-site"_s;
+        return page.process();
+    }
+    reason = "Navigation is cross-site"_s;
     
     auto registrableDomain = toRegistrableDomain(targetURL);
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
@@ -2251,12 +2262,7 @@ Ref<WebProcessProxy> WebProcessPool::processForNavigationInternal(WebPageProxy& 
         return process;
     }
 
-    if (RefPtr<WebProcessProxy> process = tryTakePrewarmedProcess(page.websiteDataStore())) {
-        tryPrewarmWithDomainInformation(*process, targetURL);
-        return process.releaseNonNull();
-    }
-
-    return createNewWebProcess(page.websiteDataStore());
+    return createNewProcess();
 }
 
 void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
