@@ -1,3 +1,22 @@
+2018-12-03  Keith Rollin  <krollin@apple.com>
+
+        Add .xcfilelist files
+        https://bugs.webkit.org/show_bug.cgi?id=192082
+        <rdar://problem/46312533>
+
+        Reviewed by Brent Fulgham.
+
+        Add .xcfilelist files for Generate Derived Sources and Generate
+        Unified Sources build phases in Xcode. These are just being staged for
+        now; they'll be added to the Xcode projects later.
+
+        No new tests -- no changed functionality.
+
+        * DerivedSources-input.xcfilelist: Added.
+        * DerivedSources-output.xcfilelist: Added.
+        * UnifiedSources-input.xcfilelist: Added.
+        * UnifiedSources-output.xcfilelist: Added.
+
 2018-12-03  Alex Christensen  <achristensen@webkit.org>
 
         Add WKWebProcessPlugInLoadDelegate SPI willStartProvisionalLoadForFrame with a completion handler
