@@ -407,6 +407,11 @@ bool PageLoadState::isLoading(const Data& data)
     return false;
 }
 
+void PageLoadState::didSwapWebProcesses()
+{
+    callObserverCallback(&Observer::didSwapWebProcesses);
+}
+
 void PageLoadState::willChangeProcessIsResponsive()
 {
     callObserverCallback(&Observer::willChangeWebProcessIsResponsive);

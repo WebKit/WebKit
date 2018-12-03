@@ -78,6 +78,8 @@ public:
 
         virtual void willChangeWebProcessIsResponsive() = 0;
         virtual void didChangeWebProcessIsResponsive() = 0;
+        
+        virtual void didSwapWebProcesses() = 0;
     };
 
     class Transaction {
@@ -164,6 +166,8 @@ public:
     void didChangeProgress(const Transaction::Token&, double);
     void didFinishProgress(const Transaction::Token&);
     void setNetworkRequestsInProgress(const Transaction::Token&, bool);
+
+    void didSwapWebProcesses();
 
     bool committedHasInsecureContent() const { return m_committedState.hasInsecureContent; }
 

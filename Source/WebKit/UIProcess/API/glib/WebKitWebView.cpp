@@ -354,6 +354,7 @@ private:
     void didChangeCertificateInfo() override { }
     void willChangeWebProcessIsResponsive() override { }
     void didChangeWebProcessIsResponsive() override { }
+    void didSwapWebProcesses() override { };
 
     WebKitWebView* m_webView;
 };

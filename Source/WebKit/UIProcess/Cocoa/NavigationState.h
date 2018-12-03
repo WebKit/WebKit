@@ -176,6 +176,7 @@ private:
     void didChangeCertificateInfo() override;
     void willChangeWebProcessIsResponsive() override;
     void didChangeWebProcessIsResponsive() override;
+    void didSwapWebProcesses() override;
 
 #if PLATFORM(IOS_FAMILY)
     void releaseNetworkActivityTokenAfterLoadCompletion() { releaseNetworkActivityToken(NetworkActivityTokenReleaseReason::LoadCompleted); }

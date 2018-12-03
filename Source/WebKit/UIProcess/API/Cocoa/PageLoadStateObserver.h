@@ -97,6 +97,7 @@ private:
     void didChangeNetworkRequestsInProgress() override { }
     void willChangeCertificateInfo() override { }
     void didChangeCertificateInfo() override { }
+    void didSwapWebProcesses() override { }
 
     void willChangeWebProcessIsResponsive() override
     {

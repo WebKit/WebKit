@@ -852,6 +852,7 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
     createInspectorTargets();
 
     pageClient().didRelaunchProcess();
+    m_pageLoadState.didSwapWebProcesses();
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 

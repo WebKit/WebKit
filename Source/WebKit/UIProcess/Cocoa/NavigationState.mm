@@ -1226,6 +1226,15 @@ void NavigationState::didChangeWebProcessIsResponsive()
     [m_webView didChangeValueForKey:@"_webProcessIsResponsive"];
 }
 
+void NavigationState::didSwapWebProcesses()
+{
+#if PLATFORM(IOS_FAMILY)
+    // Transfer our background assertion from the old process to the new one.
+    if (m_activityToken)
+        m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
+#endif
+}
+
 } // namespace WebKit
 
 #endif

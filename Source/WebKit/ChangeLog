@@ -1,3 +1,24 @@
+2018-12-03  Alex Christensen  <achristensen@webkit.org>
+
+        Update process assertions after swapping processes
+        https://bugs.webkit.org/show_bug.cgi?id=192318
+        <rdar://problem/46377552>
+
+        Reviewed by Chris Dumez.
+
+        If the previous WebProcess had a ProcessAssertion to prevent it from being suspended,
+        after navigation and process swapping we need the new WebProcess to update its process assertions.
+
+        * UIProcess/API/Cocoa/PageLoadStateObserver.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::didSwapWebProcesses):
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didSwapWebProcesses):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+
 2018-12-03  Daniel Bates  <dabates@apple.com>
 
         [iOS] Do not handle key events that are key commands
