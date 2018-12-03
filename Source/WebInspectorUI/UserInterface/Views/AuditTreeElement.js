@@ -62,10 +62,8 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
             if (this.representedObject instanceof WI.AuditTestCase)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestCaseScheduled, this);
-            else if (this.representedObject instanceof WI.AuditTestGroup) {
+            else if (this.representedObject instanceof WI.AuditTestGroup)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
-                this.expand();
-            }
         }
 
         this._updateLevel();

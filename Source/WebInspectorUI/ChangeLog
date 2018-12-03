@@ -1,3 +1,13 @@
+2018-12-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: test tree elements should start out collapsed
+        https://bugs.webkit.org/show_bug.cgi?id=192107
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.onattach):
+
 2018-12-03  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: can't select properties of read-only rules
