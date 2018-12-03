@@ -1679,6 +1679,7 @@ void DOMWindow::clearTimeout(int timeoutId)
         if (timeoutId > 0 && document) {
             DOMTimer* timer = document->findTimeout(timeoutId);
             if (timer && WebThreadContainsObservedDOMTimer(timer)) {
+                LOG_WITH_STREAM(ContentObservation, stream << "DOMWindow::clearTimeout: remove registered timer (" << timer << ")");
                 WebThreadRemoveObservedDOMTimer(timer);
 
                 if (!WebThreadCountOfObservedDOMTimers()) {

@@ -225,6 +225,7 @@ int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<Scheduled
         if (!didDeferTimeout && timeout <= 250_ms && singleShot) {
             WKSetObservedContentChange(WKContentIndeterminateChange);
             WebThreadAddObservedDOMTimer(timer);
+            LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::install: registed this timer: (" << timer << ") and observe when it fires.");
         }
     }
 #endif
@@ -349,6 +350,7 @@ void DOMTimer::fired()
     }
 
     if (shouldBeginObservingChanges) {
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: start observing (" << timer << ") timer callback.");
         WKStartObservingContentChanges();
         WKStartObservingStyleRecalcScheduling();
         WebThreadRemoveObservedDOMTimer(this);
@@ -364,6 +366,7 @@ void DOMTimer::fired()
 
 #if PLATFORM(IOS_FAMILY)
     if (shouldBeginObservingChanges) {
+        LOG_WITH_STREAM(ContentObservation, stream << "DOMTimer::fired: stop observing (" << timer << ") timer callback.");
         WKStopObservingStyleRecalcScheduling();
         WKStopObservingContentChanges();
 
@@ -371,11 +374,13 @@ void DOMTimer::fired()
         // Check if the timer callback triggered either a sync or async style update.
         auto inDeterminedState = observedContentChange == WKContentVisibilityChange || (isObversingLastTimer && observedContentChange == WKContentNoChange);  
         if (inDeterminedState) {
+            LOG(ContentObservation, "DOMTimer::fired: in determined state.");
             auto& document = downcast<Document>(context);
             if (auto* page = document.page())
                 page->chrome().client().observedContentChange(*document.frame());
         } else if (observedContentChange == WKContentIndeterminateChange) {
             // An async style recalc has been scheduled. Let's observe it.
+            LOG(ContentObservation, "DOMTimer::fired: wait until next style recalc fires.");
             WKSetShouldObserveNextStyleRecalc(true);
         }
     }

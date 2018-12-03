@@ -535,6 +535,7 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
     Frame& mainframe = m_page->mainFrame();
 
+    LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << nodeRespondingToClick << ") " << location);
     WKStartObservingContentChanges();
     WKStartObservingDOMTimerScheduling();
 
@@ -553,13 +554,16 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
     switch (WKObservedContentChange()) {
     case WKContentVisibilityChange:
         // The move event caused new contents to appear. Don't send the click event.
+        LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
         return;
     case WKContentIndeterminateChange:
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
         m_pendingSyntheticClickNode = nodeRespondingToClick;
         m_pendingSyntheticClickLocation = location;
+        LOG(ContentObservation, "handleSyntheticClick: Observed some change, but can't decide it yet -> wait.");
         return;
     case WKContentNoChange:
+        LOG(ContentObservation, "handleSyntheticClick: No change was observed -> click.");
         completeSyntheticClick(nodeRespondingToClick, location, WebCore::OneFingerTap);
         return;
     }
@@ -568,11 +572,15 @@ void WebPage::handleSyntheticClick(Node* nodeRespondingToClick, const WebCore::F
 
 void WebPage::completePendingSyntheticClickForContentChangeObserver()
 {
+    LOG_WITH_STREAM(ContentObservation, stream << "completePendingSyntheticClickForContentChangeObserver: pending target node(" << m_pendingSyntheticClickNode << ")");
     if (!m_pendingSyntheticClickNode)
         return;
     // Only dispatch the click if the document didn't get changed by any timers started by the move event.
-    if (WKObservedContentChange() == WKContentNoChange)
+    if (WKObservedContentChange() == WKContentNoChange) {
+        LOG(ContentObservation, "No chage was observed -> click.");
         completeSyntheticClick(m_pendingSyntheticClickNode.get(), m_pendingSyntheticClickLocation, WebCore::OneFingerTap);
+    } else
+        LOG(ContentObservation, "Observed meaningful visible change -> hover.");
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();

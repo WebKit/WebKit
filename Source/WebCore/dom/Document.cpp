@@ -1796,8 +1796,10 @@ void Document::scheduleStyleRecalc()
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
 #if PLATFORM(IOS_FAMILY)
-    if (WKIsObservingStyleRecalcScheduling())
+    if (WKIsObservingStyleRecalcScheduling()) {
+        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: register this style recalc schedule and observe when it fires.");
         WKSetObservedContentChange(WKContentIndeterminateChange);
+    }
 #endif
 
     // FIXME: Why on earth is this here? This is clearly misplaced.
@@ -2037,6 +2039,7 @@ bool Document::updateStyleIfNeeded()
 #if PLATFORM(IOS_FAMILY)
     auto observingContentChange = WKShouldObserveNextStyleRecalc();
     if (observingContentChange) {
+        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: start observing content change.");
         WKSetShouldObserveNextStyleRecalc(false);
         WKStartObservingContentChanges();
     }
@@ -2048,12 +2051,16 @@ bool Document::updateStyleIfNeeded()
 
 #if PLATFORM(IOS_FAMILY)
     if (observingContentChange) {
+        LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: stop observing content change.");
         WKStopObservingContentChanges();
 
         auto inDeterminedState = WKObservedContentChange() == WKContentVisibilityChange || !WebThreadCountOfObservedDOMTimers();  
         if (inDeterminedState) {
+            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: notify the pending synthetic click handler.");
             if (auto* page = this->page())
                 page->chrome().client().observedContentChange(*frame());
+        } else {
+            LOG_WITH_STREAM(ContentObservation, stream << "Document(" << this << ")::scheduleStyleRecalc: can't decided it yet.");
         }
     }
 #endif
@@ -2627,6 +2634,7 @@ void Document::platformSuspendOrStopActiveDOMObjects()
 {
 #if PLATFORM(IOS_FAMILY)
     if (WebThreadCountOfObservedDOMTimers() > 0) {
+        LOG_WITH_STREAM(ContentObservation, stream << "Document::platformSuspendOrStopActiveDOMObjects: remove registered timers.");
         if (auto* frame = this->frame()) {
             if (auto* page = frame->page())
                 page->chrome().client().clearContentChangeObservers(*frame);

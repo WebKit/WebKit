@@ -1,3 +1,23 @@
+2018-12-03  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Add logging channel for hover related content observation
+        https://bugs.webkit.org/show_bug.cgi?id=192312
+
+        Reviewed by Simon Fraser.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::platformSuspendOrStopActiveDOMObjects):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::clearTimeout):
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * platform/Logging.h:
+
 2018-12-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Use SoupSession instead of SoupSessionAsync
