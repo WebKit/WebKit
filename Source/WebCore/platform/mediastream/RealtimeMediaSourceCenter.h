@@ -88,7 +88,7 @@ public:
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
     virtual CaptureDeviceManager& displayCaptureDeviceManager() = 0;
 
-    String hashStringWithSalt(const String& id, const String& hashSalt);
+    WEBCORE_EXPORT String hashStringWithSalt(const String& id, const String& hashSalt);
     WEBCORE_EXPORT CaptureDevice captureDeviceWithUniqueID(const String& id, const String& hashSalt);
     WEBCORE_EXPORT ExceptionOr<void> setDeviceEnabled(const String&, bool);
 

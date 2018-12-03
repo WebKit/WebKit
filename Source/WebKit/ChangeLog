@@ -1,3 +1,20 @@
+2018-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] 'devicechange' event when more capture device information are revealed.
+        https://bugs.webkit.org/show_bug.cgi?id=192268
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Call captureDevicesChanged
+        if a filtered device list was returned previously.
+        (WebKit::UserMediaPermissionRequestManagerProxy::resetAccess): Clear m_hasFilteredDeviceList.
+        (WebKit::UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess): New.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Filter device
+        list and strip device IDs if gUM permission hasn't been given.
+        (WebKit::UserMediaPermissionRequestManagerProxy::watchdogTimerFired): Clear m_hasFilteredDeviceList.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2018-12-03  Keith Rollin  <krollin@apple.com>
 
         Remove Network Capture

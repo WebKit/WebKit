@@ -79,28 +79,6 @@ void MediaDevicesRequest::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices)
-{
-#if PLATFORM(IOS_FAMILY)
-    static const int defaultCameraCount = 2;
-#else
-    static const int defaultCameraCount = 1;
-#endif
-
-    static const int defaultMicrophoneCount = 1;
-
-    int cameraCount = 0;
-    int microphoneCount = 0;
-    devices.removeAllMatching([&](const Ref<MediaDeviceInfo>& device) -> bool {
-        if (device->kind() == MediaDeviceInfo::Kind::Videoinput && ++cameraCount > defaultCameraCount)
-            return true;
-        if (device->kind() == MediaDeviceInfo::Kind::Audioinput && ++microphoneCount > defaultMicrophoneCount)
-            return true;
-
-        return false;
-    });
-}
-
 void MediaDevicesRequest::start()
 {
     auto& document = downcast<Document>(*scriptExecutionContext());
@@ -127,7 +105,7 @@ void MediaDevicesRequest::start()
     }
 
     // This lambda keeps |this| alive until the request completes or is canceled.
-    auto completion = [this, protectedThis = makeRef(*this), canAccessMicrophone, canAccessCamera] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    auto completion = [this, protectedThis = makeRef(*this), canAccessMicrophone, canAccessCamera] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool) mutable {
 
         m_enumerationRequest = nullptr;
 
@@ -138,30 +116,15 @@ void MediaDevicesRequest::start()
         document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
         Vector<Ref<MediaDeviceInfo>> devices;
-        bool revealIdsAndLabels = originHasPersistentAccess || document.hasHadCaptureMediaStreamTrack();
         for (auto& deviceInfo : captureDevices) {
             if (!canAccessMicrophone && deviceInfo.type() == CaptureDevice::DeviceType::Microphone)
                 continue;
             if (!canAccessCamera && deviceInfo.type() == CaptureDevice::DeviceType::Camera)
                 continue;
 
-            auto label = emptyString();
-            auto id = emptyString();
-            auto groupId = emptyString();
-            if (revealIdsAndLabels) {
-                label = deviceInfo.label();
-                id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.persistentId(), deviceIdentifierHashSalt);
-                if (id.isEmpty())
-                    continue;
-                groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.groupId(), deviceIdentifierHashSalt);
-            }
-
             auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
-            devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
+            devices.append(MediaDeviceInfo::create(scriptExecutionContext(), deviceInfo.label(), deviceInfo.persistentId(), deviceInfo.groupId(), deviceType));
         }
-
-        if (!revealIdsAndLabels)
-            filterDeviceList(devices);
 
         callOnMainThread([protectedThis = makeRef(*this), devices = WTFMove(devices)]() mutable {
             protectedThis->m_promise.resolve(devices);

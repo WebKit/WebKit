@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    
+    promise_test(async (test) => {
+    
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
+
+        let devices1 = await navigator.mediaDevices.enumerateDevices();
+
+        let eventCount = 0;
+        await new Promise((resolve, reject) => {
+            navigator.mediaDevices.ondevicechange = (evt) => {
+                ++eventCount;
+                resolve();
+            }
+
+            setTimeout(() => {
+                reject("navigator.mediaDevices.ondevicechange took too long")
+            }, 4000);
+
+            navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+        });
+
+        let devices2 = await navigator.mediaDevices.enumerateDevices();
+        assert_true(devices1.length < devices2.length, "more devices revealed after gUM");
+        assert_equals(eventCount, 1, "one event fired");
+
+    }, "'devicechange' event fired after getUserMedia() if enumerateDevices() previously returned filtered list");
+
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -164,8 +164,13 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
         return;
 
     auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin());
-    if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIDHashSalt)))
+
+    if (grantAccess(userMediaID, WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIDHashSalt))) {
         m_grantedRequests.append(request.releaseNonNull());
+        if (m_hasFilteredDeviceList)
+            captureDevicesChanged();
+        m_hasFilteredDeviceList = false;
+    }
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(audioDevice);
@@ -181,6 +186,7 @@ void UserMediaPermissionRequestManagerProxy::resetAccess(uint64_t frameID)
     });
     m_pregrantedRequests.clear();
     m_deniedRequests.clear();
+    m_hasFilteredDeviceList = false;
 }
 
 const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::searchForGrantedRequest(uint64_t frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin, bool needsAudio, bool needsVideo) const
@@ -393,12 +399,39 @@ void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(uint64_t
         m_pendingDeviceRequests.take(userMediaID);
         request->completionHandler()(userMediaID, false);
     }
-} 
+}
+
+bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(uint64_t frameID, const SecurityOrigin& userMediaDocumentOrigin, const SecurityOrigin& topLevelDocumentOrigin)
+{
+    for (const auto& grantedRequest : m_grantedRequests) {
+        if (grantedRequest->requiresDisplayCapture())
+            continue;
+        if (!grantedRequest->userMediaDocumentSecurityOrigin().isSameSchemeHostPort(userMediaDocumentOrigin))
+            continue;
+        if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
+            continue;
+        if (grantedRequest->frameID() != frameID)
+            continue;
+
+        if (grantedRequest->requiresVideoCapture() || grantedRequest->requiresAudioCapture())
+            return true;
+    }
+
+    return false;
+}
 #endif
 
 void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin)
 {
 #if ENABLE(MEDIA_STREAM)
+
+#if PLATFORM(IOS_FAMILY)
+    static const int defaultMaximumCameraCount = 2;
+#else
+    static const int defaultMaximumCameraCount = 1;
+#endif
+    static const int defaultMaximumMicrophoneCount = 1;
+
     auto completionHandler = [this, requestOrigin = userMediaDocumentOrigin.copyRef(), topOrigin = topLevelDocumentOrigin.copyRef()](uint64_t userMediaID, bool originHasPersistentAccess) {
         auto pendingRequest = m_pendingDeviceRequests.take(userMediaID);
         if (!pendingRequest)
@@ -410,12 +443,39 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
         syncWithWebCorePrefs();
 
         auto devices = RealtimeMediaSourceCenter::singleton().getMediaStreamDevices();
-        devices.removeAllMatching([&](auto& device) -> bool {
-            return !device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone);
-        });
-
+        auto& request = *pendingRequest;
+        bool revealIdsAndLabels = originHasPersistentAccess || wasGrantedVideoOrAudioAccess(request->frameID(), request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin());
+        int cameraCount = 0;
+        int microphoneCount = 0;
         auto deviceIDHashSalt = m_page.websiteDataStore().deviceIdHashSaltStorage()->deviceIdHashSaltForOrigin(requestOrigin.get(), topOrigin.get());
-        m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, WTFMove(devices), WTFMove(deviceIDHashSalt), WTFMove(originHasPersistentAccess)), m_page.pageID());
+
+        Vector<CaptureDevice> filteredDevices;
+        for (const auto& device : devices) {
+            if (!device.enabled() || (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone))
+                continue;
+
+            if (!revealIdsAndLabels) {
+                if (device.type() == WebCore::CaptureDevice::DeviceType::Camera && ++cameraCount > defaultMaximumCameraCount)
+                    continue;
+                if (device.type() == WebCore::CaptureDevice::DeviceType::Microphone && ++microphoneCount > defaultMaximumMicrophoneCount)
+                    continue;
+            }
+
+            auto label = emptyString();
+            auto id = emptyString();
+            auto groupId = emptyString();
+            if (revealIdsAndLabels) {
+                label = device.label();
+                id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(device.persistentId(), deviceIDHashSalt);
+                groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(device.groupId(), deviceIDHashSalt);
+            }
+
+            filteredDevices.append(CaptureDevice(id, device.type(), label, groupId));
+        }
+
+        m_hasFilteredDeviceList = !revealIdsAndLabels;
+
+        m_page.process().send(Messages::WebPage::DidCompleteMediaDeviceEnumeration(userMediaID, WTFMove(filteredDevices), WTFMove(deviceIDHashSalt), originHasPersistentAccess), m_page.pageID());
     };
 
     getUserMediaPermissionInfo(userMediaID, frameID, WTFMove(completionHandler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin));
@@ -484,6 +544,7 @@ void UserMediaPermissionRequestManagerProxy::watchdogTimerFired()
     m_grantedRequests.clear();
     m_pregrantedRequests.clear();
     m_currentWatchdogInterval = 0_s;
+    m_hasFilteredDeviceList = false;
 }
 
 } // namespace WebKit

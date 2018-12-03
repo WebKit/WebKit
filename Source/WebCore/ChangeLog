@@ -1,3 +1,19 @@
+2018-12-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] 'devicechange' event when more capture device information are revealed.
+        https://bugs.webkit.org/show_bug.cgi?id=192268
+
+        Reviewed by Youenn Fablet.
+
+        Test: fast/mediastream/enumerate-devices-change-event.html
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::start): Remove code to modify device based on access, that is
+        now done in the UI process.
+        (WebCore::MediaDevicesRequest::filterDeviceList): Deleted.
+        * Modules/mediastream/MediaDevicesRequest.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
 2018-12-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOSMac] Unable to upload non-image files using drag and drop in WKWebView

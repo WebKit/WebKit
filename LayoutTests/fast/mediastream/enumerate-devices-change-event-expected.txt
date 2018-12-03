@@ -1,0 +1,3 @@
+
+PASS 'devicechange' event fired after getUserMedia() if enumerateDevices() previously returned filtered list 
+
