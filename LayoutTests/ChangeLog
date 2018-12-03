@@ -1,3 +1,12 @@
+2018-12-03  Truitt Savell  <tsavell@apple.com>
+
+        Modify unexpected new line in test after https://trac.webkit.org/changeset/238765/webkit
+        https://bugs.webkit.org/show_bug.cgi?id=192201
+
+        Unreviewed Test Gardening.
+
+        * platform/ios/compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt:
+
 2018-12-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] 'devicechange' event when more capture device information are revealed.
