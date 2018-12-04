@@ -170,9 +170,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             createLayer();
             if (parent() && !needsLayout() && containingBlock()) {
                 layer()->setRepaintStatus(NeedsFullRepaint);
-                // There is only one layer to update, it is not worth using |cachedOffset| since
-                // we are not sure the value will be used.
-                layer()->updateLayerPositions(0);
+                layer()->updateLayerPositions();
             }
         }
     } else if (layer() && layer()->parent()) {

@@ -53,12 +53,12 @@ class Element;
 class FloatSize;
 class Frame;
 class HTMLFrameOwnerElement;
-class Node;
 class Page;
 class RenderBox;
 class RenderElement;
 class RenderEmbeddedObject;
 class RenderLayer;
+class RenderLayerModelObject;
 class RenderObject;
 class RenderScrollbarPart;
 class RenderStyle;
@@ -290,9 +290,9 @@ public:
     bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && m_slowRepaintObjects->size(); }
 
     // Includes fixed- and sticky-position objects.
-    typedef HashSet<RenderElement*> ViewportConstrainedObjectSet;
-    void addViewportConstrainedObject(RenderElement*);
-    void removeViewportConstrainedObject(RenderElement*);
+    typedef HashSet<RenderLayerModelObject*> ViewportConstrainedObjectSet;
+    void addViewportConstrainedObject(RenderLayerModelObject*);
+    void removeViewportConstrainedObject(RenderLayerModelObject*);
     const ViewportConstrainedObjectSet* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
     bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && m_viewportConstrainedObjects->size() > 0; }
     

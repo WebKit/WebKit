@@ -1,3 +1,21 @@
+2018-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Viewport-constrained renderers are always RenderLayerModelObjects
+        https://bugs.webkit.org/show_bug.cgi?id=192342
+
+        Reviewed by Myles C. Maxfield.
+
+        addViewportConstrainedObject/removeViewportConstrainedObject can take RenderLayerModelObjects,
+        since all viewport-constrained renderers have layers.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addViewportConstrainedObject):
+        (WebCore::FrameView::removeViewportConstrainedObject):
+        * page/FrameView.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::styleDidChange): The 0 argument is actually a nullptr RenderGeometryMap,
+        which has a default value, and the comment was obsolete.
+
 2018-12-03  Don Olmstead  <don.olmstead@sony.com>
 
         Fix some unused parameter warnings

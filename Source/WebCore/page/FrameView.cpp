@@ -1515,7 +1515,7 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
     }
 }
 
-void FrameView::addViewportConstrainedObject(RenderElement* object)
+void FrameView::addViewportConstrainedObject(RenderLayerModelObject* object)
 {
     if (!m_viewportConstrainedObjects)
         m_viewportConstrainedObjects = std::make_unique<ViewportConstrainedObjectSet>();
@@ -1532,7 +1532,7 @@ void FrameView::addViewportConstrainedObject(RenderElement* object)
     }
 }
 
-void FrameView::removeViewportConstrainedObject(RenderElement* object)
+void FrameView::removeViewportConstrainedObject(RenderLayerModelObject* object)
 {
     if (m_viewportConstrainedObjects && m_viewportConstrainedObjects->remove(object)) {
         if (Page* page = frame().page()) {
