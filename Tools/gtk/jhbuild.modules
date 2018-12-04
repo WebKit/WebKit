@@ -208,20 +208,16 @@
             hash="sha256:db440670cb6f3c098b076df3735fbc4e69359bd605385e87c90ee48344a804ca"/>
   </autotools>
 
-  <autotools id="glib"
-             autogen-sh="configure"
-             autogenargs="--disable-dtrace --disable-libmount">
+  <meson id="glib"
+         mesonargs="-Dlibmount=false -Dselinux=false">
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.54/glib-2.54.2.tar.xz" version="2.54.2"
+    <branch module="/pub/GNOME/sources/glib/2.58/glib-${version}.tar.xz" version="2.58.1"
             repo="ftp.gnome.org"
-            hash="sha256:bb89e5c5aad33169a8c7f28b45671c7899c12f74caf707737f784d7102758e6c">
-      <!-- This patch landed in glib-2-54 branch and will be available in 2.54.3. -->
-      <patch file="glib-gtester-do-not-consider-skipped-tests-as-failures.patch" strip="1"/>
-      <patch file="glib-cast-function-type.patch" strip="1"/>
+            hash="sha256:97d6a9d926b6aa3dfaadad3077cfb43eec74432ab455dff14250c769d526d7d6">
     </branch>
-  </autotools>
+  </meson>
 
   <autotools id="glib-networking"
              autogen-sh="configure">
@@ -511,10 +507,10 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.42.0"
+            version="0.48.1"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:a74c7387a3dd8171e931bcd948355f7f9529368eae72c3c22a9beef6c2e73498"/>
+            hash="sha256:425d12edbb81498314926afa93a3eb2fca4ca6929cbe0f8abeb6ab45d1d9fa8f"/>
     <dependencies>
       <dep package="ninja"/>
     </dependencies>
