@@ -40,11 +40,11 @@ void MemoryPressureHandler::uninstall()
 {
 }
 
-void MemoryPressureHandler::holdOff(Seconds seconds)
+void MemoryPressureHandler::holdOff(Seconds)
 {
 }
 
-void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchronous synchronous)
+void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous)
 {
 }
 

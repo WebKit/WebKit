@@ -1,3 +1,17 @@
+2018-12-03  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix some unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=192336
+
+        Reviewed by Fujii Hironori.
+
+        * wtf/StackTrace.cpp:
+        (WTFGetBacktrace):
+        (WTF::StackTrace::demangle):
+        * wtf/generic/MemoryPressureHandlerGeneric.cpp:
+        (WTF::MemoryPressureHandler::holdOff):
+        (WTF::MemoryPressureHandler::respondToMemoryPressure):
+
 2018-12-01  Alexey Proskuryakov  <ap@apple.com>
 
         Modernize version check for _suppressedAutoAddedHTTPHeaders

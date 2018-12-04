@@ -339,6 +339,8 @@ PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, Op
 #if USE(FILE_LOCK)
     bool locked = lockFile(handle, lockMode);
     ASSERT_UNUSED(locked, locked);
+#else
+    UNUSED_PARAM(lockMode);
 #endif
 
     return handle;

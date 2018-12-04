@@ -114,6 +114,9 @@ static bool isLegacySerializedIDBKeyData(const uint8_t* data, size_t size)
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data, size));
     GRefPtr<GVariant> variant = g_variant_new_from_bytes(G_VARIANT_TYPE("a{sv}"), bytes.get(), FALSE);
     return g_variant_is_normal_form(variant.get());
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(size);
 #endif
     return false;
 }

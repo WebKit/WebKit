@@ -51,6 +51,7 @@ void WTFGetBacktrace(void** stack, int* size)
 #elif OS(WINDOWS)
     *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
 #else
+    UNUSED_PARAM(stack);
     *size = 0;
 #endif
 }
@@ -100,6 +101,8 @@ auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
     }
     if (mangledName || cxaDemangled)
         return DemangleEntry { mangledName, cxaDemangled };
+#else
+    UNUSED_PARAM(pc);
 #endif
     return std::nullopt;
 }

@@ -1,3 +1,20 @@
+2018-12-03  Don Olmstead  <don.olmstead@sony.com>
+
+        Fix some unused parameter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=192336
+
+        Reviewed by Fujii Hironori.
+
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::isLegacySerializedIDBKeyData):
+        * platform/FileSystem.cpp:
+        (WebCore::FileSystem::openAndLockFile):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::bindVertexArray):
+        * platform/network/curl/CertificateInfo.h:
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+
 2018-12-03  Keith Rollin  <krollin@apple.com>
 
         Add .xcfilelist files
