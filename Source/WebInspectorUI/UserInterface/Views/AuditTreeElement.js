@@ -49,6 +49,9 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
         const subtitle = null;
         super(classNames, representedObject.name, subtitle, representedObject, options);
+
+        if (isTestGroup)
+            this._expandedSetting = new WI.Setting(`audit-tree-element-${this.representedObject.name}-expanded`, false);
     }
 
     // Protected
@@ -65,6 +68,9 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
             else if (this.representedObject instanceof WI.AuditTestGroup)
                 this.representedObject.addEventListener(WI.AuditTestBase.Event.Scheduled, this._handleTestGroupScheduled, this);
         }
+
+        if (this._expandedSetting && this._expandedSetting.value)
+            this.expand();
 
         this._updateLevel();
     }
@@ -94,6 +100,22 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
             for (let result of this.representedObject.results)
                 this.appendChild(new WI.AuditTreeElement(result));
         }
+    }
+
+    onexpand()
+    {
+        console.assert(this.expanded);
+
+        if (this._expandedSetting)
+            this._expandedSetting.value = this.expanded;
+    }
+
+    oncollapse()
+    {
+        console.assert(!this.expanded);
+
+        if (this._expandedSetting)
+            this._expandedSetting.value = this.expanded;
     }
 
     ondelete()
