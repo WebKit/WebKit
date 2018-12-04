@@ -1,3 +1,23 @@
+2018-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Don't report resource timing to parent frame for history items
+        https://bugs.webkit.org/show_bug.cgi?id=192273
+        <rdar://problem/45163764>
+
+        Reviewed by Youenn Fablet.
+
+        We should not report history items to its parent frame as those are less
+        interested to its parent and might not be the first navigation in the iframes.
+
+        This change aligns the behavior when a cached document is not available for the
+        history item with the available case as we don't report resource timing for any
+        cached main document.
+
+        Test: http/tests/misc/resource-timing-navigation-in-restored-iframe-2.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+
 2018-12-04  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): position:fixed sidebar on https://www.w3.org/TR/SVG2/coords.html does not stay fixed

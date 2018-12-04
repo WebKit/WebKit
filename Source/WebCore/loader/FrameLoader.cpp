@@ -3591,6 +3591,9 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
 // methods of FrameLoader.
 void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
+    // History items should not be reported to the parent.
+    m_shouldReportResourceTimingToParentFrame = false;
+
     // Remember this item so we can traverse any child items as child frames load
     history().setProvisionalItem(&item);
 

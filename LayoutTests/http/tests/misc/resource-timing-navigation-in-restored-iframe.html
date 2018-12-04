@@ -14,7 +14,7 @@
             delete sessionStorage.didNav;
             window.addEventListener('message', (event) => {
                 resources = performance.getEntriesByType('resource');
-                shouldBe('resources.length', '1');
+                shouldBe('resources.length', '1'); // There is only one report as we don't report resource timing for cached main document.
                 shouldBeEqualToString('resources[0].name', 'http://127.0.0.1:8000/js-test-resources/js-test.js');
                 if (window.testRunner)
                     finishJSTest();
