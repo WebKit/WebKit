@@ -1,3 +1,12 @@
+2018-12-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [css-grid] Crash on debug changing the style of a positioned element
+        https://bugs.webkit.org/show_bug.cgi?id=191473
+
+        Unreviewed test gardening.
+
+        * TestExpectations: Skip crashing layout test.
+
 2018-12-03  Daniel Bates  <dabates@apple.com>
 
         [iOS] Do not handle key events that are key commands

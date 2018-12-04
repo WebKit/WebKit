@@ -617,7 +617,7 @@ webkit.org/b/191461 imported/w3c/web-platform-tests/css/css-grid/grid-items/perc
 webkit.org/b/191462 imported/w3c/web-platform-tests/css/css-grid/grid-items/percentage-size-replaced-subitems-001.html [ ImageOnlyFailure ]
 webkit.org/b/191463 imported/w3c/web-platform-tests/css/css-grid/grid-items/explicitly-sized-grid-item-as-table.html
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Failure ]
-webkit.org/b/191473 fast/css-grid-layout/grid-crash-out-of-flow-positioned-element.html [ Crash ]
+webkit.org/b/191473 fast/css-grid-layout/grid-crash-out-of-flow-positioned-element.html [ Skip ]
 webkit.org/b/149890 fast/css-grid-layout/grid-shorthands-style-format.html [ Failure ]
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Failure ]
 webkit.org/b/191507 fast/css-grid-layout/positioned-grid-container-percentage-tracks.html [ Failure ]
