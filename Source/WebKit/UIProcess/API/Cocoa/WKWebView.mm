@@ -196,15 +196,8 @@ static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 #endif // PLATFORM(MAC)
 
 #if ENABLE(ACCESSIBILITY_EVENTS)
-#include <wtf/darwin/WeakLinking.h>
-#if __has_include(<AccessibilitySupport.h>)
-#include <AccessibilitySupport.h>
-#else
-extern "C" {
-CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
-Boolean _AXSWebAccessibilityEventsEnabled();
-}
-#endif
+#import "AccessibilitySupportSPI.h"
+#import <wtf/darwin/WeakLinking.h>
 #endif
 
 #if PLATFORM(MAC) && ENABLE(DRAG_SUPPORT)
