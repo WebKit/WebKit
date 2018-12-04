@@ -146,6 +146,7 @@ struct WebPageCreationParameters {
     double viewportConfigurationLayoutSizeScaleFactor;
     WebCore::FloatSize viewportConfigurationViewSize;
     WebCore::FloatSize maximumUnobscuredSize;
+    int32_t deviceOrientation { 0 };
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;

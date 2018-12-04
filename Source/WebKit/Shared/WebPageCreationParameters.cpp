@@ -90,6 +90,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewportConfigurationLayoutSizeScaleFactor;
     encoder << viewportConfigurationViewSize;
     encoder << maximumUnobscuredSize;
+    encoder << deviceOrientation;
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
@@ -256,6 +257,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
         return std::nullopt;
     if (!decoder.decode(parameters.maximumUnobscuredSize))
+        return std::nullopt;
+    if (!decoder.decode(parameters.deviceOrientation))
         return std::nullopt;
 #endif
 

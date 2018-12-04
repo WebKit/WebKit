@@ -6533,6 +6533,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.viewportConfigurationViewLayoutSize = m_viewportConfigurationViewLayoutSize;
     parameters.viewportConfigurationLayoutSizeScaleFactor = m_viewportConfigurationLayoutSizeScaleFactor;
     parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
+    parameters.deviceOrientation = m_deviceOrientation;
 #endif
 
 #if PLATFORM(MAC)

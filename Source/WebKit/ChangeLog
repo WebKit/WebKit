@@ -1,3 +1,24 @@
+2018-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Device orientation may be wrong on page reload after crash
+        https://bugs.webkit.org/show_bug.cgi?id=192349
+        <rdar://problem/46359466>
+
+        Reviewed by Eric Carlson.
+
+        On page crash, the process is relaunched and the page is reloaded.
+        At that point, the orientation information of the page is not reset until the next device orientation change.
+        To fix that, add the device orientation to the page creation parameters so that we pass it everytime we create a page.
+        Covered by manual testing.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+
 2018-12-04  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [WPE] Add gtk-doc
