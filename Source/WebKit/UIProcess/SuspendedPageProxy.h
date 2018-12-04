@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/RefCounted.h>
@@ -68,6 +69,9 @@ private:
 
     bool m_finishedSuspending { false };
     CompletionHandler<void()> m_finishedSuspendingHandler;
+#if PLATFORM(IOS_FAMILY)
+    ProcessThrottler::BackgroundActivityToken m_suspensionToken;
+#endif
 };
 
 } // namespace WebKit

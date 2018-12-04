@@ -1,3 +1,37 @@
+2018-12-04  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r238817) PSON Page Cache API tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=192348
+
+        Reviewed by Alex Christensen.
+
+        Before suspending a WebProcess on iOS, we normally fake a memory pressure signal
+        so that the suspended process uses as little memory as possible while suspended.
+        Among other things, this will clear the page cache. This is an issue in the case
+        of process-swap on navigation because we keep suspended web processes around to
+        keep Page Cache functional.
+
+        To address the issue, when a WebProcess is about to get suspended, we check if
+        the process has any suspended WebPage (WebPage used for PSON PageCache support)
+        and we bypass the PageCache clearing if it does.
+
+        Our API tests did not catch this before r238817 because the NavigationState's
+        assertion was preventing the old WebProcesses from suspending for 3 seconds,
+        which was enough for those tests to complete.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        * UIProcess/SuspendedPageProxy.h:
+        Take a background assertion until the suspension load is complete, to make sure
+        the suspension load has a chance to complete before the process gets suspended.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::hasPageRequiringPageCacheWhileSuspended const):
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        * WebProcess/WebProcess.h:
+
 2018-12-04  Youenn Fablet  <youenn@apple.com>
 
         Device orientation may be wrong on page reload after crash

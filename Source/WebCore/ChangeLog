@@ -1,3 +1,15 @@
+2018-12-04  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r238817) PSON Page Cache API tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=192348
+
+        Reviewed by Alex Christensen.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+        (WebCore::releaseMemory):
+        * page/MemoryRelease.h:
+
 2018-12-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238838.

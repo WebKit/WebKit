@@ -29,7 +29,9 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT void releaseMemory(Critical, Synchronous);
+enum class MaintainPageCache : bool { No, Yes };
+
+WEBCORE_EXPORT void releaseMemory(Critical, Synchronous, MaintainPageCache = MaintainPageCache::No);
 void platformReleaseMemory(Critical);
 void jettisonExpensiveObjectsOnTopLevelNavigation();
 WEBCORE_EXPORT void registerMemoryReleaseNotifyCallbacks();

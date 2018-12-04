@@ -280,8 +280,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
-        memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous synchronous) {
-            WebCore::releaseMemory(critical, synchronous);
+        memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
+            auto maintainPageCache = m_isSuspending && hasPageRequiringPageCacheWhileSuspended() ? WebCore::MaintainPageCache::Yes : WebCore::MaintainPageCache::No;
+            WebCore::releaseMemory(critical, synchronous, maintainPageCache);
         });
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200) || PLATFORM(GTK) || PLATFORM(WPE)
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
@@ -427,6 +428,15 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
+}
+
+bool WebProcess::hasPageRequiringPageCacheWhileSuspended() const
+{
+    for (auto& page : m_pageMap.values()) {
+        if (page->isSuspended())
+            return true;
+    }
+    return false;
 }
 
 void WebProcess::markIsNoLongerPrewarmed()
@@ -1376,6 +1386,8 @@ void WebProcess::resetAllGeolocationPermissions()
 
 void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
+    SetForScope<bool> suspensionScope(m_isSuspending, true);
+
     if (!m_suppressMemoryPressureHandler)
         MemoryPressureHandler::singleton().releaseMemory(Critical::Yes, Synchronous::Yes);
 

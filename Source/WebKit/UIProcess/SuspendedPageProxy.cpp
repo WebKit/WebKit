@@ -79,6 +79,9 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
     , m_registrableDomain(toRegistrableDomain(URL(URL(), item.url())))
+#if PLATFORM(IOS_FAMILY)
+    , m_suspensionToken(m_process->throttler().backgroundActivityToken())
+#endif
 {
     item.setSuspendedPage(this);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);
@@ -128,6 +131,10 @@ void SuspendedPageProxy::didFinishLoad()
     m_finishedSuspending = true;
 
     m_process->send(Messages::WebProcess::UpdateActivePages(), 0);
+
+#if PLATFORM(IOS_FAMILY)
+    m_suspensionToken = nullptr;
+#endif
 
     if (auto finishedSuspendingHandler = WTFMove(m_finishedSuspendingHandler))
         finishedSuspendingHandler();
