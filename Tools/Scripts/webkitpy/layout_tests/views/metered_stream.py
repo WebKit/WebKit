@@ -104,12 +104,10 @@ class MeteredStream(object):
             now_tuple = time.localtime(now)
             timestamp_string = '%02d:%02d:%02d.%03d %d ' % (now_tuple.tm_hour, now_tuple.tm_min, now_tuple.tm_sec, int((now * 1000) % 1000), pid)
 
-        if self._isatty and not self._verbose:
-            msg = '{}{}'.format(timestamp_string, txt)
-        else:
-            msg = '{}{}'.format(timestamp_string, self._ensure_newline(txt))
+        if not self._isatty or self._verbose:
+            txt = self._ensure_newline(txt)
 
-        self._stream.write(msg)
+        self._stream.write(timestamp_string + txt)
 
     def writeln(self, txt, now=None, pid=None):
         self.write(self._ensure_newline(txt), now, pid)

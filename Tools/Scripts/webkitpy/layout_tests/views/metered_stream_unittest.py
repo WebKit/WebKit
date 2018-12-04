@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright (C) 2010, 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -107,6 +109,13 @@ class RegularTest(unittest.TestCase):
     def test_log_args(self):
         self.logger.info('foo %s %d', 'bar', 2)
         self.assertEqual(self.buflist, ['foo bar 2\n'])
+
+    def test_unicode(self):
+        self.logger.info(u'\u2713')
+        self.assertEqual(self.buflist[-1][-2:], u'\u2713\n')
+
+        self.logger.info('‘example’')
+        self.assertEqual(self.buflist[-1][-14:], '‘example’\n')
 
 
 class TtyTest(RegularTest):
