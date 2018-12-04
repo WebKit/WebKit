@@ -1,3 +1,12 @@
+2018-12-03  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Can't run MiniBrowser due to missing python2-yaml
+        https://bugs.webkit.org/show_bug.cgi?id=192308
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/install-dependencies:
+
 2018-12-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Google OAuth is broken in private sessions

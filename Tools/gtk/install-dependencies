@@ -168,6 +168,7 @@ function installDependenciesWithApt {
         pulseaudio-utils \
         python-gi \
         python-psutil \
+        python-yaml \
         ruby \
         ruby-json \
         ruby-highline \
@@ -330,6 +331,7 @@ function installDependenciesWithPacman {
         pulseaudio \
         python-gobject \
         python2-psutil \
+        python2-yaml \
         ruby \
         weston \
         xorg-server-xvfb"
@@ -492,6 +494,7 @@ function installDependenciesWithDnf {
         pulseaudio-utils \
         pygobject3-base \
         python2-psutil \
+        python2-yaml \
         ruby \
         rubygem-json \
         rubygem-highline \
