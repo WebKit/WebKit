@@ -226,6 +226,22 @@
             ]
         },
         {
+            "name": "awaitPromise",
+            "description": "Calls the async callback when the promise with the given ID gets settled.",
+            "parameters": [
+                { "name": "promiseObjectId", "$ref": "RemoteObjectId", "description": "Identifier of the promise." },
+                { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." },
+                { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for the result." },
+                { "name": "saveResult", "type": "boolean", "optional": true, "description": "Whether the resulting value should be considered for saving in the $n history." }
+            ],
+            "returns": [
+                { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
+                { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
+                { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
+            ],
+            "async": true
+        },
+        {
             "name": "callFunctionOn",
             "description": "Calls function with given declaration on the given object. Object group of the result is inherited from the target object.",
             "parameters": [

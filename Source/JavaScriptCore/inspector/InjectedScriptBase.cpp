@@ -35,6 +35,9 @@
 #include "DebuggerEvalEnabler.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
+#include "JSLock.h"
+#include "JSNativeStdFunction.h"
+#include "NativeStdFunctionCell.h"
 #include "ScriptFunctionCall.h"
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
@@ -93,9 +96,53 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, bool& out_wasThrown, std::optional<int>& out_savedResultIndex)
+void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, std::optional<bool>& out_wasThrown, std::optional<int>& out_savedResultIndex)
 {
-    RefPtr<JSON::Value> result = makeCall(function);
+    checkCallResult(errorString, makeCall(function), out_resultObject, out_wasThrown, out_savedResultIndex);
+}
+
+void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function, AsyncCallCallback&& callback)
+{
+    if (hasNoValue() || !hasAccessToInspectedScriptState()) {
+        checkAsyncCallResult(JSON::Value::null(), callback);
+        return;
+    }
+
+    auto* scriptState = m_injectedScriptObject.scriptState();
+    JSC::VM& vm = scriptState->vm();
+
+    JSC::JSNativeStdFunction* jsFunction;
+
+    {
+        JSC::JSLockHolder locker(vm);
+
+        jsFunction = JSC::JSNativeStdFunction::create(vm, scriptState->lexicalGlobalObject(), 1, String(), [&, callback = WTFMove(callback)] (JSC::ExecState* exec) {
+            if (!exec)
+                checkAsyncCallResult(JSON::Value::create("Exception while making a call."), callback);
+            if (auto resultJSONValue = toInspectorValue(*exec, exec->argument(0)))
+                checkAsyncCallResult(resultJSONValue, callback);
+            else
+                checkAsyncCallResult(JSON::Value::create(String::format("Object has too long reference chain (must not be longer than %d)", JSON::Value::maxDepth)), callback);
+            return JSC::JSValue::encode(JSC::jsUndefined());
+        });
+    }
+
+    function.appendArgument(JSC::JSValue(jsFunction));
+
+    bool hadException = false;
+    auto resultJSValue = callFunctionWithEvalEnabled(function, hadException);
+    ASSERT_UNUSED(resultJSValue, resultJSValue.isUndefined());
+
+    ASSERT(!hadException);
+    if (hadException) {
+        // Since `callback` is moved above, we can't call it if there's an exception while trying to
+        // execute the `JSNativeStdFunction` inside InjectedScriptSource.js.
+        jsFunction->nativeStdFunctionCell()->function()(nullptr);
+    }
+}
+
+void InjectedScriptBase::checkCallResult(ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, std::optional<bool>& out_wasThrown, std::optional<int>& out_savedResultIndex)
+{
     if (!result) {
         errorString = "Internal error: result value is empty"_s;
         return;
@@ -126,11 +173,25 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
     }
 
     out_resultObject = BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject);
-    out_wasThrown = wasThrown;
+
+    if (wasThrown)
+        out_wasThrown = wasThrown;
 
     int savedResultIndex;
     if (resultTuple->getInteger("savedResultIndex"_s, savedResultIndex))
         out_savedResultIndex = savedResultIndex;
+}
+
+void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback& callback)
+{
+    ErrorString errorString;
+    RefPtr<Protocol::Runtime::RemoteObject> resultObject;
+    std::optional<bool> wasThrown;
+    std::optional<int> savedResultIndex;
+
+    checkCallResult(errorString, result, resultObject, wasThrown, savedResultIndex);
+
+    callback(errorString, WTFMove(resultObject), wasThrown, savedResultIndex);
 }
 
 } // namespace Inspector

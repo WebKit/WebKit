@@ -4,6 +4,9 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/audit-utilities.js"></script>
 <script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
 function test()
 {
     let suite = InspectorTest.Audit.createSuite("Audit.Basic");
@@ -23,12 +26,24 @@ function test()
     InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Error", {level: WI.AuditTestCaseResult.Level.Error}, WI.AuditTestCaseResult.Level.Error);
     InspectorTest.Audit.addObjectTest("Audit.Basic.Object.Unsupported", {level: WI.AuditTestCaseResult.Level.Unsupported}, WI.AuditTestCaseResult.Level.Unsupported);
 
-    InspectorTest.Audit.addTest("Audit.Basic.Error.Undefined", undefined, WI.AuditTestCaseResult.Level.Error);
-    InspectorTest.Audit.addTest("Audit.Basic.Error.Null", null, WI.AuditTestCaseResult.Level.Error);
-    InspectorTest.Audit.addTest("Audit.Basic.Error.Number", 42, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Promise.Boolean.True", `resolve(true)`, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Promise.String.Pass", `resolve("${WI.AuditTestCaseResult.Level.Pass}")`, WI.AuditTestCaseResult.Level.Pass);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Promise.Object.Pass", `resolve({level: "${WI.AuditTestCaseResult.Level.Pass}"})`, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Async.Boolean.True", true, WI.AuditTestCaseResult.Level.Pass, {async: true});
+    InspectorTest.Audit.addStringTest("Audit.Basic.Async.String.Pass", WI.AuditTestCaseResult.Level.Pass, WI.AuditTestCaseResult.Level.Pass, {async: true});
+    InspectorTest.Audit.addObjectTest("Audit.Basic.Async.Object.Pass", {level: WI.AuditTestCaseResult.Level.Pass}, WI.AuditTestCaseResult.Level.Pass, {async: true});
+
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Timeout.Pass", `setTimeout(resolve, 0, "${WI.AuditTestCaseResult.Level.Pass}")`, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Undefined", undefined, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Null", null, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Number", 42, WI.AuditTestCaseResult.Level.Error);
     InspectorTest.Audit.addStringTest("Audit.Basic.Error.String", "foo", WI.AuditTestCaseResult.Level.Error);
     InspectorTest.Audit.addObjectTest("Audit.Basic.Error.Object", {}, WI.AuditTestCaseResult.Level.Error);
-    InspectorTest.Audit.addTest("Audit.Basic.Error.Variable", "INVALID", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Basic.Error.Variable", "INVALID", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Resolved", `setTimeout(resolve, 0)`, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addPromiseTest("Audit.Basic.Error.Promise.Rejected", `setTimeout(reject, 0, "rejected")`, WI.AuditTestCaseResult.Level.Error);
 
     suite.runTestCasesAndFinish();
 }

@@ -33,6 +33,7 @@
 
 #include "InjectedScriptBase.h"
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 
 namespace Deprecated {
@@ -50,9 +51,10 @@ public:
     InjectedScript(Deprecated::ScriptObject, InspectorEnvironment*);
     virtual ~InjectedScript();
 
-    void evaluate(ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown, std::optional<int>& savedResultIndex);
-    void evaluateOnCallFrame(ErrorString&, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown, std::optional<int>& savedResultIndex);
-    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown);
+    void evaluate(ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
+    void awaitPromise(const String& promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&&);
+    void evaluateOnCallFrame(ErrorString&, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex);
+    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown);
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>& result);
     void functionDetails(ErrorString&, JSC::JSValue, RefPtr<Protocol::Debugger::FunctionDetails>& result);
     void getPreview(ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>& result);

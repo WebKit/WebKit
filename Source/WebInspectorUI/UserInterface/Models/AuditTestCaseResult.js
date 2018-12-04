@@ -80,6 +80,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             metadata = {};
         else {
             metadata.startTimestamp = typeof metadata.startTimestamp === "string" ? new Date(metadata.startTimestamp) : null;
+            metadata.asyncTimestamp = typeof metadata.asyncTimestamp === "string" ? new Date(metadata.asyncTimestamp) : null;
             metadata.endTimestamp = typeof metadata.endTimestamp === "string" ? new Date(metadata.endTimestamp) : null;
             metadata.url = typeof metadata.url === "string" ? metadata.url : null;
         }
@@ -112,6 +113,8 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
             options.metadata = {};
             if (metadata.startTimestamp && !isNaN(metadata.startTimestamp))
                 options.metadata.startTimestamp = metadata.startTimestamp;
+            if (metadata.asyncTimestamp && !isNaN(metadata.asyncTimestamp))
+                options.metadata.asyncTimestamp = metadata.asyncTimestamp;
             if (metadata.endTimestamp && !isNaN(metadata.endTimestamp))
                 options.metadata.endTimestamp = metadata.endTimestamp;
             if (metadata.url)
@@ -177,6 +180,8 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
         let metadata = {};
         if (this._metadata.startTimestamp && !isNaN(this._metadata.startTimestamp))
             metadata.startTimestamp = this._metadata.startTimestamp;
+        if (this._metadata.asyncTimestamp && !isNaN(this._metadata.asyncTimestamp))
+            metadata.asyncTimestamp = this._metadata.asyncTimestamp;
         if (this._metadata.endTimestamp && !isNaN(this._metadata.endTimestamp))
             metadata.endTimestamp = this._metadata.endTimestamp;
         if (this._metadata.url)

@@ -34,6 +34,14 @@ WI.RuntimeManager = class RuntimeManager extends WI.Object
         WI.Frame.addEventListener(WI.Frame.Event.ExecutionContextsCleared, this._frameExecutionContextsCleared, this);
     }
 
+    // Static
+
+    static supportsAwaitPromise()
+    {
+        // COMPATIBILITY (iOS 12): Runtime.awaitPromise did not exist
+        return !!InspectorBackend.domains.Runtime.awaitPromise;
+    }
+
     // Target
 
     initializeTarget(target)

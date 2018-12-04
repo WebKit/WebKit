@@ -55,7 +55,8 @@ null
   },
   "metadata": {
     "startTimestamp": "0001-01-01T00:00:00.000Z",
-    "endTimestamp": "0002-01-01T00:00:00.000Z",
+    "asyncTimestamp": "0002-01-01T00:00:00.000Z",
+    "endTimestamp": "0003-01-01T00:00:00.000Z",
     "url": "validWithValidSubOptionals test result url"
   }
 }

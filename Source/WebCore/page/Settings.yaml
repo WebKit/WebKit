@@ -224,6 +224,8 @@ webGLEnabled:
   initial: false
 webGLErrorsToConsoleEnabled:
   initial: true
+unhandledPromiseRejectionToConsoleEnabled:
+  initial: true
 forceSoftwareWebGLRendering:
   initial: false
 forceWebGLUsesLowPower:

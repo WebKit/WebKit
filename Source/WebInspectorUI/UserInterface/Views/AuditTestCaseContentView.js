@@ -104,9 +104,19 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                 timeElement.textContent = metadata.startTimestamp.toLocaleString();
 
                 if (metadata.endTimestamp) {
+                    let totalDuration = Number.secondsToString((metadata.endTimestamp - metadata.startTimestamp) / 1000);
+
                     let durationElement = this._metadataElement.appendChild(document.createElement("span"));
                     durationElement.classList.add("duration");
-                    durationElement.textContent = Number.secondsToString((metadata.endTimestamp - metadata.startTimestamp) / 1000);
+                    durationElement.textContent = totalDuration;
+
+                    if (metadata.asyncTimestamp) {
+                        let evalDuration = Number.secondsToString((metadata.asyncTimestamp - metadata.startTimestamp) / 1000);
+                        let asyncDuration = Number.secondsToString((metadata.endTimestamp - metadata.asyncTimestamp) / 1000);
+
+                        durationElement.classList.add("async");
+                        durationElement.title = WI.UIString("%s eval\n%s async").format(evalDuration, asyncDuration);
+                    }
                 }
             }
 

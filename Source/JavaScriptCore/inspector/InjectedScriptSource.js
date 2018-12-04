@@ -108,6 +108,43 @@ let InjectedScript = class InjectedScript
         return this._evaluateAndWrap(InjectedScriptHost.evaluateWithScopeExtension, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview, saveResult);
     }
 
+    awaitPromise(promiseObjectId, returnByValue, generatePreview, saveResult, callback)
+    {
+        let parsedPromiseObjectId = this._parseObjectId(promiseObjectId);
+        let promiseObject = this._objectForId(parsedPromiseObjectId);
+        let promiseObjectGroupName = this._idToObjectGroupName[parsedPromiseObjectId.id];
+
+        if (!isDefined(promiseObject)) {
+            callback("Could not find object with given id");
+            return;
+        }
+
+        if (!(promiseObject instanceof Promise)) {
+            callback("Object with given id is not a Promise");
+            return;
+        }
+
+        let resolve = (value) => {
+            let returnObject = {
+                wasThrown: false,
+                result: RemoteObject.create(value, promiseObjectGroupName, returnByValue, generatePreview),
+            };
+
+            if (saveResult) {
+                this._savedResultIndex = 0;
+                this._saveResult(returnObject.result);
+                if (this._savedResultIndex)
+                    returnObject.savedResultIndex = this._savedResultIndex;
+            }
+
+            callback(returnObject);
+        };
+        let reject = (reason) => {
+            callback(this._createThrownValue(reason, promiseObjectGroupName));
+        };
+        promiseObject.then(resolve, reject);
+    }
+
     evaluateOnCallFrame(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview, saveResult)
     {
         let callFrame = this._callFrameForId(topCallFrame, callFrameId);

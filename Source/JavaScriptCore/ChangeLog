@@ -1,3 +1,43 @@
+2018-12-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: tests should support async operations
+        https://bugs.webkit.org/show_bug.cgi?id=192171
+        <rdar://problem/46423562>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add `awaitPromise` command for executing a callback when a Promise gets settled.
+
+        Drive-by: allow `wasThrown` to be optional, instead of expecting it to always have a value.
+
+        * inspector/protocol/Runtime.json:
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype.awaitPromise): Added.
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::evaluate):
+        (Inspector::InjectedScript::awaitPromise): Added.
+        (Inspector::InjectedScript::callFunctionOn):
+        (Inspector::InjectedScript::evaluateOnCallFrame):
+
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeEvalCall):
+        (Inspector::InjectedScriptBase::makeAsyncCall): Added.
+        (Inspector::InjcetedScriptBase::checkCallResult): Added.
+        (Inspector::InjcetedScriptBase::checkAsyncCallResult): Added.
+
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::awaitPromise):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame):
+
 2018-12-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r238833.

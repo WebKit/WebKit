@@ -112,13 +112,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             doNotPauseOnExceptionsAndMuteConsole: true,
         };
 
-        try {
-            metadata.startTimestamp = new Date;
-            let evaluateResponse = await RuntimeAgent.evaluate.invoke(evaluateArguments);
-            metadata.endTimestamp = new Date;
-
-            let remoteObject = WI.RemoteObject.fromPayload(evaluateResponse.result, WI.mainTarget);
-            if (evaluateResponse.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
+        async function parseResponse(response) {
+            let remoteObject = WI.RemoteObject.fromPayload(response.result, WI.mainTarget);
+            if (response.wasThrown || (remoteObject.type === "object" && remoteObject.subtype === "error"))
                 addError(remoteObject.description);
             else if (remoteObject.type === "boolean")
                 setLevel(remoteObject.value ? WI.AuditTestCaseResult.Level.Pass : WI.AuditTestCaseResult.Level.Fail);
@@ -234,6 +230,27 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                 });
             } else
                 addError(WI.UIString("Return value is not an object, string, or boolean"));
+        }
+
+        try {
+            metadata.startTimestamp = new Date;
+            let response = await RuntimeAgent.evaluate.invoke(evaluateArguments);
+            metadata.endTimestamp = new Date;
+
+            if (response.result.type === "object" && response.result.className === "Promise") {
+                if (WI.RuntimeManager.supportsAwaitPromise()) {
+                    metadata.asyncTimestamp = metadata.endTimestamp;
+                    response = await RuntimeAgent.awaitPromise(response.result.objectId);
+                    metadata.endTimestamp = new Date;
+                } else {
+                    response = null;
+                    addError(WI.UIString("Async audits are not supported."));
+                    setLevel(WI.AuditTestCaseResult.Level.Unsupported);
+                }
+            }
+
+            if (response)
+                await parseResponse(response);
         } catch (error) {
             metadata.endTimestamp = new Date;
             addError(error.message);

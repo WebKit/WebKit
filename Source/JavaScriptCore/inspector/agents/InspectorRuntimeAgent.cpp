@@ -111,7 +111,7 @@ void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Protoc
     }
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& outWasThrown, std::optional<int>& savedResultIndex)
+void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
@@ -123,9 +123,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    bool wasThrown;
     injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : String(), asBool(includeCommandLineAPI), asBool(returnByValue), asBool(generatePreview), asBool(saveResult), result, wasThrown, savedResultIndex);
-    outWasThrown = wasThrown;
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
@@ -133,7 +131,23 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& outWasThrown)
+void InspectorRuntimeAgent::awaitPromise(const String& promiseObjectId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, Ref<AwaitPromiseCallback>&& callback)
+{
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(promiseObjectId);
+    if (injectedScript.hasNoValue()) {
+        callback->sendFailure("Could not find InjectedScript for promiseObjectId"_s);
+        return;
+    }
+
+    injectedScript.awaitPromise(promiseObjectId, asBool(returnByValue), asBool(generatePreview), asBool(saveResult), [callback = WTFMove(callback)] (ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex) {
+        if (!errorString.isEmpty())
+            callback->sendFailure(errorString);
+        else
+            callback->sendSuccess(WTFMove(result), wasThrown, savedResultIndex);
+    });
+}
+
+void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -151,11 +165,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    bool wasThrown;
-
     injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), asBool(generatePreview), result, wasThrown);
-
-    outWasThrown = wasThrown;
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();

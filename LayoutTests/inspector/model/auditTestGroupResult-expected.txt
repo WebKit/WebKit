@@ -70,7 +70,8 @@ null
       },
       "metadata": {
         "startTimestamp": "0001-01-01T00:00:00.000Z",
-        "endTimestamp": "0002-01-01T00:00:00.000Z",
+        "asyncTimestamp": "0002-01-01T00:00:00.000Z",
+        "endTimestamp": "0003-01-01T00:00:00.000Z",
         "url": "validWithValidOptionals test result url"
       }
     }
@@ -106,7 +107,8 @@ null
           },
           "metadata": {
             "startTimestamp": "0001-01-01T00:00:00.000Z",
-            "endTimestamp": "0002-01-01T00:00:00.000Z",
+            "asyncTimestamp": "0002-01-01T00:00:00.000Z",
+            "endTimestamp": "0003-01-01T00:00:00.000Z",
             "url": "validNested nested test result url"
           }
         }
@@ -129,8 +131,9 @@ null
         ]
       },
       "metadata": {
-        "startTimestamp": "0003-01-01T00:00:00.000Z",
-        "endTimestamp": "0004-01-01T00:00:00.000Z",
+        "startTimestamp": "0004-01-01T00:00:00.000Z",
+        "asyncTimestamp": "0005-01-01T00:00:00.000Z",
+        "endTimestamp": "0006-01-01T00:00:00.000Z",
         "url": "validNested test result url"
       }
     }

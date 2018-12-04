@@ -69,18 +69,22 @@ TestPage.registerInitializer(() => {
         });
     };
 
-    InspectorTest.Audit.addFunctionlessTest = function(name, test, level) {
-        InspectorTest.Audit.addTest(name, `function() { return ${test} }`, level, {
+    InspectorTest.Audit.addFunctionlessTest = function(name, test, level, options = {}) {
+        InspectorTest.Audit.addTest(name, (options.async ? "async " : "") + `function() { return ${test} }`, level, {
             beforeStart: ` value \`${test}\``,
         });
     };
 
-    InspectorTest.Audit.addStringTest = function(name, test, level) {
-        InspectorTest.Audit.addFunctionlessTest(name, `"${test}"`, level);
+    InspectorTest.Audit.addStringTest = function(name, test, level, options = {}) {
+        InspectorTest.Audit.addFunctionlessTest(name, `"${test}"`, level, options);
     };
 
-    InspectorTest.Audit.addObjectTest = function(name, test, level) {
-        InspectorTest.Audit.addFunctionlessTest(name, JSON.stringify(test), level);
+    InspectorTest.Audit.addObjectTest = function(name, test, level, options = {}) {
+        InspectorTest.Audit.addFunctionlessTest(name, JSON.stringify(test), level, options);
+    };
+
+    InspectorTest.Audit.addPromiseTest = function(name, test, level, options = {}) {
+        InspectorTest.Audit.addFunctionlessTest(name, `new Promise((resolve, reject) => ${test})`, level, options);
     };
 
     InspectorTest.Audit.addDOMSelectorTest = function(name, test, level) {

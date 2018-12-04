@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+function test()
+{
+    let savedResultCount = 0;
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.awaitPromise");
+
+    function addTest(name, expression, options = {}, callback) {
+        suite.addTestCase({
+            name,
+            async test() {
+                let evaluateResponse = await RuntimeAgent.evaluate(expression);
+                InspectorTest.assert(evaluateResponse.result.type === "object");
+                InspectorTest.assert(evaluateResponse.result.className === "Promise");
+
+                let awaitPromiseResponse = await RuntimeAgent.awaitPromise(evaluateResponse.result.objectId, options.returnByValue, options.generatePreview, options.saveResult);
+
+                if (!awaitPromiseResponse.wasThrown && options.saveResult)
+                    InspectorTest.assert(++savedResultCount === awaitPromiseResponse.savedResultIndex, "savedResultIndex should match.");
+
+                await callback(WI.RemoteObject.fromPayload(awaitPromiseResponse.result), awaitPromiseResponse.wasThrown, awaitPromiseResponse.savedResultIndex);
+            },
+        });
+    }
+
+    function addResolveTest(name, value, options = {}) {
+        let expression = `new Promise((resolve, reject) => setTimeout(resolve, 0, ${JSON.stringify(value)}))`;
+        addTest(name, expression, options, async (remoteObject, wasThrown) => {
+            InspectorTest.assert(!wasThrown, "There should be no error.");
+            if (options.returnByValue) {
+                if (value && typeof value === "object")
+                    InspectorTest.expectShallowEqual(remoteObject.value, value, "The resolved value should be " + JSON.stringify(value));
+                else
+                    InspectorTest.expectEqual(remoteObject.value, value, "The resolved value should be " + JSON.stringify(value));
+            } else {
+                InspectorTest.expectEqual(remoteObject.type, value.type, "The type should be " + value.type);
+                InspectorTest.expectEqual(remoteObject.subtype, value.subtype, "The subtype should be " + value.subtype);
+                InspectorTest.expectEqual(remoteObject.description, value.description, "The description should be " + value.description);
+            }
+        });
+    }
+
+    function addRejectTest(name, value, options = {}) {
+        let expression = `new Promise((resolve, reject) => setTimeout(reject, 0, ${JSON.stringify(value)}))`;
+        addTest(name, expression, options, async (remoteObject, wasThrown) => {
+            InspectorTest.assert(wasThrown, "There should be an error.");
+            if (value && typeof value === "object") {
+                let propertyDescriptors = await new Promise((resolve) => remoteObject.getPropertyDescriptorsAsObject(resolve));
+                let properties = Array.isArray(value) ? [] : {};
+                for (let key in value)
+                    properties[key] = propertyDescriptors[key].value.value;
+                InspectorTest.expectShallowEqual(properties, value, "The rejected value should be " + JSON.stringify(value));
+            } else
+                InspectorTest.expectEqual(remoteObject.value, value, "The rejected value should be " + JSON.stringify(value));
+        });
+    }
+
+    addResolveTest("Runtime.awaitPromise.Resolve.Undefined", undefined, {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.Null", null, {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.Boolean", true, {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.Number", 42, {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.String", "foo", {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.Array", [0, 1], {returnByValue: true, saveResult: true});
+    addResolveTest("Runtime.awaitPromise.Resolve.Object", {a: 1, b: 2}, {returnByValue: true, saveResult: true});
+
+    addTest("Runtime.awaitPromise.Resolve.Chain", `Promise.resolve(1).then(() => 2).then(() => 3)`, {returnByValue: true, saveResult: true}, async (remoteObject, wasThrown) => {
+        InspectorTest.assert(!wasThrown, "There should be no error.");
+        InspectorTest.expectEqual(remoteObject.value, 3, "The resolved value should be 3.");
+    });
+
+    addRejectTest("Runtime.awaitPromise.Reject.Undefined", undefined);
+    addRejectTest("Runtime.awaitPromise.Reject.Null", null);
+    addRejectTest("Runtime.awaitPromise.Reject.Boolean", true);
+    addRejectTest("Runtime.awaitPromise.Reject.Number", 42);
+    addRejectTest("Runtime.awaitPromise.Reject.String", "foo");
+    addRejectTest("Runtime.awaitPromise.Reject.Array", [0, 1]);
+    addRejectTest("Runtime.awaitPromise.Reject.Object", {a: 1, b: 2});
+
+    addTest("Runtime.awaitPromise.Reject.Chain", `Promise.reject(1).catch(() => Promise.reject(2)).catch(() => Promise.reject(3))`, {}, async (remoteObject, wasThrown) => {
+        InspectorTest.assert(wasThrown, "There should be an error.");
+        InspectorTest.expectEqual(remoteObject.value, 3, "The rejected value should be 3.");
+    });
+
+    suite.addTestCase({
+        name: "Runtime.awaitPromise.Error.NonPromiseObjectId",
+        test(resolve, reject) {
+            RuntimeAgent.evaluate("window")
+            .then((response) => RuntimeAgent.awaitPromise(response.result.objectId))
+            .then((response) => {
+                InspectorTest.fail("Should not be able to call awaitPromise for a non-Promise object.");
+                resolve();
+            })
+            .catch((error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.awaitPromise.Error.InvalidPromiseObjectId",
+        test(resolve, reject) {
+            const promiseObjectId = "DOES_NOT_EXIST";
+            RuntimeAgent.awaitPromise(promiseObjectId, (error) => {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+                resolve();
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests functionality of Runtime.awaitPromise.</p>
+</body>
+</html>

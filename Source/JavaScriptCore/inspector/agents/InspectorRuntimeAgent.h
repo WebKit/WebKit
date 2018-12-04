@@ -59,6 +59,7 @@ public:
     void disable(ErrorString&) override { m_enabled = false; }
     void parse(ErrorString&, const String& expression, Protocol::Runtime::SyntaxErrorType* result, std::optional<String>& message, RefPtr<Protocol::Runtime::ErrorRange>&) final;
     void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex) final;
+    void awaitPromise(const String& promiseObjectId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, Ref<AwaitPromiseCallback>&&) final;
     void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const JSON::Array* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown) final;
     void releaseObject(ErrorString&, const ErrorString& objectId) final;
     void getPreview(ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>&) final;

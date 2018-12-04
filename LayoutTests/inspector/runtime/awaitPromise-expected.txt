@@ -1,0 +1,60 @@
+Tests functionality of Runtime.awaitPromise.
+
+
+== Running test suite: Runtime.awaitPromise
+-- Running test case: Runtime.awaitPromise.Resolve.Undefined
+PASS: The resolved value should be undefined
+
+-- Running test case: Runtime.awaitPromise.Resolve.Null
+PASS: The resolved value should be null
+
+-- Running test case: Runtime.awaitPromise.Resolve.Boolean
+PASS: The resolved value should be true
+
+-- Running test case: Runtime.awaitPromise.Resolve.Number
+PASS: The resolved value should be 42
+
+-- Running test case: Runtime.awaitPromise.Resolve.String
+PASS: The resolved value should be "foo"
+
+-- Running test case: Runtime.awaitPromise.Resolve.Array
+PASS: The resolved value should be [0,1]
+
+-- Running test case: Runtime.awaitPromise.Resolve.Object
+PASS: The resolved value should be {"a":1,"b":2}
+
+-- Running test case: Runtime.awaitPromise.Resolve.Chain
+PASS: The resolved value should be 3.
+
+-- Running test case: Runtime.awaitPromise.Reject.Undefined
+PASS: The rejected value should be undefined
+
+-- Running test case: Runtime.awaitPromise.Reject.Null
+PASS: The rejected value should be null
+
+-- Running test case: Runtime.awaitPromise.Reject.Boolean
+PASS: The rejected value should be true
+
+-- Running test case: Runtime.awaitPromise.Reject.Number
+PASS: The rejected value should be 42
+
+-- Running test case: Runtime.awaitPromise.Reject.String
+PASS: The rejected value should be "foo"
+
+-- Running test case: Runtime.awaitPromise.Reject.Array
+PASS: The rejected value should be [0,1]
+
+-- Running test case: Runtime.awaitPromise.Reject.Object
+PASS: The rejected value should be {"a":1,"b":2}
+
+-- Running test case: Runtime.awaitPromise.Reject.Chain
+PASS: The rejected value should be 3.
+
+-- Running test case: Runtime.awaitPromise.Error.NonPromiseObjectId
+PASS: Should produce an error.
+Error: Error: Object with given id is not a Promise
+
+-- Running test case: Runtime.awaitPromise.Error.InvalidPromiseObjectId
+PASS: Should produce an error.
+Error: Could not find InjectedScript for promiseObjectId
+

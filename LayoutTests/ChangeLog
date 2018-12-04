@@ -1,3 +1,27 @@
+2018-12-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: tests should support async operations
+        https://bugs.webkit.org/show_bug.cgi?id=192171
+        <rdar://problem/46423562>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/audit/resources/audit-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.Audit.addFunctionlessTest):
+        (TestPage.registerInitializer.InspectorTest.Audit.addStringTest):
+        (TestPage.registerInitializer.InspectorTest.Audit.addObjectTest):
+        (TestPage.registerInitializer.InspectorTest.Audit.addPromiseTest): Added.
+        * inspector/audit/basic-expected.txt:
+        * inspector/audit/basic.html:
+
+        * inspector/model/auditTestCaseResult-expected.txt:
+        * inspector/model/auditTestCaseResult.html:
+        * inspector/model/auditTestGroupResult-expected.txt:
+        * inspector/model/auditTestGroupResult.html:
+
+        * inspector/runtime/awaitPromise-expected.txt: Added.
+        * inspector/runtime/awaitPromise.html: Added.
+
 2018-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump freetype, fontconfig, harfbuzz, cairo and icu in jhbuild

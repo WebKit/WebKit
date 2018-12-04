@@ -54,7 +54,7 @@ InjectedScript::~InjectedScript()
 {
 }
 
-void InjectedScript::evaluate(ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::evaluate(ErrorString& errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "evaluate"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(expression);
@@ -66,7 +66,17 @@ void InjectedScript::evaluate(ErrorString& errorString, const String& expression
     makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
 }
 
-void InjectedScript::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown)
+void InjectedScript::awaitPromise(const String& promiseObjectId, bool returnByValue, bool generatePreview, bool saveResult, AsyncCallCallback&& callback)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "awaitPromise"_s, inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(promiseObjectId);
+    function.appendArgument(returnByValue);
+    function.appendArgument(generatePreview);
+    function.appendArgument(saveResult);
+    makeAsyncCall(function, WTFMove(callback));
+}
+
+void InjectedScript::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "callFunctionOn"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(objectId);
@@ -74,12 +84,13 @@ void InjectedScript::callFunctionOn(ErrorString& errorString, const String& obje
     function.appendArgument(arguments);
     function.appendArgument(returnByValue);
     function.appendArgument(generatePreview);
-    
-    std::optional<int> unused;
-    makeEvalCall(errorString, function, result, wasThrown, unused);
+
+    std::optional<int> savedResultIndex;
+    makeEvalCall(errorString, function, result, wasThrown, savedResultIndex);
+    ASSERT(!savedResultIndex);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString& errorString, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, bool& wasThrown, std::optional<int>& savedResultIndex)
+void InjectedScript::evaluateOnCallFrame(ErrorString& errorString, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), "evaluateOnCallFrame"_s, inspectorEnvironment()->functionCallHandler());
     function.appendArgument(callFrames);

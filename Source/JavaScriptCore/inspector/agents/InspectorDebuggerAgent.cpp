@@ -827,7 +827,7 @@ void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
     m_pauseOnAssertionFailures = enabled;
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& outWasThrown, std::optional<int>& savedResultIndex)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     if (!m_currentCallStack) {
         errorString = "Not paused"_s;
@@ -848,11 +848,9 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         muteConsole();
     }
 
-    bool wasThrown;
     injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack.get(), callFrameId, expression,
         objectGroup ? *objectGroup : emptyString(), includeCommandLineAPI && *includeCommandLineAPI, returnByValue && *returnByValue, generatePreview && *generatePreview, saveResult && *saveResult,
         result, wasThrown, savedResultIndex);
-    outWasThrown = wasThrown;
 
     if (pauseAndMute) {
         unmuteConsole();

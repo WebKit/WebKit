@@ -50,23 +50,51 @@ PASS: Result should be "error".
 Testing value `{"level":"unsupported"}`...
 PASS: Result should be "unsupported".
 
+-- Running test case: Audit.Basic.Promise.Boolean.True
+Testing value `new Promise((resolve, reject) => resolve(true))`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Promise.String.Pass
+Testing value `new Promise((resolve, reject) => resolve("pass"))`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Promise.Object.Pass
+Testing value `new Promise((resolve, reject) => resolve({level: "pass"}))`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Async.Boolean.True
+Testing value `true`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Async.String.Pass
+Testing value `"pass"`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Async.Object.Pass
+Testing value `{"level":"pass"}`...
+PASS: Result should be "pass".
+
+-- Running test case: Audit.Basic.Timeout.Pass
+Testing value `new Promise((resolve, reject) => setTimeout(resolve, 0, "pass"))`...
+PASS: Result should be "pass".
+
 -- Running test case: Audit.Basic.Error.Undefined
-Testing...
+Testing value `undefined`...
 PASS: Result should be "error".
   errors:
-   - TypeError: eval(undefined) is not a function. (In 'eval(undefined)()', 'eval(undefined)' is undefined)
+   - Return value is not an object, string, or boolean
 
 -- Running test case: Audit.Basic.Error.Null
-Testing...
+Testing value `null`...
 PASS: Result should be "error".
   errors:
-   - TypeError: eval(null) is not a function. (In 'eval(null)()', 'eval(null)' is null)
+   - Return value is not an object, string, or boolean
 
 -- Running test case: Audit.Basic.Error.Number
-Testing...
+Testing value `42`...
 PASS: Result should be "error".
   errors:
-   - TypeError: eval(42) is not a function. (In 'eval(42)()', 'eval(42)' is 42)
+   - Return value is not an object, string, or boolean
 
 -- Running test case: Audit.Basic.Error.String
 Testing value `"foo"`...
@@ -81,8 +109,20 @@ PASS: Result should be "error".
    - Missing result level
 
 -- Running test case: Audit.Basic.Error.Variable
-Testing...
+Testing value `INVALID`...
 PASS: Result should be "error".
   errors:
    - ReferenceError: Can't find variable: INVALID
+
+-- Running test case: Audit.Basic.Error.Promise.Resolved
+Testing value `new Promise((resolve, reject) => setTimeout(resolve, 0))`...
+PASS: Result should be "error".
+  errors:
+   - Return value is not an object, string, or boolean
+
+-- Running test case: Audit.Basic.Error.Promise.Rejected
+Testing value `new Promise((resolve, reject) => setTimeout(reject, 0, "rejected"))`...
+PASS: Result should be "error".
+  errors:
+   - rejected
 
