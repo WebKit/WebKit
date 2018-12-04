@@ -2993,7 +2993,7 @@ TEST(ProcessSwap, UseSessionCookiesAfterProcessSwapInPrivateBrowsing)
     auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     processPoolConfiguration.get().processSwapsOnNavigation = YES;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
-
+    [processPool _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways];
     RetainPtr<WKWebsiteDataStore> ephemeralStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
