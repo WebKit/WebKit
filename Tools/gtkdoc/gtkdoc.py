@@ -87,6 +87,9 @@ class GTKDoc(object):
     """
 
     def __init__(self, args):
+        self.version = ''
+        self.virtual_root = ''
+        self.prefix = ''
 
         # Parameters specific to scanning.
         self.module_name = ''
@@ -414,6 +417,7 @@ class GTKDoc(object):
         if not os.path.exists(unused_doc_file) or not os.access(unused_doc_file, os.R_OK):
             return []
         return open(unused_doc_file).read().splitlines()
+
 
 class PkgConfigGTKDoc(GTKDoc):
 

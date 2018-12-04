@@ -43,6 +43,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_RTC PRIVATE ${ENABLE_EXPERIMENTAL_FE
 # Public options specific to the WPE port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to any other WebKit ports.
+WEBKIT_OPTION_DEFINE(ENABLE_GTKDOC "Whether or not to use generate gtkdoc." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
 
 # Private options specific to the WPE port.
@@ -134,6 +135,11 @@ SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS_THREADED TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
 
+# Override the cached variable, gtk-doc does not really work when cross-building or building on Mac.
+if (CMAKE_CROSSCOMPILING OR APPLE)
+    set(ENABLE_GTKDOC OFF)
+endif ()
+
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
 set(FORWARDING_HEADERS_WPE_DIR ${FORWARDING_HEADERS_DIR}/wpe)
 set(FORWARDING_HEADERS_WPE_EXTENSION_DIR ${FORWARDING_HEADERS_DIR}/wpe-webextension)
@@ -141,5 +147,8 @@ set(FORWARDING_HEADERS_WPE_DOM_DIR ${FORWARDING_HEADERS_DIR}/wpe-dom)
 set(DERIVED_SOURCES_JAVASCRIPCOREWPE_DIR ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/javascriptcorewpe)
 set(DERIVED_SOURCES_JAVASCRIPCORE_GLIB_API_DIR ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/javascriptcorewpe/jsc)
 set(DERIVED_SOURCES_WPE_API_DIR ${DERIVED_SOURCES_WEBKIT_DIR}/wpe)
+
+set(WPE_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc)
+set(WPEWebExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}.pc)
 
 include(GStreamerChecks)

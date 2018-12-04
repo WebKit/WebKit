@@ -1,0 +1,245 @@
+<SECTION>
+<FILE>webextensionsdefines</FILE>
+<TITLE>WebExtensionDefines</TITLE>
+<SUBSECTION Private>
+WEBKIT_API
+WEBKIT_DEPRECATED
+WEBKIT_DEPRECATED_FOR
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebExtension</FILE>
+WebKitWebExtension
+WebKitWebExtensionInitializeFunction
+WebKitWebExtensionInitializeWithUserDataFunction
+webkit_web_extension_get_page
+
+<SUBSECTION Standard>
+WebKitWebExtensionClass
+WEBKIT_TYPE_WEB_EXTENSION
+WEBKIT_WEB_EXTENSION
+WEBKIT_IS_WEB_EXTENSION
+WEBKIT_WEB_EXTENSION_CLASS
+WEBKIT_IS_WEB_EXTENSION_CLASS
+WEBKIT_WEB_EXTENSION_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebExtensionPrivate
+webkit_web_extension_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebPage</FILE>
+WebKitWebPage
+WebKitFormSubmissionStep
+webkit_web_page_get_dom_document
+webkit_web_page_get_id
+webkit_web_page_get_uri
+webkit_web_page_get_main_frame
+webkit_web_page_get_editor
+
+<SUBSECTION Standard>
+WebKitWebPageClass
+WEBKIT_TYPE_WEB_PAGE
+WEBKIT_WEB_PAGE
+WEBKIT_IS_WEB_PAGE
+WEBKIT_WEB_PAGE_CLASS
+WEBKIT_IS_WEB_PAGE_CLASS
+WEBKIT_WEB_PAGE_GET_CLASS
+WEBKIT_TYPE_FORM_SUBMISSION_STEP
+
+<SUBSECTION Private>
+WebKitWebPagePrivate
+webkit_web_page_get_type
+webkit_form_submission_step_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebEditor</FILE>
+WebKitWebEditor
+webkit_web_editor_get_page
+
+<SUBSECTION Standard>
+WebKitWebEditorClass
+WEBKIT_TYPE_WEB_EDITOR
+WEBKIT_WEB_EDITOR
+WEBKIT_IS_WEB_EDITOR
+WEBKIT_WEB_EDITOR_CLASS
+WEBKIT_IS_WEB_EDITOR_CLASS
+WEBKIT_WEB_EDITOR_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebEditorPrivate
+webkit_web_editor_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitFrame</FILE>
+WebKitFrame
+webkit_frame_is_main_frame
+webkit_frame_get_uri
+webkit_frame_get_js_context
+webkit_frame_get_js_context_for_script_world
+webkit_frame_get_js_value_for_dom_object
+webkit_frame_get_js_value_for_dom_object_in_script_world
+
+<SUBSECTION Standard>
+WebKitFrameClass
+WEBKIT_TYPE_FRAME
+WEBKIT_FRAME
+WEBKIT_IS_FRAME
+WEBKIT_FRAME_CLASS
+WEBKIT_IS_FRAME_CLASS
+WEBKIT_FRAME_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFramePrivate
+webkit_frame_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitScriptWorld</FILE>
+WebKitScriptWorld
+webkit_script_world_get_default
+webkit_script_world_new
+webkit_script_world_new_with_name
+webkit_script_world_get_name
+
+<SUBSECTION Standard>
+WebKitScriptWorldClass
+WEBKIT_TYPE_SCRIPT_WORLD
+WEBKIT_SCRIPT_WORLD
+WEBKIT_IS_SCRIPT_WORLD
+WEBKIT_SCRIPT_WORLD_CLASS
+WEBKIT_IS_SCRIPT_WORLD_CLASS
+WEBKIT_SCRIPT_WORLD_GET_CLASS
+
+<SUBSECTION Private>
+WebKitScriptWorldPrivate
+webkit_script_world_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWebHitTestResult</FILE>
+WebKitWebHitTestResult
+webkit_web_hit_test_result_get_node
+
+<SUBSECTION Standard>
+WebKitWebHitTestResultClass
+WEBKIT_TYPE_WEB_HIT_TEST_RESULT
+WEBKIT_WEB_HIT_TEST_RESULT
+WEBKIT_IS_WEB_HIT_TEST_RESULT
+WEBKIT_WEB_HIT_TEST_RESULT_CLASS
+WEBKIT_IS_WEB_HIT_TEST_RESULT_CLASS
+WEBKIT_WEB_HIT_TEST_RESULT_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWebHitTestResultPrivate
+webkit_web_hit_test_result_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitConsoleMessage</FILE>
+WebKitConsoleMessage
+WebKitConsoleMessageSource
+WebKitConsoleMessageLevel
+webkit_console_message_copy
+webkit_console_message_free
+webkit_console_message_get_source
+webkit_console_message_get_level
+webkit_console_message_get_text
+webkit_console_message_get_line
+webkit_console_message_get_source_id
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_CONSOLE_MESSAGE
+WEBKIT_TYPE_CONSOLE_MESSAGE_LEVEL
+WEBKIT_TYPE_CONSOLE_MESSAGE_SOURCE
+
+<SUBSECTION Private>
+webkit_console_message_get_type
+webkit_console_message_level_get_type
+webkit_console_message_source_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitDOMObject</FILE>
+<TITLE>WebKitDOMObject</TITLE>
+WebKitDOMObject
+
+<SUBSECTION Standard>
+WebKitDOMObjectClass
+WEBKIT_DOM_TYPE_OBJECT
+WEBKIT_DOM_OBJECT
+WEBKIT_DOM_IS_OBJECT
+WEBKIT_DOM_OBJECT_CLASS
+WEBKIT_DOM_IS_OBJECT_CLASS
+WEBKIT_DOM_OBJECT_GET_CLASS
+
+<SUBSECTION Private>
+WebKitDOMObjectPrivate
+webkit_dom_object_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitDOMDocument</FILE>
+<TITLE>WebKitDOMDocument</TITLE>
+WebKitDOMDocument
+
+<SUBSECTION Standard>
+WebKitDOMDocumentClass
+WEBKIT_DOM_TYPE_DOCUMENT
+WEBKIT_DOM_DOCUMENT
+WEBKIT_DOM_IS_DOCUMENT
+WEBKIT_DOM_DOCUMENT_CLASS
+WEBKIT_DOM_IS_DOCUMENT_CLASS
+WEBKIT_DOM_DOCUMENT_GET_CLASS
+
+<SUBSECTION Private>
+webkit_dom_document_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitDOMElement</FILE>
+<TITLE>WebKitDOMElement</TITLE>
+WebKitDOMElement
+
+webkit_dom_element_html_input_element_is_user_edited
+webkit_dom_element_html_input_element_get_auto_filled
+webkit_dom_element_html_input_element_set_auto_filled
+webkit_dom_element_html_input_element_set_editing_value
+
+<SUBSECTION Standard>
+WebKitDOMElementClass
+WEBKIT_DOM_TYPE_ELEMENT
+WEBKIT_DOM_ELEMENT
+WEBKIT_DOM_IS_ELEMENT
+WEBKIT_DOM_ELEMENT_CLASS
+WEBKIT_DOM_IS_ELEMENT_CLASS
+WEBKIT_DOM_ELEMENT_GET_CLASS
+
+<SUBSECTION Private>
+webkit_dom_element_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitDOMNode</FILE>
+<TITLE>WebKitDOMNode</TITLE>
+WebKitDOMNode
+
+webkit_dom_node_for_js_value
+
+<SUBSECTION Standard>
+WebKitDOMNodeClass
+WEBKIT_DOM_TYPE_NODE
+WEBKIT_DOM_NODE
+WEBKIT_DOM_IS_NODE
+WEBKIT_DOM_NODE_CLASS
+WEBKIT_DOM_IS_NODE_CLASS
+WEBKIT_DOM_NODE_GET_CLASS
+
+<SUBSECTION Private>
+WebKitDOMNodePrivate
+webkit_dom_node_get_type
+</SECTION>
+

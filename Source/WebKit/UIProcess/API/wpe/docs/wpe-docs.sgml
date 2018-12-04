@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>WPE Reference Manual</title>
+    <releaseinfo>for WPE WebKit &version;</releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Class Overview</title>
+    <xi:include href="xml/WebKitWebContext.xml"/>
+    <xi:include href="xml/WebKitWebView.xml"/>
+    <xi:include href="xml/WebKitWebViewBackend.xml"/>
+    <xi:include href="xml/WebKitAuthenticationRequest.xml"/>
+    <xi:include href="xml/WebKitBackForwardList.xml"/>
+    <xi:include href="xml/WebKitBackForwardListItem.xml"/>
+    <xi:include href="xml/WebKitSettings.xml"/>
+    <xi:include href="xml/WebKitURIRequest.xml"/>
+    <xi:include href="xml/WebKitURIResponse.xml"/>
+    <xi:include href="xml/WebKitWindowProperties.xml"/>
+    <xi:include href="xml/WebKitDownload.xml"/>
+    <xi:include href="xml/WebKitPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitGeolocationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitInstallMissingMediaPluginsPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitNavigationAction.xml"/>
+    <xi:include href="xml/WebKitUserMediaPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>
+    <xi:include href="xml/WebKitHitTestResult.xml"/>
+    <xi:include href="xml/WebKitEditorState.xml"/>
+    <xi:include href="xml/WebKitWebResource.xml"/>
+    <xi:include href="xml/WebKitError.xml"/>
+    <xi:include href="xml/WebKitFaviconDatabase.xml"/>
+    <xi:include href="xml/WebKitFileChooserRequest.xml"/>
+    <xi:include href="xml/WebKitFindController.xml"/>
+    <xi:include href="xml/WebKitCookieManager.xml"/>
+    <xi:include href="xml/WebKitPlugin.xml"/>
+    <xi:include href="xml/WebKitURISchemeRequest.xml"/>
+    <xi:include href="xml/WebKitContextMenu.xml"/>
+    <xi:include href="xml/WebKitContextMenuItem.xml"/>
+    <xi:include href="xml/WebKitFormSubmissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityManager.xml"/>
+    <xi:include href="xml/WebKitUserContentManager.xml"/>
+    <xi:include href="xml/WebKitUserContent.xml"/>
+    <xi:include href="xml/WebKitNotification.xml"/>
+    <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityOrigin.xml"/>
+    <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
+    <xi:include href="xml/WebKitWebsiteData.xml"/>
+    <xi:include href="xml/WebKitNetworkProxySettings.xml"/>
+    <xi:include href="xml/WebKitAutomationSession.xml"/>
+    <xi:include href="xml/WebKitApplicationInfo.xml"/>
+  </chapter>
+
+  <index id="index-all">
+    <title>Index</title>
+  </index>
+
+  <index id="api-index-deprecated" role="deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-20" role="2.20">
+    <title>Index of new symbols in 2.20</title>
+    <xi:include href="xml/api-index-2.20.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-22" role="2.22">
+    <title>Index of new symbols in 2.22</title>
+    <xi:include href="xml/api-index-2.22.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>

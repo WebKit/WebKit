@@ -10,8 +10,8 @@ file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DOM_DIR})
 
 configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
-configure_file(wpe/wpe-webkit.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit-${WPE_API_VERSION}.pc @ONLY)
-configure_file(wpe/wpe-web-extension.pc.in ${CMAKE_BINARY_DIR}/wpe-web-extension-${WPE_API_VERSION}.pc @ONLY)
+configure_file(wpe/wpe-webkit.pc.in ${WPE_PKGCONFIG_FILE} @ONLY)
+configure_file(wpe/wpe-web-extension.pc.in ${WPEWebExtension_PKGCONFIG_FILE} @ONLY)
 
 add_definitions(-DWEBKIT2_COMPILATION)
 
@@ -330,4 +330,43 @@ install(FILES ${WPE_API_INSTALLED_HEADERS}
               ${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/wpe-webkit-${WPE_API_VERSION}/wpe"
         COMPONENT "Development"
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-wpe.cfg
+    "[wpe-${WPE_API_VERSION}]\n"
+    "pkgconfig_file=${WPE_PKGCONFIG_FILE}\n"
+    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
+    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
+    "namespace=webkit\n"
+    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
+    "       -I${WEBKIT_DIR}/Shared/API/glib\n"
+    "       -I${WEBKIT_DIR}/UIProcess/API/glib\n"
+    "       -I${WEBKIT_DIR}/UIProcess/API/wpe\n"
+    "       -I${FORWARDING_HEADERS_WPE_DIR}\n"
+    "doc_dir=${WEBKIT_DIR}/UIProcess/API/wpe/docs\n"
+    "source_dirs=${WEBKIT_DIR}/Shared/API/glib\n"
+    "            ${WEBKIT_DIR}/UIProcess/API/glib\n"
+    "            ${WEBKIT_DIR}/UIProcess/API/wpe\n"
+    "            ${DERIVED_SOURCES_WPE_API_DIR}\n"
+    "headers=${WPE_ENUM_GENERATION_HEADERS}\n"
+    "main_sgml_file=wpe-docs.sgml\n"
+)
+
+file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webextensions.cfg
+    "[wpe-webextensions-${WPE_API_VERSION}]\n"
+    "pkgconfig_file=${WPEWebExtension_PKGCONFIG_FILE}\n"
+    "decorator=WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\\(.+\\)\n"
+    "deprecation_guard=WEBKIT_DISABLE_DEPRECATED\n"
+    "namespace=webkit_webextensions\n"
+    "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
+    "       -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe\n"
+    "       -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM\n"
+    "       -I${FORWARDING_HEADERS_WPE_DIR}\n"
+    "doc_dir=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/docs\n"
+    "source_dirs=${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib\n"
+    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/DOM\n"
+    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe\n"
+    "            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM\n"
+    "headers=${WPE_WEB_EXTENSION_API_INSTALLED_HEADERS}\n"
+    "main_sgml_file=wpe-webextensions-docs.sgml\n"
 )

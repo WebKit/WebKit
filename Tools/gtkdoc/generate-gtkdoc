@@ -48,10 +48,12 @@ def configure_logging(verbose):
 def get_gtkdoc_module_paths(cross_reference_deps):
     dependent_packages = {
         'glib-2.0' : ['glib', 'gobject', 'gio'],
-        'libsoup-2.4' : ['libsoup-2.4'],
-        'gdk-pixbuf-2.0': ['gdk-pixbuf'],
-        'gtk+-3.0' : ['gtk3', 'gdk3']
+        'libsoup-2.4' : ['libsoup-2.4']
     }
+
+    if arguments.gtk:
+        dependent_packages['gdk-pixbuf-2.0'] = ['gdk-pixbuf']
+        dependent_packages['gtk+-3.0'] = ['gtk3', 'gdk3']
 
     paths = []
     html_dir = os.path.join('share', 'gtk-doc', 'html')
@@ -177,25 +179,23 @@ def prepare_environment_for_gtkdoc_generation():
     # Paths from the GNUmakefile generated configuration files are relative to the build directory.
     os.chdir(common.build_path())
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Generate gtkdoc for WebKit.')
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Whether or not to run in verbose mode.')
-    parser.add_argument('--rebase', action='store_true',
-                        help='When specified, run the tool in rebase mode.')
-    parser.add_argument('--skip-html', action='store_true',
-                        help='Whether or not to skip HTML generation, which can be slow.')
-    parser.add_argument('--virtual-root', type=str, default='',
-                        help='A temporary installation directory which is used as the root ' + \
-                             'where the actual installation prefix lives; this is mostly ' + \
-                             'useful for packagers, and should be set to what is given to ' + \
-                             'make install as DESTDIR.')
+def build_gtkdoc_for_wpe(arguments):
+    webextensions_generator = get_generator_for_config(common.build_path('gtkdoc-webextensions.cfg'), arguments.virtual_root)
+    if not webextensions_generator:
+        print("gtkdoc-webextensions.cfg does not exist! Skipping that documentation")
+        sys.exit(1)
+    saw_warnings = generate_documentation(webextensions_generator)
+    if saw_warnings:
+        sys.exit(saw_warnings)
 
-    arguments = parser.parse_args()
-    configure_logging(arguments.verbose)
+    wpe_generator = get_generator_for_config(common.build_path('gtkdoc-wpe.cfg'), arguments.virtual_root)
+    if not wpe_generator:
+        print("gtkdoc-wpe.cfg does not exist! Skipping that documentation")
+        sys.exit(1)
+    saw_warnings = generate_documentation(wpe_generator)
+    sys.exit(saw_warnings)
 
-    prepare_environment_for_gtkdoc_generation()
-
+def build_gtkdoc_for_wkgtk(arguments):
     jsc_generator = get_generator_for_config(common.build_path('gtkdoc-jsc-glib.cfg'), arguments.virtual_root)
     if not jsc_generator:
         print("gtkdoc-jsc-glib.cfg does not exist! Skipping that documentation")
@@ -217,5 +217,36 @@ if __name__ == "__main__":
         print("gtkdoc-webkit2gtk.cfg does not exist! Skipping that documentation")
         sys.exit(1)
     saw_warnings = generate_documentation(webkit2_generator)
-
     sys.exit(saw_warnings)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate gtkdoc for WebKit.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Whether or not to run in verbose mode.')
+    parser.add_argument('--rebase', action='store_true',
+                        help='When specified, run the tool in rebase mode.')
+    parser.add_argument('--skip-html', action='store_true',
+                        help='Whether or not to skip HTML generation, which can be slow.')
+    parser.add_argument('--virtual-root', type=str, default='',
+                        help='A temporary installation directory which is used as the root ' + \
+                             'where the actual installation prefix lives; this is mostly ' + \
+                             'useful for packagers, and should be set to what is given to ' + \
+                             'make install as DESTDIR.')
+
+    parser.add_argument('--gtk', action='store_true',
+                        help='Build documentation for WebKitGTK+')
+    parser.add_argument('--wpe', action='store_true',
+                        help='Build documentation for WPE')
+
+    arguments = parser.parse_args()
+    configure_logging(arguments.verbose)
+
+    prepare_environment_for_gtkdoc_generation()
+
+    if arguments.wpe:
+        build_gtkdoc_for_wpe(arguments)
+    elif arguments.gtk:
+        build_gtkdoc_for_wkgtk(arguments)
+    else:
+        print('Please choose a WebKit port with --gtk or --wpe')
+        sys.exit(1)

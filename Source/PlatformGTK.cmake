@@ -1,3 +1,4 @@
+include(GtkDoc)
 include(WebKitDist)
 
 add_subdirectory(${WEBCORE_DIR}/platform/gtk/po)
@@ -25,18 +26,7 @@ if (ENABLE_GTKDOC)
     )
 endif ()
 
-macro(ADD_GTKDOC_GENERATOR _stamp_name _extra_args)
-    add_custom_command(
-        OUTPUT "${CMAKE_BINARY_DIR}/${_stamp_name}"
-        DEPENDS ${DocumentationDependencies}
-        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS} -Wno-unused-parameter" ${CMAKE_SOURCE_DIR}/Tools/gtk/generate-gtkdoc ${_extra_args}
-        COMMAND touch ${_stamp_name}
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
-        VERBATIM
-    )
-endmacro()
-
-ADD_GTKDOC_GENERATOR("docs-build.stamp" "")
+ADD_GTKDOC_GENERATOR("docs-build.stamp" "--gtk")
 if (ENABLE_GTKDOC)
     add_custom_target(gtkdoc ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
 elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING AND NOT APPLE)
@@ -46,7 +36,7 @@ elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING AND NOT APP
     # or errors. This is useful to prevent breaking documentation inadvertently during
     # the course of development.
     if (DEVELOPER_MODE)
-        ADD_GTKDOC_GENERATOR("docs-build-no-html.stamp" "--skip-html")
+        ADD_GTKDOC_GENERATOR("docs-build-no-html.stamp" "--gtk;--skip-html")
         add_custom_target(gtkdoc-no-html ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build-no-html.stamp")
     endif ()
 endif ()

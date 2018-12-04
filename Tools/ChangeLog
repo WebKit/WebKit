@@ -1,3 +1,23 @@
+2018-12-04  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [WPE] Add gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=178900
+
+        Reviewed by Michael Catanzaro.
+
+        Add gtk-doc to WPE port. This patch tries to reuse as much code from
+        WebKitGTK+ as possible.
+
+        * gtkdoc/generate-gtkdoc: Renamed from Tools/gtk/generate-gtkdoc.
+        (get_gtkdoc_module_paths): Add GDK and GTK only if building for GTK.
+        (prepare_environment_for_gtkdoc_generation):
+        (build_gtkdoc_for_wpe): Code to generate doc for WPE.
+        (build_gtkdoc_for_wkgtk): Code to generate doc for WebKitGTK+. Moved from main.
+        * gtkdoc/gtkdoc.py: Renamed from Tools/gtk/gtkdoc.py.
+        (GTKDoc.__init__): Initialized required variables according to pylint.
+        (GTKDoc.api_missing_documentation):
+        * wpe/install-dependencies: Add gtkdoc dependency.
+
 2018-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Move URLSoup back to WebCore after r238771

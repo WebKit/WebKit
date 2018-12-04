@@ -1,3 +1,22 @@
+2018-12-04  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [WPE] Add gtk-doc
+        https://bugs.webkit.org/show_bug.cgi?id=178900
+
+        Reviewed by Michael Catanzaro.
+
+        Add gtk-doc to WPE port. This patch tries to reuse as much code from
+        WebKitGTK+ as possible.
+
+        * PlatformWPE.cmake: Write variables to gtkdoc-wpe.cfg and gtkdoc-webextensions that is used by python script later.
+        * UIProcess/API/wpe/WebKitWebContext.h: Placed sandbox functions in the same location as in the WebKitGTK+ for consistency.
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt: Added.
+        * UIProcess/API/wpe/docs/wpe-docs.sgml: Added.
+        * WebProcess/InjectedBundle/API/wpe/WebKitWebPage.h: Placed webkit_web_page_get_dom_document
+        in the same position as in the WebKitGTK+ for consistency.
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-0.1-sections.txt: Added.
+        * WebProcess/InjectedBundle/API/wpe/docs/wpe-webextensions-docs.sgml: Added.
+
 2018-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Move URLSoup back to WebCore after r238771

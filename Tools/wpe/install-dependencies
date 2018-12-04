@@ -65,6 +65,7 @@ function installDependenciesWithApt {
         gawk \
         gcc \
         gperf \
+        gtk-doc-tools \
         intltool \
         itstool \
         libasound2-dev \
@@ -155,6 +156,7 @@ function installDependenciesWithPacman {
         gcc \
         gnutls \
         gperf \
+        gtk-doc \
         grep \
         groff \
         gstreamer \
@@ -253,6 +255,7 @@ function installDependenciesWithDnf {
         gstreamer1-devel \
         gstreamer1-plugins-bad-free-devel \
         gstreamer1-plugins-base-devel \
+        gtk-doc \
         intltool \
         itstool \
         libevent-devel \

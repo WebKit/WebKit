@@ -247,6 +247,13 @@ webkit_web_context_register_uri_scheme              (WebKitWebContext           
                                                      gpointer                       user_data,
                                                      GDestroyNotify                 user_data_destroy_func);
 
+WEBKIT_API void
+webkit_web_context_set_sandbox_enabled              (WebKitWebContext               *context,
+                                                     gboolean                       enabled);
+
+WEBKIT_API gboolean
+webkit_web_context_get_sandbox_enabled              (WebKitWebContext              *context);
+
 WEBKIT_API gboolean
 webkit_web_context_get_spell_checking_enabled       (WebKitWebContext              *context);
 
@@ -295,13 +302,6 @@ webkit_web_context_set_process_model                (WebKitWebContext           
 
 WEBKIT_API WebKitProcessModel
 webkit_web_context_get_process_model                (WebKitWebContext              *context);
-
-WEBKIT_API void
-webkit_web_context_set_sandbox_enabled              (WebKitWebContext              *context,
-                                                     gboolean                       enabled);
-
-WEBKIT_API gboolean
-webkit_web_context_get_sandbox_enabled              (WebKitWebContext              *context);
 
 WEBKIT_API void
 webkit_web_context_initialize_notification_permissions
