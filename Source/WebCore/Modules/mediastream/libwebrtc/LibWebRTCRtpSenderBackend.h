@@ -87,11 +87,23 @@ public:
         );
     }
 
+    void clearSource()
+    {
+        ASSERT(hasSource());
+        m_source = nullptr;
+    }
+
     void setSource(Source&& source)
     {
         ASSERT(!hasSource());
         m_source = WTFMove(source);
         ASSERT(hasSource());
+    }
+
+    void takeSource(LibWebRTCRtpSenderBackend& backend)
+    {
+        ASSERT(backend.hasSource());
+        setSource(WTFMove(backend.m_source));
     }
 
 private:

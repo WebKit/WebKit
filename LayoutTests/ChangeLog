@@ -1,3 +1,13 @@
+2018-12-03  Youenn Fablet  <youenn@apple.com>
+
+        A sender created through addTransceiver and populated using addTrack should have its source set
+        https://bugs.webkit.org/show_bug.cgi?id=192136
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-replace-track-expected.txt:
+        * webrtc/video-replace-track.html:
+
 2018-12-03  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement non-timeslice mode encoding for MediaRecorder

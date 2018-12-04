@@ -255,6 +255,7 @@ void LibWebRTCMediaEndpoint::removeTrack(LibWebRTCRtpSenderBackend& sender)
 {
     ASSERT(m_backend);
     m_backend->RemoveTrack(sender.rtcSender());
+    sender.clearSource();
 }
 
 void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)

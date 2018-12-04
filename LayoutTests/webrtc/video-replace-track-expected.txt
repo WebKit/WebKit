@@ -2,4 +2,5 @@
 PASS Switching from front to back camera 
 PASS Switching from front to back camera, with lower resolution 
 PASS Switching from front to back camera, with higher resolution 
+PASS Replace a track for a sender created by addTransceiver and used by addTrack 
 

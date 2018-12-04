@@ -403,6 +403,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
             return Exception { TypeError, "Unable to add track"_s };
 
         if (auto sender = findExistingSender(m_peerConnection.currentSenders(), *senderBackend)) {
+            backendFromRTPSender(*sender).takeSource(*senderBackend);
             sender->setTrack(makeRef(track));
             sender->setMediaStreamIds(WTFMove(mediaStreamIds));
             return sender.releaseNonNull();
