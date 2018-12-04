@@ -27,6 +27,7 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
+#include "URLSoup.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,7 +41,7 @@ void ResourceResponse::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders)
 
 void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
 {
-    m_url = URL(soup_message_get_uri(soupMessage));
+    m_url = soupURIToURL(soup_message_get_uri(soupMessage));
 
     switch (soup_message_get_http_version(soupMessage)) {
     case SOUP_HTTP_1_0:

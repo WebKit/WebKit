@@ -27,6 +27,7 @@
 #include "APIWebsiteDataStore.h"
 
 #include <WebCore/FileSystem.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if PLATFORM(GTK)
 #define BASE_DIRECTORY "webkitgtk"

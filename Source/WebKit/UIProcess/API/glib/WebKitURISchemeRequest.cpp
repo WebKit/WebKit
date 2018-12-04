@@ -26,10 +26,11 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/URLSoup.h>
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -257,7 +258,7 @@ void webkit_uri_scheme_request_finish_error(WebKitURISchemeRequest* request, GEr
         return;
 
     priv->stream = nullptr;
-    ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), URL(priv->soupURI.get()), String::fromUTF8(error->message));
+    ResourceError resourceError(g_quark_to_string(error->domain), toWebCoreError(error->code), soupURIToURL(priv->soupURI.get()), String::fromUTF8(error->message));
     priv->manager->didFailWithError(priv->requestID, resourceError);
     webkitWebContextDidFinishLoadingCustomProtocol(priv->webContext, priv->requestID);
 }

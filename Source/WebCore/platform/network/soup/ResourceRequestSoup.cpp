@@ -24,11 +24,12 @@
 
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
+#include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "SharedBuffer.h"
+#include "URLSoup.h"
 #include "WebKitSoupRequestGeneric.h"
-#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -106,7 +107,7 @@ void ResourceRequest::updateSoupMessageMembers(SoupMessage* soupMessage) const
 {
     updateSoupMessageHeaders(soupMessage->request_headers);
 
-    GUniquePtr<SoupURI> firstParty = firstPartyForCookies().createSoupURI();
+    GUniquePtr<SoupURI> firstParty = urlToSoupURI(firstPartyForCookies());
     if (firstParty)
         soup_message_set_first_party(soupMessage, firstParty.get());
 
@@ -153,7 +154,7 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
     bool shouldPortBeResetToZero = m_url.port() && !m_url.port().value();
-    m_url = URL(soup_message_get_uri(soupMessage));
+    m_url = soupURIToURL(soup_message_get_uri(soupMessage));
 
     // SoupURI cannot differeniate between an explicitly specified port 0 and
     // no port specified.
@@ -168,7 +169,7 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
         m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);
 
     if (SoupURI* firstParty = soup_message_get_first_party(soupMessage))
-        m_firstPartyForCookies = URL(firstParty);
+        m_firstPartyForCookies = soupURIToURL(firstParty);
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 
@@ -216,7 +217,7 @@ GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
         return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
     }
 
-    GUniquePtr<SoupURI> soupURI = m_url.createSoupURI();
+    GUniquePtr<SoupURI> soupURI = urlToSoupURI(m_url);
 
     // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
     // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active

@@ -33,10 +33,6 @@
 typedef const struct __CFURL* CFURLRef;
 #endif
 
-#if USE(SOUP)
-#include <wtf/glib/GUniquePtrSoup.h>
-#endif
-
 #if USE(FOUNDATION)
 OBJC_CLASS NSURL;
 #endif
@@ -177,11 +173,6 @@ public:
 #if USE(CF)
     URL(CFURLRef);
     RetainPtr<CFURLRef> createCFURL() const;
-#endif
-
-#if USE(SOUP)
-    URL(SoupURI*);
-    GUniquePtr<SoupURI> createSoupURI() const;
 #endif
 
 #if USE(FOUNDATION)

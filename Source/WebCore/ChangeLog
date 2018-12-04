@@ -1,3 +1,45 @@
+2018-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move URLSoup back to WebCore after r238771
+        https://bugs.webkit.org/show_bug.cgi?id=192306
+
+        Reviewed by Michael Catanzaro.
+
+        Add soupURIToURL() and urlToSoupURI() to replace the URL contructor taking a Soup URI and
+        URL::createSoupURI(). Fix several build failures that showed up after removing the soup includes from URL
+        header.
+
+        * platform/Cookie.h:
+        * platform/SharedBuffer.h:
+        * platform/SourcesSoup.txt:
+        * platform/network/soup/CookieSoup.cpp:
+        * platform/network/soup/GUniquePtrSoup.h: Renamed from Source/WTF/wtf/glib/GUniquePtrSoup.h.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+        (WebCore::NetworkStorageSession::deleteCookie const):
+        (WebCore::NetworkStorageSession::getCookies):
+        (WebCore::NetworkStorageSession::getRawCookies const):
+        (WebCore::cookiesForSession):
+        * platform/network/soup/ResourceErrorSoup.cpp:
+        (WebCore::failingURI):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessageMembers const):
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+        (WebCore::ResourceRequest::createSoupURI const):
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+        * platform/network/soup/SocketStreamHandleImpl.h:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::SocketStreamHandleImpl::create):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        * platform/network/soup/URLSoup.cpp: Copied from Source/WTF/wtf/glib/URLSoup.cpp.
+        (WebCore::soupURIToURL):
+        (WebCore::urlToSoupURI):
+        * platform/network/soup/URLSoup.h: Renamed from Source/WTF/wtf/glib/URLSoup.cpp.
+
 2018-12-04  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: tests should support async operations

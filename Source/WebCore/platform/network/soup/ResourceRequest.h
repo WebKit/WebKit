@@ -28,8 +28,7 @@
 #define ResourceRequest_h
 
 #include "ResourceRequestBase.h"
-#include <libsoup/soup.h>
-#include <wtf/glib/GUniquePtrSoup.h>
+#include "URLSoup.h"
 
 namespace WebCore {
 
@@ -78,7 +77,7 @@ namespace WebCore {
         }
 
         ResourceRequest(SoupRequest* soupRequest)
-            : ResourceRequestBase(URL(soup_request_get_uri(soupRequest)), ResourceRequestCachePolicy::UseProtocolCachePolicy)
+            : ResourceRequestBase(soupURIToURL(soup_request_get_uri(soupRequest)), ResourceRequestCachePolicy::UseProtocolCachePolicy)
             , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
             , m_initiatingPageID(0)

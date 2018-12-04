@@ -1,3 +1,28 @@
+2018-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move URLSoup back to WebCore after r238771
+        https://bugs.webkit.org/show_bug.cgi?id=192306
+
+        Reviewed by Michael Catanzaro.
+
+        Include GUniquePtrSoup from WebCore again and fix several build failures that showed up after removing the soup
+        includes from URL header.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::tlsConnectionAcceptCertificate):
+        * PluginProcess/PluginProcess.cpp:
+        * Shared/API/glib/WebKitURIRequest.cpp:
+        * Shared/API/glib/WebKitURIResponse.cpp:
+        * UIProcess/API/glib/APIWebsiteDataStoreGLib.cpp:
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_finish_error): Use soupURIToURL().
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_load_uri): Use soupURIToURL().
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.h:
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp:
+        * UIProcess/Launcher/glib/FlatpakLauncher.h:
+
 2018-12-04  Tim Horton  <timothy_horton@apple.com>
 
         Fix the watchOS build; stop unnecessarily linking CorePDF

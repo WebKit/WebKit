@@ -34,6 +34,10 @@
 #include <objc/objc.h>
 #endif
 
+#if USE(SOUP)
+typedef struct _SoupCookie SoupCookie;
+#endif
+
 namespace WebCore {
 
 struct Cookie {

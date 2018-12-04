@@ -33,14 +33,15 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "GUniquePtrSoup.h"
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
+#include "URLSoup.h"
 #include <libsoup/soup.h>
 #include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/glib/GUniquePtrSoup.h>
 
 #if USE(LIBSECRET)
 #include "GRefPtrGtk.h"
@@ -318,11 +319,11 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
-    GUniquePtr<SoupURI> origin = url.createSoupURI();
+    GUniquePtr<SoupURI> origin = urlToSoupURI(url);
     if (!origin)
         return;
 
-    GUniquePtr<SoupURI> firstPartyURI = firstParty.createSoupURI();
+    GUniquePtr<SoupURI> firstPartyURI = urlToSoupURI(firstParty);
     if (!firstPartyURI)
         return;
 
@@ -369,7 +370,7 @@ void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 
 void NetworkStorageSession::deleteCookie(const URL& url, const String& name) const
 {
-    GUniquePtr<SoupURI> uri = url.createSoupURI();
+    GUniquePtr<SoupURI> uri = urlToSoupURI(url);
     if (!uri)
         return;
 
@@ -447,7 +448,7 @@ Vector<Cookie> NetworkStorageSession::getAllCookies()
 Vector<Cookie> NetworkStorageSession::getCookies(const URL& url)
 {
     Vector<Cookie> cookies;
-    GUniquePtr<SoupURI> uri = url.createSoupURI();
+    GUniquePtr<SoupURI> uri = urlToSoupURI(url);
     if (!uri)
         return cookies;
 
@@ -466,7 +467,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
     rawCookies.clear();
-    GUniquePtr<SoupURI> uri = url.createSoupURI();
+    GUniquePtr<SoupURI> uri = urlToSoupURI(url);
     if (!uri)
         return false;
 
@@ -495,7 +496,7 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 
 static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& url, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies)
 {
-    GUniquePtr<SoupURI> uri = url.createSoupURI();
+    GUniquePtr<SoupURI> uri = urlToSoupURI(url);
     if (!uri)
         return { { }, false };
 

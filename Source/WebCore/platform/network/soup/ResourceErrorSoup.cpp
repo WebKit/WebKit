@@ -29,6 +29,7 @@
 #if USE(SOUP)
 
 #include "LocalizedStrings.h"
+#include "URLSoup.h"
 #include <libsoup/soup.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
@@ -38,7 +39,7 @@ namespace WebCore {
 static URL failingURI(SoupURI* soupURI)
 {
     ASSERT(soupURI);
-    return URL(soupURI);
+    return soupURIToURL(soupURI);
 }
 
 static URL failingURI(SoupRequest* request)

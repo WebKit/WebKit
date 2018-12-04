@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
-#if USE(SOUP)
-
-#include <libsoup/soup.h>
-#include <wtf/URL.h>
-#include <wtf/URLParser.h>
-#include <wtf/text/CString.h>
+#include "GUniquePtrSoup.h"
 
 namespace WTF {
-
-URL::URL(SoupURI* soupURI)
-{
-    if (!soupURI) {
-        invalidate();
-        return;
-    }
-
-    GUniquePtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
-    URLParser parser(String::fromUTF8(urlString.get()));
-    *this = parser.result();
-
-    if (!isValid())
-        return;
-
-    // Motivated by https://bugs.webkit.org/show_bug.cgi?id=38956. libsoup
-    // does not add the password to the URL when calling
-    // soup_uri_to_string, and thus the requests are not properly
-    // built. Fixing soup_uri_to_string is a no-no as the maintainer does
-    // not want to break compatibility with previous implementations
-    if (soupURI->password)
-        setPass(String::fromUTF8(soupURI->password));
+class URL;
 }
 
-GUniquePtr<SoupURI> URL::createSoupURI() const
-{
-    if (!isValid())
-        return nullptr;
-
-    return GUniquePtr<SoupURI>(soup_uri_new(string().utf8().data()));
-}
-
-bool URL::hostIsIPAddress(StringView host)
-{
-    return !host.isEmpty() && g_hostname_is_ip_address(host.utf8().data());
-}
-
-} // namespace WTF
-
-#endif
+namespace WebCore {
+URL soupURIToURL(SoupURI*);
+GUniquePtr<SoupURI> urlToSoupURI(const WTF::URL&);
+} // namespace WebCore

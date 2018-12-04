@@ -41,6 +41,7 @@
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include "SoupNetworkSession.h"
+#include "URLSoup.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/URL.h>
@@ -89,7 +90,7 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
     if (!networkStorageSession)
         return socket;
 
-    auto uri = url.createSoupURI();
+    auto uri = urlToSoupURI(url);
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     soup_session_connect_async(networkStorageSession->getOrCreateSoupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
         url.protocolIs("wss") ? reinterpret_cast<SoupSessionConnectProgressCallback>(connectProgressCallback) : nullptr,

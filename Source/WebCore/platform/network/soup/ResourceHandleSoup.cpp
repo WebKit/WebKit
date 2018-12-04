@@ -33,6 +33,7 @@
 
 #include "CredentialStorage.h"
 #include "FileSystem.h"
+#include "GUniquePtrSoup.h"
 #include "HTTPParsers.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
@@ -57,7 +58,6 @@
 #endif
 #include <wtf/CompletionHandler.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/glib/GUniquePtrSoup.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/CString.h>
 

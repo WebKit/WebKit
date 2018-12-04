@@ -28,6 +28,8 @@
 
 #if OS(LINUX)
 
+#include <gio/gio.h>
+
 namespace WebKit {
 
 GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)

@@ -41,6 +41,9 @@
 #include <wtf/UniqueArray.h>
 #include <wtf/glib/GRefPtr.h>
 
+typedef struct _GIOStream GIOStream;
+typedef struct _GObject GObject;
+
 namespace WebCore {
 
 class SocketStreamError;

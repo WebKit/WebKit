@@ -1,3 +1,14 @@
+2018-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move URLSoup back to WebCore after r238771
+        https://bugs.webkit.org/show_bug.cgi?id=192306
+
+        Reviewed by Michael Catanzaro.
+
+        Include GUniquePtrSoup from WebCore again.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+
 2018-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump freetype, fontconfig, harfbuzz, cairo and icu in jhbuild
