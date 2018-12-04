@@ -12,6 +12,9 @@
 <script>
     var context;
 
+    if (window.internals)
+        internals.setCustomPrivateRecorderCreator();
+
     function createVideoStream() {
         const canvas = document.getElementById("canvas");
         context = canvas.getContext('2d');
@@ -44,7 +47,7 @@
         drawSomethingOnCanvas();
         setTimeout(() => {
             recorder.stop();
-        }, 2000)
+        }, 1000)
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-only stream when stop() is called');
 
     async_test(t => {
@@ -65,7 +68,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 2000);
+        }, 1000);
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a audio-only stream when stop() is called');
 
     async_test(t => {
@@ -93,7 +96,7 @@
         setTimeout(() => {
             recorder.stop();
             osc.stop();
-        }, 2000);
+        }, 1000);
     }, 'MediaRecorder will fire a dataavailable event with a blob data for a video-audio stream when stop() is called');
 
 </script>

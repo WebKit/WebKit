@@ -1,3 +1,22 @@
+2018-12-03  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement non-timeslice mode encoding for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=192069
+
+        Reviewed by Youenn Fablet.
+
+        Create new tests for encoding of MediaRecorder. Check if the produced video and audio are correct.
+        Add code to turn on the mock source of MediaRecorder for the two old tests because the real source is enabled by default.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-only-dataavailable-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-only-dataavailable.html: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-video-only-dataavailable-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-video-only-dataavailable.html: Added.
+        * http/wpt/mediarecorder/MediaRecorder-dataavailable.html:
+        * http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html:
+
 2018-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): position:fixed sidebar on https://www.w3.org/TR/SVG2/coords.html does not stay fixed

@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder Dataavailable</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../common/canvas-tests.js"></script>
+    <link rel="stylesheet" href="../common/canvas-tests.css">
+</head>
+<body>
+<div>
+    <video id="player">
+    </video>
+</div>
+<div>
+    <canvas id="canvas" width="200" height="200">
+    </canvas>
+    <canvas id="frame" width="200" height="200">
+    </canvas>
+</div>
+<script>
+    var context;
+    var drawStartTime;
+
+    function createVideoStream() {
+        const canvas = document.getElementById("canvas");
+        context = canvas.getContext('2d');
+        return canvas.captureStream();
+    }
+
+    function doRedImageDraw() {
+        if (context) {
+            context.fillStyle = "#ff0000";
+            context.fillRect(0, 0, 200, 200);
+            if (Date.now() - drawStartTime < 500) {
+                window.requestAnimationFrame(doRedImageDraw);
+            } else {
+                drawStartTime = Date.now();
+                doGreenImageDraw();
+            }
+        }
+    }
+
+    function doGreenImageDraw() {
+        if (context) {
+            context.fillStyle = "#00ff00";
+            context.fillRect(0, 0, 200, 200);
+            if (Date.now() - drawStartTime < 500) {
+                window.requestAnimationFrame(doGreenImageDraw);
+            }
+        }
+    }
+
+    async_test(t => {
+        const ac = new AudioContext();
+        const osc = ac.createOscillator();
+        const dest = ac.createMediaStreamDestination();
+        const audio = dest.stream;
+        osc.connect(dest);
+
+        const video = createVideoStream();
+        assert_equals(video.getAudioTracks().length, 0, "video mediastream starts with no audio track");
+        assert_equals(audio.getAudioTracks().length, 1, "audio mediastream starts with one audio track");
+        video.addTrack(audio.getAudioTracks()[0]);
+        assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
+        const recorder = new MediaRecorder(video);
+        let mode = 0;
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+            assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+            assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+            assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+            assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+            player.src = window.URL.createObjectURL(blobEvent.data);
+            const resFrame = document.getElementById("frame");
+            const resContext = resFrame.getContext('2d');
+            player.oncanplay = () => {
+                assert_greater_than(player.duration, 0.1, 'the duration should be greater than 100ms');
+                player.play();
+            };
+            player.onplay = () => {
+                player.pause();
+                player.currentTime = 0.1;
+            };
+            player.onseeked = () => {
+                resContext.drawImage(player, 0, 0);
+                if (!mode) {
+                    _assertPixelApprox(resFrame, 0, 0, 255, 0, 0, 255, "0, 0", "255, 0, 0, 255", 5);
+                    _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 5);
+                    mode = 1;
+                    player.currentTime = player.duration;
+                } else {
+                    _assertPixelApprox(resFrame, 199, 0, 0, 255, 0, 255, "199, 0", "0, 255, 0, 255", 5);
+                    _assertPixelApprox(resFrame, 199, 199, 0, 255, 0, 255, "199, 199", "0, 255, 0, 255", 5);
+                    t.done();
+                }
+            };
+            player.load();
+        });
+        drawStartTime = Date.now();
+        doRedImageDraw();
+        recorder.start();
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+        setTimeout(() => {
+            recorder.stop();
+        }, 1000);
+    }, 'MediaRecorder can successfully record the video for a audio-video stream');
+
+</script>
+</body>
+</html>

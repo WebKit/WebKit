@@ -1391,6 +1391,8 @@
 		4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00A9215D69A70076B983 /* MediaRecorder.h */; };
 		4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00AD215D6A690076B983 /* BlobEvent.h */; };
 		4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */; };
+		4D73F946218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D73F944218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h */; };
+		4D73F94E218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */; };
 		4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4DB7130C216EC2BD0096A4DD /* MediaRecorderErrorEvent.h */; };
 		4E1959220A39DABA00220FE5 /* MediaFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959200A39DABA00220FE5 /* MediaFeatureNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959240A39DACC00220FE5 /* MediaQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7934,6 +7936,10 @@
 		4D3B00A9215D69A70076B983 /* MediaRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorder.h; sourceTree = "<group>"; };
 		4D3B00AD215D6A690076B983 /* BlobEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobEvent.h; sourceTree = "<group>"; };
 		4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivate.h; sourceTree = "<group>"; };
+		4D73F944218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivateAVFImpl.h; sourceTree = "<group>"; };
+		4D73F945218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderPrivateAVFImpl.cpp; sourceTree = "<group>"; };
+		4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivateWriterCocoa.h; sourceTree = "<group>"; };
+		4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = MediaRecorderPrivateWriterCocoa.mm; sourceTree = "<group>"; wrapsLines = 0; };
 		4D7EB3F4217C6AE600D64888 /* BlobEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlobEvent.cpp; sourceTree = "<group>"; };
 		4D9F6B642182532B0092A9C5 /* MediaRecorderPrivateMock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderPrivateMock.h; sourceTree = "<group>"; };
 		4D9F6B652182532B0092A9C5 /* MediaRecorderPrivateMock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaRecorderPrivateMock.cpp; sourceTree = "<group>"; };
@@ -18154,11 +18160,23 @@
 		4D3B5012217E58A300665DB1 /* mediarecorder */ = {
 			isa = PBXGroup;
 			children = (
+				4D3C05D421AF480900F2890A /* cocoa */,
 				4D3B5014217E58B700665DB1 /* MediaRecorderPrivate.h */,
+				4D73F945218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.cpp */,
+				4D73F944218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h */,
 				4D9F6B652182532B0092A9C5 /* MediaRecorderPrivateMock.cpp */,
 				4D9F6B642182532B0092A9C5 /* MediaRecorderPrivateMock.h */,
 			);
 			path = mediarecorder;
+			sourceTree = "<group>";
+		};
+		4D3C05D421AF480900F2890A /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				4D73F94C218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h */,
+				4D73F94D218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		510310421BA8C64C003329C0 /* client */ = {
@@ -30132,6 +30150,8 @@
 				4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */,
 				4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */,
 				4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */,
+				4D73F946218BC5FA003A3ED6 /* MediaRecorderPrivateAVFImpl.h in Headers */,
+				4D73F94E218C4A87003A3ED6 /* MediaRecorderPrivateWriterCocoa.h in Headers */,
 				C90843D01B18E47D00B68564 /* MediaRemoteControls.h in Headers */,
 				CD8ACA8F1D23971900ECC59E /* MediaRemoteSoftLink.h in Headers */,
 				CEEFCD7A19DB31F7003876D7 /* MediaResourceLoader.h in Headers */,

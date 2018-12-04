@@ -1,0 +1,3 @@
+
+PASS MediaRecorder can successfully record the audio for a audio-only stream 
+
