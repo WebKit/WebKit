@@ -232,12 +232,6 @@ String JSBigInt::toString(ExecState* exec, unsigned radix)
     return toStringGeneric(exec, this, radix);
 }
 
-inline bool JSBigInt::isZero()
-{
-    ASSERT(length() || !sign());
-    return length() == 0;
-}
-
 // Multiplies {this} with {factor} and adds {summand} to the result.
 void JSBigInt::inplaceMultiplyAdd(Digit factor, Digit summand)
 {
@@ -1700,6 +1694,11 @@ inline size_t JSBigInt::offsetOfData()
     return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
 }
 
+size_t JSBigInt::offsetOfLength()
+{
+    return OBJECT_OFFSETOF(JSBigInt, m_length);
+}
+
 template <typename CharType>
 JSBigInt* JSBigInt::parseInt(ExecState* exec, CharType*  data, unsigned length, ErrorParseMode errorParseMode)
 {
@@ -1818,6 +1817,7 @@ inline void JSBigInt::setDigit(unsigned n, Digit value)
     ASSERT(n < length());
     dataStorage()[n] = value;
 }
+
 JSObject* JSBigInt::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
     return BigIntObject::create(exec->vm(), globalObject, const_cast<JSBigInt*>(this));
