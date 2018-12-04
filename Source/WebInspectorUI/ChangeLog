@@ -1,3 +1,22 @@
+2018-12-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: REGRESSION(r238330): Timeline auto-capture does not work after page transition
+        https://bugs.webkit.org/show_bug.cgi?id=192248
+        <rdar://problem/46390199>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WI.transitionPageTarget):
+        Let the TimelineManager perform work on page transitions.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.initializeTarget):
+        Initialize the autocapture state of the target.
+
+        (WI.TimelineManager.prototype.transitionPageTarget):
+        When transitioning pages perform a legacy (frontend based) timeline capture.
+
 2018-12-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements: $0 is shown for all selected elements

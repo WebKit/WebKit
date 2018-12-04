@@ -49,6 +49,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._autoCaptureOnPageLoad = false;
         this._mainResourceForAutoCapturing = null;
         this._shouldSetAutoCapturingMainResource = false;
+        this._transitioningPageTarget = false;
         this._boundStopCapturing = this.stopCapturing.bind(this);
 
         this._webTimelineScriptRecordsExpectingScriptProfilerEvents = null;
@@ -65,7 +66,18 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     initializeTarget(target)
     {
-        this._updateAutoCaptureInstruments([target]);
+        if (target.TimelineAgent) {
+            this._updateAutoCaptureInstruments([target]);
+
+            // COMPATIBILITY (iOS 9): Timeline.setAutoCaptureEnabled did not exist.
+            if (target.TimelineAgent.setAutoCaptureEnabled)
+                target.TimelineAgent.setAutoCaptureEnabled(this._autoCaptureOnPageLoad);
+        }
+    }
+
+    transitionPageTarget()
+    {
+        this._transitioningPageTarget = true;
     }
 
     // Static
@@ -830,6 +842,17 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return;
 
         let frame = event.target;
+
+        // When performing a page transition start a recording once the main resource changes.
+        // We start a legacy capture because the backend wasn't available to automatically
+        // initiate the capture, so the frontend must start the capture.
+        if (this._transitioningPageTarget) {
+            this._transitioningPageTarget = false;
+            if (this._autoCaptureOnPageLoad)
+                this._legacyAttemptStartAutoCapturingForFrame(frame);
+            return;
+        }
+
         if (this._attemptAutoCapturingForFrame(frame))
             return;
 

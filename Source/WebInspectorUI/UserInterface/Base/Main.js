@@ -214,6 +214,7 @@ WI.transitionPageTarget = function(target)
     this.notifications.dispatchEventToListeners(WI.Notification.TransitionPageTarget);
     WI.domManager.transitionPageTarget();
     WI.networkManager.transitionPageTarget();
+    WI.timelineManager.transitionPageTarget();
 };
 
 WI.terminatePageTarget = function(target)
