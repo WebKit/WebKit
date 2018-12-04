@@ -1,3 +1,14 @@
+2018-12-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the watchOS build; stop unnecessarily linking CorePDF
+        https://bugs.webkit.org/show_bug.cgi?id=192356
+        <rdar://problem/46427844>
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/CorePDFSPI.h:
+
 2018-12-03  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to disable animated keyboard scrolling behavior

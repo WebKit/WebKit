@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(WKLEGACYPDFVIEW) || ENABLE(WKPDFVIEW)
+
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIKit.h>
 
@@ -139,3 +141,5 @@ typedef enum {
 @end
 
 #endif
+
+#endif // ENABLE(WKLEGACYPDFVIEW) || ENABLE(WKPDFVIEW)
