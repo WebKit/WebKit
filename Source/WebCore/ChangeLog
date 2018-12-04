@@ -1,3 +1,10 @@
+2018-12-03  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        Unified sources, of course.
+
 2018-12-03  Youenn Fablet  <youenn@apple.com>
 
         A sender created through addTransceiver and populated using addTrack should have its source set

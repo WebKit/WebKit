@@ -68,8 +68,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleRateKey, NSString *)
 #define AVNumberOfChannelsKey getAVNumberOfChannelsKey()
 #define AVSampleRateKey getAVSampleRateKey()
 
-using namespace WebCore;
-
 namespace WebCore {
 
 using namespace PAL;
