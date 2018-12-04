@@ -33,6 +33,7 @@
 #include "FreeListInlines.h"
 #include "Handle.h"
 #include "IsoSubspaceInlines.h"
+#include "JSBigInt.h"
 #include "JSCast.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
@@ -339,6 +340,8 @@ inline bool JSCell::toBoolean(ExecState* exec) const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean();
+    if (isBigInt())
+        return static_cast<const JSBigInt*>(this)->toBoolean();
     return !structure(exec->vm())->masqueradesAsUndefined(exec->lexicalGlobalObject());
 }
 
@@ -346,6 +349,8 @@ inline TriState JSCell::pureToBoolean() const
 {
     if (isString())
         return static_cast<const JSString*>(this)->toBoolean() ? TrueTriState : FalseTriState;
+    if (isBigInt())
+        return static_cast<const JSBigInt*>(this)->toBoolean() ? TrueTriState : FalseTriState;
     if (isSymbol())
         return TrueTriState;
     return MixedTriState;

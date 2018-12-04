@@ -1,3 +1,15 @@
+2018-12-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Support logic operations
+        https://bugs.webkit.org/show_bug.cgi?id=179903
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-branch-usage.js: Added.
+        * stress/big-int-logical-and.js: Added.
+        * stress/big-int-logical-not.js: Added.
+        * stress/big-int-logical-or.js: Added.
+
 2018-12-02  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement support for "<<" and ">>"

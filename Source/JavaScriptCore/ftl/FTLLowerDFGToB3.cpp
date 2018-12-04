@@ -13578,7 +13578,7 @@ private:
             
             // Implements the following control flow structure:
             // if (value is cell) {
-            //     if (value is string)
+            //     if (value is string or value is BigInt)
             //         result = !!value->length
             //     else {
             //         do evil things for masquerades-as-undefined
@@ -13595,6 +13595,8 @@ private:
             LBasicBlock cellCase = m_out.newBlock();
             LBasicBlock stringCase = m_out.newBlock();
             LBasicBlock notStringCase = m_out.newBlock();
+            LBasicBlock bigIntCase = m_out.newBlock();
+            LBasicBlock notBigIntCase = m_out.newBlock();
             LBasicBlock notCellCase = m_out.newBlock();
             LBasicBlock int32Case = m_out.newBlock();
             LBasicBlock notInt32Case = m_out.newBlock();
@@ -13616,8 +13618,19 @@ private:
                 m_out.load32NonNegative(value, m_heaps.JSString_length));
             results.append(m_out.anchor(nonEmptyString));
             m_out.jump(continuation);
+
+            m_out.appendTo(notStringCase, bigIntCase);
+            m_out.branch(
+                isBigInt(value, provenType(edge) & SpecCell),
+                unsure(bigIntCase), unsure(notBigIntCase));
+
+            m_out.appendTo(bigIntCase, notBigIntCase);
+            LValue nonZeroBigInt = m_out.notZero32(
+                m_out.load32NonNegative(value, m_heaps.JSBigInt_length));
+            results.append(m_out.anchor(nonZeroBigInt));
+            m_out.jump(continuation);
             
-            m_out.appendTo(notStringCase, notCellCase);
+            m_out.appendTo(notBigIntCase, notCellCase);
             LValue isTruthyObject;
             if (masqueradesAsUndefinedWatchpointIsStillValid())
                 isTruthyObject = m_out.booleanTrue;
@@ -15607,6 +15620,15 @@ private:
         if (LValue proven = isProvenValue(type & SpecCell, ~SpecBigInt))
             return proven;
         return m_out.notEqual(
+            m_out.load32(cell, m_heaps.JSCell_structureID),
+            m_out.constInt32(vm().bigIntStructure->id()));
+    }
+
+    LValue isBigInt(LValue cell, SpeculatedType type = SpecFullTop)
+    {
+        if (LValue proven = isProvenValue(type & SpecCell, SpecBigInt))
+            return proven;
+        return m_out.equal(
             m_out.load32(cell, m_heaps.JSCell_structureID),
             m_out.constInt32(vm().bigIntStructure->id()));
     }

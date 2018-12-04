@@ -85,6 +85,7 @@ namespace JSC { namespace FTL {
     macro(JSString_flags, JSString::offsetOfFlags()) \
     macro(JSString_length, JSString::offsetOfLength()) \
     macro(JSString_value, JSString::offsetOfValue()) \
+    macro(JSBigInt_length, JSBigInt::offsetOfLength()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
     macro(RegExpConstructor_cachedResult_lastRegExp, RegExpConstructor::offsetOfCachedResult() + RegExpCachedResult::offsetOfLastRegExp()) \
