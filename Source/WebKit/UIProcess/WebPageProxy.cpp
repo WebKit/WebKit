@@ -727,12 +727,15 @@ void WebPageProxy::reattachToWebProcess()
     ASSERT(!isValid());
     RELEASE_LOG_IF_ALLOWED(Process, "%p WebPageProxy::reattachToWebProcess\n", this);
 
-    m_process->removeWebPage(*this, m_pageID);
+    m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     auto& processPool = m_process->processPool();
     m_process = processPool.createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get());
     m_isValid = true;
+
+    m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::Yes);
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     finishAttachingToWebProcess();
 }
@@ -779,7 +782,7 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
 
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
         bool didSuspendPreviousPage = suspendCurrentPageIfPossible(navigation, mainFrameIDInPreviousProcess, processSwapRequestedByClient);
-        m_process->removeWebPage(*this, m_pageID);
+        m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::No);
 
         m_process = WTFMove(process);
         m_isValid = true;
@@ -794,6 +797,9 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, API::Navigat
             m_mainFrame = WebFrameProxy::create(*this, destinationSuspendedPage->mainFrameID());
             m_process->frameCreated(destinationSuspendedPage->mainFrameID(), *m_mainFrame);
         }
+
+        m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::No);
+        m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
         finishAttachingToWebProcess(didSuspendPreviousPage ? ShouldDelayAttachingDrawingArea::Yes : ShouldDelayAttachingDrawingArea::No);
         completionHandler(didSuspendPreviousPage);
@@ -813,9 +819,6 @@ void WebPageProxy::finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea s
         m_webProcessLifetimeTracker.webPageEnteringWebProcess();
         processDidFinishLaunching();
     }
-
-    m_process->addExistingWebPage(*this, m_pageID);
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     updateActivityState();
     updateThrottleState();
@@ -996,7 +999,7 @@ void WebPageProxy::close()
     m_process->processPool().removeAllSuspendedPagesForPage(*this);
 
     m_process->send(Messages::WebPage::Close(), m_pageID);
-    m_process->removeWebPage(*this, m_pageID);
+    m_process->removeWebPage(*this, m_pageID, WebProcessProxy::EndsUsingDataStore::Yes);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 

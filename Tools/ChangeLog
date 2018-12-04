@@ -1,5 +1,20 @@
 2018-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Regression(PSON) Google OAuth is broken in private sessions
+        https://bugs.webkit.org/show_bug.cgi?id=192337
+        <rdar://problem/46353558>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/GetSessionCookie.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SetSessionCookie.html: Added.
+
+2018-12-03  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Request by the client to process-swap is ignored if the window has an opener
         https://bugs.webkit.org/show_bug.cgi?id=192267
         <rdar://problem/46386886>

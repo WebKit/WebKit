@@ -1,5 +1,36 @@
 2018-12-03  Chris Dumez  <cdumez@apple.com>
 
+        Regression(PSON) Google OAuth is broken in private sessions
+        https://bugs.webkit.org/show_bug.cgi?id=192337
+        <rdar://problem/46353558>
+
+        Reviewed by Alex Christensen.
+
+        In WebPageProxy::swapToWebProcess(), we would call removeWebPage() on the old WebProcessProxy and then
+        addExistingWebPage() on the new WebProcessProxy, as you would expect in case of process swap.
+
+        The issue is that WebProcessProxy::removeWebPage() calls WebProcessPool::pageEndUsingWebsiteDataStore()
+        which would cause the session to get destroyed assuming this was the last page using it. We would
+        therefore lose session cookies after a process-swap in private session.
+
+        To address the issue, a parameter to WebProcessPool::pageEndUsingWebsiteDataStore() and
+        WebProcessPool::pageBeginUsingWebsiteDataStore() to control if we want to tell the WebProcessPool
+        about the page beginning / ending its use of the session. In the case of a process-swap, we make
+        sure the process pool is not notified.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::swapToWebProcess):
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * UIProcess/WebProcessProxy.h:
+
+2018-12-03  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Request by the client to process-swap is ignored if the window has an opener
         https://bugs.webkit.org/show_bug.cgi?id=192267
         <rdar://problem/46386886>

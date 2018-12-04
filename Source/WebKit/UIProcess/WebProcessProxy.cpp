@@ -428,17 +428,18 @@ Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API
     uint64_t pageID = generatePageID();
     Ref<WebPageProxy> webPage = WebPageProxy::create(pageClient, *this, pageID, WTFMove(pageConfiguration));
 
-    addExistingWebPage(webPage.get(), pageID);
+    addExistingWebPage(webPage.get(), pageID, BeginsUsingDataStore::Yes);
 
     return webPage;
 }
 
-void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
+void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID, BeginsUsingDataStore beginsUsingDataStore)
 {
     ASSERT(!m_pageMap.contains(pageID));
     ASSERT(!globalPageMap().contains(pageID));
 
-    m_processPool->pageBeginUsingWebsiteDataStore(webPage);
+    if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
+        m_processPool->pageBeginUsingWebsiteDataStore(webPage);
 
     m_pageMap.set(pageID, &webPage);
     globalPageMap().set(pageID, &webPage);
@@ -457,14 +458,15 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 }
 
-void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID)
+void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID, EndsUsingDataStore endsUsingDataStore)
 {
     auto* removedPage = m_pageMap.take(pageID);
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
     removedPage = globalPageMap().take(pageID);
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
 
-    m_processPool->pageEndUsingWebsiteDataStore(webPage);
+    if (endsUsingDataStore == EndsUsingDataStore::Yes)
+        m_processPool->pageEndUsingWebsiteDataStore(webPage);
 
     updateBackgroundResponsivenessTimer();
 
