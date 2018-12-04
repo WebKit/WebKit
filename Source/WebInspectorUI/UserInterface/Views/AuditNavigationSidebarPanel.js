@@ -83,8 +83,9 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         for (let test of WI.auditManager.tests)
             this._addTest(test);
 
-        for (let result of WI.auditManager.results)
-            this._addResult(result);
+        WI.auditManager.results.forEach((result, i) => {
+            this._addResult(result, i);
+        });
 
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestAdded, this._handleAuditTestAdded, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditTestCompleted, this);

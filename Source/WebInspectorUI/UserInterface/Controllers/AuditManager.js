@@ -66,6 +66,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         if (!tests.length)
             return;
 
+        let mainResource = WI.networkManager.mainFrame.mainResource;
+
         this._runningState = WI.AuditManager.RunningState.Active;
         this._runningTests = tests;
         for (let test of this._runningTests)
@@ -81,6 +83,12 @@ WI.AuditManager = class AuditManager extends WI.Object
         this._runningTests = [];
 
         this._addResult(result);
+
+        if (mainResource !== WI.networkManager.mainFrame.mainResource) {
+            // Navigated while tests were running.
+            for (let test of this._tests)
+                test.clearResult();
+        }
     }
 
     stop()
@@ -194,8 +202,12 @@ WI.AuditManager = class AuditManager extends WI.Object
         if (!event.target.isMainFrame())
             return;
 
-        for (let test of this._tests)
-            test.clearResult();
+        if (this._runningState === WI.AuditManager.RunningState.Active)
+            this.stop();
+        else {
+            for (let test of this._tests)
+                test.clearResult();
+        }
     }
 
     addDefaultTestsIfNeeded()

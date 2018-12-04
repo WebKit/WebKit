@@ -1,5 +1,21 @@
 2018-12-03  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: navigating while tests are running should stop and clear all results
+        https://bugs.webkit.org/show_bug.cgi?id=192317
+        <rdar://problem/46435222>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.async start):
+        (WI.AuditManager.prototype._handleFrameMainResourceDidChange):
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.initialLayout):
+        Drive-by: pass the index of the saved result.
+
+2018-12-03  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: "Add Default Audits" shown when there are no filter results
         https://bugs.webkit.org/show_bug.cgi?id=192105
 
