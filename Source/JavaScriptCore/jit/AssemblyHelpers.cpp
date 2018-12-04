@@ -758,7 +758,7 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
 {
     // Implements the following control flow structure:
     // if (value is cell) {
-    //     if (value is string or value is BigInt)
+    //     if (value is string)
     //         result = !!value->length
     //     else {
     //         do evil things for masquerades-as-undefined
@@ -781,12 +781,6 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     done.append(jump());
 
     isCellButNotString.link(this);
-    auto isCellButNotBigIntOrString = branchIfNotBigInt(value.payloadGPR());
-    load32(Address(value.payloadGPR(), JSBigInt::offsetOfLength()), result);
-    compare32(invert ? Equal : NotEqual, result, TrustedImm32(0), result);
-    done.append(jump());
-
-    isCellButNotBigIntOrString.link(this);
     if (shouldCheckMasqueradesAsUndefined) {
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
         JumpList isNotMasqueradesAsUndefined;
@@ -837,7 +831,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 {
     // Implements the following control flow structure:
     // if (value is cell) {
-    //     if (value is string or value is BigInt)
+    //     if (value is string)
     //         result = !!value->length
     //     else {
     //         do evil things for masquerades-as-undefined
@@ -858,13 +852,9 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
     auto isCellButNotString = branchIfNotString(value.payloadGPR());
     truthy.append(branchTest32(invert ? Zero : NonZero, Address(value.payloadGPR(), JSString::offsetOfLength())));
     done.append(jump());
-    isCellButNotString.link(this);
-    auto isCellButNotBigIntOrString = branchIfNotBigInt(value.payloadGPR());
-    truthy.append(branchTest32(invert ? Zero : NonZero, Address(value.payloadGPR(), JSBigInt::offsetOfLength())));
-    done.append(jump());
 
     if (shouldCheckMasqueradesAsUndefined) {
-        isCellButNotBigIntOrString.link(this);
+        isCellButNotString.link(this);
         ASSERT(scratchIfShouldCheckMasqueradesAsUndefined != InvalidGPRReg);
         JumpList isNotMasqueradesAsUndefined;
         isNotMasqueradesAsUndefined.append(branchTest8(Zero, Address(value.payloadGPR(), JSCell::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined)));
@@ -884,9 +874,9 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
             truthy.append(isNotMasqueradesAsUndefined);
     } else {
         if (invert)
-            done.append(isCellButNotBigIntOrString);
+            done.append(isCellButNotString);
         else
-            truthy.append(isCellButNotBigIntOrString);
+            truthy.append(isCellButNotString);
     }
 
     notCell.link(this);

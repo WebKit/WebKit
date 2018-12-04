@@ -28,6 +28,7 @@
 #include "CPU.h"
 #include "ExceptionHelpers.h"
 #include "JSObject.h"
+#include "ParseInt.h"
 #include <wtf/CagedPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -57,8 +58,6 @@ public:
     static JSBigInt* createFrom(VM&, uint32_t value);
     static JSBigInt* createFrom(VM&, int64_t value);
     static JSBigInt* createFrom(VM&, bool value);
-
-    static size_t offsetOfLength();
 
     DECLARE_EXPORT_INFO;
 
@@ -105,7 +104,6 @@ public:
     double toNumber(ExecState*) const;
 
     JSObject* toObject(ExecState*, JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE inline bool toBoolean() const { return !isZero(); }
 
     static JSBigInt* multiply(ExecState*, JSBigInt* x, JSBigInt* y);
     
@@ -196,11 +194,7 @@ private:
     static String toStringBasePowerOfTwo(ExecState*, JSBigInt*, unsigned radix);
     static String toStringGeneric(ExecState*, JSBigInt*, unsigned radix);
 
-    inline bool isZero() const
-    {
-        ASSERT(length() || !sign());
-        return length() == 0;
-    }
+    bool isZero();
 
     template <typename CharType>
     static JSBigInt* parseInt(ExecState*, CharType*  data, unsigned length, ErrorParseMode);
