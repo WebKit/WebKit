@@ -1,3 +1,16 @@
+2018-12-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Run BugzillaPatchFetcher periodically
+        https://bugs.webkit.org/show_bug.cgi?id=192241
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/__init__.py:
+        * BuildSlaveSupport/ews-app/ews/apps.py:
+        (EwsConfig.ready): This method is called by Django on startup.
+        * BuildSlaveSupport/ews-app/ews/fetcher.py:
+        (FetchLoop): Class which invokes BugzillaPatchFetcher every 60s.
+
 2018-12-04  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Support unicode in MeteredStream

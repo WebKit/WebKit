@@ -27,3 +27,8 @@ from django.apps import AppConfig
 
 class EwsConfig(AppConfig):
     name = 'ews'
+
+    def ready(self):
+        # FIXME: Ensure that this method is called only once.
+        from ews.fetcher import FetchLoop
+        FetchLoop()
