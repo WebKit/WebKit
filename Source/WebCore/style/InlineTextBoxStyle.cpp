@@ -125,6 +125,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     }
 
     // These metrics must match where underlines get drawn.
+    // FIXME: Share the code in TextDecorationPainter::paintTextDecoration() so we can just query it for the painted geometry.
     if (decoration & TextDecoration::Underline) {
         // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
         int underlineOffset = 1;
@@ -140,23 +141,31 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         }
     }
     if (decoration & TextDecoration::Overline) {
+        FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
+        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetrics());
+        rect.move(0, autoTextDecorationThickness - strokeThickness - wavyOffset);
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            extendIntToFloat(overflowResult.bottom, -wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness);
-        } else {
-            extendIntToFloat(overflowResult.bottom, strokeThickness - height);
-            // top is untouched
+            FloatBoxExtent wavyExpansion;
+            wavyExpansion.setTop(wavyStrokeParameters.controlPointDistance);
+            wavyExpansion.setBottom(wavyStrokeParameters.controlPointDistance);
+            rect.expand(wavyExpansion);
         }
+        extendIntToFloat(overflowResult.top, -rect.y());
+        extendIntToFloat(overflowResult.bottom, rect.maxY() - height);
     }
     if (decoration & TextDecoration::LineThrough) {
-        float baseline = lineStyle.fontMetrics().floatAscent();
+        FloatRect rect(FloatPoint(), FloatSize(1, strokeThickness));
+        float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(lineStyle.computedFontSize(), lineStyle.fontMetrics());
+        auto center = 2 * lineStyle.fontMetrics().floatAscent() / 3 + autoTextDecorationThickness / 2;
+        rect.move(0, center - strokeThickness / 2);
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, -(2 * baseline / 3 - wavyStrokeParameters.controlPointDistance - strokeThickness));
-        } else {
-            extendIntToFloat(overflowResult.bottom, 2 * baseline / 3 + strokeThickness - height);
-            extendIntToFloat(overflowResult.top, -(2 * baseline / 3));
+            FloatBoxExtent wavyExpansion;
+            wavyExpansion.setTop(wavyStrokeParameters.controlPointDistance);
+            wavyExpansion.setBottom(wavyStrokeParameters.controlPointDistance);
+            rect.expand(wavyExpansion);
         }
+        extendIntToFloat(overflowResult.top, -rect.y());
+        extendIntToFloat(overflowResult.bottom, rect.maxY() - height);
     }
     return overflowResult;
 }
