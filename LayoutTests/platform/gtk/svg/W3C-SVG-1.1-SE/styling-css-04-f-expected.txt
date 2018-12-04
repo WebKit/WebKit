@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (15,19) size 433x259
         RenderSVGText {text} at (162,19) size 156x20 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 155x20
-            chunk 1 (middle anchor) text run 1 at (162.50,35.00) startOffset 0 endOffset 17 width 155.00: "CSS selector test"
+            chunk 1 (middle anchor) text run 1 at (162.79,35.00) startOffset 0 endOffset 17 width 154.42: "CSS selector test"
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (29,69) size 209x69
           RenderSVGRect {rect} at (29,69) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=70.00] [width=67.50] [height=67.50]
@@ -74,8 +74,8 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (15,238) size 10x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 9x18
               chunk 1 (middle anchor) text run 1 at (15.50,253.00) startOffset 0 endOffset 1 width 9.00: "3"
-    RenderSVGContainer {g} at (10,314) size 231x33
-      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (10,314) size 228x33
+      RenderSVGText {text} at (10,314) size 228x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.77: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

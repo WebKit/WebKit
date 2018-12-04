@@ -1,3 +1,96 @@
+2018-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump freetype, fontconfig, harfbuzz, cairo and icu in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=192310
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline tests.
+
+        * platform/gtk/fast/text/format-control-expected.png:
+        * platform/gtk/fast/text/format-control-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-light-04-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/gtk/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/gtk/svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * platform/gtk/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.png:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+
 2018-12-03  Youenn Fablet  <youenn@apple.com>
 
         A sender created through addTransceiver and populated using addTrack should have its source set

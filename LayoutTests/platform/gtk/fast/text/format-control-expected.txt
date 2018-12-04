@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,1) size 284x45
             text run at (0,1) width 284: "fi fl ff ffi ffl fl f   i"
         RenderBlock {P} at (0,87) size 784x47
-          RenderText {#text} at (0,1) size 494x45
-            text run at (0,1) width 494: "f\x{200C}i f\x{200C}l f\x{200C}f f\x{200C}f\x{200C}i f\x{200C}f\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}i"
+          RenderText {#text} at (0,1) size 284x45
+            text run at (0,1) width 284: "f\x{200C}i f\x{200C}l f\x{200C}f f\x{200C}f\x{200C}i f\x{200C}f\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}i"
         RenderBlock {P} at (0,174) size 784x47
           RenderText {#text} at (0,1) size 494x45
             text run at (0,1) width 494: "f\x{200D}i f\x{200D}l f\x{200D}f f\x{200D}f\x{200D}i f\x{200D}f\x{200D}l f\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}l f\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}i"
@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,1) size 284x45
             text run at (0,1) width 284: "fi fl ff ffi ffl fl f   i"
         RenderBlock {P} at (0,87) size 784x47
-          RenderText {#text} at (0,1) size 494x45
-            text run at (0,1) width 494: "f\x{200C}i f\x{200C}l f\x{200C}f f\x{200C}f\x{200C}i f\x{200C}f\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}i"
+          RenderText {#text} at (0,1) size 284x45
+            text run at (0,1) width 284: "f\x{200C}i f\x{200C}l f\x{200C}f f\x{200C}f\x{200C}i f\x{200C}f\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}l f\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C} \x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}\x{200C}i"
         RenderBlock {P} at (0,174) size 784x47
           RenderText {#text} at (0,1) size 494x45
             text run at (0,1) width 494: "f\x{200D}i f\x{200D}l f\x{200D}f f\x{200D}f\x{200D}i f\x{200D}f\x{200D}l f\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}l f\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D} \x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}\x{200D}i"

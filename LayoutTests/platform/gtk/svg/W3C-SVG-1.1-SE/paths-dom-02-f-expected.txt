@@ -5,10 +5,10 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (143,88) size 194x190
       RenderSVGPath {path} at (143,88) size 194x190 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M 250.261 208.191 C 256 300 224 300 229.739 208.191 C 175.122 282.21 150.609 261.641 214.019 195 C 124.601 216.595 119.045 185.081 210.456 174.791 C 128.077 133.856 144.077 106.144 220.716 157.019 C 183.923 72.7092 213.993 61.7646 240 150 C 266.007 61.7646 296.077 72.7092 259.284 157.019 C 335.923 106.144 351.923 133.856 269.544 174.791 C 360.955 185.081 355.399 216.595 265.981 195 C 329.391 261.641 304.878 282.21 250.261 208.191 Z"]
-    RenderSVGContainer {g} at (10,314) size 231x33
-      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.5 $"
+    RenderSVGContainer {g} at (10,314) size 228x33
+      RenderSVGText {text} at (10,314) size 228x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.77: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 480x23
       RenderSVGRect {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]

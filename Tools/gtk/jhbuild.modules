@@ -105,9 +105,9 @@
       <dep package="pixman"/>
       <dep package="glib"/>
     </dependencies>
-    <branch module="releases/cairo-1.14.8.tar.xz" version="1.14.8"
+    <branch module="releases/cairo-1.16.0.tar.xz" version="1.16.0"
             repo="cairographics.org"
-	    hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
+	    hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14"/>
   </autotools>
 
   <!-- FIXME: Pixman 0.32.6 ARM iwMMXt fast path isn't buildable with GCC 4.9 and
@@ -133,9 +133,9 @@
 
   <autotools id="freetype6" autogen-sh="configure"
         autogenargs="--with-harfbuzz=no">
-    <branch module="freetype/freetype-2.8.tar.bz2" version="2.8"
+    <branch module="freetype/freetype-2.9.1.tar.bz2" version="2.9.1"
             repo="savannah.gnu.org"
-            hash="sha256:a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b"/>
+            hash="sha256:db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d"/>
   </autotools>
 
   <autotools id="harfbuzz" autogen-sh="configure"
@@ -145,11 +145,11 @@
       <dep package="freetype6"/>
       <dep package="fontconfig"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-1.4.2.tar.bz2"
-            version="1.4.2"
-            checkoutdir="harfbuzz-1.4.2"
+    <branch module="software/harfbuzz/release/harfbuzz-2.2.0.tar.bz2"
+            version="2.2.0"
+            checkoutdir="harfbuzz-2.2.0"
             repo="freedesktop.org"
-            hash="sha256:8f234dcfab000fdec24d43674fffa2fdbdbd654eb176afbde30e8826339cb7b3"/>
+            hash="sha256:b7ccfcbd56b970a709e8b9ea9fb46c922c606c2feef8f086fb6a8492e530f810"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"
@@ -266,9 +266,9 @@
       <dep package="freetype6"/>
       <dep package="libxml2"/>
     </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.12.4.tar.bz2" version="2.12.4"
+    <branch module="software/fontconfig/release/fontconfig-2.13.1.tar.bz2" version="2.13.1"
             repo="freedesktop.org"
-            hash="sha256:668293fcc4b3c59765cdee5cee05941091c0879edcc24dfec5455ef83912e45c"/>
+            hash="sha256:f655dd2a986d7aa97e052261b36aa67b0a64989496361eca8d604e6414006741"/>
   </autotools>
 
   <autotools id="adwaita-icon-theme" autogen-sh="configure">
@@ -432,9 +432,9 @@
   <autotools id="icu"
              autogen-sh="./source/configure"
              autogenargs="--disable-samples --enable-weak-threads">
-    <branch module="icu4c-57_1-src.tgz" version="57.1" checkoutdir="icu"
+    <branch module="icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
             repo="webkitgtk-jhbuild-mirror"
-            hash="sha256:ff8c67cb65949b1e7808f2359f2b80f722697048e90e7cfc382ec1fe229e9581">
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
       <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>

@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (125,25) size 574x321
-      RenderSVGText {text} at (75,15) size 344x13 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 344x12
-          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 343.80: "Test 'tref' element pointing outside the SVG document fragment."
+    RenderSVGContainer {g} at (125,25) size 569x321
+      RenderSVGText {text} at (75,15) size 342x13 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 342x12
+          chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 341.39: "Test 'tref' element pointing outside the SVG document fragment."
       RenderSVGText {text} at (75,171) size 81x37 contains 1 chunk(s)
         RenderSVGInline {tref} at (0,0) size 81x36
           RenderSVGInlineText {#text} at (0,0) size 81x36
@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (16,524) size 380x54
-      RenderSVGText {text} at (10,314) size 228x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.5 $"
+    RenderSVGContainer {g} at (16,524) size 375x54
+      RenderSVGText {text} at (10,314) size 225x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 225x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 224.19: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

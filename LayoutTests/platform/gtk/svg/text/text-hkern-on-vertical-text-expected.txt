@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (10,90) size 20x80
+  RenderSVGRoot {svg} at (0,90) size 80x80
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,90) size 20x80
-      RenderSVGText {text} at (-5,0) size 10x40 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 10x40
+    RenderSVGContainer {g} at (0,90) size 80x80
+      RenderSVGText {text} at (-30,0) size 60x40 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 60x40
           chunk 1 (vertical) text run 1 at (-3.00,0.00) startOffset 0 endOffset 1 height 10.00: "1"
           chunk 1 (vertical) text run 2 at (-3.00,10.00) startOffset 1 endOffset 2 height 10.00: "2"
           chunk 1 (vertical) text run 3 at (-3.00,20.00) startOffset 2 endOffset 3 height 10.00: "3"

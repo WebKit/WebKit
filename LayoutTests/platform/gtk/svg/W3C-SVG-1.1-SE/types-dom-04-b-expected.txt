@@ -3,59 +3,59 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,15) size 430x277
-      RenderSVGText {text} at (10,15) size 301x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 301x18
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 35 width 301.00: "Testing liveness of SVG DOM objects"
-      RenderSVGContainer {g} at (90,40) size 350x252 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(500.00,0.00)}]
+    RenderSVGContainer {g} at (10,15) size 430x276
+      RenderSVGText {text} at (10,15) size 298x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 298x18
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 35 width 297.35: "Testing liveness of SVG DOM objects"
+      RenderSVGContainer {g} at (90,40) size 350x251 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(500.00,0.00)}]
         RenderSVGRect {rect} at (420,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=60.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,63) size 162x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 162x14
-            chunk 1 text run 1 at (70.00,75.00) startOffset 0 endOffset 21 width 162.00: "SVGAnimatedNumberList"
+        RenderSVGText {text} at (70,63) size 161x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 161x14
+            chunk 1 text run 1 at (70.00,75.00) startOffset 0 endOffset 21 width 160.50: "SVGAnimatedNumberList"
         RenderSVGRect {rect} at (390,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=90.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,93) size 133x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 133x14
-            chunk 1 text run 1 at (70.00,105.00) startOffset 0 endOffset 17 width 133.00: "SVGAnimatedLength"
+        RenderSVGText {text} at (70,93) size 132x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 132x14
+            chunk 1 text run 1 at (70.00,105.00) startOffset 0 endOffset 17 width 131.50: "SVGAnimatedLength"
         RenderSVGRect {rect} at (360,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=120.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,123) size 155x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 155x14
-            chunk 1 text run 1 at (70.00,135.00) startOffset 0 endOffset 21 width 155.00: "SVGAnimatedLengthList"
+        RenderSVGText {text} at (70,123) size 154x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 154x14
+            chunk 1 text run 1 at (70.00,135.00) startOffset 0 endOffset 21 width 153.46: "SVGAnimatedLengthList"
         RenderSVGRect {rect} at (330,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=150.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,153) size 125x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 125x14
-            chunk 1 text run 1 at (70.00,165.00) startOffset 0 endOffset 16 width 125.00: "SVGAnimatedAngle"
+        RenderSVGText {text} at (70,153) size 124x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 124x14
+            chunk 1 text run 1 at (70.00,165.00) startOffset 0 endOffset 16 width 123.54: "SVGAnimatedAngle"
         RenderSVGRect {rect} at (300,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=180.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,183) size 118x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 118x14
-            chunk 1 text run 1 at (70.00,195.00) startOffset 0 endOffset 15 width 118.00: "SVGAnimatedRect"
+        RenderSVGText {text} at (70,183) size 117x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 117x14
+            chunk 1 text run 1 at (70.00,195.00) startOffset 0 endOffset 15 width 116.38: "SVGAnimatedRect"
         RenderSVGRect {rect} at (270,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=210.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,213) size 177x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 177x14
-            chunk 1 text run 1 at (70.00,225.00) startOffset 0 endOffset 24 width 177.00: "SVGAnimatedTransformList"
+        RenderSVGText {text} at (70,213) size 175x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 175x14
+            chunk 1 text run 1 at (70.00,225.00) startOffset 0 endOffset 24 width 174.00: "SVGAnimatedTransformList"
         RenderSVGRect {rect} at (240,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=240.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,243) size 222x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 222x14
-            chunk 1 text run 1 at (70.00,255.00) startOffset 0 endOffset 30 width 222.00: "SVGAnimatedPreserveAspectRatio"
+        RenderSVGText {text} at (70,243) size 221x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 221x14
+            chunk 1 text run 1 at (70.00,255.00) startOffset 0 endOffset 30 width 220.29: "SVGAnimatedPreserveAspectRatio"
         RenderSVGRect {rect} at (210,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=270.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,273) size 141x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 141x14
-            chunk 1 text run 1 at (70.00,285.00) startOffset 0 endOffset 18 width 141.00: "SVGAnimatedBoolean"
-        RenderSVGRect {rect} at (180,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=300.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,303) size 126x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 126x14
-            chunk 1 text run 1 at (70.00,315.00) startOffset 0 endOffset 17 width 126.00: "SVGAnimatedString"
-        RenderSVGRect {rect} at (150,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=330.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,333) size 170x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 170x14
-            chunk 1 text run 1 at (70.00,345.00) startOffset 0 endOffset 22 width 170.00: "SVGAnimatedEnumeration"
-        RenderSVGRect {rect} at (120,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=360.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,363) size 134x15 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 134x14
-            chunk 1 text run 1 at (70.00,375.00) startOffset 0 endOffset 18 width 134.00: "SVGAnimatedInteger"
-        RenderSVGRect {rect} at (90,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=390.00] [width=20.00] [height=20.00]
-        RenderSVGText {text} at (70,393) size 140x15 contains 1 chunk(s)
+        RenderSVGText {text} at (70,273) size 140x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 140x14
-            chunk 1 text run 1 at (70.00,405.00) startOffset 0 endOffset 17 width 140.00: "SVGAnimatedNumber"
+            chunk 1 text run 1 at (70.00,285.00) startOffset 0 endOffset 18 width 139.54: "SVGAnimatedBoolean"
+        RenderSVGRect {rect} at (180,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=300.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,303) size 125x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 125x14
+            chunk 1 text run 1 at (70.00,315.00) startOffset 0 endOffset 17 width 124.52: "SVGAnimatedString"
+        RenderSVGRect {rect} at (150,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=330.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,333) size 169x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 169x14
+            chunk 1 text run 1 at (70.00,345.00) startOffset 0 endOffset 22 width 168.47: "SVGAnimatedEnumeration"
+        RenderSVGRect {rect} at (120,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=360.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,363) size 133x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 133x14
+            chunk 1 text run 1 at (70.00,375.00) startOffset 0 endOffset 18 width 132.35: "SVGAnimatedInteger"
+        RenderSVGRect {rect} at (90,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=390.00] [width=20.00] [height=20.00]
+        RenderSVGText {text} at (70,393) size 139x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 139x14
+            chunk 1 text run 1 at (70.00,405.00) startOffset 0 endOffset 17 width 138.54: "SVGAnimatedNumber"
       RenderSVGHiddenContainer {g} at (0,0) size 0x0
         RenderSVGText {text} at (10,-15) size 34x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 34x22
@@ -67,8 +67,8 @@ layer at (0,0) size 480x360
         RenderSVGViewportContainer {svg} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id=""] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feTurbulence type="TURBULENCE" baseFrequency="4.00, 5.00" seed="0.00" numOctaves="1" stitchTiles="0"]
-    RenderSVGContainer {g} at (10,314) size 231x33
-      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (10,314) size 228x33
+      RenderSVGText {text} at (10,314) size 228x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.77: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -28,10 +28,10 @@ layer at (0,0) size 480x360
         RenderSVGRect {rect} at (139,159) size 102x102 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="invisible6"]}] [x=100.00] [y=100.00] [width=100.00] [height=100.00]
         RenderSVGRect {rect} at (239,159) size 102x102 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="invisible7"]}] [x=200.00] [y=100.00] [width=100.00] [height=100.00]
         RenderSVGRect {rect} at (339,159) size 102x102 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=300.00] [y=100.00] [width=100.00] [height=100.00]
-    RenderSVGContainer {g} at (10,314) size 231x33
-      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.1 $"
+    RenderSVGContainer {g} at (10,314) size 225x33
+      RenderSVGText {text} at (10,314) size 225x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 225x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 224.54: "$Revision: 1.1 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 480x23
       RenderSVGRect {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]

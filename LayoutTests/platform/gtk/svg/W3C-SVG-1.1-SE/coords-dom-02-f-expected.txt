@@ -9,8 +9,8 @@ layer at (0,0) size 480x360
           RenderSVGEllipse {circle} at (160,140) size 160x80 [transform={m=((2.00,0.00)(0.00,1.00)) t=(20.00,20.00)}] [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=40.00]
         RenderSVGContainer {g} at (160,140) size 160x80 [transform={m=((2.00,0.00)(0.00,1.00)) t=(20.00,20.00)}]
           RenderSVGEllipse {circle} at (160,140) size 160x80 [fill={[type=SOLID] [color=#00FF00]}] [cx=0.00] [cy=0.00] [r=40.00]
-    RenderSVGContainer {g} at (10,314) size 231x33
-      RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x32
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (10,314) size 228x33
+      RenderSVGText {text} at (10,314) size 228x33 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 228x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.77: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
