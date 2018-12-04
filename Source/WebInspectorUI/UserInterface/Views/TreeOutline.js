@@ -609,8 +609,11 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             }
         }
 
-        if (!handled)
+        if (!handled) {
+            this._itemWasSelectedByUser = true;
             handled = this._selectionController.handleKeyDown(event);
+            this._itemWasSelectedByUser = false;
+        }
 
         if (nextSelectedElement) {
             nextSelectedElement.reveal();
@@ -1000,7 +1003,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (isNaN(index))
             return;
 
+        this._itemWasSelectedByUser = true;
         this._selectionController.handleItemMouseDown(index, event);
+        this._itemWasSelectedByUser = false;
     }
 
     _indexOfTreeElement(treeElement)

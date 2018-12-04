@@ -1,3 +1,15 @@
+2018-12-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION(r238602): Elements: changing selection no longer highlights the selected node
+        https://bugs.webkit.org/show_bug.cgi?id=192354
+        <rdar://problem/46444438>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._treeKeyDown):
+        (WI.TreeOutline.prototype._handleMouseDown):
+
 2018-12-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION(r238330): Timeline auto-capture does not work after page transition
