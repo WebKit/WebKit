@@ -93,6 +93,28 @@ ExceptionOr<RefPtr<PaintRenderingContext2D>> CustomPaintCanvas::getContext()
     return { RefPtr<PaintRenderingContext2D> { &downcast<PaintRenderingContext2D>(*m_context) } };
 }
 
+void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
+{
+    ASSERT(!m_destinationGraphicsContext);
+    if (!width() || !height())
+        return;
+
+    // FIXME: Using an intermediate buffer is not needed if there are no composite operations.
+    auto clipBounds = ctx->clipBounds();
+
+    auto image = ImageBuffer::createCompatibleBuffer(clipBounds.size(), *ctx);
+    if (!image)
+        return;
+
+    m_destinationGraphicsContext = &image->context();
+    m_destinationGraphicsContext->translate(-clipBounds.location());
+    if (m_context)
+        m_context->paintRenderingResultsToCanvas();
+    m_destinationGraphicsContext = nullptr;
+
+    ctx->drawImageBuffer(*image, clipBounds);
+}
+
 Image* CustomPaintCanvas::copiedImage() const
 {
     ASSERT(!m_destinationGraphicsContext);

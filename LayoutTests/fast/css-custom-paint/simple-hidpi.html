@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<script src="resources/testharness.js"></script>
+<script>
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
+        }
+    }
+
+    function finishTest() {
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+</script>
+<body onload="startTest();">
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="test hidpi scaling">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div id="paint"></div>
+
+<script id="code" type="text/worklet">
+registerPaint('my-paint', class {
+  paint(ctx, geom, properties) {
+    for (var i = 0; i < 6; i++){
+      for (var j = 0; j < 6; j++){
+        ctx.fillStyle = 'rgb(' + Math.floor(255 - 42.5 * i) + ',' +
+                         Math.floor(255 - 42.5 * j) + ',0)';
+        ctx.fillRect(j * 25, i * 25, 25, 25);
+      }
+    }
+  }
+});
+</script>
+
+<script>
+importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+</script>
+</body>

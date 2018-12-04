@@ -1,10 +1,14 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
 
-<canvas id="paint" width="150px" height="150px" ></canvas>
+<canvas id="paint" style="width: 150px; height: 150px;" ></canvas>
 
 <script id="code">
-var canvas = document.getElementById('paint');
-var ctx = canvas.getContext('2d');
+const canvas = document.getElementById('paint');
+canvas.width = 150 * window.devicePixelRatio;
+canvas.height = 150 * window.devicePixelRatio;
+
+const ctx = canvas.getContext('2d');
+ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
 for (var i = 0; i < 6; i++){
   for (var j = 0; j < 6; j++){

@@ -1,3 +1,18 @@
+2018-12-03  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API should scale display list when drawing
+        https://bugs.webkit.org/show_bug.cgi?id=192217
+
+        Reviewed by Simon Fraser.
+
+        When we replay the display list, fix the scaling. The separate buffer is needed to make sure that globalCompositeOperation functions correctly.
+
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::replayDisplayList const):
+        * html/CustomPaintCanvas.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::doCustomPaint):
+
 2018-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Thick overlines and line-throughs grow in the wrong direction

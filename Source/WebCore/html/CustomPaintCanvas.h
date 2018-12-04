@@ -70,6 +70,7 @@ public:
 
     AffineTransform baseTransform() const final { ASSERT(m_destinationGraphicsContext && m_copiedBuffer); return m_copiedBuffer->baseTransform(); }
     Image* copiedImage() const final;
+    void replayDisplayList(GraphicsContext*) const;
 
     using RefCounted::ref;
     using RefCounted::deref;

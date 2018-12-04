@@ -129,11 +129,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
     if (result.type() != CallbackResultType::Success)
         return ImageDrawResult::DidNothing;
 
-    auto image = canvas->copiedImage();
-    if (!image)
-        return ImageDrawResult::DidNothing;
-
-    destContext.drawImage(*image, FloatPoint());
+    canvas->replayDisplayList(&destContext);
 
     return ImageDrawResult::DidDraw;
 }
