@@ -1,45 +1,45 @@
-#!/bin/bash
-
+#!/bin/sh
+#
 # Copyright (C) 2018 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
 #
-# 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer.
-# 2.  Redistributions in binary form must reproduce the above copyright
-#     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution.
-# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
-#     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission.
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
 #
-# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
-# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# This script generates .xcfilelist files to be used as output specifications
-# of Run Script build phases.
+# This script generates .xcfilelist files to be used as input and output
+# specifications of Run Script build phases.
 #
 # Currently, this script looks at the Generate Derived Sources and Generate
 # Unified Sources build phases. For the former, it invokes the
-# DerivedSources.make makefile, passing in a target that results in the names
-# of the generated source files being printed out. For the latter, the script
-# is hard-coded to know the number of .cpp and .mm files that are generated and
-# creates an appropriate .xcfilelist files covering those generated files.
+# DerivedSources.make makefile, passing in options that print out the
+# dependency tree and using that information to form the associated input and
+# output .xcfilelist files. For the latter, it invokes the same
+# generate-unified-bundles.rb script that generates the actual
+# UnifiedSources*.cpp/mm files, albeit in a mode that produces .xcfilelist
+# files instead.
 #
-# The generated .xcfilelist files are created in:
-#
-#   "${WEBKIT_DIR}/{Source,Tools}/${PROJECT_NAME}/<some-name>.xcfilelist"
+# The generated DerivedSources.make .xcfilelist files are created in in the
+# same directory as the DerivedSources.make file. The generated UnifiedSources
+# .xcfilelist files are created in ${PROJECT_DIR}.
 #
 # This script assumes that the generated/derived sources are created in the
 # following location, and incorporates that path into the paths it stores in
@@ -60,12 +60,32 @@
 # compared to the versions checked into the repository. If there are
 # differences, the user is notified so that they know that the .xcfilelist
 # files need to be regenerated. This facility can be incorporated into a
-# check-in hook or into the EWS (perhaps as part of check-webkit-style).
+# build phase, a check-in hook, or into the EWS (perhaps as part of
+# check-webkit-style).
 
 
 HERE="$(cd "$(dirname "$0")" && pwd -P)"
-WEBKIT_DIR="$(cd "${HERE}/../.." && pwd -P)"
 
+
+# Print an error message and exit.
+
+function die()
+{
+    echo "### $@" 1>&2
+    exit 1
+}
+
+
+# Utility: replace one string with another in a file.
+
+function replace()
+{
+    FILE="$1"
+    PATTERN="$2"
+    REPLACEMENT="$3"
+
+    sed -E -e "s|^${PATTERN}/|${REPLACEMENT}/|" -i '' "${FILE}"
+}
 
 # Given an .xcfilelist list file containing partial paths to the generated
 # files, modify each path to also include the actual location of generated
@@ -74,20 +94,8 @@ WEBKIT_DIR="$(cd "${HERE}/../.." && pwd -P)"
 
 function prepend_prefix_to_all_paths()
 {
-    PROJECT_NAME="$1"
-    FILE="$2"
-
-    if [[ "${PROJECT_NAME}" == WebKit ]]
-    then
-        DERIVED_SOURCES_DIR=WebKit2
-    elif [[ "${PROJECT_NAME}" == WebKitLegacy ]]
-    then
-        DERIVED_SOURCES_DIR=WebKit
-    else
-        DERIVED_SOURCES_DIR="${PROJECT_NAME}"
-    fi
-
-    sed -E -e "s|^|\$\(BUILT_PRODUCTS_DIR\)/DerivedSources/${DERIVED_SOURCES_DIR}/|" -i '' "${FILE}"
+    FILE="$1"
+    sed -E -e "s|^|${DERIVED_SOURCES_DIR}/|" -i '' "${FILE}"
 }
 
 
@@ -96,21 +104,12 @@ function prepend_prefix_to_all_paths()
 
 function find_first_existing()
 {
-    DIRS=("$@")
-    for DIR in "${DIRS[@]}"
+    ITEMS=("$@")
+    for ITEM in "${ITEMS[@]}"
     do
-        [[ -x "${DIR}" ]] && { echo "${DIR}"; return 0; }
+        [[ -e "${ITEM}" ]] && { echo "${ITEM}"; return 0; }
     done
     return 1
-}
-
-
-# Utility: given a project name, find the file system path to it.
-
-function get_project_dir()
-{
-    local PROJECT_NAME="$1"
-    find_first_existing "${WEBKIT_DIR}"/{Source,Tools}/"${PROJECT_NAME}"
 }
 
 
@@ -135,100 +134,312 @@ function check_xcfilelist()
 }
 
 
-# Generate .xcfilelist files for "unified sources" derived files. Note that
-# this file list generator assumes the location of the derived files (in
-# particular, that they are based relative to $(BUILT_PRODUCTS_DIR) rather
-# than, say $(PROJECT_DERIVED_FILE_DIR)). If the Xcode projects are refactored
-# to use $(PROJECT_DERIVED_FILE_DIR), then this script should be updated, too.
+function set_build_variables_for_JavaScriptCore()
+{
+    PROJECT_NAME=JavaScriptCore
+    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
+    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
+    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
+    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+
+    export FRAMEWORK_SEARCH_PATHS=
+    export HEADER_SEARCH_PATHS="
+        ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore
+        .
+        ${BUILT_PRODUCTS_DIR}/usr/local/include"
+    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
+        ${SDKROOT}/System/Library/PrivateFrameworks"
+    export SYSTEM_HEADER_SEARCH_PATHS=
+}
+
+
+function set_build_variables_for_WebCore()
+{
+    PROJECT_NAME=WebCore
+    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
+    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
+    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
+    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+
+    export FRAMEWORK_SEARCH_PATHS="
+        ${BUILT_PRODUCTS_DIR}"
+    export HEADER_SEARCH_PATHS="
+        PAL
+        ForwardingHeaders
+        /usr/include/libxslt
+        /usr/include/libxml2
+        ${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore
+        ${BUILT_PRODUCTS_DIR}/usr/local/include
+        ${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions
+        ${SDKROOT}/usr/local/include/WebKitAdditions
+        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc
+        ${SDKROOT}/usr/local/include/webrtc
+        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc/sdk/objc/Framework/Headers
+        ${SDKROOT}/usr/local/include/webrtc/sdk/objc/Framework/Headers
+        ${PROJECT_DIR}"
+    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
+        ${SDKROOT}/System/Library/PrivateFrameworks
+        ${SDKROOT}/System/Library/Frameworks"
+    export SYSTEM_HEADER_SEARCH_PATHS=
+}
+
+
+function set_build_variables_for_WebKit()
+{
+    PROJECT_NAME=WebKit
+    PROJECT_DIR="${OPENSOURCE_DIR}/Source/${PROJECT_NAME}"
+    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
+    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
+    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2"
+
+    export FRAMEWORK_SEARCH_PATHS="
+        ${BUILT_PRODUCTS_DIR}"
+    export HEADER_SEARCH_PATHS="
+        ${BUILT_PRODUCTS_DIR}/usr/local/include
+        ${BUILT_PRODUCTS_DIR}/WebCore.framework/PrivateHeaders/ForwardingHeaders
+        ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2
+        ${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions
+        ${SDKROOT}/usr/local/include/WebKitAdditions
+        ${BUILT_PRODUCTS_DIR}/usr/local/include/webrtc
+        ${SDKROOT}/usr/local/include/webrtc
+        ${PROJECT_DIR}"
+    export SYSTEM_FRAMEWORK_SEARCH_PATHS="
+        ${SDKROOT}/System/Library/PrivateFrameworks
+        ${SDKROOT}/System/Library/Frameworks"
+    export SYSTEM_HEADER_SEARCH_PATHS=
+}
+
+
+function set_build_variables_for_DumpRenderTree()
+{
+    PROJECT_NAME=DumpRenderTree
+    PROJECT_DIR="${OPENSOURCE_DIR}/Tools/${PROJECT_NAME}"
+    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
+    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
+    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+
+    export FRAMEWORK_SEARCH_PATHS=
+    export HEADER_SEARCH_PATHS=
+    export SYSTEM_FRAMEWORK_SEARCH_PATHS=
+    export SYSTEM_HEADER_SEARCH_PATHS=
+}
+
+function set_build_variables_for_WebKitTestRunner()
+{
+    PROJECT_NAME=WebKitTestRunner
+    PROJECT_DIR="${OPENSOURCE_DIR}/Tools/${PROJECT_NAME}"
+    GENERATOR="${PROJECT_DIR}/Scripts/generate-derived-sources.sh"
+    DERIVED_SOURCES_MAKE="${PROJECT_DIR}/DerivedSources.make"
+    DERIVED_SOURCES_DIR="${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}"
+
+    export FRAMEWORK_SEARCH_PATHS=
+    export HEADER_SEARCH_PATHS=
+    export SYSTEM_FRAMEWORK_SEARCH_PATHS=
+    export SYSTEM_HEADER_SEARCH_PATHS=
+}
+
+
+function dump_variables()
+{
+    echo "ACTION                              = ${ACTION}"
+    echo "OS                                  = ${OS}"
+    echo "PLATFORM_NAME                       = ${PLATFORM_NAME}"
+    echo "SDKROOT                             = ${SDKROOT}"
+    echo "SRCROOT                             = ${SRCROOT}"
+    echo "BUILD_SCRIPTS_DIR                   = ${BUILD_SCRIPTS_DIR}"
+    echo "BUILT_PRODUCTS_DIR                  = ${BUILT_PRODUCTS_DIR}"
+    echo "WEBCORE_PRIVATE_HEADERS_DIR         = ${WEBCORE_PRIVATE_HEADERS_DIR}"
+    echo "WEBKIT2_PRIVATE_HEADERS_DIR         = ${WEBKIT2_PRIVATE_HEADERS_DIR}"
+    echo "JAVASCRIPTCORE_PRIVATE_HEADERS_DIR  = ${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}"
+    echo "WEBKITADDITIONS_HEADER_SEARCH_PATHS = ${WEBKITADDITIONS_HEADER_SEARCH_PATHS}"
+    echo ""
+    echo "PROJECT_NAME                        = ${PROJECT_NAME}"
+    echo "PROJECT_DIR                         = ${PROJECT_DIR}"
+    echo "GENERATOR                           = ${GENERATOR}"
+    echo "DERIVED_SOURCES_MAKE                = ${DERIVED_SOURCES_MAKE}"
+    echo "DERIVED_SOURCES_DIR                 = ${DERIVED_SOURCES_DIR}"
+    echo ""
+    echo "FRAMEWORK_SEARCH_PATHS              = ${FRAMEWORK_SEARCH_PATHS}"
+    echo "HEADER_SEARCH_PATHS                 = ${HEADER_SEARCH_PATHS}"
+    echo "SYSTEM_FRAMEWORK_SEARCH_PATHS       = ${SYSTEM_FRAMEWORK_SEARCH_PATHS}"
+}
+
+
+function set_build_variables()
+{
+    PROJECT_TAG="$1"
+
+    export ACTION=build
+    export OS=MACOS
+    export PLATFORM_NAME=macosx
+    export SDKROOT="$(xcrun -show-sdk-path)"
+    export BUILD_SCRIPTS_DIR="${OPENSOURCE_DIR}/Source/WTF/Scripts"
+    export BUILT_PRODUCTS_DIR="$(find_first_existing "${OPENSOURCE_DIR}/WebKitBuild/"{Debug,Release}*)"
+    [[ -n "${SDKROOT}" ]] || die "SDKROOT is not defined"
+    [[ -e "${BUILD_SCRIPTS_DIR}" ]] || die "$BUILD_SCRIPTS_DIR does not exist"
+    [[ -n "${BUILT_PRODUCTS_DIR}" ]] || die "BUILT_PRODUCTS_DIR is not defined. You may need to build WebKit first."
+
+    export WEBCORE_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/WebCore.framework/PrivateHeaders"
+    export WEBKIT2_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/WebKit.framework/PrivateHeaders"
+    export JAVASCRIPTCORE_PRIVATE_HEADERS_DIR="${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/PrivateHeaders"
+    export WEBKITADDITIONS_HEADER_SEARCH_PATHS="${BUILT_PRODUCTS_DIR}/usr/local/include/WebKitAdditions ${SDKROOT}/usr/local/include/WebKitAdditions"
+    [[ -e "${WEBCORE_PRIVATE_HEADERS_DIR}" ]] || die "$WEBCORE_PRIVATE_HEADERS_DIR does not exist. You may need to build WebKit first."
+    [[ -e "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" ]] || die "$JAVASCRIPTCORE_PRIVATE_HEADERS_DIR does not exist. You may need to build WebKit first."
+    # [[ -e "${WEBKITADDITIONS_HEADER_SEARCH_PATHS}" ]] || die "$WEBKITADDITIONS_HEADER_SEARCH_PATHS does not exist. You may need to build WebKit first."
+
+    local FN=set_build_variables_for_${PROJECT_TAG}
+    local IS_FUNCTION=$(type -t $FN)
+    [[ "${IS_FUNCTION}" == "function" ]] && eval $FN || die "Could not set build variables for ${PROJECT_TAG}"
+
+    # Do these after project-specific initialization.
+
+    export SRCROOT="${PROJECT_DIR}"
+
+    [[ -e "${PROJECT_DIR}" ]] || die "$PROJECT_DIR does not exist"
+    [[ -e "${GENERATOR}" ]] || die "$GENERATOR does not exist"
+    [[ -e "${DERIVED_SOURCES_MAKE}" ]] || die "$DERIVED_SOURCES_MAKE does not exist"
+    [[ -e "${DERIVED_SOURCES_DIR}" ]] || die "$DERIVED_SOURCES_DIR does not exist"
+
+    # dump_variables
+}
+
+
+function sort_files()
+{
+    sort "${INPUT_XCFILELIST_PATH}" -o "${INPUT_XCFILELIST_PATH}"
+    sort "${OUTPUT_XCFILELIST_PATH}" -o "${OUTPUT_XCFILELIST_PATH}"
+}
+
+
+# If we're doing a check (as opposed to generating the files), then redirect
+# the script to generate the files in a temporary location (so that we can
+# compare those to the originals later).
+
+function check_prolog()
+{
+    if (( ${DO_CHECK} ))
+    then
+        INPUT_XCFILELIST_PATH_ORIG="${INPUT_XCFILELIST_PATH}"
+        INPUT_XCFILELIST_PATH="/tmp/${INPUT_XCFILELIST_PATH##/}"
+        OUTPUT_XCFILELIST_PATH_ORIG="${OUTPUT_XCFILELIST_PATH}"
+        OUTPUT_XCFILELIST_PATH="/tmp/${OUTPUT_XCFILELIST_PATH##/}"
+        mkdir -p "$(dirname "${INPUT_XCFILELIST_PATH}")"
+        mkdir -p "$(dirname "${OUTPUT_XCFILELIST_PATH}")"
+    else
+        echo "### Generating: ${INPUT_XCFILELIST_PATH}"
+        echo "### Generating: ${OUTPUT_XCFILELIST_PATH}"
+    fi
+}
+
+
+# If we're doing a check, then diff the new files against the originals.
+
+function check_epilog()
+{
+    if (( ${DO_CHECK} ))
+    then
+        echo "### Checking: ${INPUT_XCFILELIST_PATH}"
+        check_xcfilelist "${INPUT_XCFILELIST_PATH_ORIG}" "${INPUT_XCFILELIST_PATH}"
+
+        echo "### Checking: ${OUTPUT_XCFILELIST_PATH}"
+        check_xcfilelist "${OUTPUT_XCFILELIST_PATH_ORIG}" "${OUTPUT_XCFILELIST_PATH}"
+    fi
+}
+
+
+# Generate .xcfilelist files based on the output of DerivedSources.make when
+# invoked to print out its dependency list.
+
+function generate_xcfilelists_from_derivedsources()
+{
+    set_build_variables "$1"
+
+    local DERIVED_SOURCES_MAKE_PATH="$(dirname "${DERIVED_SOURCES_MAKE}")"
+    INPUT_XCFILELIST_PATH="${DERIVED_SOURCES_MAKE_PATH}/DerivedSources-input.xcfilelist"
+    OUTPUT_XCFILELIST_PATH="${DERIVED_SOURCES_MAKE_PATH}/DerivedSources-output.xcfilelist"
+
+    # See comments in generate_xcfilelists_from_unifiedsources for what we're
+    # trying to achieve with FEATURE_DEFINES.
+
+    export FEATURE_DEFINES="$(grep 'ifeq.*findstring .*FEATURE_DEFINES.*' "${DERIVED_SOURCES_MAKE}" | sed -E -e 's/.*, (.*)\)/\1/')"
+
+    # Generate the .xcfilelist files.
+
+    check_prolog
+
+    "${GENERATOR}" NO_SUPPLEMENTAL_FILES=1 --no-builtin-rules --dry-run --always-make --debug=abvijm all |
+        "${OPENSOURCE_DIR}"/Tools/Scripts/extract-dependencies-from-makefile --input "${INPUT_XCFILELIST_PATH}" --output "${OUTPUT_XCFILELIST_PATH}"
+
+    replace "${INPUT_XCFILELIST_PATH}" 'WebCore' '$(PROJECT_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" 'JavaScriptCore' '$(PROJECT_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" 'JavaScriptCorePrivateHeaders' '$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" 'WebKit2PrivateHeaders' '$(WEBKIT2_PRIVATE_HEADERS_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" "${PROJECT_DIR}" '$(PROJECT_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" "${WEBCORE_PRIVATE_HEADERS_DIR}" '$(WEBCORE_PRIVATE_HEADERS_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" "${WEBKIT2_PRIVATE_HEADERS_DIR}" '$(WEBKIT2_PRIVATE_HEADERS_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" "${JAVASCRIPTCORE_PRIVATE_HEADERS_DIR}" '$(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)'
+    replace "${INPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
+
+    prepend_prefix_to_all_paths "${OUTPUT_XCFILELIST_PATH}"
+    replace "${OUTPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
+
+    sort_files
+    check_epilog
+}
+
+
+# Generate .xcfilelist files for "unified sources" derived files. We generate
+# two files: UnifiedSources-input.xcfilelist (the original source files that
+# get bundled into the various UnifiedSource*.cpp/mm files) and
+# UnifiedSources-output.xcfilelist (the list of UnifiedSource*.cpp/mm files).
+# Both of these are generated from the same Sources*.txt files used by
+# generate-unified-source-bundles.rb. The .xcfilelist files are written into
+# the associated project directory.
 
 function generate_xcfilelists_from_unifiedsources()
 {
-    local PROJECT_NAME="$1"
-    local NUM_CPP=$2
-    local NUM_MM=$3
+    set_build_variables "$1"
 
-    local XCFILELIST_NAME="UnifiedSources.xcfilelist"
-    local PROJECT_DIR="$(get_project_dir "${PROJECT_NAME}")"
-    local XCFILELIST_PATH="${PROJECT_DIR}/${XCFILELIST_NAME}"
+    INPUT_XCFILELIST_PATH="${PROJECT_DIR}/UnifiedSources-input.xcfilelist"
+    OUTPUT_XCFILELIST_PATH="${PROJECT_DIR}/UnifiedSources-output.xcfilelist"
 
-    if (( ${DO_CHECK} ))
-    then
-        echo "### Checking: ${XCFILELIST_PATH}"
-        XCFILELIST_PATH_ORIG="${XCFILELIST_PATH}"
-        XCFILELIST_PATH="/tmp/${XCFILELIST_NAME}"
-    else
-        echo "### Generating: ${XCFILELIST_PATH}"
-    fi
+    # Define FEATURE_DEFINES in order to enable every possible feature, thus
+    # including every possible input file into the generated .xcfilelist file.
+    # This may over-specify the input -- that is, include files that aren't
+    # actually included in the UnifiedSources files -- but that's OK. The worst
+    # that will happen is that one of these extra files will get modified and
+    # we'll unnecessarily go through the Generate Unified Sources phase. This
+    # will unnecessarily go through the process of generating the
+    # UnifiedSources, but since that process writes/updates the UnifiedSources
+    # files only if their contents actually change, we won't end up changing
+    # any UnifiedSources files and nothing gets unnecessarily recompiled.
 
-    {
-        local n
-        for n in $(seq $NUM_CPP)
-        do
-            echo unified-sources/UnifiedSource$n.cpp
-        done
+    export FEATURE_DEFINES="$(cd "${PROJECT_DIR}"; grep '#if' $(find . -name 'Sources*.txt') | sed -E -e 's/.*if (ENABLE.*)/\1/')"
 
-        echo
+    # Generate the .xcfilelist files.
 
-        for n in $(seq $NUM_MM)
-        do
-            echo unified-sources/UnifiedSource$n-mm.mm
-        done
-    } > "${XCFILELIST_PATH}"
+    check_prolog
 
-    prepend_prefix_to_all_paths "${PROJECT_NAME}" "${XCFILELIST_PATH}"
-    (( ${DO_CHECK} )) && check_xcfilelist "${XCFILELIST_PATH_ORIG}" "${XCFILELIST_PATH}"
-}
+    "${PROJECT_DIR}/Scripts/generate-unified-sources.sh" \
+        --generate-xcfilelists \
+        --input-xcfilelist-path "${INPUT_XCFILELIST_PATH}" \
+        --output-xcfilelist-path "${OUTPUT_XCFILELIST_PATH}"
 
+    replace "${INPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
+    replace "${OUTPUT_XCFILELIST_PATH}" "${BUILT_PRODUCTS_DIR}" '$(BUILT_PRODUCTS_DIR)'
 
-# Generate .xcfilelist files based on the output of the given makefile when
-# passed the "print_all_generated_files" target.
-
-function generate_xcfilelists_from_makefile()
-{
-    local PROJECT_NAME="$1"
-    local MAKEFILE_NAME="$2"
-    local XCFILELIST_NAME="$3"
-
-    local PROJECT_DIR="$(get_project_dir "${PROJECT_NAME}")"
-    local XCFILELIST_PATH="${PROJECT_DIR}/${XCFILELIST_NAME}"
-
-    if (( ${DO_CHECK} ))
-    then
-        echo "### Checking: ${XCFILELIST_PATH}"
-        XCFILELIST_PATH_ORIG="${XCFILELIST_PATH}"
-        XCFILELIST_PATH="/tmp/${XCFILELIST_NAME}"
-    else
-        echo "### Generating: ${XCFILELIST_PATH}"
-    fi
-
-    local MAKE_FLAGS=(
-        --no-builtin-rules
-        OS=MACOS
-        SDKROOT=$(xcrun --show-sdk-path)
-        FRAMEWORK_SEARCH_PATHS=.
-        HEADER_SEARCH_PATHS=${WEBKIT_DIR}/Source/WTF
-    )
-
-    make -C "${PROJECT_DIR}" -f "${MAKEFILE_NAME}" "${MAKE_FLAGS[@]}" print_all_generated_files \
-        | sort | uniq > "${XCFILELIST_PATH}"
-
-    prepend_prefix_to_all_paths "${PROJECT_NAME}" "${XCFILELIST_PATH}"
-    (( ${DO_CHECK} )) && check_xcfilelist "${XCFILELIST_PATH_ORIG}" "${XCFILELIST_PATH}"
-}
-
-
-# Wrapper around generate_xcfilelists_from_makefile() to handle the common
-# pattern of generating the list of files generated from the
-# DerivedSources.make makefiles.
-
-function generate_xcfilelists_from_derivedsources_makefile()
-{
-    local PROJECT_NAME="$1"
-    generate_xcfilelists_from_makefile "${PROJECT_NAME}" DerivedSources.make DerivedSources.xcfilelist
+    sort_files
+    check_epilog
 }
 
 
 # Process command-line parameters.
+
+ROOT_DIR="$(cd "${HERE}/../../.." && pwd -P)"
+OPENSOURCE_DIR="${ROOT_DIR}/OpenSource"
+[[ -n "${ROOT_DIR}" ]] || die "Could not find ROOT_DIR"
+[[ -n "${OPENSOURCE_DIR}" ]] || die "Could not find OPENSOURCE_DIR"
+[[ -e "${OPENSOURCE_DIR}" ]] || die "$OPENSOURCE_DIR does not exist"
 
 DO_CHECK=0
 DEFERRED_EXIT_CODE=0
@@ -242,15 +453,20 @@ do
     shift
 done
 
+generate_xcfilelists_from_derivedsources JavaScriptCore
+generate_xcfilelists_from_derivedsources WebCore
+generate_xcfilelists_from_derivedsources WebKit
+generate_xcfilelists_from_derivedsources DumpRenderTree
+generate_xcfilelists_from_derivedsources WebKitTestRunner
 
-generate_xcfilelists_from_unifiedsources JavaScriptCore 145 5
-generate_xcfilelists_from_unifiedsources WebCore 530 62
-generate_xcfilelists_from_unifiedsources WebKit 100 80
+generate_xcfilelists_from_unifiedsources JavaScriptCore
+generate_xcfilelists_from_unifiedsources WebCore
+generate_xcfilelists_from_unifiedsources WebKit
 
-generate_xcfilelists_from_derivedsources_makefile JavaScriptCore
-generate_xcfilelists_from_derivedsources_makefile WebCore
-generate_xcfilelists_from_derivedsources_makefile WebKit
-generate_xcfilelists_from_derivedsources_makefile WebKitTestRunner
-generate_xcfilelists_from_derivedsources_makefile DumpRenderTree
 
-exit ${DEFERRED_EXIT_CODE}
+SOURCED=$([[ "$0" == "${BASH_SOURCE[@]}" ]] && echo 0 || echo 1)
+if (( ! $SOURCED ))
+then
+    exit ${DEFERRED_EXIT_CODE}
+fi
+
