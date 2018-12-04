@@ -498,7 +498,7 @@ WI.TreeElement = class TreeElement extends WI.Object
         this.select(false, true);
     }
 
-    select(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
+    select(omitFocus, selectedByUser, suppressNotification)
     {
         if (!this.treeOutline || !this.selectable)
             return;
@@ -515,10 +515,7 @@ WI.TreeElement = class TreeElement extends WI.Object
             return;
 
         this.selected = true;
-        treeOutline.selectTreeElementInternal(this, suppressOnSelect, selectedByUser);
-
-        if (!suppressOnSelect && this.onselect)
-            this.onselect(this, selectedByUser);
+        treeOutline.selectTreeElementInternal(this, suppressNotification, selectedByUser);
 
         let treeOutlineGroup = WI.TreeOutlineGroup.groupForTreeOutline(treeOutline);
         if (!treeOutlineGroup)
@@ -527,22 +524,19 @@ WI.TreeElement = class TreeElement extends WI.Object
         treeOutlineGroup.didSelectTreeElement(this);
     }
 
-    revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect)
+    revealAndSelect(omitFocus, selectedByUser, suppressNotification)
     {
         this.reveal();
-        this.select(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
+        this.select(omitFocus, selectedByUser, suppressNotification);
     }
 
-    deselect(suppressOnDeselect)
+    deselect(suppressNotification)
     {
         if (!this.treeOutline || this.treeOutline.selectedTreeElement !== this || !this.selected)
             return false;
 
         this.selected = false;
-        this.treeOutline.selectTreeElementInternal(null, suppressOnDeselect);
-
-        if (!suppressOnDeselect && this.ondeselect)
-            this.ondeselect(this);
+        this.treeOutline.selectTreeElementInternal(null, suppressNotification);
 
         return true;
     }

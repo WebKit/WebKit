@@ -184,7 +184,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             this._revealAndSelectNode(selectedNode, true);
     }
 
-    updateSelection()
+    updateSelectionArea()
     {
         // This will miss updating selection areas used for the hovered tree element and
         // and those used to show forced pseudo class indicators, but this should be okay.

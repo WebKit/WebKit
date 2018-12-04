@@ -55,6 +55,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._selectable = selectable;
 
         this._cachedNumberOfDescendents = 0;
+        this._previousSelectedTreeElement = null;
         this._selectionController = new WI.SelectionController(this);
 
         this._itemWasSelectedByUser = false;
@@ -810,6 +811,17 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 if (!this._suppressNextSelectionDidChangeEvent)
                     treeElement.select();
             }
+        }
+
+        let selectedTreeElement = this.selectedTreeElement;
+        if (selectedTreeElement !== this._previousSelectedTreeElement) {
+            if (this._previousSelectedTreeElement)
+                this._previousSelectedTreeElement.listItemElement.classList.remove("last-selected");
+
+            this._previousSelectedTreeElement = selectedTreeElement;
+
+            if (this._previousSelectedTreeElement)
+                this._previousSelectedTreeElement.listItemElement.classList.add("last-selected");
         }
 
         this._dispatchSelectionDidChangeEvent();

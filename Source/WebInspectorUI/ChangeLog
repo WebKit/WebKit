@@ -1,5 +1,65 @@
 2018-12-04  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Elements: $0 is shown for all selected elements
+        https://bugs.webkit.org/show_bug.cgi?id=192119
+        <rdar://problem/46327554>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WI.ContentBrowserTabContentView.prototype._revealAndSelectRepresentedObject):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        (WI.DOMTreeContentView.prototype.layout):
+        (WI.DOMTreeContentView.prototype._domTreeSelectionDidChange):
+        Update the selected DOM node using the TreeOutline's selection change
+        event, instead of in `onselect`, which wasn't always called.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.onselect): Deleted.
+        (WI.DOMTreeElement.prototype.ondeselect): Deleted.
+        Eliminate `onselect` and `ondeselect`. TreeOutline clients should use
+        the TreeOutline.Event.SelectedDidChange event instead.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom li.last-selected > span::after):
+        (.tree-outline.dom:focus li.last-selected > span::after):
+        (.tree-outline.dom li.selected > span::after): Deleted.
+        (.tree-outline.dom:focus li.selected > span::after): Deleted.
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.updateSelection): Deleted.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WI.FolderizedTreeElement.prototype._addTreeElement):
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        (WI.NavigationSidebarPanel.prototype._treeElementWasFiltered):
+        (WI.NavigationSidebarPanel):
+        * UserInterface/Views/OpenResourceDialog.js:
+        (WI.OpenResourceDialog.prototype._populateResourceTreeOutline):
+        (WI.OpenResourceDialog.prototype._handleKeydownEvent):
+        * UserInterface/Views/SourceCodeTreeElement.js:
+        (WI.SourceCodeTreeElement.prototype.descendantResourceTreeElementTypeDidChange):
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.select):
+        (WI.TreeElement.prototype.revealAndSelect):
+        (WI.TreeElement.prototype.deselect):
+        Remove `suppressOnDeselect` and rename `suppressOnSelect` to `suppressNotification`.
+        Now that `ondeselect` has been removed `suppressOnDeselect` is no longer
+        meaningful, as TreeOutline generates a single `SelectedDidChange` event
+        when the selected item changes. In the case of `revealAndSelect`, both
+        arguments had the same value.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline):
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+        Add a unique class name to the last selected TreeElement to distinguish
+        it from other selected elements.
+
+2018-12-04  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Elements: ⌘-A should select all visible nodes
         https://bugs.webkit.org/show_bug.cgi?id=192120
         <rdar://problem/46344435>

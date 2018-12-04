@@ -223,7 +223,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
         this._insertChildTreeElement(parentTreeElement, childTreeElement);
 
         if (wasSelected)
-            childTreeElement.revealAndSelect(true, false, true, true);
+            childTreeElement.revealAndSelect(true, false, true);
     }
 
     _compareTreeElementsByMainTitle(a, b)

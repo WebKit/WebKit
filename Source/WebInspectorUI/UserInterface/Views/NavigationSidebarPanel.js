@@ -195,7 +195,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
         if (!contentView)
             return false;
 
-        treeElement.revealAndSelect(true, false, true, true);
+        treeElement.revealAndSelect(true, false, true);
         return true;
     }
 
@@ -742,9 +742,8 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
         const omitFocus = true;
         const selectedByUser = false;
-        const suppressOnSelect = true;
-        const suppressOnDeselect = true;
-        treeElement.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
+        const suppressNotification = true;
+        treeElement.revealAndSelect(omitFocus, selectedByUser, suppressNotification);
     }
 };
 

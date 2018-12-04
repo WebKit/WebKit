@@ -67,6 +67,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._domTreeOutline.allowsEmptySelection = false;
         this._domTreeOutline.allowsMultipleSelection = true;
         this._domTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._domTreeElementAdded, this);
+        this._domTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._domTreeSelectionDidChange, this);
         this._domTreeOutline.addEventListener(WI.DOMTreeOutline.Event.SelectedNodeChanged, this._selectedNodeDidChange, this);
         this._domTreeOutline.wireToDomAgent();
         this._domTreeOutline.editable = true;
@@ -357,7 +358,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
     layout()
     {
-        this._domTreeOutline.updateSelection();
+        this._domTreeOutline.updateSelectionArea();
 
         if (this.layoutReason === WI.View.LayoutReason.Resize)
             this._domTreeOutline.selectDOMNode(this._domTreeOutline.selectedDOMNode());
@@ -449,6 +450,22 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             return;
 
         this._updateBreakpointStatus(node.id);
+    }
+
+    _domTreeSelectionDidChange(event)
+    {
+        let treeElement = this._domTreeOutline.selectedTreeElement;
+        let domNode = treeElement ? treeElement.representedObject : null;
+        let selectedByUser = event.data.selectedByUser;
+
+        this._domTreeOutline.suppressRevealAndSelect = true;
+        this._domTreeOutline.selectDOMNode(domNode, selectedByUser);
+
+        if (domNode && selectedByUser)
+            WI.domManager.highlightDOMNode(domNode.id);
+
+        this._domTreeOutline.updateSelectionArea();
+        this._domTreeOutline.suppressRevealAndSelect = false;
     }
 
     _selectedNodeDidChange(event)

@@ -625,21 +625,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         listItemElement.classList.add(WI.DOMTreeElement.HighlightStyleClassName);
     }
 
-    onselect(treeElement, selectedByUser)
-    {
-        this.treeOutline.suppressRevealAndSelect = true;
-        this.treeOutline.selectDOMNode(this.representedObject, selectedByUser);
-        if (selectedByUser)
-            WI.domManager.highlightDOMNode(this.representedObject.id);
-        this.treeOutline.updateSelection();
-        this.treeOutline.suppressRevealAndSelect = false;
-    }
-
-    ondeselect(treeElement)
-    {
-        this.treeOutline.selectDOMNode(null);
-    }
-
     ondelete()
     {
         if (!this.editable)

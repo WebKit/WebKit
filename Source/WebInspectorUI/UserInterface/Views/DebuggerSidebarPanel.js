@@ -784,7 +784,7 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         var newDebuggerTreeElement = this._addDebuggerObject(debuggerObject);
 
         if (newDebuggerTreeElement && wasSelected)
-            newDebuggerTreeElement.revealAndSelect(true, false, true, true);
+            newDebuggerTreeElement.revealAndSelect(true, false, true);
     }
 
     _removeDebuggerTreeElement(debuggerTreeElement)

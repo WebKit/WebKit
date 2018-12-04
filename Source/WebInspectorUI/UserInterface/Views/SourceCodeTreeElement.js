@@ -184,7 +184,7 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
         if (wasParentExpanded)
             parentTreeElement.expand();
         if (wasSelected)
-            childTreeElement.revealAndSelect(true, false, true, true);
+            childTreeElement.revealAndSelect(true, false, true);
     }
 
     // Protected (ResourceTreeElement calls this when its Resource changes dynamically for Frames)

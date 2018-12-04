@@ -124,7 +124,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         }
 
         if (this._treeOutline.children.length)
-            this._treeOutline.children[0].select(true, false, true, true);
+            this._treeOutline.children[0].select(true, false, true);
     }
 
     didDismissDialog()
@@ -202,7 +202,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             let adjacentSiblingProperty = event.keyCode === WI.KeyboardShortcut.Key.Up.keyCode ? "previousSibling" : "nextSibling";
             treeElement = treeElement[adjacentSiblingProperty];
             if (treeElement)
-                treeElement.revealAndSelect(true, false, true, true);
+                treeElement.revealAndSelect(true, false, true);
 
             event.preventDefault();
         }

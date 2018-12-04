@@ -78,14 +78,14 @@
     background-color: hsl(209, 100%, 49%);
 }
 
-.tree-outline.dom li.selected > span::after {
+.tree-outline.dom li.last-selected > span::after {
     content: " = $0";
     color: var(--console-secondary-text-color);
     position: absolute;
     white-space: pre;
 }
 
-.tree-outline.dom:focus li.selected > span::after {
+.tree-outline.dom:focus li.last-selected > span::after {
     color: var(--selected-secondary-text-color);
 }
 
