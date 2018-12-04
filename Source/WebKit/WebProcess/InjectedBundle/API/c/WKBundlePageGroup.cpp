@@ -30,14 +30,12 @@
 #include "WKBundleAPICast.h"
 #include "WebPageGroupProxy.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundlePageGroupGetTypeID()
 {
-    return toAPI(WebPageGroupProxy::APIType);
+    return WebKit::toAPI(WebKit::WebPageGroupProxy::APIType);
 }
 
 WKStringRef WKBundlePageGroupCopyIdentifier(WKBundlePageGroupRef bundlePageGroup)
 {
-    return toCopiedAPI(toImpl(bundlePageGroup)->identifier());
+    return WebKit::toCopiedAPI(WebKit::toImpl(bundlePageGroup)->identifier());
 }

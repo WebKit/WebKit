@@ -30,40 +30,38 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundleScriptWorldGetTypeID()
 {
-    return toAPI(InjectedBundleScriptWorld::APIType);
+    return WebKit::toAPI(WebKit::InjectedBundleScriptWorld::APIType);
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
 {
-    RefPtr<InjectedBundleScriptWorld> world = InjectedBundleScriptWorld::create();
+    RefPtr<WebKit::InjectedBundleScriptWorld> world = WebKit::InjectedBundleScriptWorld::create();
     return toAPI(world.leakRef());
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 {
-    return toAPI(&InjectedBundleScriptWorld::normalWorld());
+    return toAPI(&WebKit::InjectedBundleScriptWorld::normalWorld());
 }
 
 void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorldRef)
 {
-    toImpl(scriptWorldRef)->clearWrappers();
+    WebKit::toImpl(scriptWorldRef)->clearWrappers();
 }
 
 void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorldRef)
 {
-    toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
+    WebKit::toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
 }
 
 void WKBundleScriptWorldDisableOverrideBuiltinsBehavior(WKBundleScriptWorldRef scriptWorldRef)
 {
-    toImpl(scriptWorldRef)->disableOverrideBuiltinsBehavior();
+    WebKit::toImpl(scriptWorldRef)->disableOverrideBuiltinsBehavior();
 }
 
 WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
 {
-    return toCopiedAPI(toImpl(scriptWorldRef)->name());
+    return WebKit::toCopiedAPI(WebKit::toImpl(scriptWorldRef)->name());
 }

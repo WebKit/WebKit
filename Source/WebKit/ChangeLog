@@ -1,3 +1,29 @@
+2018-12-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove "using namespace WebKit" under Source/WebKit/WebProcess/InjectedBundle/API
+        https://bugs.webkit.org/show_bug.cgi?id=192301
+
+        Reviewed by Alex Christensen.
+
+        Removed "using namespace WebKit" statement, and use "WebKit::"
+        namespace prefix instead.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleDOMWindowExtension.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageGroup.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+
 2018-12-03  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON) Google OAuth is broken in private sessions

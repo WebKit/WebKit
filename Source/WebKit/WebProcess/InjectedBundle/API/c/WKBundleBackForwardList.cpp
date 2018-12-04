@@ -30,7 +30,7 @@
 
 WKTypeID WKBundleBackForwardListGetTypeID()
 {
-    return toAPI(API::Object::Type::Null);
+    return WebKit::toAPI(API::Object::Type::Null);
 }
 
 WKBundleBackForwardListItemRef WKBundleBackForwardListCopyItemAtIndex(WKBundleBackForwardListRef listRef, int index)

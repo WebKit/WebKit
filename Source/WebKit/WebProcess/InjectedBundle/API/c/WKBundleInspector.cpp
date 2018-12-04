@@ -30,34 +30,32 @@
 #include "WKBundleAPICast.h"
 #include "WebInspector.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundleInspectorGetTypeID()
 {
-    return toAPI(WebInspector::APIType);
+    return WebKit::toAPI(WebKit::WebInspector::APIType);
 }
 
 void WKBundleInspectorShow(WKBundleInspectorRef inspectorRef)
 {
-    toImpl(inspectorRef)->show();
+    WebKit::toImpl(inspectorRef)->show();
 }
 
 void WKBundleInspectorClose(WKBundleInspectorRef inspectorRef)
 {
-    toImpl(inspectorRef)->close();
+    WebKit::toImpl(inspectorRef)->close();
 }
 
 void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, WKStringRef script)
 {
-    toImpl(inspectorRef)->evaluateScriptForTest(toWTFString(script));
+    WebKit::toImpl(inspectorRef)->evaluateScriptForTest(WebKit::toWTFString(script));
 }
 
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
-    toImpl(inspectorRef)->showTimelines();
+    WebKit::toImpl(inspectorRef)->showTimelines();
 
     if (enabled)
-        toImpl(inspectorRef)->startPageProfiling();
+        WebKit::toImpl(inspectorRef)->startPageProfiling();
     else
-        toImpl(inspectorRef)->stopPageProfiling();
+        WebKit::toImpl(inspectorRef)->stopPageProfiling();
 }

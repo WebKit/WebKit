@@ -33,51 +33,49 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundleNavigationActionGetTypeID()
 {
-    return toAPI(InjectedBundleNavigationAction::APIType);
+    return WebKit::toAPI(WebKit::InjectedBundleNavigationAction::APIType);
 }
 
 WKFrameNavigationType WKBundleNavigationActionGetNavigationType(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toAPI(toImpl(navigationActionRef)->navigationType());
+    return WebKit::toAPI(WebKit::toImpl(navigationActionRef)->navigationType());
 }
 
 WKEventModifiers WKBundleNavigationActionGetEventModifiers(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toAPI(toImpl(navigationActionRef)->modifiers());
+    return WebKit::toAPI(WebKit::toImpl(navigationActionRef)->modifiers());
 }
 
 WKEventMouseButton WKBundleNavigationActionGetEventMouseButton(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toAPI(toImpl(navigationActionRef)->mouseButton());
+    return WebKit::toAPI(WebKit::toImpl(navigationActionRef)->mouseButton());
 }
 
 WKBundleHitTestResultRef WKBundleNavigationActionCopyHitTestResult(WKBundleNavigationActionRef navigationActionRef)
 {
-    RefPtr<InjectedBundleHitTestResult> hitTestResult = toImpl(navigationActionRef)->hitTestResult();
+    RefPtr<WebKit::InjectedBundleHitTestResult> hitTestResult = WebKit::toImpl(navigationActionRef)->hitTestResult();
     return toAPI(hitTestResult.leakRef());
 }
 
 WKBundleNodeHandleRef WKBundleNavigationActionCopyFormElement(WKBundleNavigationActionRef navigationActionRef)
 {
-    RefPtr<InjectedBundleNodeHandle> formElement = toImpl(navigationActionRef)->formElement();
+    RefPtr<WebKit::InjectedBundleNodeHandle> formElement = WebKit::toImpl(navigationActionRef)->formElement();
     return toAPI(formElement.leakRef());
 }
 
 bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toImpl(navigationActionRef)->shouldOpenExternalURLs();
+    return WebKit::toImpl(navigationActionRef)->shouldOpenExternalURLs();
 }
 
 bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toImpl(navigationActionRef)->shouldTryAppLinks();
+    return WebKit::toImpl(navigationActionRef)->shouldTryAppLinks();
 }
 
 WKStringRef WKBundleNavigationActionCopyDownloadAttribute(WKBundleNavigationActionRef navigationActionRef)
 {
-    return toCopiedAPI(toImpl(navigationActionRef)->downloadAttribute());
+    return WebKit::toCopiedAPI(WebKit::toImpl(navigationActionRef)->downloadAttribute());
 }

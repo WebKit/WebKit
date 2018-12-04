@@ -31,26 +31,24 @@
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundleDOMWindowExtensionGetTypeID()
 {
-    return toAPI(InjectedBundleDOMWindowExtension::APIType);
+    return WebKit::toAPI(WebKit::InjectedBundleDOMWindowExtension::APIType);
 }
 
 WKBundleDOMWindowExtensionRef WKBundleDOMWindowExtensionCreate(WKBundleFrameRef frame, WKBundleScriptWorldRef world)
 {
-    RefPtr<InjectedBundleDOMWindowExtension> extension = InjectedBundleDOMWindowExtension::create(toImpl(frame), toImpl(world));
+    RefPtr<WebKit::InjectedBundleDOMWindowExtension> extension = WebKit::InjectedBundleDOMWindowExtension::create(WebKit::toImpl(frame), WebKit::toImpl(world));
     return toAPI(extension.leakRef());
 }
 
 WKBundleFrameRef WKBundleDOMWindowExtensionGetFrame(WKBundleDOMWindowExtensionRef extension)
 {
-    return toAPI(toImpl(extension)->frame());
+    return toAPI(WebKit::toImpl(extension)->frame());
 }
 
 WKBundleScriptWorldRef WKBundleDOMWindowExtensionGetScriptWorld(WKBundleDOMWindowExtensionRef extension)
 {
-    return toAPI(toImpl(extension)->world());
+    return toAPI(WebKit::toImpl(extension)->world());
 }
 

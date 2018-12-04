@@ -29,11 +29,9 @@
 #include "APIArray.h"
 #include "WKBundleAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundleBackForwardListItemGetTypeID()
 {
-    return toAPI(API::Object::Type::Null);
+    return WebKit::toAPI(API::Object::Type::Null);
 }
 
 bool WKBundleBackForwardListItemIsSame(WKBundleBackForwardListItemRef itemRef1, WKBundleBackForwardListItemRef itemRef2)

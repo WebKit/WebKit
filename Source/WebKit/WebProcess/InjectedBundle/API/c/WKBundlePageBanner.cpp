@@ -30,9 +30,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKBundlePageBannerGetTypeID()
 {
-    return toAPI(PageBanner::APIType);
+    return WebKit::toAPI(WebKit::PageBanner::APIType);
 }
