@@ -101,6 +101,14 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         WI.auditManager.removeEventListener(null, null, this);
     }
 
+    updateFilter()
+    {
+        super.updateFilter();
+
+        if (!this.hasActiveFilters)
+            this._updateNoAuditsPlaceholder();
+    }
+
     applyFiltersToTreeElement(treeElement)
     {
         super.applyFiltersToTreeElement(treeElement);
@@ -149,6 +157,30 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         this._startStopButtonNavigationItem.enabled = WI.auditManager.tests.length && WI.auditManager.runningState !== WI.AuditManager.RunningState.Stopping;
     }
 
+    _updateNoAuditsPlaceholder()
+    {
+        if (WI.auditManager.tests.length)
+            return;
+
+        let contentPlaceholder = WI.createMessageTextView(WI.UIString("No Audits"));
+
+        let defaultButtonElement = contentPlaceholder.appendChild(document.createElement("button"));
+        defaultButtonElement.textContent = WI.UIString("Add Default Audits");
+        defaultButtonElement.addEventListener("click", () => {
+            WI.auditManager.addDefaultTestsIfNeeded();
+        });
+
+        contentPlaceholder = this.showEmptyContentPlaceholder(contentPlaceholder);
+
+        if (WI.auditManager.results.length) {
+            console.assert(this.contentTreeOutline.children[0] === this._resultsFolderTreeElement);
+
+            // Move the placeholder to be the first element in the content area, where it will
+            // be styled such that only the button is visible.
+            this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
+        }
+    }
+
     _handleAuditTestAdded(event)
     {
         this._addTest(event.data.test);
@@ -168,27 +200,8 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this.element.classList.toggle("has-tests", !!WI.auditManager.tests.length);
 
-        if (!WI.auditManager.tests.length) {
-            let contentPlaceholder = WI.createMessageTextView(WI.UIString("No audits"));
-
-            let defaultButtonElement = contentPlaceholder.appendChild(document.createElement("button"));
-            defaultButtonElement.textContent = WI.UIString("Add Default Audits");
-            defaultButtonElement.addEventListener("click", () => {
-                WI.auditManager.addDefaultTestsIfNeeded();
-            });
-
-            contentPlaceholder = this.showEmptyContentPlaceholder(contentPlaceholder);
-
-            if (WI.auditManager.results.length) {
-                console.assert(this.contentTreeOutline.children[0] === this._resultsFolderTreeElement);
-
-                // Move the placeholder to be the first element in the content area, where it will
-                // be styled such that only the button is visible.
-                this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
-            }
-        }
-
         this._updateStartStopButtonNavigationItemState();
+        this._updateNoAuditsPlaceholder();
     }
 
     _handleAuditTestScheduled(event)
