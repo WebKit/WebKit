@@ -57,11 +57,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this.contentTreeOutline.allowsRepeatSelection = false;
 
-        this._resultsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Results"));
-        this.contentTreeOutline.appendChild(this._resultsFolderTreeElement);
-        this._resultsFolderTreeElement.hidden = true;
-        this._resultsFolderTreeElement.expand();
-
         let navigationBar = new WI.NavigationBar;
 
         this._startStopButtonNavigationItem = new WI.ToggleButtonNavigationItem("audit-start-stop", WI.UIString("Start"), WI.UIString("Stop"), "Images/AuditStart.svg", "Images/AuditStop.svg", 13, 13);
@@ -110,14 +105,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             this._updateNoAuditsPlaceholder();
     }
 
-    applyFiltersToTreeElement(treeElement)
-    {
-        super.applyFiltersToTreeElement(treeElement);
-
-        if (treeElement === this._resultsFolderTreeElement && !WI.auditManager.results.length)
-            this._resultsFolderTreeElement.hidden = true;
-    }
-
     // Private
 
     _addTest(test)
@@ -126,9 +113,13 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this._updateStartStopButtonNavigationItemState();
 
-        this.contentTreeOutline.insertChild(new WI.AuditTreeElement(test), this.contentTreeOutline.children.indexOf(this._resultsFolderTreeElement));
+        let treeElement = new WI.AuditTreeElement(test);
 
-        this._resultsFolderTreeElement.hidden = !this._resultsFolderTreeElement.children.length;
+        if (this._resultsFolderTreeElement) {
+            this.contentTreeOutline.insertChild(treeElement, this.contentTreeOutline.children.indexOf(this._resultsFolderTreeElement));
+            this._resultsFolderTreeElement.hidden = !this._resultsFolderTreeElement.children.length;
+        } else
+            this.contentTreeOutline.appendChild(treeElement);
 
         this.hideEmptyContentPlaceholder();
     }
@@ -139,7 +130,12 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this._updateStartStopButtonNavigationItemState();
 
-        this._resultsFolderTreeElement.hidden = false;
+        if (!this._resultsFolderTreeElement) {
+            this._resultsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Results"));
+            this.contentTreeOutline.appendChild(this._resultsFolderTreeElement);
+        }
+
+        this._resultsFolderTreeElement.expand();
 
         let resultFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Run %d").format(index + 1));
         if (result instanceof WI.AuditTestResultBase) {
