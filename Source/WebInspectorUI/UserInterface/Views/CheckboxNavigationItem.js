@@ -37,9 +37,10 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
 
         this._checkboxLabel = this.element.appendChild(document.createElement("label"));
         this._checkboxLabel.className = "toggle";
-        this._checkboxLabel.append(label);
         this._checkboxLabel.setAttribute("for", this._checkboxElement.id);
         this._checkboxLabel.addEventListener("click", this._handleLabelClick.bind(this));
+
+        this.label = label;
     }
 
     // Public
@@ -52,6 +53,14 @@ WI.CheckboxNavigationItem = class CheckboxNavigationItem extends WI.NavigationIt
     set checked(flag)
     {
         this._checkboxElement.checked = flag;
+    }
+
+    set label(label)
+    {
+        this._checkboxLabel.removeChildren();
+
+        if (label);
+            this._checkboxLabel.append(label);
     }
 
     // Protected

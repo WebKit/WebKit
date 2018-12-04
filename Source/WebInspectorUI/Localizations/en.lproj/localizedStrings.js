@@ -701,6 +701,7 @@ localizedStrings["Range Issue"] = "Range Issue";
 localizedStrings["Readonly"] = "Readonly";
 localizedStrings["Reasons for compositing"] = "Reasons for compositing";
 localizedStrings["Reasons for compositing:"] = "Reasons for compositing:";
+localizedStrings["Record first %s frame"] = "Record first %s frame";
 localizedStrings["Record first %s frames"] = "Record first %s frames";
 localizedStrings["Recording"] = "Recording";
 localizedStrings["Recording %d"] = "Recording %d";
