@@ -954,6 +954,10 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+#if ENABLE(MEDIA_STREAM)
+    m_userMediaPermissionRequestManager = nullptr;
+#endif
+
     reportPageLoadResult(ResourceError { ResourceError::Type::Cancellation });
 
     if (m_activePopupMenu)

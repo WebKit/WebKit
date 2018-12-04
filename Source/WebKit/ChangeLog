@@ -1,3 +1,19 @@
+2018-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Calling getUserMedia in a link that was opened with target="_blank" does not work the second time
+        https://bugs.webkit.org/show_bug.cgi?id=188088
+        <rdar://problem/42681448>
+
+        Reviewed by Eric Carlson.
+
+        On closing a page, we need to make sure to consider that the capture is ended,
+        as otherwise WebPageProxy will not get noticed from WebPage, since WebPageProxy is no longer an IPC receiver.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+
 2018-12-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r238817) PSON Page Cache API tests are failing

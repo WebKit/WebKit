@@ -224,6 +224,8 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
     bool hasAudioCapture = false;
     bool hasVideoCapture = false;
     for (auto& manager : state.managers()) {
+        if (manager == &proxy)
+            continue;
         if (manager->page().hasActiveAudioStream())
             hasAudioCapture = true;
         if (manager->page().hasActiveVideoStream())
