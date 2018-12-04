@@ -1,3 +1,15 @@
+2018-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): position:fixed sidebar on https://www.w3.org/TR/SVG2/coords.html does not stay fixed
+        https://bugs.webkit.org/show_bug.cgi?id=192320
+        <rdar://problem/46429833>
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/fixed-with-main-thread-scrolling-expected.html: Added.
+        * compositing/fixed-with-main-thread-scrolling.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-12-04  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure

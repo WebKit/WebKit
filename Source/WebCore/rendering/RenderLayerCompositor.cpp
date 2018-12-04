@@ -666,9 +666,20 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (!m_compositing && (m_forceCompositingMode || (isMainFrameCompositor() && page().pageOverlayController().overlayCount())))
         enableCompositingMode(true);
 
+    bool isPageScroll = !updateRoot || updateRoot == &rootRenderLayer();
     updateRoot = &rootRenderLayer();
 
     if (updateType == CompositingUpdateType::OnScroll || updateType == CompositingUpdateType::OnCompositedScroll) {
+        // We only get here if we didn't scroll on the scrolling thread, so this update needs to re-position viewport-constrained layers.
+        if (m_renderView.settings().acceleratedCompositingForFixedPositionEnabled() && isPageScroll) {
+            if (auto* viewportConstrainedObjects = m_renderView.frameView().viewportConstrainedObjects()) {
+                for (auto* renderer : *viewportConstrainedObjects) {
+                    if (auto* layer = renderer->layer())
+                        layer->setNeedsCompositingGeometryUpdate();
+                }
+            }
+        }
+
         // Scrolling can affect overlap. FIXME: avoid for page scrolling.
         updateRoot->setDescendantsNeedCompositingRequirementsTraversal();
     }

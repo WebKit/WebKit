@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 6000px;
+        }
+        .box {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        
+        .fixed-background {
+            margin-top: 300px;
+            height: 200px;
+            background-image: linear-gradient(white, silver);
+            background-attachment: fixed;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+        }
+
+        function scrollTest()
+        {
+            eventSender.mouseMoveTo(20, 20);
+            eventSender.monitorWheelEvents();
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "begin");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -100, "none", "continue");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end");
+            eventSender.callAfterScrollingCompletes(() => {
+                setTimeout(() => {
+                    testRunner.notifyDone()                
+                }, 0);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                scrollTest();
+            }, 0)
+        }, false);
+    </script>
+</head>
+<body>
+
+<div class="box"></div>
+
+<div class="fixed-background">
+    I have a fixed background.
+</div>
+</body>
+</html>
