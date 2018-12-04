@@ -44,6 +44,7 @@
 #include "LayoutSize.h"
 #include "RenderElement.h"
 #include "SharedBuffer.h"
+#include "TypedOMCSSImageValue.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -445,6 +446,13 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     // 6.4.1. Resolve p with imageBitmap.
     promise.resolve(WTFMove(imageBitmap));
+}
+#endif
+
+#if ENABLE(CSS_PAINTING_API)
+void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
+{
+    promise.reject(InvalidStateError, "Not implemented");
 }
 #endif
 

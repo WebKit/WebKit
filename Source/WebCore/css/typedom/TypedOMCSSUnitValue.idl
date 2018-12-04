@@ -27,11 +27,12 @@
 // This is just a stub for the CSS painting API for now. Once the Typed OM
 // is going to be implemented, please change the runtime flag.
 [
-    CustomToJSObject,
+    InterfaceName=CSSUnitValue,
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     Exposed=(Window,Worker,PaintWorklet),
-    SkipVTableValidation,
-] interface CSSStyleValue {
-    stringifier;
+    Constructor(double value, USVString unit),
+] interface TypedOMCSSUnitValue : TypedOMCSSNumericValue {
+    attribute double value;
+    readonly attribute USVString unit;
 };

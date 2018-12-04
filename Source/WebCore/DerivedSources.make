@@ -502,11 +502,12 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/StyleMedia.idl \
     $(WebCore)/css/StyleSheet.idl \
     $(WebCore)/css/StyleSheetList.idl \
-    $(WebCore)/css/typedom/CSSNumericValue.idl \
-    $(WebCore)/css/typedom/CSSStyleValue.idl \
-    $(WebCore)/css/typedom/CSSUnitValue.idl \
-    $(WebCore)/css/typedom/CSSUnparsedValue.idl \
     $(WebCore)/css/typedom/StylePropertyMapReadOnly.idl \
+	$(WebCore)/css/typedom/TypedOMCSSImageValue.idl \
+    $(WebCore)/css/typedom/TypedOMCSSNumericValue.idl \
+    $(WebCore)/css/typedom/TypedOMCSSStyleValue.idl \
+    $(WebCore)/css/typedom/TypedOMCSSUnitValue.idl \
+    $(WebCore)/css/typedom/TypedOMCSSUnparsedValue.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/AbortController.idl \

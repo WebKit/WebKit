@@ -27,23 +27,14 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "TypedOMCSSStyleValue.h"
 
 namespace WebCore {
 
-class CSSStyleValue : public RefCounted<CSSStyleValue> {
-public:
-    virtual ~CSSStyleValue() = default;
-    virtual String toString() = 0;
-
-    virtual bool isUnitValue() { return false; }
-    virtual bool isUnparsedValue() { return false; }
-
+class TypedOMCSSNumericValue : public TypedOMCSSStyleValue {
 protected:
-    CSSStyleValue() = default;
+    TypedOMCSSNumericValue() = default;
 };
-
 } // namespace WebCore
 
 #endif

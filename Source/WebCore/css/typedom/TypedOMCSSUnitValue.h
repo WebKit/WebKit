@@ -23,32 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCSSStyleValue.h"
+#pragma once
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "JSCSSUnitValue.h"
-#include "JSCSSUnparsedValue.h"
+#include "TypedOMCSSNumericValue.h"
+#include <wtf/RefCounted.h>
+#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-using namespace JSC;
 
-JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSStyleValue>&& value)
-{
-    if (value->isUnitValue())
-        return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
-    if (value->isUnparsedValue())
-        return createWrapper<CSSUnparsedValue>(globalObject, WTFMove(value));
+class TypedOMCSSUnitValue final : public TypedOMCSSNumericValue {
+public:
+    static Ref<TypedOMCSSUnitValue> create(double value, const String& unit)
+    {
+        return adoptRef(*new TypedOMCSSUnitValue(value, unit));
+    }
 
-    ASSERT_NOT_REACHED();
-    return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
-}
+    // FIXME: not correct.
+    String toString() final { return makeString((int) m_value, m_unit); }
 
-JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, CSSStyleValue& object)
-{
-    return wrap(state, globalObject, object);
-}
+    double value() const { return m_value; }
+    void setValue(double value) { m_value = value; }
+    const String& unit() const { return m_unit; }
+    void setUnit(const String& unit) { m_unit = unit; }
+
+private:
+    TypedOMCSSUnitValue(double value, const String& unit)
+        : m_value(value)
+        , m_unit(unit)
+    {
+    }
+
+    bool isUnitValue() final { return true; }
+
+    double m_value;
+    String m_unit;
+};
 
 } // namespace WebCore
 

@@ -26,11 +26,11 @@
 // FIXME: Implement this properly, according to the Typed OM spec.
 // This is just a stub for the CSS painting API for now. Once the Typed OM
 // is going to be implemented, please change the runtime flag.
-// FIXME: wrong constructor.
 [
+    InterfaceName=CSSImageValue,
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     Exposed=(Window,Worker,PaintWorklet),
-    Constructor(USVString serializedValue),
-] interface CSSUnparsedValue : CSSStyleValue {
+    JSGenerateToNativeObject,
+] interface TypedOMCSSImageValue : TypedOMCSSStyleValue {
 };

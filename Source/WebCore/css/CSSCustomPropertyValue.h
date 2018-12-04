@@ -29,6 +29,7 @@
 #include "CSSValue.h"
 #include "CSSVariableReferenceValue.h"
 #include "Length.h"
+#include "StyleImage.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
@@ -41,7 +42,7 @@ class RenderStyle;
 
 class CSSCustomPropertyValue final : public CSSValue {
 public:
-    using VariantValue = Variant<Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length>;
+    using VariantValue = Variant<Ref<CSSVariableReferenceValue>, CSSValueID, Ref<CSSVariableData>, Length, Ref<StyleImage>>;
 
     static Ref<CSSCustomPropertyValue> createUnresolved(const AtomicString& name, Ref<CSSVariableReferenceValue>&& value)
     {
@@ -65,6 +66,11 @@ public:
     }
     
     static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomicString& name, Length value)
+    {
+        return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
+    }
+
+    static Ref<CSSCustomPropertyValue> createSyntaxImage(const AtomicString& name, Ref<StyleImage>&& value)
     {
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
@@ -111,6 +117,8 @@ private:
             m_value = value.copyRef();
         }, [&](const Length& value) {
             m_value = value;
+        }, [&](const Ref<StyleImage>& value) {
+            m_value = value.copyRef();
         });
         WTF::visit(visitor, other.m_value);
     }

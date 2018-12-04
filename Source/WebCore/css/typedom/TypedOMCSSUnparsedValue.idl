@@ -26,12 +26,12 @@
 // FIXME: Implement this properly, according to the Typed OM spec.
 // This is just a stub for the CSS painting API for now. Once the Typed OM
 // is going to be implemented, please change the runtime flag.
+// FIXME: wrong constructor.
 [
+    InterfaceName=CSSUnparsedValue,
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     Exposed=(Window,Worker,PaintWorklet),
-    ImplementationLacksVTable
-] interface StylePropertyMapReadOnly {
-    // FIXME: should be (undefined or TypedOMCSSStyleValue), not null
-    TypedOMCSSStyleValue? get(USVString property);
+    Constructor(USVString serializedValue),
+] interface TypedOMCSSUnparsedValue : TypedOMCSSStyleValue {
 };

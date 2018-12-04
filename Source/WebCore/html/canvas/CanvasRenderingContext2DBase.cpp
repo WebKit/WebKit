@@ -61,6 +61,7 @@
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
+#include "TypedOMCSSImageValue.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -1438,6 +1439,16 @@ static inline FloatSize size(HTMLVideoElement& video)
 
 #endif
 
+#if ENABLE(CSS_PAINTING_API)
+static inline FloatSize size(TypedOMCSSImageValue& image)
+{
+    LayoutSize size;
+    if (auto* cachedImage = image.image())
+        size = cachedImage->imageSizeForRenderer(image.renderer(), 1.0f); // FIXME: Not sure about this, see fixme in size(HTMLImageElement&...)
+    return size;
+}
+#endif
+
 static inline FloatRect normalizeRect(const FloatRect& rect)
 {
     return FloatRect(std::min(rect.x(), rect.maxX()),
@@ -1487,6 +1498,36 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
 
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imageElement, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode)
 {
+    if (!imageElement.complete())
+        return { };
+    FloatRect imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
+
+    auto result = drawImage(imageElement.document(), imageElement.cachedImage(), imageElement.renderer(), imageRect, srcRect, dstRect, op, blendMode);
+
+    if (!result.hasException())
+        checkOrigin(&imageElement);
+    return result;
+}
+
+#if ENABLE(CSS_PAINTING_API)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(TypedOMCSSImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
+{
+    auto* renderer = image.renderer();
+    auto* cachedImage = image.image();
+    if (!renderer || !cachedImage)
+        return { };
+    FloatRect imageRect = FloatRect(FloatPoint(), size(image));
+
+    auto result = drawImage(renderer->document(), cachedImage, renderer, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
+
+    if (!result.hasException())
+        checkOrigin(image);
+    return result;
+}
+#endif
+
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage* cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode)
+{
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
         return { };
@@ -1494,13 +1535,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     if (!dstRect.width() || !dstRect.height())
         return { };
 
-    if (!imageElement.complete())
-        return { };
-
     FloatRect normalizedSrcRect = normalizeRect(srcRect);
     FloatRect normalizedDstRect = normalizeRect(dstRect);
 
-    FloatRect imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
     if (!srcRect.width() || !srcRect.height())
         return Exception { IndexSizeError };
 
@@ -1524,11 +1561,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     if (!state().hasInvertibleTransform)
         return { };
 
-    CachedImage* cachedImage = imageElement.cachedImage();
     if (!cachedImage)
         return { };
 
-    RefPtr<Image> image = cachedImage->imageForRenderer(imageElement.renderer());
+    RefPtr<Image> image = cachedImage->imageForRenderer(renderer);
     if (!image)
         return { };
 
@@ -1540,7 +1576,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     }
 
     if (image->isBitmapImage())
-        downcast<BitmapImage>(*image).updateFromSettings(imageElement.document().settings());
+        downcast<BitmapImage>(*image).updateFromSettings(document.settings());
 
     if (rectContainsCanvas(normalizedDstRect)) {
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, ImagePaintingOptions(op, blendMode));
@@ -1559,8 +1595,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     
     if (image->isSVGImage())
         image->setImageObserver(observer);
-
-    checkOrigin(&imageElement);
 
     return { };
 }
@@ -1983,6 +2017,14 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     // FIXME: Implement.
     return Exception { TypeError };
 }
+
+#if ENABLE(CSS_PAINTING_API)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(TypedOMCSSImageValue&, bool, bool)
+{
+    // FIXME: Implement.
+    return Exception { TypeError };
+}
+#endif
 
 void CanvasRenderingContext2DBase::didDrawEntireCanvas()
 {

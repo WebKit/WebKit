@@ -27,39 +27,30 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSNumericValue.h"
+#include "TypedOMCSSStyleValue.h"
 #include <wtf/RefCounted.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSUnitValue final : public CSSNumericValue {
+class TypedOMCSSUnparsedValue final : public TypedOMCSSStyleValue {
 public:
-    static Ref<CSSUnitValue> create(double value, const String& unit)
+    static Ref<TypedOMCSSUnparsedValue> create(const String& serializedValue)
     {
-        return adoptRef(*new CSSUnitValue(value, unit));
+        return adoptRef(*new TypedOMCSSUnparsedValue(serializedValue));
     }
 
-    // FIXME: not correct.
-    String toString() final { return makeString((int) m_value, m_unit); }
-
-    double value() const { return m_value; }
-    void setValue(double value) { m_value = value; }
-    const String& unit() const { return m_unit; }
-    void setUnit(const String& unit) { m_unit = unit; }
+    String toString() final { return m_serializedValue; }
 
 private:
-    CSSUnitValue(double value, const String& unit)
-        : m_value(value)
-        , m_unit(unit)
+    explicit TypedOMCSSUnparsedValue(const String& serializedValue)
+        : m_serializedValue(serializedValue)
     {
     }
 
-    bool isUnitValue() final { return true; }
+    bool isUnparsedValue() final { return true; }
 
-    double m_value;
-    String m_unit;
+    String m_serializedValue;
 };
 
 } // namespace WebCore

@@ -25,7 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO && defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
+typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap or TypedOMCSSImageValue) CanvasImageSource;
+#elif defined(ENABLE_VIDEO) && ENABLE_VIDEO
 typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
 #else
 typedef (HTMLImageElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;

@@ -1,0 +1,37 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that paint worklets parse arguments correctly">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+<script src="resources/testharness.js"></script>
+
+<script id="code" type="text/worklet">
+class MyPaint {
+  static get inputArguments() { return Array(5).fill('*') }
+  paint(ctx, geom, props, args) {
+    // Note: This does not pass on Chrome. Chrome seems to strip the whitespace.
+    const expected = [" a", " url(\"\")", " (d)", "e", " f"];
+    for (const i of expected.keys()) {
+      assert_equals(args[i].toString(), expected[i]);
+    }
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, 0, geom.width, geom.height);
+  }
+}
+registerPaint('my-paint', MyPaint);
+</script>
+
+<script type="text/javascript">
+importWorklet(CSS.paintWorklet, document.getElementById('code').textContent);
+</script>
+
+<style>
+  .paint {
+    width: 150px;
+    height: 150px;
+    background: paint(my-paint, a, url(''), (d),e,          f);
+  }
+</style>
+
+<body>
+  <div class="paint"></div>
+</body>

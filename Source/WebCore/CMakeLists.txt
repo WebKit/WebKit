@@ -593,10 +593,11 @@ set(WebCore_NON_SVG_IDL_FILES
     css/StyleSheet.idl
     css/StyleSheetList.idl
 
-    css/typedom/CSSNumericValue.idl
-    css/typedom/CSSStyleValue.idl
-    css/typedom/CSSUnitValue.idl
-    css/typedom/CSSUnparsedValue.idl
+    css/typedom/TypedOMCSSImageValue.idl
+    css/typedom/TypedOMCSSNumericValue.idl
+    css/typedom/TypedOMCSSStyleValue.idl
+    css/typedom/TypedOMCSSUnitValue.idl
+    css/typedom/TypedOMCSSUnparsedValue.idl
     css/typedom/StylePropertyMapReadOnly.idl
 
     css/WebKitCSSMatrix.idl

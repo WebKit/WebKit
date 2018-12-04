@@ -1,3 +1,69 @@
+2018-12-04  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API should allow image values in inputProperties
+        https://bugs.webkit.org/show_bug.cgi?id=192200
+
+        Reviewed by Dean Jackson.
+
+        Adds new TypedOMCSSImageValue wrapper. We rename all the existing ones so that the naming is consistent (CSSImageValue is already a thing).
+        Finally, we let CanvasRenderingContext2DBase render these.
+
+        Tests: fast/css-custom-paint/arguments.html
+               fast/css-custom-paint/image.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CallTracerTypes.h:
+        * bindings/js/JSTypedOMCSSStyleValueCustom.cpp: Renamed from Source/WebCore/bindings/js/JSCSSStyleValueCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::equals const):
+        (WebCore::CSSCustomPropertyValue::customCSSText const):
+        (WebCore::CSSCustomPropertyValue::tokens const):
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::image):
+        * css/typedom/StylePropertyMapReadOnly.h:
+        (WebCore::StylePropertyMapReadOnly::create):
+        (WebCore::StylePropertyMapReadOnly::get const):
+        (WebCore::StylePropertyMapReadOnly::StylePropertyMapReadOnly):
+        * css/typedom/StylePropertyMapReadOnly.idl:
+        * css/typedom/TypedOMCSSImageValue.h: Copied from Source/WebCore/css/typedom/CSSUnitValue.h.
+        * css/typedom/TypedOMCSSImageValue.idl: Copied from Source/WebCore/css/typedom/CSSStyleValue.idl.
+        * css/typedom/TypedOMCSSNumericValue.h: Renamed from Source/WebCore/css/typedom/CSSNumericValue.h.
+        * css/typedom/TypedOMCSSNumericValue.idl: Renamed from Source/WebCore/css/typedom/CSSNumericValue.idl.
+        * css/typedom/TypedOMCSSStyleValue.h: Renamed from Source/WebCore/css/typedom/CSSStyleValue.h.
+        (WebCore::TypedOMCSSStyleValue::isImageValue):
+        * css/typedom/TypedOMCSSStyleValue.idl: Renamed from Source/WebCore/css/typedom/CSSStyleValue.idl.
+        * css/typedom/TypedOMCSSUnitValue.h: Renamed from Source/WebCore/css/typedom/CSSUnitValue.h.
+        * css/typedom/TypedOMCSSUnitValue.idl: Renamed from Source/WebCore/css/typedom/CSSUnitValue.idl.
+        * css/typedom/TypedOMCSSUnparsedValue.h: Renamed from Source/WebCore/css/typedom/CSSUnparsedValue.h.
+        * css/typedom/TypedOMCSSUnparsedValue.idl: Renamed from Source/WebCore/css/typedom/CSSUnparsedValue.idl.
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        * html/ImageBitmap.h:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildAction):
+        * page/WindowOrWorkerGlobalScope.idl:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::doCustomPaint):
+
 2018-12-04  Chris Dumez  <cdumez@apple.com>
 
         Regression(r238817) PSON Page Cache API tests are failing

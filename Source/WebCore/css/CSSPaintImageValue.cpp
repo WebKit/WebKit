@@ -69,7 +69,11 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
         while (!localRange.atEnd() && localRange.peek() != CommaToken) {
             if (localRange.peek() == CommentToken)
                 localRange.consume();
-            else
+            else if (localRange.peek().getBlockType() == CSSParserToken::BlockStart) {
+                localRange.peek().serialize(builder);
+                builder.append(localRange.consumeBlock().serialize());
+                builder.append(')');
+            } else
                 localRange.consume().serialize(builder);
         }
         if (!localRange.atEnd())

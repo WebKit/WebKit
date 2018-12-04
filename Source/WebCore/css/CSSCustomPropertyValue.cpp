@@ -33,7 +33,7 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
 {
     if (m_name != other.m_name || m_value.index() != other.m_value.index())
         return false;
-    auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>& value) {
+    return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
         return value.get() == WTF::get<Ref<CSSVariableReferenceValue>>(other.m_value).get();
     }, [&](const CSSValueID& value) {
         return value == WTF::get<CSSValueID>(other.m_value);
@@ -41,8 +41,9 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
         return value.get() == WTF::get<Ref<CSSVariableData>>(other.m_value).get();
     }, [&](const Length& value) {
         return value == WTF::get<Length>(other.m_value);
+    }, [&](const Ref<StyleImage>& value) {
+        return value.get() == WTF::get<Ref<StyleImage>>(other.m_value).get();
     });
-    return WTF::visit(visitor, m_value);
 }
 
 String CSSCustomPropertyValue::customCSSText() const
@@ -50,7 +51,7 @@ String CSSCustomPropertyValue::customCSSText() const
     if (!m_serialized) {
         m_serialized = true;
 
-        auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>& value) {
+        WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
             m_stringValue = value->cssText();
         }, [&](const CSSValueID& value) {
             m_stringValue = getValueName(value);
@@ -58,8 +59,9 @@ String CSSCustomPropertyValue::customCSSText() const
             m_stringValue = value->tokenRange().serialize();
         }, [&](const Length& value) {
             m_stringValue = CSSPrimitiveValue::create(value.value(), CSSPrimitiveValue::CSS_PX)->cssText();
+        }, [&](const Ref<StyleImage>& value) {
+            m_stringValue = value->cssValue()->cssText();
         });
-        WTF::visit(visitor, m_value);
     }
     return m_stringValue;
 }
@@ -68,7 +70,7 @@ Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
 {
     Vector<CSSParserToken> result;
 
-    auto visitor = WTF::makeVisitor([&](const Ref<CSSVariableReferenceValue>&) {
+    WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>&) {
         ASSERT_NOT_REACHED();
     }, [&](const CSSValueID&) {
         // Do nothing
@@ -80,8 +82,13 @@ Vector<CSSParserToken> CSSCustomPropertyValue::tokens() const
         auto tokenizerRange = tokenizer.tokenRange();
         while (!tokenizerRange.atEnd())
             result.append(tokenizerRange.consume());
+    }, [&](const Ref<StyleImage>&) {
+        CSSTokenizer tokenizer(cssText());
+
+        auto tokenizerRange = tokenizer.tokenRange();
+        while (!tokenizerRange.atEnd())
+            result.append(tokenizerRange.consume());
     });
-    WTF::visit(visitor, m_value);
 
     return result;
 }

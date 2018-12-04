@@ -44,6 +44,7 @@ class IntRect;
 class IntSize;
 class PendingImageBitmap;
 class ScriptExecutionContext;
+class TypedOMCSSImageValue;
 struct ImageBitmapOptions;
 
 class ImageBitmap : public ScriptWrappable, public RefCounted<ImageBitmap> {
@@ -55,6 +56,9 @@ public:
 #endif
         RefPtr<HTMLCanvasElement>,
         RefPtr<ImageBitmap>,
+#if ENABLE(CSS_PAINTING_API)
+        RefPtr<TypedOMCSSImageValue>,
+#endif
         RefPtr<Blob>,
         RefPtr<ImageData>
     >;
@@ -98,6 +102,7 @@ private:
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<Blob>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createPromise(ScriptExecutionContext&, RefPtr<ImageData>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
+    static void createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
     static void createFromBuffer(Ref<ArrayBuffer>&&, String mimeType, long long expectedContentLength, const URL&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 
     std::unique_ptr<ImageBuffer> m_bitmapData;

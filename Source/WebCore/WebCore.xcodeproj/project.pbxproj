@@ -1367,6 +1367,7 @@
 		4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B2708C50AF19EE40065127F /* Pasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
+		4B438650219CD56100F8D3C5 /* TypedOMCSSImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B43864F219CD56100F8D3C5 /* TypedOMCSSImageValue.h */; };
 		4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */; };
 		4B6B5CBD21640EFF00603817 /* DOMCSSPaintWorklet.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CB82163EC0700603817 /* DOMCSSPaintWorklet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6B5CC02164386400603817 /* PaintWorkletGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6B5CBF2164386400603817 /* PaintWorkletGlobalScope.h */; };
@@ -1377,10 +1378,10 @@
 		4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAE95B00B2FA9CE00AED8A0 /* EditorDeleteAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BAFD0CB2190EBD600C0AB64 /* CSSPaintSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0CA2190EBD600C0AB64 /* CSSPaintSize.h */; };
 		4BAFD0CF2190F9B500C0AB64 /* StylePropertyMapReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0CE2190F9B400C0AB64 /* StylePropertyMapReadOnly.h */; };
-		4BAFD0D62192146B00C0AB64 /* CSSStyleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0D52192146B00C0AB64 /* CSSStyleValue.h */; };
-		4BAFD0D921921EA000C0AB64 /* CSSUnparsedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0D821921EA000C0AB64 /* CSSUnparsedValue.h */; };
-		4BAFD0E0219220AB00C0AB64 /* CSSNumericValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DF219220AB00C0AB64 /* CSSNumericValue.h */; };
-		4BAFD0E1219242A000C0AB64 /* CSSUnitValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DD2192209200C0AB64 /* CSSUnitValue.h */; };
+		4BAFD0D62192146B00C0AB64 /* TypedOMCSSStyleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0D52192146B00C0AB64 /* TypedOMCSSStyleValue.h */; };
+		4BAFD0D921921EA000C0AB64 /* TypedOMCSSUnparsedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0D821921EA000C0AB64 /* TypedOMCSSUnparsedValue.h */; };
+		4BAFD0E0219220AB00C0AB64 /* TypedOMCSSNumericValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */; };
+		4BAFD0E1219242A000C0AB64 /* TypedOMCSSUnitValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */; };
 		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
 		4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */; };
 		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7883,6 +7884,8 @@
 		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
 		4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageSourceCGMac.mm; sourceTree = "<group>"; };
 		4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSourceCG.h; sourceTree = "<group>"; };
+		4B43864D219CD52D00F8D3C5 /* TypedOMCSSImageValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypedOMCSSImageValue.idl; sourceTree = "<group>"; };
+		4B43864F219CD56100F8D3C5 /* TypedOMCSSImageValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedOMCSSImageValue.h; sourceTree = "<group>"; };
 		4B5BDD99216588E500DD4262 /* CSSPaintCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintCallback.idl; sourceTree = "<group>"; };
 		4B5BDD9A21658A1500DD4262 /* CSSPaintCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPaintCallback.h; sourceTree = "<group>"; };
 		4B6B5CB62163DC1A00603817 /* DOMCSSPaintWorklet.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMCSSPaintWorklet.idl; sourceTree = "<group>"; };
@@ -7905,15 +7908,15 @@
 		4BAFD0CD2190EBE900C0AB64 /* CSSPaintSize.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSPaintSize.idl; sourceTree = "<group>"; };
 		4BAFD0CE2190F9B400C0AB64 /* StylePropertyMapReadOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StylePropertyMapReadOnly.h; sourceTree = "<group>"; };
 		4BAFD0D02190F9C200C0AB64 /* StylePropertyMapReadOnly.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = StylePropertyMapReadOnly.idl; sourceTree = "<group>"; };
-		4BAFD0D32192145600C0AB64 /* CSSStyleValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSStyleValue.idl; sourceTree = "<group>"; };
-		4BAFD0D52192146B00C0AB64 /* CSSStyleValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSStyleValue.h; sourceTree = "<group>"; };
-		4BAFD0D721921E7900C0AB64 /* CSSUnparsedValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSUnparsedValue.idl; sourceTree = "<group>"; };
-		4BAFD0D821921EA000C0AB64 /* CSSUnparsedValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSUnparsedValue.h; sourceTree = "<group>"; };
-		4BAFD0DB2192202200C0AB64 /* CSSNumericValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSNumericValue.idl; sourceTree = "<group>"; };
-		4BAFD0DC2192204A00C0AB64 /* CSSUnitValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSUnitValue.idl; sourceTree = "<group>"; };
-		4BAFD0DD2192209200C0AB64 /* CSSUnitValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = CSSUnitValue.h; sourceTree = "<group>"; };
-		4BAFD0DF219220AB00C0AB64 /* CSSNumericValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSNumericValue.h; sourceTree = "<group>"; };
-		4BAFD0E22192604D00C0AB64 /* JSCSSStyleValueCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleValueCustom.cpp; sourceTree = "<group>"; };
+		4BAFD0D32192145600C0AB64 /* TypedOMCSSStyleValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypedOMCSSStyleValue.idl; sourceTree = "<group>"; };
+		4BAFD0D52192146B00C0AB64 /* TypedOMCSSStyleValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedOMCSSStyleValue.h; sourceTree = "<group>"; };
+		4BAFD0D721921E7900C0AB64 /* TypedOMCSSUnparsedValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypedOMCSSUnparsedValue.idl; sourceTree = "<group>"; };
+		4BAFD0D821921EA000C0AB64 /* TypedOMCSSUnparsedValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedOMCSSUnparsedValue.h; sourceTree = "<group>"; };
+		4BAFD0DB2192202200C0AB64 /* TypedOMCSSNumericValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypedOMCSSNumericValue.idl; sourceTree = "<group>"; };
+		4BAFD0DC2192204A00C0AB64 /* TypedOMCSSUnitValue.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypedOMCSSUnitValue.idl; sourceTree = "<group>"; };
+		4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = TypedOMCSSUnitValue.h; sourceTree = "<group>"; };
+		4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedOMCSSNumericValue.h; sourceTree = "<group>"; };
+		4BAFD0E22192604D00C0AB64 /* JSTypedOMCSSStyleValueCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedOMCSSStyleValueCustom.cpp; sourceTree = "<group>"; };
 		4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSRegisterCustomProperty.idl; sourceTree = "<group>"; };
 		4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSRegisterCustomProperty.cpp; sourceTree = "<group>"; };
 		4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSCustomPropertyDescriptor.h; sourceTree = "<group>"; };
@@ -18107,16 +18110,18 @@
 		4BAFD0DA21921EAD00C0AB64 /* typedom */ = {
 			isa = PBXGroup;
 			children = (
-				4BAFD0DF219220AB00C0AB64 /* CSSNumericValue.h */,
-				4BAFD0DB2192202200C0AB64 /* CSSNumericValue.idl */,
-				4BAFD0D52192146B00C0AB64 /* CSSStyleValue.h */,
-				4BAFD0D32192145600C0AB64 /* CSSStyleValue.idl */,
-				4BAFD0DD2192209200C0AB64 /* CSSUnitValue.h */,
-				4BAFD0DC2192204A00C0AB64 /* CSSUnitValue.idl */,
-				4BAFD0D821921EA000C0AB64 /* CSSUnparsedValue.h */,
-				4BAFD0D721921E7900C0AB64 /* CSSUnparsedValue.idl */,
 				4BAFD0CE2190F9B400C0AB64 /* StylePropertyMapReadOnly.h */,
 				4BAFD0D02190F9C200C0AB64 /* StylePropertyMapReadOnly.idl */,
+				4B43864F219CD56100F8D3C5 /* TypedOMCSSImageValue.h */,
+				4B43864D219CD52D00F8D3C5 /* TypedOMCSSImageValue.idl */,
+				4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */,
+				4BAFD0DB2192202200C0AB64 /* TypedOMCSSNumericValue.idl */,
+				4BAFD0D52192146B00C0AB64 /* TypedOMCSSStyleValue.h */,
+				4BAFD0D32192145600C0AB64 /* TypedOMCSSStyleValue.idl */,
+				4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */,
+				4BAFD0DC2192204A00C0AB64 /* TypedOMCSSUnitValue.idl */,
+				4BAFD0D821921EA000C0AB64 /* TypedOMCSSUnparsedValue.h */,
+				4BAFD0D721921E7900C0AB64 /* TypedOMCSSUnparsedValue.idl */,
 			);
 			path = typedom;
 			sourceTree = "<group>";
@@ -20323,7 +20328,6 @@
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
-				4BAFD0E22192604D00C0AB64 /* JSCSSStyleValueCustom.cpp */,
 				BC20FB7E0C0E8E6C00D1447F /* JSDeprecatedCSSOMValueCustom.cpp */,
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				ADDA94BF19686F8000453029 /* JSDocumentCustom.h */,
@@ -20376,6 +20380,7 @@
 				070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */,
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				4BAFD0E22192604D00C0AB64 /* JSTypedOMCSSStyleValueCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
 				715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */,
@@ -28236,7 +28241,6 @@
 				A80E6D030A1989CA007FB8C5 /* CSSMediaRule.h in Headers */,
 				314BE3A11B30F6B700141982 /* CSSNamedImageValue.h in Headers */,
 				94E839511DFB2A0E007BC6A7 /* CSSNamespaceRule.h in Headers */,
-				4BAFD0E0219220AB00C0AB64 /* CSSNumericValue.h in Headers */,
 				A80E6D000A1989CA007FB8C5 /* CSSPageRule.h in Headers */,
 				4B5BDD9B21658A1500DD4262 /* CSSPaintCallback.h in Headers */,
 				4B6E87692176D69200420E5E /* CSSPaintImageValue.h in Headers */,
@@ -28278,7 +28282,6 @@
 				A80E6E0F0A19911C007FB8C5 /* CSSStyleDeclaration.h in Headers */,
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
-				4BAFD0D62192146B00C0AB64 /* CSSStyleValue.h in Headers */,
 				94DE5C921D83011D00164F2A /* CSSSupportsParser.h in Headers */,
 				FC54D05716A7673100575E4D /* CSSSupportsRule.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
@@ -28288,9 +28291,7 @@
 				A882DA231593848D000115ED /* CSSToStyleMap.h in Headers */,
 				715AD7212050513F00D592DC /* CSSTransition.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
-				4BAFD0E1219242A000C0AB64 /* CSSUnitValue.h in Headers */,
 				DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */,
-				4BAFD0D921921EA000C0AB64 /* CSSUnparsedValue.h in Headers */,
 				BC7D8FF01BD03B6400FFE540 /* CSSUnsetValue.h in Headers */,
 				A80E6CEE0A1989CA007FB8C5 /* CSSValue.h in Headers */,
 				6565815109D13043000E61D7 /* CSSValueKeywords.h in Headers */,
@@ -31493,6 +31494,11 @@
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */,
+				4B438650219CD56100F8D3C5 /* TypedOMCSSImageValue.h in Headers */,
+				4BAFD0E0219220AB00C0AB64 /* TypedOMCSSNumericValue.h in Headers */,
+				4BAFD0D62192146B00C0AB64 /* TypedOMCSSStyleValue.h in Headers */,
+				4BAFD0E1219242A000C0AB64 /* TypedOMCSSUnitValue.h in Headers */,
+				4BAFD0D921921EA000C0AB64 /* TypedOMCSSUnparsedValue.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
 				83FE7CA71DA9F1A70037237C /* UIEventInit.h in Headers */,

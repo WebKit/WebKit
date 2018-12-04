@@ -27,30 +27,23 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSStyleValue.h"
+#include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSUnparsedValue final : public CSSStyleValue {
+class TypedOMCSSStyleValue : public RefCounted<TypedOMCSSStyleValue>, public ScriptWrappable {
 public:
-    static Ref<CSSUnparsedValue> create(const String& serializedValue)
-    {
-        return adoptRef(*new CSSUnparsedValue(serializedValue));
-    }
+    virtual ~TypedOMCSSStyleValue() = default;
+    virtual String toString() = 0;
 
-    String toString() final { return m_serializedValue; }
+    virtual bool isUnitValue() { return false; }
+    virtual bool isUnparsedValue() { return false; }
+    virtual bool isImageValue() { return false; }
 
-private:
-    explicit CSSUnparsedValue(const String& serializedValue)
-        : m_serializedValue(serializedValue)
-    {
-    }
-
-    bool isUnparsedValue() final { return true; }
-
-    String m_serializedValue;
+protected:
+    TypedOMCSSStyleValue() = default;
 };
 
 } // namespace WebCore

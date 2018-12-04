@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUTexture.h"
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
@@ -37,7 +38,6 @@ OBJC_PROTOCOL(CAMetalDrawable);
 namespace WebCore {
 
 class GPUDevice;
-class GPUTexture;
 
 enum class GPUTextureFormatEnum;
 

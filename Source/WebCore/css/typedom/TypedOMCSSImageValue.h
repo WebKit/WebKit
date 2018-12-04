@@ -27,29 +27,39 @@
 
 #if ENABLE(CSS_PAINTING_API)
 
+#include "CSSImageValue.h"
+#include "ImageBitmap.h"
+#include "RenderElement.h"
 #include "TypedOMCSSStyleValue.h"
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class StylePropertyMapReadOnly : public RefCounted<StylePropertyMapReadOnly> {
+class TypedOMCSSImageValue final : public TypedOMCSSStyleValue {
 public:
-    static Ref<StylePropertyMapReadOnly> create(HashMap<String, Ref<TypedOMCSSStyleValue>>&& map)
+    static Ref<TypedOMCSSImageValue> create(CSSImageValue& cssValue, RenderElement& renderer)
     {
-        return adoptRef(*new StylePropertyMapReadOnly(WTFMove(map)));
+        return adoptRef(*new TypedOMCSSImageValue(cssValue, renderer));
     }
 
-    TypedOMCSSStyleValue* get(String property) const { return m_map.get(property); }
+    String toString() final { return m_cssValue->cssText(); }
+
+    CachedImage* image() { return m_cssValue->cachedImage(); }
+    const RenderElement* renderer() const { return m_renderer.get(); }
 
 private:
-    explicit StylePropertyMapReadOnly(HashMap<String, Ref<TypedOMCSSStyleValue>>&& map)
-        : m_map(WTFMove(map))
+    TypedOMCSSImageValue(CSSImageValue& cssValue, RenderElement& renderer)
+        : m_cssValue(makeRef(cssValue))
+        , m_renderer(makeWeakPtr(renderer))
     {
     }
 
-    HashMap<String, Ref<TypedOMCSSStyleValue>> m_map;
+    bool isImageValue() final { return true; }
+
+    Ref<CSSImageValue> m_cssValue;
+    WeakPtr<RenderElement> m_renderer;
 };
 
 } // namespace WebCore

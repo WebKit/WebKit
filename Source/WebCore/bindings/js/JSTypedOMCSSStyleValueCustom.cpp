@@ -23,18 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSTypedOMCSSStyleValue.h"
 
 #if ENABLE(CSS_PAINTING_API)
 
-#include "CSSStyleValue.h"
+#include "JSTypedOMCSSImageValue.h"
+#include "JSTypedOMCSSUnitValue.h"
+#include "JSTypedOMCSSUnparsedValue.h"
 
 namespace WebCore {
+using namespace JSC;
 
-class CSSNumericValue : public CSSStyleValue {
-protected:
-    CSSNumericValue() = default;
-};
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TypedOMCSSStyleValue>&& value)
+{
+    if (value->isUnitValue())
+        return createWrapper<TypedOMCSSUnitValue>(globalObject, WTFMove(value));
+    if (value->isUnparsedValue())
+        return createWrapper<TypedOMCSSUnparsedValue>(globalObject, WTFMove(value));
+    if (value->isImageValue())
+        return createWrapper<TypedOMCSSImageValue>(globalObject, WTFMove(value));
+
+    ASSERT_NOT_REACHED();
+    return createWrapper<TypedOMCSSStyleValue>(globalObject, WTFMove(value));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, TypedOMCSSStyleValue& object)
+{
+    return wrap(state, globalObject, object);
+}
+
 } // namespace WebCore
 
 #endif

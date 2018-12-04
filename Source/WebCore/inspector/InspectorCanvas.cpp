@@ -620,6 +620,9 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
 #if ENABLE(VIDEO)
             [&] (const RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
 #endif
+#if ENABLE(CSS_PAINTING_API)
+            [&] (const RefPtr<TypedOMCSSImageValue>&) { /* FIXME implement. */ },
+#endif
             [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageBitmap); },
             [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
             [&] (const RefPtr<Int32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },

@@ -144,4 +144,9 @@ void CanvasRenderingContext::checkOrigin(const URL& url)
         m_canvas.setOriginTainted();
 }
 
+void CanvasRenderingContext::checkOrigin(const TypedOMCSSImageValue&)
+{
+    m_canvas.setOriginTainted();
+}
+
 } // namespace WebCore

@@ -38,6 +38,7 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
+class TypedOMCSSImageValue;
 class WebGLObject;
 
 class CanvasRenderingContext : public ScriptWrappable {
@@ -88,6 +89,7 @@ protected:
             m_canvas.setOriginTainted();
     }
     void checkOrigin(const URL&);
+    void checkOrigin(const TypedOMCSSImageValue&);
 
     bool m_callTracingActive { false };
 

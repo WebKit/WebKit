@@ -58,6 +58,7 @@ namespace WebCore {
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \
+    macro(CSSImageValue) \
     macro(CSSNumericValue) \
     macro(CSSPaintSize) \
     macro(CSSStyleValue) \
