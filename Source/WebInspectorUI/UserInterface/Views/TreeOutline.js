@@ -545,66 +545,67 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (event.target !== this._childrenListNode)
             return;
 
-        if (!this.selectedTreeElement || event.commandOrControlKey)
-            return;
-
         let isRTL = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL;
+        let expandKeyIdentifier = isRTL ? "Left" : "Right";
+        let collapseKeyIdentifier = isRTL ? "Right" : "Left";
 
         var handled = false;
         var nextSelectedElement;
 
-        if ((!isRTL && event.keyIdentifier === "Left") || (isRTL && event.keyIdentifier === "Right")) {
-            if (this.selectedTreeElement.expanded) {
-                if (event.altKey)
-                    this.selectedTreeElement.collapseRecursively();
-                else
-                    this.selectedTreeElement.collapse();
-                handled = true;
-            } else if (this.selectedTreeElement.parent && !this.selectedTreeElement.parent.root) {
-                handled = true;
-                if (this.selectedTreeElement.parent.selectable) {
-                    nextSelectedElement = this.selectedTreeElement.parent;
-                    while (nextSelectedElement && !nextSelectedElement.selectable)
-                        nextSelectedElement = nextSelectedElement.parent;
-                    handled = nextSelectedElement ? true : false;
-                } else if (this.selectedTreeElement.parent)
-                    this.selectedTreeElement.parent.collapse();
-            }
-        } else if ((!isRTL && event.keyIdentifier === "Right") || (isRTL && event.keyIdentifier === "Left")) {
-            if (!this.selectedTreeElement.revealed()) {
-                this.selectedTreeElement.reveal();
-                handled = true;
-            } else if (this.selectedTreeElement.hasChildren) {
-                handled = true;
+        if (this.selectedTreeElement) {
+            if (event.keyIdentifier === collapseKeyIdentifier) {
                 if (this.selectedTreeElement.expanded) {
-                    nextSelectedElement = this.selectedTreeElement.children[0];
-                    while (nextSelectedElement && !nextSelectedElement.selectable)
-                        nextSelectedElement = nextSelectedElement.nextSibling;
-                    handled = nextSelectedElement ? true : false;
-                } else {
                     if (event.altKey)
-                        this.selectedTreeElement.expandRecursively();
+                        this.selectedTreeElement.collapseRecursively();
                     else
-                        this.selectedTreeElement.expand();
-                }
-            }
-        } else if (event.keyCode === 8 /* Backspace */ || event.keyCode === 46 /* Delete */) {
-            for (let treeElement of this.selectedTreeElements) {
-                if (treeElement.ondelete && treeElement.ondelete())
+                        this.selectedTreeElement.collapse();
                     handled = true;
+                } else if (this.selectedTreeElement.parent && !this.selectedTreeElement.parent.root) {
+                    handled = true;
+                    if (this.selectedTreeElement.parent.selectable) {
+                        nextSelectedElement = this.selectedTreeElement.parent;
+                        while (nextSelectedElement && !nextSelectedElement.selectable)
+                            nextSelectedElement = nextSelectedElement.parent;
+                        handled = nextSelectedElement ? true : false;
+                    } else if (this.selectedTreeElement.parent)
+                        this.selectedTreeElement.parent.collapse();
+                }
+            } else if (event.keyIdentifier === expandKeyIdentifier) {
+                if (!this.selectedTreeElement.revealed()) {
+                    this.selectedTreeElement.reveal();
+                    handled = true;
+                } else if (this.selectedTreeElement.hasChildren) {
+                    handled = true;
+                    if (this.selectedTreeElement.expanded) {
+                        nextSelectedElement = this.selectedTreeElement.children[0];
+                        while (nextSelectedElement && !nextSelectedElement.selectable)
+                            nextSelectedElement = nextSelectedElement.nextSibling;
+                        handled = nextSelectedElement ? true : false;
+                    } else {
+                        if (event.altKey)
+                            this.selectedTreeElement.expandRecursively();
+                        else
+                            this.selectedTreeElement.expand();
+                    }
+                }
+            } else if (event.keyCode === 8 /* Backspace */ || event.keyCode === 46 /* Delete */) {
+                for (let treeElement of this.selectedTreeElements) {
+                    if (treeElement.ondelete && treeElement.ondelete())
+                        handled = true;
+                }
+                if (!handled && this.treeOutline.ondelete)
+                    handled = this.treeOutline.ondelete(this.selectedTreeElement);
+            } else if (isEnterKey(event)) {
+                if (this.selectedTreeElement.onenter)
+                    handled = this.selectedTreeElement.onenter();
+                if (!handled && this.treeOutline.onenter)
+                    handled = this.treeOutline.onenter(this.selectedTreeElement);
+            } else if (event.keyIdentifier === "U+0020" /* Space */) {
+                if (this.selectedTreeElement.onspace)
+                    handled = this.selectedTreeElement.onspace();
+                if (!handled && this.treeOutline.onspace)
+                    handled = this.treeOutline.onspace(this.selectedTreeElement);
             }
-            if (!handled && this.treeOutline.ondelete)
-                handled = this.treeOutline.ondelete(this.selectedTreeElement);
-        } else if (isEnterKey(event)) {
-            if (this.selectedTreeElement.onenter)
-                handled = this.selectedTreeElement.onenter();
-            if (!handled && this.treeOutline.onenter)
-                handled = this.treeOutline.onenter(this.selectedTreeElement);
-        } else if (event.keyIdentifier === "U+0020" /* Space */) {
-            if (this.selectedTreeElement.onspace)
-                handled = this.selectedTreeElement.onspace();
-            if (!handled && this.treeOutline.onspace)
-                handled = this.treeOutline.onspace(this.selectedTreeElement);
         }
 
         if (!handled)
