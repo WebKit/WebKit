@@ -1,3 +1,23 @@
+2018-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): position:fixed sidebar on https://www.w3.org/TR/SVG2/coords.html does not stay fixed
+        https://bugs.webkit.org/show_bug.cgi?id=192320
+        <rdar://problem/46429833>
+
+        Reviewed by Zalan Bujtas.
+        
+        When we fall into slow scrolling mode (for example, because of background-attachment: fixed),
+        RenderLayerCompositor::updateCompositingLayers() needs to set the geometry dirty bit on layers
+        for viewport-constrained objects so we update them.
+        
+        This is only necessary for page scrolling; for overflow scrolls, updateLayerPositions() already
+        does enough dirtying that fixed layers nested inside scrollers get updated.
+
+        Test: compositing/fixed-with-main-thread-scrolling.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+
 2018-12-03  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should scale display list when drawing
