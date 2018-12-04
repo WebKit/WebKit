@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>MediaRecorder Dataavailable</title>
+    <title>MediaRecorder can successfully record the audio for a audio-only stream</title>
     <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
     <script src="/resources/testharness.js"></script>
     <script src="/resources/testharnessreport.js"></script>
@@ -11,36 +11,34 @@
 </audio>
 <script>
 
-    async_test(t => {
-        const ac = new AudioContext();
-        const osc = ac.createOscillator();
-        const dest = ac.createMediaStreamDestination();
-        const audio = dest.stream;
-        osc.connect(dest);
-        const recorder = new MediaRecorder(audio);
-        recorder.ondataavailable = t.step_func(blobEvent => {
-            assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
-            assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
-            assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
-            assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
-            assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
-            const player = document.getElementById("player");
-            player.src = window.URL.createObjectURL(blobEvent.data);
-            player.oncanplay = () => {
-                assert_greater_than(player.duration, 0, 'the duration should be greater than 0');
-                t.done();
-            };
-            player.load();
-        });
+    const ac = new webkitAudioContext();
+    const osc = ac.createOscillator();
+    const dest = ac.createMediaStreamDestination();
+    const audio = dest.stream;
+    osc.connect(dest);
+    const recorder = new MediaRecorder(audio);
+    recorder.ondataavailable = (blobEvent) => {
+        assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+        assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+        assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+        assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+        assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+        const player = document.getElementById("player");
+        player.src = window.URL.createObjectURL(blobEvent.data);
+        player.oncanplay = () => {
+            assert_greater_than(player.duration, 0, 'the duration should be greater than 0');
+            done();
+        };
+        player.load();
+    };
 
-        recorder.start();
-        osc.start();
-        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
-        setTimeout(() => {
-            recorder.stop();
-            osc.stop();
-        }, 500);
-    }, 'MediaRecorder can successfully record the audio for a audio-only stream');
+    recorder.start();
+    osc.start();
+    assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+    setTimeout(() => {
+        recorder.stop();
+        osc.stop();
+    }, 500);
 
 </script>
 </body>

@@ -519,6 +519,10 @@ void Internals::resetToConsistentState(Page& page)
     page.setFullscreenControlsHidden(false);
 
     MediaEngineConfigurationFactory::disableMock();
+
+#if ENABLE(MEDIA_STREAM)
+    WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
+#endif
 }
 
 Internals::Internals(Document& document)

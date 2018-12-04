@@ -1,3 +1,16 @@
+2018-12-04  Youenn Fablet  <youenn@apple.com>
+
+        Fix MediaRecorder flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=192371
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        Reset to use real MediaRecorder by default.
+
 2018-12-04  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API should allow image values in inputProperties
