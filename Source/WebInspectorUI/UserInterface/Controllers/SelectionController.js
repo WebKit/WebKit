@@ -87,6 +87,9 @@ WI.SelectionController = class SelectionController extends WI.Object
         console.assert(!extendSelection || this._allowsMultipleSelection, "Cannot extend selection with multiple selection disabled.");
         console.assert(index >= 0 && index < this.numberOfItems);
 
+        if (!this._allowsMultipleSelection)
+            extendSelection = false;
+
         if (this.hasSelectedItem(index)) {
             if (!extendSelection)
                 this._deselectAllAndSelect(index);

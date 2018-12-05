@@ -31,7 +31,6 @@ PASS: allowsMultipleSelection enabled.
 PASS: allowsMultipleSelection disabled.
 
 -- Running test case: Table.SelectMultipleRows.ExtendSelection
-PASS: allowsMultipleSelection enabled.
 Selecting row 0.
 PASS: Table selection changed.
 PASS: selectedRow should be 0.
@@ -42,6 +41,15 @@ Selecting row 9.
 PASS: Table selection changed.
 PASS: selectedRow should be 9.
 PASS: selectedRows should be [0, 1, 9].
+
+-- Running test case: Table.SelectMultipleRows.ExtendSelection.MultipleSelectionDisabled
+Selecting row 0.
+PASS: Table selection changed.
+PASS: selectedRow should be 0.
+Selecting row 1.
+PASS: Table selection changed.
+PASS: selectedRow should be 1.
+PASS: selectedRows should be [1].
 
 -- Running test case: Table.SelectMultipleRows.SelectTheSameRowTwice.ExtendSelection
 Selecting row 0.
