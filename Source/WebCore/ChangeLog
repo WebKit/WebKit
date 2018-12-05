@@ -1,3 +1,96 @@
+2018-12-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=192384
+
+        Reviewed by Brent Fulgham.
+
+        Implements WebCore for the PlayStation platform.
+
+        * PlatformPlayStation.cmake: Added.
+        * loader/cache/CachedResourceLoader.cpp:
+        * platform/generic/KeyedDecoderGeneric.cpp: Added.
+        (WebCore::KeyedDecoder::decoder):
+        (WebCore::KeyedDecoderGeneric::KeyedDecoderGeneric):
+        (WebCore::KeyedDecoderGeneric::~KeyedDecoderGeneric):
+        (WebCore::KeyedDecoderGeneric::decodeBytes):
+        (WebCore::KeyedDecoderGeneric::decodeBool):
+        (WebCore::KeyedDecoderGeneric::decodeUInt32):
+        (WebCore::KeyedDecoderGeneric::decodeUInt64):
+        (WebCore::KeyedDecoderGeneric::decodeInt32):
+        (WebCore::KeyedDecoderGeneric::decodeInt64):
+        (WebCore::KeyedDecoderGeneric::decodeFloat):
+        (WebCore::KeyedDecoderGeneric::decodeDouble):
+        (WebCore::KeyedDecoderGeneric::decodeString):
+        (WebCore::KeyedDecoderGeneric::beginObject):
+        (WebCore::KeyedDecoderGeneric::endObject):
+        (WebCore::KeyedDecoderGeneric::beginArray):
+        (WebCore::KeyedDecoderGeneric::beginArrayElement):
+        (WebCore::KeyedDecoderGeneric::endArrayElement):
+        (WebCore::KeyedDecoderGeneric::endArray):
+        * platform/generic/KeyedDecoderGeneric.h: Added.
+        * platform/generic/KeyedEncoderGeneric.cpp: Added.
+        (WebCore::KeyedEncoder::encoder):
+        (WebCore::KeyedEncoderGeneric::KeyedEncoderGeneric):
+        (WebCore::KeyedEncoderGeneric::~KeyedEncoderGeneric):
+        (WebCore::KeyedEncoderGeneric::encodeBytes):
+        (WebCore::KeyedEncoderGeneric::encodeBool):
+        (WebCore::KeyedEncoderGeneric::encodeUInt32):
+        (WebCore::KeyedEncoderGeneric::encodeUInt64):
+        (WebCore::KeyedEncoderGeneric::encodeInt32):
+        (WebCore::KeyedEncoderGeneric::encodeInt64):
+        (WebCore::KeyedEncoderGeneric::encodeFloat):
+        (WebCore::KeyedEncoderGeneric::encodeDouble):
+        (WebCore::KeyedEncoderGeneric::encodeString):
+        (WebCore::KeyedEncoderGeneric::beginObject):
+        (WebCore::KeyedEncoderGeneric::endObject):
+        (WebCore::KeyedEncoderGeneric::beginArray):
+        (WebCore::KeyedEncoderGeneric::beginArrayElement):
+        (WebCore::KeyedEncoderGeneric::endArrayElement):
+        (WebCore::KeyedEncoderGeneric::endArray):
+        (WebCore::KeyedEncoderGeneric::finishEncoding):
+        * platform/generic/KeyedEncoderGeneric.h: Added.
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::defaultCookieJarPath):
+        * platform/network/playstation/CurlSSLHandlePlayStation.cpp: Added.
+        (WebCore::getCACertPathEnv):
+        (WebCore::CurlSSLHandle::platformInitialize):
+        * platform/network/playstation/NetworkStateNotifierPlayStation.cpp: Added.
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying):
+        (WebCore::NetworkStateNotifier::startObserving):
+        * platform/playstation/EventLoopPlayStation.cpp: Added.
+        (WebCore::EventLoop::cycle):
+        * platform/playstation/MIMETypeRegistryPlayStation.cpp: Added.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/playstation/PlatformScreenPlayStation.cpp: Added.
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenHasInvertedColors):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenSupportsExtendedColor):
+        * platform/playstation/ScrollbarThemePlayStation.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemePlayStation::scrollbarThickness):
+        (WebCore::ScrollbarThemePlayStation::hasButtons):
+        (WebCore::ScrollbarThemePlayStation::hasThumb):
+        (WebCore::ScrollbarThemePlayStation::backButtonRect):
+        (WebCore::ScrollbarThemePlayStation::forwardButtonRect):
+        (WebCore::ScrollbarThemePlayStation::trackRect):
+        (WebCore::ScrollbarThemePlayStation::paintTrackBackground):
+        (WebCore::ScrollbarThemePlayStation::paintThumb):
+        * platform/playstation/ScrollbarThemePlayStation.h: Added.
+        * platform/playstation/UserAgentPlayStation.cpp: Added.
+        (WebCore::standardUserAgent):
+        (WebCore::standardUserAgentForURL):
+        * rendering/RenderThemePlayStation.cpp: Added.
+        (WebCore::RenderTheme::singleton):
+        (WebCore::RenderThemePlayStation::updateCachedSystemFontDescription const):
+        * rendering/RenderThemePlayStation.h: Added.
+
 2018-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Null pointer crash in DocumentOrderedMap::getElementById via FormAssociatedElement::findAssociatedForm

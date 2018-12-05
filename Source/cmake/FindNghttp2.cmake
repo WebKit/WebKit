@@ -1,9 +1,9 @@
-# - Try to find LibPSL
+# - Try to find nghttp2
 # This module defines the following variables:
 #
-#  LIBPSL_FOUND - LibPSL was found
-#  LIBPSL_INCLUDE_DIRS - the LibPSL include directories
-#  LIBPSL_LIBRARIES - link these to use LibPSL
+#  NGHTTP2_FOUND - nghttp2 was found
+#  NGHTTP2_INCLUDE_DIRS - the nghttp2 include directories
+#  NGHTTP2_LIBRARIES - link these to use nghttp2
 #
 # Copyright (C) 2018 Sony Interactive Entertainment Inc.
 #
@@ -28,37 +28,36 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_path(LIBPSL_INCLUDE_DIRS
-    NAMES libpsl.h
-    PATH_SUFFIXES libpsl
+find_package(PkgConfig)
+pkg_check_modules(PC_NGHTTP2 QUIET nghttp2)
+
+find_path(NGHTTP2_INCLUDE_DIRS
+    NAMES nghttp2.h
+    HINTS ${PC_NGHTTP2_INCLUDEDIR}
+          ${PC_NGHTTP2_INCLUDE_DIRS}
+    PATH_SUFFIXES nghttp2
 )
 
-find_library(LIBPSL_LIBRARIES
-    NAMES psl
+find_library(NGHTTP2_LIBRARIES
+    NAMES nghttp2
+    HINTS ${PC_NGHTTP2_LIBDIR}
+          ${PC_NGHTTP2_LIBRARY_DIRS}
 )
 
-if (LIBPSL_INCLUDE_DIRS)
-    if (EXISTS "${LIBPSL_INCLUDE_DIRS}/libpsl.h")
-        file(READ "${LIBPSL_INCLUDE_DIRS}/libpsl.h" LIBPSL_VERSION_CONTENT)
+if (NGHTTP2_INCLUDE_DIRS)
+    if (EXISTS "${NGHTTP2_INCLUDE_DIRS}/nghttp2ver.h")
+        file(READ "${NGHTTP2_INCLUDE_DIRS}/nghttp2ver.h" _nghttp2_version_content)
 
-        string(REGEX MATCH "#define +PSL_VERSION_MAJOR +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_MAJOR "${CMAKE_MATCH_1}")
-
-        string(REGEX MATCH "#define +PSL_VERSION_MINOR +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_MINOR "${CMAKE_MATCH_1}")
-
-        string(REGEX MATCH "#define +PSL_VERSION_PATCH +([0-9]+)" _dummy "${LIBPSL_VERSION_CONTENT}")
-        set(LIBPSL_VERSION_PATCH "${CMAKE_MATCH_1}")
-
-        set(LIBPSL_VERSION "${LIBPSL_VERSION_MAJOR}.${LIBPSL_VERSION_MINOR}.${LIBPSL_VERSION_PATCH}")
+        string(REGEX MATCH "#define +NGHTTP2_VERSION +\"([0-9]+\.[0-9]+\.[0-9]+)\"" _dummy "${_nghttp2_version_content}")
+        set(NGHTTP2_VERSION "${CMAKE_MATCH_1}")
     endif ()
 endif ()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(LibPSL REQUIRED_VARS LIBPSL_INCLUDE_DIRS LIBPSL_LIBRARIES
-                                         VERSION_VAR LIBPSL_VERSION)
+find_package_handle_standard_args(Nghttp2 REQUIRED_VARS NGHTTP2_INCLUDE_DIRS NGHTTP2_LIBRARIES
+                                          VERSION_VAR NGHTTP2_VERSION)
 
 mark_as_advanced(
-    LIBPSL_INCLUDE_DIRS
-    LIBPSL_LIBRARIES
+    NGHTTP2_INCLUDE_DIRS
+    NGHTTP2_LIBRARIES
 )

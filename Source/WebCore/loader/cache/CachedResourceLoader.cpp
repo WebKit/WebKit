@@ -41,6 +41,7 @@
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginAccessControl.h"
 #include "DOMWindow.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"

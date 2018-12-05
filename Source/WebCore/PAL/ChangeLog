@@ -1,3 +1,14 @@
+2018-12-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Enable WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=192384
+
+        Reviewed by Brent Fulgham.
+
+        Implements PAL for the PlayStation platform.
+
+        * pal/PlatformPlayStation.cmake: Added.
+
 2018-12-02  Zalan Bujtas  <zalan@apple.com>
 
         Add a runtime feature flag for LayoutFormattingContext.

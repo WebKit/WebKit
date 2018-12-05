@@ -51,7 +51,12 @@ static String defaultCookieJarPath()
     if (cookieJarPath)
         return cookieJarPath;
 
+#if PLATFORM(WIN)
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
+#else
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=192417
+    return defaultFileName;
+#endif
 }
 
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
