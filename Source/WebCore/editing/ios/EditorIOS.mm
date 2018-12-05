@@ -97,13 +97,13 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     case TextAlignMode::Start:
     case TextAlignMode::End: {
         switch (direction) {
-        case NaturalWritingDirection:
+        case WritingDirection::Natural:
             // no-op
             break;
-        case LeftToRightWritingDirection:
+        case WritingDirection::LeftToRight:
             newValue = "left";
             break;
-        case RightToLeftWritingDirection:
+        case WritingDirection::RightToLeft:
             newValue = "right";
             break;
         }
@@ -131,7 +131,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     if (focusedElement && (is<HTMLTextAreaElement>(*focusedElement) || (is<HTMLInputElement>(*focusedElement)
         && (downcast<HTMLInputElement>(*focusedElement).isTextField()
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
-        if (direction == NaturalWritingDirection)
+        if (direction == WritingDirection::Natural)
             return;
         downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, newValue);
         m_frame.document()->updateStyleIfNeeded();

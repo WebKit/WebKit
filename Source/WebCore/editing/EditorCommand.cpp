@@ -1430,17 +1430,17 @@ static TriState stateSuperscript(Frame& frame, Event*)
 
 static TriState stateTextWritingDirectionLeftToRight(Frame& frame, Event*)
 {
-    return stateTextWritingDirection(frame, LeftToRightWritingDirection);
+    return stateTextWritingDirection(frame, WritingDirection::LeftToRight);
 }
 
 static TriState stateTextWritingDirectionNatural(Frame& frame, Event*)
 {
-    return stateTextWritingDirection(frame, NaturalWritingDirection);
+    return stateTextWritingDirection(frame, WritingDirection::Natural);
 }
 
 static TriState stateTextWritingDirectionRightToLeft(Frame& frame, Event*)
 {
-    return stateTextWritingDirection(frame, RightToLeftWritingDirection);
+    return stateTextWritingDirection(frame, WritingDirection::RightToLeft);
 }
 
 static TriState stateUnderline(Frame& frame, Event*)

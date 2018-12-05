@@ -1,3 +1,37 @@
+2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn WritingDirection into an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=192401
+        Work towards <rdar://problem/42075638>
+
+        Reviewed by Dan Bernstein.
+
+        Change WritingDirection from an enum to an enum class. No change in behavior.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::textDirection const):
+        (WebCore::EditingStyle::textDirectionForSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::baseWritingDirectionForSelectionStart const):
+        * editing/EditorCommand.cpp:
+        (WebCore::stateTextWritingDirectionLeftToRight):
+        (WebCore::stateTextWritingDirectionNatural):
+        (WebCore::stateTextWritingDirectionRightToLeft):
+        * editing/WritingDirection.h:
+
+        Additionally wrap this enum in `namespace WebCore`, and update the copyright year.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setBaseWritingDirection):
+
 2018-12-05  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove the AppendPipeline state machine

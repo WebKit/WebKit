@@ -979,11 +979,11 @@ HRESULT WebFrame::setTextDirection(_In_ BSTR direction)
 
     String directionString(direction, SysStringLen(direction));
     if (directionString == "auto")
-        coreFrame->editor().setBaseWritingDirection(NaturalWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
     else if (directionString == "ltr")
-        coreFrame->editor().setBaseWritingDirection(LeftToRightWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
     else if (directionString == "rtl")
-        coreFrame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
     return S_OK;
 }
 

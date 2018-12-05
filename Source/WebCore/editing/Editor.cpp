@@ -1780,11 +1780,11 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         
     Element* focusedElement = document().focusedElement();
     if (focusedElement && focusedElement->isTextField()) {
-        if (direction == NaturalWritingDirection)
+        if (direction == WritingDirection::Natural)
             return;
 
         auto& focusedFormElement = downcast<HTMLTextFormControlElement>(*focusedElement);
-        auto directionValue = direction == LeftToRightWritingDirection ? "ltr" : "rtl";
+        auto directionValue = direction == WritingDirection::LeftToRight ? "ltr" : "rtl";
         auto writingDirectionInputTypeName = inputTypeNameForEditingAction(EditAction::SetWritingDirection);
         if (!dispatchBeforeInputEvent(focusedFormElement, writingDirectionInputTypeName, directionValue))
             return;
@@ -1796,13 +1796,13 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
     }
 
     RefPtr<MutableStyleProperties> style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyDirection, direction == LeftToRightWritingDirection ? "ltr" : direction == RightToLeftWritingDirection ? "rtl" : "inherit", false);
+    style->setProperty(CSSPropertyDirection, direction == WritingDirection::LeftToRight ? "ltr" : direction == WritingDirection::RightToLeft ? "rtl" : "inherit", false);
     applyParagraphStyleToSelection(style.get(), EditAction::SetWritingDirection);
 }
 
 WritingDirection Editor::baseWritingDirectionForSelectionStart() const
 {
-    WritingDirection result = LeftToRightWritingDirection;
+    auto result = WritingDirection::LeftToRight;
 
     Position pos = m_frame.selection().selection().visibleStart().deepEquivalent();
     Node* node = pos.deprecatedNode();
@@ -1821,9 +1821,9 @@ WritingDirection Editor::baseWritingDirectionForSelectionStart() const
 
     switch (renderer->style().direction()) {
     case TextDirection::LTR:
-        return LeftToRightWritingDirection;
+        return WritingDirection::LeftToRight;
     case TextDirection::RTL:
-        return RightToLeftWritingDirection;
+        return WritingDirection::RightToLeft;
     }
     
     return result;

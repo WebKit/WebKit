@@ -567,13 +567,13 @@ bool EditingStyle::textDirection(WritingDirection& writingDirection) const
         if (!is<CSSPrimitiveValue>(direction))
             return false;
 
-        writingDirection = downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+        writingDirection = downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;
 
         return true;
     }
 
     if (unicodeBidiValue == CSSValueNormal) {
-        writingDirection = NaturalWritingDirection;
+        writingDirection = WritingDirection::Natural;
         return true;
     }
 
@@ -1468,13 +1468,13 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
     hasNestedOrMultipleEmbeddings = true;
 
     if (selection.isNone())
-        return NaturalWritingDirection;
+        return WritingDirection::Natural;
 
     Position position = selection.start().downstream();
 
     Node* node = position.deprecatedNode();
     if (!node)
-        return NaturalWritingDirection;
+        return WritingDirection::Natural;
 
     Position end;
     if (selection.isRange()) {
@@ -1491,7 +1491,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
 
             CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
             if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
-                return NaturalWritingDirection;
+                return WritingDirection::Natural;
         }
     }
 
@@ -1507,7 +1507,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
     // The selection is either a caret with no typing attributes or a range in which no embedding is added, so just use the start position
     // to decide.
     Node* block = enclosingBlock(node);
-    WritingDirection foundDirection = NaturalWritingDirection;
+    auto foundDirection = WritingDirection::Natural;
 
     for (; node != block; node = node->parentNode()) {
         if (!node->isStyledElement())
@@ -1523,7 +1523,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             continue;
 
         if (unicodeBidiValue == CSSValueBidiOverride)
-            return NaturalWritingDirection;
+            return WritingDirection::Natural;
 
         ASSERT(unicodeBidiValue == CSSValueEmbed);
         RefPtr<CSSValue> direction = computedStyle.propertyValue(CSSPropertyDirection);
@@ -1534,14 +1534,14 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
             continue;
 
-        if (foundDirection != NaturalWritingDirection)
-            return NaturalWritingDirection;
+        if (foundDirection != WritingDirection::Natural)
+            return WritingDirection::Natural;
 
         // In the range case, make sure that the embedding element persists until the end of the range.
         if (selection.isRange() && !end.deprecatedNode()->isDescendantOf(*node))
-            return NaturalWritingDirection;
+            return WritingDirection::Natural;
         
-        foundDirection = directionValue == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+        foundDirection = directionValue == CSSValueLtr ? WritingDirection::LeftToRight : WritingDirection::RightToLeft;
     }
     hasNestedOrMultipleEmbeddings = false;
     return foundDirection;

@@ -5520,18 +5520,18 @@ IGNORE_WARNINGS_END
     if (!coreFrame)
         return;
 
-    WritingDirection direction = RightToLeftWritingDirection;
+    auto direction = WritingDirection::RightToLeft;
     switch (coreFrame->editor().baseWritingDirectionForSelectionStart()) {
-        case LeftToRightWritingDirection:
-            break;
-        case RightToLeftWritingDirection:
-            direction = LeftToRightWritingDirection;
-            break;
-        // The writingDirectionForSelectionStart method will never return "natural". It
-        // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
-        case NaturalWritingDirection:
-            ASSERT_NOT_REACHED();
-            break;
+    case WritingDirection::LeftToRight:
+        break;
+    case WritingDirection::RightToLeft:
+        direction = WritingDirection::LeftToRight;
+        break;
+    // The writingDirectionForSelectionStart method will never return "natural". It
+    // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
+    case WritingDirection::Natural:
+        ASSERT_NOT_REACHED();
+        break;
     }
 
     if (Frame* coreFrame = core([self _frame]))
@@ -5552,7 +5552,7 @@ IGNORE_WARNINGS_END
     ASSERT(writingDirection != NSWritingDirectionNatural);
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor().setBaseWritingDirection(writingDirection == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(writingDirection == NSWritingDirectionLeftToRight ? WritingDirection::LeftToRight : WritingDirection::RightToLeft);
 }
 
 static BOOL writingDirectionKeyBindingsEnabled()
@@ -5573,7 +5573,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     }
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->editor().setBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
+        coreFrame->editor().setBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? WritingDirection::LeftToRight : WritingDirection::RightToLeft);
 }
 
 - (void)makeBaseWritingDirectionLeftToRight:(id)sender

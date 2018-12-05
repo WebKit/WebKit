@@ -1,3 +1,16 @@
+2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn WritingDirection into an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=192401
+        Work towards <rdar://problem/42075638>
+
+        Reviewed by Dan Bernstein.
+
+        Change WritingDirection from an enum to an enum class. No change in behavior.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setTextDirection):
+
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
         [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)

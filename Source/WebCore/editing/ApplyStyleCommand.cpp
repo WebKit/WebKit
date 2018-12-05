@@ -484,7 +484,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     HTMLElement* unsplitAncestor = nullptr;
 
     WritingDirection highestAncestorDirection;
-    if (allowedDirection != NaturalWritingDirection
+    if (allowedDirection != WritingDirection::Natural
         && highestAncestorUnicodeBidi != CSSValueBidiOverride
         && is<HTMLElement>(*highestAncestorWithUnicodeBidi)
         && EditingStyle::create(highestAncestorWithUnicodeBidi, EditingStyle::AllProperties)->textDirection(highestAncestorDirection)
@@ -614,7 +614,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     Position removeStart = start.upstream();
-    WritingDirection textDirection = NaturalWritingDirection;
+    WritingDirection textDirection = WritingDirection::Natural;
     bool hasTextDirection = style.textDirection(textDirection);
     RefPtr<EditingStyle> styleWithoutEmbedding;
     RefPtr<EditingStyle> embeddingStyle;
