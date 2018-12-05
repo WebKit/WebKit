@@ -1,3 +1,9 @@
+2018-12-05  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, add myself to some watch lists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2018-12-05  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove the AppendPipeline state machine
