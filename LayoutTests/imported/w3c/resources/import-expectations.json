@@ -71,6 +71,7 @@
     "web-platform-tests/css/css-grid/layout-algorithm/": "import", 
     "web-platform-tests/css/css-logical": "import", 
     "web-platform-tests/css/css-multicol": "import", 
+    "web-platform-tests/css/css-overscroll-behavior": "import", 
     "web-platform-tests/css/css-properties-values-api": "import", 
     "web-platform-tests/css/css-pseudo": "import", 
     "web-platform-tests/css/css-scoping": "import", 

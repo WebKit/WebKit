@@ -1,0 +1,6 @@
+
+PASS Property overscroll-behavior-x has initial value auto 
+PASS Property overscroll-behavior-x does not inherit 
+PASS Property overscroll-behavior-y has initial value auto 
+PASS Property overscroll-behavior-y does not inherit 
+
