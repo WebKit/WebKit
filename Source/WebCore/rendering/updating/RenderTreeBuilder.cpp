@@ -653,6 +653,13 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
             blockBuilder().childBecameNonInline(downcast<RenderBlock>(*parent), child);
         else if (is<RenderInline>(*parent))
             inlineBuilder().childBecameNonInline(downcast<RenderInline>(*parent), child);
+
+        // childBecameNonInline might have re-parented us.
+        if (auto* newParent = child.parent()) {
+            // We need to re-run the grid items placement if it had gained a new item.
+            if (newParent != parent && is<RenderGrid>(*newParent))
+                downcast<RenderGrid>(*newParent).dirtyGrid();
+        }
     } else {
         // An anonymous block must be made to wrap this inline.
         auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
