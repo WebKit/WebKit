@@ -1,3 +1,12 @@
+2018-12-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test http/tests/misc/resource-timing-resolution.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=181957
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-12-05  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove the AppendPipeline state machine

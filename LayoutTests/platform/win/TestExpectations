@@ -4273,3 +4273,5 @@ webkit.org/b/192011 svg/text/monospace-text-size-in-img.html [ ImageOnlyFailure 
 # This only applies to file:// loading of ES6 Modules via the import syntax. When
 # Windows recognizes .mjs files as JavaScript, this will just work.
 js/dom/modules/import-mjs-module.html [ Skip ]
+
+webkit.org/b/181957 http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
