@@ -64,7 +64,7 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
     return adoptRef(*new WebsiteDataStore);
 }
 
-Ref<WebsiteDataStore> WebsiteDataStore::createLegacy(WebKit::WebsiteDataStore::Configuration configuration)
+Ref<WebsiteDataStore> WebsiteDataStore::createLegacy(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration)
 {
     return adoptRef(*new WebsiteDataStore(WTFMove(configuration), PAL::SessionID::defaultSessionID()));
 }
@@ -74,7 +74,7 @@ WebsiteDataStore::WebsiteDataStore()
 {
 }
 
-WebsiteDataStore::WebsiteDataStore(WebKit::WebsiteDataStore::Configuration configuration, PAL::SessionID sessionID)
+WebsiteDataStore::WebsiteDataStore(Ref<WebKit::WebsiteDataStoreConfiguration>&& configuration, PAL::SessionID sessionID)
     : m_websiteDataStore(WebKit::WebsiteDataStore::create(WTFMove(configuration), sessionID))
 {
 }
@@ -130,19 +130,19 @@ WTF::String WebsiteDataStore::defaultJavaScriptConfigurationDirectory()
 }
 #endif
 
-WebKit::WebsiteDataStore::Configuration WebsiteDataStore::legacyDefaultDataStoreConfiguration()
+Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::legacyDefaultDataStoreConfiguration()
 {
-    WebKit::WebsiteDataStore::Configuration configuration = defaultDataStoreConfiguration();
+    auto configuration = defaultDataStoreConfiguration();
 
-    configuration.applicationCacheDirectory = legacyDefaultApplicationCacheDirectory();
-    configuration.applicationCacheFlatFileSubdirectoryName = "ApplicationCache";
-    configuration.networkCacheDirectory = legacyDefaultNetworkCacheDirectory();
-    configuration.mediaCacheDirectory = legacyDefaultMediaCacheDirectory();
-    configuration.mediaKeysStorageDirectory = legacyDefaultMediaKeysStorageDirectory();
-    configuration.indexedDBDatabaseDirectory = legacyDefaultIndexedDBDatabaseDirectory();
-    configuration.webSQLDatabaseDirectory = legacyDefaultWebSQLDatabaseDirectory();
-    configuration.localStorageDirectory = legacyDefaultLocalStorageDirectory();
-    configuration.javaScriptConfigurationDirectory = legacyDefaultJavaScriptConfigurationDirectory();
+    configuration->setApplicationCacheDirectory(legacyDefaultApplicationCacheDirectory());
+    configuration->setApplicationCacheFlatFileSubdirectoryName("ApplicationCache");
+    configuration->setNetworkCacheDirectory(legacyDefaultNetworkCacheDirectory());
+    configuration->setMediaCacheDirectory(legacyDefaultMediaCacheDirectory());
+    configuration->setMediaKeysStorageDirectory(legacyDefaultMediaKeysStorageDirectory());
+    configuration->setIndexedDBDatabaseDirectory(legacyDefaultIndexedDBDatabaseDirectory());
+    configuration->setWebSQLDatabaseDirectory(legacyDefaultWebSQLDatabaseDirectory());
+    configuration->setLocalStorageDirectory(legacyDefaultLocalStorageDirectory());
+    configuration->setJavaScriptConfigurationDirectory(legacyDefaultJavaScriptConfigurationDirectory());
     
     return configuration;
 }

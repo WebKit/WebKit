@@ -163,19 +163,19 @@ WTF::String WebsiteDataStore::legacyDefaultJavaScriptConfigurationDirectory()
     return WebCore::FileSystem::stringFromFileSystemRepresentation(javaScriptCoreConfigDirectory.get());
 }
 
-WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
+Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
 {
-    WebKit::WebsiteDataStore::Configuration configuration;
+    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
 
-    configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
-    configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
+    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
+    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
 
-    configuration.indexedDBDatabaseDirectory = defaultIndexedDBDatabaseDirectory();
-    configuration.serviceWorkerRegistrationDirectory = defaultServiceWorkerRegistrationDirectory();
-    configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
-    configuration.localStorageDirectory = defaultLocalStorageDirectory();
-    configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
-    configuration.resourceLoadStatisticsDirectory = defaultResourceLoadStatisticsDirectory();
+    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
+    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
+    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
+    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
+    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
+    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
 
     return configuration;
 }

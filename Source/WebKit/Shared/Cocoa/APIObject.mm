@@ -82,6 +82,7 @@
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
+#import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -94,12 +95,12 @@ static const size_t maximumExtraSpaceForAlignment = minimumObjectAlignment - ali
 
 namespace API {
 
-void Object::ref()
+void Object::ref() const
 {
     CFRetain((__bridge CFTypeRef)wrapper());
 }
 
-void Object::deref()
+void Object::deref() const
 {
     CFRelease((__bridge CFTypeRef)wrapper());
 }
@@ -335,6 +336,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::WebsiteDataStore:
         wrapper = [WKWebsiteDataStore alloc];
+        break;
+        
+    case Type::WebsiteDataStoreConfiguration:
+        wrapper = [_WKWebsiteDataStoreConfiguration alloc];
         break;
 
     case Type::WebsitePolicies:

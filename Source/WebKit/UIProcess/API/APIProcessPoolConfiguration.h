@@ -46,7 +46,7 @@ class ProcessPoolConfiguration final : public ObjectImpl<Object::Type::ProcessPo
 public:
     static Ref<ProcessPoolConfiguration> create();
     static Ref<ProcessPoolConfiguration> createWithLegacyOptions();
-    static Ref<ProcessPoolConfiguration> createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStore::Configuration&);
+    static Ref<ProcessPoolConfiguration> createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStoreConfiguration&);
 
     explicit ProcessPoolConfiguration();
     virtual ~ProcessPoolConfiguration();

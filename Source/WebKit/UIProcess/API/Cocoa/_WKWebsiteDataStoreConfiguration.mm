@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "_WKWebsiteDataStoreConfiguration.h"
+#import "_WKWebsiteDataStoreConfigurationInternal.h"
 
 #if WK_API_ENABLED
 
@@ -36,54 +36,44 @@ static void checkURLArgument(NSURL *url)
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
 }
 
-@implementation _WKWebsiteDataStoreConfiguration {
-    RetainPtr<NSURL> _webStorageDirectoryURL;
-    RetainPtr<NSURL> _indexedDBDatabaseDirectoryURL;
-    RetainPtr<NSURL> _webSQLDatabaseDirectoryURL;
-    RetainPtr<NSURL> _cookieStorageFileURL;
-    RetainPtr<NSURL> _resourceLoadStatisticsDirectoryURL;
-    RetainPtr<NSURL> _cacheStorageDirectoryURL;
-    RetainPtr<NSURL> _serviceWorkerRegistrationDirectoryURL;
-    RetainPtr<NSString> _sourceApplicationBundleIdentifier;
-    RetainPtr<NSString> _sourceApplicationSecondaryIdentifier;
-}
+@implementation _WKWebsiteDataStoreConfiguration
 
 - (NSURL *)_webStorageDirectory
 {
-    return _webStorageDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->webStorageDirectory() isDirectory:YES];
 }
 
 - (void)_setWebStorageDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _webStorageDirectoryURL = adoptNS([url copy]);
+    _configuration->setWebStorageDirectory(url.path);
 }
 
 - (NSURL *)_indexedDBDatabaseDirectory
 {
-    return _indexedDBDatabaseDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->indexedDBDatabaseDirectory() isDirectory:YES];
 }
 
 - (void)_setIndexedDBDatabaseDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _indexedDBDatabaseDirectoryURL = adoptNS([url copy]);
+    _configuration->setIndexedDBDatabaseDirectory(url.path);
 }
 
 - (NSURL *)_webSQLDatabaseDirectory
 {
-    return _webSQLDatabaseDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->webSQLDatabaseDirectory() isDirectory:YES];
 }
 
 - (void)_setWebSQLDatabaseDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _webSQLDatabaseDirectoryURL = adoptNS([url copy]);
+    _configuration->setWebSQLDatabaseDirectory(url.path);
 }
 
 - (NSURL *)_cookieStorageFile
 {
-    return _cookieStorageFileURL.get();
+    return [NSURL fileURLWithPath:_configuration->cookieStorageFile() isDirectory:NO];
 }
 
 - (void)_setCookieStorageFile:(NSURL *)url
@@ -92,60 +82,65 @@ static void checkURLArgument(NSURL *url)
     if ([url hasDirectoryPath])
         [NSException raise:NSInvalidArgumentException format:@"The cookie storage path must point to a file, not a directory."];
 
-    _cookieStorageFileURL = adoptNS([url copy]);
+    _configuration->setCookieStorageFile(url.path);
 }
 
 - (NSURL *)_resourceLoadStatisticsDirectory
 {
-    return _resourceLoadStatisticsDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->resourceLoadStatisticsDirectory() isDirectory:YES];
 }
 
 - (void)_setResourceLoadStatisticsDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _resourceLoadStatisticsDirectoryURL = adoptNS([url copy]);
+    _configuration->setResourceLoadStatisticsDirectory(url.path);
 }
 
 - (NSURL *)_cacheStorageDirectory
 {
-    return _cacheStorageDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->cacheStorageDirectory() isDirectory:YES];
 }
 
 - (void)_setCacheStorageDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _cacheStorageDirectoryURL = adoptNS([url copy]);
+    _configuration->setCacheStorageDirectory(url.path);
 }
 
 - (NSURL *)_serviceWorkerRegistrationDirectory
 {
-    return _serviceWorkerRegistrationDirectoryURL.get();
+    return [NSURL fileURLWithPath:_configuration->serviceWorkerRegistrationDirectory() isDirectory:YES];
 }
 
 - (void)_setServiceWorkerRegistrationDirectory:(NSURL *)url
 {
     checkURLArgument(url);
-    _serviceWorkerRegistrationDirectoryURL = adoptNS([url copy]);
+    _configuration->setServiceWorkerRegistrationDirectory(url.path);
 }
 
 - (void)setSourceApplicationBundleIdentifier:(NSString *)identifier
 {
-    _sourceApplicationBundleIdentifier = identifier;
+    _configuration->setSourceApplicationBundleIdentifier(identifier);
 }
 
 - (NSString *)sourceApplicationBundleIdentifier
 {
-    return _sourceApplicationBundleIdentifier.get();
+    return _configuration->sourceApplicationBundleIdentifier();
 }
 
 - (NSString *)sourceApplicationSecondaryIdentifier
 {
-    return _sourceApplicationSecondaryIdentifier.get();
+    return _configuration->sourceApplicationSecondaryIdentifier();
 }
 
 - (void)setSourceApplicationSecondaryIdentifier:(NSString *)identifier
 {
-    _sourceApplicationSecondaryIdentifier = identifier;
+    _configuration->setSourceApplicationSecondaryIdentifier(identifier);
+}
+
+- (API::Object&)_apiObject
+{
+    return *_configuration;
 }
 
 @end

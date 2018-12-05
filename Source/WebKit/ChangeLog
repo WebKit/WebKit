@@ -1,3 +1,128 @@
+2018-12-05  Alex Christensen  <achristensen@webkit.org>
+
+        Make WebsiteDataStoreConfiguration a proper API object
+        https://bugs.webkit.org/show_bug.cgi?id=192380
+
+        Reviewed by Youenn Fablet.
+
+        In the immediate future I'll need to add things to _WKWebsiteDataStoreConfiguration.
+        Instead of making ivars, setting them, copying them to a local object, make this a wrapper of an API::Object
+        like all our other ObjC API objects are.
+
+        * Shared/API/APIObject.h:
+        (API::Object::wrapper const):
+        (API::Object::wrapper): Deleted.
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::ref const):
+        (API::Object::deref const):
+        (API::Object::newObject):
+        (API::Object::ref): Deleted.
+        (API::Object::deref): Deleted.
+        * Sources.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::createLegacy):
+        (API::WebsiteDataStore::WebsiteDataStore):
+        (API::WebsiteDataStore::legacyDefaultDataStoreConfiguration):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration _webStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _indexedDBDatabaseDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setIndexedDBDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _webSQLDatabaseDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setWebSQLDatabaseDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _cookieStorageFile]):
+        (-[_WKWebsiteDataStoreConfiguration _setCookieStorageFile:]):
+        (-[_WKWebsiteDataStoreConfiguration _resourceLoadStatisticsDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setResourceLoadStatisticsDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _cacheStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setCacheStorageDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration _serviceWorkerRegistrationDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration _setServiceWorkerRegistrationDirectory:]):
+        (-[_WKWebsiteDataStoreConfiguration setSourceApplicationBundleIdentifier:]):
+        (-[_WKWebsiteDataStoreConfiguration sourceApplicationBundleIdentifier]):
+        (-[_WKWebsiteDataStoreConfiguration sourceApplicationSecondaryIdentifier]):
+        (-[_WKWebsiteDataStoreConfiguration setSourceApplicationSecondaryIdentifier:]):
+        (-[_WKWebsiteDataStoreConfiguration _apiObject]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfigurationInternal.h: Added.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration):
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::create):
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::parameters):
+        (WebKit::WebsiteDataStore::Configuration::Configuration): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::cacheStoragePerOriginQuota const):
+        (WebKit::WebsiteDataStore::setCacheStoragePerOriginQuota):
+        (WebKit::WebsiteDataStore::cacheStorageDirectory const):
+        (WebKit::WebsiteDataStore::setCacheStorageDirectory):
+        (WebKit::WebsiteDataStore::serviceWorkerRegistrationDirectory const):
+        (WebKit::WebsiteDataStore::setServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStore::resolvedApplicationCacheDirectory const):
+        (WebKit::WebsiteDataStore::resolvedMediaCacheDirectory const):
+        (WebKit::WebsiteDataStore::resolvedMediaKeysDirectory const):
+        (WebKit::WebsiteDataStore::resolvedDatabaseDirectory const):
+        (WebKit::WebsiteDataStore::resolvedJavaScriptConfigurationDirectory const):
+        (WebKit::WebsiteDataStore::resolvedCookieStorageFile const):
+        (WebKit::WebsiteDataStore::resolvedIndexedDatabaseDirectory const):
+        (WebKit::WebsiteDataStore::resolvedServiceWorkerRegistrationDirectory const):
+        (WebKit::WebsiteDataStore::resolvedResourceLoadStatisticsDirectory const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp: Added.
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h: Added.
+        (WebKit::WebsiteDataStoreConfiguration::create):
+        (WebKit::WebsiteDataStoreConfiguration::cacheStoragePerOriginQuota):
+        (WebKit::WebsiteDataStoreConfiguration::setCacheStoragePerOriginQuota):
+        (WebKit::WebsiteDataStoreConfiguration::applicationCacheDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setApplicationCacheDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::mediaCacheDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setMediaCacheDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::mediaKeysStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setMediaKeysStorageDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::javaScriptConfigurationDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setJavaScriptConfigurationDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::webStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setWebStorageDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::indexedDBDatabaseDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setIndexedDBDatabaseDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::webSQLDatabaseDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setWebSQLDatabaseDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::localStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setLocalStorageDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::cookieStorageFile const):
+        (WebKit::WebsiteDataStoreConfiguration::setCookieStorageFile):
+        (WebKit::WebsiteDataStoreConfiguration::resourceLoadStatisticsDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setResourceLoadStatisticsDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::networkCacheDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setNetworkCacheDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::cacheStorageDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setCacheStorageDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::applicationCacheFlatFileSubdirectoryName const):
+        (WebKit::WebsiteDataStoreConfiguration::setApplicationCacheFlatFileSubdirectoryName):
+        (WebKit::WebsiteDataStoreConfiguration::serviceWorkerRegistrationDirectory const):
+        (WebKit::WebsiteDataStoreConfiguration::setServiceWorkerRegistrationDirectory):
+        (WebKit::WebsiteDataStoreConfiguration::sourceApplicationBundleIdentifier const):
+        (WebKit::WebsiteDataStoreConfiguration::setSourceApplicationBundleIdentifier):
+        (WebKit::WebsiteDataStoreConfiguration::sourceApplicationSecondaryIdentifier const):
+        (WebKit::WebsiteDataStoreConfiguration::setSourceApplicationSecondaryIdentifier):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn WritingDirection into an enum class

@@ -23,7 +23,7 @@
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(WebKit::WebsiteDataStore::Configuration&&);
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(Ref<WebKit::WebsiteDataStoreConfiguration>&&);
 API::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
 void webkitWebsiteDataManagerAddProcessPool(WebKitWebsiteDataManager*, WebKit::WebProcessPool&);
 void webkitWebsiteDataManagerRemoveProcessPool(WebKitWebsiteDataManager*, WebKit::WebProcessPool&);

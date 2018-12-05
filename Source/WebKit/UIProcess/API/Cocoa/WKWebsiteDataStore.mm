@@ -197,25 +197,25 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     auto config = API::WebsiteDataStore::defaultDataStoreConfiguration();
 
     if (configuration._webStorageDirectory)
-        config.localStorageDirectory = configuration._webStorageDirectory.path;
+        config->setLocalStorageDirectory(configuration._webStorageDirectory.path);
     if (configuration._webSQLDatabaseDirectory)
-        config.webSQLDatabaseDirectory = configuration._webSQLDatabaseDirectory.path;
+        config->setWebSQLDatabaseDirectory(configuration._webSQLDatabaseDirectory.path);
     if (configuration._indexedDBDatabaseDirectory)
-        config.indexedDBDatabaseDirectory = configuration._indexedDBDatabaseDirectory.path;
+        config->setIndexedDBDatabaseDirectory(configuration._indexedDBDatabaseDirectory.path);
     if (configuration._cookieStorageFile)
-        config.cookieStorageFile = configuration._cookieStorageFile.path;
+        config->setCookieStorageFile(configuration._cookieStorageFile.path);
     if (configuration._resourceLoadStatisticsDirectory)
-        config.resourceLoadStatisticsDirectory = configuration._resourceLoadStatisticsDirectory.path;
+        config->setResourceLoadStatisticsDirectory(configuration._resourceLoadStatisticsDirectory.path);
     if (configuration._cacheStorageDirectory)
-        config.cacheStorageDirectory = configuration._cacheStorageDirectory.path;
+        config->setCacheStorageDirectory(configuration._cacheStorageDirectory.path);
     if (configuration._serviceWorkerRegistrationDirectory)
-        config.serviceWorkerRegistrationDirectory = configuration._serviceWorkerRegistrationDirectory.path;
+        config->setServiceWorkerRegistrationDirectory(configuration._serviceWorkerRegistrationDirectory.path);
     if (configuration.sourceApplicationBundleIdentifier)
-        config.sourceApplicationBundleIdentifier = configuration.sourceApplicationBundleIdentifier;
+        config->setSourceApplicationBundleIdentifier(configuration.sourceApplicationBundleIdentifier);
     if (configuration.sourceApplicationSecondaryIdentifier)
-        config.sourceApplicationSecondaryIdentifier = configuration.sourceApplicationSecondaryIdentifier;
+        config->setSourceApplicationSecondaryIdentifier(configuration.sourceApplicationSecondaryIdentifier);
 
-    API::Object::constructInWrapper<API::WebsiteDataStore>(self, config, PAL::SessionID::generatePersistentSessionID());
+    API::Object::constructInWrapper<API::WebsiteDataStore>(self, WTFMove(config), PAL::SessionID::generatePersistentSessionID());
 
     return self;
 }

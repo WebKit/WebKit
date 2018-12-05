@@ -27,6 +27,7 @@
 
 #include "NetworkSessionCreationParameters.h"
 #include "WebProcessLifetimeObserver.h"
+#include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
@@ -80,32 +81,8 @@ struct PluginModuleInfo;
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
-    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 50 * 1024 * 1024;
-
-    struct Configuration {
-        String cacheStorageDirectory;
-        uint64_t cacheStoragePerOriginQuota { defaultCacheStoragePerOriginQuota };
-        String networkCacheDirectory;
-        String applicationCacheDirectory;
-        String applicationCacheFlatFileSubdirectoryName;
-
-        String mediaCacheDirectory;
-        String indexedDBDatabaseDirectory;
-        String serviceWorkerRegistrationDirectory;
-        String webSQLDatabaseDirectory;
-        String localStorageDirectory;
-        String mediaKeysStorageDirectory;
-        String deviceIdHashSaltsStorageDirectory;
-        String resourceLoadStatisticsDirectory;
-        String javaScriptConfigurationDirectory;
-        String cookieStorageFile;
-        String sourceApplicationBundleIdentifier;
-        String sourceApplicationSecondaryIdentifier;
-
-        explicit Configuration();
-    };
     static Ref<WebsiteDataStore> createNonPersistent();
-    static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);
+    static Ref<WebsiteDataStore> create(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
     virtual ~WebsiteDataStore();
 
     static WebsiteDataStore* existingNonDefaultDataStoreForSessionID(PAL::SessionID);
@@ -119,12 +96,12 @@ public:
     void setResourceLoadStatisticsDebugMode(bool);
     void setResourceLoadStatisticsDebugMode(bool, CompletionHandler<void()>&&);
 
-    uint64_t cacheStoragePerOriginQuota() const { return m_resolvedConfiguration.cacheStoragePerOriginQuota; }
-    void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration.cacheStoragePerOriginQuota = quota; }
-    const String& cacheStorageDirectory() const { return m_resolvedConfiguration.cacheStorageDirectory; }
-    void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration.cacheStorageDirectory = WTFMove(directory); }
-    const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration.serviceWorkerRegistrationDirectory; }
-    void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration.serviceWorkerRegistrationDirectory = WTFMove(directory); }
+    uint64_t cacheStoragePerOriginQuota() const { return m_resolvedConfiguration->cacheStoragePerOriginQuota(); }
+    void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration->setCacheStoragePerOriginQuota(quota); }
+    const String& cacheStorageDirectory() const { return m_resolvedConfiguration->cacheStorageDirectory(); }
+    void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration->setCacheStorageDirectory(WTFMove(directory)); }
+    const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
+    void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(WTFMove(directory)); }
 
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
@@ -153,15 +130,15 @@ public:
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);
     void resolveDirectoriesIfNecessary();
-    const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }
-    const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration.mediaCacheDirectory; }
-    const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration.mediaKeysStorageDirectory; }
-    const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration.webSQLDatabaseDirectory; }
-    const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration.javaScriptConfigurationDirectory; }
-    const String& resolvedCookieStorageFile() const { return m_resolvedConfiguration.cookieStorageFile; }
-    const String& resolvedIndexedDatabaseDirectory() const { return m_resolvedConfiguration.indexedDBDatabaseDirectory; }
-    const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration.serviceWorkerRegistrationDirectory; }
-    const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration.resourceLoadStatisticsDirectory; }
+    const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration->applicationCacheDirectory(); }
+    const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration->mediaCacheDirectory(); }
+    const String& resolvedMediaKeysDirectory() const { return m_resolvedConfiguration->mediaKeysStorageDirectory(); }
+    const String& resolvedDatabaseDirectory() const { return m_resolvedConfiguration->webSQLDatabaseDirectory(); }
+    const String& resolvedJavaScriptConfigurationDirectory() const { return m_resolvedConfiguration->javaScriptConfigurationDirectory(); }
+    const String& resolvedCookieStorageFile() const { return m_resolvedConfiguration->cookieStorageFile(); }
+    const String& resolvedIndexedDatabaseDirectory() const { return m_resolvedConfiguration->indexedDBDatabaseDirectory(); }
+    const String& resolvedServiceWorkerRegistrationDirectory() const { return m_resolvedConfiguration->serviceWorkerRegistrationDirectory(); }
+    const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
 
     StorageManager* storageManager() { return m_storageManager.get(); }
 
@@ -209,11 +186,11 @@ public:
 
     void didCreateNetworkProcess();
 
-    const Configuration& configuration() { return m_configuration; }
+    const WebsiteDataStoreConfiguration& configuration() { return m_configuration.get(); }
 
 private:
     explicit WebsiteDataStore(PAL::SessionID);
-    explicit WebsiteDataStore(Configuration, PAL::SessionID);
+    explicit WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&&, PAL::SessionID);
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
@@ -246,8 +223,8 @@ private:
 
     const PAL::SessionID m_sessionID;
 
-    const Configuration m_configuration;
-    Configuration m_resolvedConfiguration;
+    Ref<WebsiteDataStoreConfiguration> m_resolvedConfiguration;
+    Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
 
     const RefPtr<StorageManager> m_storageManager;

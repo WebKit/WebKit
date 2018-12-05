@@ -82,7 +82,7 @@ void WebInspectorProxy::platformInspectedURLChanged(const String&)
     notImplemented();
 }
 
-void WebInspectorProxy::platformShowCertificate(const CertificateInfo&)
+void WebInspectorProxy::platformShowCertificate(const WebCore::CertificateInfo&)
 {
     notImplemented();
 }

@@ -396,6 +396,7 @@ UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp
 
 UIProcess/WebsiteData/WebsiteDataRecord.cpp
 UIProcess/WebsiteData/WebsiteDataStore.cpp
+UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp
 
 WebProcess/WebConnectionToUIProcess.cpp
 WebProcess/WebProcess.cpp

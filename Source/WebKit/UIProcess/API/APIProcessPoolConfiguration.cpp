@@ -47,20 +47,20 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions(
     return configuration;
 }
 
-Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStore::Configuration& legacyConfiguration)
+Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration(const WebKit::WebsiteDataStoreConfiguration& legacyConfiguration)
 {
     auto configuration = ProcessPoolConfiguration::create();
 
-    configuration->m_applicationCacheDirectory = legacyConfiguration.applicationCacheDirectory;
-    configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName;
-    configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory;
-    configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory;
+    configuration->m_applicationCacheDirectory = legacyConfiguration.applicationCacheDirectory();
+    configuration->m_applicationCacheFlatFileSubdirectoryName = legacyConfiguration.applicationCacheFlatFileSubdirectoryName();
+    configuration->m_diskCacheDirectory = legacyConfiguration.networkCacheDirectory();
+    configuration->m_mediaCacheDirectory = legacyConfiguration.mediaCacheDirectory();
     configuration->m_indexedDBDatabaseDirectory = WebsiteDataStore::legacyDefaultIndexedDBDatabaseDirectory();
-    configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory;
-    configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory;
-    configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory;
-    configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory;
-    configuration->m_javaScriptConfigurationDirectory = legacyConfiguration.javaScriptConfigurationDirectory;
+    configuration->m_localStorageDirectory = legacyConfiguration.localStorageDirectory();
+    configuration->m_mediaKeysStorageDirectory = legacyConfiguration.mediaKeysStorageDirectory();
+    configuration->m_resourceLoadStatisticsDirectory = legacyConfiguration.resourceLoadStatisticsDirectory();
+    configuration->m_webSQLDatabaseDirectory = legacyConfiguration.webSQLDatabaseDirectory();
+    configuration->m_javaScriptConfigurationDirectory = legacyConfiguration.javaScriptConfigurationDirectory();
 
     return configuration;
 }

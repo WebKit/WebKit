@@ -302,24 +302,24 @@ WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const
     return url.absoluteURL.path.fileSystemRepresentation;
 }
 
-WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
+Ref<WebKit::WebsiteDataStoreConfiguration> WebsiteDataStore::defaultDataStoreConfiguration()
 {
-    WebKit::WebsiteDataStore::Configuration configuration;
+    auto configuration = WebKit::WebsiteDataStoreConfiguration::create();
 
-    configuration.applicationCacheDirectory = defaultApplicationCacheDirectory();
-    configuration.applicationCacheFlatFileSubdirectoryName = "Files";
-    configuration.cacheStorageDirectory = defaultCacheStorageDirectory();
-    configuration.networkCacheDirectory = defaultNetworkCacheDirectory();
-    configuration.mediaCacheDirectory = defaultMediaCacheDirectory();
+    configuration->setApplicationCacheDirectory(defaultApplicationCacheDirectory());
+    configuration->setApplicationCacheFlatFileSubdirectoryName("Files");
+    configuration->setCacheStorageDirectory(defaultCacheStorageDirectory());
+    configuration->setNetworkCacheDirectory(defaultNetworkCacheDirectory());
+    configuration->setMediaCacheDirectory(defaultMediaCacheDirectory());
 
-    configuration.indexedDBDatabaseDirectory = defaultIndexedDBDatabaseDirectory();
-    configuration.serviceWorkerRegistrationDirectory = defaultServiceWorkerRegistrationDirectory();
-    configuration.webSQLDatabaseDirectory = defaultWebSQLDatabaseDirectory();
-    configuration.localStorageDirectory = defaultLocalStorageDirectory();
-    configuration.mediaKeysStorageDirectory = defaultMediaKeysStorageDirectory();
-    configuration.resourceLoadStatisticsDirectory = defaultResourceLoadStatisticsDirectory();
+    configuration->setIndexedDBDatabaseDirectory(defaultIndexedDBDatabaseDirectory());
+    configuration->setServiceWorkerRegistrationDirectory(defaultServiceWorkerRegistrationDirectory());
+    configuration->setWebSQLDatabaseDirectory(defaultWebSQLDatabaseDirectory());
+    configuration->setLocalStorageDirectory(defaultLocalStorageDirectory());
+    configuration->setMediaKeysStorageDirectory(defaultMediaKeysStorageDirectory());
+    configuration->setResourceLoadStatisticsDirectory(defaultResourceLoadStatisticsDirectory());
     
-    configuration.javaScriptConfigurationDirectory = defaultJavaScriptConfigurationDirectory();
+    configuration->setJavaScriptConfigurationDirectory(defaultJavaScriptConfigurationDirectory());
 
     return configuration;
 }

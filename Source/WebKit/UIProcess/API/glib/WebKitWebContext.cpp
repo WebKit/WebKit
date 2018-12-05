@@ -314,14 +314,14 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     }
 }
 
-static inline WebsiteDataStore::Configuration websiteDataStoreConfigurationForWebProcessPoolConfiguration(const API::ProcessPoolConfiguration& processPoolconfigurarion)
+static inline Ref<WebsiteDataStoreConfiguration> websiteDataStoreConfigurationForWebProcessPoolConfiguration(const API::ProcessPoolConfiguration& processPoolconfigurarion)
 {
-    WebsiteDataStore::Configuration configuration;
-    configuration.applicationCacheDirectory = processPoolconfigurarion.applicationCacheDirectory();
-    configuration.networkCacheDirectory = processPoolconfigurarion.diskCacheDirectory();
-    configuration.webSQLDatabaseDirectory = processPoolconfigurarion.webSQLDatabaseDirectory();
-    configuration.localStorageDirectory = processPoolconfigurarion.localStorageDirectory();
-    configuration.mediaKeysStorageDirectory = processPoolconfigurarion.mediaKeysStorageDirectory();
+    auto configuration = WebsiteDataStoreConfiguration::create();
+    configuration->setApplicationCacheDirectory(String(processPoolconfigurarion.applicationCacheDirectory()));
+    configuration->setNetworkCacheDirectory(String(processPoolconfigurarion.diskCacheDirectory()));
+    configuration->setWebSQLDatabaseDirectory(String(processPoolconfigurarion.webSQLDatabaseDirectory()));
+    configuration->setLocalStorageDirectory(String(processPoolconfigurarion.localStorageDirectory()));
+    configuration->setMediaKeysStorageDirectory(String(processPoolconfigurarion.mediaKeysStorageDirectory()));
     return configuration;
 }
 

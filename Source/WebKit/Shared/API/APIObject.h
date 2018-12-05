@@ -163,6 +163,7 @@ public:
         WebResourceLoadStatisticsManager,
         WebsiteDataRecord,
         WebsiteDataStore,
+        WebsiteDataStoreConfiguration,
         WebsitePolicies,
         WindowFeatures,
 
@@ -215,10 +216,10 @@ public:
     }
 #endif
 
-    NSObject *wrapper() { return m_wrapper; }
+    NSObject *wrapper() const { return m_wrapper; }
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
 #endif // DELEGATE_REF_COUNTING_TO_COCOA
 
     static void* wrap(API::Object*);
