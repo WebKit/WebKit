@@ -1,3 +1,27 @@
+2018-12-05  Rob Buis  <rbuis@igalia.com>
+
+        Align with Fetch on data: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=182325
+
+        Reviewed by Alex Christensen.
+
+        Do not accept data URLs that do not contain a comma
+        character, as specified in the relevant specs [1, 2].
+
+        Behavior matches Firefox and Chrome.
+
+        Test: web-platform-tests/fetch/api/basic/scheme-data.any.html
+
+        [1] https://tools.ietf.org/html/rfc2397
+        [2] https://fetch.spec.whatwg.org/#data-url-processor
+
+        * platform/network/DataURLDecoder.cpp:
+        (WebCore::DataURLDecoder::parseMediaType):
+        (WebCore::DataURLDecoder::DecodeTask::DecodeTask):
+        (WebCore::DataURLDecoder::DecodeTask::process):
+        (WebCore::DataURLDecoder::createDecodeTask):
+        (WebCore::DataURLDecoder::decode):
+
 2018-12-05  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed build fix.

@@ -1,3 +1,15 @@
+2018-12-05  Rob Buis  <rbuis@igalia.com>
+
+        Align with Fetch on data: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=182325
+
+        Reviewed by Alex Christensen.
+
+        Update improved test expectations.
+
+        * web-platform-tests/fetch/api/basic/scheme-data.any-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-data.any.worker-expected.txt:
+
 2018-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         title attribute on style & link elements should be ignored inside a shadow tree

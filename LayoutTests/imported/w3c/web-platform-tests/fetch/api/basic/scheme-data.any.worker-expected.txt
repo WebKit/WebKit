@@ -6,5 +6,5 @@ PASS Fetching data:text/plain;base64,cmVzcG9uc2UncyBib[...] is OK
 PASS Fetching data:image/png;base64,cmVzcG9uc2UncyBib2[...] is OK 
 PASS Fetching [POST] data:,response%27s%20body is OK 
 PASS Fetching [HEAD] data:,response%27s%20body is OK 
-FAIL Fetching [GET] data:notAdataUrl.com is KO assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Fetching [GET] data:notAdataUrl.com is KO 
 
