@@ -35,20 +35,18 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
+class Blob;
+class PlatformAudioData;
 class MediaSample;
 class MediaStreamTrackPrivate;
-class PlatformAudioData;
-class SharedBuffer;
 
 class MediaRecorderPrivate {
 public:
     virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) = 0;
     virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
     
-    virtual RefPtr<SharedBuffer> fetchData() = 0;
-    virtual const String& mimeType() = 0;
+    virtual Ref<Blob> fetchData() = 0;
     virtual ~MediaRecorderPrivate() = default;
-    virtual void stopRecording() { }
 };
     
 } // namespace WebCore

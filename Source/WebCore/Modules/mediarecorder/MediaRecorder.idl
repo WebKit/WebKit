@@ -29,7 +29,6 @@ enum RecordingState { "inactive", "recording", "paused" };
     Conditional=MEDIA_STREAM,
     Constructor(MediaStream stream, optional MediaRecorderOptions options),
     ConstructorCallWith=Document,
-    ConstructorMayThrowException,
     EnabledAtRuntime=MediaRecorder,
     Exposed=Window
 ] interface MediaRecorder : EventTarget {

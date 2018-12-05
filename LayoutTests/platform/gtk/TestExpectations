@@ -599,9 +599,6 @@ webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 
 imported/w3c/web-platform-tests/webrtc/ [ Skip ]
 http/tests/webrtc [ Skip ]
-
-http/wpt/mediarecorder [ Skip ]
-
 # The MediaStream implementation is also still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]

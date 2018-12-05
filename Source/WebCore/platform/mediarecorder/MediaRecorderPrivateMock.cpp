@@ -28,8 +28,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Blob.h"
 #include "MediaStreamTrackPrivate.h"
-#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -56,19 +56,13 @@ void MediaRecorderPrivateMock::generateMockString(MediaStreamTrackPrivate& track
     m_buffer.append("\r\n---------\r\n");
 }
 
-RefPtr<SharedBuffer> MediaRecorderPrivateMock::fetchData()
+Ref<Blob> MediaRecorderPrivateMock::fetchData()
 {
     auto locker = holdLock(m_bufferLock);
     Vector<uint8_t> value(m_buffer.length());
     memcpy(value.data(), m_buffer.characters8(), m_buffer.length());
     m_buffer.clear();
-    return SharedBuffer::create(WTFMove(value));
-}
-
-const String& MediaRecorderPrivateMock::mimeType()
-{
-    static NeverDestroyed<const String> textPlainMimeType(MAKE_STATIC_STRING_IMPL("text/plain"));
-    return textPlainMimeType;
+    return Blob::create(WTFMove(value), "text/plain");
 }
 
 } // namespace WebCore

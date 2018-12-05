@@ -480,9 +480,6 @@ platform/mac/WebNSAttributedStringExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm
 
-platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
-platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm
-
 platform/mediasession/mac/MediaSessionInterruptionProviderMac.mm
 
 platform/mediastream/ios/AVAudioSessionCaptureDevice.mm

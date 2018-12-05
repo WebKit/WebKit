@@ -228,8 +228,6 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaRecorder.h"
-#include "MediaRecorderPrivateMock.h"
 #include "MediaStream.h"
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
@@ -519,10 +517,6 @@ void Internals::resetToConsistentState(Page& page)
     page.setFullscreenControlsHidden(false);
 
     MediaEngineConfigurationFactory::disableMock();
-
-#if ENABLE(MEDIA_STREAM)
-    WebCore::MediaRecorder::setCustomPrivateRecorderCreator(nullptr);
-#endif
 }
 
 Internals::Internals(Document& document)
@@ -1477,16 +1471,6 @@ void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connecti
 void Internals::setMockMediaCaptureDevicesEnabled(bool enabled)
 {
     WebCore::DeprecatedGlobalSettings::setMockCaptureDevicesEnabled(enabled);
-}
-
-static std::unique_ptr<MediaRecorderPrivate> createRecorderMockSource()
-{
-    return std::unique_ptr<MediaRecorderPrivateMock>(new MediaRecorderPrivateMock);
-}
-
-void Internals::setCustomPrivateRecorderCreator()
-{
-    WebCore::MediaRecorder::setCustomPrivateRecorderCreator(createRecorderMockSource);
 }
 
 #endif

@@ -1,3 +1,24 @@
+2018-12-05  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r238844, r238846, and r238874.
+        https://bugs.webkit.org/show_bug.cgi?id=192414
+
+        The layout tests added with this change are flaky. (Requested
+        by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "Implement non-timeslice mode encoding for MediaRecorder"
+        https://bugs.webkit.org/show_bug.cgi?id=192069
+        https://trac.webkit.org/changeset/238844
+
+        "Fix the build"
+        https://trac.webkit.org/changeset/238846
+
+        "Fix MediaRecorder flaky tests"
+        https://bugs.webkit.org/show_bug.cgi?id=192371
+        https://trac.webkit.org/changeset/238874
+
 2018-12-05  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test http/tests/misc/resource-timing-resolution.html is a flaky failure

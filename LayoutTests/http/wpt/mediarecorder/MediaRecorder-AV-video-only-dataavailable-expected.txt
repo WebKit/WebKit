@@ -1,4 +1,0 @@
-
-
-PASS MediaRecorder can successfully record the video for a video-only stream 
-

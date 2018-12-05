@@ -494,8 +494,6 @@ http/tests/webrtc [ Skip ]
 http/tests/websocket [ Skip ]
 http/tests/xmlhttprequest [ Skip ]
 
-http/wpt/mediarecorder [ Skip ]
-
 # Service-workers tests that fail, time out or crash.
 webkit.org/b/175419 http/tests/workers/service/controller-change.html [ Skip ]
 webkit.org/b/175419 http/tests/workers/service/no-page-cache-when-controlled.html [ Skip ]
