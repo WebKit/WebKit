@@ -1,3 +1,31 @@
+2018-12-04  Frederic Wang  <fwang@igalia.com>
+
+        Always pass scrollingGeometry to update*ScrollingNode functions
+        https://bugs.webkit.org/show_bug.cgi?id=192358
+
+        Reviewed by Simon Fraser.
+
+        Currently, the scrollingGeometry parameter of updateOverflowScrollingNode is always used
+        while the one of updateFrameScrollingNode is never used. Both of them are passed as possibly
+        null pointers. This commit makes things more consistent by making the parameter a reference
+        and explicitly setting the scrollingGeometry of updateFrameScrollingNode. This will help
+        other efforts (such as support for macOS/iOS asynchronous scrolling of overflow nodes /
+        subframes or for CSS overscroll-behavior) for which new data members have to be passed to the
+        scrolling nodes.
+
+        No new tests, no behavior changes.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateFrameScrollingNode):
+        (WebCore::ScrollingCoordinator::updateOverflowScrollingNode):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2018-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in HTMLCollection::updateNamedElementCache

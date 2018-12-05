@@ -189,8 +189,8 @@ public:
 #endif
     };
 
-    virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry* = nullptr) { }
-    virtual void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, const ScrollingGeometry* = nullptr) { }
+    virtual void updateFrameScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, GraphicsLayer* /*counterScrollingLayer*/, GraphicsLayer* /*insetClipLayer*/, const ScrollingGeometry&) { }
+    virtual void updateOverflowScrollingNode(ScrollingNodeID, GraphicsLayer* /*scrollLayer*/, GraphicsLayer* /*scrolledContentsLayer*/, const ScrollingGeometry&) { }
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
     virtual bool isRubberBandInProgress() const { return false; }

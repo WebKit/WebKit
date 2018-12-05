@@ -3869,10 +3869,21 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
 void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID parentNodeID)
 {
     auto* scrollingCoordinator = this->scrollingCoordinator();
-    ASSERT(scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView()));
+    FrameView& frameView = m_renderView.frameView();
+    ASSERT(scrollingCoordinator->coordinatesScrollingForFrameView(frameView));
 
     ScrollingNodeID nodeID = attachScrollingNode(*m_renderView.layer(), m_renderView.frame().isMainFrame() ? MainFrameScrollingNode : SubframeScrollingNode, parentNodeID);
-    scrollingCoordinator->updateFrameScrollingNode(nodeID, m_scrollLayer.get(), m_rootContentLayer.get(), fixedRootBackgroundLayer(), clipLayer());
+    ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
+    // FIXME(https://webkit.org/b/172917): Pass parentRelativeScrollableRect?
+    scrollingGeometry.scrollOrigin = frameView.scrollOrigin();
+    scrollingGeometry.scrollableAreaSize = frameView.visibleContentRect().size();
+    scrollingGeometry.contentSize = frameView.totalContentsSize();
+    scrollingGeometry.reachableContentSize = frameView.totalContentsSize();
+#if ENABLE(CSS_SCROLL_SNAP)
+    frameView.updateSnapOffsets();
+    scrollingCoordinator->updateScrollSnapPropertiesWithFrameView(frameView);
+#endif
+    scrollingCoordinator->updateFrameScrollingNode(nodeID, m_scrollLayer.get(), m_rootContentLayer.get(), fixedRootBackgroundLayer(), clipLayer(), scrollingGeometry);
 }
 
 void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, OptionSet<LayerScrollCoordinationRole> reasons, OptionSet<ScrollingNodeChangeFlags> changes)
@@ -3951,6 +3962,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
                 return;
 
             ScrollingCoordinator::ScrollingGeometry scrollingGeometry;
+            // FIXME(https://webkit.org/b/172917): Pass parentRelativeScrollableRect?
             scrollingGeometry.scrollOrigin = layer.scrollOrigin();
             scrollingGeometry.scrollPosition = layer.scrollPosition();
             scrollingGeometry.scrollableAreaSize = layer.visibleSize();
@@ -3971,7 +3983,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Opt
 
             LOG(Compositing, "Registering Scrolling scrolling node %" PRIu64 " (layer %" PRIu64 ") as child of %" PRIu64, nodeID, backing->graphicsLayer()->primaryLayerID(), parentNodeID);
 
-            scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), &scrollingGeometry);
+            scrollingCoordinator->updateOverflowScrollingNode(nodeID, backing->scrollingLayer(), backing->scrollingContentsLayer(), scrollingGeometry);
         }
     } else
         detachScrollCoordinatedLayer(layer, Scrolling);
