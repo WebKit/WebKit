@@ -65,13 +65,25 @@ TEST(AbortableTaskQueue, AsyncTasks)
 struct FancyResponse {
     WTF_MAKE_NONCOPYABLE(FancyResponse);
 public:
-    FancyResponse(int fancyInt)
+    FancyResponse(int fancyInt, bool* destructedFlagPointer = nullptr)
         : fancyInt(fancyInt)
+        , destructedFlagPointer(destructedFlagPointer)
     { }
 
-    FancyResponse(FancyResponse&& a)
-        : fancyInt(a.fancyInt)
-    { }
+    FancyResponse(FancyResponse&& original)
+        : fancyInt(original.fancyInt)
+        , destructedFlagPointer(original.destructedFlagPointer)
+    {
+        original.destructedFlagPointer = nullptr;
+    }
+
+    ~FancyResponse()
+    {
+        if (destructedFlagPointer) {
+            RELEASE_ASSERT(!*destructedFlagPointer);
+            *destructedFlagPointer = true;
+        }
+    }
 
     FancyResponse& operator=(FancyResponse&& a)
     {
@@ -80,12 +92,14 @@ public:
     }
 
     int fancyInt;
+    bool* destructedFlagPointer;
 };
 
 TEST(AbortableTaskQueue, SyncTasks)
 {
     AbortableTaskQueue taskQueue;
     bool testFinished { false };
+    bool destructedResponseFlag { false };
     int currentStep { 0 };
     RunLoop::initializeMainRunLoop();
 
@@ -95,13 +109,16 @@ TEST(AbortableTaskQueue, SyncTasks)
             EXPECT_TRUE(isMainThread());
             currentStep++;
             EXPECT_EQ(1, currentStep);
-            FancyResponse returnValue(100);
+            FancyResponse returnValue(100, &destructedResponseFlag);
             return returnValue;
         });
         currentStep++;
         EXPECT_EQ(2, currentStep);
         EXPECT_TRUE(response);
+        EXPECT_FALSE(destructedResponseFlag);
         EXPECT_EQ(100, response->fancyInt);
+        response = std::nullopt;
+        EXPECT_TRUE(destructedResponseFlag);
         RunLoop::main().dispatch([&]() {
             testFinished = true;
         });
@@ -219,7 +236,7 @@ TEST(AbortableTaskQueue, Abort)
     Util::run(&testFinished);
 }
 
-TEST(AbortableTaskQueue, AbortDuringSyncTask)
+TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
 {
     AbortableTaskQueue taskQueue;
     bool testFinished { false };
@@ -249,6 +266,48 @@ TEST(AbortableTaskQueue, AbortDuringSyncTask)
         WTF::sleep(100_ms);
 
         taskQueue.startAborting();
+    });
+
+    Util::run(&testFinished);
+}
+
+TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
+{
+    AbortableTaskQueue taskQueue;
+    bool testFinished { false };
+    int currentStep { 0 };
+    bool destructedResponseFlag { false };
+    RunLoop::initializeMainRunLoop();
+
+    auto backgroundThreadFunction = [&]() {
+        EXPECT_FALSE(isMainThread());
+        currentStep++;
+        EXPECT_EQ(1, currentStep);
+
+        std::optional<FancyResponse> response = taskQueue.enqueueTaskAndWait<FancyResponse>([&]() -> FancyResponse {
+            currentStep++;
+            EXPECT_EQ(2, currentStep);
+            taskQueue.startAborting();
+            // This task should not have been able to run under the scheduling of this test.
+            return FancyResponse(100, &destructedResponseFlag);
+        });
+
+        currentStep++;
+        EXPECT_EQ(3, currentStep);
+
+        // Main thread has called startAborting().
+        EXPECT_FALSE(response);
+
+        // The response object has not been leaked.
+        EXPECT_TRUE(destructedResponseFlag);
+
+        RunLoop::main().dispatch([&]() {
+            testFinished = true;
+        });
+    };
+    RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+        EXPECT_TRUE(isMainThread());
+        WTF::Thread::create("atq-background", WTFMove(backgroundThreadFunction))->detach();
     });
 
     Util::run(&testFinished);

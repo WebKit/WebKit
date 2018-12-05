@@ -1,3 +1,24 @@
+2018-12-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove the AppendPipeline state machine
+        https://bugs.webkit.org/show_bug.cgi?id=192204
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Updated AbortableTaskQueue tests:
+
+        Added test: AbortedBySyncTaskHandler.
+
+        Renamed test: AbortDuringSyncTask -> AbortBeforeSyncTaskRun (in
+        order to avoid confusion with the new test).
+
+        Added checks for the correct destruction of response objects.
+
+        * TestWebKitAPI/Tests/WebCore/AbortableTaskQueue.cpp:
+        (TestWebKitAPI::FancyResponse::FancyResponse):
+        (TestWebKitAPI::FancyResponse::~FancyResponse):
+        (TestWebKitAPI::TEST):
+
 2018-12-04  Chris Dumez  <cdumez@apple.com>
 
         ProcessSwap.UseSessionCookiesAfterProcessSwapInPrivateBrowsing API test is failing

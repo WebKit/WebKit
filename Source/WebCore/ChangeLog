@@ -1,3 +1,77 @@
+2018-12-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove the AppendPipeline state machine
+        https://bugs.webkit.org/show_bug.cgi?id=192204
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch tries to reduce the complexity of the AppendPipeline by
+        removing the appendState state machine and cleaning all the
+        conditional code around it that is not necessary anymore.
+
+        For the most part the behavior is the same, but some edge cases have
+        been improved in the process:
+
+        Demuxing errors now result in the append being flagged as
+        ParsingFailed and the error being propagated to the application. This
+        fixes media/media-source/media-source-error-crash.html (or at least
+        gets it up to date with cross platform expectations).
+
+        AbortableTaskQueue now allows the task handler to perform an abort
+        safely. This is used in the GstBus error message sync handler, since
+        it needs to ask the MainThread to raise a parse error, which will in
+        turn abort. An API test has been added for this new functionality.
+        Also, code has been added to the API tests to ensure the correct
+        destruction of the response object, especially in this case.
+
+        The code handling invalid track codecs has been made clearer by also
+        explicitly raising a parse error, but it should not expose behavior
+        differences for the application. A test has been added for this
+        behavior: web-platform-tests/media-source/mediasource-invalid-codec.html
+
+        The reporting of EOS events have been made more rigorous. EOS is only
+        expected after a demuxing error, otherwise it's a g_critical.
+
+        AppendPipeline::abort() has been renamed to
+        AppendPipeline::resetParserState() to honor the fact that it's not
+        only called when the user calls abort() and match better the names
+        used in the spec.
+
+        Test: imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html
+
+        * platform/AbortableTaskQueue.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::assertedElementSetState):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::handleErrorSyncMessage):
+        (WebCore::AppendPipeline::appsrcEndOfAppendCheckerProbe):
+        (WebCore::AppendPipeline::handleNeedContextSyncMessage):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::handleEndOfAppend):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::didReceiveInitializationSegment):
+        (WebCore::AppendPipeline::resetParserState):
+        (WebCore::AppendPipeline::pushNewBuffer):
+        (WebCore::AppendPipeline::handleAppsinkNewSampleFromStreamingThread):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::dumpAppendState): Deleted.
+        (WebCore::AppendPipeline::demuxerNoMorePads): Deleted.
+        (WebCore::AppendPipeline::setAppendState): Deleted.
+        (WebCore::AppendPipeline::appsinkEOS): Deleted.
+        (WebCore::AppendPipeline::resetPipeline): Deleted.
+        (WebCore::AppendPipeline::abort): Deleted.
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::appendState): Deleted.
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::abort):
+        (WebCore::MediaSourceClientGStreamerMSE::resetParserState):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::appendParsingFailed):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
         [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)

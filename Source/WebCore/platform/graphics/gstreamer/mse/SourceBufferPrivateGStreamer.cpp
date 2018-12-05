@@ -178,5 +178,11 @@ void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
         m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendSucceeded);
 }
 
+void SourceBufferPrivateGStreamer::appendParsingFailed()
+{
+    if (m_sourceBufferPrivateClient)
+        m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ParsingFailed);
+}
+
 }
 #endif

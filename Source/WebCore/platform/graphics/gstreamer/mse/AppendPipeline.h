@@ -50,21 +50,20 @@ public:
     virtual ~AppendPipeline();
 
     GstFlowReturn pushNewBuffer(GstBuffer*);
-    void abort();
+    void resetParserState();
     Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate() { return m_sourceBufferPrivate.get(); }
     GstCaps* appsinkCaps() { return m_appsinkCaps.get(); }
     RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
 private:
-    enum class AppendState { Invalid, NotStarted, Ongoing, DataStarve, Sampling, LastSample, Aborting };
 
+    void handleErrorSyncMessage(GstMessage*);
     void handleNeedContextSyncMessage(GstMessage*);
+    // For debug purposes only:
     void handleStateChangeMessage(GstMessage*);
 
     gint id();
-    AppendState appendState() { return m_appendState; }
-    void setAppendState(AppendState);
 
     GstFlowReturn handleAppsinkNewSampleFromStreamingThread(GstElement*);
 
@@ -72,7 +71,6 @@ private:
     void parseDemuxerSrcPadCaps(GstCaps*);
     void appsinkCapsChanged();
     void appsinkNewSample(GRefPtr<GstSample>&&);
-    void appsinkEOS();
     void handleEndOfAppend();
     void didReceiveInitializationSegment();
     AtomicString trackId();
@@ -89,15 +87,12 @@ private:
     void connectDemuxerSrcPadToAppsink(GstPad*);
 
     void resetPipeline();
-    void checkEndOfAppend();
-    void demuxerNoMorePads();
 
     void consumeAppsinkAvailableSamples();
 
     GstPadProbeReturn appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*);
 
     static void staticInitialization();
-    static const char* dumpAppendState(AppendPipeline::AppendState);
 
     static std::once_flag s_staticInitializationFlag;
     static GType s_endOfAppendMetaType;
@@ -106,6 +101,9 @@ private:
     // Used only for asserting that there is only one streaming thread.
     // Only the pointers are compared.
     WTF::Thread* m_streamingThread;
+
+    // Used only for asserting EOS events are only caused by demuxing errors.
+    bool m_errorReceived { false };
 
     Ref<MediaSourceClientGStreamerMSE> m_mediaSourceClient;
     Ref<SourceBufferPrivateGStreamer> m_sourceBufferPrivate;
@@ -143,14 +141,6 @@ private:
 #if ENABLE(ENCRYPTED_MEDIA)
     struct PadProbeInformation m_appsinkPadEventProbeInformation;
 #endif
-    // Keeps track of the states of append processing, to avoid performing actions inappropriate for the current state
-    // (eg: processing more samples when the last one has been detected, etc.). See setAppendState() for valid
-    // transitions.
-    AppendState m_appendState;
-
-    // Aborts can only be completed when the normal sample detection has finished. Meanwhile, the willing to abort is
-    // expressed in this field.
-    bool m_abortPending;
 
     WebCore::MediaSourceStreamTypeGStreamer m_streamType;
     RefPtr<WebCore::TrackPrivateBase> m_track;

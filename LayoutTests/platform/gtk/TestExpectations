@@ -2360,7 +2360,6 @@ webkit.org/b/163780 media/media-controls-drag-timeline-set-controls-property.htm
 
 webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
-webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
 
 webkit.org/b/169211 fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]

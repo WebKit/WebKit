@@ -106,7 +106,7 @@ void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> s
 
     ASSERT(appendPipeline);
 
-    appendPipeline->abort();
+    appendPipeline->resetParserState();
 }
 
 void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
@@ -122,7 +122,7 @@ void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateG
 
     ASSERT(appendPipeline);
 
-    appendPipeline->abort();
+    appendPipeline->resetParserState();
 }
 
 bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, Vector<unsigned char>&& data)

@@ -67,28 +67,6 @@ void AppendPipeline::staticInitialization()
     s_webKitEndOfAppendMetaInfo = gst_meta_register(s_endOfAppendMetaType, "WebKitEndOfAppendMeta", sizeof(EndOfAppendMeta), EndOfAppendMeta::init, EndOfAppendMeta::free, EndOfAppendMeta::transform);
 }
 
-const char* AppendPipeline::dumpAppendState(AppendPipeline::AppendState appendState)
-{
-    switch (appendState) {
-    case AppendPipeline::AppendState::Invalid:
-        return "Invalid";
-    case AppendPipeline::AppendState::NotStarted:
-        return "NotStarted";
-    case AppendPipeline::AppendState::Ongoing:
-        return "Ongoing";
-    case AppendPipeline::AppendState::DataStarve:
-        return "DataStarve";
-    case AppendPipeline::AppendState::Sampling:
-        return "Sampling";
-    case AppendPipeline::AppendState::LastSample:
-        return "LastSample";
-    case AppendPipeline::AppendState::Aborting:
-        return "Aborting";
-    default:
-        return "(unknown)";
-    }
-}
-
 #if !LOG_DISABLED
 static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadProbeInfo*, struct PadProbeInformation*);
 #endif
@@ -101,14 +79,30 @@ static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadP
 
 static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstPadProbeInfo*, void*);
 
+// Wrapper for gst_element_set_state() that emits a critical if the state change fails or is not synchronous.
+static void assertedElementSetState(GstElement* element, GstState desiredState)
+{
+    GstState oldState;
+    gst_element_get_state(element, &oldState, nullptr, 0);
+
+    GstStateChangeReturn result = gst_element_set_state(element, desiredState);
+
+    GstState newState;
+    gst_element_get_state(element, &newState, nullptr, 0);
+
+    if (desiredState != newState || result != GST_STATE_CHANGE_SUCCESS) {
+        GST_ERROR("AppendPipeline state change failed (returned %d): %" GST_PTR_FORMAT " %d -> %d (expected %d)",
+            static_cast<int>(result), element, static_cast<int>(oldState), static_cast<int>(newState), static_cast<int>(desiredState));
+        ASSERT_NOT_REACHED();
+    }
+}
+
 AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceClient, Ref<SourceBufferPrivateGStreamer> sourceBufferPrivate, MediaPlayerPrivateGStreamerMSE& playerPrivate)
     : m_mediaSourceClient(mediaSourceClient.get())
     , m_sourceBufferPrivate(sourceBufferPrivate.get())
     , m_playerPrivate(&playerPrivate)
     , m_id(0)
     , m_wasBusAlreadyNotifiedOfAvailableSamples(false)
-    , m_appendState(AppendState::NotStarted)
-    , m_abortPending(false)
     , m_streamType(Unknown)
 {
     ASSERT(isMainThread());
@@ -127,6 +121,9 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
     gst_bus_add_signal_watch_full(m_bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
     gst_bus_enable_sync_message_emission(m_bus.get());
 
+    g_signal_connect(m_bus.get(), "sync-message::error", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
+        appendPipeline->handleErrorSyncMessage(message);
+    }), this);
     g_signal_connect(m_bus.get(), "sync-message::need-context", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
         appendPipeline->handleNeedContextSyncMessage(message);
     }), this);
@@ -155,6 +152,8 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
 
     gst_app_sink_set_emit_signals(GST_APP_SINK(m_appsink.get()), TRUE);
     gst_base_sink_set_sync(GST_BASE_SINK(m_appsink.get()), FALSE);
+    gst_base_sink_set_async_enabled(GST_BASE_SINK(m_appsink.get()), FALSE); // No prerolls, no async state changes.
+    gst_base_sink_set_drop_out_of_segment(GST_BASE_SINK(m_appsink.get()), FALSE);
     gst_base_sink_set_last_sample_enabled(GST_BASE_SINK(m_appsink.get()), FALSE);
 
     GRefPtr<GstPad> appsinkPad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
@@ -202,33 +201,32 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
         ASSERT(!isMainThread());
         GST_DEBUG("Posting no-more-pads task to main thread");
         appendPipeline->m_taskQueue.enqueueTask([appendPipeline]() {
-            appendPipeline->demuxerNoMorePads();
+            appendPipeline->didReceiveInitializationSegment();
         });
     }), this);
     g_signal_connect(m_appsink.get(), "new-sample", G_CALLBACK(+[](GstElement* appsink, AppendPipeline* appendPipeline) {
         appendPipeline->handleAppsinkNewSampleFromStreamingThread(appsink);
     }), this);
     g_signal_connect(m_appsink.get(), "eos", G_CALLBACK(+[](GstElement*, AppendPipeline* appendPipeline) {
-        ASSERT(!isMainThread());
-        GST_DEBUG("Posting appsink-eos task to main thread");
-        appendPipeline->m_taskQueue.enqueueTask([appendPipeline]() {
-            appendPipeline->appsinkEOS();
-        });
+        // basesrc will emit an EOS after it has received a GST_FLOW_ERROR. That's the only case we are expecting.
+        if (!appendPipeline->m_errorReceived) {
+            GST_ERROR("Unexpected appsink EOS in AppendPipeline");
+            ASSERT_NOT_REACHED();
+        }
     }), this);
 
     // Add_many will take ownership of a reference. That's why we used an assignment before.
     gst_bin_add_many(GST_BIN(m_pipeline.get()), m_appsrc.get(), m_demux.get(), nullptr);
     gst_element_link(m_appsrc.get(), m_demux.get());
 
-    gst_element_set_state(m_pipeline.get(), GST_STATE_READY);
-};
+    assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
+}
 
 AppendPipeline::~AppendPipeline()
 {
-    GST_TRACE("Destructing AppendPipeline (%p)", this);
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Destructing AppendPipeline (%p)", this);
     ASSERT(isMainThread());
 
-    setAppendState(AppendState::Invalid);
     // Forget all pending tasks and unblock the streaming thread if it was blocked.
     m_taskQueue.startAborting();
 
@@ -273,6 +271,21 @@ AppendPipeline::~AppendPipeline()
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 }
 
+void AppendPipeline::handleErrorSyncMessage(GstMessage* message)
+{
+    ASSERT(!isMainThread());
+    GST_WARNING_OBJECT(m_pipeline.get(), "Demuxing error: %" GST_PTR_FORMAT, message);
+    // Notify the main thread that the append has a decode error.
+    auto response = m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([this]() {
+        m_errorReceived = true;
+        // appendParsingFailed() will cause resetParserState() to be called.
+        m_sourceBufferPrivate->appendParsingFailed();
+        return AbortableTaskQueue::Void();
+    });
+    // The streaming thread has now been unblocked because we are aborting in the main thread.
+    ASSERT(!response);
+}
+
 GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo* padProbeInfo)
 {
     ASSERT(!isMainThread());
@@ -280,6 +293,8 @@ GstPadProbeReturn AppendPipeline::appsrcEndOfAppendCheckerProbe(GstPadProbeInfo*
 
     GstBuffer* buffer = GST_BUFFER(padProbeInfo->data);
     ASSERT(GST_IS_BUFFER(buffer));
+
+    GST_TRACE_OBJECT(m_pipeline.get(), "Buffer entered appsrcEndOfAppendCheckerProbe: %" GST_PTR_FORMAT, buffer);
 
     EndOfAppendMeta* endOfAppendMeta = reinterpret_cast<EndOfAppendMeta*>(gst_buffer_get_meta(buffer, s_endOfAppendMetaType));
     if (!endOfAppendMeta) {
@@ -301,16 +316,7 @@ void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
     GST_TRACE("context type: %s", contextType);
 
     // MediaPlayerPrivateGStreamerBase will take care of setting up encryption.
-    if (m_playerPrivate)
-        m_playerPrivate->handleSyncMessage(message);
-}
-
-void AppendPipeline::demuxerNoMorePads()
-{
-    GST_TRACE("calling didReceiveInitializationSegment");
-    didReceiveInitializationSegment();
-    GST_TRACE("set pipeline to playing");
-    gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
+    m_playerPrivate->handleSyncMessage(message);
 }
 
 void AppendPipeline::handleStateChangeMessage(GstMessage* message)
@@ -364,146 +370,6 @@ gint AppendPipeline::id()
     return m_id;
 }
 
-void AppendPipeline::setAppendState(AppendState newAppendState)
-{
-    ASSERT(isMainThread());
-    // Valid transitions:
-    // NotStarted-->Ongoing-->DataStarve-->NotStarted
-    //           |         |            `->Aborting-->NotStarted
-    //           |         `->Sampling-···->Sampling-->LastSample-->NotStarted
-    //           |                                               `->Aborting-->NotStarted
-    //           `->Aborting-->NotStarted
-    AppendState oldAppendState = m_appendState;
-    AppendState nextAppendState = AppendState::Invalid;
-
-    if (oldAppendState != newAppendState)
-        GST_TRACE("%s --> %s", dumpAppendState(oldAppendState), dumpAppendState(newAppendState));
-
-    bool ok = false;
-
-    switch (oldAppendState) {
-    case AppendState::NotStarted:
-        switch (newAppendState) {
-        case AppendState::Ongoing:
-            ok = true;
-            gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
-            break;
-        case AppendState::NotStarted:
-            ok = true;
-            if (m_pendingBuffer) {
-                GST_TRACE("pushing pending buffer %" GST_PTR_FORMAT, m_pendingBuffer.get());
-                gst_app_src_push_buffer(GST_APP_SRC(appsrc()), m_pendingBuffer.leakRef());
-                nextAppendState = AppendState::Ongoing;
-            }
-            break;
-        case AppendState::Aborting:
-            ok = true;
-            nextAppendState = AppendState::NotStarted;
-            break;
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::Ongoing:
-        switch (newAppendState) {
-        case AppendState::Sampling:
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        case AppendState::DataStarve:
-            ok = true;
-            GST_DEBUG("received all pending samples");
-            m_sourceBufferPrivate->didReceiveAllPendingSamples();
-            if (m_abortPending)
-                nextAppendState = AppendState::Aborting;
-            else
-                nextAppendState = AppendState::NotStarted;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::DataStarve:
-        switch (newAppendState) {
-        case AppendState::NotStarted:
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        case AppendState::Aborting:
-            ok = true;
-            nextAppendState = AppendState::NotStarted;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::Sampling:
-        switch (newAppendState) {
-        case AppendState::Sampling:
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        case AppendState::LastSample:
-            ok = true;
-            GST_DEBUG("received all pending samples");
-            m_sourceBufferPrivate->didReceiveAllPendingSamples();
-            if (m_abortPending)
-                nextAppendState = AppendState::Aborting;
-            else
-                nextAppendState = AppendState::NotStarted;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::LastSample:
-        switch (newAppendState) {
-        case AppendState::NotStarted:
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        case AppendState::Aborting:
-            ok = true;
-            nextAppendState = AppendState::NotStarted;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::Aborting:
-        switch (newAppendState) {
-        case AppendState::NotStarted:
-            ok = true;
-            resetPipeline();
-            m_abortPending = false;
-            nextAppendState = AppendState::NotStarted;
-            break;
-        case AppendState::Invalid:
-            ok = true;
-            break;
-        default:
-            break;
-        }
-        break;
-    case AppendState::Invalid:
-        ok = true;
-        break;
-    }
-
-    if (ok)
-        m_appendState = newAppendState;
-    else
-        GST_ERROR("Invalid append state transition %s --> %s", dumpAppendState(oldAppendState), dumpAppendState(newAppendState));
-
-    ASSERT(ok);
-
-    if (nextAppendState != AppendState::Invalid)
-        setAppendState(nextAppendState);
-}
-
 void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
 {
     ASSERT(isMainThread());
@@ -536,9 +402,6 @@ void AppendPipeline::appsinkCapsChanged()
 {
     ASSERT(isMainThread());
 
-    if (!m_appsink)
-        return;
-
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(pad.get()));
 
@@ -550,31 +413,16 @@ void AppendPipeline::appsinkCapsChanged()
 
     if (m_appsinkCaps != caps) {
         m_appsinkCaps = WTFMove(caps);
-        if (m_playerPrivate)
-            m_playerPrivate->trackDetected(this, m_track, previousCapsWereNull);
-        gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
+        m_playerPrivate->trackDetected(this, m_track, previousCapsWereNull);
     }
 }
 
 void AppendPipeline::handleEndOfAppend()
 {
     ASSERT(isMainThread());
-    GST_TRACE_OBJECT(m_pipeline.get(), "received end-of-append");
-
-    // Regardless of the state transition, the result is the same: didReceiveAllPendingSamples() is called.
-    switch (m_appendState) {
-    case AppendState::Ongoing:
-        GST_TRACE("DataStarve");
-        setAppendState(AppendState::DataStarve);
-        break;
-    case AppendState::Sampling:
-        GST_TRACE("LastSample");
-        setAppendState(AppendState::LastSample);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    consumeAppsinkAvailableSamples();
+    GST_TRACE_OBJECT(m_pipeline.get(), "Notifying SourceBufferPrivate the append is complete");
+    sourceBufferPrivate()->didReceiveAllPendingSamples();
 }
 
 void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
@@ -595,11 +443,10 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
         mediaSample->duration().toString().utf8().data(),
         mediaSample->presentationSize().width(), mediaSample->presentationSize().height());
 
-    // If we're beyond the duration, ignore this sample and the remaining ones.
+    // If we're beyond the duration, ignore this sample.
     MediaTime duration = m_mediaSourceClient->duration();
     if (duration.isValid() && !duration.indefiniteTime() && mediaSample->presentationTime() > duration) {
-        GST_DEBUG("Detected sample (%f) beyond the duration (%f), declaring LastSample", mediaSample->presentationTime().toFloat(), duration.toFloat());
-        setAppendState(AppendState::LastSample);
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Detected sample (%s) beyond the duration (%s), discarding", mediaSample->presentationTime().toString().utf8().data(), duration.toString().utf8().data());
         return;
     }
 
@@ -610,28 +457,6 @@ void AppendPipeline::appsinkNewSample(GRefPtr<GstSample>&& sample)
     }
 
     m_sourceBufferPrivate->didReceiveSample(*mediaSample);
-    setAppendState(AppendState::Sampling);
-}
-
-void AppendPipeline::appsinkEOS()
-{
-    ASSERT(isMainThread());
-
-    switch (m_appendState) {
-    case AppendState::Aborting:
-        // Ignored. Operation completion will be managed by the Aborting->NotStarted transition.
-        return;
-    case AppendState::Ongoing:
-        // Finish Ongoing and Sampling states.
-        setAppendState(AppendState::DataStarve);
-        break;
-    case AppendState::Sampling:
-        setAppendState(AppendState::LastSample);
-        break;
-    default:
-        GST_DEBUG("Unexpected EOS");
-        break;
-    }
 }
 
 void AppendPipeline::didReceiveInitializationSegment()
@@ -690,51 +515,45 @@ void AppendPipeline::consumeAppsinkAvailableSamples()
     GST_TRACE_OBJECT(m_pipeline.get(), "batchedSampleCount = %d", batchedSampleCount);
 }
 
-void AppendPipeline::resetPipeline()
+void AppendPipeline::resetParserState()
 {
     ASSERT(isMainThread());
-    GST_DEBUG("resetting pipeline");
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Handling resetParserState() in AppendPipeline by resetting the pipeline");
 
-    gst_element_set_state(m_pipeline.get(), GST_STATE_READY);
-    gst_element_get_state(m_pipeline.get(), nullptr, nullptr, 0);
+    // FIXME: Implement a flush event-based resetParserState() implementation would allow the initialization segment to
+    // survive, in accordance with the spec.
+
+    // This function restores the GStreamer pipeline to the same state it was when the AppendPipeline constructor
+    // finished. All previously enqueued data is lost and the demuxer is reset, losing all pads and track data.
+
+    // Unlock the streaming thread.
+    m_taskQueue.startAborting();
+
+    // Reset the state of all elements in the pipeline.
+    assertedElementSetState(m_pipeline.get(), GST_STATE_READY);
+
+    // The parser is tear down automatically when the demuxer is reset (see disconnectDemuxerSrcPadFromAppsinkFromAnyThread()).
+    ASSERT(!m_parser);
+
+    // Set the pipeline to PLAYING so that it can be used again.
+    assertedElementSetState(m_pipeline.get(), GST_STATE_PLAYING);
+
+    // All processing related to the previous append has been aborted and the pipeline is idle.
+    // We can listen again to new requests coming from the streaming thread.
+    m_taskQueue.finishAborting();
 
 #if (!(LOG_DISABLED || defined(GST_DISABLE_GST_DEBUG)))
     {
         static unsigned i = 0;
         // This is here for debugging purposes. It does not make sense to have it as class member.
-        WTF::String  dotFileName = String::format("reset-pipeline-%d", ++i);
+        WTF::String dotFileName = String::format("reset-pipeline-%d", ++i);
         gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
     }
 #endif
-
-}
-
-void AppendPipeline::abort()
-{
-    ASSERT(isMainThread());
-    GST_DEBUG("aborting");
-
-    m_pendingBuffer = nullptr;
-
-    // Abort already ongoing.
-    if (m_abortPending)
-        return;
-
-    m_abortPending = true;
-    if (m_appendState == AppendState::NotStarted)
-        setAppendState(AppendState::Aborting);
-    // Else, the automatic state transitions will take care when the ongoing append finishes.
 }
 
 GstFlowReturn AppendPipeline::pushNewBuffer(GstBuffer* buffer)
 {
-    if (m_abortPending) {
-        m_pendingBuffer = adoptGRef(buffer);
-        return GST_FLOW_OK;
-    }
-
-    setAppendState(AppendPipeline::AppendState::Ongoing);
-
     GST_TRACE_OBJECT(m_pipeline.get(), "pushing data buffer %" GST_PTR_FORMAT, buffer);
     GstFlowReturn pushDataBufferRet = gst_app_src_push_buffer(GST_APP_SRC(m_appsrc.get()), buffer);
     // Pushing buffers to appsrc can only fail if the appsrc is flushing, in EOS or stopped. Neither of these should
@@ -770,13 +589,8 @@ GstFlowReturn AppendPipeline::handleAppsinkNewSampleFromStreamingThread(GstEleme
         // removes the appsrcEndOfAppendCheckerProbe(). Either way, the end-of-append detection would be broken.
         // AppendPipeline should have only one streaming thread. Otherwise we can't detect reliably when an appends has
         // been demuxed completely.;
-        g_critical("Appsink received a sample in a different thread than appsrcEndOfAppendCheckerProbe run.");
+        GST_ERROR_OBJECT(m_pipeline.get(), "Appsink received a sample in a different thread than appsrcEndOfAppendCheckerProbe run.");
         ASSERT_NOT_REACHED();
-    }
-
-    if (!m_playerPrivate || m_appendState == AppendState::Invalid) {
-        GST_WARNING("AppendPipeline has been disabled, ignoring this sample");
-        return GST_FLOW_ERROR;
     }
 
     if (!m_wasBusAlreadyNotifiedOfAvailableSamples.test_and_set()) {
@@ -825,8 +639,6 @@ createOptionalParserForFormat(GstPad* demuxerSrcPad)
 void AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad* demuxerSrcPad)
 {
     ASSERT(!isMainThread());
-    if (!m_appsink)
-        return;
 
     GST_DEBUG("connecting to appsink");
 
@@ -865,7 +677,6 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad* de
         || (m_streamType == WebCore::MediaSourceStreamTypeGStreamer::Text);
 
     if (isData) {
-        // FIXME: Only add appsink one time. This method can be called several times.
         GRefPtr<GstObject> parent = adoptGRef(gst_element_get_parent(m_appsink.get()));
         if (!parent)
             gst_bin_add(GST_BIN(m_pipeline.get()), m_appsink.get());
@@ -892,9 +703,6 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad* de
 
         gst_element_sync_state_with_parent(m_appsink.get());
 
-        gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
-        gst_element_sync_state_with_parent(m_appsink.get());
-
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "webkit-after-link");
     }
 }
@@ -915,10 +723,6 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
 
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(GST_PAD(demuxerSrcPad)));
 
-    if (!caps || m_appendState == AppendState::Invalid || !m_playerPrivate) {
-        return;
-    }
-
 #ifndef GST_DISABLE_GST_DEBUG
     {
         GUniquePtr<gchar> strcaps(gst_caps_to_string(caps.get()));
@@ -933,34 +737,31 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
 
     switch (m_streamType) {
     case WebCore::MediaSourceStreamTypeGStreamer::Audio:
-        if (m_playerPrivate)
-            m_track = WebCore::AudioTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+        m_track = WebCore::AudioTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
         break;
     case WebCore::MediaSourceStreamTypeGStreamer::Video:
-        if (m_playerPrivate)
-            m_track = WebCore::VideoTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
+        m_track = WebCore::VideoTrackPrivateGStreamer::create(makeWeakPtr(*m_playerPrivate), id(), sinkSinkPad.get());
         break;
     case WebCore::MediaSourceStreamTypeGStreamer::Text:
         m_track = WebCore::InbandTextTrackPrivateGStreamer::create(id(), sinkSinkPad.get());
         break;
     case WebCore::MediaSourceStreamTypeGStreamer::Invalid:
-        {
-            GUniquePtr<gchar> strcaps(gst_caps_to_string(caps.get()));
-            GST_DEBUG("Unsupported track codec: %s", strcaps.get());
-        }
-        // This is going to cause an error which will detach the SourceBuffer and tear down this
-        // AppendPipeline, so we need the padAddRemove lock released before continuing.
-        m_track = nullptr;
-        didReceiveInitializationSegment();
+        GST_WARNING_OBJECT(m_pipeline.get(), "Unsupported track codec: %" GST_PTR_FORMAT, caps.get());
+        // 3.5.7 Initialization Segment Received
+        // 5.1. If the initialization segment contains tracks with codecs the user agent does not support, then run the
+        // append error algorithm and abort these steps.
+
+        // appendParsingFailed() will immediately cause a resetParserState() which will stop demuxing, then the
+        // AppendPipeline will be destroyed.
+        m_sourceBufferPrivate->appendParsingFailed();
         return;
     default:
-        // No useful data.
+        GST_WARNING_OBJECT(m_pipeline.get(), "Pad has unknown track type, ignoring: %" GST_PTR_FORMAT, caps.get());
         break;
     }
 
     m_appsinkCaps = WTFMove(caps);
-    if (m_playerPrivate)
-        m_playerPrivate->trackDetected(this, m_track, true);
+    m_playerPrivate->trackDetected(this, m_track, true);
 }
 
 void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)
@@ -973,7 +774,7 @@ void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*)
     GST_DEBUG("Disconnecting appsink");
 
     if (m_parser) {
-        gst_element_set_state(m_parser.get(), GST_STATE_NULL);
+        assertedElementSetState(m_parser.get(), GST_STATE_NULL);
         gst_bin_remove(GST_BIN(m_pipeline.get()), m_parser.get());
         m_parser = nullptr;
     }

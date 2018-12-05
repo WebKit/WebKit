@@ -76,6 +76,7 @@ public:
     void didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void didReceiveSample(MediaSample&);
     void didReceiveAllPendingSamples();
+    void appendParsingFailed();
 
     ContentType type() const { return m_type; }
 

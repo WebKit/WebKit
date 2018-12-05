@@ -1,3 +1,20 @@
+2018-12-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove the AppendPipeline state machine
+        https://bugs.webkit.org/show_bug.cgi?id=192204
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Removed timeout expectations for
+        media/media-source/media-source-error-crash.html
+
+        Added expectations for mediasource-invalid-codec.html for Mac, where
+        WebM is not supported.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
         [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)

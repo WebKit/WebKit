@@ -1,3 +1,18 @@
+2018-12-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove the AppendPipeline state machine
+        https://bugs.webkit.org/show_bug.cgi?id=192204
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Added a test checking that initialization segments with invalid codec
+        identifiers are flagged as errors.
+
+        * web-platform-tests/media-source/mediasource-invalid-codec-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-invalid-codec.html: Added.
+        * web-platform-tests/media-source/mp4/invalid-codec.mp4: Added.
+        * web-platform-tests/media-source/webm/invalid-codec.webm: Added.
+
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
         [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)

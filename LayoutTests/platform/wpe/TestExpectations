@@ -1213,7 +1213,6 @@ legacy-animation-engine/transitions/svg-text-shadow-transition.html [ Pass ]
 
 # ENABLE_MEDIA_SOURCE
 media/media-source/ [ Pass ]
-webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/165394 media/media-source/media-source-seek-detach-crash.html [ Timeout ]
