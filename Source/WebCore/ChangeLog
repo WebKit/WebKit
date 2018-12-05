@@ -1,3 +1,18 @@
+2018-12-05  Youenn Fablet  <youenn@apple.com>
+
+        Update ServiceWorkerContainer::getRegistration lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=192376
+
+        Reviewed by Chris Dumez.
+
+        There is no need to pass 'this' in lambdas as the last lambda
+        takes a ScriptExecutionContext&.
+        No change of behavior.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+
 2018-12-05  Chris Dumez  <cdumez@apple.com>
 
         Crash under WebCore::cachedDocumentWrapper()
