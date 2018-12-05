@@ -164,6 +164,17 @@
     color: var(--syntax-highlight-comment-color);
 }
 
+.spreadsheet-style-declaration-editor.debug-style-locked::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 2px;
+    background-color: red;
+    pointer-events: none;
+}
+
 @media (prefers-dark-interface) {
     .spreadsheet-style-declaration-editor {
         --background-color-selected: hsl(230, 51%, 36%);

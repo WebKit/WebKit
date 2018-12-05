@@ -1,3 +1,28 @@
+2018-12-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add style editing debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=192282
+        <rdar://problem/46399176>
+
+        Reviewed by Matt Baker.
+
+        Introduce a style editing debug mode to help to troubleshoot complex bugs in the style editor.
+
+          - Log CSS changes;
+          - Display red border for locked style declarations.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor.debug-style-locked::after):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._updateStyleLock):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._updateDebugLockStatus):
+
 2018-12-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION(r238602): Elements: changing selection no longer highlights the selected node

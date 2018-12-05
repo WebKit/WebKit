@@ -112,6 +112,8 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this.addBlankProperty(this._propertyViews.length - 1 - this._pendingAddBlankPropertyIndexOffset);
         else if (this.hasSelectedProperties())
             this.selectProperties(this._anchorIndex, this._focusIndex);
+
+        this._updateDebugLockStatus();
     }
 
     detached()
@@ -610,6 +612,15 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return;
 
         this._style.locked = this._focused || this._inlineSwatchActive;
+        this._updateDebugLockStatus();
+    }
+
+    _updateDebugLockStatus()
+    {
+        if (!this._style || !WI.settings.enableStyleEditingDebugMode.value)
+            return;
+
+        this.element.classList.toggle("debug-style-locked", this._style.locked);
     }
 };
 
