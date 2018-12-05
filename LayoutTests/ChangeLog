@@ -1,3 +1,17 @@
+2018-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in HTMLCollection::updateNamedElementCache
+        https://bugs.webkit.org/show_bug.cgi?id=192347
+
+        Reviewed by Darin Adler.
+
+        Added a regression test. We can't simply call select.options.item
+        to catch this crash because the generated bidning code first call length()
+        to check if the index is within the valid range.
+
+        * fast/dom/options-collection-zero-length-crash-expected.txt: Added.
+        * fast/dom/options-collection-zero-length-crash.html: Added.
+
 2018-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Don't report resource timing to parent frame for history items

@@ -1,3 +1,22 @@
+2018-12-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in HTMLCollection::updateNamedElementCache
+        https://bugs.webkit.org/show_bug.cgi?id=192347
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by CollectionIndexCache's nodeAt caching the length of 1
+        when there are no matching elements in the subtree when the index is non-zero.
+
+        A related bug was fixed in r182125 but we were not considering the possibility
+        that the index given to this function might be non-zero even when there were
+        no matching elements.
+
+        Test: fast/dom/options-collection-zero-length-crash.html
+
+        * dom/CollectionIndexCache.h:
+        (WebCore::CollectionIndexCache<Collection, Iterator>::nodeAt):
+
 2018-11-30  Jiewen Tan  <jiewen_tan@apple.com>
 
         Don't report resource timing to parent frame for history items

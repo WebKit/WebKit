@@ -203,13 +203,14 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
 
     m_current = collection.collectionBegin();
     m_currentIndex = 0;
-    if (index && m_current != end) {
+    bool startIsEnd = m_current == end;
+    if (index && !startIsEnd) {
         collection.collectionTraverseForward(m_current, index, m_currentIndex);
         ASSERT(m_current != end || m_currentIndex < index);
     }
     if (m_current == end) {
         // Failed to find the index but at least we now know the size.
-        m_nodeCount = index ? m_currentIndex + 1 : 0;
+        m_nodeCount = startIsEnd ? 0 : m_currentIndex + 1;
         m_nodeCountValid = true;
         return nullptr;
     }
