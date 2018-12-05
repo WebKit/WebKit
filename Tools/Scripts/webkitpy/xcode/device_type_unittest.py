@@ -143,3 +143,15 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertFalse(DeviceType.from_string('iPhone') in DeviceType.from_string('iPhone 6s'))
         self.assertTrue(DeviceType.from_string('iPhone', Version(11, 1)) in DeviceType.from_string('iPhone', Version(11)))
         self.assertFalse(DeviceType.from_string('iPhone', Version(11)) in DeviceType.from_string('iPhone', Version(11, 1)))
+
+    def test_comparsion_lower_case(self):
+        self.assertEqual(DeviceType.from_string('iphone X'), DeviceType.from_string('iPhone'))
+        self.assertEqual(DeviceType.from_string('iphone'), DeviceType.from_string('iPhone X'))
+        self.assertEqual(DeviceType.from_string('iPhone X'), DeviceType.from_string('iphone'))
+        self.assertEqual(DeviceType.from_string('iPhone'), DeviceType.from_string('iphone X'))
+        self.assertEqual(DeviceType.from_string('iphone X'), DeviceType.from_string('iphone'))
+        self.assertEqual(DeviceType.from_string('iphone'), DeviceType.from_string('iphone X'))
+
+        self.assertTrue(DeviceType.from_string('iphone 6s') in DeviceType.from_string('iPhone'))
+        self.assertTrue(DeviceType.from_string('iPhone 6s') in DeviceType.from_string('iphone'))
+        self.assertTrue(DeviceType.from_string('iphone 6s') in DeviceType.from_string('iphone'))

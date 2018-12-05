@@ -117,11 +117,11 @@ class DeviceType(object):
     # This technique of matching treats 'None' a wild-card.
     def __eq__(self, other):
         assert isinstance(other, DeviceType)
-        if self.hardware_family is not None and other.hardware_family is not None and self.hardware_family != other.hardware_family:
+        if self.hardware_family is not None and other.hardware_family is not None and self.hardware_family.lower() != other.hardware_family.lower():
             return False
-        if self.hardware_type is not None and other.hardware_type is not None and self.hardware_type != other.hardware_type:
+        if self.hardware_type is not None and other.hardware_type is not None and self.hardware_type.lower() != other.hardware_type.lower():
             return False
-        if self.software_variant is not None and other.software_variant is not None and self.software_variant != other.software_variant:
+        if self.software_variant is not None and other.software_variant is not None and self.software_variant.lower() != other.software_variant.lower():
             return False
         if self.software_version is not None and other.software_version is not None and self.software_version != other.software_version:
             return False
@@ -129,11 +129,11 @@ class DeviceType(object):
 
     def __contains__(self, other):
         assert isinstance(other, DeviceType)
-        if self.hardware_family is not None and self.hardware_family != other.hardware_family:
+        if self.hardware_family is not None and (not other.hardware_family or self.hardware_family.lower() != other.hardware_family.lower()):
             return False
-        if self.hardware_type is not None and self.hardware_type != other.hardware_type:
+        if self.hardware_type is not None and (not other.hardware_type or self.hardware_type.lower() != other.hardware_type.lower()):
             return False
-        if self.software_variant is not None and self.software_variant != other.software_variant:
+        if self.software_variant is not None and (not other.software_variant or self.software_variant.lower() != other.software_variant.lower()):
             return False
         if self.software_version is not None and other.software_version is not None and not other.software_version in self.software_version:
             return False
