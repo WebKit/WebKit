@@ -58,19 +58,6 @@ class IOSSimulatorPort(IOSPort):
             return Version.from_string(self.get_option('version'))
         return IOSSimulatorPort._version_from_name(self._name) if IOSSimulatorPort._version_from_name(self._name) else self.host.platform.xcode_sdk_version('iphonesimulator')
 
-    @memoized
-    def default_child_processes(self):
-        def booted_ios_devices_filter(device):
-            if not device.platform_device.is_booted_or_booting():
-                return False
-            return device.platform_device.device_type in DeviceType(software_variant='iOS', software_version=self.device_version())
-
-        if not self.get_option('dedicated_simulators', False):
-            num_booted_sims = len(SimulatedDeviceManager.device_by_filter(booted_ios_devices_filter, host=self.host))
-            if num_booted_sims:
-                return num_booted_sims
-        return SimulatedDeviceManager.max_supported_simulators(self.host)
-
     def clean_up_test_run(self):
         super(IOSSimulatorPort, self).clean_up_test_run()
         _log.debug("clean_up_test_run")
@@ -101,14 +88,6 @@ class IOSSimulatorPort(IOSPort):
 
     def operating_system(self):
         return 'ios-simulator'
-
-    def check_sys_deps(self):
-        target_device_type = DeviceType(software_variant='iOS', software_version=self.device_version())
-        for device in SimulatedDeviceManager.available_devices(self.host):
-            if device.platform_device.device_type in target_device_type:
-                return super(IOSSimulatorPort, self).check_sys_deps()
-        _log.error('No Simulated device matching "{}" defined in Xcode iOS SDK'.format(str(target_device_type)))
-        return False
 
     def reset_preferences(self):
         _log.debug("reset_preferences")

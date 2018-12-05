@@ -1,3 +1,56 @@
+2018-12-05  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Sort tests by associated device type
+        https://bugs.webkit.org/show_bug.cgi?id=192161
+        <rdar://problem/46345392>
+
+        Reviewed by Lucas Forschler.
+
+        Sort tests by device type and make an effort to run each specified device type.
+        Do not run tests if their specified device is not available.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.is_watchos): Add watchos bits to platform info.
+        (PlatformInfo._determine_os_name): Ditto.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Assign each test a device type. Then, generate a list of
+        device types to sequentially iterate through. Note that a test will run
+        on the first device which matches.
+        (Manager._end_test_run): Handle the case where no devices are available and no
+        tests are run.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options): Manage child processes in manager.
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.default_child_processes): Accept additional arguments.
+        (Port.max_child_processes): Add upper limit for number of child processes.
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort):
+        (DevicePort._device_type_with_version): Adds version to the DeviceType.
+        (DevicePort.default_child_processes): Allows default_child_processes to be
+        attached to a device type.
+        (DevicePort.max_child_processes): Add upper limit to the maximum number of child processes.
+        (DevicePort.setup_test_run): Use _device_type_with_version.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort):
+        (IOSDevicePort.default_child_processes): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.default_child_processes): Deleted.
+        (IOSSimulatorPort.check_sys_deps): Deleted.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_child_processes): Accept additional arguments.
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/port/watch_device.py:
+        (WatchDevicePort):
+        (WatchDevicePort.default_child_processes): Deleted.
+        * Scripts/webkitpy/port/watch_simulator.py:
+        (WatchSimulatorPort.default_child_processes): Deleted.
+        (WatchSimulatorPort.check_sys_deps): Deleted.
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager):
+        (SimulatedDeviceManager.device_count_for_type): Count the number of devices
+        available for a specific device type.
+
 2018-12-05  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, add myself to some watch lists.

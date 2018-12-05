@@ -325,6 +325,20 @@ class SimulatedDeviceManager(object):
         SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
 
     @staticmethod
+    def device_count_for_type(device_type, host=SystemHost(), use_booted_simulator=True, **kwargs):
+        if not host.platform.is_mac():
+            return 0
+
+        if SimulatedDeviceManager.device_by_filter(lambda device: device.platform_device.is_booted_or_booting(), host=host) and use_booted_simulator:
+            filter = lambda device: device.platform_device.is_booted_or_booting() and device.platform_device.device_type in device_type
+            return len(SimulatedDeviceManager.device_by_filter(filter, host=host))
+
+        for name in SimulatedDeviceManager._device_identifier_to_name.itervalues():
+            if DeviceType.from_string(name) in device_type:
+                return SimulatedDeviceManager.max_supported_simulators(host)
+        return 0
+
+    @staticmethod
     def initialize_devices(requests, host=SystemHost(), name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
         if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
             return SimulatedDeviceManager.INITIALIZED_DEVICES

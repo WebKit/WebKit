@@ -188,7 +188,7 @@ class MacPort(DarwinPort):
     def is_mavericks(self):
         return self._version == 'mavericks'
 
-    def default_child_processes(self):
+    def default_child_processes(self, **kwargs):
         default_count = super(MacPort, self).default_child_processes()
 
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=95906  With too many WebProcess WK2 tests get stuck in resource contention.

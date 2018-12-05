@@ -104,7 +104,6 @@ class Manager(object):
         return self.web_platform_test_subdir in test or self.webkit_specific_web_platform_test_subdir in test
 
     def _custom_device_for_test(self, test):
-        # FIXME: Use available devices instead of CUSTOM_DEVICE_TYPES https://bugs.webkit.org/show_bug.cgi?id=192161
         # FIXME: This is a terrible way to do device-specific expected results https://bugs.webkit.org/show_bug.cgi?id=192162
         for device_type in self._port.CUSTOM_DEVICE_TYPES:
             if device_type.hardware_family and device_type.hardware_family.lower() + self._port.TEST_PATH_SEPARATOR in test:
@@ -206,24 +205,24 @@ class Manager(object):
             _log.critical('No tests to run.')
             return test_run_results.RunDetails(exit_code=-1)
 
-        default_device_tests = []
-
         # Look for tests with custom device requirements.
-        custom_device_tests = defaultdict(list)
+        test_device_mapping = defaultdict(list)
         for test_file in tests_to_run:
-            custom_device = self._custom_device_for_test(test_file)
-            if custom_device:
-                custom_device_tests[custom_device].append(test_file)
+            test_device_mapping[self._custom_device_for_test(test_file) or self._port.DEFAULT_DEVICE_TYPE].append(test_file)
+
+        # Order device types from most specific to least specific in the hopes that some of the more specific device
+        # types will match the less specific device types.
+        device_type_order = []
+        types_with_family = []
+        remaining_types = []
+        for device_type in test_device_mapping.iterkeys():
+            if device_type and device_type.hardware_family and device_type.hardware_type:
+                device_type_order.append(device_type)
+            elif device_type and device_type.hardware_family:
+                types_with_family.append(device_type)
             else:
-                default_device_tests.append(test_file)
-
-        if custom_device_tests:
-            for device_type, tests in custom_device_tests.iteritems():
-                _log.debug('{} tests use device {}'.format(len(tests), device_type))
-
-        initial_results = None
-        retry_results = None
-        enabled_pixel_tests_in_retry = False
+                remaining_types.append(device_type)
+        device_type_order.extend(types_with_family + remaining_types)
 
         needs_http = any((self._is_http_test(test) and not self._needs_web_platform_test(test)) for test in tests_to_run)
         needs_web_platform_test_server = any(self._needs_web_platform_test(test) for test in tests_to_run)
@@ -242,33 +241,48 @@ class Manager(object):
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
-        if default_device_tests:
+        initial_results = None
+        retry_results = None
+        enabled_pixel_tests_in_retry = False
+
+        child_processes_option_value = self._options.child_processes
+
+        while device_type_order:
+            device_type = device_type_order[0]
+            tests = test_device_mapping[device_type]
+            del device_type_order[0]
+
+            self._options.child_processes = min(self._port.max_child_processes(device_type=device_type), int(child_processes_option_value or self._port.default_child_processes(device_type=device_type)))
+
             _log.info('')
-            _log.info("Running %s", pluralize(len(tests_to_run), "test"))
+            if not self._options.child_processes:
+                _log.info('Skipping {} because {} is not available'.format(pluralize(len(test_device_mapping[device_type]), 'test'), str(device_type)))
+                _log.info('')
+                continue
+
+            # This loop looks for any less-specific device types which match the current device type
+            index = 0
+            while index < len(device_type_order):
+                if device_type_order[index] == device_type:
+                    tests.extend(test_device_mapping[device_type_order[index]])
+
+                    # Remove devices types from device_type_order once tests associated with that type have been claimed.
+                    del device_type_order[index]
+                else:
+                    index += 1
+
+            _log.info('Running {}{}'.format(pluralize(len(tests), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
             _log.info('')
-            if not self._set_up_run(tests_to_run):
+            if not self._set_up_run(tests, device_type):
                 return test_run_results.RunDetails(exit_code=-1)
 
-            initial_results, retry_results, enabled_pixel_tests_in_retry = self._run_test_subset(default_device_tests, tests_to_skip)
-
-        # Only use a single worker for custom device classes
-        self._options.child_processes = 1
-        for device_type in custom_device_tests:
-            device_tests = custom_device_tests[device_type]
-            if device_tests:
-                _log.info('')
-                _log.info('Running %s for %s', pluralize(len(device_tests), "test"), device_type)
-                _log.info('')
-                if not self._set_up_run(device_tests, device_type):
-                    return test_run_results.RunDetails(exit_code=-1)
-
-                device_initial_results, device_retry_results, device_enabled_pixel_tests_in_retry = self._run_test_subset(device_tests, tests_to_skip)
-
-                initial_results = initial_results.merge(device_initial_results) if initial_results else device_initial_results
-                retry_results = retry_results.merge(device_retry_results) if retry_results else device_retry_results
-                enabled_pixel_tests_in_retry |= device_enabled_pixel_tests_in_retry
+            temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(tests, tests_to_skip)
+            initial_results = initial_results.merge(temp_initial_results) if initial_results else temp_initial_results
+            retry_results = retry_results.merge(temp_retry_results) if retry_results else temp_retry_results
+            enabled_pixel_tests_in_retry |= temp_enabled_pixel_tests_in_retry
 
         self._runner.stop_servers()
+
         end_time = time.time()
         return self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
@@ -298,9 +312,12 @@ class Manager(object):
         return (initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _end_test_run(self, start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry):
+        if initial_results is None:
+            _log.error('No results generated')
+            return test_run_results.RunDetails(exit_code=-1)
+
         # Some crash logs can take a long time to be written out so look
         # for new logs after the test run finishes.
-
         _log.debug("looking for new crash logs")
         self._look_for_new_crash_logs(initial_results, start_time)
         if retry_results:

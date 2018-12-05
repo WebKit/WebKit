@@ -81,6 +81,7 @@ class Port(object):
 
     DEFAULT_ARCHITECTURE = 'x86'
 
+    DEFAULT_DEVICE_TYPE = None
     CUSTOM_DEVICE_TYPES = []
 
     @classmethod
@@ -176,9 +177,13 @@ class Port(object):
     def should_retry_crashes(self):
         return False
 
-    def default_child_processes(self):
+    def default_child_processes(self, **kwargs):
         """Return the number of DumpRenderTree instances to use for this port."""
         return self._executive.cpu_count()
+
+    def max_child_processes(self, **kwargs):
+        """Forbid the user from specifying more than this number of child processes"""
+        return float('inf')
 
     def worker_startup_delay_secs(self):
         # FIXME: If we start workers up too quickly, DumpRenderTree appears

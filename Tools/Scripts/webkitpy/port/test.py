@@ -418,7 +418,7 @@ class TestPort(Port):
         }
         return [self._webkit_baseline_path(d) for d in search_paths[self.name()]]
 
-    def default_child_processes(self):
+    def default_child_processes(self, **kwargs):
         return 1
 
     def worker_startup_delay_secs(self):

@@ -44,12 +44,6 @@ class IOSDevicePort(IOSPort):
     NO_ON_DEVICE_TESTING = 'On-device testing is not supported in this configuration'
     NO_DEVICE_MANAGER = NO_ON_DEVICE_TESTING
 
-    @memoized
-    def default_child_processes(self):
-        if apple_additions():
-            return apple_additions().ios_device_default_child_processes(self)
-        return 1
-
     def _driver_class(self):
         if apple_additions():
             return apple_additions().ios_device_driver()
@@ -92,13 +86,15 @@ class IOSDevicePort(IOSPort):
         if self.get_option('version'):
             return Version.from_string(self.get_option('version'))
 
-        if not apple_additions():
+        if not self.DEVICE_MANAGER:
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
 
-        if not self.devices():
+        if not self.DEVICE_MANAGER.available_devices(host=self.host):
             raise RuntimeError('No devices are available')
         version = None
-        for device in self.devices():
+        for device in self.DEVICE_MANAGER.available_devices(host=self.host):
+            if not device.platform.is_ios():
+                continue
             if not version:
                 version = device.platform.os_version
             else:

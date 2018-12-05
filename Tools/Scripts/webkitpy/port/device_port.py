@@ -23,12 +23,11 @@
 import logging
 import traceback
 
-from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.darwin import DarwinPort
 from webkitpy.port.simulator_process import SimulatorProcess
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.simulated_device import DeviceRequest
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
 
 _log = logging.getLogger(__name__)
@@ -37,7 +36,6 @@ _log = logging.getLogger(__name__)
 class DevicePort(DarwinPort):
 
     DEVICE_MANAGER = None
-    DEFAULT_DEVICE_TYPE = None
     NO_DEVICE_MANAGER = 'No device manager found for port'
 
     def __init__(self, *args, **kwargs):
@@ -59,7 +57,6 @@ class DevicePort(DarwinPort):
                 configurations.append(TestConfiguration(version=self.version_name(), architecture=architecture, build_type=build_type))
         return configurations
 
-    @memoized
     def child_processes(self):
         return int(self.get_option('child_processes'))
 
@@ -106,17 +103,36 @@ class DevicePort(DarwinPort):
             if not device.install_dylibs(self._build_path()):
                 raise RuntimeError('Failed to install dylibs at {} on device {}'.format(self._build_path(), device.udid))
 
-    def setup_test_run(self, device_type=None):
-        if not self.DEVICE_MANAGER:
-            raise RuntimeError(self.NO_DEVICE_MANAGER)
-
+    def _device_type_with_version(self, device_type=None):
         device_type = device_type if device_type else self.DEFAULT_DEVICE_TYPE
-        device_type = DeviceType(
+        return DeviceType(
             hardware_family=device_type.hardware_family,
             hardware_type=device_type.hardware_type,
             software_version=self.device_version(),
             software_variant=device_type.software_variant,
         )
+
+    def default_child_processes(self, device_type=None):
+        if not self.DEVICE_MANAGER:
+            raise RuntimeError(self.NO_DEVICE_MANAGER)
+        if self.DEVICE_MANAGER.INITIALIZED_DEVICES:
+            return len(self.DEVICE_MANAGER.INITIALIZED_DEVICES)
+        return self.DEVICE_MANAGER.device_count_for_type(
+            self._device_type_with_version(device_type),
+            host=self.host,
+            dedicated_simulators=not self.get_option('dedicated_simulators', False),
+        )
+
+    def max_child_processes(self, device_type=None):
+        if self.DEVICE_MANAGER == SimulatedDeviceManager:
+            return super(DevicePort, self).max_child_processes(device_type=device_type)
+        return self.default_child_processes(device_type=device_type)
+
+    def setup_test_run(self, device_type=None):
+        if not self.DEVICE_MANAGER:
+            raise RuntimeError(self.NO_DEVICE_MANAGER)
+
+        device_type = self._device_type_with_version(device_type)
         _log.debug('\nCreating devices for {}'.format(device_type))
 
         request = DeviceRequest(
@@ -125,7 +141,14 @@ class DevicePort(DarwinPort):
             use_existing_simulator=False,
             allow_incomplete_match=True,
         )
-        self.DEVICE_MANAGER.initialize_devices([request] * self.child_processes(), self.host)
+        self.DEVICE_MANAGER.initialize_devices(
+            [request] * self.child_processes(),
+            self.host,
+            layout_test_dir=self.layout_tests_dir(),
+            pin=self.get_option('pin', None),
+            use_nfs=self.get_option('use_nfs', True),
+            reboot=self.get_option('reboot', False),
+        )
 
         if not self.devices():
             raise RuntimeError('No devices are available for testing')

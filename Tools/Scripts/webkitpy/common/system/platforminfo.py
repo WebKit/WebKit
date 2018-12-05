@@ -72,6 +72,9 @@ class PlatformInfo(object):
     def is_ios(self):
         return self.os_name == 'ios'
 
+    def is_watchos(self):
+        return self.os_name == 'watchos'
+
     def is_win(self):
         return self.os_name == 'win'
 
@@ -179,7 +182,7 @@ class PlatformInfo(object):
     def _determine_os_name(self, sys_platform):
         if sys_platform == 'darwin':
             return 'mac'
-        if sys_platform == 'ios':
+        if sys_platform == 'ios' or sys_platform == 'watchos':
             return 'ios'
         if sys_platform.startswith('linux'):
             return 'linux'

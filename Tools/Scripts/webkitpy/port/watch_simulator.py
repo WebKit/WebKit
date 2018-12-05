@@ -71,29 +71,8 @@ class WatchSimulatorPort(WatchPort):
                 new_environment[value] = inherited_env[value]
         return new_environment
 
-    @memoized
-    def default_child_processes(self):
-        def filter_booted_watchos_devices(device):
-            if not device.platform_device.is_booted_or_booting():
-                return False
-            return device.platform_device.device_type in DeviceType(software_variant='watchOS', software_version=self.device_version())
-
-        if not self.get_option('dedicated_simulators', False):
-            num_booted_sims = len(SimulatedDeviceManager.device_by_filter(filter_booted_watchos_devices, host=self.host))
-            if num_booted_sims:
-                return num_booted_sims
-        return SimulatedDeviceManager.max_supported_simulators(self.host)
-
     def operating_system(self):
         return 'watchos-simulator'
-
-    def check_sys_deps(self):
-        target_device_type = DeviceType(software_variant='watchOS', software_version=self.device_version())
-        for device in SimulatedDeviceManager.available_devices(self.host):
-            if device.platform_device.device_type in target_device_type:
-                return super(WatchSimulatorPort, self).check_sys_deps()
-        _log.error('No simulated device matching "{}" found in watchOS SDK'.format(str(target_device_type)))
-        return False
 
     def setup_environ_for_server(self, server_name=None):
         _log.debug('Setting up environment for server on {}'.format(self.operating_system()))
