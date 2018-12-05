@@ -1,3 +1,21 @@
+2018-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Null pointer crash in DocumentOrderedMap::getElementById via FormAssociatedElement::findAssociatedForm
+        https://bugs.webkit.org/show_bug.cgi?id=192392
+
+        Reviewed by Dean Jackson.
+
+        The crash was caused by FormAssociatedElement::findAssociatedForm invoking DocumentOrderedMap::getElementById
+        and de-referencing nullptr Attribute* via IdTargetObserver before Element::attributeChanged had updated
+        ElementData::m_idForStyleResolution.
+
+        Fixed it by updating m_idForStyleResolution before invoking IdTargetObservers.
+
+        Test: fast/dom/remove-id-form-associated-elemet-id-observer-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): Fixed the bug.
+
 2018-12-05  Youenn Fablet  <youenn@apple.com>
 
         Enable the possibility to do video capture in UIProcess

@@ -1,3 +1,15 @@
+2018-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Null pointer crash in DocumentOrderedMap::getElementById via FormAssociatedElement::findAssociatedForm
+        https://bugs.webkit.org/show_bug.cgi?id=192392
+
+        Reviewed by Dean Jackson.
+
+        Added a regression test.
+
+        * fast/dom/remove-id-form-associated-elemet-id-observer-crash-expected.txt: Added.
+        * fast/dom/remove-id-form-associated-elemet-id-observer-crash.html: Added.
+
 2018-12-05  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure
