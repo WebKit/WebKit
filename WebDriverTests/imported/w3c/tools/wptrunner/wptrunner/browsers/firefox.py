@@ -83,7 +83,8 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
             "asan": run_info_data.get("asan"),
             "stylo_threads": kwargs["stylo_threads"],
             "chaos_mode_flags": kwargs["chaos_mode_flags"],
-            "config": config}
+            "config": config,
+            "headless": kwargs["headless"]}
 
 
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
@@ -106,6 +107,11 @@ def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
             options["binary"] = kwargs["binary"]
         if kwargs["binary_args"]:
             options["args"] = kwargs["binary_args"]
+        if kwargs["headless"]:
+            if "args" not in options:
+                options["args"] = []
+            if "--headless" not in options["args"]:
+                options["args"].append("--headless")
         options["prefs"] = {
             "network.dns.localDomains": ",".join(server_config.domains_set)
         }
@@ -135,10 +141,18 @@ def env_options():
 
 
 def run_info_extras(**kwargs):
+
+    def get_bool_pref(pref):
+        for key, value in kwargs.get('extra_prefs', []):
+            if pref == key:
+                return value.lower() in ('true', '1')
+        return False
+
     return {"e10s": kwargs["gecko_e10s"],
             "wasm": kwargs.get("wasm", True),
             "verify": kwargs["verify"],
-            "headless": "MOZ_HEADLESS" in os.environ}
+            "headless": "MOZ_HEADLESS" in os.environ,
+            "sw-e10s": get_bool_pref("dom.serviceWorkers.parent_intercept"),}
 
 
 def update_properties():
@@ -155,7 +169,7 @@ class FirefoxBrowser(Browser):
                  symbols_path=None, stackwalk_binary=None, certutil_binary=None,
                  ca_certificate_path=None, e10s=False, stackfix_dir=None,
                  binary_args=None, timeout_multiplier=None, leak_check=False, asan=False,
-                 stylo_threads=1, chaos_mode_flags=None, config=None):
+                 stylo_threads=1, chaos_mode_flags=None, config=None, headless=None, **kwargs):
         Browser.__init__(self, logger)
         self.binary = binary
         self.prefs_root = prefs_root
@@ -183,14 +197,17 @@ class FirefoxBrowser(Browser):
 
         self.asan = asan
         self.lsan_allowed = None
+        self.lsan_max_stack_depth = None
         self.leak_check = leak_check
         self.leak_report_file = None
         self.lsan_handler = None
         self.stylo_threads = stylo_threads
         self.chaos_mode_flags = chaos_mode_flags
+        self.headless = headless
 
     def settings(self, test):
         self.lsan_allowed = test.lsan_allowed
+        self.lsan_max_stack_depth = test.lsan_max_stack_depth
         return {"check_leaks": self.leak_check and not test.leaks,
                 "lsan_allowed": test.lsan_allowed}
 
@@ -206,7 +223,8 @@ class FirefoxBrowser(Browser):
             print "Setting up LSAN"
             self.lsan_handler = mozleak.LSANLeaks(self.logger,
                                                   scope=group_metadata.get("scope", "/"),
-                                                  allowed=self.lsan_allowed)
+                                                  allowed=self.lsan_allowed,
+                                                  maxNumRecordedFrames=self.lsan_max_stack_depth)
 
         env = test_environment(xrePath=os.path.dirname(self.binary),
                                debugger=self.debug_info is not None,
@@ -216,17 +234,21 @@ class FirefoxBrowser(Browser):
         env["STYLO_THREADS"] = str(self.stylo_threads)
         if self.chaos_mode_flags is not None:
             env["MOZ_CHAOSMODE"] = str(self.chaos_mode_flags)
+        if self.headless:
+            env["MOZ_HEADLESS"] = "1"
 
         preferences = self.load_prefs()
 
         self.profile = FirefoxProfile(preferences=preferences)
-        self.profile.set_preferences({"marionette.port": self.marionette_port,
-                                      "dom.disable_open_during_load": False,
-                                      "network.dns.localDomains": ",".join(self.config.domains_set),
-                                      "network.proxy.type": 0,
-                                      "places.history.enabled": False,
-                                      "dom.send_after_paint_to_content": True,
-                                      "network.preload": True})
+        self.profile.set_preferences({
+            "marionette.port": self.marionette_port,
+            "network.dns.localDomains": ",".join(self.config.domains_set),
+
+            # TODO: Remove preferences once Firefox 64 is stable (Bug 905404)
+            "network.proxy.type": 0,
+            "places.history.enabled": False,
+            "network.preload": True,
+        })
         if self.e10s:
             self.profile.set_preferences({"browser.tabs.remote.autostart": True})
 
@@ -249,9 +271,11 @@ class FirefoxBrowser(Browser):
         if self.ca_certificate_path is not None:
             self.setup_ssl()
 
+        args = self.binary_args[:] if self.binary_args else []
+        args += [cmd_arg("marionette"), "about:blank"]
+
         debug_args, cmd = browser_command(self.binary,
-                                          self.binary_args if self.binary_args else [] +
-                                          [cmd_arg("marionette"), "about:blank"],
+                                          args,
                                           self.debug_info)
 
         self.runner = FirefoxRunner(profile=self.profile,

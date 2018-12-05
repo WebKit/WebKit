@@ -1,3 +1,353 @@
+2018-12-04  Brian Burg  <bburg@apple.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+        <rdar://problem/46470254>
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/error.py:
+        * imported/w3c/tools/wptrunner/docs/design.rst:
+        * imported/w3c/tools/wptrunner/requirements.txt:
+        * imported/w3c/tools/wptrunner/requirements_chrome.txt:
+        * imported/w3c/tools/wptrunner/requirements_chrome_android.txt:
+        * imported/w3c/tools/wptrunner/requirements_edge.txt:
+        * imported/w3c/tools/wptrunner/requirements_firefox.txt:
+        * imported/w3c/tools/wptrunner/requirements_ie.txt:
+        * imported/w3c/tools/wptrunner/requirements_opera.txt:
+        * imported/w3c/tools/wptrunner/requirements_safari.txt:
+        * imported/w3c/tools/wptrunner/requirements_sauce.txt:
+        * imported/w3c/tools/wptrunner/tox.ini:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/__init__.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/edge_webdriver.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/fennec.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/safari.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/servodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/webkit.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorwebdriver.py: Copied from WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/protocol.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/runner.js: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_webdriver.js:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_webdriver_resume.js:
+        * imported/w3c/tools/wptrunner/wptrunner/formatters.py:
+        * imported/w3c/tools/wptrunner/wptrunner/manifestexpected.py:
+        * imported/w3c/tools/wptrunner/wptrunner/stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testdriver-extra.js:
+        * imported/w3c/tools/wptrunner/wptrunner/testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_formatters.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_update.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_wpttest.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/tree.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/update.py:
+        * imported/w3c/tools/wptrunner/wptrunner/webdriver_server.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/parser.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_parser.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_serializer.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wpttest.py:
+        * imported/w3c/webdriver/tests/add_cookie/add.py:
+        * imported/w3c/webdriver/tests/add_cookie/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/back/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/conftest.py:
+        * imported/w3c/webdriver/tests/delete_all_cookies/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/delete_session/delete.py:
+        * imported/w3c/webdriver/tests/element_clear/clear.py:
+        * imported/w3c/webdriver/tests/element_clear/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/element_click/center_point.py: Added.
+        * imported/w3c/webdriver/tests/element_click/interactability.py:
+        * imported/w3c/webdriver/tests/element_click/scroll_into_view.py:
+        * imported/w3c/webdriver/tests/element_click/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/element_send_keys/file_upload.py:
+        * imported/w3c/webdriver/tests/element_send_keys/interactability.py:
+        * imported/w3c/webdriver/tests/element_send_keys/scroll_into_view.py:
+        * imported/w3c/webdriver/tests/element_send_keys/send_keys.py:
+        * imported/w3c/webdriver/tests/execute_async_script/execute_async.py:
+        * imported/w3c/webdriver/tests/execute_script/execute.py:
+        * imported/w3c/webdriver/tests/execute_script/promise.py: Added.
+        * imported/w3c/webdriver/tests/find_element/find.py:
+        * imported/w3c/webdriver/tests/find_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_element_from_element/find.py:
+        * imported/w3c/webdriver/tests/find_element_from_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_elements/find.py:
+        * imported/w3c/webdriver/tests/find_elements/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_elements_from_element/find.py:
+        * imported/w3c/webdriver/tests/find_elements_from_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py:
+        * imported/w3c/webdriver/tests/fullscreen_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py:
+        * imported/w3c/webdriver/tests/get_active_element/get.py:
+        * imported/w3c/webdriver/tests/get_active_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_current_url/get.py:
+        * imported/w3c/webdriver/tests/get_element_attribute/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_attribute/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_css_value/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_css_value/get.py: Added.
+        * imported/w3c/webdriver/tests/get_element_css_value/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_rect/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_rect/get.py: Added.
+        * imported/w3c/webdriver/tests/get_element_rect/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_text/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_named_cookie/get.py:
+        * imported/w3c/webdriver/tests/get_named_cookie/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_page_source/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_page_source/source.py: Added.
+        * imported/w3c/webdriver/tests/get_page_source/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_title/get.py:
+        * imported/w3c/webdriver/tests/get_window_handle/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handle/get.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handle/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/get.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/__init__.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/enabled.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/maximize_window/maximize.py:
+        * imported/w3c/webdriver/tests/maximize_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/minimize_window/minimize.py:
+        * imported/w3c/webdriver/tests/minimize_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/minimize_window/user_prompts.py:
+        * imported/w3c/webdriver/tests/navigate_to/navigate.py:
+        * imported/w3c/webdriver/tests/navigate_to/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/new_session/invalid_capabilities.py:
+        * imported/w3c/webdriver/tests/new_session/platform_name.py:
+        * imported/w3c/webdriver/tests/new_session/response.py:
+        * imported/w3c/webdriver/tests/new_session/support/create.py:
+        * imported/w3c/webdriver/tests/perform_actions/__init__.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/conftest.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_events.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_modifiers.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_shortcuts.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_special_keys.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/none.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_dblclick.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_modifier_click.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_origin.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_pause_dblclick.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/sequence.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/__init__.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/keys.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/mouse.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/refine.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/test_actions_wdspec.html: Added.
+        * imported/w3c/webdriver/tests/perform_actions/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/perform_actions/validity.py: Added.
+        * imported/w3c/webdriver/tests/permissions/set.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/__init__.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/conftest.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/release.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/sequence.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/__init__.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/refine.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/test_actions_wdspec.html: Added.
+        * imported/w3c/webdriver/tests/send_alert_text/send.py:
+        * imported/w3c/webdriver/tests/set_timeouts/set.py:
+        * imported/w3c/webdriver/tests/set_timeouts/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/set_window_rect/set.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+        * imported/w3c/webdriver/tests/support/defaults.py: Added.
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/helpers.py: Added.
+        * imported/w3c/webdriver/tests/support/http_request.py:
+        * imported/w3c/webdriver/tests/support/image.py: Added.
+        * imported/w3c/webdriver/tests/support/inline.py:
+        * imported/w3c/webdriver/tests/support/sync.py: Added.
+        * imported/w3c/webdriver/tests/switch_to_frame/switch.py:
+        * imported/w3c/webdriver/tests/switch_to_window/switch.py:
+        * imported/w3c/webdriver/tests/take_element_screenshot/__init__.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/screenshot.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/__init__.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/screenshot.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/user_prompts.py: Added.
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/error.py:
+        * imported/w3c/tools/wptrunner/docs/design.rst:
+        * imported/w3c/tools/wptrunner/requirements.txt:
+        * imported/w3c/tools/wptrunner/requirements_chrome.txt:
+        * imported/w3c/tools/wptrunner/requirements_chrome_android.txt:
+        * imported/w3c/tools/wptrunner/requirements_edge.txt:
+        * imported/w3c/tools/wptrunner/requirements_firefox.txt:
+        * imported/w3c/tools/wptrunner/requirements_ie.txt:
+        * imported/w3c/tools/wptrunner/requirements_opera.txt:
+        * imported/w3c/tools/wptrunner/requirements_safari.txt:
+        * imported/w3c/tools/wptrunner/requirements_sauce.txt:
+        * imported/w3c/tools/wptrunner/tox.ini:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/__init__.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/edge_webdriver.py: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/fennec.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/safari.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/servodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/webkit.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorwebdriver.py: Copied from WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/protocol.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/runner.js: Added.
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_webdriver.js:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/testharness_webdriver_resume.js:
+        * imported/w3c/tools/wptrunner/wptrunner/formatters.py:
+        * imported/w3c/tools/wptrunner/wptrunner/manifestexpected.py:
+        * imported/w3c/tools/wptrunner/wptrunner/stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testdriver-extra.js:
+        * imported/w3c/tools/wptrunner/wptrunner/testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_formatters.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_update.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_wpttest.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/tree.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/update.py:
+        * imported/w3c/tools/wptrunner/wptrunner/webdriver_server.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/parser.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_parser.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_serializer.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wpttest.py:
+        * imported/w3c/webdriver/tests/add_cookie/add.py:
+        * imported/w3c/webdriver/tests/add_cookie/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/back/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/conftest.py:
+        * imported/w3c/webdriver/tests/delete_all_cookies/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/delete_session/delete.py:
+        * imported/w3c/webdriver/tests/element_clear/clear.py:
+        * imported/w3c/webdriver/tests/element_clear/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/element_click/center_point.py: Added.
+        * imported/w3c/webdriver/tests/element_click/interactability.py:
+        * imported/w3c/webdriver/tests/element_click/scroll_into_view.py:
+        * imported/w3c/webdriver/tests/element_click/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/element_send_keys/file_upload.py:
+        * imported/w3c/webdriver/tests/element_send_keys/interactability.py:
+        * imported/w3c/webdriver/tests/element_send_keys/scroll_into_view.py:
+        * imported/w3c/webdriver/tests/element_send_keys/send_keys.py:
+        * imported/w3c/webdriver/tests/execute_async_script/execute_async.py:
+        * imported/w3c/webdriver/tests/execute_script/execute.py:
+        * imported/w3c/webdriver/tests/execute_script/promise.py: Added.
+        * imported/w3c/webdriver/tests/find_element/find.py:
+        * imported/w3c/webdriver/tests/find_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_element_from_element/find.py:
+        * imported/w3c/webdriver/tests/find_element_from_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_elements/find.py:
+        * imported/w3c/webdriver/tests/find_elements/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/find_elements_from_element/find.py:
+        * imported/w3c/webdriver/tests/find_elements_from_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/fullscreen_window/fullscreen.py:
+        * imported/w3c/webdriver/tests/fullscreen_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/fullscreen_window/user_prompts.py:
+        * imported/w3c/webdriver/tests/get_active_element/get.py:
+        * imported/w3c/webdriver/tests/get_active_element/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_current_url/get.py:
+        * imported/w3c/webdriver/tests/get_element_attribute/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_attribute/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_css_value/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_css_value/get.py: Added.
+        * imported/w3c/webdriver/tests/get_element_css_value/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_rect/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_element_rect/get.py: Added.
+        * imported/w3c/webdriver/tests/get_element_rect/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_element_text/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_named_cookie/get.py:
+        * imported/w3c/webdriver/tests/get_named_cookie/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_page_source/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_page_source/source.py: Added.
+        * imported/w3c/webdriver/tests/get_page_source/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/get_title/get.py:
+        * imported/w3c/webdriver/tests/get_window_handle/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handle/get.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handle/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/__init__.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/get.py: Added.
+        * imported/w3c/webdriver/tests/get_window_handles/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/__init__.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/enabled.py: Added.
+        * imported/w3c/webdriver/tests/is_element_enabled/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/maximize_window/maximize.py:
+        * imported/w3c/webdriver/tests/maximize_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/minimize_window/minimize.py:
+        * imported/w3c/webdriver/tests/minimize_window/stress.py: Added.
+        * imported/w3c/webdriver/tests/minimize_window/user_prompts.py:
+        * imported/w3c/webdriver/tests/navigate_to/navigate.py:
+        * imported/w3c/webdriver/tests/navigate_to/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/new_session/invalid_capabilities.py:
+        * imported/w3c/webdriver/tests/new_session/platform_name.py:
+        * imported/w3c/webdriver/tests/new_session/response.py:
+        * imported/w3c/webdriver/tests/new_session/support/create.py:
+        * imported/w3c/webdriver/tests/perform_actions/__init__.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/conftest.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_events.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_modifiers.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_shortcuts.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/key_special_keys.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/none.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_contextmenu.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_dblclick.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_modifier_click.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_origin.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/pointer_pause_dblclick.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/sequence.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/__init__.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/keys.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/mouse.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/refine.py: Added.
+        * imported/w3c/webdriver/tests/perform_actions/support/test_actions_wdspec.html: Added.
+        * imported/w3c/webdriver/tests/perform_actions/user_prompts.py: Copied from WebDriverTests/imported/w3c/webdriver/tests/minimize_window/user_prompts.py.
+        * imported/w3c/webdriver/tests/perform_actions/validity.py: Added.
+        * imported/w3c/webdriver/tests/permissions/set.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/__init__.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/conftest.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/release.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/sequence.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/__init__.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/refine.py: Added.
+        * imported/w3c/webdriver/tests/release_actions/support/test_actions_wdspec.html: Added.
+        * imported/w3c/webdriver/tests/send_alert_text/send.py:
+        * imported/w3c/webdriver/tests/set_timeouts/set.py:
+        * imported/w3c/webdriver/tests/set_timeouts/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/set_window_rect/set.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+        * imported/w3c/webdriver/tests/support/defaults.py: Added.
+        * imported/w3c/webdriver/tests/support/fixtures.py:
+        * imported/w3c/webdriver/tests/support/helpers.py: Added.
+        * imported/w3c/webdriver/tests/support/http_request.py:
+        * imported/w3c/webdriver/tests/support/image.py: Added.
+        * imported/w3c/webdriver/tests/support/inline.py:
+        * imported/w3c/webdriver/tests/support/sync.py: Added.
+        * imported/w3c/webdriver/tests/switch_to_frame/switch.py:
+        * imported/w3c/webdriver/tests/switch_to_window/switch.py:
+        * imported/w3c/webdriver/tests/take_element_screenshot/__init__.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/screenshot.py: Added.
+        * imported/w3c/webdriver/tests/take_element_screenshot/user_prompts.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/__init__.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/screenshot.py: Added.
+        * imported/w3c/webdriver/tests/take_screenshot/user_prompts.py: Added.
+
 2018-11-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix WebDriver expectations syntax after previous commit

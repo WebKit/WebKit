@@ -4,7 +4,7 @@ import tempfile
 
 from mozprocess import ProcessHandler
 
-from serve.serve import make_hosts_file
+from tools.serve.serve import make_hosts_file
 
 from .base import Browser, require_arg, get_free_port, browser_command, ExecutorBrowser
 from ..executors import executor_kwargs as base_executor_kwargs
@@ -38,7 +38,7 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
         "binary": kwargs["binary"],
         "binary_args": kwargs["binary_args"],
         "debug_info": kwargs["debug_info"],
-        "server_config": config.ssl_config,
+        "server_config": config,
         "user_stylesheets": kwargs.get("user_stylesheets"),
     }
 
@@ -106,7 +106,7 @@ class ServoWebDriverBrowser(Browser):
             self.binary,
             self.binary_args + [
                 "--hard-fail",
-                "--webdriver", str(self.webdriver_port),
+                "--webdriver=%s" % self.webdriver_port,
                 "about:blank",
             ],
             self.debug_info

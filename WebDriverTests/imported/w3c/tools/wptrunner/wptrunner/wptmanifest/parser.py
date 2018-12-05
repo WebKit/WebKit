@@ -212,6 +212,20 @@ class Tokenizer(object):
         else:
             self.state = self.value_state
 
+    def after_expr_state(self):
+        self.skip_whitespace()
+        c = self.char()
+        if c == "#":
+            self.next_state = self.after_expr_state
+            self.state = self.comment_state
+        elif c == eol:
+            self.next_state = self.after_expr_state
+            self.state = self.eol_state
+        elif c == "[":
+            self.state = self.list_start_state
+        else:
+            self.state = self.value_state
+
     def list_start_state(self):
         yield (token_types.list_start, "[")
         self.consume()
@@ -378,7 +392,7 @@ class Tokenizer(object):
         elif c == ":":
             yield (token_types.separator, c)
             self.consume()
-            self.state = self.value_state
+            self.state = self.after_expr_state
         elif c in parens:
             self.consume()
             yield (token_types.paren, c)
@@ -517,10 +531,12 @@ class Parser(object):
 
     def expect(self, type, value=None):
         if self.token[0] != type:
-            raise ParseError
+            raise ParseError(self.tokenizer.filename, self.tokenizer.line_number,
+                             "Token '{}' doesn't equal expected type '{}'".format(self.token[0], type))
         if value is not None:
             if self.token[1] != value:
-                raise ParseError
+                raise ParseError(self.tokenizer.filename, self.tokenizer.line_number,
+                                 "Token '{}' doesn't equal expected value '{}'".format(self.token[1], value))
 
         self.consume()
 
@@ -539,7 +555,8 @@ class Parser(object):
         while self.token == (token_types.paren, "["):
             self.consume()
             if self.token[0] != token_types.string:
-                raise ParseError
+                raise ParseError(self.tokenizer.filename, self.tokenizer.line_number,
+                                 "Token '{}' is not a string".format(self.token[0]))
             self.tree.append(DataNode(self.token[1]))
             self.consume()
             self.expect(token_types.paren, "]")
@@ -568,7 +585,8 @@ class Parser(object):
         elif self.token[0] == token_types.atom:
             self.atom()
         else:
-            raise ParseError
+            raise ParseError(self.tokenizer.filename, self.tokenizer.line_number,
+                             "Token '{}' is not a known type".format(self.token[0]))
 
     def list_value(self):
         self.tree.append(ListNode())
@@ -586,10 +604,7 @@ class Parser(object):
             self.tree.append(ConditionalNode())
             self.expr_start()
             self.expect(token_types.separator)
-            if self.token[0] == token_types.string:
-                self.value()
-            else:
-                raise ParseError
+            self.value_block()
             self.tree.pop()
 
     def value(self):

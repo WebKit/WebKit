@@ -1,8 +1,5 @@
 import os
-import signal
-import sys
 import tempfile
-import traceback
 
 import moznetwork
 from mozprocess import ProcessHandler
@@ -14,14 +11,16 @@ from serve.serve import make_hosts_file
 from .base import (get_free_port,
                    cmd_arg,
                    browser_command)
-from ..executors.executormarionette import MarionetteTestharnessExecutor  # noqa: F401
+from ..executors.executormarionette import (MarionetteTestharnessExecutor,  # noqa: F401
+                                            MarionetteRefTestExecutor)  # noqa: F401
 from .firefox import (get_timeout_multiplier, update_properties, executor_kwargs, FirefoxBrowser)  # noqa: F401
 
 
 __wptrunner__ = {"product": "fennec",
                  "check_args": "check_args",
                  "browser": "FennecBrowser",
-                 "executor": {"testharness": "MarionetteTestharnessExecutor"},
+                 "executor": {"testharness": "MarionetteTestharnessExecutor",
+                              "reftest": "MarionetteRefTestExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -29,59 +28,10 @@ __wptrunner__ = {"product": "fennec",
                  "run_info_extras": "run_info_extras",
                  "update_properties": "update_properties"}
 
-class FennecProfile(FirefoxProfile):
-    # WPT-specific prefs are set in FennecBrowser.start()
-    FirefoxProfile.preferences.update({
-        # Make sure Shield doesn't hit the network.
-        "app.normandy.api_url": "",
-        # Increase the APZ content response timeout in tests to 1 minute.
-        "apz.content_response_timeout": 60000,
-        # Enable output of dump()
-        "browser.dom.window.dump.enabled": True,
-        # Disable safebrowsing components
-        "browser.safebrowsing.blockedURIs.enabled": False,
-        "browser.safebrowsing.downloads.enabled": False,
-        "browser.safebrowsing.passwords.enabled": False,
-        "browser.safebrowsing.malware.enabled": False,
-        "browser.safebrowsing.phishing.enabled": False,
-        # Do not restore the last open set of tabs if the browser has crashed
-        "browser.sessionstore.resume_from_crash": False,
-        # Disable Android snippets
-        "browser.snippets.enabled": False,
-        "browser.snippets.syncPromo.enabled": False,
-        "browser.snippets.firstrunHomepage.enabled": False,
-        # Do not allow background tabs to be zombified, otherwise for tests that
-        # open additional tabs, the test harness tab itself might get unloaded
-        "browser.tabs.disableBackgroundZombification": True,
-        # Disable e10s by default
-        "browser.tabs.remote.autostart": False,
-        # Don't warn when exiting the browser
-        "browser.warnOnQuit": False,
-        # Don't send Firefox health reports to the production server
-        "datareporting.healthreport.about.reportUrl": "http://%(server)s/dummy/abouthealthreport/",
-        # Automatically unload beforeunload alerts
-        "dom.disable_beforeunload": True,
-        # Disable the ProcessHangMonitor
-        "dom.ipc.reportProcessHangs": False,
-        # No slow script dialogs
-        "dom.max_chrome_script_run_time": 0,
-        "dom.max_script_run_time": 0,
-        # Make sure opening about:addons won"t hit the network
-        "extensions.webservice.discoverURL": "http://%(server)s/dummy/discoveryURL",
-        # No hang monitor
-        "hangmonitor.timeout": 0,
-
-        "javascript.options.showInConsole": True,
-        # Ensure blocklist updates don't hit the network
-        "services.settings.server": "http://%(server)s/dummy/blocklist/",
-        # Disable password capture, so that tests that include forms aren"t
-        # influenced by the presence of the persistent doorhanger notification
-        "signon.rememberSignons": False,
-    })
-
 
 def check_args(**kwargs):
     pass
+
 
 def browser_kwargs(test_type, run_info_data, config, **kwargs):
     return {"package_name": kwargs["package_name"],
@@ -93,7 +43,7 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
             "symbols_path": kwargs["symbols_path"],
             "stackwalk_binary": kwargs["stackwalk_binary"],
             "certutil_binary": kwargs["certutil_binary"],
-            "ca_certificate_path": kwargs["ssl_env"].ca_cert_path(),
+            "ca_certificate_path": config.ssl_config["ca_cert_path"],
             "stackfix_dir": kwargs["stackfix_dir"],
             "binary_args": kwargs["binary_args"],
             "timeout_multiplier": get_timeout_multiplier(test_type,
@@ -102,7 +52,9 @@ def browser_kwargs(test_type, run_info_data, config, **kwargs):
             "leak_check": kwargs["leak_check"],
             "stylo_threads": kwargs["stylo_threads"],
             "chaos_mode_flags": kwargs["chaos_mode_flags"],
-            "config": config}
+            "config": config,
+            "install_fonts": kwargs["install_fonts"],
+            "tests_root": config.doc_root}
 
 
 def env_extras(**kwargs):
@@ -111,7 +63,8 @@ def env_extras(**kwargs):
 
 def run_info_extras(**kwargs):
     return {"e10s": False,
-            "headless": False}
+            "headless": False,
+            "sw-e10s": False}
 
 
 def env_options():
@@ -147,6 +100,8 @@ class FennecBrowser(FirefoxBrowser):
         FirefoxBrowser.__init__(self, logger, None, prefs_root, test_type, **kwargs)
         self._package_name = package_name
         self.device_serial = device_serial
+        self.tests_root = kwargs["tests_root"]
+        self.install_fonts = kwargs["install_fonts"]
 
     @property
     def package_name(self):
@@ -175,12 +130,32 @@ class FennecBrowser(FirefoxBrowser):
 
         preferences = self.load_prefs()
 
-        self.profile = FennecProfile(preferences=preferences)
+        self.profile = FirefoxProfile(preferences=preferences)
         self.profile.set_preferences({"marionette.port": self.marionette_port,
                                       "dom.disable_open_during_load": False,
                                       "places.history.enabled": False,
                                       "dom.send_after_paint_to_content": True,
                                       "network.preload": True})
+        if self.test_type == "reftest":
+            self.logger.info("Setting android reftest preferences")
+            self.profile.set_preferences({"browser.viewport.desktopWidth": 600,
+                                          # Disable high DPI
+                                          "layout.css.devPixelsPerPx": "1.0",
+                                          # Ensure that the full browser element
+                                          # appears in the screenshot
+                                          "apz.allow_zooming": False,
+                                          "android.widget_paints_background": False,
+                                          # Ensure that scrollbars are always painted
+                                          "ui.scrollbarFadeBeginDelay": 100000})
+
+        if self.install_fonts:
+            self.logger.debug("Copying Ahem font to profile")
+            font_dir = os.path.join(self.profile.profile, "fonts")
+            if not os.path.exists(font_dir):
+                os.makedirs(font_dir)
+            with open(os.path.join(self.tests_root, "fonts", "Ahem.ttf"), "rb") as src:
+                with open(os.path.join(font_dir, "Ahem.ttf"), "wb") as dest:
+                    dest.write(src.read())
 
         if self.leak_check and kwargs.get("check_leaks", True):
             self.leak_report_file = os.path.join(self.profile.profile, "runtests_leaks.log")
@@ -209,46 +184,31 @@ class FennecBrowser(FirefoxBrowser):
                                            process_class=ProcessHandler,
                                            process_args={"processOutputLine": [self.on_output]})
 
-        self.logger.debug("Starting Fennec")
+        self.logger.debug("Starting %s" % self.package_name)
         # connect to a running emulator
         self.runner.device.connect()
 
         write_hosts_file(self.config, self.runner.device.device)
 
+        self.runner.stop()
         self.runner.start(debug_args=debug_args, interactive=self.debug_info and self.debug_info.interactive)
-
-        # gecko_log comes from logcat when running with device/emulator
-        logcat_args = {
-            "filterspec": "Gecko",
-            "serial": self.runner.device.app_ctx.device_serial
-        }
-        # TODO setting logcat_args["logfile"] yields an almost empty file
-        # even without filterspec
-        logcat_args["stream"] = sys.stdout
-        self.runner.device.start_logcat(**logcat_args)
 
         self.runner.device.device.forward(
             local="tcp:{}".format(self.marionette_port),
             remote="tcp:{}".format(self.marionette_port))
 
-        self.logger.debug("Fennec Started")
+        self.logger.debug("%s Started" % self.package_name)
 
     def stop(self, force=False):
         if self.runner is not None:
-            try:
-                if self.runner.device.connected:
+            if (self.runner.device.connected and
+                len(self.runner.device.device.list_forwards()) > 0):
+                try:
                     self.runner.device.device.remove_forwards(
                         "tcp:{}".format(self.marionette_port))
-            except Exception:
-                traceback.print_exception(*sys.exc_info())
+                except Exception:
+                    self.logger.warning("Failed to remove port forwarding")
             # We assume that stopping the runner prompts the
             # browser to shut down. This allows the leak log to be written
-            for clean, stop_f in [(True, lambda: self.runner.wait(self.shutdown_timeout)),
-                                  (False, lambda: self.runner.stop(signal.SIGTERM)),
-                                  (False, lambda: self.runner.stop(signal.SIGKILL))]:
-                if not force or not clean:
-                    retcode = stop_f()
-                    if retcode is not None:
-                        self.logger.info("Browser exited with return code %s" % retcode)
-                        break
+            self.runner.stop()
         self.logger.debug("stopped")

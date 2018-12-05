@@ -197,7 +197,7 @@ class GitTree(object):
                        add all files under that path.
         """
         with tempfile.TemporaryFile() as f:
-            sync_tree.git("ls-tree", "-r", "--name-only", "HEAD", stdout=f)
+            sync_tree.git("ls-tree", "-z", "-r", "--name-only", "HEAD", stdout=f)
             f.seek(0)
             ignored_files = sync_tree.git("check-ignore", "--no-index", "--stdin", "-z", stdin=f)
         args = []

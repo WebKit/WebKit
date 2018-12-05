@@ -39,6 +39,7 @@ metadata files are used to store the expected test results.
 def setup_logging(*args, **kwargs):
     global logger
     logger = wptlogging.setup(*args, **kwargs)
+    return logger
 
 
 def get_loader(test_paths, product, debug=None, run_info_extras=None, **kwargs):
@@ -47,6 +48,8 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, **kwargs):
 
     run_info = wpttest.get_run_info(kwargs["run_info"], product,
                                     browser_version=kwargs.get("browser_version"),
+                                    browser_channel=kwargs.get("browser_channel"),
+                                    verify=kwargs.get("verify"),
                                     debug=debug,
                                     extras=run_info_extras)
 
@@ -123,6 +126,8 @@ def get_pause_after_test(test_loader, **kwargs):
     if kwargs["pause_after_test"] is None:
         if kwargs["repeat_until_unexpected"]:
             return False
+        if kwargs["headless"]:
+            return False
         if kwargs["repeat"] == 1 and kwargs["rerun"] == 1 and total_tests == 1:
             return True
         return False
@@ -145,20 +150,13 @@ def run_tests(config, test_paths, product, **kwargs):
         if kwargs["install_fonts"]:
             env_extras.append(FontInstaller(
                 font_dir=kwargs["font_dir"],
-                ahem=os.path.join(kwargs["tests_root"], "fonts/Ahem.ttf")
+                ahem=os.path.join(test_paths["/"]["tests_path"], "fonts/Ahem.ttf")
             ))
 
-        if "test_loader" in kwargs:
-            run_info = wpttest.get_run_info(kwargs["run_info"], product,
-                                            browser_version=kwargs.get("browser_version"),
-                                            debug=None,
-                                            extras=run_info_extras(**kwargs))
-            test_loader = kwargs["test_loader"]
-        else:
-            run_info, test_loader = get_loader(test_paths,
-                                               product,
-                                               run_info_extras=run_info_extras(**kwargs),
-                                               **kwargs)
+        run_info, test_loader = get_loader(test_paths,
+                                           product,
+                                           run_info_extras=run_info_extras(**kwargs),
+                                           **kwargs)
 
         test_source_kwargs = {"processes": kwargs["processes"]}
         if kwargs["run_by_dir"] is False:
@@ -170,6 +168,7 @@ def run_tests(config, test_paths, product, **kwargs):
 
         logger.info("Using %i client processes" % kwargs["processes"])
 
+        skipped_tests = 0
         test_total = 0
         unexpected_total = 0
 
@@ -241,19 +240,16 @@ def run_tests(config, test_paths, product, **kwargs):
                     for test in test_loader.disabled_tests[test_type]:
                         logger.test_start(test.id)
                         logger.test_end(test.id, status="SKIP")
+                        skipped_tests += 1
 
                     if test_type == "testharness":
                         run_tests = {"testharness": []}
                         for test in test_loader.tests["testharness"]:
-                            if test.testdriver and not executor_cls.supports_testdriver:
+                            if (test.testdriver and not executor_cls.supports_testdriver) or (
+                                    test.jsshell and not executor_cls.supports_jsshell):
                                 logger.test_start(test.id)
                                 logger.test_end(test.id, status="SKIP")
-                            elif test.jsshell and not executor_cls.supports_jsshell:
-                                # We expect that tests for JavaScript shells
-                                # will not be run along with tests that run in
-                                # a full web browser, so we silently skip them
-                                # here.
-                                pass
+                                skipped_tests += 1
                             else:
                                 run_tests["testharness"].append(test)
                     else:
@@ -271,26 +267,30 @@ def run_tests(config, test_paths, product, **kwargs):
                                       kwargs["pause_after_test"],
                                       kwargs["pause_on_unexpected"],
                                       kwargs["restart_on_unexpected"],
-                                      kwargs["debug_info"]) as manager_group:
+                                      kwargs["debug_info"],
+                                      not kwargs["no_capture_stdio"]) as manager_group:
                         try:
                             manager_group.run(test_type, run_tests)
                         except KeyboardInterrupt:
                             logger.critical("Main thread got signal")
                             manager_group.stop()
                             raise
-                    test_count += manager_group.test_count()
-                    unexpected_count += manager_group.unexpected_count()
+                        test_count += manager_group.test_count()
+                        unexpected_count += manager_group.unexpected_count()
 
                 test_total += test_count
                 unexpected_total += unexpected_count
                 logger.info("Got %i unexpected results" % unexpected_count)
+                logger.suite_end()
                 if repeat_until_unexpected and unexpected_total > 0:
                     break
-                logger.suite_end()
 
     if test_total == 0:
-        logger.error("No tests ran")
-        return False
+        if skipped_tests > 0:
+            logger.warning("All requested tests were skipped")
+        else:
+            logger.error("No tests ran")
+            return False
 
     if unexpected_total and not kwargs["fail_on_unexpected"]:
         logger.info("Tolerating %s unexpected results" % unexpected_total)
@@ -326,7 +326,7 @@ def start(**kwargs):
     elif kwargs["list_tests"]:
         list_tests(**kwargs)
     elif kwargs["verify"] or kwargs["stability"]:
-        check_stability(**kwargs)
+        return check_stability(**kwargs)
     else:
         return not run_tests(**kwargs)
 

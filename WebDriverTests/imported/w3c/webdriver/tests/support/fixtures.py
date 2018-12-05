@@ -1,122 +1,41 @@
-from __future__ import print_function
-
 import copy
 import json
 import os
 import urlparse
-import re
-import sys
 
+import pytest
 import webdriver
 
+from tests.support import defaults
+from tests.support.helpers import cleanup_session
 from tests.support.http_request import HTTPRequest
-from tests.support.wait import wait
+from tests.support.sync import Poll
 
-default_host = "http://127.0.0.1"
-default_port = "4444"
-
-default_script_timeout = 30
-default_page_load_timeout = 300
-default_implicit_wait_timeout = 0
-
-default_window_size = (800, 600)
 
 _current_session = None
 _custom_session = False
 
 
-def ignore_exceptions(f):
-    def inner(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except webdriver.error.WebDriverException as e:
-            print("Ignored exception %s" % e, file=sys.stderr)
-    inner.__name__ = f.__name__
-    return inner
+def pytest_configure(config):
+    # register the capabilities marker
+    config.addinivalue_line("markers",
+        "capabilities: mark test to use capabilities")
 
 
-def cleanup_session(session):
-    """Clean-up the current session for a clean state."""
-    @ignore_exceptions
-    def _dismiss_user_prompts(session):
-        """Dismiss any open user prompts in windows."""
-        current_window = session.window_handle
-
-        for window in _windows(session):
-            session.window_handle = window
-            try:
-                session.alert.dismiss()
-            except webdriver.NoSuchAlertException:
-                pass
-
-        session.window_handle = current_window
-
-    @ignore_exceptions
-    def _ensure_valid_window(session):
-        """If current window was closed, ensure to have a valid one selected."""
-        try:
-            session.window_handle
-        except webdriver.NoSuchWindowException:
-            session.window_handle = session.handles[0]
-
-    @ignore_exceptions
-    def _restore_timeouts(session):
-        """Restore modified timeouts to their default values."""
-        session.timeouts.implicit = default_implicit_wait_timeout
-        session.timeouts.page_load = default_page_load_timeout
-        session.timeouts.script = default_script_timeout
-
-    @ignore_exceptions
-    def _restore_window_state(session):
-        """Reset window to an acceptable size.
-
-        This also includes bringing it out of maximized, minimized,
-        or fullscreened state.
-        """
-        session.window.size = default_window_size
-
-    @ignore_exceptions
-    def _restore_windows(session):
-        """Close superfluous windows opened by the test.
-
-        It will not end the session implicitly by closing the last window.
-        """
-        current_window = session.window_handle
-
-        for window in _windows(session, exclude=[current_window]):
-            session.window_handle = window
-            if len(session.handles) > 1:
-                session.close()
-
-        session.window_handle = current_window
-
-    _restore_timeouts(session)
-    _ensure_valid_window(session)
-    _dismiss_user_prompts(session)
-    _restore_windows(session)
-    _restore_window_state(session)
-    _switch_to_top_level_browsing_context(session)
+@pytest.fixture
+def capabilities():
+    """Default capabilities to use for a new WebDriver session."""
+    return {}
 
 
-@ignore_exceptions
-def _switch_to_top_level_browsing_context(session):
-    """If the current browsing context selected by WebDriver is a
-    `<frame>` or an `<iframe>`, switch it back to the top-level
-    browsing context.
-    """
-    session.switch_frame(None)
+def pytest_generate_tests(metafunc):
+    if "capabilities" in metafunc.fixturenames:
+        marker = metafunc.definition.get_closest_marker(name="capabilities")
+        if marker:
+            metafunc.parametrize("capabilities", marker.args, ids=None)
 
 
-def _windows(session, exclude=None):
-    """Set of window handles, filtered by an `exclude` list if
-    provided.
-    """
-    if exclude is None:
-        exclude = []
-    wins = [w for w in session.handles if w not in exclude]
-    return set(wins)
-
-
+@pytest.fixture
 def add_event_listeners(session):
     """Register listeners for tracked events on element."""
     def add_event_listeners(element, tracked_events):
@@ -137,6 +56,7 @@ def add_event_listeners(session):
     return add_event_listeners
 
 
+@pytest.fixture
 def create_cookie(session, url):
     """Create a cookie"""
     def create_cookie(name, value, **kwargs):
@@ -149,6 +69,7 @@ def create_cookie(session, url):
     return create_cookie
 
 
+@pytest.fixture
 def create_frame(session):
     """Create an `iframe` element in the current browsing context and insert it
     into the document. Return a reference to the newly-created element."""
@@ -163,6 +84,7 @@ def create_frame(session):
     return create_frame
 
 
+@pytest.fixture
 def create_window(session):
     """Open new window and return the window handle."""
     def create_window():
@@ -174,17 +96,20 @@ def create_window(session):
     return create_window
 
 
+@pytest.fixture
 def http(configuration):
     return HTTPRequest(configuration["host"], configuration["port"])
 
 
+@pytest.fixture
 def server_config():
     return json.loads(os.environ.get("WD_SERVER_CONFIG"))
 
 
+@pytest.fixture(scope="session")
 def configuration():
-    host = os.environ.get("WD_HOST", default_host)
-    port = int(os.environ.get("WD_PORT", default_port))
+    host = os.environ.get("WD_HOST", defaults.DRIVER_HOST)
+    port = int(os.environ.get("WD_PORT", str(defaults.DRIVER_PORT)))
     capabilities = json.loads(os.environ.get("WD_CAPABILITIES", "{}"))
 
     return {
@@ -194,6 +119,7 @@ def configuration():
     }
 
 
+@pytest.fixture(scope="function")
 def session(capabilities, configuration, request):
     """Create and start a session for a test that does not itself test session creation.
 
@@ -227,17 +153,19 @@ def session(capabilities, configuration, request):
             raise
 
     # Enforce a fixed default window size
-    _current_session.window.size = default_window_size
+    _current_session.window.size = defaults.WINDOW_SIZE
 
     yield _current_session
 
     cleanup_session(_current_session)
 
 
+@pytest.fixture(scope="function")
 def current_session():
     return _current_session
 
 
+@pytest.fixture
 def url(server_config):
     def inner(path, protocol="http", query="", fragment=""):
         port = server_config["ports"][protocol][0]
@@ -248,6 +176,7 @@ def url(server_config):
     return inner
 
 
+@pytest.fixture
 def create_dialog(session):
     """Create a dialog (one of "alert", "prompt", or "confirm") and provide a
     function to validate that the dialog has been "handled" (either accepted or
@@ -263,53 +192,42 @@ def create_dialog(session):
         assert isinstance(text, basestring), "`text` parameter must be a string"
 
         # Script completes itself when the user prompt has been opened.
+        # For prompt() dialogs, add a value for the 'default' argument,
+        # as some user agents (IE, for example) do not produce consistent
+        # values for the default.
         session.execute_async_script("""
             let dialog_type = arguments[0];
             let text = arguments[1];
 
             setTimeout(function() {
-              window.dialog_return_value = window[dialog_type](text);
+              if (dialog_type == 'prompt') {
+                window.dialog_return_value = window[dialog_type](text, '');
+              } else {
+                window.dialog_return_value = window[dialog_type](text);
+              }
             }, 0);
             """, args=(dialog_type, text))
 
-        wait(session,
-             lambda s: s.alert.text == text,
-             "No user prompt with text '{}' detected".format(text),
-             timeout=15,
-             ignored_exceptions=webdriver.NoSuchAlertException)
+        wait = Poll(
+            session,
+            timeout=15,
+            ignored_exceptions=webdriver.NoSuchAlertException,
+            message="No user prompt with text '{}' detected".format(text))
+        wait.until(lambda s: s.alert.text == text)
 
     return create_dialog
 
 
-def clear_all_cookies(session):
-    """Removes all cookies associated with the current active document"""
-    session.transport.send("DELETE", "session/%s/cookie" % session.session_id)
-
-
+@pytest.fixture
 def closed_window(session, create_window):
-    new_handle = create_window()
     original_handle = session.window_handle
 
+    new_handle = create_window()
     session.window_handle = new_handle
+
     session.close()
     assert new_handle not in session.handles, "Unable to close window {}".format(new_handle)
 
     yield new_handle
 
     session.window_handle = original_handle
-
-
-def is_element_in_viewport(session, element):
-    """Check if element is outside of the viewport"""
-    return session.execute_script("""
-        let el = arguments[0];
-
-        let rect = el.getBoundingClientRect();
-        let viewport = {
-          height: window.innerHeight || document.documentElement.clientHeight,
-          width: window.innerWidth || document.documentElement.clientWidth,
-        };
-
-        return !(rect.right < 0 || rect.bottom < 0 ||
-            rect.left > viewport.width || rect.top > viewport.height)
-    """, args=(element,))
