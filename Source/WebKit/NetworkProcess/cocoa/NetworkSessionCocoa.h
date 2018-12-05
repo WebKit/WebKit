@@ -48,10 +48,7 @@ public:
     ~NetworkSessionCocoa();
 
     // Must be called before any NetworkSession has been created.
-    // FIXME: Move these to NetworkSessionCreationParameters.
-    static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
-    static void setSourceApplicationBundleIdentifier(const String&);
-    static void setSourceApplicationSecondaryIdentifier(const String&);
+    // FIXME: Move this to NetworkSessionCreationParameters.
 #if PLATFORM(IOS_FAMILY)
     static void setCTDataConnectionServiceType(const String&);
 #endif
@@ -86,9 +83,6 @@ private:
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
     bool m_shouldLogCookieInformation { false };
     Seconds m_loadThrottleLatency;
-
-    String m_sourceApplicationBundleIdentifier;
-    String m_sourceApplicationSecondaryIdentifier;
 };
 
 } // namespace WebKit

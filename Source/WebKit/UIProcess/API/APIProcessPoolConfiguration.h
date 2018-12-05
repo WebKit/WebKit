@@ -128,12 +128,6 @@ public:
 
     const Vector<WTF::String>& overrideLanguages() const { return m_overrideLanguages; }
     void setOverrideLanguages(Vector<WTF::String>&& languages) { m_overrideLanguages = WTFMove(languages); }
-
-    const WTF::String& sourceApplicationBundleIdentifier() const { return m_sourceApplicationBundleIdentifier; }
-    void setSourceApplicationBundleIdentifier(const WTF::String& sourceApplicationBundleIdentifier) { m_sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier; }
-
-    const WTF::String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
-    void setSourceApplicationSecondaryIdentifier(const WTF::String& sourceApplicationSecondaryIdentifier) { m_sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier; }
     
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     void setAlwaysRunsAtBackgroundPriority(bool alwaysRunsAtBackgroundPriority) { m_alwaysRunsAtBackgroundPriority = alwaysRunsAtBackgroundPriority; }
@@ -209,8 +203,6 @@ private:
     bool m_ignoreSynchronousMessagingTimeoutsForTesting { false };
     bool m_attrStyleEnabled { false };
     Vector<WTF::String> m_overrideLanguages;
-    WTF::String m_sourceApplicationBundleIdentifier;
-    WTF::String m_sourceApplicationSecondaryIdentifier;
     bool m_alwaysRunsAtBackgroundPriority { false };
     bool m_shouldTakeUIBackgroundAssertion { true };
     bool m_shouldCaptureAudioInUIProcess { false };

@@ -1,3 +1,45 @@
+2018-12-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove source application identifiers from NetworkProcessCreationParameters
+        https://bugs.webkit.org/show_bug.cgi?id=192372
+
+        Reviewed by Brady Eidson.
+
+        The _WKWebProcessPoolConfiguration way of setting these was deprecated in http://trac.webkit.org/r235127
+        The replacement was adopted in <rdar://problem/46359330>
+        The transition process is done!  Time to remove the old code.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::globalSourceApplicationAuditTokenData): Deleted.
+        (WebKit::globalSourceApplicationBundleIdentifier): Deleted.
+        (WebKit::globalSourceApplicationSecondaryIdentifier): Deleted.
+        (WebKit::NetworkSessionCocoa::setSourceApplicationAuditTokenData): Deleted.
+        (WebKit::NetworkSessionCocoa::setSourceApplicationBundleIdentifier): Deleted.
+        (WebKit::NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration sourceApplicationBundleIdentifier]):
+        (-[_WKProcessPoolConfiguration setSourceApplicationBundleIdentifier:]):
+        (-[_WKProcessPoolConfiguration sourceApplicationSecondaryIdentifier]):
+        (-[_WKProcessPoolConfiguration setSourceApplicationSecondaryIdentifier:]):
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard):
+        (WebKit::toPKPaymentRequest):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::configuration):
+
 2018-12-04  Youenn Fablet  <youenn@apple.com>
 
         Calling getUserMedia in a link that was opened with target="_blank" does not work the second time

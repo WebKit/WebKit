@@ -583,24 +583,6 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
-static RetainPtr<CFDataRef>& globalSourceApplicationAuditTokenData()
-{
-    static NeverDestroyed<RetainPtr<CFDataRef>> sourceApplicationAuditTokenData;
-    return sourceApplicationAuditTokenData.get();
-}
-
-static String& globalSourceApplicationBundleIdentifier()
-{
-    static NeverDestroyed<String> sourceApplicationBundleIdentifier;
-    return sourceApplicationBundleIdentifier.get();
-}
-
-static String& globalSourceApplicationSecondaryIdentifier()
-{
-    static NeverDestroyed<String> sourceApplicationSecondaryIdentifier;
-    return sourceApplicationSecondaryIdentifier.get();
-}
-
 #if PLATFORM(IOS_FAMILY)
 static String& globalCTDataConnectionServiceType()
 {
@@ -608,24 +590,6 @@ static String& globalCTDataConnectionServiceType()
     return ctDataConnectionServiceType.get();
 }
 #endif
-    
-void NetworkSessionCocoa::setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&& data)
-{
-    ASSERT(!sessionsCreated);
-    globalSourceApplicationAuditTokenData() = data;
-}
-
-void NetworkSessionCocoa::setSourceApplicationBundleIdentifier(const String& identifier)
-{
-    ASSERT(!sessionsCreated);
-    globalSourceApplicationBundleIdentifier() = identifier;
-}
-
-void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& identifier)
-{
-    ASSERT(!sessionsCreated);
-    globalSourceApplicationSecondaryIdentifier() = identifier;
-}
 
 #if PLATFORM(IOS_FAMILY)
 void NetworkSessionCocoa::setCTDataConnectionServiceType(const String& type)
@@ -646,8 +610,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_loadThrottleLatency(parameters.loadThrottleLatency)
-    , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
-    , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
 
@@ -670,23 +632,16 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
     // The WebKit network cache was already queried.
     configuration.URLCache = nil;
 
-    if (auto& data = globalSourceApplicationAuditTokenData())
+    if (auto data = NetworkProcess::singleton().sourceApplicationAuditData())
         configuration._sourceApplicationAuditTokenData = (__bridge NSData *)data.get();
 
-    auto& sourceApplicationBundleIdentifier = globalSourceApplicationBundleIdentifier();
-    if (!m_sourceApplicationBundleIdentifier.isEmpty()) {
-        configuration._sourceApplicationBundleIdentifier = m_sourceApplicationBundleIdentifier;
-        configuration._sourceApplicationAuditTokenData = nil;
-    } else if (!sourceApplicationBundleIdentifier.isEmpty()) {
-        configuration._sourceApplicationBundleIdentifier = sourceApplicationBundleIdentifier;
+    if (!parameters.sourceApplicationBundleIdentifier.isEmpty()) {
+        configuration._sourceApplicationBundleIdentifier = parameters.sourceApplicationBundleIdentifier;
         configuration._sourceApplicationAuditTokenData = nil;
     }
 
-    auto& sourceApplicationSecondaryIdentifier = globalSourceApplicationSecondaryIdentifier();
-    if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
-        configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
-    else if (!sourceApplicationSecondaryIdentifier.isEmpty())
-        configuration._sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier;
+    if (!parameters.sourceApplicationSecondaryIdentifier.isEmpty())
+        configuration._sourceApplicationSecondaryIdentifier = parameters.sourceApplicationSecondaryIdentifier;
 
 #if PLATFORM(IOS_FAMILY)
     auto& ctDataConnectionServiceType = globalCTDataConnectionServiceType();

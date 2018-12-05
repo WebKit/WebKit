@@ -209,6 +209,8 @@ public:
 
     void didCreateNetworkProcess();
 
+    const Configuration& configuration() { return m_configuration; }
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);

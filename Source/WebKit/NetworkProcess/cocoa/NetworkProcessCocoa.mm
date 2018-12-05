@@ -88,9 +88,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 
-    NetworkSessionCocoa::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
-    NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
-    NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
 #if PLATFORM(IOS_FAMILY)
     NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif
