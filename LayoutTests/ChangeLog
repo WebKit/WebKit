@@ -1,3 +1,9 @@
+2018-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to de-flake this test by scrolling a bit more.
+
+        * compositing/fixed-with-main-thread-scrolling.html:
+
 2018-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in HTMLCollection::updateNamedElementCache
