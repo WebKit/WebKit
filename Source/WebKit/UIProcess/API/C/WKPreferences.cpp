@@ -2079,3 +2079,23 @@ bool WKPreferencesGetWebSQLDisabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->webSQLDisabled();
 }
+
+void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCaptureAudioInUIProcessEnabled(flag);
+}
+
+bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->captureAudioInUIProcessEnabled();
+}
+
+void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCaptureVideoInUIProcessEnabled(flag);
+}
+
+bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->captureVideoInUIProcessEnabled();
+}

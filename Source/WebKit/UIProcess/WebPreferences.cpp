@@ -139,6 +139,18 @@ void WebPreferences::updateBoolValueForInternalDebugFeatureKey(const String& key
 
         return;
     }
+    if (key == WebPreferencesKey::captureAudioInUIProcessEnabledKey()) {
+        for (auto* page : m_pages)
+            page->process().processPool().configuration().setShouldCaptureAudioInUIProcess(value);
+
+        return;
+    }
+    if (key == WebPreferencesKey::captureVideoInUIProcessEnabledKey()) {
+        for (auto* page : m_pages)
+            page->process().processPool().configuration().setShouldCaptureVideoInUIProcess(value);
+
+        return;
+    }
 
     update(); // FIXME: Only send over the changed key and value.
 }

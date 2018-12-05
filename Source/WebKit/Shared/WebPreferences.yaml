@@ -1474,3 +1474,20 @@ LayoutFormattingContextEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+CaptureAudioInUIProcessEnabled:
+  type: bool
+  defaultValue: DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS
+  humanReadableName: "Capture audio in UIProcess"
+  humanReadableDescription: "Enable audio capture in UIProcess"
+  category: internal
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)
+
+CaptureVideoInUIProcessEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Capture video in UIProcess"
+  humanReadableDescription: "Enable video capture in UIProcess"
+  category: internal
+  webcoreBinding: none
+  condition: ENABLE(MEDIA_STREAM)

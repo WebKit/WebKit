@@ -223,6 +223,12 @@
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
 bool defaultCustomPasteboardDataEnabled();
 
+#if PLATFORM(MAC)
+#define DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS true
+#else
+#define DEFAULT_CAPTURE_AUDIO_IN_UIPROCESS false
+#endif
+
 #if PLATFORM(WATCHOS)
 #define DEFAULT_INPUT_TYPE_COLOR_ENABLED false
 #define DEFAULT_DATALIST_ELEMENT_ENABLED false

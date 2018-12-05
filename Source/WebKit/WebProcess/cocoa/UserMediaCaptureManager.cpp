@@ -219,6 +219,8 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
 {
     if (parameters.shouldCaptureAudioInUIProcess)
         RealtimeMediaSourceCenter::setAudioFactory(*this);
+    if (parameters.shouldCaptureVideoInUIProcess)
+        RealtimeMediaSourceCenter::setVideoFactory(*this);
     if (parameters.shouldCaptureDisplayInUIProcess)
         RealtimeMediaSourceCenter::setDisplayCaptureFactory(*this);
 }

@@ -342,7 +342,8 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
                 auto settingsDictionary = @{
                     (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
                     (__bridge NSString *)kCVPixelBufferWidthKey: @(avPreset->size.width()),
-                    (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height())
+                    (__bridge NSString *)kCVPixelBufferHeightKey: @(avPreset->size.height()),
+                    (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
                 };
                 [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
