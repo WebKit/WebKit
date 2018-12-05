@@ -664,4 +664,6 @@ enum CompositingPolicy {
     unsigned long pluginCount();
 
     void notifyResourceLoadObserver();
+
+    void setAlwaysAllowLocalWebarchive();
 };

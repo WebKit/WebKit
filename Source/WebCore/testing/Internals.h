@@ -725,6 +725,8 @@ public:
 
     void notifyResourceLoadObserver();
 
+    void setAlwaysAllowLocalWebarchive() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

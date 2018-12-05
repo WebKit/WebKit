@@ -4,6 +4,8 @@
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive();
     onload = function() {
         frame = document.createElement("iframe");
         frame.src = "resources/mainresource-null-mimetype.webarchive";

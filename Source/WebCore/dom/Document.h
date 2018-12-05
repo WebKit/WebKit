@@ -1467,6 +1467,10 @@ public:
     void updateMainArticleElementAfterLayout();
     bool hasMainArticleElement() const { return !!m_mainArticleElement; }
 
+    // Used in webarchive loading tests.
+    void setAlwaysAllowLocalWebarchive() { m_alwaysAllowLocalWebarchive = true; }
+    bool alwaysAllowLocalWebarchive() const { return m_alwaysAllowLocalWebarchive; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1971,6 +1975,8 @@ private:
 #endif
     
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
+
+    bool m_alwaysAllowLocalWebarchive { false };
 };
 
 Element* eventTargetElementForDocument(Document*);

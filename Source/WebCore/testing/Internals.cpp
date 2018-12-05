@@ -4689,4 +4689,12 @@ void Internals::notifyResourceLoadObserver()
     ResourceLoadObserver::shared().notifyObserver();
 }
 
+void Internals::setAlwaysAllowLocalWebarchive() const
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+    document->setAlwaysAllowLocalWebarchive();
+}
+
 } // namespace WebCore

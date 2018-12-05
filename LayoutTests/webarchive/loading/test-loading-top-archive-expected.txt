@@ -1,0 +1,12 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - willPerformClientRedirectToURL: resources/top.webarchive 
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+hello, world.

@@ -3,7 +3,8 @@
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
-
+    if (window.internals)
+        internals.setAlwaysAllowLocalWebarchive();
     onload = function() {
         frame = document.createElement("iframe");
         frame.src = "resources/missing-data.webarchive";

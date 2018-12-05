@@ -1,0 +1,8 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+frame "<!--frame1-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--frame1-->" - didFailProvisionalLoadWithError
+main frame - didFinishLoadForFrame
+ This test assumes the webarchive is not loaded.

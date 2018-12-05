@@ -1,19 +1,18 @@
 <html>
 <script>
     if (window.testRunner) {
-        testRunner.dumpResourceLoadCallbacks();
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
-    if (window.internals)
-        internals.setAlwaysAllowLocalWebarchive();
+
     function frameLoaded() {
         if (window.testRunner)
             testRunner.notifyDone();
     }
+    setTimeout(frameLoaded, 10);
 </script>
 <body>
     <iframe onload="frameLoaded();" src="resources/helloworld.webarchive"></iframe>
-    This tests that doing a "normal load" of a webarchive (not using loadArchive) does not cause a cancelled error to be called.
+    This test assumes the webarchive is not loaded.
 </body>
 </html>

@@ -3,6 +3,8 @@ if (window.testRunner) {
 	testRunner.dumpAsText();
 	testRunner.dumpChildFramesAsText();
 }
+if (window.internals)
+    internals.setAlwaysAllowLocalWebarchive();
 </script>
 The webarchive in this iframe is utf-8 encoded and will only display properly if the webarchive's encoding is respected.<br>
 <iframe src="resources/utf8-encoded.webarchive"></iframe>
