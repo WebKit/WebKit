@@ -1,3 +1,16 @@
+2018-12-04  Mark Lam  <mark.lam@apple.com>
+
+        DFG's StrengthReduction phase should not reduce Construct into DirectContruct when the executable does not have constructAbility.
+        https://bugs.webkit.org/show_bug.cgi?id=192386
+        <rdar://problem/46445516>
+
+        Reviewed by Saam Barati.
+
+        This violates an invariant documented by a RELEASE_ASSERT in operationLinkDirectCall().
+
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2018-12-04  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Support logic operations
