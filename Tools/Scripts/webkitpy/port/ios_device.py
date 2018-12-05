@@ -46,7 +46,7 @@ class IOSDevicePort(IOSPort):
 
     def _driver_class(self):
         if apple_additions():
-            return apple_additions().ios_device_driver()
+            return apple_additions().device_driver()
         return super(IOSDevicePort, self)._driver_class()
 
     @classmethod
@@ -61,7 +61,7 @@ class IOSDevicePort(IOSPort):
     def path_to_crash_logs(self):
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)
-        return apple_additions().ios_crash_log_path()
+        return apple_additions().device_crash_log_path()
 
     def _look_for_all_crash_logs_in_log_dir(self, newer_than):
         log_list = {}
@@ -111,4 +111,4 @@ class IOSDevicePort(IOSPort):
 
     def clean_up_test_run(self):
         super(IOSDevicePort, self).clean_up_test_run()
-        apple_additions().ios_device_clean_up_test_run(self, self._path_to_driver(), self._build_path())
+        apple_additions().device_clean_up_test_run(self, self._path_to_driver(), self._build_path())

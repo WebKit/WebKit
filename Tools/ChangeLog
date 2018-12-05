@@ -1,5 +1,21 @@
 2018-12-05  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Clean-up apple_additions
+        https://bugs.webkit.org/show_bug.cgi?id=192413
+        <rdar://problem/46493491>
+
+        Reviewed by Lucas Forschler.
+
+        After the addition of watchOS, some functions which were originally iOS specific were
+        generalized to include all devices.
+
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort._driver_class): Replace iOS specific call with generalized device call.
+        (IOSDevicePort.path_to_crash_logs): Ditto.
+        (IOSDevicePort.clean_up_test_run): Ditto.
+
+2018-12-05  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Ignore case when comparing device types
         https://bugs.webkit.org/show_bug.cgi?id=192409
         <rdar://problem/46491558>
