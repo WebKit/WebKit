@@ -1,3 +1,9 @@
+2018-12-05  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed build fix.
+
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm: Add missing header.
+
 2018-12-05  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Crash on debug changing the style of a positioned element
