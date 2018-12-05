@@ -2700,14 +2700,10 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, R
             return;
         }
 
-        if (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes) {
+        if (m_backForwardList->currentItem() && (navigation->lockBackForwardList() == LockBackForwardList::Yes || navigation->lockHistory() == LockHistory::Yes)) {
             // If WebCore is supposed to lock the history for this load, then the new process needs to know about the current history item so it can update
             // it instead of creating a new one.
-            auto itemStates = m_backForwardList->filteredItemStates([currentItem = m_backForwardList->currentItem()](WebBackForwardListItem& item) {
-                return &item == currentItem;
-            });
-            RELEASE_ASSERT(itemStates.size() == 1);
-            m_process->send(Messages::WebPage::SetCurrentHistoryItemForReattach(itemStates[0]), m_pageID);
+            m_process->send(Messages::WebPage::SetCurrentHistoryItemForReattach(m_backForwardList->currentItem()->itemState()), m_pageID);
         }
 
         // FIXME: Work out timing of responding with the last policy delegate, etc
