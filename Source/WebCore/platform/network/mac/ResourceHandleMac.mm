@@ -427,7 +427,8 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
             if (!originalContentType.isEmpty())
                 request.setHTTPHeaderField(HTTPHeaderName::ContentType, originalContentType);
         }
-    }
+    } else if (redirectResponse.httpStatusCode() == 303 && equalLettersIgnoringASCIICase(d->m_firstRequest.httpMethod(), "head")) // FIXME: (rdar://problem/13706454).
+        request.setHTTPMethod("HEAD"_s);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())

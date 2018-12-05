@@ -1,3 +1,15 @@
+2018-12-05  Rob Buis  <rbuis@igalia.com>
+
+        [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)
+        https://bugs.webkit.org/show_bug.cgi?id=114965
+
+        Reviewed by Frédéric Wang.
+
+        Update these since we now expect to pass head-redirection.html here.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/http/tests/xmlhttprequest/head-redirection-expected.txt: Removed.
+
 2018-12-05  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Crash on debug changing the style of a positioned element

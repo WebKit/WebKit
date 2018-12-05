@@ -1,5 +1,27 @@
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
+        [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)
+        https://bugs.webkit.org/show_bug.cgi?id=114965
+
+        Reviewed by Frédéric Wang.
+
+        HEAD requests should not be changed to GET after 303 redirects, see [1].
+        This was fixed earlier for GTK [2].
+
+        Behavior matches Firefox and Chrome.
+
+        [1] http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics-21#section-7.4
+        [2] https://bugs.webkit.org/show_bug.cgi?id=110127
+
+        Tests: web-platform-tests/fetch/api/redirect/redirect-method.html
+               web-platform-tests/fetch/api/redirect/redirect-method-worker.html
+               http/tests/xmlhttprequest/head-redirection.html
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::willSendRequest):
+
+2018-12-05  Rob Buis  <rbuis@igalia.com>
+
         Align with Fetch on data: URLs
         https://bugs.webkit.org/show_bug.cgi?id=182325
 

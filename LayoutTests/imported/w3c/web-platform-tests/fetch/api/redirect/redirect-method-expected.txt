@@ -8,7 +8,7 @@ PASS Redirect 302 with POST
 PASS Redirect 302 with HEAD 
 PASS Redirect 303 with GET 
 PASS Redirect 303 with POST 
-FAIL Redirect 303 with HEAD assert_equals: Request method after redirection is HEAD expected "HEAD" but got "GET"
+PASS Redirect 303 with HEAD 
 PASS Redirect 307 with GET 
 PASS Redirect 307 with POST (string body) 
 PASS Redirect 307 with POST (blob body) 

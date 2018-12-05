@@ -1,5 +1,17 @@
 2018-12-05  Rob Buis  <rbuis@igalia.com>
 
+        [Mac] HEAD requests changed to GET after 301, 302, and 303 redirections (http/tests/xmlhttprequest/head-redirection.html)
+        https://bugs.webkit.org/show_bug.cgi?id=114965
+
+        Reviewed by Frédéric Wang.
+
+        Update test expectations.
+
+        * web-platform-tests/fetch/api/redirect/redirect-method-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-method-worker-expected.txt:
+
+2018-12-05  Rob Buis  <rbuis@igalia.com>
+
         Align with Fetch on data: URLs
         https://bugs.webkit.org/show_bug.cgi?id=182325
 
