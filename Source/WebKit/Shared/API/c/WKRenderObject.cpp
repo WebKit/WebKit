@@ -30,69 +30,66 @@
 #include "WKAPICast.h"
 #include "WebRenderObject.h"
 
-using namespace WebCore;
-using namespace WebKit;
-
 WKTypeID WKRenderObjectGetTypeID()
 {
-    return toAPI(WebRenderObject::APIType);
+    return WebKit::toAPI(WebKit::WebRenderObject::APIType);
 }
 
 WKStringRef WKRenderObjectCopyName(WKRenderObjectRef renderObjectRef)
 {
-    return toCopiedAPI(toImpl(renderObjectRef)->name());
+    return WebKit::toCopiedAPI(WebKit::toImpl(renderObjectRef)->name());
 }
 
 WKStringRef WKRenderObjectCopyTextSnippet(WKRenderObjectRef renderObjectRef)
 {
-    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    WebKit::WebRenderObject* renderObject = WebKit::toImpl(renderObjectRef);
     if (!renderObject->textSnippet().isNull())
-        return toCopiedAPI(renderObject->textSnippet());
+        return WebKit::toCopiedAPI(renderObject->textSnippet());
 
     return nullptr;
 }
 
 unsigned WKRenderObjectGetTextLength(WKRenderObjectRef renderObjectRef)
 {
-    return toImpl(renderObjectRef)->textLength();
+    return WebKit::toImpl(renderObjectRef)->textLength();
 }
 
 WKStringRef WKRenderObjectCopyElementTagName(WKRenderObjectRef renderObjectRef)
 {
-    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    WebKit::WebRenderObject* renderObject = WebKit::toImpl(renderObjectRef);
     if (!renderObject->elementTagName().isNull())
-        return toCopiedAPI(renderObject->elementTagName());
+        return WebKit::toCopiedAPI(renderObject->elementTagName());
 
     return nullptr;
 }
 
 WKStringRef WKRenderObjectCopyElementID(WKRenderObjectRef renderObjectRef)
 {
-    WebRenderObject* renderObject = toImpl(renderObjectRef);
+    WebKit::WebRenderObject* renderObject = WebKit::toImpl(renderObjectRef);
     if (!renderObject->elementID().isNull())
-        return toCopiedAPI(renderObject->elementID());
+        return WebKit::toCopiedAPI(renderObject->elementID());
 
     return nullptr;
 }
 
 WKArrayRef WKRenderObjectGetElementClassNames(WKRenderObjectRef renderObjectRef)
 {
-    return toAPI(toImpl(renderObjectRef)->elementClassNames());
+    return WebKit::toAPI(WebKit::toImpl(renderObjectRef)->elementClassNames());
 }
 
 WKPoint WKRenderObjectGetAbsolutePosition(WKRenderObjectRef renderObjectRef)
 {
-    IntPoint absolutePosition = toImpl(renderObjectRef)->absolutePosition();
+    WebCore::IntPoint absolutePosition = WebKit::toImpl(renderObjectRef)->absolutePosition();
     return WKPointMake(absolutePosition.x(), absolutePosition.y());
 }
 
 WKRect WKRenderObjectGetFrameRect(WKRenderObjectRef renderObjectRef)
 {
-    IntRect frameRect = toImpl(renderObjectRef)->frameRect();
+    WebCore::IntRect frameRect = WebKit::toImpl(renderObjectRef)->frameRect();
     return WKRectMake(frameRect.x(), frameRect.y(), frameRect.width(), frameRect.height());
 }
 
 WKArrayRef WKRenderObjectGetChildren(WKRenderObjectRef renderObjectRef)
 {
-    return toAPI(toImpl(renderObjectRef)->children());
+    return WebKit::toAPI(WebKit::toImpl(renderObjectRef)->children());
 }

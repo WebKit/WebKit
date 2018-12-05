@@ -29,50 +29,48 @@
 #include "APIGeometry.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKSizeGetTypeID(void)
 {
-    return toAPI(API::Size::APIType);
+    return WebKit::toAPI(API::Size::APIType);
 }
 
 WKTypeID WKPointGetTypeID(void)
 {
-    return toAPI(API::Point::APIType);
+    return WebKit::toAPI(API::Point::APIType);
 }
 
 WKTypeID WKRectGetTypeID(void)
 {
-    return toAPI(API::Rect::APIType);
+    return WebKit::toAPI(API::Rect::APIType);
 }
 
 WKPointRef WKPointCreate(WKPoint point)
 {
-    return toAPI(&API::Point::create(point).leakRef());
+    return WebKit::toAPI(&API::Point::create(point).leakRef());
 }
 
 WKSizeRef WKSizeCreate(WKSize size)
 {
-    return toAPI(&API::Size::create(size).leakRef());
+    return WebKit::toAPI(&API::Size::create(size).leakRef());
 }
 
 WKRectRef WKRectCreate(WKRect rect)
 {
-    return toAPI(&API::Rect::create(rect).leakRef());
+    return WebKit::toAPI(&API::Rect::create(rect).leakRef());
 }
 
 WKSize WKSizeGetValue(WKSizeRef size)
 {
-    return toImpl(size)->size();
+    return WebKit::toImpl(size)->size();
 }
 
 WKPoint WKPointGetValue(WKPointRef point)
 {
-    return toImpl(point)->point();
+    return WebKit::toImpl(point)->point();
 }
 
 WKRect WKRectGetValue(WKRectRef rect)
 {
-    return toImpl(rect)->rect();
+    return WebKit::toImpl(rect)->rect();
 }
 

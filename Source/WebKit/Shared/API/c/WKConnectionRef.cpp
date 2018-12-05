@@ -29,20 +29,18 @@
 #include "WKAPICast.h"
 #include "WebConnection.h"
 
-using namespace WebKit;
-
 WKTypeID WKConnectionGetTypeID()
 {
-    return toAPI(WebConnection::APIType);
+    return WebKit::toAPI(WebKit::WebConnection::APIType);
 }
 
 void WKConnectionSetConnectionClient(WKConnectionRef connectionRef, const WKConnectionClientBase* wkClient)
 {
-    toImpl(connectionRef)->initializeConnectionClient(wkClient);
+    WebKit::toImpl(connectionRef)->initializeConnectionClient(wkClient);
 }
 
 void WKConnectionPostMessage(WKConnectionRef connectionRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
-    toImpl(connectionRef)->postMessage(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
+    WebKit::toImpl(connectionRef)->postMessage(WebKit::toImpl(messageNameRef)->string(), WebKit::toImpl(messageBodyRef));
 }
 

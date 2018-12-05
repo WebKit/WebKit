@@ -30,53 +30,51 @@
 #include "WKAPICast.h"
 #include <WebCore/SecurityOriginData.h>
 
-using namespace WebKit;
-
 WKTypeID WKSecurityOriginGetTypeID()
 {
-    return toAPI(API::SecurityOrigin::APIType);
+    return WebKit::toAPI(API::SecurityOrigin::APIType);
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromString(WKStringRef string)
 {
-    return toAPI(&API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromString(toImpl(string)->string())).leakRef());
+    return WebKit::toAPI(&API::SecurityOrigin::create(WebCore::SecurityOrigin::createFromString(WebKit::toImpl(string)->string())).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef identifier)
 {
-    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(toImpl(identifier)->string());
+    auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(WebKit::toImpl(identifier)->string());
     if (!origin)
         return nullptr;
-    return toAPI(&API::SecurityOrigin::create(origin.value().securityOrigin()).leakRef());
+    return WebKit::toAPI(&API::SecurityOrigin::create(origin.value().securityOrigin()).leakRef());
 }
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
 {
-    auto securityOrigin = API::SecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
-    return toAPI(&securityOrigin.leakRef());
+    auto securityOrigin = API::SecurityOrigin::create(WebKit::toImpl(protocol)->string(), WebKit::toImpl(host)->string(), port);
+    return WebKit::toAPI(&securityOrigin.leakRef());
 }
 
 WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().data().databaseIdentifier());
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().data().databaseIdentifier());
 }
 
 WKStringRef WKSecurityOriginCopyToString(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().toString());
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().toString());
 }
 
 WKStringRef WKSecurityOriginCopyProtocol(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().protocol());
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().protocol());
 }
 
 WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 {
-    return toCopiedAPI(toImpl(securityOrigin)->securityOrigin().host());
+    return WebKit::toCopiedAPI(WebKit::toImpl(securityOrigin)->securityOrigin().host());
 }
 
 unsigned short WKSecurityOriginGetPort(WKSecurityOriginRef securityOrigin)
 {
-    return toImpl(securityOrigin)->securityOrigin().port().value_or(0);
+    return WebKit::toImpl(securityOrigin)->securityOrigin().port().value_or(0);
 }

@@ -29,24 +29,22 @@
 #include "APIData.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKDataGetTypeID()
 {
-    return toAPI(API::Data::APIType);
+    return WebKit::toAPI(API::Data::APIType);
 }
 
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
-    return toAPI(&API::Data::create(bytes, size).leakRef());
+    return WebKit::toAPI(&API::Data::create(bytes, size).leakRef());
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)
 {
-    return toImpl(dataRef)->bytes();
+    return WebKit::toImpl(dataRef)->bytes();
 }
 
 size_t WKDataGetSize(WKDataRef dataRef)
 {
-    return toImpl(dataRef)->size();
+    return WebKit::toImpl(dataRef)->size();
 }

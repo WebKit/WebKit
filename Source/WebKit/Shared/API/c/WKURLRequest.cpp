@@ -31,39 +31,36 @@
 #include "WKData.h"
 #include <wtf/URL.h>
 
-using namespace WebCore;
-using namespace WebKit;
-
 WKTypeID WKURLRequestGetTypeID()
 {
-    return toAPI(API::URLRequest::APIType);
+    return WebKit::toAPI(API::URLRequest::APIType);
 }
 
 WKURLRequestRef WKURLRequestCreateWithWKURL(WKURLRef url)
 {
-    return toAPI(&API::URLRequest::create(URL(URL(), toImpl(url)->string())).leakRef());
+    return WebKit::toAPI(&API::URLRequest::create(URL(URL(), WebKit::toImpl(url)->string())).leakRef());
 }
 
 WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
 {
-    return toCopiedURLAPI(toImpl(requestRef)->resourceRequest().url());
+    return WebKit::toCopiedURLAPI(WebKit::toImpl(requestRef)->resourceRequest().url());
 }
 
 WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef requestRef)
 {
-    return toCopiedURLAPI(toImpl(requestRef)->resourceRequest().firstPartyForCookies());
+    return WebKit::toCopiedURLAPI(WebKit::toImpl(requestRef)->resourceRequest().firstPartyForCookies());
 }
 
 WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef requestRef)
 {
-    return toCopiedAPI(toImpl(requestRef)->resourceRequest().httpMethod());
+    return WebKit::toCopiedAPI(WebKit::toImpl(requestRef)->resourceRequest().httpMethod());
 }
 
 WKURLRequestRef WKURLRequestCopySettingHTTPBody(WKURLRequestRef requestRef, WKDataRef body)
 {
-    WebCore::ResourceRequest requestCopy(toImpl(requestRef)->resourceRequest());
-    requestCopy.setHTTPBody(FormData::create(WKDataGetBytes(body), WKDataGetSize(body)));
-    return toAPI(&API::URLRequest::create(requestCopy).leakRef());
+    WebCore::ResourceRequest requestCopy(WebKit::toImpl(requestRef)->resourceRequest());
+    requestCopy.setHTTPBody(WebCore::FormData::create(WKDataGetBytes(body), WKDataGetSize(body)));
+    return WebKit::toAPI(&API::URLRequest::create(requestCopy).leakRef());
 }
 
 void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)

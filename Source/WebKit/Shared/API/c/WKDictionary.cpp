@@ -30,33 +30,31 @@
 #include "APIDictionary.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKDictionaryGetTypeID()
 {
-    return toAPI(API::Dictionary::APIType);
+    return WebKit::toAPI(API::Dictionary::APIType);
 }
 
 WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues)
 {
     API::Dictionary::MapType map;
     for (size_t i = 0; i < numberOfValues; ++i)
-        map.add(toImpl(keys[i])->string(), toImpl(values[i]));
+        map.add(WebKit::toImpl(keys[i])->string(), WebKit::toImpl(values[i]));
 
-    return toAPI(&API::Dictionary::create(WTFMove(map)).leakRef());
+    return WebKit::toAPI(&API::Dictionary::create(WTFMove(map)).leakRef());
 }
 
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)
 {
-    return toAPI(toImpl(dictionaryRef)->get(toImpl(key)->string()));
+    return WebKit::toAPI(WebKit::toImpl(dictionaryRef)->get(WebKit::toImpl(key)->string()));
 }
 
 size_t WKDictionaryGetSize(WKDictionaryRef dictionaryRef)
 {
-    return toImpl(dictionaryRef)->size();
+    return WebKit::toImpl(dictionaryRef)->size();
 }
 
 WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
-    return toAPI(&toImpl(dictionaryRef)->keys().leakRef());
+    return WebKit::toAPI(&WebKit::toImpl(dictionaryRef)->keys().leakRef());
 }

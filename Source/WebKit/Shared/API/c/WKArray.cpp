@@ -29,11 +29,9 @@
 #include "APIArray.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKArrayGetTypeID()
 {
-    return toAPI(API::Array::APIType);
+    return WebKit::toAPI(API::Array::APIType);
 }
 
 WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
@@ -42,9 +40,9 @@ WKArrayRef WKArrayCreate(WKTypeRef* values, size_t numberOfValues)
     elements.reserveInitialCapacity(numberOfValues);
 
     for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(toImpl(values[i]));
+        elements.uncheckedAppend(WebKit::toImpl(values[i]));
 
-    return toAPI(&API::Array::create(WTFMove(elements)).leakRef());
+    return WebKit::toAPI(&API::Array::create(WTFMove(elements)).leakRef());
 }
 
 WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
@@ -53,17 +51,17 @@ WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* values, size_t numberOfValues)
     elements.reserveInitialCapacity(numberOfValues);
 
     for (size_t i = 0; i < numberOfValues; ++i)
-        elements.uncheckedAppend(adoptRef(toImpl(values[i])));
+        elements.uncheckedAppend(adoptRef(WebKit::toImpl(values[i])));
 
-    return toAPI(&API::Array::create(WTFMove(elements)).leakRef());
+    return WebKit::toAPI(&API::Array::create(WTFMove(elements)).leakRef());
 }
 
 WKTypeRef WKArrayGetItemAtIndex(WKArrayRef arrayRef, size_t index)
 {
-    return toAPI(toImpl(arrayRef)->at(index));
+    return WebKit::toAPI(WebKit::toImpl(arrayRef)->at(index));
 }
 
 size_t WKArrayGetSize(WKArrayRef arrayRef)
 {
-    return toImpl(arrayRef)->size();
+    return WebKit::toImpl(arrayRef)->size();
 }

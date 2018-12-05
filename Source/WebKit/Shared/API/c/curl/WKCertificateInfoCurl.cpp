@@ -34,8 +34,6 @@
 
 #include <WebCore/CertificateInfo.h>
 
-using namespace WebKit;
-
 using Certificate = Vector<uint8_t>;
 using CertificateChain = Vector<Certificate>;
 
@@ -55,19 +53,19 @@ WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef certi
 
 int WKCertificateInfoGetVerificationError(WKCertificateInfoRef certificateInfoRef)
 {
-    return toImpl(certificateInfoRef)->certificateInfo().verificationError();
+    return WebKit::toImpl(certificateInfoRef)->certificateInfo().verificationError();
 }
 
 size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef certificateInfoRef)
 {
-    return toImpl(certificateInfoRef)->certificateInfo().certificateChain().size();
+    return WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().size();
 }
 
 WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef certificateInfoRef, size_t index)
 {
-    if (toImpl(certificateInfoRef)->certificateInfo().certificateChain().size() <= index)
+    if (WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().size() <= index)
         return WebKit::toAPI(&API::Data::create(nullptr, 0).leakRef());
 
-    const auto& certificate = toImpl(certificateInfoRef)->certificateInfo().certificateChain().at(index);
+    const auto& certificate = WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().at(index);
     return WebKit::toAPI(&API::Data::create(reinterpret_cast<const unsigned char*>(certificate.data()), certificate.size()).leakRef());
 }

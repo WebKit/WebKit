@@ -29,10 +29,9 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessPool.h"
 
+namespace API {
 using namespace WebCore;
 using namespace WebKit;
-
-namespace API {
 
 URLRequest::URLRequest(const ResourceRequest& request)
     : m_request(request)

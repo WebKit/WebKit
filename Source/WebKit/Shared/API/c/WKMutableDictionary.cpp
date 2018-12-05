@@ -29,15 +29,13 @@
 #include "APIDictionary.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
-    return const_cast<WKMutableDictionaryRef>(toAPI(&API::Dictionary::create().leakRef()));
+    return const_cast<WKMutableDictionaryRef>(WebKit::toAPI(&API::Dictionary::create().leakRef()));
 }
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
-    return toImpl(dictionaryRef)->set(toImpl(keyRef)->string(), toImpl(itemRef));
+    return WebKit::toImpl(dictionaryRef)->set(WebKit::toImpl(keyRef)->string(), WebKit::toImpl(itemRef));
 }
 

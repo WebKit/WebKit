@@ -29,52 +29,50 @@
 #include "APINumber.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKBooleanGetTypeID()
 {
-    return toAPI(API::Boolean::APIType);
+    return WebKit::toAPI(API::Boolean::APIType);
 }
 
 WKBooleanRef WKBooleanCreate(bool value)
 {
     auto booleanObject = API::Boolean::create(value);
-    return toAPI(&booleanObject.leakRef());
+    return WebKit::toAPI(&booleanObject.leakRef());
 }
 
 bool WKBooleanGetValue(WKBooleanRef booleanRef)
 {
-    return toImpl(booleanRef)->value();
+    return WebKit::toImpl(booleanRef)->value();
 }
 
 WKTypeID WKDoubleGetTypeID()
 {
-    return toAPI(API::Double::APIType);
+    return WebKit::toAPI(API::Double::APIType);
 }
 
 WKDoubleRef WKDoubleCreate(double value)
 {
     auto doubleObject = API::Double::create(value);
-    return toAPI(&doubleObject.leakRef());
+    return WebKit::toAPI(&doubleObject.leakRef());
 }
 
 double WKDoubleGetValue(WKDoubleRef doubleRef)
 {
-    return toImpl(doubleRef)->value();
+    return WebKit::toImpl(doubleRef)->value();
 }
 
 WKTypeID WKUInt64GetTypeID()
 {
-    return toAPI(API::UInt64::APIType);
+    return WebKit::toAPI(API::UInt64::APIType);
 }
 
 WKUInt64Ref WKUInt64Create(uint64_t value)
 {
     auto uint64Object = API::UInt64::create(value);
-    return toAPI(&uint64Object.leakRef());
+    return WebKit::toAPI(&uint64Object.leakRef());
 }
 
 uint64_t WKUInt64GetValue(WKUInt64Ref uint64Ref)
 {
-    return toImpl(uint64Ref)->value();
+    return WebKit::toImpl(uint64Ref)->value();
 }

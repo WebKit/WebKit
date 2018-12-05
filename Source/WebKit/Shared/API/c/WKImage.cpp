@@ -29,20 +29,18 @@
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
 
-using namespace WebKit;
-
 WKTypeID WKImageGetTypeID(void)
 {
-    return toAPI(WebImage::APIType);
+    return WebKit::toAPI(WebKit::WebImage::APIType);
 }
 
 WKImageRef WKImageCreate(WKSize size, WKImageOptions options)
 {
-    auto webImage = WebImage::create(toIntSize(size), toImageOptions(options));
+    auto webImage = WebKit::WebImage::create(WebKit::toIntSize(size), WebKit::toImageOptions(options));
     return toAPI(webImage.leakRef());
 }
 
 WKSize WKImageGetSize(WKImageRef imageRef)
 {
-    return toAPI(toImpl(imageRef)->size());
+    return WebKit::toAPI(WebKit::toImpl(imageRef)->size());
 }

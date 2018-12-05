@@ -29,20 +29,18 @@
 #include "APIArray.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKMutableArrayRef WKMutableArrayCreate()
 {
-    return const_cast<WKMutableArrayRef>(toAPI(&API::Array::create().leakRef()));
+    return const_cast<WKMutableArrayRef>(WebKit::toAPI(&API::Array::create().leakRef()));
 }
 
 void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)
 {
-    toImpl(arrayRef)->elements().append(toImpl(itemRef));
+    WebKit::toImpl(arrayRef)->elements().append(WebKit::toImpl(itemRef));
 }
 
 void WKArrayRemoveItemAtIndex(WKMutableArrayRef arrayRef, size_t index)
 {
-    toImpl(arrayRef)->elements().remove(index);
+    WebKit::toImpl(arrayRef)->elements().remove(index);
 }
 

@@ -28,9 +28,8 @@
 
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace API {
+using namespace WebCore;
 
 URLResponse::URLResponse(const WebCore::ResourceResponse& response)
     : m_response(response)

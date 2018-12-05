@@ -30,39 +30,37 @@
 #include "WKAPICast.h"
 #include "WKString.h"
 
-using namespace WebKit;
-
 WKTypeID WKUserContentURLPatternGetTypeID()
 {
-    return toAPI(API::UserContentURLPattern::APIType);
+    return WebKit::toAPI(API::UserContentURLPattern::APIType);
 }
 
 WKUserContentURLPatternRef WKUserContentURLPatternCreate(WKStringRef patternRef)
 {
-    return toAPI(&API::UserContentURLPattern::create(toImpl(patternRef)->string()).leakRef());
+    return WebKit::toAPI(&API::UserContentURLPattern::create(WebKit::toImpl(patternRef)->string()).leakRef());
 }
 
 WKStringRef WKUserContentURLPatternCopyHost(WKUserContentURLPatternRef urlPatternRef)
 {
-    return toCopiedAPI(toImpl(urlPatternRef)->host());
+    return WebKit::toCopiedAPI(WebKit::toImpl(urlPatternRef)->host());
 }
 
 WKStringRef WKUserContentURLPatternCopyScheme(WKUserContentURLPatternRef urlPatternRef)
 {
-    return toCopiedAPI(toImpl(urlPatternRef)->scheme());
+    return WebKit::toCopiedAPI(WebKit::toImpl(urlPatternRef)->scheme());
 }
 
 bool WKUserContentURLPatternIsValid(WKUserContentURLPatternRef urlPatternRef)
 {
-    return toImpl(urlPatternRef)->isValid();
+    return WebKit::toImpl(urlPatternRef)->isValid();
 }
 
 bool WKUserContentURLPatternMatchesURL(WKUserContentURLPatternRef urlPatternRef, WKURLRef urlRef)
 {
-    return toImpl(urlPatternRef)->matchesURL(toWTFString(urlRef));
+    return WebKit::toImpl(urlPatternRef)->matchesURL(WebKit::toWTFString(urlRef));
 }
 
 bool WKUserContentURLPatternMatchesSubdomains(WKUserContentURLPatternRef urlPatternRef)
 {
-    return toImpl(urlPatternRef)->matchesSubdomains();
+    return WebKit::toImpl(urlPatternRef)->matchesSubdomains();
 }

@@ -30,80 +30,77 @@
 #include "WKAPICast.h"
 #include "WebRenderLayer.h"
 
-using namespace WebCore;
-using namespace WebKit;
-
 WKTypeID WKRenderLayerGetTypeID()
 {
-    return toAPI(WebRenderLayer::APIType);
+    return WebKit::toAPI(WebKit::WebRenderLayer::APIType);
 }
 
 WKRenderObjectRef WKRenderLayerGetRenderer(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->renderer());
+    return toAPI(WebKit::toImpl(renderLayerRef)->renderer());
 }
 
 WKStringRef WKRenderLayerCopyRendererName(WKRenderLayerRef renderLayerRef)
 {
-    return toCopiedAPI(toImpl(renderLayerRef)->renderer()->name());
+    return WebKit::toCopiedAPI(WebKit::toImpl(renderLayerRef)->renderer()->name());
 }
 
 WKStringRef WKRenderLayerCopyElementTagName(WKRenderLayerRef renderLayerRef)
 {
-    WebRenderLayer* renderLayer = toImpl(renderLayerRef);
+    WebKit::WebRenderLayer* renderLayer = WebKit::toImpl(renderLayerRef);
     if (!renderLayer->renderer()->elementTagName().isNull())
-        return toCopiedAPI(renderLayer->renderer()->elementTagName());
+        return WebKit::toCopiedAPI(renderLayer->renderer()->elementTagName());
 
     return nullptr;
 }
 
 WKStringRef WKRenderLayerCopyElementID(WKRenderLayerRef renderLayerRef)
 {
-    WebRenderLayer* renderLayer = toImpl(renderLayerRef);
+    WebKit::WebRenderLayer* renderLayer = WebKit::toImpl(renderLayerRef);
     if (!renderLayer->renderer()->elementID().isNull())
-        return toCopiedAPI(renderLayer->renderer()->elementID());
+        return WebKit::toCopiedAPI(renderLayer->renderer()->elementID());
 
     return nullptr;
 }
 
 WKArrayRef WKRenderLayerGetElementClassNames(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->renderer()->elementClassNames());
+    return WebKit::toAPI(WebKit::toImpl(renderLayerRef)->renderer()->elementClassNames());
 }
 
 WKRect WKRenderLayerGetAbsoluteBounds(WKRenderLayerRef renderLayerRef)
 {
-    IntRect bounds = toImpl(renderLayerRef)->absoluteBoundingBox();
+    WebCore::IntRect bounds = WebKit::toImpl(renderLayerRef)->absoluteBoundingBox();
     return WKRectMake(bounds.x(), bounds.y(), bounds.width(), bounds.height());
 }
 
 bool WKRenderLayerIsClipping(WKRenderLayerRef renderLayerRef)
 {
-    return toImpl(renderLayerRef)->isClipping();
+    return WebKit::toImpl(renderLayerRef)->isClipping();
 }
 
 bool WKRenderLayerIsClipped(WKRenderLayerRef renderLayerRef)
 {
-    return toImpl(renderLayerRef)->isClipped();
+    return WebKit::toImpl(renderLayerRef)->isClipped();
 }
 
 bool WKRenderLayerIsReflection(WKRenderLayerRef renderLayerRef)
 {
-    return toImpl(renderLayerRef)->isReflection();
+    return WebKit::toImpl(renderLayerRef)->isReflection();
 }
 
 WKCompositingLayerType WKRenderLayerGetCompositingLayerType(WKRenderLayerRef renderLayerRef)
 {
-    switch (toImpl(renderLayerRef)->compositingLayerType()) {
-    case WebRenderLayer::None:
+    switch (WebKit::toImpl(renderLayerRef)->compositingLayerType()) {
+    case WebKit::WebRenderLayer::None:
         return kWKCompositingLayerTypeNone;
-    case WebRenderLayer::Normal:
+    case WebKit::WebRenderLayer::Normal:
         return kWKCompositingLayerTypeNormal;
-    case WebRenderLayer::Tiled:
+    case WebKit::WebRenderLayer::Tiled:
         return kWKCompositingLayerTypeTiled;
-    case WebRenderLayer::Media:
+    case WebKit::WebRenderLayer::Media:
         return kWKCompositingLayerTypeMedia;
-    case WebRenderLayer::Container:
+    case WebKit::WebRenderLayer::Container:
         return kWKCompositingLayerTypeContainer;
     }
 
@@ -113,25 +110,25 @@ WKCompositingLayerType WKRenderLayerGetCompositingLayerType(WKRenderLayerRef ren
 
 WK_EXPORT double WKRenderLayerGetBackingStoreMemoryEstimate(WKRenderLayerRef renderLayerRef)
 {
-    return toImpl(renderLayerRef)->backingStoreMemoryEstimate();
+    return WebKit::toImpl(renderLayerRef)->backingStoreMemoryEstimate();
 }
 
 WKArrayRef WKRenderLayerGetNegativeZOrderList(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->negativeZOrderList());
+    return WebKit::toAPI(WebKit::toImpl(renderLayerRef)->negativeZOrderList());
 }
 
 WKArrayRef WKRenderLayerGetNormalFlowList(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->normalFlowList());
+    return WebKit::toAPI(WebKit::toImpl(renderLayerRef)->normalFlowList());
 }
 
 WKArrayRef WKRenderLayerGetPositiveZOrderList(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->positiveZOrderList());
+    return WebKit::toAPI(WebKit::toImpl(renderLayerRef)->positiveZOrderList());
 }
 
 WKRenderLayerRef WKRenderLayerGetFrameContentsLayer(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(toImpl(renderLayerRef)->frameContentsLayer());
+    return toAPI(WebKit::toImpl(renderLayerRef)->frameContentsLayer());
 }

@@ -1,3 +1,41 @@
+2018-12-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Remove using namespace WebCore and WebKit under WebKit/Shared/API
+        https://bugs.webkit.org/show_bug.cgi?id=192352
+
+        Reviewed by Alex Christensen.
+
+        Removed using namespace statements, and use namespace prefix
+        instead.
+
+        * Shared/API/APIURLRequest.cpp:
+        * Shared/API/APIURLResponse.cpp:
+        * Shared/API/c/WKArray.cpp:
+        * Shared/API/c/WKCertificateInfo.cpp:
+        * Shared/API/c/WKConnectionRef.cpp:
+        * Shared/API/c/WKContextMenuItem.cpp:
+        * Shared/API/c/WKData.cpp:
+        * Shared/API/c/WKDictionary.cpp:
+        * Shared/API/c/WKErrorRef.cpp:
+        * Shared/API/c/WKGeometry.cpp:
+        * Shared/API/c/WKImage.cpp:
+        * Shared/API/c/WKMutableArray.cpp:
+        * Shared/API/c/WKMutableDictionary.cpp:
+        * Shared/API/c/WKNumber.cpp:
+        * Shared/API/c/WKPluginInformation.cpp:
+        * Shared/API/c/WKRenderLayer.cpp:
+        * Shared/API/c/WKRenderObject.cpp:
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        * Shared/API/c/WKString.cpp:
+        * Shared/API/c/WKType.cpp:
+        * Shared/API/c/WKURL.cpp:
+        * Shared/API/c/WKURLRequest.cpp:
+        * Shared/API/c/WKURLResponse.cpp:
+        * Shared/API/c/WKUserContentURLPattern.cpp:
+        * Shared/API/c/cairo/WKImageCairo.cpp:
+        * Shared/API/c/curl/WKCertificateInfoCurl.cpp:
+
 2018-12-04  Alex Christensen  <achristensen@webkit.org>
 
         Remove source application identifiers from NetworkProcessCreationParameters

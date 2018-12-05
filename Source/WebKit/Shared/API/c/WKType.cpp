@@ -29,21 +29,19 @@
 #include "APIObject.h"
 #include "WKAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKGetTypeID(WKTypeRef typeRef)
 {
-    return toAPI(toImpl(typeRef)->type());
+    return WebKit::toAPI(WebKit::toImpl(typeRef)->type());
 }
 
 WKTypeRef WKRetain(WKTypeRef typeRef)
 {
-    toImpl(typeRef)->ref();
+    WebKit::toImpl(typeRef)->ref();
 
     return typeRef;
 }
 
 void WKRelease(WKTypeRef typeRef)
 {
-    toImpl(typeRef)->deref();
+    WebKit::toImpl(typeRef)->deref();
 }
