@@ -1,3 +1,14 @@
+2018-12-05  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=189727
+        <rdar://problem/44584993>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        * platform/ios/TestExpectations:
+
 2018-12-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r238844, r238846, and r238874.

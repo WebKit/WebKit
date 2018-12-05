@@ -1,3 +1,87 @@
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: undefined
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?reject.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?throw due to access control checks.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?throw due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: Returned response is null.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://localhost:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Origin https://localhost:9443 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore due to access control checks.
+CONSOLE MESSAGE: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://localhost:9443&ignore due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py due to access control checks.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
+CONSOLE MESSAGE: FetchEvent.respondWith received an error: TypeError: Credentials flag is true, but Access-Control-Allow-Credentials is not "true".
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443.
 
 PASS Verify CORS XHR of fetch() in a Service Worker 
+PASS test 1: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials false must be FAIL 
+PASS test 2: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials true must be FAIL 
+PASS test 3: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials false must be FAIL 
+PASS test 4: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?reject with credentials true must be FAIL 
+PASS test 5: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials false must be SUCCESS 
+PASS test 6: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials true must be SUCCESS 
+PASS test 7: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials false must be FAIL 
+PASS test 8: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?throw with credentials true must be FAIL 
+PASS test 9: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials false must be FAIL 
+PASS test 10: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials true must be FAIL 
+PASS test 11: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials false must be FAIL 
+PASS test 12: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?resolve-null with credentials true must be FAIL 
+PASS test 13: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials false must be SUCCESS 
+PASS test 14: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials true must be SUCCESS 
+PASS test 15: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials false must be FAIL 
+PASS test 16: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ignore with credentials true must be FAIL 
+PASS test 17: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://localhost:9443&ignore with credentials false must be SUCCESS 
+PASS test 18: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://localhost:9443&ignore with credentials true must be FAIL 
+PASS test 19: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?ACAOrigin=https://localhost:9443&ACACredentials=true&ignore with credentials true must be SUCCESS 
+PASS test 20: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials false must be SUCCESS 
+PASS test 21: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials true must be SUCCESS 
+PASS test 22: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials false must be FAIL 
+PASS test 23: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ignore with credentials true must be FAIL 
+PASS test 24: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://localhost:9443&ignore with credentials false must be STATUS401 
+PASS test 25: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://localhost:9443&ignore with credentials true must be FAIL 
+PASS test 26: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?Auth&ACAOrigin=https://localhost:9443&ACACredentials=true&ignore with credentials true must be SUCCESS 
+PASS test 27: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS 
+PASS test 28: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS 
+PASS test 29: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS 
+PASS test 30: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=same-origin&url=https%3A%2F%2Flocalhost%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be SUCCESS 
+PASS test 31: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL 
+PASS test 32: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL 
+PASS test 33: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL 
+PASS test 34: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=no-cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py with credentials false must be FAIL 
+PASS test 35: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443 with credentials false must be SUCCESS 
+PASS test 36: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443 with credentials true must be FAIL 
+PASS test 37: https://localhost:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue with credentials true must be SUCCESS 
+PASS test 38: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443 with credentials false must be SUCCESS 
+PASS test 39: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443 with credentials true must be FAIL 
+PASS test 40: https://127.0.0.1:9443/service-workers/service-worker/resources/fetch-access-control.py?mode=cors&url=https%3A%2F%2F127.0.0.1%3A9443%2Fservice-workers%2Fservice-worker%2Fresources%2Ffetch-access-control.py%3FACAOrigin%3Dhttps%3A%2F%2Flocalhost%3A9443%26ACACredentials%3Dtrue with credentials true must be SUCCESS 
 

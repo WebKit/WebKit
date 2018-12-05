@@ -263,7 +263,6 @@ imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.any.worker.html [ D
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-mode-worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-to-dataurl.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-security-error.https.html [ DumpJSConsoleLogInStdErr ]

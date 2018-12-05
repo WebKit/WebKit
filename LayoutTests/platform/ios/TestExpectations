@@ -3136,7 +3136,7 @@ webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propaga
 webkit.org/b/189726 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html [ Pass Failure ]
 webkit.org/b/189726 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html [ Pass Failure ]
 
-webkit.org/b/189727 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
+webkit.org/b/189727 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Pass Failure ]
 
 webkit.org/b/187557 media/media-fragments/TC0005.html [ Pass Failure ]
 webkit.org/b/187557 media/media-fragments/TC0006.html [ Pass Failure ]
