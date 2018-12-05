@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeNode.h"

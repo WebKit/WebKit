@@ -361,10 +361,10 @@ bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const Fr
     return true;
 }
 
-ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
+ScrollingNodeID ScrollingCoordinator::uniqueScrollingNodeID()
 {
-    static ScrollingNodeID uniqueScrollLayerID = 1;
-    return uniqueScrollLayerID++;
+    static ScrollingNodeID uniqueScrollingNodeID = 1;
+    return uniqueScrollingNodeID++;
 }
 
 String ScrollingCoordinator::scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior) const

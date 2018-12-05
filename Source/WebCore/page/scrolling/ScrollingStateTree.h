@@ -27,12 +27,14 @@
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
-#include "ScrollingStateFrameScrollingNode.h"
+#include "ScrollingCoordinator.h"
+#include "ScrollingStateNode.h"
 #include <wtf/RefPtr.h>
  
 namespace WebCore {
 
 class AsyncScrollingCoordinator;
+class ScrollingStateFrameScrollingNode;
 
 // The ScrollingStateTree is a tree that managed ScrollingStateNodes. The nodes keep track of the current
 // state of scrolling related properties. Whenever any properties change, the scrolling coordinator
@@ -74,8 +76,8 @@ public:
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
 private:
-    void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&& rootStateNode) { m_rootStateNode = WTFMove(rootStateNode); }
-    void addNode(ScrollingStateNode*);
+    void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
+    void addNode(ScrollingStateNode&);
 
     Ref<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
 

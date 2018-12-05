@@ -29,6 +29,7 @@
 
 #include "ScrollController.h"
 #include "ScrollbarThemeMac.h"
+#include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include <wtf/RetainPtr.h>
 

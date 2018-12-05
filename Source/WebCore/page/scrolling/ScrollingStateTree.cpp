@@ -105,7 +105,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
 #if ENABLE(ASYNC_SCROLLING)
         // If the type has changed, we need to destroy and recreate the node with a new ID.
         if (nodeType != node->nodeType())
-            newNodeID = m_scrollingCoordinator->uniqueScrollLayerID();
+            newNodeID = m_scrollingCoordinator->uniqueScrollingNodeID();
 #endif
 
         // The node is being re-parented. To do that, we'll remove it, and then create a new node.
@@ -196,9 +196,14 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     return treeStateClone;
 }
 
-void ScrollingStateTree::addNode(ScrollingStateNode* node)
+void ScrollingStateTree::setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&& rootStateNode)
 {
-    m_stateNodeMap.add(node->scrollingNodeID(), node);
+    m_rootStateNode = WTFMove(rootStateNode);
+}
+
+void ScrollingStateTree::addNode(ScrollingStateNode& node)
+{
+    m_stateNodeMap.add(node.scrollingNodeID(), &node);
 }
 
 void ScrollingStateTree::removeNodeAndAllDescendants(ScrollingStateNode* node, SubframeNodeRemoval subframeNodeRemoval)

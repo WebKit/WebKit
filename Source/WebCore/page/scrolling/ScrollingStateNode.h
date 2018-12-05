@@ -248,12 +248,12 @@ private:
     void dump(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const;
 
     const ScrollingNodeType m_nodeType;
-    ScrollingNodeID m_nodeID;
-    ChangedProperties m_changedProperties;
+    const ScrollingNodeID m_nodeID;
+    ChangedProperties m_changedProperties { 0 };
 
     ScrollingStateTree& m_scrollingStateTree;
 
-    ScrollingStateNode* m_parent;
+    ScrollingStateNode* m_parent { nullptr };
     std::unique_ptr<Vector<RefPtr<ScrollingStateNode>>> m_children;
 
     LayerRepresentation m_layer;

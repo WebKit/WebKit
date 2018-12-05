@@ -3835,7 +3835,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     LayerScrollCoordinationRole role = scrollCoordinationRoleForNodeType(nodeType);
     ScrollingNodeID nodeID = backing->scrollingNodeIDForRole(role);
     if (!nodeID)
-        nodeID = scrollingCoordinator->uniqueScrollLayerID();
+        nodeID = scrollingCoordinator->uniqueScrollingNodeID();
 
     nodeID = scrollingCoordinator->attachToStateTree(nodeType, nodeID, parentNodeID);
     if (!nodeID)
