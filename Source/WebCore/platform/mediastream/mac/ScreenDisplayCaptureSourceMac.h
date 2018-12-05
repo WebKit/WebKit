@@ -61,7 +61,6 @@ private:
 
     void startProducingData() final;
     void stopProducingData() final;
-    void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
     void commitConfiguration() final;
 
     bool createDisplayStream();
@@ -95,8 +94,6 @@ private:
     mutable Lock m_currentFrameMutex;
     DisplaySurface m_currentFrame;
     RetainPtr<CGDisplayStreamRef> m_displayStream;
-    CGDisplayStreamFrameAvailableHandler m_frameAvailableBlock;
-
     OSObjectPtr<dispatch_queue_t> m_captureQueue;
 
     uint32_t m_displayID { 0 };

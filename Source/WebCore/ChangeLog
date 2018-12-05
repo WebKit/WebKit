@@ -1,3 +1,23 @@
+2018-12-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Cleanup up Mac screen capture class
+        https://bugs.webkit.org/show_bug.cgi?id=192379
+        <rdar://problem/46465458>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, tested manually.
+
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::captureDevices): Initialize Screen devices first so
+        they are first in the list of devices.
+
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream): Cleanup. Always capture at the
+        native screen size to work around a bug.
+        (WebCore::ScreenDisplayCaptureSourceMac::settingsDidChange): Deleted.
+
 2018-12-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r238844, r238846, and r238874.

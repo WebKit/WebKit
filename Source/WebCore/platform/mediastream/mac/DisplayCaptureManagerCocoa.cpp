@@ -52,8 +52,8 @@ const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
 {
     m_devices.clear();
 
-    updateWindowCaptureDevices();
     updateDisplayCaptureDevices();
+    updateWindowCaptureDevices();
 
     return m_devices;
 }
