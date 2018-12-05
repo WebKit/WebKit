@@ -1,3 +1,17 @@
+2018-12-05  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::cachedDocumentWrapper()
+        https://bugs.webkit.org/show_bug.cgi?id=192421
+        <rdar://problem/37114163>
+
+        Reviewed by Alex Christensen.
+
+        Fix potential null defererence of the value returned by toJSDOMWindow(). For example,
+        if the window is frameless, it would return null.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::cachedDocumentWrapper):
+
 2018-12-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Cleanup up Mac screen capture class

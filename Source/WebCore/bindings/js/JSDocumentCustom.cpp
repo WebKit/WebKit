@@ -57,8 +57,12 @@ JSObject* cachedDocumentWrapper(ExecState& state, JSDOMGlobalObject& globalObjec
     if (!window)
         return nullptr;
 
+    auto* documentGlobalObject = toJSDOMWindow(state.vm(), toJS(&state, *window));
+    if (!documentGlobalObject)
+        return nullptr;
+
     // Creating a wrapper for domWindow might have created a wrapper for document as well.
-    return getCachedWrapper(toJSDOMWindow(state.vm(), toJS(&state, *window))->world(), document);
+    return getCachedWrapper(documentGlobalObject->world(), document);
 }
 
 void reportMemoryForDocumentIfFrameless(ExecState& state, Document& document)
