@@ -60,6 +60,7 @@ void NetworkMDNSRegister::unregisterMDNSNames(WebCore::DocumentIdentifier docume
     if (iterator == m_services.end())
         return;
     DNSServiceRefDeallocate(iterator->value);
+    m_services.remove(iterator);
 }
 
 struct PendingRegistrationRequest {
