@@ -152,7 +152,7 @@ void DFA::debugPrintDot() const
             for (unsigned actionIndex = 0; actionIndex < actions.size(); ++actionIndex) {
                 if (actionIndex)
                     dataLogF(", ");
-                dataLogF("%llu", actions[actionIndex]);
+                dataLogF("%" PRIu64, actions[actionIndex]);
             }
         }
         dataLogF(">]");

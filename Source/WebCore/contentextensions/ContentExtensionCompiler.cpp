@@ -427,9 +427,6 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime totalNFAToByteCodeBuildTimeEnd = MonotonicTime::now();
     dataLogF("    Time spent building and compiling the DFAs: %f\n", (totalNFAToByteCodeBuildTimeEnd - totalNFAToByteCodeBuildTimeStart).seconds());
-
-    dataLogF("    Number of machines without condition filters: %d (total bytecode size = %d)\n", machinesWithoutConditionsCount, totalBytecodeSizeForMachinesWithoutConditions);
-    dataLogF("    Number of machines with condition filters: %d (total bytecode size = %d)\n", machinesWithConditionsCount, totalBytecodeSizeForMachinesWithConditions);
 #endif
 
     client.finalize();

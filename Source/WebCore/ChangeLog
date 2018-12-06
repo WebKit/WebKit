@@ -1,3 +1,29 @@
+2018-12-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Content Extensions: Misc fixes to debugging / perf testing code
+        https://bugs.webkit.org/show_bug.cgi?id=192474
+
+        Reviewed by Mark Lam.
+
+        This make it possible to build the content extensions support with the
+        debugging features enabled. In particular, building with
+        CONTENT_EXTENSIONS_PERFORMANCE_REPORTING enabled was broken.
+
+        No new tests needed.
+
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList): Remove usage of removed
+        variables machinesWihthoutConditionsCount,
+        totalBytecodeSizeForMachinesWithoutConditions,
+        machinesWithConditionsCount, and
+        totalBytecodeSizeForMachinesWithConditions.
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::debugPrintDot const):
+        Use "%" PRIu64 instead of "%llu" to format uint64_t values.
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::debugPrintDot const):
+        Use "%" PRIu64 instead of "%llu" to format uint64_t values.
+
 2018-12-06  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused LoaderStrategy::storeDerivedDataToCache and associated dead code
