@@ -1,5 +1,29 @@
 2018-12-05  Alan Coon  <alancoon@apple.com>
 
+        Apply patch. rdar://problem/46085280
+
+    2018-12-05  Brent Fulgham  <bfulgham@apple.com>
+
+            Lifetime of HTMLMediaElement is not properly handled in asynchronous actions
+            https://bugs.webkit.org/show_bug.cgi?id=192087
+            <rdar://problem/45975230>
+
+            Reviewed by Dean Jackson.
+
+            The HTMLMediaElement performs operations that allow arbitrary JavaScript to run. We need to make
+            sure the active media element is protected until those calls complete.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::didFinishInsertingNode):
+            (WebCore::HTMLMediaElement::exitFullscreen):
+            (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured):
+            (WebCore::HTMLMediaElement::scheduleConfigureTextTracks):
+            (WebCore::HTMLMediaElement::scheduleMediaEngineWasUpdated):
+            (WebCore::HTMLMediaElement::scheduleUpdatePlayState):
+            (WebCore::HTMLMediaElement::scheduleUpdateMediaState):
+
+2018-12-05  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/45997392
 
     2018-12-05  Jiewen Tan  <jiewen_tan@apple.com>
