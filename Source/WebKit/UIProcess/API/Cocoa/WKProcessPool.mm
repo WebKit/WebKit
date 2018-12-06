@@ -576,9 +576,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return (_WKDownload *)_processPool->download([webView _page], request)->wrapper();
 }
 
-- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path
+- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView
 {
-    return wrapper(_processPool->resumeDownload(API::Data::createWithoutCopying(resumeData).ptr(), path));
+    return wrapper(_processPool->resumeDownload([webView _page], API::Data::createWithoutCopying(resumeData).ptr(), path));
 }
 
 - (void)_getActivePagesOriginsInWebProcessForTesting:(pid_t)pid completionHandler:(void(^)(NSArray<NSString *> *))completionHandler

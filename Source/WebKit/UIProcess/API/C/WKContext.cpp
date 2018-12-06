@@ -282,7 +282,7 @@ WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, WKURLRequestR
 
 WKDownloadRef WKContextResumeDownload(WKContextRef contextRef, WKDataRef resumeData, WKStringRef path)
 {
-    return toAPI(toImpl(contextRef)->resumeDownload(toImpl(resumeData), toWTFString(path)));
+    return toAPI(toImpl(contextRef)->resumeDownload(nullptr, toImpl(resumeData), toWTFString(path)));
 }
 
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)

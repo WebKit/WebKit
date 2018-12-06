@@ -82,7 +82,7 @@
 - (void)_registerURLSchemeAsCanDisplayOnlyIfCanRequest:(NSString *)scheme WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 - (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateNetworkProcess;

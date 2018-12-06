@@ -189,7 +189,7 @@ public:
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
     DownloadProxy* download(WebPageProxy* initiatingPage, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
-    DownloadProxy* resumeDownload(const API::Data* resumeData, const String& path);
+    DownloadProxy* resumeDownload(WebPageProxy* initiatingPage, const API::Data* resumeData, const String& path);
 
     void setInjectedBundleInitializationUserData(RefPtr<API::Object>&& userData) { m_injectedBundleInitializationUserData = WTFMove(userData); }
 

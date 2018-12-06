@@ -1261,17 +1261,17 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
     return downloadProxy;
 }
 
-DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const String& path)
+DownloadProxy* WebProcessPool::resumeDownload(WebPageProxy* initiatingPage, const API::Data* resumeData, const String& path)
 {
-    auto* downloadProxy = createDownloadProxy(ResourceRequest(), nullptr);
+    auto* downloadProxy = createDownloadProxy(ResourceRequest(), initiatingPage);
+    PAL::SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : PAL::SessionID::defaultSessionID();
 
     SandboxExtension::Handle sandboxExtensionHandle;
     if (!path.isEmpty())
         SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
 
     if (networkProcess()) {
-        // FIXME: If we started a download in an ephemeral session and that session still exists, we should find a way to use that same session.
-        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(PAL::SessionID::defaultSessionID(), downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
+        networkProcess()->send(Messages::NetworkProcess::ResumeDownload(sessionID, downloadProxy->downloadID(), resumeData->dataReference(), path, sandboxExtensionHandle), 0);
         return downloadProxy;
     }
 

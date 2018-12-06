@@ -1,3 +1,25 @@
+2018-12-06  David Quesada  <david_quesada@apple.com>
+
+        -[WKProcessPool _resumeDownloadFromData:path:] should allow specifying the originating web view
+        https://bugs.webkit.org/show_bug.cgi?id=192411
+        rdar://problem/46492487
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextResumeDownload):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _resumeDownloadFromData:path:originatingWebView:]):
+        (-[WKProcessPool _resumeDownloadFromData:path:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::resumeDownload):
+         - Set the originating page of the DownloadProxy.
+         - If the originating page is non-null, use its session ID for the download.
+         - Remove a FIXME. It's possible to do this now by providing the web view whose session
+           should be used for the download.
+        * UIProcess/WebProcessPool.h:
+
 2018-12-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a quick fix after r238919
