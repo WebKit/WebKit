@@ -9,6 +9,10 @@
 <body>
 <div id="mydiv" style="font: 12px 'ahem'">Test</div>
 <script>
+if (window.internals) {
+    internals.clearMemoryCache();
+    internals.invalidateFontCache();
+}
 const waitOnLoad = new Promise((resolve) => {
     window.onload = resolve;
 })
