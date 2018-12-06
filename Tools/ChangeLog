@@ -1,5 +1,17 @@
 2018-12-06  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Ignore case when comparing device types (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=192409
+        <rdar://problem/46491558>
+
+        Unreviewed typo fix.
+
+        * Scripts/webkitpy/xcode/device_type_unittest.py:
+        (DeviceTypeTest.test_comparison_lower_case):
+        (DeviceTypeTest.test_comparsion_lower_case): Deleted.
+
+2018-12-06  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Create device given lower-case DeviceType
         <https://bugs.webkit.org/show_bug.cgi?id=192472>
         <rdar://problem/46532650>

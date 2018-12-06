@@ -144,7 +144,7 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertTrue(DeviceType.from_string('iPhone', Version(11, 1)) in DeviceType.from_string('iPhone', Version(11)))
         self.assertFalse(DeviceType.from_string('iPhone', Version(11)) in DeviceType.from_string('iPhone', Version(11, 1)))
 
-    def test_comparsion_lower_case(self):
+    def test_comparison_lower_case(self):
         self.assertEqual(DeviceType.from_string('iphone X'), DeviceType.from_string('iPhone'))
         self.assertEqual(DeviceType.from_string('iphone'), DeviceType.from_string('iPhone X'))
         self.assertEqual(DeviceType.from_string('iPhone X'), DeviceType.from_string('iphone'))
