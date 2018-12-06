@@ -41,8 +41,10 @@ MockHidService::MockHidService(Observer& observer, const MockWebAuthenticationCo
 
 void MockHidService::platformStartDiscovery()
 {
-    if (!!m_configuration.hid)
+    if (!!m_configuration.hid) {
         deviceAdded(nullptr);
+        return;
+    }
     LOG_ERROR("No hid authenticators is available.");
 }
 
