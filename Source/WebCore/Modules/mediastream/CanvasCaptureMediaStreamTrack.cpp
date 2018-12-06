@@ -143,6 +143,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, co
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
+#if ENABLE(WEBGL)
     // FIXME: We need to preserve drawing buffer as we are currently grabbing frames asynchronously.
     // We should instead add an anchor point for both 2d and 3d contexts where canvas will actually paint.
     // And call canvas observers from that point.
@@ -153,6 +154,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, co
             context.setPreserveDrawingBuffer(true);
         }
     }
+#endif
 
     // FIXME: We should try to generate the frame at the time the screen is being updated.
     if (m_canvasChangedTimer.isActive())

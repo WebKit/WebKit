@@ -1,5 +1,19 @@
 2018-12-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
+        [GStreamer] -DENABLE_VIDEO=ON -DENABLE_OPENGL=OFF still tries to build GstreamerGL
+        https://bugs.webkit.org/show_bug.cgi?id=191998
+
+        Reviewed by Philippe Normand.
+
+        Fix compilation with -DENABLE_VIDEO=ON and -DENABLE_OPENGL=OFF due to GStreamerGL.
+
+        No new tests required. Only fixing the build with certain flags.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged): add required #if ENABLE(WEBGL).
+
+2018-12-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
         REGRESSION(r231043): [GTK] Undefined references to WebCore::LayerRepresentation::* with -DENABLE_OPENGL=OFF builds
         https://bugs.webkit.org/show_bug.cgi?id=191997
 
