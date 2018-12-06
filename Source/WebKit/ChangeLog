@@ -1,3 +1,30 @@
+2018-12-06  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API: share overlay does not stick to the Safari window
+        https://bugs.webkit.org/show_bug.cgi?id=192469
+        <rdar://problem/46074833>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet sharingServicePicker:didChooseSharingService:]):
+        (-[WKShareSheet sharingServicePicker:delegateForSharingService:]):
+        (-[WKShareSheet sharingService:sourceWindowForShareItems:sharingContentScope:]):
+        (-[WKShareSheet sharingService:didFailToShareItems:error:]):
+        (-[WKShareSheet sharingService:didShareItems:]):
+        Implement another NSSharingServicePickerDelegate method to return
+        an *NSSharingService* delegate when needed.
+
+        Implement an NSSharingServiceDelegate method to return the window that
+        the service's UI should attach to.
+
+        Also, instead of notifying the Web Content process when a service is picked
+        (or not) in the NSSharingServicePicker, wait until the share has completed
+        (or failed) to send didComplete. This both makes the return completion
+        value more accurate (matching iOS, if you cancel the share during the
+        recipient choice step, it will now fail), and avoids explicitly tearing
+        down the NSSharingServicePicker too early, which breaks the UI attaching mechanism.
+
 2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard

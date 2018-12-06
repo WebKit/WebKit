@@ -42,7 +42,7 @@
 #endif
 
 #if PLATFORM(MAC)
-@interface WKShareSheet () <NSSharingServicePickerDelegate>
+@interface WKShareSheet () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 @end
 #endif
 
@@ -124,9 +124,35 @@
 #if PLATFORM(MAC)
 - (void)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker didChooseSharingService:(NSSharingService *)service
 {
-    [self _didCompleteWithSuccess:!!service];
+    if (service)
+        return;
+
+    [self _didCompleteWithSuccess:NO];
     [self dispatchDidDismiss];
 }
+
+- (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
+{
+    return self;
+}
+
+- (NSWindow *)sharingService:(NSSharingService *)sharingService sourceWindowForShareItems:(NSArray *)items sharingContentScope:(NSSharingContentScope *)sharingContentScope
+{
+    return [_webView window];
+}
+
+- (void)sharingService:(NSSharingService *)sharingService didFailToShareItems:(NSArray *)items error:(NSError *)error
+{
+    [self _didCompleteWithSuccess:NO];
+    [self dispatchDidDismiss];
+}
+
+- (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
+{
+    [self _didCompleteWithSuccess:YES];
+    [self dispatchDidDismiss];
+}
+
 #endif
 
 - (void)_didCompleteWithSuccess:(BOOL)success
