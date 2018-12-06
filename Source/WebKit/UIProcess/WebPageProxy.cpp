@@ -160,6 +160,7 @@
 #include <WebCore/TextIndicator.h>
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
+#include <WebCore/WritingDirection.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SystemTracing.h>
@@ -1854,20 +1855,34 @@ void WebPageProxy::validateCommand(const String& commandName, WTF::Function<void
 
 void WebPageProxy::increaseListLevel()
 {
-    if (isValid())
-        m_process->send(Messages::WebPage::IncreaseListLevel(), m_pageID);
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::IncreaseListLevel(), m_pageID);
 }
 
 void WebPageProxy::decreaseListLevel()
 {
-    if (isValid())
-        m_process->send(Messages::WebPage::DecreaseListLevel(), m_pageID);
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::DecreaseListLevel(), m_pageID);
 }
 
 void WebPageProxy::changeListType()
 {
-    if (isValid())
-        m_process->send(Messages::WebPage::ChangeListType(), m_pageID);
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::ChangeListType(), m_pageID);
+}
+
+void WebPageProxy::setBaseWritingDirection(WritingDirection direction)
+{
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetBaseWritingDirection(direction), m_pageID);
 }
 
 void WebPageProxy::updateFontAttributesAfterEditorStateChange()
@@ -6423,6 +6438,8 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
+    m_deferredNodeAssistanceArguments = nullptr;
     m_activityToken = nullptr;
 #endif
 

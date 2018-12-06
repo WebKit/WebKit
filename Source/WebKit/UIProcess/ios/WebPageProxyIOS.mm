@@ -895,6 +895,8 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
 
 void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData& userData)
 {
+    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = true;
+
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
         m_deferredNodeAssistanceArguments = std::make_unique<NodeAssistanceArguments>(NodeAssistanceArguments { information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject });
@@ -906,6 +908,7 @@ void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information
 
 void WebPageProxy::stopAssistingNode()
 {
+    m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
     m_deferredNodeAssistanceArguments = nullptr;
     pageClient().stopAssistingNode();
 }
@@ -1054,6 +1057,11 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     
     m_editorState = editorState;
+
+    if (m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement && !m_editorState.isMissingPostLayoutData) {
+        pageClient().didReceiveEditorStateUpdateAfterFocus();
+        m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
+    }
     
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
     if (couldChangeSecureInputState && !editorState.selectionIsNone)

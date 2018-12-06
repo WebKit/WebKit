@@ -476,4 +476,13 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => testRunner.runUIScript(`uiController.setMinimumEffectiveWidth(${effectiveWidth})`, resolve));
     }
+
+    static setKeyboardInputModeIdentifier(identifier)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        const escapedIdentifier = identifier.replace(/`/g, "\\`");
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setKeyboardInputModeIdentifier(\`${escapedIdentifier}\`)`, resolve));
+    }
 }

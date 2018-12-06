@@ -103,6 +103,8 @@ public:
     bool drawsBackground() const;
     void setDrawsBackground(bool);
 
+    void setEditable(bool);
+
     void removeFromWindow();
     void addToWindow();
 

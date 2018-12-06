@@ -140,6 +140,7 @@ private:
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) override;
     void stopAssistingNode() override;
+    void didReceiveEditorStateUpdateAfterFocus() override;
     bool isAssistingNode() override;
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;

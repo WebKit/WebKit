@@ -1257,6 +1257,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.shouldShowSpellCheckingDots = parseBooleanTestHeaderValue(value);
         else if (key == "enableEditableImages")
             testOptions.enableEditableImages = parseBooleanTestHeaderValue(value);
+        else if (key == "editable")
+            testOptions.editable = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

@@ -578,6 +578,11 @@ void PageClientImpl::stopAssistingNode()
     [m_contentView _stopAssistingNode];
 }
 
+void PageClientImpl::didReceiveEditorStateUpdateAfterFocus()
+{
+    [m_contentView _didReceiveEditorStateUpdateAfterFocus];
+}
+
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
 {
     [m_contentView _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:contextUID];

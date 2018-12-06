@@ -388,6 +388,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_disableDoubleTapGesturesDuringTapIfNecessary:(uint64_t)requestID;
 - (void)_startAssistingNode:(const WebKit::AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject;
 - (void)_stopAssistingNode;
+- (void)_didReceiveEditorStateUpdateAfterFocus;
 - (void)_selectionChanged;
 - (void)_updateChangedSelection;
 - (BOOL)_interpretKeyEvent:(::WebEvent *)theEvent isCharEvent:(BOOL)isCharEvent;

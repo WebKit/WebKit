@@ -219,6 +219,7 @@
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 #include <WebCore/WebGLStateTracker.h>
+#include <WebCore/WritingDirection.h>
 #include <WebCore/markup.h>
 #include <pal/SessionID.h>
 #include <wtf/ProcessID.h>
@@ -1162,6 +1163,11 @@ void WebPage::decreaseListLevel()
 void WebPage::changeListType()
 {
     m_page->focusController().focusedOrMainFrame().editor().changeSelectionListType();
+}
+
+void WebPage::setBaseWritingDirection(WritingDirection direction)
+{
+    m_page->focusController().focusedOrMainFrame().editor().setBaseWritingDirection(direction);
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)

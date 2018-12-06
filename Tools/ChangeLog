@@ -1,3 +1,52 @@
+2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=187554
+        <rdar://problem/42075638>
+
+        Reviewed by Tim Horton.
+
+        Add support for simulating the keyboard input mode in layout tests using UIScriptController, as well as a new
+        `TestOption` to make the web view editable.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setKeyboardInputModeIdentifier):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setKeyboardInputModeIdentifier):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::overriddenKeyboardInputMode const):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::setEditable):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::setEditable):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::swizzleCurrentInputMode):
+        (WTR::TestController::setKeyboardInputModeIdentifier):
+
+        Swizzle out several `UIKeyboardInputModeController` methods in order to convince UIKit that the user has
+        selected a `UIKeyboardInputMode` corresponding to the given identifier. The call to
+        `-prepareKeyboardInputModeFromPreferences:` is also necessary on iOS 12 in order to update cached writing
+        direction state in UIKit.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setKeyboardInputModeIdentifier):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::setEditable):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::setEditable):
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::setEditable):
+
 2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Share ClassMethodSwizzler and InstanceMethodSwizzler between TestWebKitAPI and WebKitTestRunner

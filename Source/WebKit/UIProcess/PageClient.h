@@ -363,6 +363,7 @@ public:
 
     virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) = 0;
     virtual void stopAssistingNode() = 0;
+    virtual void didReceiveEditorStateUpdateAfterFocus() = 0;
     virtual bool isAssistingNode() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;
     virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;

@@ -294,6 +294,15 @@ void PlatformWebView::changeWindowScaleIfNeeded(float)
     // Retina only surface.
 }
 
+void PlatformWebView::setEditable(bool editable)
+{
+#if WK_API_ENABLED
+    m_view._editable = editable;
+#else
+    UNUSED_PARAM(editable);
+#endif
+}
+
 bool PlatformWebView::drawsBackground() const
 {
     return false;

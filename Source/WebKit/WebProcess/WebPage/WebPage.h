@@ -169,6 +169,7 @@ class VisiblePosition;
 enum SyntheticClickType : int8_t;
 enum class ShouldTreatAsContinuingLoad : bool;
 enum class TextIndicatorPresentationTransition : uint8_t;
+enum class WritingDirection : uint8_t;
 
 struct BackForwardItemIdentifier;
 struct CompositionUnderline;
@@ -1214,6 +1215,8 @@ private:
     void increaseListLevel();
     void decreaseListLevel();
     void changeListType();
+
+    void setBaseWritingDirection(WebCore::WritingDirection);
 
     void setNeedsFontAttributes(bool);
 

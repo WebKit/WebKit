@@ -212,6 +212,15 @@ void PlatformWebView::setDrawsBackground(bool drawsBackground)
 #endif
 }
 
+void PlatformWebView::setEditable(bool editable)
+{
+#if WK_API_ENABLED
+    m_view._editable = editable;
+#else
+    UNUSED_PARAM(editable);
+#endif
+}
+
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     [platformView() display];

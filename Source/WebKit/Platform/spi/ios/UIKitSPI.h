@@ -913,6 +913,7 @@ typedef enum {
 @end
 
 @interface UIKeyboardInputMode : UITextInputMode <NSCopying>
++ (UIKeyboardInputMode *)keyboardInputModeWithIdentifier:(NSString *)identifier;
 @property (nonatomic, readonly, retain) NSArray <NSString *> *multilingualLanguages;
 @property (nonatomic, readonly, retain) NSString *languageWithRegion;
 @end
@@ -1060,6 +1061,12 @@ typedef NSInteger UICompositingMode;
 - (int)_endIgnoringReloadInputViews;
 - (void)forceReloadInputViews;
 - (CGFloat)getVerticalOverlapForView:(UIView *)view usingKeyboardInfo:(NSDictionary *)info;
+@end
+
+@interface UIKeyboardImpl (IPI)
+- (void)setInitialDirection;
+- (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
+@property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 
 @interface _UILayerHostView : UIView

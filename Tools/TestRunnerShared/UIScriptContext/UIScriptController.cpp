@@ -510,6 +510,10 @@ JSObjectRef UIScriptController::attachmentInfo(JSStringRef)
     return nullptr;
 }
 
+void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef)
+{
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

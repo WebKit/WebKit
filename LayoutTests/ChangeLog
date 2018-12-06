@@ -1,3 +1,26 @@
+2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=187554
+        <rdar://problem/42075638>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that when focusing an editable WKWebView using a right-to-left keyboard input
+        mode, we will set the base writing direction to be right-to-left, and vice versa.
+
+        * TestExpectations:
+        * editing/input/ios/rtl-keyboard-input-on-focus-expected.txt: Added.
+        * editing/input/ios/rtl-keyboard-input-on-focus.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * resources/ui-helper.js:
+
+        Add a UIHelper method to set the keyboard input mode to the given identifier. Example identifiers are "en_US"
+        (the default U.S. English keyboard) and "he_IL" (the Hebrew keyboard, which is right-to-left).
+
+        (window.UIHelper.setKeyboardInputModeIdentifier):
+        (window.UIHelper):
+
 2018-12-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Layout Test http/tests/misc/resource-timing-resolution.html is a flaky failure

@@ -222,6 +222,8 @@ messages -> WebPage LegacyReceiver {
     DecreaseListLevel()
     ChangeListType()
 
+    SetBaseWritingDirection(enum:uint8_t WebCore::WritingDirection direction)
+
     SetNeedsFontAttributes(bool needsFontAttributes)
 
     RequestFontAttributesAtSelectionStart(WebKit::CallbackID callbackID)

@@ -171,6 +171,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
     if (options.punchOutWhiteBackgroundsInDarkMode)
         m_mainWebView->setDrawsBackground(false);
+
+    if (options.editable)
+        m_mainWebView->setEditable(true);
 #else
     m_mainWebView = std::make_unique<PlatformWebView>(globalWebViewConfiguration, options);
 #endif

@@ -92,6 +92,7 @@
 #import <WebCore/TextIndicator.h>
 #import <WebCore/VisibleSelection.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/WritingDirection.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
@@ -3582,16 +3583,34 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return nil;
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (UITextWritingDirection)baseWritingDirectionForPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
+- (NSWritingDirection)baseWritingDirectionForPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
 {
-    return UITextWritingDirectionLeftToRight;
+    return NSWritingDirectionLeftToRight;
 }
 
-- (void)setBaseWritingDirection:(UITextWritingDirection)writingDirection forRange:(UITextRange *)range
+static WritingDirection coreWritingDirection(NSWritingDirection direction)
 {
+    switch (direction) {
+    case NSWritingDirectionNatural:
+        return WritingDirection::Natural;
+    case NSWritingDirectionLeftToRight:
+        return WritingDirection::LeftToRight;
+    case NSWritingDirectionRightToLeft:
+        return WritingDirection::RightToLeft;
+    default:
+        ASSERT_NOT_REACHED();
+        return WritingDirection::Natural;
+    }
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction forRange:(UITextRange *)range
+{
+    if (range && ![range isEqual:self.selectedTextRange]) {
+        // We currently only support changing the base writing direction at the selection.
+        return;
+    }
+    _page->setBaseWritingDirection(coreWritingDirection(direction));
+}
 
 - (CGRect)firstRectForRange:(UITextRange *)range
 {
@@ -4511,6 +4530,23 @@ static bool isAssistableInputType(InputType type)
     [_webView didEndFormControlInteraction];
 
     [self _stopSuppressingSelectionAssistantForReason:FocusedElementIsTransparent];
+}
+
+- (void)_didReceiveEditorStateUpdateAfterFocus
+{
+    if (!_page->isEditable())
+        return;
+
+    auto& editorState = _page->editorState();
+    if (editorState.selectionIsNone || editorState.selectionIsRange)
+        return;
+
+    UIKeyboardImpl *keyboard = UIKeyboardImpl.activeInstance;
+    if (keyboard.delegate != self)
+        return;
+
+    // Synchronize the keyboard's writing direction with the newly received EditorState.
+    [keyboard setInitialDirection];
 }
 
 - (void)updateCurrentAssistedNodeInformation:(Function<void(bool didUpdate)>&&)callback

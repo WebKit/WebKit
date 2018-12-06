@@ -178,6 +178,7 @@ enum class HasInsecureContent : bool;
 enum class NotificationDirection : uint8_t;
 enum class ShouldSample : bool;
 enum class ShouldTreatAsContinuingLoad : bool;
+enum class WritingDirection : uint8_t;
 
 struct ApplicationManifest;
 struct BackForwardItemIdentifier;
@@ -562,6 +563,8 @@ public:
     void increaseListLevel();
     void decreaseListLevel();
     void changeListType();
+
+    void setBaseWritingDirection(WebCore::WritingDirection);
 
     std::optional<WebCore::FontAttributes> cachedFontAttributesAtSelectionStart() const { return m_cachedFontAttributesAtSelectionStart; }
 
@@ -1765,6 +1768,7 @@ private:
 
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData&);
     void stopAssistingNode();
+    void didReceiveEditorStateUpdateAfterFocus();
 
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
@@ -2252,6 +2256,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
+    bool m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement { false };
     bool m_forceAlwaysUserScalable { false };
     WebCore::FloatSize m_viewportConfigurationViewLayoutSize;
     double m_viewportConfigurationLayoutSizeScaleFactor { 1 };

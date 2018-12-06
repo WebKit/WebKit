@@ -171,6 +171,8 @@ public:
     void setDefaultCalendarType(JSStringRef calendarIdentifier);
     JSObjectRef inputViewBounds() const;
 
+    void setKeyboardInputModeIdentifier(JSStringRef);
+
     void replaceTextAtRange(JSStringRef, int location, int length);
     void removeAllDynamicDictionaries();
     

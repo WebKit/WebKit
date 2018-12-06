@@ -116,6 +116,9 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
     cocoaResetStateToConsistentValues(options);
 
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
+
+    m_inputModeSwizzlers.clear();
+    m_overriddenKeyboardInputMode = nil;
     
     BOOL shouldRestoreFirstResponder = NO;
     if (PlatformWebView* platformWebView = mainWebView()) {
@@ -196,6 +199,33 @@ const char* TestController::platformLibraryPathForTesting()
 void TestController::setHidden(bool)
 {
     // FIXME: implement for iOS
+}
+
+static UIKeyboardInputMode *swizzleCurrentInputMode()
+{
+    return TestController::singleton().overriddenKeyboardInputMode();
+}
+
+static NSArray<UIKeyboardInputMode *> *swizzleActiveInputModes()
+{
+    return @[ TestController::singleton().overriddenKeyboardInputMode() ];
+}
+
+void TestController::setKeyboardInputModeIdentifier(const String& identifier)
+{
+    m_inputModeSwizzlers.clear();
+    m_overriddenKeyboardInputMode = [UIKeyboardInputMode keyboardInputModeWithIdentifier:identifier];
+    if (!m_overriddenKeyboardInputMode) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto controllerClass = UIKeyboardInputModeController.class;
+    m_inputModeSwizzlers.reserveCapacity(3);
+    m_inputModeSwizzlers.uncheckedAppend(std::make_unique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputMode), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
+    m_inputModeSwizzlers.uncheckedAppend(std::make_unique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputModeInPreference), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
+    m_inputModeSwizzlers.uncheckedAppend(std::make_unique<InstanceMethodSwizzler>(controllerClass, @selector(activeInputModes), reinterpret_cast<IMP>(swizzleActiveInputModes)));
+    [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:nil];
 }
 
 } // namespace WTR

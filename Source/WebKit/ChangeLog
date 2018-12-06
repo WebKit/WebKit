@@ -1,3 +1,70 @@
+2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=187554
+        <rdar://problem/42075638>
+
+        Reviewed by Tim Horton.
+
+        Add support for automatically switching the base writing direction to the default writing direction with respect
+        to the current keyboard in an editable WKWebView by implementing `-setBaseWritingDirection:forRange:`. On iOS 12
+        and earlier, UIKit invokes this protocol method whenever the keyboard is changed to one with a different writing
+        direction, although in some other versions of iOS, this only happens when first focusing an editable area.
+
+        Test: editing/input/ios/rtl-keyboard-input-on-focus.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Declare UIKeyboardImpl IPI methods mostly for use in WebKitTestRunner (with the exception of
+        `-setInitialDirection`, which we may invoke when we receive the first post-layout EditorState update after
+        focusing an editable element).
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::increaseListLevel):
+        (WebKit::WebPageProxy::decreaseListLevel):
+        (WebKit::WebPageProxy::changeListType):
+        (WebKit::WebPageProxy::setBaseWritingDirection):
+
+        Drive-by style fixes: make these bail and return early if `!isValid()`.
+
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+
+        Reset assisted node state in the UI process upon web process termination.
+
+        * UIProcess/WebPageProxy.h:
+
+        Add plumbing for `setBaseWritingDirection`, from `WebPageProxy` to `WebPage` to `Editor`.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didReceiveEditorStateUpdateAfterFocus):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView baseWritingDirectionForPosition:inDirection:]):
+        (coreWritingDirection):
+        (-[WKContentView setBaseWritingDirection:forRange:]):
+
+        Support `-setBaseWritingDirectionForPosition:forRange:`, but only in the case where the given range is the
+        selected range. This is all that's currently needed to fulfill the requirements in <rdar://problem/42075638>,
+        though we could potentially add full support for this in the future by mapping the given text range to a DOM
+        range and moving the selection prior to setting the base writing direction.
+
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]):
+
+        Add a hook to notify WKContentView when the first post-layout EditorState has been received in the UI process.
+        When this is invoked, if the web view is editable and the selection is not a range, we call into `UIKeyboardImpl`
+        to change the initial writing direction if necessary.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        (WebKit::WebPageProxy::stopAssistingNode):
+        (WebKit::WebPageProxy::editorStateChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setBaseWritingDirection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-12-06  David Quesada  <david_quesada@apple.com>
 
         -[WKProcessPool _resumeDownloadFromData:path:] should allow specifying the originating web view

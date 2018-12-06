@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true, editable=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+    function appendOutput(string) {
+        let pre = document.createElement("pre");
+        pre.textContent = string;
+        document.body.appendChild(pre);
+    }
+
+    beforeInputEvents = [];
+    inputEvents = [];
+    eventNumber = 0;
+
+    async function run()
+    {
+        script.remove();
+
+        document.body.addEventListener("beforeinput", event => {
+            beforeInputEvents.push({
+                "inputType": event.inputType,
+                "data": event.data,
+                "order": ++eventNumber
+            });
+        });
+
+        document.body.addEventListener("input", event => {
+            inputEvents.push({
+                "inputType": event.inputType,
+                "data": event.data,
+                "order": ++eventNumber
+            });
+        });
+
+        await UIHelper.setKeyboardInputModeIdentifier("he_IL");
+        await UIHelper.activateAndWaitForInputSessionAt(100, 250);
+        await UIHelper.ensurePresentationUpdate();
+        const markupUsingHebrewKeyboard = document.body.innerHTML;
+
+        document.body.blur();
+        await UIHelper.waitForKeyboardToHide();
+        await UIHelper.setKeyboardInputModeIdentifier("en_US");
+        await UIHelper.activateAndWaitForInputSessionAt(100, 250);
+        await UIHelper.ensurePresentationUpdate();
+        const markupUsingEnglishKeyboard = document.body.innerHTML;
+
+        appendOutput(`Using Hebrew keyboard: ${markupUsingHebrewKeyboard}`);
+        appendOutput(`Using English keyboard: ${markupUsingEnglishKeyboard}`);
+        appendOutput(`Observed 'beforeinput' events: ${JSON.stringify(beforeInputEvents, null, 4)}`);
+        appendOutput(`Observed 'input' events: ${JSON.stringify(inputEvents, null, 4)}`);
+        testRunner.notifyDone();
+    }
+    </script>
+</head>
+<body onload="run()">
+    <div><br></div>
+    <div><br></div>
+</body>
+<script id="script">
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+} else {
+    const description = document.createElement("p");
+    description.textContent = "Verifies that focusing an editable area with an RTL keyboard switches text direction to RTL. "
+        + "To test manually, switch to a Hebrew keyboard and focus the editable area. "
+        + "The editable area should be made RTL.";
+    document.body.prepend(description);
+}
+</script>
+</html>

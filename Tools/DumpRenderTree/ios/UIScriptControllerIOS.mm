@@ -436,6 +436,10 @@ JSObjectRef UIScriptController::attachmentInfo(JSStringRef)
     return nullptr;
 }
 
+void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef)
+{
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -258,6 +258,8 @@ interface UIScriptController {
     void setDefaultCalendarType(DOMString calendarIdentifier);
     readonly attribute object inputViewBounds;
 
+    void setKeyboardInputModeIdentifier(DOMString identifier);
+
     void replaceTextAtRange(DOMString text, long location, long length);
     void removeAllDynamicDictionaries();
 

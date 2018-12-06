@@ -259,4 +259,8 @@ void PlatformWebView::setDrawsBackground(bool)
 {
 }
 
+void PlatformWebView::setEditable(bool)
+{
+}
+
 } // namespace WTR

@@ -40,9 +40,11 @@
 
 #if PLATFORM(COCOA)
 #include "ClassMethodSwizzler.h"
+#include "InstanceMethodSwizzler.h"
 #endif
 
 OBJC_CLASS NSString;
+OBJC_CLASS UIKeyboardInputMode;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -270,6 +272,12 @@ public:
     RetainPtr<NSString> getOverriddenCalendarIdentifier() const;
     void setDefaultCalendarType(NSString *identifier);
 #endif // PLATFORM(COCOA)
+
+#if PLATFORM(IOS_FAMILY)
+    void setKeyboardInputModeIdentifier(const String&);
+    UIKeyboardInputMode *overriddenKeyboardInputMode() const { return m_overriddenKeyboardInputMode.get(); }
+#endif
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(WKContextConfigurationRef);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration() const;
@@ -440,6 +448,11 @@ private:
     std::unique_ptr<PlatformWebView> m_mainWebView;
     WKRetainPtr<WKContextRef> m_context;
     WKRetainPtr<WKPageGroupRef> m_pageGroup;
+
+#if PLATFORM(IOS_FAMILY)
+    Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
+    RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
+#endif
 
     enum State {
         Initial,
