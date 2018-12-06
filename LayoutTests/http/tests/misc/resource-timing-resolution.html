@@ -18,7 +18,6 @@ window.addEventListener("load", function() {
     var entries = performance.getEntries();
     t0 = entries[0].fetchStart;
     t1 = entries[1].fetchStart;
-    shouldBe("t0 !== t1", "true");
 
     var expectedResolutionMilliseconds = 0.005;
     var integerMultipleOfResolution = (t1 - t0) / expectedResolutionMilliseconds;

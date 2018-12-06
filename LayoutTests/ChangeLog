@@ -1,3 +1,19 @@
+2018-12-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Layout Test http/tests/misc/resource-timing-resolution.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=181957
+
+        Reviewed by Youenn Fablet.
+
+        Since the timing information is a multiplier of a small delta, it is likely that
+        two timing information are the same as they are so close that fall into the same
+        bucket. Therefore, this patch releases the check of 't0 !== t1'.
+
+        * http/tests/misc/resource-timing-resolution-expected.txt:
+        * http/tests/misc/resource-timing-resolution.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-12-06  Truitt Savell  <tsavell@apple.com>
 
         imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html is flaky timeout
