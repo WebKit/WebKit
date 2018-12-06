@@ -1,3 +1,17 @@
+2018-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Add MarginCollapse::establishesBlockFormattingContext
+        https://bugs.webkit.org/show_bug.cgi?id=192297
+
+        Reviewed by Antti Koivisto.
+
+        WebKit treats the document element renderer as a block formatting context root.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::establishesBlockFormattingContext):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent):
+
 2018-12-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
 
         [GStreamer] -DENABLE_VIDEO=ON -DENABLE_OPENGL=OFF still tries to build GstreamerGL

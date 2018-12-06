@@ -69,6 +69,15 @@ static bool hasPaddingAfter(const Box& layoutBox)
     return hasPadding(layoutBox.style().paddingAfter());
 }
 
+static bool establishesBlockFormattingContext(const Box& layoutBox)
+{
+    // WebKit treats the document element renderer as a block formatting context root. It probably only impacts margin collapsing, so let's not do
+    // a layout wide quirk on this for now.
+    if (layoutBox.isDocumentBox())
+        return true;
+    return layoutBox.establishesBlockFormattingContext();
+}
+
 static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidateMarginValue)
 {
     if (!candidateMarginValue)
@@ -131,14 +140,9 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithP
     if (layoutBox.previousInFlowSibling())
         return false;
 
-    // We never margin collapse the initial containing block.
-    ASSERT(layoutBox.parent());
     auto& parent = *layoutBox.parent();
-    if (parent.establishesBlockFormattingContext())
-        return false;
-
-    // Margins of the root element's box do not collapse.
-    if (parent.isDocumentBox() || parent.isInitialContainingBlock())
+    // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children
+    if (establishesBlockFormattingContext(parent))
         return false;
 
     if (hasBorderBefore(parent))
@@ -308,18 +312,13 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     if (isMarginBottomCollapsedThrough(layoutBox))
         return false;
 
-    // We never margin collapse the initial containing block.
-    ASSERT(layoutBox.parent());
-    auto& parent = *layoutBox.parent();
     // Only the last inlflow child collapses with parent.
     if (layoutBox.nextInFlowSibling())
         return false;
 
-    if (parent.establishesBlockFormattingContext())
-        return false;
-
-    // Margins of the root element's box do not collapse.
-    if (parent.isDocumentBox() || parent.isInitialContainingBlock())
+    auto& parent = *layoutBox.parent();
+    // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children
+    if (establishesBlockFormattingContext(parent))
         return false;
 
     if (hasBorderBefore(parent))
