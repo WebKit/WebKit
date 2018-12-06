@@ -1,3 +1,24 @@
+2018-12-05  Mark Lam  <mark.lam@apple.com>
+
+        speculationFromCell() should speculate non-Identifier strings as SpecString instead of SpecStringVar.
+        https://bugs.webkit.org/show_bug.cgi?id=192441
+        <rdar://problem/46480355>
+
+        Reviewed by Saam Barati.
+
+        This is because a regular String (non-Identifier) can be converted into an
+        Identifier.  During DFG/FTL compilation, AbstractValue::checkConsistency() may
+        expect a value to be of type SpecStringVar, but the mutator thread may have
+        converted the string into an Identifier.  This creates a race where
+        AbstractValue::checkConsistency() may fail because it sees a SpecStringIdent when
+        it expects the a SpecStringVar.  
+
+        The fix is to speculate non-Identifier strings as type SpecString which allows it
+        to be SpecStringVar or SpecStringIndent.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromCell):
+
 2018-12-04  Mark Lam  <mark.lam@apple.com>
 
         DFG's StrengthReduction phase should not reduce Construct into DirectContruct when the executable does not have constructAbility.
