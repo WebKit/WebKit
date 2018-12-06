@@ -26,6 +26,7 @@ from webkitpy.common.version import Version
 from webkitpy.port.watch_simulator import WatchSimulatorPort
 from webkitpy.port import watch_testcase
 from webkitpy.tool.mocktool import MockOptions
+from webkitpy.xcode.device_type import DeviceType
 
 
 class WatchSimulatorTest(watch_testcase.WatchTest):
@@ -74,3 +75,7 @@ class WatchSimulatorTest(watch_testcase.WatchTest):
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
         expected_stdout = "['xcrun', '--sdk', 'watchsimulator', '-find', 'test']\n"
         OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)
+
+    def test_max_child_processes(self):
+        port = self.make_port()
+        self.assertEqual(port.max_child_processes(DeviceType.from_string('iPhone')), 0)

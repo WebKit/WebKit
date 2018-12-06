@@ -27,6 +27,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.version import Version
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
+from webkitpy.xcode.device_type import DeviceType
 
 
 class IOSSimulatorTest(ios_testcase.IOSTest):
@@ -115,3 +116,7 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
         self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/ios-wk2')
         self.assertEqual(search_path[6], '/mock-checkout/LayoutTests/platform/ios')
         self.assertEqual(search_path[7], '/mock-checkout/LayoutTests/platform/wk2')
+
+    def test_max_child_processes(self):
+        port = self.make_port()
+        self.assertEqual(port.max_child_processes(DeviceType.from_string('Apple Watch')), 0)

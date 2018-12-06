@@ -684,3 +684,8 @@ MOCK output of child process
     def test_additional_platform_directory(self):
         port = self.make_port(options=MockOptions(additional_platform_directory=['/tmp/foo']))
         self.assertEqual(port.baseline_search_path()[0], '/tmp/foo')
+
+    def test_max_child_processes(self):
+        port = self.make_port()
+        self.assertEqual(port.max_child_processes(True), 0)
+        self.assertEqual(port.max_child_processes(), float('inf'))

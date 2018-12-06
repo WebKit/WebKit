@@ -1,5 +1,38 @@
 2018-12-06  Jonathan Bedard  <jbedard@apple.com>
 
+        REGRESSION: run-webkit-tests may fail when using booted simulators
+        https://bugs.webkit.org/show_bug.cgi?id=192470
+        <rdar://problem/46532001>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Logging uses the number of child processes to print out information about how efficiently tests
+        were sharded after the fact. This number is the most meaningful if it is the maximum number of child processes used.
+        * Scripts/webkitpy/port/base.py:
+        (Port.max_child_processes): By default, Ports do not support running on any specific kind of device.
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort.default_child_processes): Rather than using the currently initialized devices as a proxy for how many
+        child processes are being used, check the device manager every time. Regardless of which devices are attached or
+        available, iOS cannot boot watchOS devices and vice-versa. dedicated_simulators is not a known argument to
+        device_count_for_type, use use_booted_simulator instead.
+        (DevicePort.max_child_processes): Simulators can boot more devices than what is specified by device_count_for_type,
+        but, if no devices are available, then max_child_processes should return 0 even for simulators.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest):
+        (IOSDeviceTest.test_max_child_processes):
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest):
+        (IOSSimulatorTest.test_max_child_processes):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.test_max_child_processes):
+        * Scripts/webkitpy/port/watch_simulator_unittest.py:
+        (WatchSimulatorTest):
+        (WatchSimulatorTest.test_max_child_processes):
+
+2018-12-06  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Ignore case when comparing device types (Follow-up fix)
         https://bugs.webkit.org/show_bug.cgi?id=192409
         <rdar://problem/46491558>

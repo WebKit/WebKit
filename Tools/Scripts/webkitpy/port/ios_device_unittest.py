@@ -112,3 +112,6 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/ios-wk2')
         self.assertEqual(search_path[6], '/mock-checkout/LayoutTests/platform/ios')
         self.assertEqual(search_path[7], '/mock-checkout/LayoutTests/platform/wk2')
+
+    def test_max_child_processes(self):
+        pass

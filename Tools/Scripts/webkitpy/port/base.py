@@ -181,8 +181,10 @@ class Port(object):
         """Return the number of DumpRenderTree instances to use for this port."""
         return self._executive.cpu_count()
 
-    def max_child_processes(self, **kwargs):
+    def max_child_processes(self, device_type=None):
         """Forbid the user from specifying more than this number of child processes"""
+        if device_type:
+            return 0
         return float('inf')
 
     def worker_startup_delay_secs(self):

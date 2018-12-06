@@ -115,18 +115,25 @@ class DevicePort(DarwinPort):
     def default_child_processes(self, device_type=None):
         if not self.DEVICE_MANAGER:
             raise RuntimeError(self.NO_DEVICE_MANAGER)
-        if self.DEVICE_MANAGER.INITIALIZED_DEVICES:
-            return len(self.DEVICE_MANAGER.INITIALIZED_DEVICES)
+
+        # FIXME Checking software variant is important for simulators, otherwise an iOS port could boot a watchOS simulator.
+        # Really, the DEFAULT_DEVICE_TYPE for simulators should be a general instead of specific type, then this code would
+        # explicitly compare against device_type
+        device_type = self._device_type_with_version(device_type)
+        if device_type.software_variant and self.DEFAULT_DEVICE_TYPE.software_variant != device_type.software_variant:
+            return 0
+
         return self.DEVICE_MANAGER.device_count_for_type(
             self._device_type_with_version(device_type),
             host=self.host,
-            dedicated_simulators=not self.get_option('dedicated_simulators', False),
+            use_booted_simulator=not self.get_option('dedicated_simulators', False),
         )
 
     def max_child_processes(self, device_type=None):
-        if self.DEVICE_MANAGER == SimulatedDeviceManager:
-            return super(DevicePort, self).max_child_processes(device_type=device_type)
-        return self.default_child_processes(device_type=device_type)
+        result = self.default_child_processes(device_type=device_type)
+        if result and self.DEVICE_MANAGER == SimulatedDeviceManager:
+            return super(DevicePort, self).max_child_processes(device_type=None)
+        return result
 
     def setup_test_run(self, device_type=None):
         if not self.DEVICE_MANAGER:

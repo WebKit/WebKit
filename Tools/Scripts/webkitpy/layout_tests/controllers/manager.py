@@ -245,6 +245,7 @@ class Manager(object):
         retry_results = None
         enabled_pixel_tests_in_retry = False
 
+        max_child_processes_for_run = 1
         child_processes_option_value = self._options.child_processes
 
         while device_type_order:
@@ -259,6 +260,8 @@ class Manager(object):
                 _log.info('Skipping {} because {} is not available'.format(pluralize(len(test_device_mapping[device_type]), 'test'), str(device_type)))
                 _log.info('')
                 continue
+
+            max_child_processes_for_run = max(self._options.child_processes, max_child_processes_for_run)
 
             # This loop looks for any less-specific device types which match the current device type
             index = 0
@@ -280,6 +283,9 @@ class Manager(object):
             initial_results = initial_results.merge(temp_initial_results) if initial_results else temp_initial_results
             retry_results = retry_results.merge(temp_retry_results) if retry_results else temp_retry_results
             enabled_pixel_tests_in_retry |= temp_enabled_pixel_tests_in_retry
+
+        # Used for final logging, max_child_processes_for_run is most relevant here.
+        self._options.child_processes = max_child_processes_for_run
 
         self._runner.stop_servers()
 
