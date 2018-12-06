@@ -1,3 +1,15 @@
+2018-12-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        REGRESSION(r231043): [GTK] Undefined references to WebCore::LayerRepresentation::* with -DENABLE_OPENGL=OFF builds
+        https://bugs.webkit.org/show_bug.cgi?id=191997
+
+        Reviewed by Philippe Normand.
+
+        Fix build with -DENABLE_OPENGL=OFF and -DENABLE_VIDEO=OFF.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent): add required #if ENABLE(ASYNC_SCROLLING)
+
 2018-12-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(PSON): Process swapping code doesn't set DisplayID in WebContent process

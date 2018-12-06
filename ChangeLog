@@ -1,3 +1,14 @@
+2018-12-06  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        REGRESSION(r231043): [GTK] Undefined references to WebCore::LayerRepresentation::* with -DENABLE_OPENGL=OFF builds
+        https://bugs.webkit.org/show_bug.cgi?id=191997
+
+        Reviewed by Philippe Normand.
+
+        Fix build with -DENABLE_OPENGL=OFF and -DENABLE_VIDEO=OFF
+
+        * Source/cmake/OptionsGTK.cmake: make ENABLE_ASYNC_SCROLLING depend on ENABLE_OPENGL
+
 2018-12-05  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Enable WebCore
