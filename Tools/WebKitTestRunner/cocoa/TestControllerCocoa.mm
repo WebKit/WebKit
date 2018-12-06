@@ -205,17 +205,6 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:endDate];
 }
 
-ClassMethodSwizzler::ClassMethodSwizzler(Class cls, SEL originalSelector, IMP implementation)
-    : m_method(class_getClassMethod(objc_getMetaClass(NSStringFromClass(cls).UTF8String), originalSelector))
-    , m_originalImplementation(method_setImplementation(m_method, implementation))
-{
-}
-
-ClassMethodSwizzler::~ClassMethodSwizzler()
-{
-    method_setImplementation(m_method, m_originalImplementation);
-}
-    
 static NSCalendar *swizzledCalendar()
 {
     return [NSCalendar calendarWithIdentifier:TestController::singleton().getOverriddenCalendarIdentifier().get()];

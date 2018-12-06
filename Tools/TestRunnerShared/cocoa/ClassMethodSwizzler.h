@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InstanceMethodSwizzler.h"
+#pragma once
 
-namespace TestWebKitAPI {
+#include <objc/runtime.h>
+#include <wtf/Noncopyable.h>
 
-InstanceMethodSwizzler::InstanceMethodSwizzler(Class cls, SEL selector, IMP implementation)
-    : m_method(class_getInstanceMethod(cls, selector))
-    , m_originalImplementation(method_setImplementation(m_method, implementation))
-{
-}
+class ClassMethodSwizzler {
+    WTF_MAKE_NONCOPYABLE(ClassMethodSwizzler);
+public:
+    ClassMethodSwizzler(Class, SEL, IMP);
+    ~ClassMethodSwizzler();
 
-InstanceMethodSwizzler::~InstanceMethodSwizzler()
-{
-    method_setImplementation(m_method, m_originalImplementation);
-}
-
-} // namespace TestWebKitAPI
+    Method m_method;
+    IMP m_originalImplementation;
+};

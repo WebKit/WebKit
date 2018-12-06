@@ -45,7 +45,7 @@ static void newOpenURL(id self, SEL _cmd, NSURL* value)
 
 TEST(WKWebView, DefaultNavigationDelegate)
 {
-    TestWebKitAPI::InstanceMethodSwizzler swizzle([NSWorkspace class], @selector(openURL:), reinterpret_cast<IMP>(newOpenURL));
+    InstanceMethodSwizzler swizzle([NSWorkspace class], @selector(openURL:), reinterpret_cast<IMP>(newOpenURL));
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
 

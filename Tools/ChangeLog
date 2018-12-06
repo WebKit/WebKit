@@ -1,3 +1,41 @@
+2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Share ClassMethodSwizzler and InstanceMethodSwizzler between TestWebKitAPI and WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=192437
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * TestRunnerShared/cocoa/ClassMethodSwizzler.h: Renamed from Tools/TestWebKitAPI/ClassMethodSwizzler.h.
+        * TestRunnerShared/cocoa/ClassMethodSwizzler.mm: Renamed from Tools/TestWebKitAPI/ClassMethodSwizzler.mm.
+        (ClassMethodSwizzler::ClassMethodSwizzler):
+        (ClassMethodSwizzler::~ClassMethodSwizzler):
+        * TestRunnerShared/cocoa/InstanceMethodSwizzler.h: Renamed from Tools/TestWebKitAPI/cocoa/InstanceMethodSwizzler.h.
+        * TestRunnerShared/cocoa/InstanceMethodSwizzler.mm: Renamed from Tools/TestWebKitAPI/cocoa/InstanceMethodSwizzler.mm.
+        (InstanceMethodSwizzler::InstanceMethodSwizzler):
+        (InstanceMethodSwizzler::~InstanceMethodSwizzler):
+
+        Move these swizzling helper classes into TestRunnerShared.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/LocalStorageClear.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (safeBrowsingView):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewDefaultNavigationDelegate.mm:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView initWithFrame:configuration:addToWindow:]):
+
+        Remove namespacing around ClassMethodSwizzler and InstanceMethodSwizzler in a few API tests.
+
+        * TestWebKitAPI/mac/TestFontOptions.mm:
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::ClassMethodSwizzler::ClassMethodSwizzler): Deleted.
+        (WTR::ClassMethodSwizzler::~ClassMethodSwizzler): Deleted.
+
+        Remove this duplicate implementation of ClassMethodSwizzler in WebKitTestRunner.
+
 2018-12-05  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Clean-up apple_additions

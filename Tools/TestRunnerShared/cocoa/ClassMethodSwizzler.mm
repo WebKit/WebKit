@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ClassMethodSwizzler.h"
 
-namespace TestWebKitAPI {
-
 ClassMethodSwizzler::ClassMethodSwizzler(Class cls, SEL originalSelector, IMP implementation)
     : m_method(class_getClassMethod(objc_getMetaClass(NSStringFromClass(cls).UTF8String), originalSelector))
     , m_originalImplementation(method_setImplementation(m_method, implementation))
@@ -38,5 +36,3 @@ ClassMethodSwizzler::~ClassMethodSwizzler()
 {
     method_setImplementation(m_method, m_originalImplementation);
 }
-
-} // namespace TestWebKitAPI

@@ -130,7 +130,7 @@ TEST(WKWebView, ClearAppCache)
 {
 #if PLATFORM(IOS_FAMILY)
     // On iOS, MobileSafari and webbookmarksd need to share the same AppCache directory.
-    TestWebKitAPI::InstanceMethodSwizzler swizzle([NSBundle class], @selector(bundleIdentifier), reinterpret_cast<IMP>(swizzledBundleIdentifierWebBookmarksD));
+    InstanceMethodSwizzler swizzle([NSBundle class], @selector(bundleIdentifier), reinterpret_cast<IMP>(swizzledBundleIdentifierWebBookmarksD));
 #endif
 
     // Start with a clean slate of WebsiteData.

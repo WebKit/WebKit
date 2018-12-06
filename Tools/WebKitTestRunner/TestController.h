@@ -39,9 +39,7 @@
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
-
-#include <objc/runtime.h>
-
+#include "ClassMethodSwizzler.h"
 #endif
 
 OBJC_CLASS NSString;
@@ -55,19 +53,6 @@ class PlatformWebView;
 class EventSenderProxy;
 struct TestCommand;
 struct TestOptions;
-
-#if PLATFORM(COCOA)
-// FIXME: This should be shared with TestWebKitAPI.
-class ClassMethodSwizzler {
-    WTF_MAKE_NONCOPYABLE(ClassMethodSwizzler);
-public:
-    ClassMethodSwizzler(Class, SEL, IMP);
-    ~ClassMethodSwizzler();
-    
-    Method m_method;
-    IMP m_originalImplementation;
-};
-#endif // PLATFORM(COCOA)
 
 class AsyncTask {
 public:

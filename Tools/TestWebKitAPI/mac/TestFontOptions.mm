@@ -34,8 +34,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 
-using namespace TestWebKitAPI;
-
 static TestFontOptions *sharedFontOptionsForTesting()
 {
     return TestFontOptions.sharedInstance;

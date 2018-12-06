@@ -253,7 +253,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     RetainPtr<TestWKWebViewHostWindow> _hostWindow;
     RetainPtr<TestMessageHandler> _testHandler;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<TestWebKitAPI::ClassMethodSwizzler> _sharedCalloutBarSwizzler;
+    std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
 #endif
 }
 
@@ -288,7 +288,7 @@ static UICalloutBar *suppressUICalloutBar()
 
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
-    _sharedCalloutBarSwizzler = std::make_unique<TestWebKitAPI::ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
+    _sharedCalloutBarSwizzler = std::make_unique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
 #endif
 
     return self;
