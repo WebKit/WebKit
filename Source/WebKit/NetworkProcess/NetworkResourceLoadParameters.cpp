@@ -83,7 +83,6 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << needsCertificateInfo;
     encoder << isMainFrameNavigation;
     encoder << maximumBufferingTime;
-    encoder << derivedCachedDataTypesToRetrieve;
 
     encoder << static_cast<bool>(sourceOrigin);
     if (sourceOrigin)
@@ -172,8 +171,6 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.isMainFrameNavigation))
         return false;
     if (!decoder.decode(result.maximumBufferingTime))
-        return false;
-    if (!decoder.decode(result.derivedCachedDataTypesToRetrieve))
         return false;
 
     bool hasSourceOrigin;

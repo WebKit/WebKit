@@ -31,7 +31,6 @@
 #include "StoredCredentialsPolicy.h"
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/SHA1.h>
 
 namespace WebCore {
 
@@ -73,8 +72,6 @@ public:
 
     using PreconnectCompletionHandler = WTF::Function<void(const ResourceError&)>;
     virtual void preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, PreconnectCompletionHandler&&) = 0;
-
-    virtual void storeDerivedDataToCache(const SHA1::Digest& bodyKey, const String& type, const String& partition, WebCore::SharedBuffer&) = 0;
 
     virtual void setCaptureExtraNetworkLoadMetricsEnabled(bool) = 0;
 

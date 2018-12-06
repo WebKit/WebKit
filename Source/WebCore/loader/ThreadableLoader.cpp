@@ -89,9 +89,6 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.initiatorContext = this->initiatorContext;
     copy.clientCredentialPolicy = this->clientCredentialPolicy;
     copy.maxRedirectCount = this->maxRedirectCount;
-    copy.derivedCachedDataTypesToRetrieve.reserveInitialCapacity(this->derivedCachedDataTypesToRetrieve.size());
-    for (auto& derivedCachedDataType : this->derivedCachedDataTypesToRetrieve)
-        copy.derivedCachedDataTypesToRetrieve.uncheckedAppend(derivedCachedDataType.isolatedCopy());
     copy.preflightPolicy = this->preflightPolicy;
 
     // ThreadableLoaderOptions

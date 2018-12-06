@@ -105,7 +105,6 @@ public:
     virtual void didReceiveBuffer(Ref<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
     virtual void didFinishLoading(const NetworkLoadMetrics&);
     virtual void didFail(const ResourceError&);
-    virtual void didRetrieveDerivedDataFromCache(const String& type, SharedBuffer&);
 
     WEBCORE_EXPORT void didBlockAuthenticationChallenge();
 

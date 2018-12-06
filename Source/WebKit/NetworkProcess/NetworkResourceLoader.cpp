@@ -749,7 +749,8 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
     if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
-        continueProcessingCachedEntryAfterDidReceiveResponse(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
+        sendResultForCacheEntry(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
+        cleanup(LoadResult::Success);
         return;
     }
 
@@ -840,41 +841,10 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     if (needsContinueDidReceiveResponseMessage)
         m_cacheEntryWaitingForContinueDidReceiveResponse = WTFMove(entry);
-    else
-        continueProcessingCachedEntryAfterDidReceiveResponse(WTFMove(entry));
-}
-
-void NetworkResourceLoader::continueProcessingCachedEntryAfterDidReceiveResponse(std::unique_ptr<NetworkCache::Entry> entry)
-{
-    if (entry->sourceStorageRecord().bodyHash && !m_parameters.derivedCachedDataTypesToRetrieve.isEmpty()) {
-        auto bodyHash = *entry->sourceStorageRecord().bodyHash;
-        auto* entryPtr = entry.release();
-        auto retrieveCount = m_parameters.derivedCachedDataTypesToRetrieve.size();
-
-        for (auto& type : m_parameters.derivedCachedDataTypesToRetrieve) {
-            NetworkCache::DataKey key { originalRequest().cachePartition(), type, bodyHash };
-            m_cache->retrieveData(key, [loader = makeRef(*this), entryPtr, type, retrieveCount] (const uint8_t* data, size_t size) mutable {
-                loader->m_retrievedDerivedDataCount++;
-                bool retrievedAll = loader->m_retrievedDerivedDataCount == retrieveCount;
-                std::unique_ptr<NetworkCache::Entry> entry(retrievedAll ? entryPtr : nullptr);
-                if (loader->hasOneRef())
-                    return;
-                if (data) {
-                    IPC::DataReference dataReference(data, size);
-                    loader->send(Messages::WebResourceLoader::DidRetrieveDerivedData(type, dataReference));
-                }
-                if (retrievedAll) {
-                    loader->sendResultForCacheEntry(WTFMove(entry));
-                    loader->cleanup(LoadResult::Success);
-                }
-            });
-        }
-        return;
+    else {
+        sendResultForCacheEntry(WTFMove(entry));
+        cleanup(LoadResult::Success);
     }
-
-    sendResultForCacheEntry(WTFMove(entry));
-
-    cleanup(LoadResult::Success);
 }
 
 void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)

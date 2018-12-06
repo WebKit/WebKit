@@ -152,7 +152,6 @@ struct ResourceLoaderOptions : public FetchOptions {
     std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
 #endif
     HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>> httpHeadersToKeep;
-    Vector<String> derivedCachedDataTypesToRetrieve;
     std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     unsigned maxRedirectCount { 20 };
 

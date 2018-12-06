@@ -1,3 +1,23 @@
+2018-12-06  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused LoaderStrategy::storeDerivedDataToCache and associated dead code
+        https://bugs.webkit.org/show_bug.cgi?id=192452
+
+        Reviewed by Anders Carlsson.
+
+        * loader/LoaderStrategy.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didRetrieveDerivedDataFromCache): Deleted.
+        * loader/ResourceLoader.h:
+        * loader/ResourceLoaderOptions.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didRetrieveDerivedDataFromCache): Deleted.
+        * loader/SubresourceLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::isolatedCopy const):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::didRetrieveDerivedDataFromCache): Deleted.
+
 2018-12-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] HeightAndMargin::margin is always the non-collapsed margin value.

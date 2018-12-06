@@ -50,8 +50,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     BlobSize(URL url) -> (uint64_t resultSize) LegacySync
     WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
-    StoreDerivedDataToCache(WebKit::NetworkCache::DataKey key, IPC::SharedBufferDataReference data)
-
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
     CreateSocketStream(URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
