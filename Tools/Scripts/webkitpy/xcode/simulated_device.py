@@ -229,7 +229,7 @@ class SimulatedDeviceManager(object):
     @staticmethod
     def _get_device_identifier_for_type(device_type):
         for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.iteritems():
-            if type_name == '{} {}'.format(device_type.hardware_family, device_type.hardware_type):
+            if type_name.lower() == '{} {}'.format(device_type.hardware_family.lower(), device_type.hardware_type.lower()):
                 return type_id
         return None
 

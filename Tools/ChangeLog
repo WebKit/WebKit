@@ -1,3 +1,17 @@
+2018-12-06  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Create device given lower-case DeviceType
+        <https://bugs.webkit.org/show_bug.cgi?id=192472>
+        <rdar://problem/46532650>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._get_device_identifier_for_type): Comparing simctl device identifiers with DeviceTypes
+        should be letter-case agnostic.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (test_lower_case_device_type):
+
 2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard

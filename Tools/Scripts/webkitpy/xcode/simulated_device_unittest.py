@@ -610,6 +610,20 @@ class SimulatedDeviceTest(unittest.TestCase):
         SimulatedDeviceManager.tear_down(host)
         self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
 
+    def test_lower_case_device_type(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceManager.available_devices(host)
+
+        SimulatedDeviceManager.initialize_devices(DeviceRequest(DeviceType.from_string('iphone 5s', Version(11))), host=host)
+
+        self.assertEquals(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
+        self.assertEquals('34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
+        self.assertEquals(SimulatedDevice.DeviceState.BOOTED, SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
+
+        SimulatedDeviceManager.tear_down(host)
+        self.assertIsNone(SimulatedDeviceManager.INITIALIZED_DEVICES)
+
     @staticmethod
     def change_state_to(device, state):
         assert isinstance(state, int)
