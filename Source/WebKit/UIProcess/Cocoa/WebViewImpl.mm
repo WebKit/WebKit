@@ -1498,6 +1498,7 @@ void WebViewImpl::didRelaunchProcess()
         m_gestureController->connectToProcess();
 
     accessibilityRegisterUIProcessTokens();
+    windowDidChangeScreen(); // Make sure DisplayID is set.
 }
 
 void WebViewImpl::setDrawsBackground(bool drawsBackground)
