@@ -1,3 +1,19 @@
+2018-12-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+
+        Reviewed by Dewei Zhu.
+
+        Part 1.
+
+        Add some loggings to determine possible causes for the flakiness.
+
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::continueAddDeviceAfterGetInfo):
+        * UIProcess/WebAuthentication/Mock/MockHidService.cpp:
+        (WebKit::MockHidService::platformStartDiscovery):
+
 2018-12-05  Chris Dumez  <cdumez@apple.com>
 
         Simplify logic inside WebPageProxy::continueNavigationInNewProcess()

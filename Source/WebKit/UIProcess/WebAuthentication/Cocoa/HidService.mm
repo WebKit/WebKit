@@ -115,6 +115,7 @@ void HidService::continueAddDeviceAfterGetInfo(CtapHidDriver* ptr, Vector<uint8_
         return;
     }
     // FIXME(191535): Support U2F authenticators.
+    LOG_ERROR("Couldn't parse a ctap get info response.");
 }
 
 } // namespace WebKit

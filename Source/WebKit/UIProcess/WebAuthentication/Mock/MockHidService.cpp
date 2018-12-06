@@ -43,6 +43,7 @@ void MockHidService::platformStartDiscovery()
 {
     if (!!m_configuration.hid)
         deviceAdded(nullptr);
+    LOG_ERROR("No hid authenticators is available.");
 }
 
 UniqueRef<HidConnection> MockHidService::createHidConnection(IOHIDDeviceRef device) const
