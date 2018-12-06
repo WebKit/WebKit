@@ -1,3 +1,18 @@
+2018-12-05  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=192436
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/deleting/delete-emoji-1-expected.txt:
+        * platform/gtk/editing/deleting/delete-emoji-expected.txt:
+        * platform/wpe/animations/lineheight-animation-expected.txt:
+        * platform/wpe/animations/simultaneous-start-transform-expected.txt:
+        * platform/wpe/animations/width-using-ems-expected.txt:
+        * platform/wpe/legacy-animation-engine/animations/lineheight-animation-expected.txt:
+        * platform/wpe/legacy-animation-engine/animations/simultaneous-start-transform-expected.txt:
+        * platform/wpe/legacy-animation-engine/animations/width-using-ems-expected.txt:
+
 2018-12-05  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION: Layout Test http/tests/security/cross-origin-css-resource-timing.html is flaky

@@ -1926,7 +1926,7 @@ webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeo
 # Tests that fail on the EWS queue since we enabled tests there
 webkit.org/b/186638 printing/print-close-crash.html [ Timeout Pass ]
 webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout Pass ]
-webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass ]
+webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass Failure ]
 webkit.org/b/186638 animations/play-state-paused.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
 webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
@@ -3392,8 +3392,6 @@ webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.htm
 
 webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
-webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
-webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
 # This one is only failing on the release bots.
 webkit.org/b/18328 [ Release ] imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
@@ -3647,6 +3645,12 @@ webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.ht
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker.html [ Failure ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 
+webkit.org/b/192432 compositing/backing/backing-store-attachment-scroll.html [ Failure ]
+webkit.org/b/192432 compositing/tiling/tile-coverage-on-scroll.html [ Failure ]
+webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html [ Failure ]
+webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
+webkit.org/b/166536 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
+webkit.org/b/192435 fast/css-custom-paint/leaks.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
