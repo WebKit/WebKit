@@ -532,8 +532,10 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     deselect(suppressNotification)
     {
-        if (!this.treeOutline || this.treeOutline.selectedTreeElement !== this || !this.selected)
+        if (!this.treeOutline || !this.selected)
             return false;
+
+        console.assert(this.treeOutline.selectedTreeElements.includes(this));
 
         this.selected = false;
         this.treeOutline.selectTreeElementInternal(null, suppressNotification);
