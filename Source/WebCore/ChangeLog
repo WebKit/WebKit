@@ -1,3 +1,28 @@
+2018-12-07  Rob Buis  <rbuis@igalia.com>
+
+        Merge parseAccessControlExposeHeadersAllowList into parseAccessControlAllowList
+        https://bugs.webkit.org/show_bug.cgi?id=192288
+
+        Reviewed by Frédéric Wang.
+
+        Merge parseAccessControlExposeHeadersAllowList into parseAccessControlAllowList
+        as they do the same thing. Also remove std::optional from parseAccessControlAllowList
+        since the function can't fail.
+
+        * WebCore.order:
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validatePreflightResponse):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        * loader/CrossOriginPreflightResultCache.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseAccessControlExposeHeadersAllowList): Deleted.
+        * platform/network/HTTPParsers.h:
+        (WebCore::parseAccessControlAllowList):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::filter):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting):
+
 2018-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Don't update AVPlayerViewController currentTime while scrubbing

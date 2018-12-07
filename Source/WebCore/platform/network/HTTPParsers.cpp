@@ -769,15 +769,6 @@ size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned cha
     return length;
 }
 
-void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet& headerSet)
-{
-    for (auto& header : headerValue.split(',')) {
-        String strippedHeader = header.stripWhiteSpace();
-        if (!strippedHeader.isEmpty())
-            headerSet.add(strippedHeader);
-    }
-}
-
 // Implements <https://fetch.spec.whatwg.org/#forbidden-header-name>.
 bool isForbiddenHeaderName(const String& name)
 {

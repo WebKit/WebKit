@@ -97,8 +97,6 @@ size_t parseHTTPRequestLine(const char* data, size_t length, String& failureReas
 size_t parseHTTPHeader(const char* data, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict = true);
 size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body);
 
-void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHeaderSet&);
-
 // HTTP Header routine as per https://fetch.spec.whatwg.org/#terminology-headers
 bool isForbiddenHeaderName(const String&);
 bool isForbiddenResponseHeaderName(const String&);
@@ -151,9 +149,8 @@ void addToAccessControlAllowList(const String& string, unsigned start, unsigned 
 }
 
 template<class HashType = DefaultHash<String>::Hash>
-std::optional<HashSet<String, HashType>> parseAccessControlAllowList(const String& string)
+void parseAccessControlAllowList(const String& string, HashSet<String, HashType>& set)
 {
-    HashSet<String, HashType> set;
     unsigned start = 0;
     size_t end;
     while ((end = string.find(',', start)) != notFound) {
@@ -163,8 +160,6 @@ std::optional<HashSet<String, HashType>> parseAccessControlAllowList(const Strin
     }
     if (start != string.length())
         addToAccessControlAllowList(string, start, string.length() - 1, set);
-
-    return set;
 }
 
 }

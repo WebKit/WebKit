@@ -45,7 +45,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT bool parse(const ResourceResponse&, String& errorDescription);
+    WEBCORE_EXPORT bool parse(const ResourceResponse&);
     WEBCORE_EXPORT bool allowsCrossOriginMethod(const String&, String& errorDescription) const;
     WEBCORE_EXPORT bool allowsCrossOriginHeaders(const HTTPHeaderMap&, String& errorDescription) const;
     bool allowsRequest(StoredCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders) const;

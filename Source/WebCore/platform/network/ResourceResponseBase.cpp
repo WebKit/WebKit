@@ -152,7 +152,7 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
     filteredResponse.setType(Type::Cors);
 
     HTTPHeaderSet accessControlExposeHeaderSet;
-    parseAccessControlExposeHeadersAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders), accessControlExposeHeaderSet);
+    parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders), accessControlExposeHeaderSet);
     filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {
         return !isCrossOriginSafeHeader(entry.key, accessControlExposeHeaderSet);
     });
@@ -419,13 +419,13 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
             if (isSafeCrossOriginResponseHeader(header.key))
                 filteredHeaders.add(header.key, WTFMove(header.value));
         }
-        if (auto corsSafeHeaderSet = parseAccessControlAllowList(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders))) {
-            for (auto& headerName : *corsSafeHeaderSet) {
-                if (!filteredHeaders.contains(headerName)) {
-                    auto value = m_httpHeaderFields.get(headerName);
-                    if (!value.isNull())
-                        filteredHeaders.add(headerName, value);
-                }
+        HTTPHeaderSet corsSafeHeaderSet;
+        parseAccessControlAllowList(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders), corsSafeHeaderSet);
+        for (auto& headerName : corsSafeHeaderSet) {
+            if (!filteredHeaders.contains(headerName)) {
+                auto value = m_httpHeaderFields.get(headerName);
+                if (!value.isNull())
+                    filteredHeaders.add(headerName, value);
             }
         }
         m_httpHeaderFields = WTFMove(filteredHeaders);
