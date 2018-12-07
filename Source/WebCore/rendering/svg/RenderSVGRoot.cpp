@@ -28,10 +28,10 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
-#include "LayoutState.h"
 #include "Page.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayoutState.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
@@ -145,7 +145,7 @@ void RenderSVGRoot::layout()
 
     m_resourcesNeedingToInvalidateClients.clear();
 
-    // Arbitrary affine transforms are incompatible with LayoutState.
+    // Arbitrary affine transforms are incompatible with RenderLayoutState.
     LayoutStateDisabler layoutStateDisabler(view().frameView().layoutContext());
 
     bool needsLayout = selfNeedsLayout();

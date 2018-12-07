@@ -32,9 +32,9 @@
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
 #include "LayoutDisallowedScope.h"
-#include "LayoutState.h"
 #include "Logging.h"
 #include "RenderElement.h"
+#include "RenderLayoutState.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptDisallowedScope.h"
@@ -584,7 +584,7 @@ bool FrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 }
 #endif
 
-LayoutState* FrameViewLayoutContext::layoutState() const
+RenderLayoutState* FrameViewLayoutContext::layoutState() const
 {
     if (m_layoutStateStack.isEmpty())
         return nullptr;
@@ -596,14 +596,14 @@ void FrameViewLayoutContext::pushLayoutState(RenderElement& root)
     ASSERT(!m_paintOffsetCacheDisableCount);
     ASSERT(!layoutState());
 
-    m_layoutStateStack.append(std::make_unique<LayoutState>(root));
+    m_layoutStateStack.append(std::make_unique<RenderLayoutState>(root));
 }
 
 bool FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
 {
     if (layoutState())
         return false;
-    m_layoutStateStack.append(std::make_unique<LayoutState>(layoutRoot, LayoutState::IsPaginated::Yes));
+    m_layoutStateStack.append(std::make_unique<RenderLayoutState>(layoutRoot, RenderLayoutState::IsPaginated::Yes));
     return true;
 }
     
@@ -613,7 +613,7 @@ bool FrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const LayoutSi
     auto* layoutState = this->layoutState();
     if (!layoutState || !needsFullRepaint() || layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
         || layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
-        m_layoutStateStack.append(std::make_unique<LayoutState>(m_layoutStateStack, renderer, offset, pageHeight, pageHeightChanged));
+        m_layoutStateStack.append(std::make_unique<RenderLayoutState>(m_layoutStateStack, renderer, offset, pageHeight, pageHeightChanged));
         return true;
     }
     return false;

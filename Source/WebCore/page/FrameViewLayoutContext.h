@@ -37,11 +37,11 @@ class Frame;
 class FrameView;
 class LayoutScope;
 class LayoutSize;
-class LayoutState;
 class RenderBlockFlow;
 class RenderBox;
 class RenderObject;
 class RenderElement;
+class RenderLayoutState;
 class RenderView;
     
 class FrameViewLayoutContext {
@@ -93,7 +93,7 @@ public:
 
     void flushAsynchronousTasks();
 
-    LayoutState* layoutState() const;
+    RenderLayoutState* layoutState() const;
     // Returns true if layoutState should be used for its cached offset and clip.
     bool isPaintOffsetCacheEnabled() const { return !m_paintOffsetCacheDisableCount && layoutState(); }
 #ifndef NDEBUG
@@ -107,7 +107,7 @@ public:
 #if !ASSERT_DISABLED
     bool layoutDeltaMatches(const LayoutSize& delta);
 #endif
-    using LayoutStateStack = Vector<std::unique_ptr<LayoutState>>;
+    using LayoutStateStack = Vector<std::unique_ptr<RenderLayoutState>>;
 
 private:
     friend class LayoutScope;

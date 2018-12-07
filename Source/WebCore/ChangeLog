@@ -1,5 +1,85 @@
 2018-12-07  Antti Koivisto  <antti@apple.com>
 
+        Rename LayoutState to RenderLayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=192504
+
+        Reviewed by Zalan Bujtas.
+
+        The name is better used in LFC.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutState const):
+        (WebCore::FrameViewLayoutContext::pushLayoutState):
+        (WebCore::FrameViewLayoutContext::pushLayoutStateForPaginationIfNeeded):
+        * page/FrameViewLayoutContext.h:
+        * rendering/LayoutState.cpp: Removed.
+        * rendering/LayoutState.h: Removed.
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderEmbeddedObject.cpp:
+        * rendering/RenderFragmentedFlow.cpp:
+        * rendering/RenderGrid.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLayoutState.cpp: Copied from Source/WebCore/rendering/LayoutState.cpp.
+        (WebCore::RenderLayoutState::RenderLayoutState):
+        (WebCore::RenderLayoutState::computeOffsets):
+        (WebCore::RenderLayoutState::computeClipRect):
+        (WebCore::RenderLayoutState::computePaginationInformation):
+        (WebCore::RenderLayoutState::pageLogicalOffset const):
+        (WebCore::RenderLayoutState::computeLineGridPaginationOrigin):
+        (WebCore::RenderLayoutState::propagateLineGridInfo):
+        (WebCore::RenderLayoutState::establishLineGrid):
+        (WebCore::RenderLayoutState::addLayoutDelta):
+        (WebCore::RenderLayoutState::layoutDeltaMatches const):
+        (WebCore::LayoutState::LayoutState): Deleted.
+        (WebCore::LayoutState::computeOffsets): Deleted.
+        (WebCore::LayoutState::computeClipRect): Deleted.
+        (WebCore::LayoutState::computePaginationInformation): Deleted.
+        (WebCore::LayoutState::pageLogicalOffset const): Deleted.
+        (WebCore::LayoutState::computeLineGridPaginationOrigin): Deleted.
+        (WebCore::LayoutState::propagateLineGridInfo): Deleted.
+        (WebCore::LayoutState::establishLineGrid): Deleted.
+        (WebCore::LayoutState::addLayoutDelta): Deleted.
+        (WebCore::LayoutState::layoutDeltaMatches const): Deleted.
+        * rendering/RenderLayoutState.h: Copied from Source/WebCore/rendering/LayoutState.h.
+        (WebCore::RenderLayoutState::RenderLayoutState):
+        (WebCore::LayoutState::LayoutState): Deleted.
+        (WebCore::LayoutState::isPaginated const): Deleted.
+        (WebCore::LayoutState::pageLogicalHeight const): Deleted.
+        (WebCore::LayoutState::pageLogicalHeightChanged const): Deleted.
+        (WebCore::LayoutState::lineGrid const): Deleted.
+        (WebCore::LayoutState::lineGridOffset const): Deleted.
+        (WebCore::LayoutState::lineGridPaginationOrigin const): Deleted.
+        (WebCore::LayoutState::paintOffset const): Deleted.
+        (WebCore::LayoutState::layoutOffset const): Deleted.
+        (WebCore::LayoutState::pageOffset const): Deleted.
+        (WebCore::LayoutState::needsBlockDirectionLocationSetBeforeLayout const): Deleted.
+        (WebCore::LayoutState::renderer const): Deleted.
+        (WebCore::LayoutState::clipRect const): Deleted.
+        (WebCore::LayoutState::isClipped const): Deleted.
+        (WebCore::LayoutState::layoutDelta const): Deleted.
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderMediaControlElements.cpp:
+        * rendering/RenderMultiColumnFlow.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderVTTCue.cpp:
+        * rendering/RenderView.cpp:
+        * rendering/RenderView.h:
+        * rendering/RootInlineBox.cpp:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+
+2018-12-07  Antti Koivisto  <antti@apple.com>
+
         [LFC] Rename formattingContext() to createFormattingContext()
         https://bugs.webkit.org/show_bug.cgi?id=192500
 

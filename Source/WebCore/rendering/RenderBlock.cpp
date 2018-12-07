@@ -55,6 +55,7 @@
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayoutState.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
 #include "RenderSVGResourceClipper.h"

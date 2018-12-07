@@ -29,8 +29,8 @@
 #if ENABLE(VIDEO_TRACK)
 #include "RenderVTTCue.h"
 
-#include "LayoutState.h"
 #include "RenderInline.h"
+#include "RenderLayoutState.h"
 #include "RenderView.h"
 #include "TextTrackCueGeneric.h"
 #include "VTTCue.h"

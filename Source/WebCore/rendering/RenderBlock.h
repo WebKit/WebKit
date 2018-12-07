@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class LayoutState;
 class LineLayoutState;
 class LogicalSelectionOffsetCaches;
 class RenderInline;

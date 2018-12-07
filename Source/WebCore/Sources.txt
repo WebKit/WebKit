@@ -1917,7 +1917,6 @@ rendering/InlineIterator.cpp
 rendering/InlineTextBox.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
-rendering/LayoutState.cpp
 rendering/MarkedText.cpp
 rendering/OrderIterator.cpp
 rendering/PointerEventsHitRules.cpp
@@ -1956,6 +1955,7 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerFilters.cpp
 rendering/RenderLayerModelObject.cpp
+rendering/RenderLayoutState.cpp
 rendering/RenderLineBoxList.cpp
 rendering/RenderLineBreak.cpp
 rendering/RenderListBox.cpp

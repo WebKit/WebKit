@@ -27,8 +27,8 @@
 #include "RenderMultiColumnFlow.h"
 
 #include "HitTestResult.h"
-#include "LayoutState.h"
 #include "RenderIterator.h"
+#include "RenderLayoutState.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderTreeBuilder.h"

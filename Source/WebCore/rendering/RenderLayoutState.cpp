@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutState.h"
+#include "RenderLayoutState.h"
 
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-LayoutState::LayoutState(RenderElement& renderer, IsPaginated isPaginated)
+RenderLayoutState::RenderLayoutState(RenderElement& renderer, IsPaginated isPaginated)
     : m_clipped(false)
     , m_isPaginated(isPaginated == IsPaginated::Yes)
     , m_pageLogicalHeightChanged(false)
@@ -64,7 +64,7 @@ LayoutState::LayoutState(RenderElement& renderer, IsPaginated isPaginated)
     }
 }
 
-LayoutState::LayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+RenderLayoutState::RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -84,7 +84,7 @@ LayoutState::LayoutState(const FrameViewLayoutContext::LayoutStateStack& layoutS
     computePaginationInformation(layoutStateStack, renderer, pageLogicalHeight, pageLogicalHeightChanged);
 }
 
-void LayoutState::computeOffsets(const LayoutState& ancestor, RenderBox& renderer, LayoutSize offset)
+void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, RenderBox& renderer, LayoutSize offset)
 {
     bool fixed = renderer.isFixedPositioned();
     if (fixed) {
@@ -115,7 +115,7 @@ void LayoutState::computeOffsets(const LayoutState& ancestor, RenderBox& rendere
 #endif
 }
 
-void LayoutState::computeClipRect(const LayoutState& ancestor, RenderBox& renderer)
+void RenderLayoutState::computeClipRect(const RenderLayoutState& ancestor, RenderBox& renderer)
 {
     m_clipped = !renderer.isFixedPositioned() && ancestor.isClipped();
     if (m_clipped)
@@ -133,7 +133,7 @@ void LayoutState::computeClipRect(const LayoutState& ancestor, RenderBox& render
     // FIXME: <http://bugs.webkit.org/show_bug.cgi?id=13443> Apply control clip if present.
 }
 
-void LayoutState::computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
+void RenderLayoutState::computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
 {
     auto* ancestor = layoutStateStack.isEmpty() ? nullptr : layoutStateStack.last().get();
     // If we establish a new page height, then cache the offset to the top of the first page.
@@ -170,14 +170,14 @@ void LayoutState::computePaginationInformation(const FrameViewLayoutContext::Lay
         establishLineGrid(layoutStateStack, downcast<RenderBlockFlow>(renderer));
 }
 
-LayoutUnit LayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const
+LayoutUnit RenderLayoutState::pageLogicalOffset(RenderBox* child, LayoutUnit childLogicalOffset) const
 {
     if (child->isHorizontalWritingMode())
         return m_layoutOffset.height() + childLogicalOffset - m_pageOffset.height();
     return m_layoutOffset.width() + childLogicalOffset - m_pageOffset.width();
 }
 
-void LayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnFlow& multicol)
+void RenderLayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnFlow& multicol)
 {
     if (!isPaginated() || !pageLogicalHeight())
         return;
@@ -218,7 +218,7 @@ void LayoutState::computeLineGridPaginationOrigin(const RenderMultiColumnFlow& m
         m_lineGridPaginationOrigin.setWidth(paginationDelta);
 }
 
-void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& renderer)
+void RenderLayoutState::propagateLineGridInfo(const RenderLayoutState& ancestor, RenderBox& renderer)
 {
     // Disable line grids for objects we don't support. For now this includes overflow:scroll/auto, inline blocks and
     // writing mode roots.
@@ -230,7 +230,7 @@ void LayoutState::propagateLineGridInfo(const LayoutState& ancestor, RenderBox& 
     m_lineGridPaginationOrigin = ancestor.lineGridPaginationOrigin();
 }
 
-void LayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
+void RenderLayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBlockFlow& renderer)
 {
     // First check to see if this grid has been established already.
     if (m_lineGrid) {
@@ -257,7 +257,7 @@ void LayoutState::establishLineGrid(const FrameViewLayoutContext::LayoutStateSta
     m_lineGridOffset = m_layoutOffset;
 }
 
-void LayoutState::addLayoutDelta(LayoutSize delta)
+void RenderLayoutState::addLayoutDelta(LayoutSize delta)
 {
     m_layoutDelta += delta;
 #if !ASSERT_DISABLED
@@ -267,7 +267,7 @@ void LayoutState::addLayoutDelta(LayoutSize delta)
 }
 
 #if !ASSERT_DISABLED
-bool LayoutState::layoutDeltaMatches(LayoutSize delta) const
+bool RenderLayoutState::layoutDeltaMatches(LayoutSize delta) const
 {
     return (delta.width() == m_layoutDelta.width() || m_layoutDeltaXSaturated) && (delta.height() == m_layoutDelta.height() || m_layoutDeltaYSaturated);
 }

@@ -33,8 +33,8 @@
 namespace WebCore {
 
 class ImageQualityController;
-class LayoutState;
 class RenderLayerCompositor;
+class RenderLayoutState;
 class RenderQuote;
 
 class RenderView final : public RenderBlockFlow {
@@ -210,7 +210,7 @@ private:
     bool shouldRepaint(const LayoutRect&) const;
     void flushAccumulatedRepaintRegion() const;
 
-    void layoutContent(const LayoutState&);
+    void layoutContent(const RenderLayoutState&);
 
     bool isScrollableOrRubberbandableBox() const override;
 

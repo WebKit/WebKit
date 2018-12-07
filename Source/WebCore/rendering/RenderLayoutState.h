@@ -38,11 +38,11 @@ class RenderFragmentedFlow;
 class RenderMultiColumnFlow;
 class RenderObject;
 
-class LayoutState {
-    WTF_MAKE_NONCOPYABLE(LayoutState); WTF_MAKE_FAST_ALLOCATED;
+class RenderLayoutState {
+    WTF_MAKE_NONCOPYABLE(RenderLayoutState); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    LayoutState()
+    RenderLayoutState()
         : m_clipped(false)
         , m_isPaginated(false)
         , m_pageLogicalHeightChanged(false)
@@ -52,9 +52,9 @@ public:
 #endif
     {
     }
-    LayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
+    RenderLayoutState(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
     enum class IsPaginated { No, Yes };
-    explicit LayoutState(RenderElement&, IsPaginated = IsPaginated::No);
+    explicit RenderLayoutState(RenderElement&, IsPaginated = IsPaginated::No);
 
     bool isPaginated() const { return m_isPaginated; }
 
@@ -89,11 +89,11 @@ public:
 #endif
 
 private:
-    void computeOffsets(const LayoutState& ancestor, RenderBox&, LayoutSize offset);
-    void computeClipRect(const LayoutState& ancestor, RenderBox&);
+    void computeOffsets(const RenderLayoutState& ancestor, RenderBox&, LayoutSize offset);
+    void computeClipRect(const RenderLayoutState& ancestor, RenderBox&);
     // FIXME: webkit.org/b/179440 these functions should be part of the pagination code/FrameViewLayoutContext.
     void computePaginationInformation(const FrameViewLayoutContext::LayoutStateStack&, RenderBox&, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged);
-    void propagateLineGridInfo(const LayoutState& ancestor, RenderBox&);
+    void propagateLineGridInfo(const RenderLayoutState& ancestor, RenderBox&);
     void establishLineGrid(const FrameViewLayoutContext::LayoutStateStack&, RenderBlockFlow&);
     void computeLineGridPaginationOrigin(const RenderMultiColumnFlow&);
 
