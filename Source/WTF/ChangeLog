@@ -1,3 +1,15 @@
+2018-12-07  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Add optional variants of SOFT_LINK_CLASS_FOR_SOURCE
+        https://bugs.webkit.org/show_bug.cgi?id=192498
+
+        Reviewed by Tim Horton.
+
+        Added SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL and SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT,
+        which behave like their non-optional variants but do not require their classes to exist.
+
+        * wtf/cocoa/SoftLinking.h:
+
 2018-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Move USE_NEW_THEME out of WebCore's config.h

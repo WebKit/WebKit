@@ -389,7 +389,7 @@
     } \
     }
 
-#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, export) \
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, export, assertion) \
     @class className; \
     namespace functionNamespace { \
     static Class init##className(); \
@@ -407,15 +407,26 @@
         dispatch_once(&once, ^{ \
             framework##Library(); \
             class##className = objc_getClass(#className); \
-            RELEASE_ASSERT(class##className); \
+            assertion(class##className); \
             get##className##Class = className##Function; \
         }); \
         return class##className; \
     } \
     }
 
+#define NO_ASSERT(assertion) (void(0))
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, export) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, export, RELEASE_ASSERT)
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(functionNamespace, framework, className, export) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, export, NO_ASSERT)
+
 #define SOFT_LINK_CLASS_FOR_SOURCE(functionNamespace, framework, className) \
-    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, className, )
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, , RELEASE_ASSERT)
+
+#define SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(functionNamespace, framework, className) \
+    SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT_AND_ASSERTION(functionNamespace, framework, className, , NO_ASSERT)
 
 #define SOFT_LINK_CONSTANT_FOR_HEADER(functionNamespace, framework, variableName, variableType) \
     WTF_EXTERN_C_BEGIN \
