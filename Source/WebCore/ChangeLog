@@ -1,3 +1,12 @@
+2018-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Move USE_NEW_THEME out of WebCore's config.h
+        https://bugs.webkit.org/show_bug.cgi?id=192426
+
+        Reviewed by Tim Horton.
+
+        * config.h:
+
 2018-12-06  Frederic Wang  <fwang@igalia.com>
 
         Allow control over child order when adding nodes to the scrolling tree

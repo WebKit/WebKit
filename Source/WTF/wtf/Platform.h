@@ -1418,3 +1418,12 @@
 #define USE_CFNETWORK_AUTO_ADDED_HTTP_HEADER_SUPPRESSION 1
 #endif
 #endif
+
+#ifdef __APPLE__
+#define HAVE_FUNC_USLEEP 1
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(WPE)
+/* FIXME: This really needs a descriptive name, this "new theme" was added in 2008. */
+#define USE_NEW_THEME 1
+#endif
