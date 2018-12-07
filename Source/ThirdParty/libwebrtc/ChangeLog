@@ -2,6 +2,17 @@
 
         Update libwebrtc up to 0d007d7c4f
         https://bugs.webkit.org/show_bug.cgi?id=192316
+        <rdar://problem/46563726>
+
+        Unreviewed.
+
+        * Source/webrtc/data/voice_engine/stereo_rtp_files/rtpplay.exe: Removed.
+        Unneeded file.
+
+2018-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 0d007d7c4f
+        https://bugs.webkit.org/show_bug.cgi?id=192316
 
         Reviewed by Eric Carlson.
 
