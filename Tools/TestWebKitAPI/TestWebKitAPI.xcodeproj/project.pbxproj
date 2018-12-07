@@ -235,9 +235,11 @@
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
 		51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
+		5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */; };
 		524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBC9B19DF3714002F1AF1 /* file-with-video.html */; };
 		524BBCA119E30C77002F1AF1 /* test.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBCA019E30C63002F1AF1 /* test.mp4 */; };
 		52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 52B8CF9415868CF000281053 /* SetDocumentURI.html */; };
+		52D5D6C021B9F1B30046ABA6 /* RenderingProgress.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */; };
 		52D673EE1AFB127300FA19FE /* WKPageCopySessionStateWithFiltering.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52D673EC1AFB126800FA19FE /* WKPageCopySessionStateWithFiltering.cpp */; };
 		52E5CE4914D21EAB003B2BD8 /* ParentFrame_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */; };
 		5311BD5E1EA9490E00525281 /* ThreadMessages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5311BD5D1EA9490D00525281 /* ThreadMessages.cpp */; };
@@ -1578,6 +1580,9 @@
 		52B8CF9415868CF000281053 /* SetDocumentURI.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SetDocumentURI.html; sourceTree = "<group>"; };
 		52B8CF9515868CF000281053 /* SetDocumentURI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetDocumentURI.mm; sourceTree = "<group>"; };
 		52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadAlternateHTMLStringWithNonDirectoryURL.cpp; sourceTree = "<group>"; };
+		52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgress.mm; sourceTree = "<group>"; };
+		52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressPlugIn.mm; sourceTree = "<group>"; };
+		52D5D6BF21B9F1B20046ABA6 /* RenderingProgressProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderingProgressProtocol.h; sourceTree = "<group>"; };
 		52D673EC1AFB126800FA19FE /* WKPageCopySessionStateWithFiltering.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageCopySessionStateWithFiltering.cpp; sourceTree = "<group>"; };
 		52E5CE4514D21E9D003B2BD8 /* ParentFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame.cpp; sourceTree = "<group>"; };
 		52E5CE4814D21EAB003B2BD8 /* ParentFrame_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParentFrame_Bundle.cpp; sourceTree = "<group>"; };
@@ -2495,6 +2500,9 @@
 				A12DDBF91E836F0700CF6CAE /* RenderedImageWithOptions.mm */,
 				A12DDBFC1E836FF100CF6CAE /* RenderedImageWithOptionsPlugIn.mm */,
 				A12DDC011E8374F500CF6CAE /* RenderedImageWithOptionsProtocol.h */,
+				52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */,
+				52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */,
+				52D5D6BF21B9F1B20046ABA6 /* RenderingProgressProtocol.h */,
 				CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */,
 				51C8E1A41F26AC5400BF731B /* ResourceLoadStatistics.mm */,
 				5CCB10E02134579D00AC5AF0 /* ResponsivenessTimer.mm */,
@@ -3913,6 +3921,7 @@
 				A155022A1E05020B00A24C57 /* DuplicateCompletionHandlerCalls.mm in Sources */,
 				7CCE7EBE1A411A7E00447C4C /* DynamicDeviceScaleFactor.mm in Sources */,
 				5C0BF8921DD599B600B00328 /* EarlyKVOCrash.mm in Sources */,
+				52D5D6C021B9F1B30046ABA6 /* RenderingProgress.mm in Sources */,
 				F44D064A1F3962F2001A0E29 /* EditingTestHarness.mm in Sources */,
 				7CCE7EE01A411A9A00447C4C /* EditorCommands.mm in Sources */,
 				F44D06471F39627A001A0E29 /* EditorStateTests.mm in Sources */,
@@ -4282,6 +4291,7 @@
 				0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */,
 				79C5D431209D768300F1E7CA /* InjectedBundleNodeHandleIsTextField.mm in Sources */,
 				F44C7A0020F9EEBF0014478C /* ParserYieldTokenPlugIn.mm in Sources */,
+				5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,

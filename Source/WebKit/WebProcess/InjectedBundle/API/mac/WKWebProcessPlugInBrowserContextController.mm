@@ -110,6 +110,7 @@ public:
     void didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPage&, WebKit::WebFrame&, RefPtr<API::Object>&) override;
     void didLayoutForFrame(WebKit::WebPage&, WebKit::WebFrame&) override;
     void didReachLayoutMilestone(WebKit::WebPage&, OptionSet<WebCore::LayoutMilestone>, RefPtr<API::Object>&) override;
+    OptionSet<WebCore::LayoutMilestone> layoutMilestones() const override;
     
     void didHandleOnloadEventsForFrame(WebKit::WebPage&, WebKit::WebFrame&) override;
     
@@ -230,6 +231,16 @@ void PageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebKit::WebPage&, 
 {
     if ([loadDelegate() respondsToSelector:@selector(webProcessPlugInBrowserContextController:didFirstVisuallyNonEmptyLayoutForFrame:)])
         [loadDelegate() webProcessPlugInBrowserContextController:pluginContextController() didFirstVisuallyNonEmptyLayoutForFrame:wrapper(frame)];
+}
+
+OptionSet<WebCore::LayoutMilestone> PageLoaderClient::layoutMilestones() const
+{
+    if ([loadDelegate() respondsToSelector:@selector(webProcessPlugInBrowserContextControllerRenderingProgressEvents:)]) {
+        _WKRenderingProgressEvents milestones = [loadDelegate() webProcessPlugInBrowserContextControllerRenderingProgressEvents:pluginContextController()];
+        return WebKit::toLayoutMilestones(static_cast<WKLayoutMilestones>(milestones));
+    }
+
+    return { };
 }
 
 void PageLoaderClient::didHandleOnloadEventsForFrame(WebKit::WebPage&, WebKit::WebFrame& frame)

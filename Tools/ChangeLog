@@ -1,3 +1,20 @@
+2018-12-07  Saam Barati  <sbarati@apple.com>
+
+        WKWebProcessPlugInLoadDelegate should have API for saying which rendering events it wants to listen for
+        https://bugs.webkit.org/show_bug.cgi?id=192473
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/RenderingProgress.mm: Added.
+        (-[DidFirstMeaningfulPaintRemoteObject didFirstMeaningfulPaint]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/RenderingProgressPlugIn.mm: Added.
+        (-[RenderingProgressPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[RenderingProgressPlugIn webProcessPlugInBrowserContextControllerRenderingProgressEvents:]):
+        (-[RenderingProgressPlugIn webProcessPlugInBrowserContextController:renderingProgressDidChange:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/RenderingProgressProtocol.h: Added.
+
 2018-12-07  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION: run-webkit-tests may fail when using booted simulators (Follow-up fix)
