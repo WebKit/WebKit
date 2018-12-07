@@ -963,6 +963,7 @@
 		31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		317D3FF3215599F40034E3B9 /* PointerEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 317D3FF2215599E30034E3B9 /* PointerEvent.h */; };
 		31815A311F9A6C8F00FCBF89 /* ImageBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D26BBF1F86D189008FF255 /* ImageBitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		318436DE21B9DAAF00ED383E /* WebGPULayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 318436DB21B9DAA000ED383E /* WebGPULayer.h */; };
 		318891611AB7EEA100EA627B /* missingImage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CDF419991AB0DA14004E64E1 /* missingImage@3x.png */; };
 		318EAD4D1FA91380008CEF86 /* ImageBitmapRenderingContextSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 318EAD4A1FA91157008CEF86 /* ImageBitmapRenderingContextSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7021,6 +7022,8 @@
 		317D3FEF215599E10034E3B9 /* PointerEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PointerEvent.idl; sourceTree = "<group>"; };
 		317D3FF1215599E20034E3B9 /* PointerEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PointerEvent.cpp; sourceTree = "<group>"; };
 		317D3FF2215599E30034E3B9 /* PointerEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PointerEvent.h; sourceTree = "<group>"; };
+		318436DB21B9DAA000ED383E /* WebGPULayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGPULayer.h; sourceTree = "<group>"; };
+		318436DD21B9DAA000ED383E /* WebGPULayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGPULayer.mm; sourceTree = "<group>"; };
 		3189E6DB16B2103500386EA3 /* plugIns.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = plugIns.css; sourceTree = "<group>"; };
 		318EAD4A1FA91157008CEF86 /* ImageBitmapRenderingContextSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBitmapRenderingContextSettings.h; sourceTree = "<group>"; };
 		318EAD4C1FA91352008CEF86 /* ImageBitmapRenderingContextSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageBitmapRenderingContextSettings.idl; sourceTree = "<group>"; };
@@ -24419,6 +24422,8 @@
 				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
 				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
+				318436DB21B9DAA000ED383E /* WebGPULayer.h */,
+				318436DD21B9DAA000ED383E /* WebGPULayer.mm */,
 				316BDB8A1E6E153000DE0D5A /* WebMetalLayer.h */,
 				D045AD1D2168230B000A6E9B /* WebMetalLayer.mm */,
 			);
@@ -31659,6 +31664,7 @@
 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
 				6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */,
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
+				318436DE21B9DAAF00ED383E /* WebGPULayer.h in Headers */,
 				A5B81CB71FAA44620037D1E6 /* WebHeapAgent.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,

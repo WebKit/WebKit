@@ -1,3 +1,41 @@
+2018-12-07  Dean Jackson  <dino@apple.com>
+
+        [iOS] Make WebGPU work with remote layer hosting
+        https://bugs.webkit.org/show_bug.cgi?id=192508
+        <rdar://problem/46560649>
+
+        Reviewed by Tim Horton.
+
+        WebGPU wasn't working on iOS because we were not correctly
+        identifying the CALayers for remote hosting. Fix this by
+        adding a new CALayer type, WebGPULayer. This will also
+        eventually hold the code to render WebGPU into a canvas.
+
+        Covered by the existing reference tests (on device).
+
+        * SourcesCocoa.txt: Add new files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm: Recognise the WebGPULayer
+        class for remote hosting.
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+
+        * platform/graphics/cocoa/WebGPULayer.h: Added. Very simple inheritance
+        from CAMetalLayer.
+        * platform/graphics/cocoa/WebGPULayer.mm: Added.
+        (-[WebGPULayer init]):
+        (-[WebGPULayer copyImageSnapshotWithColorSpace:]):
+
+        * platform/graphics/gpu/GPUSwapChain.h: Reference WebGPULayer rather
+        than CALayer.
+
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm: Ensure that
+        the WebGPULayer has a reference back to this object, which it
+        will use in the future.
+        (WebCore::GPUSwapChain::create):
+        (WebCore::GPUSwapChain::GPUSwapChain):
+
 2018-12-07  Antti Koivisto  <antti@apple.com>
 
         Rename LayoutState to RenderLayoutState
