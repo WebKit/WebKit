@@ -41,6 +41,8 @@ typedef struct _WebKitMediaStreamSrc WebKitMediaStreamSrc;
 #define WEBKIT_TYPE_MEDIA_STREAM_SRC (webkit_media_stream_src_get_type())
 GType webkit_media_stream_src_get_type(void) G_GNUC_CONST;
 bool webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc*, MediaStreamPrivate*);
+bool webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, MediaStreamTrackPrivate*, bool onlyTrack);
+GstElement * webkitMediaStreamSrcNew(void);
 } // WebCore
 
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(LIBWEBRTC)

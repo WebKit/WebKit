@@ -82,6 +82,7 @@ public:
     bool isSignedInteger() const final { return GST_AUDIO_INFO_IS_INTEGER(&m_info); }
     bool isNativeEndian() const final { return GST_AUDIO_INFO_ENDIANNESS(&m_info) == G_BYTE_ORDER; }
     bool isFloat() const final { return GST_AUDIO_INFO_IS_FLOAT(&m_info); }
+    int bytesPerFrame() { return GST_AUDIO_INFO_BPF(&m_info);  }
 
     uint32_t numberOfInterleavedChannels() const final { return isInterleaved() ? GST_AUDIO_INFO_CHANNELS(&m_info) : TRUE; }
     uint32_t numberOfChannelStreams() const final { return GST_AUDIO_INFO_CHANNELS(&m_info); }

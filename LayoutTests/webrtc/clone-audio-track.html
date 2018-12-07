@@ -33,7 +33,7 @@
                 });
             }).then(() => {
                 return analyseAudio(remoteStream, 200, context).then((results) => {
-                    assert_false(results.heardHum, "Did not heard hum from remote enabled track");
+                    assert_false(results.heardHum, "Did not hear hum from remote disabled track");
                 });
             }).then(() => {
                 return analyseAudio(new MediaStream([clonedTrack]), 200, context).then((results) => {

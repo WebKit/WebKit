@@ -32,7 +32,6 @@ public:
     GStreamerAudioCapturer(GStreamerCaptureDevice);
     GStreamerAudioCapturer();
 
-    GstElement* createSource() final;
     GstElement* createConverter() final;
     const char* name() final { return "Audio"; }
 

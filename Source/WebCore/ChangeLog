@@ -1,3 +1,47 @@
+2018-12-07  Thibault Saunier  <tsaunier@igalia.com>
+
+        [WPE][GTK] Implement WebAudioSourceProviderGStreamer to allow bridging MediaStream and the WebAudio APIs
+        https://bugs.webkit.org/show_bug.cgi?id=186933
+
+        Reusing the AudioSourceProviderGStreamer itself as it was doing almost everything we needed,
+        just added a constructor to be able to create it from a MediaStreamTrackPrivate and made it a
+        WebAudioSourceProvider which only means it is now a ThreadSafeRefCounted.
+
+        Sensibily refactored GStreamerMediaStreamSource so that we could reuse it to track a single
+        MediaStreamTrack.
+
+        Reviewed by Philippe Normand.
+
+        Enabled all tests depending on that feature.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::setClient):
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::audioSourceProvider):
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp:
+        (WebCore::GStreamerAudioCapturer::GStreamerAudioCapturer):
+        * platform/mediastream/gstreamer/GStreamerAudioStreamDescription.h:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebCore::webkitMediaStreamSrcSetupSrc):
+        (WebCore::webkitMediaStreamSrcSetupAppSrc):
+        (WebCore::webkitMediaStreamSrcAddTrack):
+        (WebCore::webkitMediaStreamSrcSetStream):
+        (WebCore::webkitMediaStreamSrcNew):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.h:
+        * platform/mediastream/gstreamer/MockGStreamerAudioCaptureSource.cpp:
+        (WebCore::WrappedMockRealtimeAudioSource::WrappedMockRealtimeAudioSource):
+        (WebCore::WrappedMockRealtimeAudioSource::start):
+        (WebCore::WrappedMockRealtimeAudioSource::addHum):
+        (WebCore::WrappedMockRealtimeAudioSource::render):
+        (WebCore::WrappedMockRealtimeAudioSource::settingsDidChange):
+        (WebCore::MockGStreamerAudioCaptureSource::startProducingData):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData): Handle the case where input buffers
+          are "big" and process all the data we can for each runs of the method.
+
 2018-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Move USE_NEW_THEME out of WebCore's config.h

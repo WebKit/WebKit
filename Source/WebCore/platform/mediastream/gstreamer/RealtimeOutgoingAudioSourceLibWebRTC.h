@@ -54,6 +54,7 @@ private:
 
     Lock m_adapterMutex;
     GRefPtr<GstAdapter> m_adapter;
+    Vector<uint8_t> m_audioBuffer;
 };
 
 } // namespace WebCore
