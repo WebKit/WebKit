@@ -1,3 +1,15 @@
+2018-12-07  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION: run-webkit-tests may fail when using booted simulators (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=192470
+        <rdar://problem/46532001>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort.setup_test_run): Check that the number of initialized devices matches the
+        number of child processes.
+
 2018-12-07  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Send bug id as a build property

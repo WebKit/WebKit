@@ -159,7 +159,7 @@ class DevicePort(DarwinPort):
 
         if not self.devices():
             raise RuntimeError('No devices are available for testing')
-        if self.default_child_processes() < self.child_processes():
+        if len(self.DEVICE_MANAGER.INITIALIZED_DEVICES) < self.child_processes():
             raise RuntimeError('To few connected devices for {} processes'.format(self.child_processes()))
 
         self._install()
