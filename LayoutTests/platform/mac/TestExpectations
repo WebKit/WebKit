@@ -1794,3 +1794,5 @@ webkit.org/b/190883 legacy-animation-engine/animations/suspend-resume-animation.
 webkit.org/b/190724 [ Debug ] http/tests/misc/large-js-program.php [ Pass Timeout ]
 
 webkit.org/b/191565 imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Pass Slow ] 
+
+webkit.org/b/183389 [ Debug ] fast/css/counters/element-removal-crash.xhtml [ Pass Failure ] 
