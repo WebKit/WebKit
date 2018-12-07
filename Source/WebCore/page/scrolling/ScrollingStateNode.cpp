@@ -97,6 +97,26 @@ void ScrollingStateNode::appendChild(Ref<ScrollingStateNode>&& childNode)
     m_children->append(WTFMove(childNode));
 }
 
+void ScrollingStateNode::insertChild(Ref<ScrollingStateNode>&& childNode, size_t index)
+{
+    childNode->setParent(this);
+
+    if (!m_children) {
+        ASSERT(!index);
+        m_children = std::make_unique<Vector<RefPtr<ScrollingStateNode>>>();
+    }
+
+    m_children->insert(index, WTFMove(childNode));
+}
+
+size_t ScrollingStateNode::indexOfChild(ScrollingStateNode& childNode) const
+{
+    if (!m_children)
+        return notFound;
+
+    return m_children->find(&childNode);
+}
+
 void ScrollingStateNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
     if (!m_children)
