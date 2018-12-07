@@ -51,6 +51,7 @@ class PlaybackSessionInterfaceAVKit;
 @property BOOL canScanBackward;
 @property (readonly) BOOL canSeekToBeginning;
 @property (readonly) BOOL canSeekToEnd;
+@property (readonly) BOOL isScrubbing;
 
 @property BOOL canPlay;
 @property (getter=isPlaying) BOOL playing;

@@ -1,3 +1,22 @@
+2018-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Don't update AVPlayerViewController currentTime while scrubbing
+        https://bugs.webkit.org/show_bug.cgi?id=192438
+        <rdar://problem/42977046>
+
+        Reviewed by Jer Noble.
+
+        No new tests, tested manually.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::currentTimeChanged): Don't report change during scrubbing.
+
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController beginScrubbing:]): Set _isScrubbing.
+        (-[WebAVPlayerController endScrubbing:]): Ditto.
+        (-[WebAVPlayerController isScrubbing]): Return _isScrubbing.
+
 2018-12-07  Thibault Saunier  <tsaunier@igalia.com>
 
         [WPE][GTK] Implement WebAudioSourceProviderGStreamer to allow bridging MediaStream and the WebAudio APIs

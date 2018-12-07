@@ -95,6 +95,9 @@ void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
 
 void PlaybackSessionInterfaceAVKit::currentTimeChanged(double currentTime, double anchorTime)
 {
+    if ([m_playerController isScrubbing])
+        return;
+
     NSTimeInterval anchorTimeStamp = ![m_playerController rate] ? NAN : anchorTime;
     AVValueTiming *timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime
         anchorTimeStamp:anchorTimeStamp rate:0];

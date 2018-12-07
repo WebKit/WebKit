@@ -56,6 +56,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @implementation WebAVPlayerController {
     BOOL _liveStreamEventModePossible;
+    BOOL _isScrubbing;
 }
 
 - (instancetype)init
@@ -157,6 +158,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 - (void)beginScrubbing:(id)sender
 {
     UNUSED_PARAM(sender);
+    _isScrubbing = YES;
     if (self.delegate)
         self.delegate->beginScrubbing();
 }
@@ -164,6 +166,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 - (void)endScrubbing:(id)sender
 {
     UNUSED_PARAM(sender);
+    _isScrubbing = NO;
     if (self.delegate)
         self.delegate->endScrubbing();
 }
@@ -286,6 +289,11 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
     if (!isnan(timeAtEndOfSeekableTimeRanges))
         [self seekToTime:timeAtEndOfSeekableTimeRanges];
+}
+
+- (BOOL)isScrubbing
+{
+    return _isScrubbing;
 }
 
 - (BOOL)canScanForward
