@@ -10,6 +10,8 @@
 
 #include "rtc_base/synchronization/rw_lock_posix.h"
 
+#include <stddef.h>
+
 namespace webrtc {
 
 RWLockPosix::RWLockPosix() : lock_() {}

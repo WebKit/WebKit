@@ -14,8 +14,9 @@
 #include <string>
 #include <vector>
 
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/video/video_codec_type.h"
 #include "media/base/codec.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 class VideoEncoder;
@@ -25,7 +26,7 @@ namespace cricket {
 
 // Deprecated. Use webrtc::VideoEncoderFactory instead.
 // https://bugs.chromium.org/p/webrtc/issues/detail?id=7925
-class WebRtcVideoEncoderFactory {
+class RTC_EXPORT WebRtcVideoEncoderFactory {
  public:
   virtual ~WebRtcVideoEncoderFactory() {}
 

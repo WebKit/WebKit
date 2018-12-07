@@ -21,7 +21,7 @@ static const int kIsacBlockDurationMs = 30;
 static const int kIsacInputSamplingKhz = 16;
 static const int kIsacOutputSamplingKhz = 16;
 
-DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
+WEBRTC_DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
 
 }  // namespace
 

@@ -10,10 +10,15 @@
 
 #include "rtc_base/rtccertificategenerator.h"
 
+#include <time.h>
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/location.h"
+#include "rtc_base/messagehandler.h"
+#include "rtc_base/messagequeue.h"
 #include "rtc_base/refcountedobject.h"
 #include "rtc_base/sslidentity.h"
 
@@ -23,7 +28,6 @@ namespace {
 
 // A certificates' subject and issuer name.
 const char kIdentityName[] = "WebRTC";
-
 const uint64_t kYearInSeconds = 365 * 24 * 60 * 60;
 
 enum {
@@ -60,11 +64,9 @@ class RTCCertificateGenerationTask : public RefCountInterface,
     switch (msg->message_id) {
       case MSG_GENERATE:
         RTC_DCHECK(worker_thread_->IsCurrent());
-
         // Perform the certificate generation work here on the worker thread.
         certificate_ = RTCCertificateGenerator::GenerateCertificate(
             key_params_, expires_ms_);
-
         // Handle callbacks on signaling thread. Pass on the |msg->pdata|
         // (which references |this| with ref counting) to that thread.
         signaling_thread_->Post(RTC_FROM_HERE, this, MSG_GENERATE_DONE,
@@ -72,14 +74,12 @@ class RTCCertificateGenerationTask : public RefCountInterface,
         break;
       case MSG_GENERATE_DONE:
         RTC_DCHECK(signaling_thread_->IsCurrent());
-
         // Perform callback with result here on the signaling thread.
         if (certificate_) {
           callback_->OnSuccess(certificate_);
         } else {
           callback_->OnFailure();
         }
-
         // Destroy |msg->pdata| which references |this| with ref counting. This
         // may result in |this| being deleted - do not touch member variables
         // after this line.
@@ -105,9 +105,11 @@ class RTCCertificateGenerationTask : public RefCountInterface,
 scoped_refptr<RTCCertificate> RTCCertificateGenerator::GenerateCertificate(
     const KeyParams& key_params,
     const absl::optional<uint64_t>& expires_ms) {
-  if (!key_params.IsValid())
+  if (!key_params.IsValid()) {
     return nullptr;
-  SSLIdentity* identity;
+  }
+
+  SSLIdentity* identity = nullptr;
   if (!expires_ms) {
     identity = SSLIdentity::Generate(kIdentityName, key_params);
   } else {
@@ -124,8 +126,9 @@ scoped_refptr<RTCCertificate> RTCCertificateGenerator::GenerateCertificate(
     identity = SSLIdentity::GenerateWithExpiration(kIdentityName, key_params,
                                                    cert_lifetime_s);
   }
-  if (!identity)
+  if (!identity) {
     return nullptr;
+  }
   std::unique_ptr<SSLIdentity> identity_sptr(identity);
   return RTCCertificate::Create(std::move(identity_sptr));
 }

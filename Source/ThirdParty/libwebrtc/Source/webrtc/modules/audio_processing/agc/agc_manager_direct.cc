@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/agc/agc_manager_direct.h"
 
+#include <algorithm>
 #include <cmath>
 
 #ifdef WEBRTC_AGC_DEBUG_DUMP

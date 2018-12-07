@@ -92,7 +92,7 @@ void LibWebRTCSocketClient::signalReadPacket(rtc::AsyncPacketSocket* socket, con
     auto buffer = WebCore::SharedBuffer::create(value, length);
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, buffer = WTFMove(buffer), address = RTCNetwork::isolatedCopy(address), packetTime](IPC::Connection& connection) {
         IPC::DataReference data(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-        connection.send(Messages::WebRTCSocket::SignalReadPacket(data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime.timestamp), identifier);
+        connection.send(Messages::WebRTCSocket::SignalReadPacket(data, RTCNetwork::IPAddress(address.ipaddr()), address.port(), packetTime), identifier);
     });
 }
 

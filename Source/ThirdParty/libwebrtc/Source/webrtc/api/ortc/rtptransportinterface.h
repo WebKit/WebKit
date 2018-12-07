@@ -18,7 +18,6 @@
 #include "api/rtcerror.h"
 #include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
-#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

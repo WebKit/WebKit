@@ -17,6 +17,7 @@
 #include "api/audio/audio_mixer.h"
 #include "modules/audio_mixer/frame_combiner.h"
 #include "modules/audio_mixer/output_rate_calculator.h"
+#include "rtc_base/criticalsection.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/thread_annotations.h"

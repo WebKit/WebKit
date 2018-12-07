@@ -126,7 +126,7 @@ class VideoCapturerTrackSourceTest : public testing::Test {
   }
 
   void CaptureSingleFrame() {
-    rtc::Event event(false, false);
+    rtc::Event event;
     task_queue_.PostTask([this, &event]() {
       ASSERT_TRUE(capturer_->CaptureFrame());
       event.Set();

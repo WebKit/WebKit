@@ -10,12 +10,9 @@
 
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 
-#include <algorithm>
-
-#include "common_types.h"  // NOLINT(build/include)
+#include "common_types.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 
 namespace webrtc {
 

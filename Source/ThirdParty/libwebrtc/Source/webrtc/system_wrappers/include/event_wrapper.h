@@ -12,11 +12,7 @@
 #define SYSTEM_WRAPPERS_INCLUDE_EVENT_WRAPPER_H_
 
 namespace webrtc {
-enum EventTypeWrapper {
-  kEventSignaled = 1,
-  kEventError = 2,
-  kEventTimeout = 3
-};
+enum EventTypeWrapper { kEventSignaled = 1, kEventTimeout = 2 };
 
 #define WEBRTC_EVENT_INFINITE 0xffffffff
 

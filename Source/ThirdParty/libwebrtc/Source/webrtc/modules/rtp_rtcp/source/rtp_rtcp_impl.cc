@@ -11,12 +11,14 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl.h"
 
 #include <string.h>
-
 #include <algorithm>
+#include <cstdint>
 #include <set>
 #include <string>
+#include <utility>
 
-#include "api/rtpparameters.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/dlrr.h"
+#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -31,6 +33,8 @@ const int64_t kRtpRtcpMaxIdleTimeProcessMs = 5;
 const int64_t kRtpRtcpRttProcessTimeMs = 1000;
 const int64_t kRtpRtcpBitrateProcessTimeMs = 10;
 const int64_t kDefaultExpectedRetransmissionTimeMs = 125;
+constexpr int32_t kDefaultVideoReportInterval = 1000;
+constexpr int32_t kDefaultAudioReportInterval = 5000;
 }  // namespace
 
 RtpRtcp::Configuration::Configuration() = default;
@@ -62,7 +66,10 @@ ModuleRtpRtcpImpl::ModuleRtpRtcpImpl(const Configuration& configuration)
                    configuration.rtcp_packet_type_counter_observer,
                    configuration.event_log,
                    configuration.outgoing_transport,
-                   configuration.rtcp_interval_config),
+                   configuration.rtcp_report_interval_ms > 0
+                       ? configuration.rtcp_report_interval_ms
+                       : (configuration.audio ? kDefaultAudioReportInterval
+                                              : kDefaultVideoReportInterval)),
       rtcp_receiver_(configuration.clock,
                      configuration.receiver_only,
                      configuration.rtcp_packet_type_counter_observer,
@@ -70,6 +77,10 @@ ModuleRtpRtcpImpl::ModuleRtpRtcpImpl(const Configuration& configuration)
                      configuration.intra_frame_callback,
                      configuration.transport_feedback_callback,
                      configuration.bitrate_allocation_observer,
+                     configuration.rtcp_report_interval_ms > 0
+                         ? configuration.rtcp_report_interval_ms
+                         : (configuration.audio ? kDefaultAudioReportInterval
+                                                : kDefaultVideoReportInterval),
                      this),
       clock_(configuration.clock),
       audio_(configuration.audio),
@@ -99,7 +110,9 @@ ModuleRtpRtcpImpl::ModuleRtpRtcpImpl(const Configuration& configuration)
         configuration.send_packet_observer,
         configuration.retransmission_rate_limiter,
         configuration.overhead_observer,
-        configuration.populate_network2_timestamp));
+        configuration.populate_network2_timestamp,
+        configuration.frame_encryptor, configuration.require_frame_encryption,
+        configuration.extmap_allow_mixed));
     // Make sure rtcp sender use same timestamp offset as rtp sender.
     rtcp_sender_.SetTimestampOffset(rtp_sender_->TimestampOffset());
 
@@ -175,10 +188,9 @@ void ModuleRtpRtcpImpl::Process() {
 
     // Verify receiver reports are delivered and the reported sequence number
     // is increasing.
-    int64_t rtcp_interval = RtcpReportInterval();
-    if (rtcp_receiver_.RtcpRrTimeout(rtcp_interval)) {
+    if (rtcp_receiver_.RtcpRrTimeout()) {
       RTC_LOG_F(LS_WARNING) << "Timeout: No RTCP RR received.";
-    } else if (rtcp_receiver_.RtcpRrSequenceNumberTimeout(rtcp_interval)) {
+    } else if (rtcp_receiver_.RtcpRrSequenceNumberTimeout()) {
       RTC_LOG_F(LS_WARNING) << "Timeout: No increase in RTCP RR extended "
                                "highest sequence number.";
     }
@@ -253,6 +265,7 @@ void ModuleRtpRtcpImpl::IncomingRtcpPacket(const uint8_t* rtcp_packet,
 }
 
 int32_t ModuleRtpRtcpImpl::RegisterSendPayload(const CodecInst& voice_codec) {
+  rtcp_sender_.SetRtpClockRate(voice_codec.pltype, voice_codec.plfreq);
   return rtp_sender_->RegisterPayload(
       voice_codec.plname, voice_codec.pltype, voice_codec.plfreq,
       voice_codec.channels, (voice_codec.rate < 0) ? 0 : voice_codec.rate);
@@ -260,8 +273,10 @@ int32_t ModuleRtpRtcpImpl::RegisterSendPayload(const CodecInst& voice_codec) {
 
 void ModuleRtpRtcpImpl::RegisterVideoSendPayload(int payload_type,
                                                  const char* payload_name) {
-  RTC_CHECK_EQ(
-      0, rtp_sender_->RegisterPayload(payload_name, payload_type, 90000, 0, 0));
+  rtcp_sender_.SetRtpClockRate(payload_type, kVideoPayloadTypeFrequency);
+  RTC_CHECK_EQ(0,
+               rtp_sender_->RegisterPayload(payload_name, payload_type,
+                                            kVideoPayloadTypeFrequency, 0, 0));
 }
 
 int32_t ModuleRtpRtcpImpl::DeRegisterSendPayload(const int8_t payload_type) {
@@ -392,6 +407,11 @@ bool ModuleRtpRtcpImpl::SendingMedia() const {
   return rtp_sender_ ? rtp_sender_->SendingMedia() : false;
 }
 
+void ModuleRtpRtcpImpl::SetAsPartOfAllocation(bool part_of_allocation) {
+  RTC_CHECK(rtp_sender_);
+  rtp_sender_->SetAsPartOfAllocation(part_of_allocation);
+}
+
 bool ModuleRtpRtcpImpl::SendOutgoingData(
     FrameType frame_type,
     int8_t payload_type,
@@ -402,7 +422,7 @@ bool ModuleRtpRtcpImpl::SendOutgoingData(
     const RTPFragmentationHeader* fragmentation,
     const RTPVideoHeader* rtp_video_header,
     uint32_t* transport_frame_id_out) {
-  rtcp_sender_.SetLastRtpTime(time_stamp, capture_time_ms);
+  rtcp_sender_.SetLastRtpTime(time_stamp, capture_time_ms, payload_type);
   // Make sure an RTCP report isn't queued behind a key frame.
   if (rtcp_sender_.TimeToSendRTCPReport(kVideoFrameKey == frame_type)) {
     rtcp_sender_.SendRTCP(GetFeedbackState(), kRtcpReport);
@@ -602,6 +622,10 @@ void ModuleRtpRtcpImpl::SetRemb(int64_t bitrate_bps,
 
 void ModuleRtpRtcpImpl::UnsetRemb() {
   rtcp_sender_.UnsetRemb();
+}
+
+void ModuleRtpRtcpImpl::SetExtmapAllowMixed(bool extmap_allow_mixed) {
+  rtp_sender_->SetExtmapAllowMixed(extmap_allow_mixed);
 }
 
 int32_t ModuleRtpRtcpImpl::RegisterSendRtpHeaderExtension(
@@ -841,13 +865,6 @@ bool ModuleRtpRtcpImpl::LastReceivedNTP(
 // Called from RTCPsender.
 std::vector<rtcp::TmmbItem> ModuleRtpRtcpImpl::BoundingSet(bool* tmmbr_owner) {
   return rtcp_receiver_.BoundingSet(tmmbr_owner);
-}
-
-int64_t ModuleRtpRtcpImpl::RtcpReportInterval() {
-  if (audio_)
-    return rtcp_sender_.RtcpAudioReportInverval();
-  else
-    return rtcp_sender_.RtcpVideoReportInverval();
 }
 
 void ModuleRtpRtcpImpl::SetRtcpReceiverSsrcs(uint32_t main_ssrc) {

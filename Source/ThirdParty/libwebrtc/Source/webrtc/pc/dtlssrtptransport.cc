@@ -301,6 +301,8 @@ void DtlsSrtpTransport::OnDtlsState(cricket::DtlsTransportInternal* transport,
   RTC_DCHECK(transport == rtp_dtls_transport_ ||
              transport == rtcp_dtls_transport_);
 
+  SignalDtlsStateChange();
+
   if (state != cricket::DTLS_TRANSPORT_CONNECTED) {
     ResetParams();
     return;

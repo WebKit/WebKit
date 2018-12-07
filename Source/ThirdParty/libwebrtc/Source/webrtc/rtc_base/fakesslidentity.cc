@@ -29,8 +29,8 @@ FakeSSLCertificate::FakeSSLCertificate(const FakeSSLCertificate&) = default;
 
 FakeSSLCertificate::~FakeSSLCertificate() = default;
 
-FakeSSLCertificate* FakeSSLCertificate::GetReference() const {
-  return new FakeSSLCertificate(*this);
+std::unique_ptr<SSLCertificate> FakeSSLCertificate::Clone() const {
+  return absl::make_unique<FakeSSLCertificate>(*this);
 }
 
 std::string FakeSSLCertificate::ToPEMString() const {
@@ -83,10 +83,10 @@ FakeSSLIdentity::FakeSSLIdentity(const std::vector<std::string>& pem_strings) {
 }
 
 FakeSSLIdentity::FakeSSLIdentity(const FakeSSLCertificate& cert)
-    : cert_chain_(absl::make_unique<SSLCertChain>(&cert)) {}
+    : cert_chain_(absl::make_unique<SSLCertChain>(cert.Clone())) {}
 
 FakeSSLIdentity::FakeSSLIdentity(const FakeSSLIdentity& o)
-    : cert_chain_(o.cert_chain_->UniqueCopy()) {}
+    : cert_chain_(o.cert_chain_->Clone()) {}
 
 FakeSSLIdentity::~FakeSSLIdentity() = default;
 

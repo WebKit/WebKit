@@ -28,8 +28,8 @@ bool RtcEventAlrState::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventAlrState::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventAlrState(*this));
+std::unique_ptr<RtcEventAlrState> RtcEventAlrState::Copy() const {
+  return absl::WrapUnique<RtcEventAlrState>(new RtcEventAlrState(*this));
 }
 
 }  // namespace webrtc

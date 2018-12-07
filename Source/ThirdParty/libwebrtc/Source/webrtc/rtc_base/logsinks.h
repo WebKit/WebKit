@@ -11,6 +11,7 @@
 #ifndef RTC_BASE_LOGSINKS_H_
 #define RTC_BASE_LOGSINKS_H_
 
+#include <stddef.h>
 #include <memory>
 #include <string>
 

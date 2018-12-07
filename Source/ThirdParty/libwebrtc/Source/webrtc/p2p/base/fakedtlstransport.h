@@ -17,9 +17,11 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/crypto/cryptooptions.h"
 #include "p2p/base/dtlstransportinternal.h"
 #include "p2p/base/fakeicetransport.h"
 #include "rtc_base/fakesslidentity.h"
+#include "rtc_base/rtccertificate.h"
 
 namespace cricket {
 
@@ -32,7 +34,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       : ice_transport_(ice_transport),
         transport_name_(ice_transport->transport_name()),
         component_(ice_transport->component()),
-        dtls_fingerprint_("", nullptr, 0) {
+        dtls_fingerprint_("", nullptr) {
     RTC_DCHECK(ice_transport_);
     ice_transport_->SignalReadPacket.connect(
         this, &FakeDtlsTransport::OnIceTransportReadPacket);
@@ -44,7 +46,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       : owned_ice_transport_(std::move(ice)),
         transport_name_(owned_ice_transport_->transport_name()),
         component_(owned_ice_transport_->component()),
-        dtls_fingerprint_("", nullptr, 0) {
+        dtls_fingerprint_("", rtc::ArrayView<const uint8_t>()) {
     ice_transport_ = owned_ice_transport_.get();
     ice_transport_->SignalReadPacket.connect(
         this, &FakeDtlsTransport::OnIceTransportReadPacket);
@@ -82,6 +84,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     ice_transport_->SetReceiving(receiving);
     set_receiving(receiving);
   }
+  void SetDtlsState(DtlsTransportState state) { dtls_state_ = state; }
 
   // Simulates the two DTLS transports connecting to each other.
   // If |asymmetric| is true this method only affects this FakeDtlsTransport.
@@ -132,7 +135,8 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   bool SetRemoteFingerprint(const std::string& alg,
                             const uint8_t* digest,
                             size_t digest_len) override {
-    dtls_fingerprint_ = rtc::SSLFingerprint(alg, digest, digest_len);
+    dtls_fingerprint_ =
+        rtc::SSLFingerprint(alg, rtc::MakeArrayView(digest, digest_len));
     return true;
   }
   bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version) override {
@@ -149,10 +153,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     *role = *dtls_role_;
     return true;
   }
-  const rtc::CryptoOptions& crypto_options() const override {
+  const webrtc::CryptoOptions& crypto_options() const override {
     return crypto_options_;
   }
-  void SetCryptoOptions(const rtc::CryptoOptions& crypto_options) {
+  void SetCryptoOptions(const webrtc::CryptoOptions& crypto_options) {
     crypto_options_ = crypto_options;
   }
   bool SetLocalCertificate(
@@ -178,8 +182,10 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     return local_cert_;
   }
   std::unique_ptr<rtc::SSLCertChain> GetRemoteSSLCertChain() const override {
-    return remote_cert_ ? absl::make_unique<rtc::SSLCertChain>(remote_cert_)
-                        : nullptr;
+    if (!remote_cert_) {
+      return nullptr;
+    }
+    return absl::make_unique<rtc::SSLCertChain>(remote_cert_->Clone());
   }
   bool ExportKeyingMaterial(const std::string& label,
                             const uint8_t* context,
@@ -232,9 +238,9 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   void OnIceTransportReadPacket(PacketTransportInternal* ice_,
                                 const char* data,
                                 size_t len,
-                                const rtc::PacketTime& time,
+                                const int64_t& packet_time_us,
                                 int flags) {
-    SignalReadPacket(this, data, len, time, flags);
+    SignalReadPacket(this, data, len, packet_time_us, flags);
   }
 
   void set_receiving(bool receiving) {
@@ -272,7 +278,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   rtc::SSLFingerprint dtls_fingerprint_;
   absl::optional<rtc::SSLRole> dtls_role_;
   int crypto_suite_ = rtc::SRTP_AES128_CM_SHA1_80;
-  rtc::CryptoOptions crypto_options_;
+  webrtc::CryptoOptions crypto_options_;
 
   DtlsTransportState dtls_state_ = DTLS_TRANSPORT_NEW;
 

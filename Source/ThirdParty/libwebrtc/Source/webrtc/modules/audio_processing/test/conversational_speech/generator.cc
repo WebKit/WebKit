@@ -32,10 +32,10 @@ const char kUsageDescription[] =
     "Command-line tool to generate multiple-end audio tracks to simulate "
     "conversational speech with two or more participants.\n";
 
-DEFINE_string(i, "", "Directory containing the speech turn wav files");
-DEFINE_string(t, "", "Path to the timing text file");
-DEFINE_string(o, "", "Output wav files destination path");
-DEFINE_bool(help, false, "Prints this message");
+WEBRTC_DEFINE_string(i, "", "Directory containing the speech turn wav files");
+WEBRTC_DEFINE_string(t, "", "Path to the timing text file");
+WEBRTC_DEFINE_string(o, "", "Output wav files destination path");
+WEBRTC_DEFINE_bool(help, false, "Prints this message");
 
 }  // namespace
 

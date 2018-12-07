@@ -87,7 +87,7 @@ void NetworkControllerTester::RunSimulation(TimeDelta duration,
     if (state_.congestion_window && state_.congestion_window->IsFinite()) {
       DataSize data_in_flight = DataSize::Zero();
       for (PacketResult& packet : outstanding_packets_)
-        data_in_flight += packet.sent_packet->size;
+        data_in_flight += packet.sent_packet.size;
       if (data_in_flight > *state_.congestion_window)
         send_packet = false;
     }
@@ -98,7 +98,7 @@ void NetworkControllerTester::RunSimulation(TimeDelta duration,
       sent_packet.sequence_number = packet_sequence_number_++;
       sent_packet.data_in_flight = sent_packet.size;
       for (PacketResult& packet : outstanding_packets_)
-        sent_packet.data_in_flight += packet.sent_packet->size;
+        sent_packet.data_in_flight += packet.sent_packet.size;
       Update(&state_, controller_->OnSentPacket(sent_packet));
 
       TimeDelta time_in_flight = sent_packet.size / actual_bandwidth;
@@ -120,7 +120,7 @@ void NetworkControllerTester::RunSimulation(TimeDelta duration,
       TransportPacketsFeedback feedback;
       feedback.prior_in_flight = DataSize::Zero();
       for (PacketResult& packet : outstanding_packets_)
-        feedback.prior_in_flight += packet.sent_packet->size;
+        feedback.prior_in_flight += packet.sent_packet.size;
       while (!outstanding_packets_.empty() &&
              current_time_ >= outstanding_packets_.front().receive_time +
                                   propagation_delay) {
@@ -131,7 +131,7 @@ void NetworkControllerTester::RunSimulation(TimeDelta duration,
           feedback.packet_feedbacks.back().receive_time + propagation_delay;
       feedback.data_in_flight = DataSize::Zero();
       for (PacketResult& packet : outstanding_packets_)
-        feedback.data_in_flight += packet.sent_packet->size;
+        feedback.data_in_flight += packet.sent_packet.size;
       Update(&state_, controller_->OnTransportPacketsFeedback(feedback));
     }
     current_time_ += packet_interval;

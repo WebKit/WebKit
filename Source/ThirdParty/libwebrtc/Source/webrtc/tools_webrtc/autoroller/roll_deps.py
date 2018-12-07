@@ -70,6 +70,8 @@ ANDROID_DEPS_END = r'=== ANDROID_DEPS Generated Code End ==='
 # Location of automically gathered android deps.
 ANDROID_DEPS_PATH = 'src/third_party/android_deps/'
 
+NOTIFY_EMAIL = 'webrtc-trooper@grotations.appspotmail.com'
+
 
 sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
 import find_depot_tools
@@ -256,8 +258,9 @@ def BuildDepsentryDict(deps_dict):
 
 
 def _FindChangedCipdPackages(path, old_pkgs, new_pkgs):
-  assert ({p['package'] for p in old_pkgs} ==
-          {p['package'] for p in new_pkgs})
+  pkgs_equal = ({p['package'] for p in old_pkgs} ==
+      {p['package'] for p in new_pkgs})
+  assert pkgs_equal, 'Old: %s\n New: %s' % (old_pkgs, new_pkgs)
   for old_pkg in old_pkgs:
     for new_pkg in new_pkgs:
       old_version = old_pkg['version']
@@ -592,10 +595,11 @@ def _UploadCL(commit_queue_mode):
     - 1: Run trybots but do not submit to CQ.
     - 0: Skip CQ, upload only.
   """
-  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks']
+  cmd = ['git', 'cl', 'upload', '--force', '--bypass-hooks', '--send-mail']
+  cmd.extend(['--cc', NOTIFY_EMAIL])
   if commit_queue_mode >= 2:
     logging.info('Sending the CL to the CQ...')
-    cmd.extend(['--use-commit-queue', '--send-mail'])
+    cmd.extend(['--use-commit-queue'])
   elif commit_queue_mode >= 1:
     logging.info('Starting CQ dry run...')
     cmd.extend(['--cq-dry-run'])

@@ -19,6 +19,7 @@
 
 #include "absl/types/optional.h"
 
+#include "api/crypto/framedecryptorinterface.h"
 #include "api/video_codecs/video_codec.h"
 #include "call/rtp_packet_sink_interface.h"
 #include "call/syncable.h"
@@ -67,7 +68,8 @@ class RtpVideoStreamReceiver : public RecoveredPacketReceiver,
       ProcessThread* process_thread,
       NackSender* nack_sender,
       KeyFrameRequestSender* keyframe_request_sender,
-      video_coding::OnCompleteFrameCallback* complete_frame_callback);
+      video_coding::OnCompleteFrameCallback* complete_frame_callback,
+      rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor);
   ~RtpVideoStreamReceiver() override;
 
   void AddReceiveCodec(const VideoCodec& video_codec,
@@ -102,7 +104,8 @@ class RtpVideoStreamReceiver : public RecoveredPacketReceiver,
       const uint8_t* payload_data,
       size_t payload_size,
       const WebRtcRTPHeader* rtp_header,
-      const absl::optional<RtpGenericFrameDescriptor>& generic_descriptor);
+      const absl::optional<RtpGenericFrameDescriptor>& generic_descriptor,
+      bool is_recovered);
 
   // Implements RecoveredPacketReceiver.
   void OnRecoveredPacket(const uint8_t* packet, size_t packet_length) override;
@@ -203,6 +206,11 @@ class RtpVideoStreamReceiver : public RecoveredPacketReceiver,
       RTC_GUARDED_BY(rtp_sources_lock_);
   absl::optional<int64_t> last_received_rtp_system_time_ms_
       RTC_GUARDED_BY(rtp_sources_lock_);
+
+  // E2EE Video Frame Decryptor (Optional)
+  rtc::scoped_refptr<FrameDecryptorInterface> frame_decryptor_;
+  // Set to true on the first successsfully decrypted frame.
+  bool has_received_decrypted_frame_ = false;
 };
 
 }  // namespace webrtc

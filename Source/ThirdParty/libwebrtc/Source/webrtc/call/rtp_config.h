@@ -11,6 +11,8 @@
 #ifndef CALL_RTP_CONFIG_H_
 #define CALL_RTP_CONFIG_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 #include <vector>
 
@@ -74,6 +76,9 @@ struct RtpConfig {
   // Max RTP packet size delivered to send transport from VideoEngine.
   size_t max_packet_size = kDefaultMaxPacketSize;
 
+  // Corresponds to the SDP attribute extmap-allow-mixed.
+  bool extmap_allow_mixed = false;
+
   // RTP header extensions to use for this send stream.
   std::vector<RtpExtension> extensions;
 
@@ -128,18 +133,6 @@ struct RtpConfig {
 
   // RTCP CNAME, see RFC 3550.
   std::string c_name;
-};
-
-struct RtcpConfig {
-  RtcpConfig();
-  RtcpConfig(const RtcpConfig&);
-  ~RtcpConfig();
-  std::string ToString() const;
-
-  // Time interval between RTCP report for video
-  int64_t video_report_interval_ms = 1000;
-  // Time interval between RTCP report for audio
-  int64_t audio_report_interval_ms = 5000;
 };
 }  // namespace webrtc
 #endif  // CALL_RTP_CONFIG_H_

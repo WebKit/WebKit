@@ -92,6 +92,43 @@ class FieldTrialParameter : public FieldTrialParameterInterface {
   T value_;
 };
 
+// This class uses the ParseTypedParameter function to implement a parameter
+// implementation with an enforced default value and a range constraint. Values
+// outside the configured range will be ignored.
+template <typename T>
+class FieldTrialConstrained : public FieldTrialParameterInterface {
+ public:
+  FieldTrialConstrained(std::string key,
+                        T default_value,
+                        absl::optional<T> lower_limit,
+                        absl::optional<T> upper_limit)
+      : FieldTrialParameterInterface(key),
+        value_(default_value),
+        lower_limit_(lower_limit),
+        upper_limit_(upper_limit) {}
+  T Get() const { return value_; }
+  operator T() const { return Get(); }
+  const T* operator->() const { return &value_; }
+
+ protected:
+  bool Parse(absl::optional<std::string> str_value) override {
+    if (str_value) {
+      absl::optional<T> value = ParseTypedParameter<T>(*str_value);
+      if (value && (!lower_limit_ || *value >= *lower_limit_) &&
+          (!upper_limit_ || *value <= *upper_limit_)) {
+        value_ = *value;
+        return true;
+      }
+    }
+    return false;
+  }
+
+ private:
+  T value_;
+  absl::optional<T> lower_limit_;
+  absl::optional<T> upper_limit_;
+};
+
 class AbstractFieldTrialEnum : public FieldTrialParameterInterface {
  public:
   AbstractFieldTrialEnum(std::string key,
@@ -190,6 +227,9 @@ extern template class FieldTrialParameter<double>;
 extern template class FieldTrialParameter<int>;
 // Using the given value as is.
 extern template class FieldTrialParameter<std::string>;
+
+extern template class FieldTrialConstrained<double>;
+extern template class FieldTrialConstrained<int>;
 
 extern template class FieldTrialOptional<double>;
 extern template class FieldTrialOptional<int>;

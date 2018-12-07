@@ -12,10 +12,12 @@
 
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 class Random;
@@ -94,8 +96,11 @@ class RtpPacket {
   template <typename Extension>
   bool HasExtension() const;
 
-  template <typename Extension, typename... Values>
-  bool GetExtension(Values...) const;
+  template <typename Extension, typename FirstValue, typename... Values>
+  bool GetExtension(FirstValue, Values...) const;
+
+  template <typename Extension>
+  absl::optional<typename Extension::value_type> GetExtension() const;
 
   // Returns view of the raw extension or empty view on failure.
   template <typename Extension>
@@ -111,7 +116,12 @@ class RtpPacket {
   uint8_t* SetPayloadSize(size_t size_bytes);
   // Same as SetPayloadSize but doesn't guarantee to keep current payload.
   uint8_t* AllocatePayload(size_t size_bytes);
-  bool SetPadding(uint8_t size_bytes, Random* random);
+  RTC_DEPRECATED
+  bool SetPadding(uint8_t size_bytes, Random* random) {
+    return SetPadding(size_bytes);
+  }
+
+  bool SetPadding(size_t padding_size);
 
  private:
   struct ExtensionInfo {
@@ -177,12 +187,21 @@ bool RtpPacket::HasExtension() const {
   return !FindExtension(Extension::kId).empty();
 }
 
-template <typename Extension, typename... Values>
-bool RtpPacket::GetExtension(Values... values) const {
+template <typename Extension, typename FirstValue, typename... Values>
+bool RtpPacket::GetExtension(FirstValue first, Values... values) const {
   auto raw = FindExtension(Extension::kId);
   if (raw.empty())
     return false;
-  return Extension::Parse(raw, values...);
+  return Extension::Parse(raw, first, values...);
+}
+
+template <typename Extension>
+absl::optional<typename Extension::value_type> RtpPacket::GetExtension() const {
+  absl::optional<typename Extension::value_type> result;
+  auto raw = FindExtension(Extension::kId);
+  if (raw.empty() || !Extension::Parse(raw, &result.emplace()))
+    result = absl::nullopt;
+  return result;
 }
 
 template <typename Extension>

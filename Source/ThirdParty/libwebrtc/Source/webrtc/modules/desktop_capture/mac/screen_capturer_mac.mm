@@ -167,11 +167,7 @@ ScreenCapturerMac::~ScreenCapturerMac() {
 
 bool ScreenCapturerMac::Init() {
   TRACE_EVENT0("webrtc", "ScreenCapturerMac::Init");
-
-  desktop_config_monitor_->Lock();
   desktop_config_ = desktop_config_monitor_->desktop_configuration();
-  desktop_config_monitor_->Unlock();
-
   return true;
 }
 
@@ -207,7 +203,6 @@ void ScreenCapturerMac::CaptureFrame() {
   queue_.MoveToNextFrame();
   RTC_DCHECK(!queue_.current_frame() || !queue_.current_frame()->IsShared());
 
-  desktop_config_monitor_->Lock();
   MacDesktopConfiguration new_config = desktop_config_monitor_->desktop_configuration();
   if (!desktop_config_.Equals(new_config)) {
     desktop_config_ = new_config;
@@ -234,7 +229,6 @@ void ScreenCapturerMac::CaptureFrame() {
   DesktopFrame* current_frame = queue_.current_frame();
 
   if (!CgBlit(*current_frame, region)) {
-    desktop_config_monitor_->Unlock();
     callback_->OnCaptureResult(Result::ERROR_PERMANENT, nullptr);
     return;
   }
@@ -255,10 +249,6 @@ void ScreenCapturerMac::CaptureFrame() {
   }
 
   helper_.set_size_most_recent(new_frame->size());
-
-  // Signal that we are done capturing data from the display framebuffer,
-  // and accessing display structures.
-  desktop_config_monitor_->Unlock();
 
   new_frame->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
                                  rtc::kNumNanosecsPerMillisec);

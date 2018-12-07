@@ -11,15 +11,26 @@
 #ifndef MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_PROCESSING_STATISTICS_H_
 #define MODULES_AUDIO_PROCESSING_INCLUDE_AUDIO_PROCESSING_STATISTICS_H_
 
+#include <stdint.h>
+
 #include "absl/types/optional.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 // This version of the stats uses Optionals, it will replace the regular
 // AudioProcessingStatistics struct.
-struct AudioProcessingStats {
+struct RTC_EXPORT AudioProcessingStats {
   AudioProcessingStats();
   AudioProcessingStats(const AudioProcessingStats& other);
   ~AudioProcessingStats();
+
+  // The root mean square (RMS) level in dBFS (decibels from digital
+  // full-scale) of the last capture frame, after processing. It is
+  // constrained to [-127, 0].
+  // The computation follows: https://tools.ietf.org/html/rfc6465
+  // with the intent that it can provide the RTP audio level indication.
+  // Only reported if level estimation is enabled in AudioProcessing::Config.
+  absl::optional<int> output_rms_dbfs;
 
   // AEC Statistics.
   // ERL = 10log_10(P_far / P_echo)

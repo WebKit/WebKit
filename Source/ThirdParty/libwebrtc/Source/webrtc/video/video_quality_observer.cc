@@ -34,7 +34,9 @@ const int kBlockyQpThresholdVp9 = 60;  // TODO(ilnik): tune this value.
 
 VideoQualityObserver::VideoQualityObserver(VideoContentType content_type)
     : last_frame_decoded_ms_(-1),
+      last_frame_rendered_ms_(-1),
       num_frames_decoded_(0),
+      num_frames_rendered_(0),
       first_frame_decoded_ms_(-1),
       last_frame_pixels_(0),
       last_frame_qp_(0),
@@ -119,6 +121,46 @@ void VideoQualityObserver::UpdateHistograms() {
   RTC_LOG(LS_INFO) << log_stream.str();
 }
 
+void VideoQualityObserver::OnRenderedFrame(int64_t now_ms) {
+  if (num_frames_rendered_ == 0) {
+    last_unfreeze_time_ = now_ms;
+  }
+
+  ++num_frames_rendered_;
+
+  if (!is_paused_ && num_frames_rendered_ > 1) {
+    // Process inter-frame delay.
+    int64_t interframe_delay_ms = now_ms - last_frame_rendered_ms_;
+    render_interframe_delays_.Add(interframe_delay_ms);
+    absl::optional<int> avg_interframe_delay =
+        render_interframe_delays_.Avg(kMinFrameSamplesToDetectFreeze);
+    // Check if it was a freeze.
+    if (avg_interframe_delay &&
+        interframe_delay_ms >=
+            std::max(3 * *avg_interframe_delay,
+                     *avg_interframe_delay + kMinIncreaseForFreezeMs)) {
+      freezes_durations_.Add(interframe_delay_ms);
+      smooth_playback_durations_.Add(last_frame_rendered_ms_ -
+                                     last_unfreeze_time_);
+      last_unfreeze_time_ = now_ms;
+    }
+  }
+
+  if (is_paused_) {
+    // If the stream was paused since the previous frame, do not count the
+    // pause toward smooth playback. Explicitly count the part before it and
+    // start the new smooth playback interval from this frame.
+    is_paused_ = false;
+    if (last_frame_rendered_ms_ > last_unfreeze_time_) {
+      smooth_playback_durations_.Add(last_frame_rendered_ms_ -
+                                     last_unfreeze_time_);
+    }
+    last_unfreeze_time_ = now_ms;
+  }
+
+  last_frame_rendered_ms_ = now_ms;
+}
+
 void VideoQualityObserver::OnDecodedFrame(absl::optional<uint8_t> qp,
                                           int width,
                                           int height,
@@ -126,7 +168,6 @@ void VideoQualityObserver::OnDecodedFrame(absl::optional<uint8_t> qp,
                                           VideoCodecType codec) {
   if (num_frames_decoded_ == 0) {
     first_frame_decoded_ms_ = now_ms;
-    last_unfreeze_time_ = now_ms;
   }
 
   ++num_frames_decoded_;
@@ -134,21 +175,14 @@ void VideoQualityObserver::OnDecodedFrame(absl::optional<uint8_t> qp,
   if (!is_paused_ && num_frames_decoded_ > 1) {
     // Process inter-frame delay.
     int64_t interframe_delay_ms = now_ms - last_frame_decoded_ms_;
-    interframe_delays_.Add(interframe_delay_ms);
+    decode_interframe_delays_.Add(interframe_delay_ms);
     absl::optional<int> avg_interframe_delay =
-        interframe_delays_.Avg(kMinFrameSamplesToDetectFreeze);
-    // Check if it was a freeze.
-    if (avg_interframe_delay &&
-        interframe_delay_ms >=
+        decode_interframe_delays_.Avg(kMinFrameSamplesToDetectFreeze);
+    // Count spatial metrics if there were no freeze.
+    if (!avg_interframe_delay ||
+        interframe_delay_ms <
             std::max(3 * *avg_interframe_delay,
                      *avg_interframe_delay + kMinIncreaseForFreezeMs)) {
-      freezes_durations_.Add(interframe_delay_ms);
-      smooth_playback_durations_.Add(last_frame_decoded_ms_ -
-                                     last_unfreeze_time_);
-      last_unfreeze_time_ = now_ms;
-    } else {
-      // Only count inter-frame delay as playback time if there
-      // was no freeze.
       time_in_resolution_ms_[current_resolution_] += interframe_delay_ms;
       absl::optional<int> qp_blocky_threshold;
       // TODO(ilnik): add other codec types when we have QP for them.
@@ -166,18 +200,6 @@ void VideoQualityObserver::OnDecodedFrame(absl::optional<uint8_t> qp,
         time_in_blocky_video_ms_ += interframe_delay_ms;
       }
     }
-  }
-
-  if (is_paused_) {
-    // If the stream was paused since the previous frame, do not count the
-    // pause toward smooth playback. Explicitly count the part before it and
-    // start the new smooth playback interval from this frame.
-    is_paused_ = false;
-    if (last_frame_decoded_ms_ > last_unfreeze_time_) {
-      smooth_playback_durations_.Add(last_frame_decoded_ms_ -
-                                     last_unfreeze_time_);
-    }
-    last_unfreeze_time_ = now_ms;
   }
 
   int64_t pixels = width * height;

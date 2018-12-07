@@ -10,9 +10,15 @@
 
 #include "modules/audio_coding/neteq/decoder_database.h"
 
-#include <utility>  // pair
+#include <stddef.h>
+#include <cstdint>
+#include <list>
+#include <type_traits>
+#include <utility>
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/audio_decoder.h"
+#include "common_types.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/audio_format_to_string.h"
@@ -101,7 +107,7 @@ AudioDecoder* DecoderDatabase::DecoderInfo::GetDecoder() const {
 }
 
 bool DecoderDatabase::DecoderInfo::IsType(const char* name) const {
-  return STR_CASE_CMP(audio_format_.name.c_str(), name) == 0;
+  return absl::EqualsIgnoreCase(audio_format_.name, name);
 }
 
 bool DecoderDatabase::DecoderInfo::IsType(const std::string& name) const {
@@ -110,7 +116,7 @@ bool DecoderDatabase::DecoderInfo::IsType(const std::string& name) const {
 
 absl::optional<DecoderDatabase::DecoderInfo::CngDecoder>
 DecoderDatabase::DecoderInfo::CngDecoder::Create(const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "CN") == 0) {
+  if (absl::EqualsIgnoreCase(format.name, "CN")) {
     // CN has a 1:1 RTP clock rate to sample rate ratio.
     const int sample_rate_hz = format.clockrate_hz;
     RTC_DCHECK(sample_rate_hz == 8000 || sample_rate_hz == 16000 ||
@@ -123,11 +129,11 @@ DecoderDatabase::DecoderInfo::CngDecoder::Create(const SdpAudioFormat& format) {
 
 DecoderDatabase::DecoderInfo::Subtype
 DecoderDatabase::DecoderInfo::SubtypeFromFormat(const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "CN") == 0) {
+  if (absl::EqualsIgnoreCase(format.name, "CN")) {
     return Subtype::kComfortNoise;
-  } else if (STR_CASE_CMP(format.name.c_str(), "telephone-event") == 0) {
+  } else if (absl::EqualsIgnoreCase(format.name, "telephone-event")) {
     return Subtype::kDtmf;
-  } else if (STR_CASE_CMP(format.name.c_str(), "red") == 0) {
+  } else if (absl::EqualsIgnoreCase(format.name, "red")) {
     return Subtype::kRed;
   }
 

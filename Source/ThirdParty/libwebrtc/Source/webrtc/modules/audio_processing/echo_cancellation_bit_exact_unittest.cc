@@ -74,9 +74,7 @@ void RunBitexactnessTest(
     EchoCancellationImpl::SuppressionLevel suppression_level,
     bool stream_has_echo_reference,
     const rtc::ArrayView<const float>& output_reference) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoCancellationImpl echo_canceller(&crit_render, &crit_capture);
+  EchoCancellationImpl echo_canceller;
   SetupComponent(sample_rate_hz, suppression_level, drift_compensation_enabled,
                  &echo_canceller);
 

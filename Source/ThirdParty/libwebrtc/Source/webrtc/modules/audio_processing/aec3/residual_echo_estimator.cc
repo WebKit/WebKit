@@ -11,9 +11,11 @@
 
 #include "modules/audio_processing/aec3/residual_echo_estimator.h"
 
-#include <numeric>
+#include <stddef.h>
+#include <algorithm>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/reverb_model.h"
 #include "modules/audio_processing/aec3/reverb_model_fallback.h"
 #include "rtc_base/checks.h"
@@ -105,9 +107,15 @@ void ResidualEchoEstimator::Estimate(
 
   // Estimate the residual echo power.
   if (aec_state.UsableLinearEstimate()) {
-    RTC_DCHECK(!aec_state.SaturatedEcho());
     LinearEstimate(S2_linear, aec_state.Erle(), aec_state.ErleUncertainty(),
                    R2);
+
+    // When there is saturated echo, assume the same spectral content as is
+    // present in the micropone signal.
+    if (aec_state.SaturatedEcho()) {
+      std::copy(Y2.begin(), Y2.end(), R2->begin());
+    }
+
     // Adds the estimated unmodelled echo power to the residual echo power
     // estimate.
     if (echo_reverb_) {
@@ -151,10 +159,10 @@ void ResidualEchoEstimator::Estimate(
     }
     NonLinearEstimate(echo_path_gain, X2, Y2, R2);
 
-    // If the echo is saturated, estimate the echo power as the maximum echo
-    // power with a leakage factor.
+    // When there is saturated echo, assume the same spectral content as is
+    // present in the micropone signal.
     if (aec_state.SaturatedEcho()) {
-      R2->fill((*std::max_element(R2->begin(), R2->end())) * 100.f);
+      std::copy(Y2.begin(), Y2.end(), R2->begin());
     }
 
     if (!(aec_state.TransparentMode() && soft_transparent_mode_)) {

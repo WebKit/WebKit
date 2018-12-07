@@ -10,8 +10,10 @@
 
 #include "p2p/base/portallocator.h"
 
+#include <iterator>
 #include <utility>
 
+#include "p2p/base/icecredentialsiterator.h"
 #include "rtc_base/checks.h"
 
 namespace cricket {
@@ -121,6 +123,10 @@ PortAllocator::~PortAllocator() {
   CheckRunOnValidThreadIfInitialized();
 }
 
+void PortAllocator::set_restrict_ice_credentials_change(bool value) {
+  restrict_ice_credentials_change_ = value;
+}
+
 bool PortAllocator::SetConfiguration(
     const ServerAddresses& stun_servers,
     const std::vector<RelayServerConfig>& turn_servers,
@@ -166,8 +172,8 @@ bool PortAllocator::SetConfiguration(
   // If |candidate_pool_size_| is less than the number of pooled sessions, get
   // rid of the extras.
   while (candidate_pool_size_ < static_cast<int>(pooled_sessions_.size())) {
-    pooled_sessions_.front().reset(nullptr);
-    pooled_sessions_.pop_front();
+    pooled_sessions_.back().reset(nullptr);
+    pooled_sessions_.pop_back();
   }
 
   // |stun_candidate_keepalive_interval_| will be used in STUN port allocation
@@ -183,7 +189,11 @@ bool PortAllocator::SetConfiguration(
   // If |candidate_pool_size_| is greater than the number of pooled sessions,
   // create new sessions.
   while (static_cast<int>(pooled_sessions_.size()) < candidate_pool_size_) {
-    PortAllocatorSession* pooled_session = CreateSessionInternal("", 0, "", "");
+    IceParameters iceCredentials =
+        IceCredentialsIterator::CreateRandomIceCredentials();
+    PortAllocatorSession* pooled_session =
+        CreateSessionInternal("", 0, iceCredentials.ufrag, iceCredentials.pwd);
+    pooled_session->set_pooled(true);
     pooled_session->StartGettingPorts();
     pooled_sessions_.push_back(
         std::unique_ptr<PortAllocatorSession>(pooled_session));
@@ -214,22 +224,50 @@ std::unique_ptr<PortAllocatorSession> PortAllocator::TakePooledSession(
   if (pooled_sessions_.empty()) {
     return nullptr;
   }
-  std::unique_ptr<PortAllocatorSession> ret =
-      std::move(pooled_sessions_.front());
+
+  IceParameters credentials(ice_ufrag, ice_pwd, false);
+  // If restrict_ice_credentials_change_ is TRUE, then call FindPooledSession
+  // with ice credentials. Otherwise call it with nullptr which means
+  // "find any" pooled session.
+  auto cit = FindPooledSession(restrict_ice_credentials_change_ ? &credentials
+                                                                : nullptr);
+  if (cit == pooled_sessions_.end()) {
+    return nullptr;
+  }
+
+  auto it =
+      pooled_sessions_.begin() + std::distance(pooled_sessions_.cbegin(), cit);
+  std::unique_ptr<PortAllocatorSession> ret = std::move(*it);
   ret->SetIceParameters(content_name, component, ice_ufrag, ice_pwd);
-  // According to JSEP, a pooled session should filter candidates only after
-  // it's taken out of the pool.
+  ret->set_pooled(false);
+  // According to JSEP, a pooled session should filter candidates only
+  // after it's taken out of the pool.
   ret->SetCandidateFilter(candidate_filter());
-  pooled_sessions_.pop_front();
+  pooled_sessions_.erase(it);
   return ret;
 }
 
-const PortAllocatorSession* PortAllocator::GetPooledSession() const {
+const PortAllocatorSession* PortAllocator::GetPooledSession(
+    const IceParameters* ice_credentials) const {
   CheckRunOnValidThreadAndInitialized();
-  if (pooled_sessions_.empty()) {
+  auto it = FindPooledSession(ice_credentials);
+  if (it == pooled_sessions_.end()) {
     return nullptr;
+  } else {
+    return it->get();
   }
-  return pooled_sessions_.front().get();
+}
+
+std::vector<std::unique_ptr<PortAllocatorSession>>::const_iterator
+PortAllocator::FindPooledSession(const IceParameters* ice_credentials) const {
+  for (auto it = pooled_sessions_.begin(); it != pooled_sessions_.end(); ++it) {
+    if (ice_credentials == nullptr ||
+        ((*it)->ice_ufrag() == ice_credentials->ufrag &&
+         (*it)->ice_pwd() == ice_credentials->pwd)) {
+      return it;
+    }
+  }
+  return pooled_sessions_.end();
 }
 
 void PortAllocator::FreezeCandidatePool() {
@@ -248,6 +286,16 @@ void PortAllocator::GetCandidateStatsFromPooledSessions(
   for (const auto& session : pooled_sessions()) {
     session->GetCandidateStatsFromReadyPorts(candidate_stats_list);
   }
+}
+
+std::vector<IceParameters> PortAllocator::GetPooledIceCredentials() {
+  CheckRunOnValidThreadAndInitialized();
+  std::vector<IceParameters> list;
+  for (const auto& session : pooled_sessions_) {
+    list.push_back(
+        IceParameters(session->ice_ufrag(), session->ice_pwd(), false));
+  }
+  return list;
 }
 
 }  // namespace cricket

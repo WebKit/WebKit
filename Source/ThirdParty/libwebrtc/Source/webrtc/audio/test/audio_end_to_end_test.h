@@ -29,7 +29,7 @@ class AudioEndToEndTest : public test::EndToEndTest {
   const AudioSendStream* send_stream() const { return send_stream_; }
   const AudioReceiveStream* receive_stream() const { return receive_stream_; }
 
-  virtual DefaultNetworkSimulationConfig GetNetworkPipeConfig() const;
+  virtual BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const;
 
   size_t GetNumVideoStreams() const override;
   size_t GetNumAudioStreams() const override;

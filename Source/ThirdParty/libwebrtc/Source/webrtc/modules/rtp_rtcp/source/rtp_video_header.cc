@@ -12,7 +12,7 @@
 
 namespace webrtc {
 
-RTPVideoHeader::RTPVideoHeader() : playout_delay(), video_timing() {}
+RTPVideoHeader::RTPVideoHeader() : video_timing() {}
 RTPVideoHeader::RTPVideoHeader(const RTPVideoHeader& other) = default;
 RTPVideoHeader::~RTPVideoHeader() = default;
 

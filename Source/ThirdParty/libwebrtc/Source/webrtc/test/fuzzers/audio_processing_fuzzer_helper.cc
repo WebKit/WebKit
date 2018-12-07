@@ -130,10 +130,8 @@ void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
       }
     }
 
-    // Make calls to stats gathering functions to cover these
-    // codeways.
-    static_cast<void>(apm->GetStatistics());
-    static_cast<void>(apm->GetStatistics(true));
+    // Cover stats gathering code paths.
+    static_cast<void>(apm->GetStatistics(true /*has_remote_tracks*/));
     static_cast<void>(apm->UpdateHistogramsOnCallEnd());
 
     RTC_DCHECK_NE(apm_return_code, AudioProcessing::kBadDataLengthError);

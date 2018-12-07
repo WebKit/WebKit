@@ -14,6 +14,7 @@
 #include <limits>
 #include <utility>
 
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/i420_buffer.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "common_video/h264/h264_common.h"
@@ -173,8 +174,9 @@ VideoProcessor::VideoProcessor(webrtc::VideoEncoder* encoder,
       stats_(stats),
       encoder_(encoder),
       decoders_(decoders),
-      bitrate_allocator_(VideoCodecInitializer::CreateBitrateAllocator(
-          config_.codec_settings)),
+      bitrate_allocator_(
+          CreateBuiltinVideoBitrateAllocatorFactory()
+              ->CreateVideoBitrateAllocator(config_.codec_settings)),
       framerate_fps_(0),
       encode_callback_(this),
       input_frame_reader_(input_frame_reader),

@@ -72,8 +72,6 @@ class VCMJitterEstimator {
   double _theta[2];  // Estimated line parameters (slope, offset)
   double _varNoise;  // Variance of the time-deviation from the line
 
-  virtual bool LowRateExperimentEnabled();
-
  private:
   // Updates the Kalman filter for the line describing
   // the frame size dependent jitter.
@@ -159,8 +157,7 @@ class VCMJitterEstimator {
   VCMRttFilter _rttFilter;
 
   rtc::RollingAccumulator<uint64_t> fps_counter_;
-  enum ExperimentFlag { kInit, kEnabled, kDisabled };
-  ExperimentFlag low_rate_experiment_;
+  const double time_deviation_upper_bound_;
   const Clock* clock_;
 };
 

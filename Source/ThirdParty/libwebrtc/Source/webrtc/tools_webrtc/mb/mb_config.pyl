@@ -24,7 +24,6 @@
       'iOS32 Release': 'ios',
       'iOS64 Debug': 'ios',
       'iOS64 Release': 'ios',
-      'iOS32 Sim Debug (iOS 9.0)': 'ios',
       'iOS64 Sim Debug (iOS 9.0)': 'ios',
       'iOS64 Sim Debug (iOS 10.0)': 'ios',
 

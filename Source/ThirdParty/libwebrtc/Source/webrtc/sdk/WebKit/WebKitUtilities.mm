@@ -29,8 +29,9 @@
 #import "WebRTC/RTCVideoCodecH264.h"
 
 #include "api/video/video_frame.h"
-#include "third_party/libyuv/include/libyuv/convert_from.h"
 #include "native/src/objc_frame_buffer.h"
+#include "third_party/libyuv/include/libyuv/convert_from.h"
+#include "webrtc/rtc_base/checks.h"
 #include "Framework/Headers/WebRTC/RTCVideoCodecFactory.h"
 #include "Framework/Headers/WebRTC/RTCVideoFrame.h"
 #include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"

@@ -30,7 +30,7 @@ TEST(ContributingSourcesTest, RecordSources) {
   ContributingSources csrcs;
   constexpr uint32_t kCsrcs[] = {kCsrc1, kCsrc2};
   constexpr int64_t kTime1 = 10;
-  csrcs.Update(kTime1, kCsrcs);
+  csrcs.Update(kTime1, kCsrcs, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime1),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
@@ -45,12 +45,12 @@ TEST(ContributingSourcesTest, UpdateSources) {
   constexpr uint32_t kCsrcs2[] = {kCsrc2, kCsrc3};
   constexpr int64_t kTime1 = 10;
   constexpr int64_t kTime2 = kTime1 + 5 * rtc::kNumMillisecsPerSec;
-  csrcs.Update(kTime1, kCsrcs1);
+  csrcs.Update(kTime1, kCsrcs1, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime1),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
                            RtpSource(kTime1, kCsrc2, RtpSourceType::CSRC)));
-  csrcs.Update(kTime2, kCsrcs2);
+  csrcs.Update(kTime2, kCsrcs2, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime2),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
@@ -65,12 +65,12 @@ TEST(ContributingSourcesTest, ReturnRecentOnly) {
   constexpr int64_t kTime1 = 10;
   constexpr int64_t kTime2 = kTime1 + 5 * rtc::kNumMillisecsPerSec;
   constexpr int64_t kTime3 = kTime1 + 12 * rtc::kNumMillisecsPerSec;
-  csrcs.Update(kTime1, kCsrcs1);
+  csrcs.Update(kTime1, kCsrcs1, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime1),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
                            RtpSource(kTime1, kCsrc2, RtpSourceType::CSRC)));
-  csrcs.Update(kTime2, kCsrcs2);
+  csrcs.Update(kTime2, kCsrcs2, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime3),
       UnorderedElementsAre(RtpSource(kTime2, kCsrc2, RtpSourceType::CSRC),
@@ -84,18 +84,18 @@ TEST(ContributingSourcesTest, PurgeOldSources) {
   constexpr int64_t kTime1 = 10;
   constexpr int64_t kTime2 = kTime1 + 10 * rtc::kNumMillisecsPerSec;
   constexpr int64_t kTime3 = kTime1 + 20 * rtc::kNumMillisecsPerSec;
-  csrcs.Update(kTime1, kCsrcs1);
+  csrcs.Update(kTime1, kCsrcs1, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime2),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
                            RtpSource(kTime1, kCsrc2, RtpSourceType::CSRC)));
-  csrcs.Update(kTime2, kCsrcs2);
+  csrcs.Update(kTime2, kCsrcs2, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime2),
       UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC),
                            RtpSource(kTime2, kCsrc2, RtpSourceType::CSRC),
                            RtpSource(kTime2, kCsrc3, RtpSourceType::CSRC)));
-  csrcs.Update(kTime3, kCsrcs2);
+  csrcs.Update(kTime3, kCsrcs2, absl::nullopt);
   EXPECT_THAT(
       csrcs.GetSources(kTime3),
       UnorderedElementsAre(RtpSource(kTime3, kCsrc2, RtpSourceType::CSRC),
@@ -106,6 +106,24 @@ TEST(ContributingSourcesTest, PurgeOldSources) {
       csrcs.GetSources(kTime2),
       UnorderedElementsAre(RtpSource(kTime3, kCsrc2, RtpSourceType::CSRC),
                            RtpSource(kTime3, kCsrc3, RtpSourceType::CSRC)));
+}
+
+TEST(ContributingSourcesTest, AudioLevel) {
+  ContributingSources csrcs;
+  constexpr uint32_t kCsrcs[] = {kCsrc1, kCsrc2};
+  constexpr int64_t kTime1 = 10;
+  csrcs.Update(kTime1, kCsrcs, 47);
+  EXPECT_THAT(
+      csrcs.GetSources(kTime1),
+      UnorderedElementsAre(RtpSource(kTime1, kCsrc1, RtpSourceType::CSRC, 47),
+                           RtpSource(kTime1, kCsrc2, RtpSourceType::CSRC, 47)));
+
+  constexpr uint32_t kCsrcsSubset[] = {kCsrc1};
+  csrcs.Update(kTime1 + 1, kCsrcsSubset, absl::nullopt);
+  EXPECT_THAT(
+      csrcs.GetSources(kTime1 + 1),
+      UnorderedElementsAre(RtpSource(kTime1 + 1, kCsrc1, RtpSourceType::CSRC),
+                           RtpSource(kTime1, kCsrc2, RtpSourceType::CSRC, 47)));
 }
 
 }  // namespace webrtc

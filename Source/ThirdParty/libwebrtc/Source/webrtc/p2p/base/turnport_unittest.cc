@@ -194,23 +194,23 @@ class TurnPortTest : public testing::Test,
   void OnTurnReadPacket(Connection* conn,
                         const char* data,
                         size_t size,
-                        const rtc::PacketTime& packet_time) {
+                        int64_t packet_time_us) {
     turn_packets_.push_back(rtc::Buffer(data, size));
   }
   void OnUdpPortComplete(Port* port) { udp_ready_ = true; }
   void OnUdpReadPacket(Connection* conn,
                        const char* data,
                        size_t size,
-                       const rtc::PacketTime& packet_time) {
+                       int64_t packet_time_us) {
     udp_packets_.push_back(rtc::Buffer(data, size));
   }
   void OnSocketReadPacket(rtc::AsyncPacketSocket* socket,
                           const char* data,
                           size_t size,
                           const rtc::SocketAddress& remote_addr,
-                          const rtc::PacketTime& packet_time) {
+                          const int64_t& packet_time_us) {
     turn_port_->HandleIncomingPacket(socket, data, size, remote_addr,
-                                     packet_time);
+                                     packet_time_us);
   }
   void OnTurnPortClosed(TurnPort* port) { turn_port_closed_ = true; }
   void OnTurnPortDestroyed(PortInterface* port) { turn_port_destroyed_ = true; }
@@ -270,10 +270,9 @@ class TurnPortTest : public testing::Test,
                                    const ProtocolAddress& server_address,
                                    const std::string& origin) {
     RelayCredentials credentials(username, password);
-    turn_port_.reset(TurnPort::Create(
+    turn_port_ = TurnPort::Create(
         &main_, &socket_factory_, network, 0, 0, kIceUfrag1, kIcePwd1,
-        server_address, credentials, 0, origin, std::vector<std::string>(),
-        std::vector<std::string>(), turn_customizer_.get()));
+        server_address, credentials, 0, origin, {}, {}, turn_customizer_.get());
     // This TURN port will be the controlling.
     turn_port_->SetIceRole(ICEROLE_CONTROLLING);
     ConnectSignals();
@@ -301,10 +300,10 @@ class TurnPortTest : public testing::Test,
     }
 
     RelayCredentials credentials(username, password);
-    turn_port_.reset(TurnPort::Create(&main_, &socket_factory_,
-                                      MakeNetwork(kLocalAddr1), socket_.get(),
-                                      kIceUfrag1, kIcePwd1, server_address,
-                                      credentials, 0, std::string(), nullptr));
+    turn_port_ =
+        TurnPort::Create(&main_, &socket_factory_, MakeNetwork(kLocalAddr1),
+                         socket_.get(), kIceUfrag1, kIcePwd1, server_address,
+                         credentials, 0, std::string(), nullptr);
     // This TURN port will be the controlling.
     turn_port_->SetIceRole(ICEROLE_CONTROLLING);
     ConnectSignals();
@@ -329,9 +328,9 @@ class TurnPortTest : public testing::Test,
   void CreateUdpPort() { CreateUdpPort(kLocalAddr2); }
 
   void CreateUdpPort(const SocketAddress& address) {
-    udp_port_.reset(UDPPort::Create(
-        &main_, &socket_factory_, MakeNetwork(address), 0, 0, kIceUfrag2,
-        kIcePwd2, std::string(), false, absl::nullopt));
+    udp_port_ = UDPPort::Create(&main_, &socket_factory_, MakeNetwork(address),
+                                0, 0, kIceUfrag2, kIcePwd2, std::string(),
+                                false, absl::nullopt);
     // UDP port will be controlled.
     udp_port_->SetIceRole(ICEROLE_CONTROLLED);
     udp_port_->SignalPortComplete.connect(this,
@@ -1032,8 +1031,7 @@ TEST_F(TurnPortTest, TestTurnAllocateMismatch) {
   std::string test_packet = "Test packet";
   EXPECT_FALSE(turn_port_->HandleIncomingPacket(
       socket_.get(), test_packet.data(), test_packet.size(),
-      rtc::SocketAddress(kTurnUdpExtAddr.ipaddr(), 0),
-      rtc::CreatePacketTime(0)));
+      rtc::SocketAddress(kTurnUdpExtAddr.ipaddr(), 0), rtc::TimeMicros()));
 }
 
 // Tests that a shared-socket-TurnPort creates its own socket after

@@ -11,10 +11,12 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_ADAPTIVE_MODE_LEVEL_ESTIMATOR_AGC_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_ADAPTIVE_MODE_LEVEL_ESTIMATOR_AGC_H_
 
-#include <vector>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "modules/audio_processing/agc/agc.h"
 #include "modules/audio_processing/agc2/adaptive_mode_level_estimator.h"
+#include "modules/audio_processing/agc2/saturation_protector.h"
 #include "modules/audio_processing/agc2/vad_with_level.h"
 
 namespace webrtc {

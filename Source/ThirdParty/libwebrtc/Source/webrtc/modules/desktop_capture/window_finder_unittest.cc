@@ -21,8 +21,8 @@
 
 #if defined(USE_X11)
 #include "absl/memory/memory.h"
-#include "modules/desktop_capture/x11/shared_x_display.h"
-#include "modules/desktop_capture/x11/x_atom_cache.h"
+#include "modules/desktop_capture/linux/shared_x_display.h"
+#include "modules/desktop_capture/linux/x_atom_cache.h"
 #endif
 
 #if defined(WEBRTC_WIN)

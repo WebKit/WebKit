@@ -10,8 +10,13 @@
 
 #include "modules/audio_processing/low_cut_filter.h"
 
+#include <stdint.h>
+#include <cstring>
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {

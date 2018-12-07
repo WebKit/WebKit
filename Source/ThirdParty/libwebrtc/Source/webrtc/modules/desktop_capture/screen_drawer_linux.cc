@@ -14,9 +14,9 @@
 #include <memory>
 
 #include "absl/memory/memory.h"
+#include "modules/desktop_capture/linux/shared_x_display.h"
 #include "modules/desktop_capture/screen_drawer.h"
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
-#include "modules/desktop_capture/x11/shared_x_display.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/sleep.h"
 

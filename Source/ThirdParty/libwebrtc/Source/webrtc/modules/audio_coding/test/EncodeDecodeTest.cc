@@ -14,9 +14,9 @@
 #include <stdlib.h>
 #include <memory>
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/utility.h"
@@ -248,11 +248,11 @@ void EncodeDecodeTest::Perform() {
 
   for (int n = 0; n < numCodecs; n++) {
     EXPECT_EQ(0, acm->Codec(n, &sendCodecTmp));
-    if (STR_CASE_CMP(sendCodecTmp.plname, "telephone-event") == 0) {
+    if (absl::EqualsIgnoreCase(sendCodecTmp.plname, "telephone-event")) {
       numPars[n] = 0;
-    } else if (STR_CASE_CMP(sendCodecTmp.plname, "cn") == 0) {
+    } else if (absl::EqualsIgnoreCase(sendCodecTmp.plname, "cn")) {
       numPars[n] = 0;
-    } else if (STR_CASE_CMP(sendCodecTmp.plname, "red") == 0) {
+    } else if (absl::EqualsIgnoreCase(sendCodecTmp.plname, "red")) {
       numPars[n] = 0;
     } else if (sendCodecTmp.channels == 2) {
       numPars[n] = 0;

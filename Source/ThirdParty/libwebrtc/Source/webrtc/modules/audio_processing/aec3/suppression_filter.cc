@@ -10,13 +10,14 @@
 
 #include "modules/audio_processing/aec3/suppression_filter.h"
 
-#include <math.h>
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <functional>
-#include <numeric>
+#include <iterator>
 
-#include "modules/audio_processing/utility/ooura_fft.h"
+#include "modules/audio_processing/aec3/vector_math.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -59,8 +60,10 @@ const float kSqrtHanning[kFftLength] = {
 
 }  // namespace
 
-SuppressionFilter::SuppressionFilter(int sample_rate_hz)
-    : sample_rate_hz_(sample_rate_hz),
+SuppressionFilter::SuppressionFilter(Aec3Optimization optimization,
+                                     int sample_rate_hz)
+    : optimization_(optimization),
+      sample_rate_hz_(sample_rate_hz),
       fft_(),
       e_output_old_(NumBandsForRate(sample_rate_hz_)) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz_));
@@ -90,18 +93,17 @@ void SuppressionFilter::ApplyGain(
   std::transform(suppression_gain.begin(), suppression_gain.end(), E.im.begin(),
                  E.im.begin(), std::multiplies<float>());
 
-  // Compute and add the comfort noise.
-  std::array<float, kFftLengthBy2Plus1> scaled_comfort_noise;
+  // Comfort noise gain is sqrt(1-g^2), where g is the suppression gain.
+  std::array<float, kFftLengthBy2Plus1> noise_gain;
   std::transform(suppression_gain.begin(), suppression_gain.end(),
-                 comfort_noise.re.begin(), scaled_comfort_noise.begin(),
-                 [](float a, float b) { return std::max(1.f - a, 0.f) * b; });
-  std::transform(scaled_comfort_noise.begin(), scaled_comfort_noise.end(),
-                 E.re.begin(), E.re.begin(), std::plus<float>());
-  std::transform(suppression_gain.begin(), suppression_gain.end(),
-                 comfort_noise.im.begin(), scaled_comfort_noise.begin(),
-                 [](float a, float b) { return std::max(1.f - a, 0.f) * b; });
-  std::transform(scaled_comfort_noise.begin(), scaled_comfort_noise.end(),
-                 E.im.begin(), E.im.begin(), std::plus<float>());
+                 noise_gain.begin(), [](float g) { return 1.f - g * g; });
+  aec3::VectorMath(optimization_).Sqrt(noise_gain);
+
+  // Scale and add the comfort noise.
+  for (size_t k = 0; k < kFftLengthBy2Plus1; k++) {
+    E.re[k] += noise_gain[k] * comfort_noise.re[k];
+    E.im[k] += noise_gain[k] * comfort_noise.im[k];
+  }
 
   // Synthesis filterbank.
   std::array<float, kFftLength> e_extended;
@@ -135,7 +137,7 @@ void SuppressionFilter::ApplyGain(
 
     // Scale and apply the noise to the signals.
     const float high_bands_noise_scaling =
-        0.4f * std::max(1.f - high_bands_gain, 0.f);
+        0.4f * std::sqrt(1.f - high_bands_gain * high_bands_gain);
 
     std::transform(
         (*e)[1].begin(), (*e)[1].end(), time_domain_high_band_noise.begin(),

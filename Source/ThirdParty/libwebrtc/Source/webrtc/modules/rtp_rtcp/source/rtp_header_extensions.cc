@@ -10,10 +10,14 @@
 
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 
+#include <string.h>
+#include <cmath>
+
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
+// TODO(bug:9855) Move kNoSpatialIdx from vp9_globals.h to common_constants
+#include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 // Absolute send time in RTP streams.
@@ -428,6 +432,172 @@ bool FrameMarkingExtension::Write(rtc::ArrayView<uint8_t> data,
     data[2] = frame_marking.tl0_pic_idx;
   }
   return true;
+}
+
+// Color space including HDR metadata as an optional field.
+//
+// RTP header extension to carry HDR metadata.
+// Float values are upscaled by a static factor and transmitted as integers.
+//
+// Data layout with HDR metadata
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |       ID      |   length=30    |   Primaries   |    Transfer    |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |     Matrix    |      Range     |                 luminance_max  |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |               |                  luminance_min                  |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |              mastering_metadata.primary_r.x and .y              |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |              mastering_metadata.primary_g.x and .y              |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |              mastering_metadata.primary_b.x and .y              |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |                mastering_metadata.white.x and .y                |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |     max_content_light_level    | max_frame_average_light_level  |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+// Data layout without HDR metadata
+//    0                   1                   2                   3
+//    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |       ID      |    length=4    |   Primaries   |    Transfer    |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//   |     Matrix    |      Range     |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+
+constexpr RTPExtensionType ColorSpaceExtension::kId;
+constexpr uint8_t ColorSpaceExtension::kValueSizeBytes;
+constexpr const char ColorSpaceExtension::kUri[];
+
+bool ColorSpaceExtension::Parse(rtc::ArrayView<const uint8_t> data,
+                                ColorSpace* color_space) {
+  RTC_DCHECK(color_space);
+  if (data.size() != kValueSizeBytes &&
+      data.size() != kValueSizeBytesWithoutHdrMetadata)
+    return false;
+
+  size_t offset = 0;
+  // Read color space information.
+  if (!color_space->set_primaries_from_uint8(data.data()[offset++]))
+    return false;
+  if (!color_space->set_transfer_from_uint8(data.data()[offset++]))
+    return false;
+  if (!color_space->set_matrix_from_uint8(data.data()[offset++]))
+    return false;
+  if (!color_space->set_range_from_uint8(data.data()[offset++]))
+    return false;
+
+  // Read HDR metadata if it exists, otherwise clear it.
+  if (data.size() == kValueSizeBytesWithoutHdrMetadata) {
+    color_space->set_hdr_metadata(nullptr);
+  } else {
+    HdrMetadata hdr_metadata;
+    offset += ParseLuminance(data.data() + offset,
+                             &hdr_metadata.mastering_metadata.luminance_max,
+                             kLuminanceMaxDenominator);
+    offset += ParseLuminance(data.data() + offset,
+                             &hdr_metadata.mastering_metadata.luminance_min,
+                             kLuminanceMinDenominator);
+    offset += ParseChromaticity(data.data() + offset,
+                                &hdr_metadata.mastering_metadata.primary_r);
+    offset += ParseChromaticity(data.data() + offset,
+                                &hdr_metadata.mastering_metadata.primary_g);
+    offset += ParseChromaticity(data.data() + offset,
+                                &hdr_metadata.mastering_metadata.primary_b);
+    offset += ParseChromaticity(data.data() + offset,
+                                &hdr_metadata.mastering_metadata.white_point);
+    hdr_metadata.max_content_light_level =
+        ByteReader<uint16_t>::ReadBigEndian(data.data() + offset);
+    offset += 2;
+    hdr_metadata.max_frame_average_light_level =
+        ByteReader<uint16_t>::ReadBigEndian(data.data() + offset);
+    offset += 2;
+    color_space->set_hdr_metadata(&hdr_metadata);
+  }
+  RTC_DCHECK_EQ(ValueSize(*color_space), offset);
+  return true;
+}
+
+bool ColorSpaceExtension::Write(rtc::ArrayView<uint8_t> data,
+                                const ColorSpace& color_space) {
+  RTC_DCHECK(data.size() >= ValueSize(color_space));
+  size_t offset = 0;
+  // Write color space information.
+  data.data()[offset++] = static_cast<uint8_t>(color_space.primaries());
+  data.data()[offset++] = static_cast<uint8_t>(color_space.transfer());
+  data.data()[offset++] = static_cast<uint8_t>(color_space.matrix());
+  data.data()[offset++] = static_cast<uint8_t>(color_space.range());
+
+  // Write HDR metadata if it exists.
+  if (color_space.hdr_metadata()) {
+    const HdrMetadata& hdr_metadata = *color_space.hdr_metadata();
+    offset += WriteLuminance(data.data() + offset,
+                             hdr_metadata.mastering_metadata.luminance_max,
+                             kLuminanceMaxDenominator);
+    offset += WriteLuminance(data.data() + offset,
+                             hdr_metadata.mastering_metadata.luminance_min,
+                             kLuminanceMinDenominator);
+    offset += WriteChromaticity(data.data() + offset,
+                                hdr_metadata.mastering_metadata.primary_r);
+    offset += WriteChromaticity(data.data() + offset,
+                                hdr_metadata.mastering_metadata.primary_g);
+    offset += WriteChromaticity(data.data() + offset,
+                                hdr_metadata.mastering_metadata.primary_b);
+    offset += WriteChromaticity(data.data() + offset,
+                                hdr_metadata.mastering_metadata.white_point);
+
+    ByteWriter<uint16_t>::WriteBigEndian(data.data() + offset,
+                                         hdr_metadata.max_content_light_level);
+    offset += 2;
+    ByteWriter<uint16_t>::WriteBigEndian(
+        data.data() + offset, hdr_metadata.max_frame_average_light_level);
+    offset += 2;
+  }
+  RTC_DCHECK_EQ(ValueSize(color_space), offset);
+  return true;
+}
+
+size_t ColorSpaceExtension::ParseChromaticity(
+    const uint8_t* data,
+    HdrMasteringMetadata::Chromaticity* p) {
+  uint16_t chromaticity_x_scaled = ByteReader<uint16_t>::ReadBigEndian(data);
+  uint16_t chromaticity_y_scaled =
+      ByteReader<uint16_t>::ReadBigEndian(data + 2);
+  p->x = static_cast<float>(chromaticity_x_scaled) / kChromaticityDenominator;
+  p->y = static_cast<float>(chromaticity_y_scaled) / kChromaticityDenominator;
+  return 4;  // Return number of bytes read.
+}
+
+size_t ColorSpaceExtension::ParseLuminance(const uint8_t* data,
+                                           float* f,
+                                           int denominator) {
+  uint32_t luminance_scaled = ByteReader<uint32_t, 3>::ReadBigEndian(data);
+  *f = static_cast<float>(luminance_scaled) / denominator;
+  return 3;  // Return number of bytes read.
+}
+
+size_t ColorSpaceExtension::WriteChromaticity(
+    uint8_t* data,
+    const HdrMasteringMetadata::Chromaticity& p) {
+  RTC_DCHECK_GE(p.x, 0.0f);
+  RTC_DCHECK_GE(p.y, 0.0f);
+  ByteWriter<uint16_t>::WriteBigEndian(
+      data, std::round(p.x * kChromaticityDenominator));
+  ByteWriter<uint16_t>::WriteBigEndian(
+      data + 2, std::round(p.y * kChromaticityDenominator));
+  return 4;  // Return number of bytes written.
+}
+
+size_t ColorSpaceExtension::WriteLuminance(uint8_t* data,
+                                           float f,
+                                           int denominator) {
+  RTC_DCHECK_GE(f, 0.0f);
+  ByteWriter<uint32_t, 3>::WriteBigEndian(data, std::round(f * denominator));
+  return 3;  // Return number of bytes written.
 }
 
 bool BaseRtpStringExtension::Parse(rtc::ArrayView<const uint8_t> data,

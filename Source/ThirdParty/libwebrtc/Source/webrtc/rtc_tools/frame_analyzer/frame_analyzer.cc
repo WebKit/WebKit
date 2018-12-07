@@ -15,7 +15,10 @@
 #include <string>
 #include <vector>
 
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
+#include "rtc_tools/frame_analyzer/video_color_aligner.h"
+#include "rtc_tools/frame_analyzer/video_geometry_aligner.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "rtc_tools/frame_analyzer/video_temporal_aligner.h"
 #include "rtc_tools/simple_command_line_parser.h"
@@ -133,8 +136,35 @@ int main(int argc, char* argv[]) {
   const std::vector<size_t> matching_indices =
       webrtc::test::FindMatchingFrameIndices(reference_video, test_video);
 
-  results.frames =
-      webrtc::test::RunAnalysis(reference_video, test_video, matching_indices);
+  // Align the reference video both temporally and geometrically. I.e. align the
+  // frames to match up in order to the test video, and align a crop region of
+  // the reference video to match up to the test video.
+  const rtc::scoped_refptr<webrtc::test::Video> aligned_reference_video =
+      AdjustCropping(ReorderVideo(reference_video, matching_indices),
+                     test_video);
+
+  // Calculate if there is any systematic color difference between the reference
+  // and test video.
+  const webrtc::test::ColorTransformationMatrix color_transformation =
+      CalculateColorTransformationMatrix(aligned_reference_video, test_video);
+
+  char buf[256];
+  rtc::SimpleStringBuilder string_builder(buf);
+  for (int i = 0; i < 3; ++i) {
+    string_builder << "\n";
+    for (int j = 0; j < 4; ++j)
+      string_builder.AppendFormat("%6.2f ", color_transformation[i][j]);
+  }
+  printf("Adjusting test video with color transformation: %s\n",
+         string_builder.str());
+
+  // Adjust all frames in the test video with the calculated color
+  // transformation.
+  const rtc::scoped_refptr<webrtc::test::Video> color_adjusted_test_video =
+      AdjustColors(color_transformation, test_video);
+
+  results.frames = webrtc::test::RunAnalysis(
+      aligned_reference_video, color_adjusted_test_video, matching_indices);
 
   const std::vector<webrtc::test::Cluster> clusters =
       webrtc::test::CalculateFrameClusters(matching_indices);
@@ -151,20 +181,17 @@ int main(int argc, char* argv[]) {
   if (!chartjson_result_file.empty()) {
     webrtc::test::WritePerfResults(chartjson_result_file);
   }
-  rtc::scoped_refptr<webrtc::test::Video> reordered_video =
-      webrtc::test::GenerateAlignedReferenceVideo(reference_video,
-                                                  matching_indices);
   std::string aligned_output_file = parser.GetFlag("aligned_output_file");
   if (!aligned_output_file.empty()) {
-    webrtc::test::WriteVideoToFile(reordered_video, aligned_output_file,
+    webrtc::test::WriteVideoToFile(aligned_reference_video, aligned_output_file,
                                    /*fps=*/30);
   }
   std::string yuv_directory = parser.GetFlag("yuv_directory");
   if (!yuv_directory.empty()) {
-    webrtc::test::WriteVideoToFile(reordered_video,
+    webrtc::test::WriteVideoToFile(aligned_reference_video,
                                    JoinFilename(yuv_directory, "ref.yuv"),
                                    /*fps=*/30);
-    webrtc::test::WriteVideoToFile(test_video,
+    webrtc::test::WriteVideoToFile(color_adjusted_test_video,
                                    JoinFilename(yuv_directory, "test.yuv"),
                                    /*fps=*/30);
   }

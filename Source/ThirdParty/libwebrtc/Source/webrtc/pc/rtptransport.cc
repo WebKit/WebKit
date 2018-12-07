@@ -187,7 +187,7 @@ RtpTransportParameters RtpTransport::GetParameters() const {
 }
 
 void RtpTransport::DemuxPacket(rtc::CopyOnWriteBuffer* packet,
-                               const rtc::PacketTime& time) {
+                               int64_t packet_time_us) {
   webrtc::RtpPacketReceived parsed_packet(&header_extension_map_);
   if (!parsed_packet.Parse(std::move(*packet))) {
     RTC_LOG(LS_ERROR)
@@ -195,8 +195,8 @@ void RtpTransport::DemuxPacket(rtc::CopyOnWriteBuffer* packet,
     return;
   }
 
-  if (time.timestamp != -1) {
-    parsed_packet.set_arrival_time_ms((time.timestamp + 500) / 1000);
+  if (packet_time_us != -1) {
+    parsed_packet.set_arrival_time_ms((packet_time_us + 500) / 1000);
   }
   rtp_demuxer_.OnRtpPacket(parsed_packet);
 }
@@ -236,19 +236,19 @@ void RtpTransport::OnSentPacket(rtc::PacketTransportInternal* packet_transport,
 }
 
 void RtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                       const rtc::PacketTime& packet_time) {
-  DemuxPacket(packet, packet_time);
+                                       int64_t packet_time_us) {
+  DemuxPacket(packet, packet_time_us);
 }
 
 void RtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                        const rtc::PacketTime& packet_time) {
-  SignalRtcpPacketReceived(packet, packet_time);
+                                        int64_t packet_time_us) {
+  SignalRtcpPacketReceived(packet, packet_time_us);
 }
 
 void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
                                 const char* data,
                                 size_t len,
-                                const rtc::PacketTime& packet_time,
+                                const int64_t& packet_time_us,
                                 int flags) {
   TRACE_EVENT0("webrtc", "RtpTransport::OnReadPacket");
 
@@ -272,9 +272,9 @@ void RtpTransport::OnReadPacket(rtc::PacketTransportInternal* transport,
   }
 
   if (rtcp) {
-    OnRtcpPacketReceived(&packet, packet_time);
+    OnRtcpPacketReceived(&packet, packet_time_us);
   } else {
-    OnRtpPacketReceived(&packet, packet_time);
+    OnRtpPacketReceived(&packet, packet_time_us);
   }
 }
 

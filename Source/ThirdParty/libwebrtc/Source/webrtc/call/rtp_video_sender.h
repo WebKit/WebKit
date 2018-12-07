@@ -23,7 +23,6 @@
 #include "call/rtp_payload_params.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "call/rtp_video_sender_interface.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -36,6 +35,7 @@
 
 namespace webrtc {
 
+class FrameEncryptorInterface;
 class RTPFragmentationHeader;
 class RtpRtcp;
 class RtpTransportControllerSendInterface;
@@ -53,13 +53,15 @@ class RtpVideoSender : public RtpVideoSenderInterface,
       std::map<uint32_t, RtpState> suspended_ssrcs,
       const std::map<uint32_t, RtpPayloadState>& states,
       const RtpConfig& rtp_config,
-      const RtcpConfig& rtcp_config,
+      int rtcp_report_interval_ms,
       Transport* send_transport,
       const RtpSenderObservers& observers,
       RtpTransportControllerSendInterface* transport,
       RtcEventLog* event_log,
       RateLimiter* retransmission_limiter,  // move inside RtpTransport
-      std::unique_ptr<FecController> fec_controller);
+      std::unique_ptr<FecController> fec_controller,
+      FrameEncryptorInterface* frame_encryptor,
+      const CryptoOptions& crypto_options);  // move inside RtpTransport
   ~RtpVideoSender() override;
 
   // RegisterProcessThread register |module_process_thread| with those objects

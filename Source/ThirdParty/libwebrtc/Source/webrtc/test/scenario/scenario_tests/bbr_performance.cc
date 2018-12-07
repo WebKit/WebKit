@@ -167,31 +167,31 @@ TEST_P(BbrScenarioTest, ReceivesVideo) {
   net_conf.simulation.delay_std_dev = conf_.scenario.delay_noise;
   SimulationNode* send_net = s.CreateSimulationNode(net_conf);
   SimulationNode* ret_net = s.CreateSimulationNode(net_conf);
-  VideoStreamPair* alice_video = s.CreateVideoStream(
-      alice, {send_net}, bob, {ret_net}, [&](VideoStreamConfig* c) {
+  auto route = s.CreateRoutes(alice, {send_net}, bob, {ret_net});
+
+  VideoStreamPair* alice_video =
+      s.CreateVideoStream(route->forward(), [&](VideoStreamConfig* c) {
         c->encoder.fake.max_rate = DataRate::kbps(1800);
       });
-  s.CreateAudioStream(alice, {send_net}, bob, {ret_net},
-                      [&](AudioStreamConfig* c) {
-                        if (conf_.tuning.use_bbr) {
-                          c->stream.in_bandwidth_estimation = true;
-                          c->encoder.fixed_rate = DataRate::kbps(31);
-                        }
-                      });
+  s.CreateAudioStream(route->forward(), [&](AudioStreamConfig* c) {
+    if (conf_.tuning.use_bbr) {
+      c->stream.in_bandwidth_estimation = true;
+      c->encoder.fixed_rate = DataRate::kbps(31);
+    }
+  });
 
   VideoStreamPair* bob_video = nullptr;
   if (conf_.scenario.return_traffic) {
-    bob_video = s.CreateVideoStream(
-        bob, {ret_net}, alice, {send_net}, [&](VideoStreamConfig* c) {
+    bob_video =
+        s.CreateVideoStream(route->reverse(), [&](VideoStreamConfig* c) {
           c->encoder.fake.max_rate = DataRate::kbps(1800);
         });
-    s.CreateAudioStream(bob, {ret_net}, alice, {send_net},
-                        [&](AudioStreamConfig* c) {
-                          if (conf_.tuning.use_bbr) {
-                            c->stream.in_bandwidth_estimation = true;
-                            c->encoder.fixed_rate = DataRate::kbps(31);
-                          }
-                        });
+    s.CreateAudioStream(route->reverse(), [&](AudioStreamConfig* c) {
+      if (conf_.tuning.use_bbr) {
+        c->stream.in_bandwidth_estimation = true;
+        c->encoder.fixed_rate = DataRate::kbps(31);
+      }
+    });
   }
   CrossTrafficConfig cross_config;
   cross_config.peak_rate = conf_.scenario.cross_traffic;

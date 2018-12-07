@@ -19,6 +19,7 @@
 #include "modules/include/module_common_types_public.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -33,7 +34,7 @@ struct WebRtcRTPHeader {
   int64_t ntp_time_ms;
 };
 
-class RTPFragmentationHeader {
+class RTC_EXPORT RTPFragmentationHeader {
  public:
   RTPFragmentationHeader();
   RTPFragmentationHeader(const RTPFragmentationHeader&) = delete;

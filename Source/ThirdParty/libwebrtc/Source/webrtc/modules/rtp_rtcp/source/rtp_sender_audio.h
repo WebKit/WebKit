@@ -11,14 +11,19 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_SENDER_AUDIO_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
+#include "absl/strings/string_view.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/source/dtmf_queue.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_sender.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/onetimeevent.h"
+#include "rtc_base/thread_annotations.h"
+#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -27,7 +32,7 @@ class RTPSenderAudio {
   RTPSenderAudio(Clock* clock, RTPSender* rtp_sender);
   ~RTPSenderAudio();
 
-  int32_t RegisterAudioPayload(const char payloadName[RTP_PAYLOAD_NAME_SIZE],
+  int32_t RegisterAudioPayload(absl::string_view payload_name,
                                int8_t payload_type,
                                uint32_t frequency,
                                size_t channels,

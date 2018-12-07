@@ -199,21 +199,32 @@ TEST(RtpPacketizerSplitAboutEqually, GivesNonZeroPayloadLengthEachPacket) {
 }
 
 TEST(RtpPacketizerSplitAboutEqually,
-     OnePacketWhenExtraSpaceIsEnoughForSumOfFirstAndLastPacketReductions) {
+     IgnoresFirstAndLastPacketReductionWhenPayloadFitsIntoSinglePacket) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 30;
-  limits.first_packet_reduction_len = 6;
-  limits.last_packet_reduction_len = 4;
+  limits.first_packet_reduction_len = 29;
+  limits.last_packet_reduction_len = 29;
+  limits.single_packet_reduction_len = 10;
 
   EXPECT_THAT(RtpPacketizer::SplitAboutEqually(20, limits), ElementsAre(20));
 }
 
 TEST(RtpPacketizerSplitAboutEqually,
-     TwoPacketsWhenExtraSpaceIsTooSmallForSumOfFirstAndLastPacketReductions) {
+     OnePacketWhenExtraSpaceIsEnoughForSinglePacketReduction) {
+  RtpPacketizer::PayloadSizeLimits limits;
+  limits.max_payload_len = 30;
+  limits.single_packet_reduction_len = 10;
+
+  EXPECT_THAT(RtpPacketizer::SplitAboutEqually(20, limits), ElementsAre(20));
+}
+
+TEST(RtpPacketizerSplitAboutEqually,
+     TwoPacketsWhenExtraSpaceIsTooSmallForSinglePacketReduction) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 29;
-  limits.first_packet_reduction_len = 6;
-  limits.last_packet_reduction_len = 4;
+  limits.first_packet_reduction_len = 3;
+  limits.last_packet_reduction_len = 1;
+  limits.single_packet_reduction_len = 10;
 
   // First packet needs two more extra bytes compared to last one,
   // so should have two less payload bytes.
@@ -246,8 +257,7 @@ TEST(RtpPacketizerSplitAboutEqually, RejectsZeroLastPacketLen) {
 TEST(RtpPacketizerSplitAboutEqually, CantPutSinglePayloadByteInTwoPackets) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 10;
-  limits.first_packet_reduction_len = 6;
-  limits.last_packet_reduction_len = 4;
+  limits.single_packet_reduction_len = 10;
 
   EXPECT_THAT(RtpPacketizer::SplitAboutEqually(1, limits), IsEmpty());
 }
@@ -255,8 +265,7 @@ TEST(RtpPacketizerSplitAboutEqually, CantPutSinglePayloadByteInTwoPackets) {
 TEST(RtpPacketizerSplitAboutEqually, CanPutTwoPayloadBytesInTwoPackets) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 10;
-  limits.first_packet_reduction_len = 6;
-  limits.last_packet_reduction_len = 4;
+  limits.single_packet_reduction_len = 10;
 
   EXPECT_THAT(RtpPacketizer::SplitAboutEqually(2, limits), ElementsAre(1, 1));
 }
@@ -264,8 +273,7 @@ TEST(RtpPacketizerSplitAboutEqually, CanPutTwoPayloadBytesInTwoPackets) {
 TEST(RtpPacketizerSplitAboutEqually, CanPutSinglePayloadByteInOnePacket) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 11;
-  limits.first_packet_reduction_len = 6;
-  limits.last_packet_reduction_len = 4;
+  limits.single_packet_reduction_len = 10;
 
   EXPECT_THAT(RtpPacketizer::SplitAboutEqually(1, limits), ElementsAre(1));
 }

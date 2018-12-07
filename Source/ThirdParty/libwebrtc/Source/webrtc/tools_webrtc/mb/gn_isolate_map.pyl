@@ -82,10 +82,6 @@
     "label": "//modules:modules_unittests",
     "type": "windowed_test_launcher",
   },
-  "ortc_unittests": {
-    "label": "//ortc:ortc_unittests",
-    "type": "console_test_launcher",
-  },
   "peerconnection_unittests": {
     "label": "//pc:peerconnection_unittests",
     "type": "console_test_launcher",
@@ -104,6 +100,10 @@
   },
   "rtc_unittests": {
     "label": "//:rtc_unittests",
+    "type": "console_test_launcher",
+  },
+  "slow_tests": {
+    "label": "//:slow_tests",
     "type": "console_test_launcher",
   },
   "system_wrappers_unittests": {

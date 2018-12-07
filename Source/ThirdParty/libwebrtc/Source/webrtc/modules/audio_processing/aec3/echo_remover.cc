@@ -10,26 +10,29 @@
 #include "modules/audio_processing/aec3/echo_remover.h"
 
 #include <math.h>
+#include <stddef.h>
 #include <algorithm>
+#include <array>
 #include <memory>
-#include <numeric>
-#include <string>
 
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_fft.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/comfort_noise_generator.h"
 #include "modules/audio_processing/aec3/echo_path_variability.h"
 #include "modules/audio_processing/aec3/echo_remover_metrics.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
-#include "modules/audio_processing/aec3/render_delay_buffer.h"
+#include "modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "modules/audio_processing/aec3/residual_echo_estimator.h"
 #include "modules/audio_processing/aec3/subtractor.h"
+#include "modules/audio_processing/aec3/subtractor_output.h"
 #include "modules/audio_processing/aec3/suppression_filter.h"
 #include "modules/audio_processing/aec3/suppression_gain.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/atomicops.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
@@ -175,7 +178,7 @@ EchoRemoverImpl::EchoRemoverImpl(const EchoCanceller3Config& config,
       subtractor_(config, data_dumper_.get(), optimization_),
       suppression_gain_(config_, optimization_, sample_rate_hz),
       cng_(optimization_),
-      suppression_filter_(sample_rate_hz_),
+      suppression_filter_(optimization_, sample_rate_hz_),
       render_signal_analyzer_(config_),
       residual_echo_estimator_(config_),
       aec_state_(config_) {

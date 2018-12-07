@@ -92,10 +92,10 @@ std::array<OneChannelBuffer, kMaximumAmountOfChannels> MixToFloatFrame(
   return mixing_buffer;
 }
 
-void RunLimiter(AudioFrameView<float> mixing_buffer_view,
-                FixedGainController* limiter) {
+void RunLimiter(AudioFrameView<float> mixing_buffer_view, Limiter* limiter) {
   const size_t sample_rate = mixing_buffer_view.samples_per_channel() * 1000 /
                              AudioMixerImpl::kFrameDurationInMs;
+  // TODO(alessiob): Avoid calling SetSampleRate every time.
   limiter->SetSampleRate(sample_rate);
   limiter->Process(mixing_buffer_view);
 }
@@ -117,10 +117,8 @@ void InterleaveToAudioFrame(AudioFrameView<const float> mixing_buffer_view,
 
 FrameCombiner::FrameCombiner(bool use_limiter)
     : data_dumper_(new ApmDataDumper(0)),
-      limiter_(data_dumper_.get(), "AudioMixer"),
-      use_limiter_(use_limiter) {
-  limiter_.SetGain(0.f);
-}
+      limiter_(static_cast<size_t>(48000), data_dumper_.get(), "AudioMixer"),
+      use_limiter_(use_limiter) {}
 
 FrameCombiner::~FrameCombiner() = default;
 

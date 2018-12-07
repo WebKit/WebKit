@@ -1,6 +1,7 @@
 {
   "comments": [
-    "Builder for 32-bit devices."
+    "Builder for 32-bit devices.",
+    "NOTE: Update cache entry in cr-buildbucket.cfg when changing xcode version."
   ],
   "xcode build version": "10l232m",
   "gn_args": [

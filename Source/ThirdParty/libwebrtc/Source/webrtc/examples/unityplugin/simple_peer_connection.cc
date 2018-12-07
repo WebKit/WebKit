@@ -15,6 +15,7 @@
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/create_peerconnection_factory.h"
 #include "api/videosourceproxy.h"
 #include "media/engine/internaldecoderfactory.h"
 #include "media/engine/internalencoderfactory.h"
@@ -448,7 +449,8 @@ void SimplePeerConnection::AddStreams(bool audio_only) {
 
     rtc::scoped_refptr<webrtc::jni::AndroidVideoTrackSource> source(
         new rtc::RefCountedObject<webrtc::jni::AndroidVideoTrackSource>(
-            g_signaling_thread.get(), env, false));
+            g_signaling_thread.get(), env, /* is_screencast= */ false,
+            /* align_timestamps= */ true));
     rtc::scoped_refptr<webrtc::VideoTrackSourceProxy> proxy_source =
         webrtc::VideoTrackSourceProxy::Create(g_signaling_thread.get(),
                                               g_worker_thread.get(), source);

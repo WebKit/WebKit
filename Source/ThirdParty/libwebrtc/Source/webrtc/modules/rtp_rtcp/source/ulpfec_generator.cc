@@ -10,12 +10,15 @@
 
 #include "modules/rtp_rtcp/source/ulpfec_generator.h"
 
+#include <string.h>
+#include <cstdint>
 #include <memory>
 #include <utility>
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
+#include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 #include "rtc_base/checks.h"
 

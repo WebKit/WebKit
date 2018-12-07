@@ -47,7 +47,6 @@
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/logging.h"
 
-#ifdef ENABLE_RTC_EVENT_LOG
 
 // *.pb.h files are generated at build-time by the protobuf compiler.
 RTC_PUSH_IGNORING_WUNDEF()
@@ -223,7 +222,8 @@ ConvertIceCandidatePairEventType(IceCandidatePairEventType type) {
 
 }  // namespace
 
-std::string RtcEventLogEncoderLegacy::EncodeLogStart(int64_t timestamp_us) {
+std::string RtcEventLogEncoderLegacy::EncodeLogStart(int64_t timestamp_us,
+                                                     int64_t utc_time_us) {
   rtclog::Event rtclog_event;
   rtclog_event.set_timestamp_us(timestamp_us);
   rtclog_event.set_type(rtclog::Event::LOG_START);
@@ -357,37 +357,37 @@ std::string RtcEventLogEncoderLegacy::Encode(const RtcEvent& event) {
 std::string RtcEventLogEncoderLegacy::EncodeAlrState(
     const RtcEventAlrState& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::ALR_STATE_EVENT);
 
   auto* alr_state = rtclog_event.mutable_alr_state();
-  alr_state->set_in_alr(event.in_alr_);
+  alr_state->set_in_alr(event.in_alr());
   return Serialize(&rtclog_event);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeAudioNetworkAdaptation(
     const RtcEventAudioNetworkAdaptation& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::AUDIO_NETWORK_ADAPTATION_EVENT);
 
   auto* audio_network_adaptation =
       rtclog_event.mutable_audio_network_adaptation();
-  if (event.config_->bitrate_bps)
-    audio_network_adaptation->set_bitrate_bps(*event.config_->bitrate_bps);
-  if (event.config_->frame_length_ms)
+  if (event.config().bitrate_bps)
+    audio_network_adaptation->set_bitrate_bps(*event.config().bitrate_bps);
+  if (event.config().frame_length_ms)
     audio_network_adaptation->set_frame_length_ms(
-        *event.config_->frame_length_ms);
-  if (event.config_->uplink_packet_loss_fraction) {
+        *event.config().frame_length_ms);
+  if (event.config().uplink_packet_loss_fraction) {
     audio_network_adaptation->set_uplink_packet_loss_fraction(
-        *event.config_->uplink_packet_loss_fraction);
+        *event.config().uplink_packet_loss_fraction);
   }
-  if (event.config_->enable_fec)
-    audio_network_adaptation->set_enable_fec(*event.config_->enable_fec);
-  if (event.config_->enable_dtx)
-    audio_network_adaptation->set_enable_dtx(*event.config_->enable_dtx);
-  if (event.config_->num_channels)
-    audio_network_adaptation->set_num_channels(*event.config_->num_channels);
+  if (event.config().enable_fec)
+    audio_network_adaptation->set_enable_fec(*event.config().enable_fec);
+  if (event.config().enable_dtx)
+    audio_network_adaptation->set_enable_dtx(*event.config().enable_dtx);
+  if (event.config().num_channels)
+    audio_network_adaptation->set_num_channels(*event.config().num_channels);
 
   return Serialize(&rtclog_event);
 }
@@ -395,11 +395,11 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioNetworkAdaptation(
 std::string RtcEventLogEncoderLegacy::EncodeAudioPlayout(
     const RtcEventAudioPlayout& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::AUDIO_PLAYOUT_EVENT);
 
   auto* playout_event = rtclog_event.mutable_audio_playout_event();
-  playout_event->set_local_ssrc(event.ssrc_);
+  playout_event->set_local_ssrc(event.ssrc());
 
   return Serialize(&rtclog_event);
 }
@@ -407,15 +407,15 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioPlayout(
 std::string RtcEventLogEncoderLegacy::EncodeAudioReceiveStreamConfig(
     const RtcEventAudioReceiveStreamConfig& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::AUDIO_RECEIVER_CONFIG_EVENT);
 
   rtclog::AudioReceiveConfig* receiver_config =
       rtclog_event.mutable_audio_receiver_config();
-  receiver_config->set_remote_ssrc(event.config_->remote_ssrc);
-  receiver_config->set_local_ssrc(event.config_->local_ssrc);
+  receiver_config->set_remote_ssrc(event.config().remote_ssrc);
+  receiver_config->set_local_ssrc(event.config().local_ssrc);
 
-  for (const auto& e : event.config_->rtp_extensions) {
+  for (const auto& e : event.config().rtp_extensions) {
     rtclog::RtpHeaderExtension* extension =
         receiver_config->add_header_extensions();
     extension->set_name(e.uri);
@@ -428,15 +428,15 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioReceiveStreamConfig(
 std::string RtcEventLogEncoderLegacy::EncodeAudioSendStreamConfig(
     const RtcEventAudioSendStreamConfig& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::AUDIO_SENDER_CONFIG_EVENT);
 
   rtclog::AudioSendConfig* sender_config =
       rtclog_event.mutable_audio_sender_config();
 
-  sender_config->set_ssrc(event.config_->local_ssrc);
+  sender_config->set_ssrc(event.config().local_ssrc);
 
-  for (const auto& e : event.config_->rtp_extensions) {
+  for (const auto& e : event.config().rtp_extensions) {
     rtclog::RtpHeaderExtension* extension =
         sender_config->add_header_extensions();
     extension->set_name(e.uri);
@@ -449,12 +449,12 @@ std::string RtcEventLogEncoderLegacy::EncodeAudioSendStreamConfig(
 std::string RtcEventLogEncoderLegacy::EncodeBweUpdateDelayBased(
     const RtcEventBweUpdateDelayBased& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::DELAY_BASED_BWE_UPDATE);
 
   auto* bwe_event = rtclog_event.mutable_delay_based_bwe_update();
-  bwe_event->set_bitrate_bps(event.bitrate_bps_);
-  bwe_event->set_detector_state(ConvertDetectorState(event.detector_state_));
+  bwe_event->set_bitrate_bps(event.bitrate_bps());
+  bwe_event->set_detector_state(ConvertDetectorState(event.detector_state()));
 
   return Serialize(&rtclog_event);
 }
@@ -462,13 +462,13 @@ std::string RtcEventLogEncoderLegacy::EncodeBweUpdateDelayBased(
 std::string RtcEventLogEncoderLegacy::EncodeBweUpdateLossBased(
     const RtcEventBweUpdateLossBased& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::LOSS_BASED_BWE_UPDATE);
 
   auto* bwe_event = rtclog_event.mutable_loss_based_bwe_update();
-  bwe_event->set_bitrate_bps(event.bitrate_bps_);
-  bwe_event->set_fraction_loss(event.fraction_loss_);
-  bwe_event->set_total_packets(event.total_packets_);
+  bwe_event->set_bitrate_bps(event.bitrate_bps());
+  bwe_event->set_fraction_loss(event.fraction_loss());
+  bwe_event->set_total_packets(event.total_packets());
 
   return Serialize(&rtclog_event);
 }
@@ -476,15 +476,15 @@ std::string RtcEventLogEncoderLegacy::EncodeBweUpdateLossBased(
 std::string RtcEventLogEncoderLegacy::EncodeIceCandidatePairConfig(
     const RtcEventIceCandidatePairConfig& event) {
   rtclog::Event encoded_rtc_event;
-  encoded_rtc_event.set_timestamp_us(event.timestamp_us_);
+  encoded_rtc_event.set_timestamp_us(event.timestamp_us());
   encoded_rtc_event.set_type(rtclog::Event::ICE_CANDIDATE_PAIR_CONFIG);
 
   auto* encoded_ice_event =
       encoded_rtc_event.mutable_ice_candidate_pair_config();
   encoded_ice_event->set_config_type(
-      ConvertIceCandidatePairConfigType(event.type_));
-  encoded_ice_event->set_candidate_pair_id(event.candidate_pair_id_);
-  const auto& desc = event.candidate_pair_desc_;
+      ConvertIceCandidatePairConfigType(event.type()));
+  encoded_ice_event->set_candidate_pair_id(event.candidate_pair_id());
+  const auto& desc = event.candidate_pair_desc();
   encoded_ice_event->set_local_candidate_type(
       ConvertIceCandidateType(desc.local_candidate_type));
   encoded_ice_event->set_local_relay_protocol(
@@ -505,28 +505,28 @@ std::string RtcEventLogEncoderLegacy::EncodeIceCandidatePairConfig(
 std::string RtcEventLogEncoderLegacy::EncodeIceCandidatePairEvent(
     const RtcEventIceCandidatePair& event) {
   rtclog::Event encoded_rtc_event;
-  encoded_rtc_event.set_timestamp_us(event.timestamp_us_);
+  encoded_rtc_event.set_timestamp_us(event.timestamp_us());
   encoded_rtc_event.set_type(rtclog::Event::ICE_CANDIDATE_PAIR_EVENT);
 
   auto* encoded_ice_event =
       encoded_rtc_event.mutable_ice_candidate_pair_event();
   encoded_ice_event->set_event_type(
-      ConvertIceCandidatePairEventType(event.type_));
-  encoded_ice_event->set_candidate_pair_id(event.candidate_pair_id_);
+      ConvertIceCandidatePairEventType(event.type()));
+  encoded_ice_event->set_candidate_pair_id(event.candidate_pair_id());
   return Serialize(&encoded_rtc_event);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeProbeClusterCreated(
     const RtcEventProbeClusterCreated& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::BWE_PROBE_CLUSTER_CREATED_EVENT);
 
   auto* probe_cluster = rtclog_event.mutable_probe_cluster();
-  probe_cluster->set_id(event.id_);
-  probe_cluster->set_bitrate_bps(event.bitrate_bps_);
-  probe_cluster->set_min_packets(event.min_probes_);
-  probe_cluster->set_min_bytes(event.min_bytes_);
+  probe_cluster->set_id(event.id());
+  probe_cluster->set_bitrate_bps(event.bitrate_bps());
+  probe_cluster->set_min_packets(event.min_probes());
+  probe_cluster->set_min_bytes(event.min_bytes());
 
   return Serialize(&rtclog_event);
 }
@@ -534,12 +534,12 @@ std::string RtcEventLogEncoderLegacy::EncodeProbeClusterCreated(
 std::string RtcEventLogEncoderLegacy::EncodeProbeResultFailure(
     const RtcEventProbeResultFailure& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::BWE_PROBE_RESULT_EVENT);
 
   auto* probe_result = rtclog_event.mutable_probe_result();
-  probe_result->set_id(event.id_);
-  probe_result->set_result(ConvertProbeResultType(event.failure_reason_));
+  probe_result->set_id(event.id());
+  probe_result->set_result(ConvertProbeResultType(event.failure_reason()));
 
   return Serialize(&rtclog_event);
 }
@@ -547,70 +547,71 @@ std::string RtcEventLogEncoderLegacy::EncodeProbeResultFailure(
 std::string RtcEventLogEncoderLegacy::EncodeProbeResultSuccess(
     const RtcEventProbeResultSuccess& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::BWE_PROBE_RESULT_EVENT);
 
   auto* probe_result = rtclog_event.mutable_probe_result();
-  probe_result->set_id(event.id_);
+  probe_result->set_id(event.id());
   probe_result->set_result(rtclog::BweProbeResult::SUCCESS);
-  probe_result->set_bitrate_bps(event.bitrate_bps_);
+  probe_result->set_bitrate_bps(event.bitrate_bps());
 
   return Serialize(&rtclog_event);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeRtcpPacketIncoming(
     const RtcEventRtcpPacketIncoming& event) {
-  return EncodeRtcpPacket(event.timestamp_us_, event.packet_, true);
+  return EncodeRtcpPacket(event.timestamp_us(), event.packet(), true);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeRtcpPacketOutgoing(
     const RtcEventRtcpPacketOutgoing& event) {
-  return EncodeRtcpPacket(event.timestamp_us_, event.packet_, false);
+  return EncodeRtcpPacket(event.timestamp_us(), event.packet(), false);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacketIncoming(
     const RtcEventRtpPacketIncoming& event) {
-  return EncodeRtpPacket(event.timestamp_us_, event.header_,
-                         event.packet_length_, PacedPacketInfo::kNotAProbe,
+  return EncodeRtpPacket(event.timestamp_us(), event.header(),
+                         event.packet_length(), PacedPacketInfo::kNotAProbe,
                          true);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacketOutgoing(
     const RtcEventRtpPacketOutgoing& event) {
-  return EncodeRtpPacket(event.timestamp_us_, event.header_,
-                         event.packet_length_, event.probe_cluster_id_, false);
+  return EncodeRtpPacket(event.timestamp_us(), event.header(),
+                         event.packet_length(), event.probe_cluster_id(),
+                         false);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeVideoReceiveStreamConfig(
     const RtcEventVideoReceiveStreamConfig& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::VIDEO_RECEIVER_CONFIG_EVENT);
 
   rtclog::VideoReceiveConfig* receiver_config =
       rtclog_event.mutable_video_receiver_config();
-  receiver_config->set_remote_ssrc(event.config_->remote_ssrc);
-  receiver_config->set_local_ssrc(event.config_->local_ssrc);
+  receiver_config->set_remote_ssrc(event.config().remote_ssrc);
+  receiver_config->set_local_ssrc(event.config().local_ssrc);
 
   // TODO(perkj): Add field for rsid.
-  receiver_config->set_rtcp_mode(ConvertRtcpMode(event.config_->rtcp_mode));
-  receiver_config->set_remb(event.config_->remb);
+  receiver_config->set_rtcp_mode(ConvertRtcpMode(event.config().rtcp_mode));
+  receiver_config->set_remb(event.config().remb);
 
-  for (const auto& e : event.config_->rtp_extensions) {
+  for (const auto& e : event.config().rtp_extensions) {
     rtclog::RtpHeaderExtension* extension =
         receiver_config->add_header_extensions();
     extension->set_name(e.uri);
     extension->set_id(e.id);
   }
 
-  for (const auto& d : event.config_->codecs) {
+  for (const auto& d : event.config().codecs) {
     rtclog::DecoderConfig* decoder = receiver_config->add_decoders();
     decoder->set_name(d.payload_name);
     decoder->set_payload_type(d.payload_type);
     if (d.rtx_payload_type != 0) {
       rtclog::RtxMap* rtx = receiver_config->add_rtx_map();
       rtx->set_payload_type(d.payload_type);
-      rtx->mutable_config()->set_rtx_ssrc(event.config_->rtx_ssrc);
+      rtx->mutable_config()->set_rtx_ssrc(event.config().rtx_ssrc);
       rtx->mutable_config()->set_rtx_payload_type(d.rtx_payload_type);
     }
   }
@@ -621,19 +622,19 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoReceiveStreamConfig(
 std::string RtcEventLogEncoderLegacy::EncodeVideoSendStreamConfig(
     const RtcEventVideoSendStreamConfig& event) {
   rtclog::Event rtclog_event;
-  rtclog_event.set_timestamp_us(event.timestamp_us_);
+  rtclog_event.set_timestamp_us(event.timestamp_us());
   rtclog_event.set_type(rtclog::Event::VIDEO_SENDER_CONFIG_EVENT);
 
   rtclog::VideoSendConfig* sender_config =
       rtclog_event.mutable_video_sender_config();
 
   // TODO(perkj): rtclog::VideoSendConfig should only contain one SSRC.
-  sender_config->add_ssrcs(event.config_->local_ssrc);
-  if (event.config_->rtx_ssrc != 0) {
-    sender_config->add_rtx_ssrcs(event.config_->rtx_ssrc);
+  sender_config->add_ssrcs(event.config().local_ssrc);
+  if (event.config().rtx_ssrc != 0) {
+    sender_config->add_rtx_ssrcs(event.config().rtx_ssrc);
   }
 
-  for (const auto& e : event.config_->rtp_extensions) {
+  for (const auto& e : event.config().rtp_extensions) {
     rtclog::RtpHeaderExtension* extension =
         sender_config->add_header_extensions();
     extension->set_name(e.uri);
@@ -642,13 +643,13 @@ std::string RtcEventLogEncoderLegacy::EncodeVideoSendStreamConfig(
 
   // TODO(perkj): rtclog::VideoSendConfig should contain many possible codec
   // configurations.
-  for (const auto& codec : event.config_->codecs) {
+  for (const auto& codec : event.config().codecs) {
     sender_config->set_rtx_payload_type(codec.rtx_payload_type);
     rtclog::EncoderConfig* encoder = sender_config->mutable_encoder();
     encoder->set_name(codec.payload_name);
     encoder->set_payload_type(codec.payload_type);
 
-    if (event.config_->codecs.size() > 1) {
+    if (event.config().codecs.size() > 1) {
       RTC_LOG(WARNING)
           << "LogVideoSendStreamConfig currently only supports one "
           << "codec. Logging codec :" << codec.payload_name;
@@ -756,5 +757,3 @@ std::string RtcEventLogEncoderLegacy::Serialize(rtclog::Event* event) {
 }
 
 }  // namespace webrtc
-
-#endif  // ENABLE_RTC_EVENT_LOG

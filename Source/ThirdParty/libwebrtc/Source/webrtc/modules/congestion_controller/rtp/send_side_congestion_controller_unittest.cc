@@ -17,7 +17,7 @@
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
-#include "rtc_base/socket.h"
+#include "rtc_base/network/sent_packet.h"
 #include "system_wrappers/include/clock.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
@@ -108,8 +108,11 @@ class SendSideCongestionControllerTest : public ::testing::Test {
     controller_->AddPacket(ssrc, packet_feedback.sequence_number,
                            packet_feedback.payload_size,
                            packet_feedback.pacing_info);
+    rtc::PacketInfo packet_info;
+    packet_info.included_in_feedback = true;
     controller_->OnSentPacket(rtc::SentPacket(packet_feedback.sequence_number,
-                                              packet_feedback.send_time_ms));
+                                              packet_feedback.send_time_ms,
+                                              packet_info));
   }
 
   // Allows us to track the target bitrate, without prescribing the exact

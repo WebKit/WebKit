@@ -68,6 +68,17 @@ class VideoAdapter {
       const absl::optional<int>& max_pixel_count,
       const absl::optional<int>& max_fps);
 
+  // Same as above, but allows setting two different target aspect ratios
+  // depending on incoming frame orientation. This gives more fine-grained
+  // control and can e.g. be used to force landscape video to be cropped to
+  // portrait video.
+  void OnOutputFormatRequest(
+      const absl::optional<std::pair<int, int>>& target_landscape_aspect_ratio,
+      const absl::optional<int>& max_landscape_pixel_count,
+      const absl::optional<std::pair<int, int>>& target_portrait_aspect_ratio,
+      const absl::optional<int>& max_portrait_pixel_count,
+      const absl::optional<int>& max_fps);
+
   // Requests the output frame size from |AdaptFrameResolution| to have as close
   // as possible to |target_pixel_count| pixels (if set) but no more than
   // |max_pixel_count|.
@@ -100,9 +111,14 @@ class VideoAdapter {
   // Max number of pixels/fps requested via calls to OnOutputFormatRequest,
   // OnResolutionFramerateRequest respectively.
   // The adapted output format is the minimum of these.
-  absl::optional<std::pair<int, int>> target_aspect_ratio_
+  absl::optional<std::pair<int, int>> target_landscape_aspect_ratio_
       RTC_GUARDED_BY(critical_section_);
-  absl::optional<int> max_pixel_count_ RTC_GUARDED_BY(critical_section_);
+  absl::optional<int> max_landscape_pixel_count_
+      RTC_GUARDED_BY(critical_section_);
+  absl::optional<std::pair<int, int>> target_portrait_aspect_ratio_
+      RTC_GUARDED_BY(critical_section_);
+  absl::optional<int> max_portrait_pixel_count_
+      RTC_GUARDED_BY(critical_section_);
   absl::optional<int> max_fps_ RTC_GUARDED_BY(critical_section_);
   int resolution_request_target_pixel_count_ RTC_GUARDED_BY(critical_section_);
   int resolution_request_max_pixel_count_ RTC_GUARDED_BY(critical_section_);

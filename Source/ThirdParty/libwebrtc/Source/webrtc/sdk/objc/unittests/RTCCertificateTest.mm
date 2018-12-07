@@ -71,7 +71,7 @@
 
 @end
 
-TEST(CertificateTest, CertificateIsUsedInConfig) {
+TEST(CertificateTest, DISABLED_CertificateIsUsedInConfig) {
   RTCCertificateTest *test = [[RTCCertificateTest alloc] init];
   [test testCertificateIsUsedInConfig];
 }

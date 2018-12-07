@@ -8,8 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <stddef.h>
+
 #include "modules/audio_device/linux/audio_device_pulse_linux.h"
 #include "modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
+#include "modules/audio_device/linux/latebindingsymboltable_linux.h"
+#include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

@@ -11,8 +11,9 @@
 #include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
 
 #include <algorithm>
-#include <limits>
-#include "common_types.h"  // NOLINT(build/include)
+#include <cstdint>
+
+#include "common_types.h"
 #include "modules/audio_coding/codecs/ilbc/ilbc.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"

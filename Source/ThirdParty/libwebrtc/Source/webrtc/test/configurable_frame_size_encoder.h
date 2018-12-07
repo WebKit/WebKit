@@ -37,8 +37,6 @@ class ConfigurableFrameSizeEncoder : public VideoEncoder {
 
   int32_t Release() override;
 
-  int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-
   int32_t SetRateAllocation(const VideoBitrateAllocation& allocation,
                             uint32_t framerate) override;
 
@@ -46,8 +44,13 @@ class ConfigurableFrameSizeEncoder : public VideoEncoder {
 
   void SetCodecType(VideoCodecType codec_type_);
 
+  void RegisterPostEncodeCallback(
+      std::function<void(void)> post_encode_callback);
+
  private:
   EncodedImageCallback* callback_;
+  absl::optional<std::function<void(void)>> post_encode_callback_;
+
   const size_t max_frame_size_;
   size_t current_frame_size_;
   std::unique_ptr<uint8_t[]> buffer_;

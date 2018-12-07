@@ -10,8 +10,6 @@
 
 #include "rtc_base/file.h"
 
-#include <utility>
-
 namespace rtc {
 
 File::File(PlatformFile file) : file_(file) {}

@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <vector>
 
+#include "rtc_base/numerics/safe_minmax.h"
+
 namespace webrtc {
 namespace test {
 namespace {
@@ -168,29 +170,29 @@ SimulationNode::SimulationNode(
       simulated_network_(simulation),
       config_(config) {}
 
-NetworkNodeTransport::NetworkNodeTransport(CallClient* sender,
-                                           NetworkNode* send_net,
-                                           uint64_t receiver,
-                                           DataSize packet_overhead)
-    : sender_(sender),
-      send_net_(send_net),
-      receiver_id_(receiver),
-      packet_overhead_(packet_overhead) {}
+NetworkNodeTransport::NetworkNodeTransport(const Clock* sender_clock,
+                                           Call* sender_call)
+    : sender_clock_(sender_clock), sender_call_(sender_call) {}
 
 NetworkNodeTransport::~NetworkNodeTransport() = default;
 
 bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
                                    size_t length,
                                    const PacketOptions& options) {
-  int64_t send_time_ms = sender_->clock_->TimeInMilliseconds();
+  int64_t send_time_ms = sender_clock_->TimeInMilliseconds();
   rtc::SentPacket sent_packet;
   sent_packet.packet_id = options.packet_id;
+  sent_packet.info.included_in_feedback = options.included_in_feedback;
+  sent_packet.info.included_in_allocation = options.included_in_allocation;
   sent_packet.send_time_ms = send_time_ms;
   sent_packet.info.packet_size_bytes = length;
   sent_packet.info.packet_type = rtc::PacketType::kData;
-  sender_->call_->OnSentPacket(sent_packet);
+  sender_call_->OnSentPacket(sent_packet);
 
   Timestamp send_time = Timestamp::ms(send_time_ms);
+  rtc::CritScope crit(&crit_sect_);
+  if (!send_net_)
+    return false;
   rtc::CopyOnWriteBuffer buffer(packet, length,
                                 length + packet_overhead_.bytes());
   buffer.SetSize(length + packet_overhead_.bytes());
@@ -199,13 +201,29 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
 
 bool NetworkNodeTransport::SendRtcp(const uint8_t* packet, size_t length) {
   rtc::CopyOnWriteBuffer buffer(packet, length);
-  Timestamp send_time = Timestamp::ms(sender_->clock_->TimeInMilliseconds());
+  Timestamp send_time = Timestamp::ms(sender_clock_->TimeInMilliseconds());
+  rtc::CritScope crit(&crit_sect_);
   buffer.SetSize(length + packet_overhead_.bytes());
+  if (!send_net_)
+    return false;
   return send_net_->TryDeliverPacket(buffer, receiver_id_, send_time);
 }
 
-uint64_t NetworkNodeTransport::ReceiverId() const {
-  return receiver_id_;
+void NetworkNodeTransport::Connect(NetworkNode* send_node,
+                                   uint64_t receiver_id,
+                                   DataSize packet_overhead) {
+  rtc::CritScope crit(&crit_sect_);
+  send_net_ = send_node;
+  receiver_id_ = receiver_id;
+  packet_overhead_ = packet_overhead;
+
+  rtc::NetworkRoute route;
+  route.connected = true;
+  route.local_network_id = receiver_id;
+  route.remote_network_id = receiver_id;
+  std::string transport_name = "dummy";
+  sender_call_->GetTransportControllerSend()->OnNetworkRouteChanged(
+      transport_name, route);
 }
 
 CrossTrafficSource::CrossTrafficSource(NetworkReceiverInterface* target,

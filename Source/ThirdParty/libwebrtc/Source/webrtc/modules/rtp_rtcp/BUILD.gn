@@ -11,6 +11,7 @@ import("../../webrtc.gni")
 rtc_source_set("rtp_rtcp_format") {
   visibility = [ "*" ]
   public = [
+    "include/rtcp_statistics.h",
     "include/rtp_cvo.h",
     "include/rtp_header_extension_map.h",
     "include/rtp_rtcp_defines.h",
@@ -85,6 +86,7 @@ rtc_source_set("rtp_rtcp_format") {
 
   deps = [
     "..:module_api",
+    "..:module_api_public",
     "../..:webrtc_common",
     "../../api:array_view",
     "../../api:libjingle_peerconnection_api",
@@ -96,6 +98,7 @@ rtc_source_set("rtp_rtcp_format") {
     "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../system_wrappers",
+    "../video_coding:codec_globals_headers",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
   ]
@@ -186,7 +189,10 @@ rtc_static_library("rtp_rtcp") {
 
   deps = [
     ":rtp_rtcp_format",
+    ":rtp_video_header",
     "..:module_api",
+    "..:module_api_public",
+    "..:module_fec_api",
     "../..:webrtc_common",
     "../../api:array_view",
     "../../api:libjingle_peerconnection_api",
@@ -217,9 +223,12 @@ rtc_static_library("rtp_rtcp") {
     "../../system_wrappers:metrics",
     "../audio_coding:audio_format_conversion",
     "../remote_bitrate_estimator",
+    "../video_coding:codec_globals_headers",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
+    "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
 
@@ -264,6 +273,7 @@ rtc_source_set("rtp_video_header") {
     "../../api/video:video_frame",
     "../../modules/video_coding:codec_globals_headers",
     "//third_party/abseil-cpp/absl/container:inlined_vector",
+    "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
   ]
 }
@@ -322,6 +332,7 @@ if (rtc_include_tests) {
       ":rtp_rtcp",
       "../../test:fileutils",
       "../../test:test_main",
+      "../../test:test_support",
       "//testing/gtest",
     ]
   }  # test_packet_masks_metrics

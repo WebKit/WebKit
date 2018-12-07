@@ -16,6 +16,7 @@
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"  // For Time, TimeSince
 #include "rtc_base/win32window.h"
 
 namespace rtc {

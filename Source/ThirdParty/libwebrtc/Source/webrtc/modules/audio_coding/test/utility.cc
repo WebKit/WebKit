@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "test/gtest.h"
 
@@ -268,7 +268,7 @@ bool FixedPayloadTypeCodec(const char* payloadName) {
       "G722", "QCELP", "CN",  "MPA",  "G728", "G729"};
 
   for (int n = 0; n < NUM_CODECS_WITH_FIXED_PAYLOAD_TYPE; n++) {
-    if (!STR_CASE_CMP(payloadName, fixPayloadTypeCodecs[n])) {
+    if (absl::EqualsIgnoreCase(payloadName, fixPayloadTypeCodecs[n])) {
       return true;
     }
   }

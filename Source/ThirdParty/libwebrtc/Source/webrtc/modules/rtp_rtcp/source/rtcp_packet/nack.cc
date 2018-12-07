@@ -11,6 +11,7 @@
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <utility>
 
 #include "modules/rtp_rtcp/source/byte_io.h"

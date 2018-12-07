@@ -14,12 +14,14 @@
 #include <memory>
 
 #include "api/video_codecs/video_encoder_factory.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Creates a new factory that can create the built-in types of video encoders.
 // The factory has simulcast support for VP8.
-std::unique_ptr<VideoEncoderFactory> CreateBuiltinVideoEncoderFactory();
+RTC_EXPORT std::unique_ptr<VideoEncoderFactory>
+CreateBuiltinVideoEncoderFactory();
 
 }  // namespace webrtc
 

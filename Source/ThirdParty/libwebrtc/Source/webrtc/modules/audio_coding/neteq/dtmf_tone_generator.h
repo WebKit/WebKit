@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_DTMF_TONE_GENERATOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_DTMF_TONE_GENERATOR_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "rtc_base/constructormagic.h"
 

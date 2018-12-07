@@ -36,6 +36,14 @@ constexpr uint8_t kFlageXtendedOffset = 0x02;
 // B:   +      FID      +
 //      |               |
 //      +-+-+-+-+-+-+-+-+
+//      |               |
+//      +     Width     +
+// B=1  |               |
+// and  +-+-+-+-+-+-+-+-+
+// D=0  |               |
+//      +     Height    +
+//      |               |
+//      +-+-+-+-+-+-+-+-+
 // D:   |    FDIFF  |X|M|
 //      +---------------+
 // X:   |      ...      |
@@ -75,6 +83,12 @@ bool RtpGenericFrameDescriptorExtension::Parse(
   descriptor->ClearFrameDependencies();
   size_t offset = 4;
   bool has_more_dependencies = (data[0] & kFlagDependencies) != 0;
+  if (!has_more_dependencies && data.size() >= offset + 4) {
+    uint16_t width = (data[offset] << 8) | data[offset + 1];
+    uint16_t height = (data[offset + 2] << 8) | data[offset + 3];
+    descriptor->SetResolution(width, height);
+    offset += 4;
+  }
   while (has_more_dependencies) {
     if (data.size() == offset)
       return false;
@@ -91,7 +105,7 @@ bool RtpGenericFrameDescriptorExtension::Parse(
     if (!descriptor->AddFrameDependencyDiff(fdiff))
       return false;
   }
-  return data.size() == offset;
+  return true;
 }
 
 size_t RtpGenericFrameDescriptorExtension::ValueSize(
@@ -102,6 +116,11 @@ size_t RtpGenericFrameDescriptorExtension::ValueSize(
   size_t size = 4;
   for (uint16_t fdiff : descriptor.FrameDependenciesDiffs()) {
     size += (fdiff >= (1 << 6)) ? 2 : 1;
+  }
+  if (descriptor.FirstPacketInSubFrame() &&
+      descriptor.FrameDependenciesDiffs().empty() && descriptor.Width() > 0 &&
+      descriptor.Height() > 0) {
+    size += 4;
   }
   return size;
 }
@@ -129,6 +148,13 @@ bool RtpGenericFrameDescriptorExtension::Write(
   data[3] = frame_id >> 8;
   rtc::ArrayView<const uint16_t> fdiffs = descriptor.FrameDependenciesDiffs();
   size_t offset = 4;
+  if (descriptor.FirstPacketInSubFrame() && fdiffs.empty() &&
+      descriptor.Width() > 0 && descriptor.Height() > 0) {
+    data[offset++] = (descriptor.Width() >> 8);
+    data[offset++] = (descriptor.Width() & 0xFF);
+    data[offset++] = (descriptor.Height() >> 8);
+    data[offset++] = (descriptor.Height() & 0xFF);
+  }
   for (size_t i = 0; i < fdiffs.size(); i++) {
     bool extended = fdiffs[i] >= (1 << 6);
     bool more = i < fdiffs.size() - 1;

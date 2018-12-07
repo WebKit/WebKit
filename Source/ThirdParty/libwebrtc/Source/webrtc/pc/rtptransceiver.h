@@ -70,11 +70,11 @@ class RtpTransceiver final
 
   // Returns the Voice/VideoChannel set for this transceiver. May be null if
   // the transceiver is not in the currently set local/remote description.
-  cricket::BaseChannel* channel() const { return channel_; }
+  cricket::ChannelInterface* channel() const { return channel_; }
 
   // Sets the Voice/VideoChannel. The caller must pass in the correct channel
   // implementation based on the type of the transceiver.
-  void SetChannel(cricket::BaseChannel* channel);
+  void SetChannel(cricket::ChannelInterface* channel);
 
   // Adds an RtpSender of the appropriate type to be owned by this transceiver.
   // Must not be null.
@@ -177,7 +177,7 @@ class RtpTransceiver final
   void SetCodecPreferences(rtc::ArrayView<RtpCodecCapability> codecs) override;
 
  private:
-  void OnFirstPacketReceived(cricket::BaseChannel* channel);
+  void OnFirstPacketReceived(cricket::ChannelInterface* channel);
 
   const bool unified_plan_;
   const cricket::MediaType media_type_;
@@ -196,7 +196,7 @@ class RtpTransceiver final
   bool created_by_addtrack_ = false;
   bool has_ever_been_used_to_send_ = false;
 
-  cricket::BaseChannel* channel_ = nullptr;
+  cricket::ChannelInterface* channel_ = nullptr;
 };
 
 BEGIN_SIGNALING_PROXY_MAP(RtpTransceiver)

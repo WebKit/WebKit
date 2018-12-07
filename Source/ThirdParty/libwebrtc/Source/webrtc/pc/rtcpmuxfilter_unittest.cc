@@ -9,7 +9,6 @@
  */
 
 #include "pc/rtcpmuxfilter.h"
-#include "media/base/testutils.h"
 #include "rtc_base/gunit.h"
 
 TEST(RtcpMuxFilterTest, IsActiveSender) {

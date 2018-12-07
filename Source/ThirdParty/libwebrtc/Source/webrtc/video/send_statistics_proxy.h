@@ -18,7 +18,6 @@
 
 #include "api/video/video_stream_encoder_observer.h"
 #include "call/video_send_stream.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/criticalsection.h"
@@ -53,6 +52,10 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
 
   void OnSendEncodedImage(const EncodedImage& encoded_image,
                           const CodecSpecificInfo* codec_info) override;
+
+  void OnEncoderImplementationChanged(
+      const std::string& implementation_name) override;
+
   // Used to update incoming frame rate.
   void OnIncomingFrame(int width, int height) override;
 
@@ -240,6 +243,14 @@ class SendStatisticsProxy : public VideoStreamEncoderObserver,
   rtc::RateTracker encoded_frame_rate_tracker_ RTC_GUARDED_BY(crit_);
 
   absl::optional<int64_t> last_outlier_timestamp_ RTC_GUARDED_BY(crit_);
+
+  struct EncoderChangeEvent {
+    std::string previous_encoder_implementation;
+    std::string new_encoder_implementation;
+  };
+  // Stores the last change in encoder implementation in an optional, so that
+  // the event can be consumed.
+  absl::optional<EncoderChangeEvent> encoder_changed_;
 
   // Contains stats used for UMA histograms. These stats will be reset if
   // content type changes between real-time video and screenshare, since these

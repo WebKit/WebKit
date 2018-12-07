@@ -10,6 +10,8 @@
 
 #include "api/rtptransceiverinterface.h"
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 RtpTransceiverInit::RtpTransceiverInit() = default;

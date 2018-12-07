@@ -36,8 +36,10 @@ bool RtcEventBweUpdateDelayBased::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventBweUpdateDelayBased::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventBweUpdateDelayBased(*this));
+std::unique_ptr<RtcEventBweUpdateDelayBased> RtcEventBweUpdateDelayBased::Copy()
+    const {
+  return absl::WrapUnique<RtcEventBweUpdateDelayBased>(
+      new RtcEventBweUpdateDelayBased(*this));
 }
 
 }  // namespace webrtc

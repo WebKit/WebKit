@@ -19,11 +19,8 @@ namespace webrtc {
 namespace test {
 
 NetEqEventLogInput::NetEqEventLogInput(const std::string& file_name,
-                                       const RtpHeaderExtensionMap& hdr_ext_map)
-    : source_(RtcEventLogSource::Create(file_name)) {
-  for (const auto& ext_pair : hdr_ext_map) {
-    source_->RegisterRtpHeaderExtension(ext_pair.second, ext_pair.first);
-  }
+                                       absl::optional<uint32_t> ssrc_filter)
+    : source_(RtcEventLogSource::Create(file_name, ssrc_filter)) {
   LoadNextPacket();
   AdvanceOutputEvent();
 }

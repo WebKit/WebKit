@@ -22,11 +22,12 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/messagequeue.h"
 #include "rtc_base/network.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 
 namespace cricket {
 
-class BasicPortAllocator : public PortAllocator {
+class RTC_EXPORT BasicPortAllocator : public PortAllocator {
  public:
   // note: The (optional) relay_port_factory is owned by caller
   // and must have a life time that exceeds that of BasicPortAllocator.
@@ -110,8 +111,8 @@ enum class SessionState {
               // process will be started.
 };
 
-class BasicPortAllocatorSession : public PortAllocatorSession,
-                                  public rtc::MessageHandler {
+class RTC_EXPORT BasicPortAllocatorSession : public PortAllocatorSession,
+                                             public rtc::MessageHandler {
  public:
   BasicPortAllocatorSession(BasicPortAllocator* allocator,
                             const std::string& content_name,
@@ -235,6 +236,10 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
 
   bool CheckCandidateFilter(const Candidate& c) const;
   bool CandidatePairable(const Candidate& c, const Port* port) const;
+
+  // Returns true if there is an mDNS responder attached to the network manager
+  bool MdnsObfuscationEnabled() const;
+
   // Clears 1) the address if the candidate is supposedly a hostname candidate;
   // 2) the related address according to the flags and candidate filter in order
   // to avoid leaking any information.
@@ -274,7 +279,7 @@ class BasicPortAllocatorSession : public PortAllocatorSession,
 
 // Records configuration information useful in creating ports.
 // TODO(deadbeef): Rename "relay" to "turn_server" in this struct.
-struct PortConfiguration : public rtc::MessageData {
+struct RTC_EXPORT PortConfiguration : public rtc::MessageData {
   // TODO(jiayl): remove |stun_address| when Chrome is updated.
   rtc::SocketAddress stun_address;
   ServerAddresses stun_servers;
@@ -383,7 +388,7 @@ class AllocationSequence : public rtc::MessageHandler,
                     const char* data,
                     size_t size,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time);
+                    const int64_t& packet_time_us);
 
   void OnPortDestroyed(PortInterface* port);
 

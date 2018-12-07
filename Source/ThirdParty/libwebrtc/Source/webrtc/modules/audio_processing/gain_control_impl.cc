@@ -10,10 +10,14 @@
 
 #include "modules/audio_processing/gain_control_impl.h"
 
+#include <cstdint>
+
 #include "absl/types/optional.h"
 #include "modules/audio_processing/agc/legacy/gain_control.h"
 #include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {

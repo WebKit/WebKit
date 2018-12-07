@@ -12,13 +12,14 @@
 #include <algorithm>
 #include <utility>
 
+#include "api/test/video/function_video_encoder_factory.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "media/base/mediaconstants.h"
 #include "media/engine/internaldecoderfactory.h"
 #include "media/engine/internalencoderfactory.h"
 #include "media/engine/webrtcvideoengine.h"
 #include "test/call_test.h"
 #include "test/fake_encoder.h"
-#include "test/function_video_encoder_factory.h"
 #include "test/scenario/hardware_codecs.h"
 #include "test/testsupport/fileutils.h"
 
@@ -131,11 +132,20 @@ VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
   size_t num_streams = config.encoder.num_simulcast_streams;
   VideoEncoderConfig encoder_config;
   encoder_config.codec_type = config.encoder.codec;
-  encoder_config.content_type = VideoEncoderConfig::ContentType::kRealtimeVideo;
+  switch (config.source.content_type) {
+    case VideoStreamConfig::Source::ContentType::kVideo:
+      encoder_config.content_type =
+          VideoEncoderConfig::ContentType::kRealtimeVideo;
+      break;
+    case VideoStreamConfig::Source::ContentType::kScreen:
+      encoder_config.content_type = VideoEncoderConfig::ContentType::kScreen;
+      break;
+  }
   encoder_config.video_format =
       SdpVideoFormat(CodecTypeToPayloadString(config.encoder.codec), {});
   encoder_config.number_of_streams = num_streams;
   encoder_config.simulcast_layers = std::vector<VideoStream>(num_streams);
+  encoder_config.min_transmit_bitrate_bps = config.stream.pad_to_rate.bps();
 
   std::string cricket_codec = CodecTypeToCodecName(config.encoder.codec);
   if (!cricket_codec.empty()) {
@@ -153,6 +163,12 @@ VideoEncoderConfig CreateVideoEncoderConfig(VideoStreamConfig config) {
   }
   encoder_config.encoder_specific_settings =
       CreateEncoderSpecificSettings(config);
+  if (config.encoder.max_framerate) {
+    for (auto& layer : encoder_config.simulcast_layers) {
+      layer.max_framerate = *config.encoder.max_framerate;
+    }
+  }
+
   return encoder_config;
 }
 }  // namespace
@@ -193,11 +209,13 @@ SendVideoStream::SendVideoStream(CallClient* sender,
     case Encoder::Implementation::kFake:
       if (config.encoder.codec == Codec::kVideoCodecGeneric) {
         encoder_factory_ =
-            absl::make_unique<FunctionVideoEncoderFactory>([this, config]() {
+            absl::make_unique<FunctionVideoEncoderFactory>([this]() {
+              rtc::CritScope cs(&crit_);
               auto encoder =
                   absl::make_unique<test::FakeEncoder>(sender_->clock_);
-              if (config.encoder.fake.max_rate.IsFinite())
-                encoder->SetMaxBitrate(config.encoder.fake.max_rate.kbps());
+              fake_encoders_.push_back(encoder.get());
+              if (config_.encoder.fake.max_rate.IsFinite())
+                encoder->SetMaxBitrate(config_.encoder.fake.max_rate.kbps());
               return encoder;
             });
       } else {
@@ -213,9 +231,15 @@ SendVideoStream::SendVideoStream(CallClient* sender,
   }
   RTC_CHECK(encoder_factory_);
 
+  bitrate_allocator_factory_ = CreateBuiltinVideoBitrateAllocatorFactory();
+  RTC_CHECK(bitrate_allocator_factory_);
+
   VideoSendStream::Config send_config =
       CreateVideoSendStreamConfig(config, ssrcs_, send_transport);
   send_config.encoder_settings.encoder_factory = encoder_factory_.get();
+  send_config.encoder_settings.bitrate_allocator_factory =
+      bitrate_allocator_factory_.get();
+
   VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config);
 
   send_stream_ = sender_->call_->CreateVideoSendStream(
@@ -232,29 +256,34 @@ SendVideoStream::~SendVideoStream() {
 void SendVideoStream::Start() {
   send_stream_->Start();
   video_capturer_->Start();
+  sender_->call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
 }
 
-bool SendVideoStream::TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                       uint64_t receiver,
-                                       Timestamp at_time) {
-  // Removes added overhead before delivering RTCP packet to sender.
-  RTC_DCHECK_GE(packet.size(), config_.stream.packet_overhead.bytes());
-  packet.SetSize(packet.size() - config_.stream.packet_overhead.bytes());
-  sender_->DeliverPacket(MediaType::VIDEO, packet, at_time);
-  return true;
+void SendVideoStream::UpdateConfig(
+    std::function<void(VideoStreamConfig*)> modifier) {
+  rtc::CritScope cs(&crit_);
+  VideoStreamConfig prior_config = config_;
+  modifier(&config_);
+  if (prior_config.encoder.fake.max_rate != config_.encoder.fake.max_rate) {
+    for (auto* encoder : fake_encoders_) {
+      encoder->SetMaxBitrate(config_.encoder.fake.max_rate.kbps());
+    }
+  }
+  // TODO(srte): Add more conditions that should cause reconfiguration.
+  if (prior_config.encoder.max_framerate != config_.encoder.max_framerate) {
+    VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config_);
+    send_stream_->ReconfigureVideoEncoder(std::move(encoder_config));
+  }
+  if (prior_config.source.framerate != config_.source.framerate) {
+    SetCaptureFramerate(config_.source.framerate);
+  }
 }
 
 void SendVideoStream::SetCaptureFramerate(int framerate) {
   RTC_CHECK(frame_generator_)
       << "Framerate change only implemented for generators";
   frame_generator_->ChangeFramerate(framerate);
-}
 
-void SendVideoStream::SetMaxFramerate(absl::optional<int> max_framerate) {
-  VideoEncoderConfig encoder_config = CreateVideoEncoderConfig(config_);
-  RTC_DCHECK_EQ(encoder_config.simulcast_layers.size(), 1);
-  encoder_config.simulcast_layers[0].max_framerate = max_framerate.value_or(-1);
-  send_stream_->ReconfigureVideoEncoder(std::move(encoder_config));
 }
 
 VideoSendStream::Stats SendVideoStream::GetStats() const {
@@ -284,15 +313,14 @@ ReceiveVideoStream::ReceiveVideoStream(CallClient* receiver,
                                        SendVideoStream* send_stream,
                                        size_t chosen_stream,
                                        Transport* feedback_transport)
-    : receiver_(receiver),
-      config_(config),
-      decoder_factory_(absl::make_unique<InternalDecoderFactory>()) {
+    : receiver_(receiver), config_(config) {
   renderer_ = absl::make_unique<FakeVideoRenderer>();
   VideoReceiveStream::Config recv_config(feedback_transport);
   recv_config.rtp.remb = !config.stream.packet_feedback;
   recv_config.rtp.transport_cc = config.stream.packet_feedback;
   recv_config.rtp.local_ssrc = CallTest::kReceiverLocalVideoSsrc;
   recv_config.rtp.extensions = GetVideoRtpExtensions(config);
+  receiver_->AddExtensions(recv_config.rtp.extensions);
   RTC_DCHECK(!config.stream.use_rtx ||
              config.stream.nack_history_time > TimeDelta::Zero());
   recv_config.rtp.nack.rtp_history_ms = config.stream.nack_history_time.ms();
@@ -300,14 +328,24 @@ ReceiveVideoStream::ReceiveVideoStream(CallClient* receiver,
   recv_config.renderer = renderer_.get();
   if (config.stream.use_rtx) {
     recv_config.rtp.rtx_ssrc = send_stream->rtx_ssrcs_[chosen_stream];
+    receiver->ssrc_media_types_[recv_config.rtp.rtx_ssrc] = MediaType::VIDEO;
     recv_config.rtp
         .rtx_associated_payload_types[CallTest::kSendRtxPayloadType] =
         CodecTypeToPayloadType(config.encoder.codec);
   }
   recv_config.rtp.remote_ssrc = send_stream->ssrcs_[chosen_stream];
+  receiver->ssrc_media_types_[recv_config.rtp.remote_ssrc] = MediaType::VIDEO;
+
   VideoReceiveStream::Decoder decoder =
       CreateMatchingDecoder(CodecTypeToPayloadType(config.encoder.codec),
                             CodecTypeToPayloadString(config.encoder.codec));
+  if (config.encoder.codec ==
+      VideoStreamConfig::Encoder::Codec::kVideoCodecGeneric) {
+    decoder_factory_ = absl::make_unique<FunctionVideoDecoderFactory>(
+        []() { return absl::make_unique<FakeDecoder>(); });
+  } else {
+    decoder_factory_ = absl::make_unique<InternalDecoderFactory>();
+  }
   decoder.decoder_factory = decoder_factory_.get();
   recv_config.decoders.push_back(decoder);
 
@@ -316,6 +354,7 @@ ReceiveVideoStream::ReceiveVideoStream(CallClient* receiver,
     FlexfecReceiveStream::Config flexfec_config(feedback_transport);
     flexfec_config.payload_type = CallTest::kFlexfecPayloadType;
     flexfec_config.remote_ssrc = CallTest::kFlexfecSendSsrc;
+    receiver->ssrc_media_types_[flexfec_config.remote_ssrc] = MediaType::VIDEO;
     flexfec_config.protected_media_ssrcs = send_stream->rtx_ssrcs_;
     flexfec_config.local_ssrc = recv_config.rtp.local_ssrc;
     flecfec_stream_ =
@@ -337,46 +376,23 @@ ReceiveVideoStream::~ReceiveVideoStream() {
     receiver_->call_->DestroyFlexfecReceiveStream(flecfec_stream_);
 }
 
-bool ReceiveVideoStream::TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                                          uint64_t receiver,
-                                          Timestamp at_time) {
-  RTC_DCHECK_GE(packet.size(), config_.stream.packet_overhead.bytes());
-  packet.SetSize(packet.size() - config_.stream.packet_overhead.bytes());
-  receiver_->DeliverPacket(MediaType::VIDEO, packet, at_time);
-  return true;
+void ReceiveVideoStream::Start() {
+  receive_stream_->Start();
+  receiver_->call_->SignalChannelNetworkState(MediaType::VIDEO, kNetworkUp);
 }
 
 VideoStreamPair::~VideoStreamPair() = default;
 
 VideoStreamPair::VideoStreamPair(CallClient* sender,
-                                 std::vector<NetworkNode*> send_link,
-                                 uint64_t send_receiver_id,
                                  CallClient* receiver,
-                                 std::vector<NetworkNode*> return_link,
-                                 uint64_t return_receiver_id,
                                  VideoStreamConfig config)
     : config_(config),
-      send_link_(send_link),
-      return_link_(return_link),
-      send_transport_(sender,
-                      send_link.front(),
-                      send_receiver_id,
-                      config.stream.packet_overhead),
-      return_transport_(receiver,
-                        return_link.front(),
-                        return_receiver_id,
-                        config.stream.packet_overhead),
-      send_stream_(sender, config, &send_transport_),
+      send_stream_(sender, config, &sender->transport_),
       receive_stream_(receiver,
                       config,
                       &send_stream_,
                       /*chosen_stream=*/0,
-                      &return_transport_) {
-  NetworkNode::Route(send_transport_.ReceiverId(), send_link_,
-                     &receive_stream_);
-  NetworkNode::Route(return_transport_.ReceiverId(), return_link_,
-                     &send_stream_);
-}
+                      &receiver->transport_) {}
 
 }  // namespace test
 }  // namespace webrtc

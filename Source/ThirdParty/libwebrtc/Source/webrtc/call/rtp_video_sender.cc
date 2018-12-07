@@ -40,8 +40,8 @@ static const size_t kPathMTU = 1500;
 
 std::vector<std::unique_ptr<RtpRtcp>> CreateRtpRtcpModules(
     const std::vector<uint32_t>& ssrcs,
-    const std::vector<uint32_t>& protected_media_ssrcs,
-    const RtcpConfig& rtcp_config,
+    const RtpConfig& rtp_config,
+    int rtcp_report_interval_ms,
     Transport* send_transport,
     RtcpIntraFrameObserver* intra_frame_callback,
     RtcpBandwidthObserver* bandwidth_callback,
@@ -56,8 +56,11 @@ std::vector<std::unique_ptr<RtpRtcp>> CreateRtpRtcpModules(
     RtcEventLog* event_log,
     RateLimiter* retransmission_rate_limiter,
     OverheadObserver* overhead_observer,
-    RtpKeepAliveConfig keepalive_config) {
+    RtpKeepAliveConfig keepalive_config,
+    FrameEncryptorInterface* frame_encryptor,
+    const CryptoOptions& crypto_options) {
   RTC_DCHECK_GT(ssrcs.size(), 0);
+
   RtpRtcp::Configuration configuration;
   configuration.audio = false;
   configuration.receiver_only = false;
@@ -79,12 +82,15 @@ std::vector<std::unique_ptr<RtpRtcp>> CreateRtpRtcpModules(
   configuration.retransmission_rate_limiter = retransmission_rate_limiter;
   configuration.overhead_observer = overhead_observer;
   configuration.keepalive_config = keepalive_config;
-  configuration.rtcp_interval_config.video_interval_ms =
-      rtcp_config.video_report_interval_ms;
-  configuration.rtcp_interval_config.audio_interval_ms =
-      rtcp_config.audio_report_interval_ms;
+  configuration.frame_encryptor = frame_encryptor;
+  configuration.require_frame_encryption =
+      crypto_options.sframe.require_frame_encryption;
+  configuration.extmap_allow_mixed = rtp_config.extmap_allow_mixed;
+  configuration.rtcp_report_interval_ms = rtcp_report_interval_ms;
+
   std::vector<std::unique_ptr<RtpRtcp>> modules;
-  const std::vector<uint32_t>& flexfec_protected_ssrcs = protected_media_ssrcs;
+  const std::vector<uint32_t>& flexfec_protected_ssrcs =
+      rtp_config.flexfec.protected_media_ssrcs;
   for (uint32_t ssrc : ssrcs) {
     bool enable_flexfec = flexfec_sender != nullptr &&
                           std::find(flexfec_protected_ssrcs.begin(),
@@ -177,13 +183,15 @@ RtpVideoSender::RtpVideoSender(
     std::map<uint32_t, RtpState> suspended_ssrcs,
     const std::map<uint32_t, RtpPayloadState>& states,
     const RtpConfig& rtp_config,
-    const RtcpConfig& rtcp_config,
+    int rtcp_report_interval_ms,
     Transport* send_transport,
     const RtpSenderObservers& observers,
     RtpTransportControllerSendInterface* transport,
     RtcEventLog* event_log,
     RateLimiter* retransmission_limiter,
-    std::unique_ptr<FecController> fec_controller)
+    std::unique_ptr<FecController> fec_controller,
+    FrameEncryptorInterface* frame_encryptor,
+    const CryptoOptions& crypto_options)
     : send_side_bwe_with_overhead_(
           webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")),
       active_(false),
@@ -191,25 +199,26 @@ RtpVideoSender::RtpVideoSender(
       suspended_ssrcs_(std::move(suspended_ssrcs)),
       flexfec_sender_(MaybeCreateFlexfecSender(rtp_config, suspended_ssrcs_)),
       fec_controller_(std::move(fec_controller)),
-      rtp_modules_(
-          CreateRtpRtcpModules(ssrcs,
-                               rtp_config.flexfec.protected_media_ssrcs,
-                               rtcp_config,
-                               send_transport,
-                               observers.intra_frame_callback,
-                               transport->GetBandwidthObserver(),
-                               transport,
-                               observers.rtcp_rtt_stats,
-                               flexfec_sender_.get(),
-                               observers.bitrate_observer,
-                               observers.frame_count_observer,
-                               observers.rtcp_type_observer,
-                               observers.send_delay_observer,
-                               observers.send_packet_observer,
-                               event_log,
-                               retransmission_limiter,
-                               this,
-                               transport->keepalive_config())),
+      rtp_modules_(CreateRtpRtcpModules(ssrcs,
+                                        rtp_config,
+                                        rtcp_report_interval_ms,
+                                        send_transport,
+                                        observers.intra_frame_callback,
+                                        transport->GetBandwidthObserver(),
+                                        transport,
+                                        observers.rtcp_rtt_stats,
+                                        flexfec_sender_.get(),
+                                        observers.bitrate_observer,
+                                        observers.frame_count_observer,
+                                        observers.rtcp_type_observer,
+                                        observers.send_delay_observer,
+                                        observers.send_packet_observer,
+                                        event_log,
+                                        retransmission_limiter,
+                                        this,
+                                        transport->keepalive_config(),
+                                        frame_encryptor,
+                                        crypto_options)),
       rtp_config_(rtp_config),
       transport_(transport),
       transport_overhead_bytes_per_packet_(0),
@@ -246,9 +255,6 @@ RtpVideoSender::RtpVideoSender(
   for (size_t i = 0; i < rtp_config_.extensions.size(); ++i) {
     const std::string& extension = rtp_config_.extensions[i].uri;
     int id = rtp_config_.extensions[i].id;
-    // One-byte-extension local identifiers are in the range 1-14 inclusive.
-    RTC_DCHECK_GE(id, 1);
-    RTC_DCHECK_LE(id, 14);
     RTC_DCHECK(RtpExtension::IsSupportedForVideo(extension));
     for (auto& rtp_rtcp : rtp_modules_) {
       RTC_CHECK(rtp_rtcp->RegisterRtpHeaderExtension(extension, id));
@@ -592,12 +598,14 @@ void RtpVideoSender::OnBitrateUpdated(uint32_t bitrate_bps,
   rtc::CritScope lock(&crit_);
   uint32_t payload_bitrate_bps = bitrate_bps;
   if (send_side_bwe_with_overhead_) {
-    payload_bitrate_bps -= CalculateOverheadRateBps(
+    uint32_t overhead_bps = CalculateOverheadRateBps(
         CalculatePacketRate(
             bitrate_bps,
             rtp_config_.max_packet_size + transport_overhead_bytes_per_packet_),
         overhead_bytes_per_packet_ + transport_overhead_bytes_per_packet_,
         bitrate_bps);
+    RTC_DCHECK_LE(overhead_bps, bitrate_bps);
+    payload_bitrate_bps = bitrate_bps - overhead_bps;
   }
 
   // Get the encoder target rate. It is the estimated network rate -

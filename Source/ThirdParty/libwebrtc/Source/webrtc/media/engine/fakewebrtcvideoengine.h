@@ -86,7 +86,6 @@ class FakeWebRtcVideoEncoder : public webrtc::VideoEncoder {
   int32_t RegisterEncodeCompleteCallback(
       webrtc::EncodedImageCallback* callback) override;
   int32_t Release() override;
-  int32_t SetChannelParameters(uint32_t packetLoss, int64_t rtt) override;
   int32_t SetRateAllocation(const webrtc::VideoBitrateAllocation& allocation,
                             uint32_t framerate) override;
 

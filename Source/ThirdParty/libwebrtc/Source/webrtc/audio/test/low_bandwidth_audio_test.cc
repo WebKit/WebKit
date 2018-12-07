@@ -14,14 +14,15 @@
 #include "system_wrappers/include/sleep.h"
 #include "test/testsupport/fileutils.h"
 
-DEFINE_int(sample_rate_hz,
-           16000,
-           "Sample rate (Hz) of the produced audio files.");
+WEBRTC_DEFINE_int(sample_rate_hz,
+                  16000,
+                  "Sample rate (Hz) of the produced audio files.");
 
-DEFINE_bool(quick,
-            false,
-            "Don't do the full audio recording. "
-            "Used to quickly check that the test runs without crashing.");
+WEBRTC_DEFINE_bool(
+    quick,
+    false,
+    "Don't do the full audio recording. "
+    "Used to quickly check that the test runs without crashing.");
 
 namespace webrtc {
 namespace test {
@@ -89,8 +90,8 @@ class Mobile2GNetworkTest : public AudioQualityTest {
          {{"maxaveragebitrate", "6000"}, {"ptime", "60"}, {"stereo", "1"}}});
   }
 
-  DefaultNetworkSimulationConfig GetNetworkPipeConfig() const override {
-    DefaultNetworkSimulationConfig pipe_config;
+  BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const override {
+    BuiltInNetworkBehaviorConfig pipe_config;
     pipe_config.link_capacity_kbps = 12;
     pipe_config.queue_length_packets = 1500;
     pipe_config.queue_delay_ms = 400;

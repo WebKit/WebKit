@@ -140,8 +140,9 @@ class FuzzSignalInput : public NetEqInput {
 }  // namespace
 
 void FuzzOneInputTest(const uint8_t* data, size_t size) {
-  if (size < 1)
+  if (size < 1 || size > 90000) {
     return;
+  }
 
   FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
 

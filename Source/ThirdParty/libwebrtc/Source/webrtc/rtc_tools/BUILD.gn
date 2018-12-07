@@ -25,9 +25,6 @@ group("rtc_tools") {
       ":psnr_ssim_analyzer",
       ":rgba_to_i420_converter",
     ]
-    if (rtc_include_internal_audio_device) {
-      deps += [ ":force_mic_volume_max" ]
-    }
     if (rtc_enable_protobuf) {
       deps += [ ":chart_proto" ]
     }
@@ -39,8 +36,10 @@ group("rtc_tools") {
       ":tools_unittests",
     ]
     if (rtc_enable_protobuf) {
+      if (!build_with_chromium) {
+        deps += [ ":event_log_visualizer" ]
+      }
       deps += [
-        ":event_log_visualizer",
         ":rtp_analyzer",
         ":unpack_aecdump",
         "network_tester",
@@ -89,6 +88,12 @@ rtc_static_library("video_file_writer") {
 
 rtc_static_library("video_quality_analysis") {
   sources = [
+    "frame_analyzer/linear_least_squares.cc",
+    "frame_analyzer/linear_least_squares.h",
+    "frame_analyzer/video_color_aligner.cc",
+    "frame_analyzer/video_color_aligner.h",
+    "frame_analyzer/video_geometry_aligner.cc",
+    "frame_analyzer/video_geometry_aligner.h",
     "frame_analyzer/video_quality_analysis.cc",
     "frame_analyzer/video_quality_analysis.h",
     "frame_analyzer/video_temporal_aligner.cc",
@@ -96,6 +101,8 @@ rtc_static_library("video_quality_analysis") {
   ]
   deps = [
     ":video_file_reader",
+    "../api:array_view",
+    "../api/video:video_frame",
     "../api/video:video_frame_i420",
     "../common_video",
     "../rtc_base:checks",
@@ -211,20 +218,6 @@ if (!build_with_chromium) {
     ]
   }
 
-  # It doesn't make sense to build this tool without the ADM enabled.
-  if (rtc_include_internal_audio_device) {
-    rtc_executable("force_mic_volume_max") {
-      sources = [
-        "force_mic_volume_max/force_mic_volume_max.cc",
-      ]
-
-      deps = [
-        "../modules/audio_device",
-        "../modules/audio_device:audio_device_impl",
-      ]
-    }
-  }
-
   if (rtc_enable_protobuf) {
     proto_library("chart_proto") {
       sources = [
@@ -272,10 +265,13 @@ if (!build_with_chromium) {
 
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
+        "../api/transport:goog_cc",
         "../modules/congestion_controller",
         "../modules/congestion_controller/goog_cc:delay_based_bwe",
         "../modules/congestion_controller/goog_cc:estimators",
+        "../modules/congestion_controller/rtp:transport_feedback",
         "../modules/pacing",
+        "../modules/remote_bitrate_estimator",
         "../modules/rtp_rtcp",
         "//third_party/abseil-cpp/absl/memory",
       ]
@@ -284,7 +280,7 @@ if (!build_with_chromium) {
 }
 
 if (rtc_include_tests) {
-  if (rtc_enable_protobuf) {
+  if (rtc_enable_protobuf && !build_with_chromium) {
     rtc_executable("event_log_visualizer") {
       testonly = true
       sources = [
@@ -347,7 +343,10 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
+      "frame_analyzer/linear_least_squares_unittest.cc",
       "frame_analyzer/reference_less_video_analysis_unittest.cc",
+      "frame_analyzer/video_color_aligner_unittest.cc",
+      "frame_analyzer/video_geometry_aligner_unittest.cc",
       "frame_analyzer/video_quality_analysis_unittest.cc",
       "frame_analyzer/video_temporal_aligner_unittest.cc",
       "frame_editing/frame_editing_unittest.cc",
@@ -364,8 +363,6 @@ if (rtc_include_tests) {
 
     deps = [
       ":command_line_parser",
-      ":frame_editing_lib",
-      ":reference_less_video_analysis_lib",
       ":video_file_reader",
       ":video_file_writer",
       ":video_quality_analysis",
@@ -374,9 +371,18 @@ if (rtc_include_tests) {
       "../rtc_base:checks",
       "../test:fileutils",
       "../test:test_main",
+      "../test:test_support",
       "//testing/gtest",
       "//third_party/abseil-cpp/absl/memory",
+      "//third_party/libyuv",
     ]
+
+    if (!build_with_chromium) {
+      deps += [
+        ":frame_editing_lib",
+        ":reference_less_video_analysis_lib",
+      ]
+    }
 
     if (rtc_enable_protobuf) {
       deps += [ "network_tester:network_tester_unittests" ]

@@ -25,7 +25,7 @@ namespace {
 static const int kInputSampleRateKhz = 8;
 static const int kOutputSampleRateKhz = 8;
 
-DEFINE_int(frame_size_ms, 20, "Codec frame size (milliseconds).");
+WEBRTC_DEFINE_int(frame_size_ms, 20, "Codec frame size (milliseconds).");
 
 }  // namespace
 

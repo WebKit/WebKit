@@ -11,9 +11,14 @@
 #ifndef API_VIDEO_CODECS_VIDEO_CODEC_H_
 #define API_VIDEO_CODECS_VIDEO_CODEC_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
+#include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_codec_type.h"
 #include "common_types.h"  // NOLINT(build/include)
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -86,8 +91,8 @@ struct VideoCodecH264 {
 };
 
 // Translates from name of codec to codec type and vice versa.
-const char* CodecTypeToPayloadString(VideoCodecType type);
-VideoCodecType PayloadStringToCodecType(const std::string& name);
+RTC_EXPORT const char* CodecTypeToPayloadString(VideoCodecType type);
+RTC_EXPORT VideoCodecType PayloadStringToCodecType(const std::string& name);
 
 union VideoCodecUnion {
   VideoCodecVP8 VP8;
@@ -98,7 +103,7 @@ union VideoCodecUnion {
 enum class VideoCodecMode { kRealtimeVideo, kScreensharing };
 
 // Common video codec properties
-class VideoCodec {
+class RTC_EXPORT VideoCodec {
  public:
   VideoCodec();
 

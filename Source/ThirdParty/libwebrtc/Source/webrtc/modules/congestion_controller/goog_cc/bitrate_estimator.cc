@@ -10,11 +10,11 @@
 
 #include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
 
+#include <stdio.h>
 #include <cmath>
 #include <string>
 
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -130,6 +130,12 @@ absl::optional<uint32_t> BitrateEstimator::bitrate_bps() const {
   if (bitrate_estimate_ < 0.f)
     return absl::nullopt;
   return bitrate_estimate_ * 1000;
+}
+
+absl::optional<uint32_t> BitrateEstimator::PeekBps() const {
+  if (current_window_ms_ > 0)
+    return sum_ * 8000 / current_window_ms_;
+  return absl::nullopt;
 }
 
 void BitrateEstimator::ExpectFastRateChange() {

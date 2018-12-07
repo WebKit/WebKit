@@ -25,6 +25,9 @@ namespace test {
 // to find the project root.
 extern const char* kCannotFindProjectRootDir;
 
+// Slash or backslash, depending on platform. NUL-terminated string.
+extern const char* kPathDelimiter;
+
 // Returns the absolute path to the output directory where log files and other
 // test artifacts should be put. The output directory is generally a directory
 // named "out" at the project root. This root is assumed to be two levels above
@@ -51,18 +54,8 @@ std::string TempFilename(const std::string& dir, const std::string& prefix);
 std::string GenerateTempFilename(const std::string& dir,
                                  const std::string& prefix);
 
-// Returns a path to a resource file for the currently executing platform.
-// Adapts to what filenames are currently present in the
-// [project-root]/resources/ dir.
-// Returns an absolute path according to this priority list (the directory
-// part of the path is left out for readability):
-// 1. [name]_[platform]_[architecture].[extension]
-// 2. [name]_[platform].[extension]
-// 3. [name]_[architecture].[extension]
-// 4. [name].[extension]
-// Where
-// * platform is either of "win", "mac" or "linux".
-// * architecture is either of "32" or "64".
+// Returns a path to a resource file in [project-root]/resources/ dir.
+// Returns an absolute path
 //
 // Arguments:
 //    name - Name of the resource file. If a plain filename (no directory path)
@@ -109,15 +102,6 @@ std::string DirName(const std::string& path);
 // File size of the supplied file in bytes. Will return 0 if the file is
 // empty or if the file does not exist/is readable.
 size_t GetFileSize(const std::string& filename);
-
-// Sets the executable path, i.e. the path to the executable that is being used
-// when launching it. This is usually the path relative to the working directory
-// but can also be an absolute path. The intention with this function is to pass
-// the argv[0] being sent into the main function to make it possible for
-// fileutils.h to find the correct project paths even when the working directory
-// is outside the project tree (which happens in some cases).
-// TODO(bugs.webrtc.org/9792): Deprecated - going away soon.
-void SetExecutablePath(const std::string& path_to_executable);
 
 }  // namespace test
 }  // namespace webrtc

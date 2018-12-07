@@ -27,8 +27,8 @@ constexpr size_t kMaxFrameLen =
 
 constexpr uint8_t kBitmaskBuffSize = 8;
 
-DEFINE_string(i, "", "Input wav file");
-DEFINE_string(o, "", "VAD output file");
+WEBRTC_DEFINE_string(i, "", "Input wav file");
+WEBRTC_DEFINE_string(o, "", "VAD output file");
 
 int main(int argc, char* argv[]) {
   if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true))

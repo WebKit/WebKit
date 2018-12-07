@@ -19,6 +19,7 @@
 #include "absl/types/optional.h"
 #include "api/candidate.h"
 #include "api/jsep.h"
+#include "api/media_transport_interface.h"
 #include "p2p/base/dtlstransport.h"
 #include "p2p/base/p2pconstants.h"
 #include "p2p/base/transportinfo.h"
@@ -70,11 +71,16 @@ struct JsepTransportDescription {
 //
 // On Threading: JsepTransport performs work solely on the network thread, and
 // so its methods should only be called on the network thread.
-class JsepTransport : public sigslot::has_slots<> {
+class JsepTransport : public sigslot::has_slots<>,
+                      public webrtc::MediaTransportStateCallback {
  public:
   // |mid| is just used for log statements in order to identify the Transport.
   // Note that |local_certificate| is allowed to be null since a remote
   // description may be set before a local certificate is generated.
+  //
+  // |media_trasport| is optional (experimental). If available it will be used
+  // to send / receive encoded audio and video frames instead of RTP.
+  // Currently |media_transport| can co-exist with RTP / RTCP transports.
   JsepTransport(
       const std::string& mid,
       const rtc::scoped_refptr<rtc::RTCCertificate>& local_certificate,
@@ -82,7 +88,8 @@ class JsepTransport : public sigslot::has_slots<> {
       std::unique_ptr<webrtc::SrtpTransport> sdes_transport,
       std::unique_ptr<webrtc::DtlsSrtpTransport> dtls_srtp_transport,
       std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
-      std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport);
+      std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport,
+      std::unique_ptr<webrtc::MediaTransportInterface> media_transport);
 
   ~JsepTransport() override;
 
@@ -158,10 +165,25 @@ class JsepTransport : public sigslot::has_slots<> {
     return rtcp_dtls_transport_.get();
   }
 
+  // Returns media transport, if available.
+  // Note that media transport is owned by jseptransport and the pointer
+  // to media transport will becomes invalid after destruction of jseptransport.
+  webrtc::MediaTransportInterface* media_transport() const {
+    return media_transport_.get();
+  }
+
+  // Returns the latest media transport state.
+  webrtc::MediaTransportState media_transport_state() const {
+    return media_transport_state_;
+  }
+
   // This is signaled when RTCP-mux becomes active and
   // |rtcp_dtls_transport_| is destroyed. The JsepTransportController will
   // handle the signal and update the aggregate transport states.
   sigslot::signal<> SignalRtcpMuxActive;
+
+  // This is signaled for changes in |media_transport_| state.
+  sigslot::signal<> SignalMediaTransportStateChanged;
 
   // TODO(deadbeef): The methods below are only public for testing. Should make
   // them utility functions or objects so they can be tested independently from
@@ -218,6 +240,9 @@ class JsepTransport : public sigslot::has_slots<> {
   bool GetTransportStats(DtlsTransportInternal* dtls_transport,
                          TransportStats* stats);
 
+  // Invoked whenever the state of the media transport changes.
+  void OnStateChanged(webrtc::MediaTransportState state) override;
+
   const std::string mid_;
   // needs-ice-restart bit as described in JSEP.
   bool needs_ice_restart_ = false;
@@ -240,6 +265,14 @@ class JsepTransport : public sigslot::has_slots<> {
   // Cache the encrypted header extension IDs for SDES negoitation.
   absl::optional<std::vector<int>> send_extension_ids_;
   absl::optional<std::vector<int>> recv_extension_ids_;
+
+  // Optional media transport (experimental).
+  std::unique_ptr<webrtc::MediaTransportInterface> media_transport_;
+
+  // If |media_transport_| is provided, this variable represents the state of
+  // media transport.
+  webrtc::MediaTransportState media_transport_state_ =
+      webrtc::MediaTransportState::kPending;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(JsepTransport);
 };

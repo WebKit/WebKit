@@ -169,6 +169,9 @@ template class FieldTrialParameter<double>;
 template class FieldTrialParameter<int>;
 template class FieldTrialParameter<std::string>;
 
+template class FieldTrialConstrained<double>;
+template class FieldTrialConstrained<int>;
+
 template class FieldTrialOptional<double>;
 template class FieldTrialOptional<int>;
 template class FieldTrialOptional<bool>;

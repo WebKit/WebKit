@@ -11,14 +11,17 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_RENDER_BUFFER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_RENDER_BUFFER_H_
 
+#include <stddef.h>
 #include <array>
-#include <memory>
+#include <vector>
 
 #include "api/array_view.h"
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/fft_buffer.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/matrix_buffer.h"
 #include "modules/audio_processing/aec3/vector_buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {

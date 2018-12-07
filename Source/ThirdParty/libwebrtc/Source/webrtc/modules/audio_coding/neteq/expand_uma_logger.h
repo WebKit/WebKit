@@ -10,6 +10,7 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_EXPAND_UMA_LOGGER_H_
 #define MODULES_AUDIO_CODING_NETEQ_EXPAND_UMA_LOGGER_H_
 
+#include <stdint.h>
 #include <memory>
 #include <string>
 

@@ -18,8 +18,6 @@
 #include "api/peerconnectioninterface.h"
 #include "rtc_base/thread.h"
 
-using rtc::Thread;
-
 namespace webrtc {
 namespace jni {
 
@@ -33,18 +31,18 @@ PeerConnectionFactoryInterface* factoryFromJava(jlong j_p);
 // single thing for Java to hold and eventually free.
 class OwnedFactoryAndThreads {
  public:
-  OwnedFactoryAndThreads(std::unique_ptr<Thread> network_thread,
-                         std::unique_ptr<Thread> worker_thread,
-                         std::unique_ptr<Thread> signaling_thread,
+  OwnedFactoryAndThreads(std::unique_ptr<rtc::Thread> network_thread,
+                         std::unique_ptr<rtc::Thread> worker_thread,
+                         std::unique_ptr<rtc::Thread> signaling_thread,
                          rtc::NetworkMonitorFactory* network_monitor_factory,
                          PeerConnectionFactoryInterface* factory);
 
   ~OwnedFactoryAndThreads();
 
   PeerConnectionFactoryInterface* factory() { return factory_; }
-  Thread* network_thread() { return network_thread_.get(); }
-  Thread* signaling_thread() { return signaling_thread_.get(); }
-  Thread* worker_thread() { return worker_thread_.get(); }
+  rtc::Thread* network_thread() { return network_thread_.get(); }
+  rtc::Thread* signaling_thread() { return signaling_thread_.get(); }
+  rtc::Thread* worker_thread() { return worker_thread_.get(); }
   rtc::NetworkMonitorFactory* network_monitor_factory() {
     return network_monitor_factory_;
   }
@@ -52,9 +50,9 @@ class OwnedFactoryAndThreads {
   void InvokeJavaCallbacksOnFactoryThreads();
 
  private:
-  const std::unique_ptr<Thread> network_thread_;
-  const std::unique_ptr<Thread> worker_thread_;
-  const std::unique_ptr<Thread> signaling_thread_;
+  const std::unique_ptr<rtc::Thread> network_thread_;
+  const std::unique_ptr<rtc::Thread> worker_thread_;
+  const std::unique_ptr<rtc::Thread> signaling_thread_;
   rtc::NetworkMonitorFactory* network_monitor_factory_;
   PeerConnectionFactoryInterface* factory_;  // Const after ctor except dtor.
 };

@@ -10,9 +10,19 @@
 
 #include "modules/rtp_rtcp/source/rtp_utility.h"
 
+#include <assert.h>
+#include <stddef.h>
+
+#include "api/array_view.h"
+#include "api/video/video_content_type.h"
+#include "api/video/video_frame_marking.h"
+#include "api/video/video_rotation.h"
+#include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/stringutils.h"
 
@@ -32,10 +42,6 @@ enum {
 /*
  * Misc utility routines
  */
-
-bool StringCompare(const char* str1, const char* str2, const uint32_t length) {
-  return _strnicmp(str1, str2, length) == 0;
-}
 
 size_t Word32Align(size_t size) {
   uint32_t remainder = size % 4;
@@ -500,6 +506,10 @@ void RtpHeaderParser::ParseOneByteExtensionHeader(
         case kRtpExtensionGenericFrameDescriptor:
           RTC_LOG(WARNING)
               << "RtpGenericFrameDescriptor unsupported by rtp header parser.";
+          break;
+        case kRtpExtensionColorSpace:
+          RTC_LOG(WARNING)
+              << "RtpExtensionColorSpace unsupported by rtp header parser.";
           break;
         case kRtpExtensionNone:
         case kRtpExtensionNumberOfExtensions: {

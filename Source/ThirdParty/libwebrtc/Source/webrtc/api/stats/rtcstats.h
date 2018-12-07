@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -47,7 +48,7 @@ class RTCStatsMemberInterface;
 // for (const RTCStatsMemberInterface* member : foo.Members()) {
 //   printf("%s = %s\n", member->name(), member->ValueToString().c_str());
 // }
-class RTCStats {
+class RTC_EXPORT RTCStats {
  public:
   RTCStats(const std::string& id, int64_t timestamp_us)
       : id_(id), timestamp_us_(timestamp_us) {}
@@ -247,7 +248,7 @@ class RTCStatsMemberInterface {
 // (undefined reference to |kType|). The supported types are the ones described
 // by |RTCStatsMemberInterface::Type|.
 template <typename T>
-class RTCStatsMember : public RTCStatsMemberInterface {
+class RTC_EXPORT RTCStatsMember : public RTCStatsMemberInterface {
  public:
   static const Type kType;
 
@@ -291,15 +292,6 @@ class RTCStatsMember : public RTCStatsMemberInterface {
   }
   T& operator=(const T&& value) {
     value_ = std::move(value);
-    is_defined_ = true;
-    return value_;
-  }
-  T& operator=(const RTCStatsMember<T>& other) {
-    RTC_DCHECK(other.is_defined_);
-    // Shouldn't be attempting to assign an RTCNonStandardStatsMember to an
-    // RTCStatsMember or vice versa.
-    RTC_DCHECK(is_standardized() == other.is_standardized());
-    value_ = other.value_;
     is_defined_ = true;
     return value_;
   }
@@ -347,6 +339,11 @@ class RTCNonStandardStatsMember : public RTCStatsMember<T> {
       : RTCStatsMember<T>(std::move(other)) {}
 
   bool is_standardized() const override { return false; }
+
+  T& operator=(const T& value) { return RTCStatsMember<T>::operator=(value); }
+  T& operator=(const T&& value) {
+    return RTCStatsMember<T>::operator=(std::move(value));
+  }
 };
 }  // namespace webrtc
 

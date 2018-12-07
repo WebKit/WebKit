@@ -60,6 +60,32 @@ group("examples") {
   }
 }
 
+rtc_source_set("read_auth_file") {
+  testonly = true
+  sources = [
+    "turnserver/read_auth_file.cc",
+    "turnserver/read_auth_file.h",
+  ]
+  deps = [
+    "../rtc_base:rtc_base",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_test("examples_unittests") {
+    testonly = true
+    sources = [
+      "turnserver/read_auth_file_unittest.cc",
+    ]
+    deps = [
+      ":read_auth_file",
+      "../test:test_main",
+      "//test:test_support",
+      "//testing/gtest",
+    ]
+  }
+}
+
 if (is_android) {
   rtc_android_apk("AppRTCMobile") {
     testonly = true
@@ -166,15 +192,12 @@ if (is_android) {
       "../build/android/adb_reverse_forwarder.py",
       "../examples/androidtests/video_quality_loopback_test.py",
       "../resources/reference_video_640x360_30fps.y4m",
-      "../rtc_tools/barcode_tools/barcode_decoder.py",
-      "../rtc_tools/barcode_tools/helper_functions.py",
       "../rtc_tools/compare_videos.py",
       "../rtc_tools/testing/prebuilt_apprtc.zip",
       "../rtc_tools/testing/golang/linux/go.tar.gz",
       "../rtc_tools/testing/build_apprtc.py",
       "../rtc_tools/testing/utils.py",
       "../tools_webrtc/video_quality_toolchain/linux/ffmpeg",
-      "../tools_webrtc/video_quality_toolchain/linux/zxing",
       "${root_out_dir}/frame_analyzer_host",
     ]
   }
@@ -480,8 +503,10 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../api:libjingle_peerconnection_api",
         "../api/audio_codecs:builtin_audio_decoder_factory",
         "../api/audio_codecs:builtin_audio_encoder_factory",
+        "../api/video:builtin_video_bitrate_allocator_factory",
         "../logging:rtc_event_log_impl_base",
         "../media:rtc_audio_video",
+        "../modules/audio_processing:api",
         "../modules/audio_processing:audio_processing",
         "../pc:libjingle_peerconnection",
         "../rtc_base:rtc_base",
@@ -625,12 +650,13 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       rtc_ios_xctest_test("apprtcmobile_tests") {
         info_plist = "objc/AppRTCMobile/ios/Info.plist"
         sources = [
-          "objc/AppRTCMobile/ios/main.m",
+          "objc/AppRTCMobile/tests/main.mm",
         ]
         deps = [
           ":AppRTCMobile_lib",
           ":apprtcmobile_test_sources",
           "../sdk:framework_objc",
+          "//test:test_support",
         ]
         ldflags = [ "-all_load" ]
       }
@@ -655,11 +681,14 @@ if (is_linux || is_win) {
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
     deps = [
+      "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
       "../api/video:video_frame_i420",
       "../rtc_base:checks",
       "../rtc_base:stringutils",
       "../rtc_base/third_party/sigslot",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
     ]
     if (is_win) {
       sources += [
@@ -696,6 +725,7 @@ if (is_linux || is_win) {
       "../api/video_codecs:builtin_video_encoder_factory",
       "../media:rtc_audio_video",
       "../modules/audio_device:audio_device",
+      "../modules/audio_processing:api",
       "../modules/audio_processing:audio_processing",
       "../modules/video_capture:video_capture_module",
       "../pc:libjingle_peerconnection",
@@ -718,10 +748,11 @@ if (is_linux || is_win) {
       "peerconnection/server/utils.h",
     ]
     deps = [
-      "..:webrtc_common",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:stringutils",
       "../rtc_tools:command_line_parser",
+      "../system_wrappers:field_trial",
+      "../test:field_trial",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -750,6 +781,7 @@ if (is_linux || is_win) {
       "turnserver/turnserver_main.cc",
     ]
     deps = [
+      ":read_auth_file",
       "../p2p:rtc_p2p",
       "../pc:rtc_pc",
       "../rtc_base:rtc_base",
@@ -807,6 +839,7 @@ if (is_win || is_android) {
       configs += [ "//build/config/win:windowed" ]
     }
     deps = [
+      "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
       "../api/audio_codecs:builtin_audio_decoder_factory",
       "../api/audio_codecs:builtin_audio_encoder_factory",
@@ -816,6 +849,7 @@ if (is_win || is_android) {
       "../media:rtc_media",
       "../media:rtc_media_base",
       "../modules/audio_device:audio_device",
+      "../modules/audio_processing:api",
       "../modules/audio_processing:audio_processing",
       "../modules/video_capture:video_capture_module",
       "../pc:libjingle_peerconnection",

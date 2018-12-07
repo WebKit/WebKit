@@ -19,16 +19,16 @@
 #include "rtc_base/flags.h"
 
 // Define command line flags.
-DEFINE_int(red, 117, "RTP payload type for RED");
-DEFINE_int(audio_level,
-           -1,
-           "Extension ID for audio level (RFC 6464); "
-           "-1 not to print audio level");
-DEFINE_int(abs_send_time,
-           -1,
-           "Extension ID for absolute sender time; "
-           "-1 not to print absolute send time");
-DEFINE_bool(help, false, "Print this message");
+WEBRTC_DEFINE_int(red, 117, "RTP payload type for RED");
+WEBRTC_DEFINE_int(audio_level,
+                  -1,
+                  "Extension ID for audio level (RFC 6464); "
+                  "-1 not to print audio level");
+WEBRTC_DEFINE_int(abs_send_time,
+                  -1,
+                  "Extension ID for absolute sender time; "
+                  "-1 not to print absolute send time");
+WEBRTC_DEFINE_bool(help, false, "Print this message");
 
 int main(int argc, char* argv[]) {
   std::string program_name = argv[0];

@@ -22,7 +22,10 @@
 
   <issue id="GoogleAppIndexingWarning" severity="ignore"/>
   <issue id="MissingRegistered" severity="ignore"/>
-
+  <issue id="LintError">
+    <!-- We no longer supply class files to lint. -->
+    <ignore regexp="No `.class` files were found in project"/>
+  </issue>
   <!-- These are just from the dummy AndroidManifest.xml we use for linting.
        It's in the same directory as this file. -->
   <issue id="MissingApplicationIcon" severity="ignore"/>

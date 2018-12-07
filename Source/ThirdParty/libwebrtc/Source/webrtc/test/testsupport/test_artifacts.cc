@@ -24,9 +24,9 @@ const std::string& DefaultArtifactPath() {
 }
 }  // namespace
 
-DEFINE_string(test_artifacts_dir,
-              DefaultArtifactPath().c_str(),
-              "The output folder where test output should be saved.");
+WEBRTC_DEFINE_string(test_artifacts_dir,
+                     DefaultArtifactPath().c_str(),
+                     "The output folder where test output should be saved.");
 
 namespace webrtc {
 namespace test {

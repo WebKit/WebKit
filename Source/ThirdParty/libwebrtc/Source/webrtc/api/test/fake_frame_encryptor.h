@@ -24,28 +24,34 @@ class FakeFrameEncryptor
     : public rtc::RefCountedObject<FrameEncryptorInterface> {
  public:
   // Provide a key (0,255) and some postfix byte (0,255).
-  explicit FakeFrameEncryptor(uint8_t fake_key = 1, uint8_t postfix_byte = 255);
-
-  // FrameEncryptorInterface implementation
+  explicit FakeFrameEncryptor(uint8_t fake_key = 0xAA,
+                              uint8_t postfix_byte = 255);
+  // Simply xors each payload with the provided fake key and adds the postfix
+  // bit to the end. This will always fail if fail_encryption_ is set to true.
   int Encrypt(cricket::MediaType media_type,
               uint32_t ssrc,
               rtc::ArrayView<const uint8_t> additional_data,
               rtc::ArrayView<const uint8_t> frame,
               rtc::ArrayView<uint8_t> encrypted_frame,
               size_t* bytes_written) override;
-
+  // Always returns 1 more than the size of the frame.
   size_t GetMaxCiphertextByteSize(cricket::MediaType media_type,
                                   size_t frame_size) override;
-
+  // Sets the fake key to use during encryption.
   void SetFakeKey(uint8_t fake_key);
-
+  // Returns the fake key used during encryption.
   uint8_t GetFakeKey() const;
-
+  // Set the postfix byte to use.
   void SetPostfixByte(uint8_t expected_postfix_byte);
-
+  // Return a postfix byte added to each outgoing payload.
   uint8_t GetPostfixByte() const;
-
+  // Force all encryptions to fail.
   void SetFailEncryption(bool fail_encryption);
+
+  enum class FakeEncryptionStatus : int {
+    OK = 0,
+    FORCED_FAILURE = 1,
+  };
 
  private:
   uint8_t fake_key_ = 0;

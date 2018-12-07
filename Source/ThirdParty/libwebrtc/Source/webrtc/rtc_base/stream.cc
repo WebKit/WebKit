@@ -7,29 +7,23 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-
-#if defined(WEBRTC_POSIX)
-#include <sys/file.h>
-#endif  // WEBRTC_POSIX
 #include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-
 #include <algorithm>
 #include <string>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/location.h"
 #include "rtc_base/messagequeue.h"
 #include "rtc_base/stream.h"
-#include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/timeutils.h"
 
 #if defined(WEBRTC_WIN)
 #include <windows.h>
+
 #define fileno _fileno
+#include "rtc_base/stringutils.h"
 #endif
 
 namespace rtc {
@@ -75,26 +69,6 @@ StreamResult StreamInterface::ReadAll(void* buffer,
   return result;
 }
 
-StreamResult StreamInterface::ReadLine(std::string* line) {
-  line->clear();
-  StreamResult result = SR_SUCCESS;
-  while (true) {
-    char ch;
-    result = Read(&ch, sizeof(ch), nullptr, nullptr);
-    if (result != SR_SUCCESS) {
-      break;
-    }
-    if (ch == '\n') {
-      break;
-    }
-    line->push_back(ch);
-  }
-  if (!line->empty()) {   // give back the line we've collected so far with
-    result = SR_SUCCESS;  // a success code.  Otherwise return the last code
-  }
-  return result;
-}
-
 void StreamInterface::PostEvent(Thread* t, int events, int err) {
   t->Post(RTC_FROM_HERE, this, MSG_POST_EVENT,
           new StreamEventData(events, err));
@@ -102,14 +76,6 @@ void StreamInterface::PostEvent(Thread* t, int events, int err) {
 
 void StreamInterface::PostEvent(int events, int err) {
   PostEvent(Thread::Current(), events, err);
-}
-
-const void* StreamInterface::GetReadData(size_t* data_len) {
-  return nullptr;
-}
-
-void* StreamInterface::GetWriteBuffer(size_t* buf_len) {
-  return nullptr;
 }
 
 bool StreamInterface::SetPosition(size_t position) {
@@ -121,10 +87,6 @@ bool StreamInterface::GetPosition(size_t* position) const {
 }
 
 bool StreamInterface::GetSize(size_t* size) const {
-  return false;
-}
-
-bool StreamInterface::GetWriteRemaining(size_t* size) const {
   return false;
 }
 
@@ -186,10 +148,6 @@ bool StreamAdapterInterface::GetPosition(size_t* position) const {
 
 bool StreamAdapterInterface::GetSize(size_t* size) const {
   return stream_->GetSize(size);
-}
-
-bool StreamAdapterInterface::GetWriteRemaining(size_t* size) const {
-  return stream_->GetWriteRemaining(size);
 }
 
 bool StreamAdapterInterface::ReserveSize(size_t size) {
@@ -387,143 +345,6 @@ bool FileStream::Flush() {
 
 void FileStream::DoClose() {
   fclose(file_);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// MemoryStream
-///////////////////////////////////////////////////////////////////////////////
-
-MemoryStreamBase::MemoryStreamBase()
-    : buffer_(nullptr), buffer_length_(0), data_length_(0), seek_position_(0) {}
-
-StreamState MemoryStreamBase::GetState() const {
-  return SS_OPEN;
-}
-
-StreamResult MemoryStreamBase::Read(void* buffer,
-                                    size_t bytes,
-                                    size_t* bytes_read,
-                                    int* error) {
-  if (seek_position_ >= data_length_) {
-    return SR_EOS;
-  }
-  size_t available = data_length_ - seek_position_;
-  if (bytes > available) {
-    // Read partial buffer
-    bytes = available;
-  }
-  memcpy(buffer, &buffer_[seek_position_], bytes);
-  seek_position_ += bytes;
-  if (bytes_read) {
-    *bytes_read = bytes;
-  }
-  return SR_SUCCESS;
-}
-
-StreamResult MemoryStreamBase::Write(const void* buffer,
-                                     size_t bytes,
-                                     size_t* bytes_written,
-                                     int* error) {
-  size_t available = buffer_length_ - seek_position_;
-  if (0 == available) {
-    // Increase buffer size to the larger of:
-    // a) new position rounded up to next 256 bytes
-    // b) double the previous length
-    size_t new_buffer_length =
-        std::max(((seek_position_ + bytes) | 0xFF) + 1, buffer_length_ * 2);
-    StreamResult result = DoReserve(new_buffer_length, error);
-    if (SR_SUCCESS != result) {
-      return result;
-    }
-    RTC_DCHECK(buffer_length_ >= new_buffer_length);
-    available = buffer_length_ - seek_position_;
-  }
-
-  if (bytes > available) {
-    bytes = available;
-  }
-  memcpy(&buffer_[seek_position_], buffer, bytes);
-  seek_position_ += bytes;
-  if (data_length_ < seek_position_) {
-    data_length_ = seek_position_;
-  }
-  if (bytes_written) {
-    *bytes_written = bytes;
-  }
-  return SR_SUCCESS;
-}
-
-void MemoryStreamBase::Close() {
-  // nothing to do
-}
-
-bool MemoryStreamBase::SetPosition(size_t position) {
-  if (position > data_length_)
-    return false;
-  seek_position_ = position;
-  return true;
-}
-
-bool MemoryStreamBase::GetPosition(size_t* position) const {
-  if (position)
-    *position = seek_position_;
-  return true;
-}
-
-bool MemoryStreamBase::GetSize(size_t* size) const {
-  if (size)
-    *size = data_length_;
-  return true;
-}
-
-bool MemoryStreamBase::ReserveSize(size_t size) {
-  return (SR_SUCCESS == DoReserve(size, nullptr));
-}
-
-StreamResult MemoryStreamBase::DoReserve(size_t size, int* error) {
-  return (buffer_length_ >= size) ? SR_SUCCESS : SR_EOS;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-MemoryStream::MemoryStream() {}
-
-MemoryStream::MemoryStream(const char* data) {
-  SetData(data, strlen(data));
-}
-
-MemoryStream::MemoryStream(const void* data, size_t length) {
-  SetData(data, length);
-}
-
-MemoryStream::~MemoryStream() {
-  delete[] buffer_;
-}
-
-void MemoryStream::SetData(const void* data, size_t length) {
-  data_length_ = buffer_length_ = length;
-  delete[] buffer_;
-  buffer_ = new char[buffer_length_];
-  memcpy(buffer_, data, data_length_);
-  seek_position_ = 0;
-}
-
-StreamResult MemoryStream::DoReserve(size_t size, int* error) {
-  if (buffer_length_ >= size)
-    return SR_SUCCESS;
-
-  if (char* new_buffer = new char[size]) {
-    memcpy(new_buffer, buffer_, data_length_);
-    delete[] buffer_;
-    buffer_ = new_buffer;
-    buffer_length_ = size;
-    return SR_SUCCESS;
-  }
-
-  if (error) {
-    *error = ENOMEM;
-  }
-  return SR_ERROR;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -757,69 +578,5 @@ StreamResult FifoBuffer::WriteOffsetLocked(const void* buffer,
   }
   return SR_SUCCESS;
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-
-StreamResult Flow(StreamInterface* source,
-                  char* buffer,
-                  size_t buffer_len,
-                  StreamInterface* sink,
-                  size_t* data_len /* = nullptr */) {
-  RTC_DCHECK(buffer_len > 0);
-
-  StreamResult result;
-  size_t count, read_pos, write_pos;
-  if (data_len) {
-    read_pos = *data_len;
-  } else {
-    read_pos = 0;
-  }
-
-  bool end_of_stream = false;
-  do {
-    // Read until buffer is full, end of stream, or error
-    while (!end_of_stream && (read_pos < buffer_len)) {
-      result = source->Read(buffer + read_pos, buffer_len - read_pos, &count,
-                            nullptr);
-      if (result == SR_EOS) {
-        end_of_stream = true;
-      } else if (result != SR_SUCCESS) {
-        if (data_len) {
-          *data_len = read_pos;
-        }
-        return result;
-      } else {
-        read_pos += count;
-      }
-    }
-
-    // Write until buffer is empty, or error (including end of stream)
-    write_pos = 0;
-    while (write_pos < read_pos) {
-      result = sink->Write(buffer + write_pos, read_pos - write_pos, &count,
-                           nullptr);
-      if (result != SR_SUCCESS) {
-        if (data_len) {
-          *data_len = read_pos - write_pos;
-          if (write_pos > 0) {
-            memmove(buffer, buffer + write_pos, *data_len);
-          }
-        }
-        return result;
-      }
-      write_pos += count;
-    }
-
-    read_pos = 0;
-  } while (!end_of_stream);
-
-  if (data_len) {
-    *data_len = 0;
-  }
-  return SR_SUCCESS;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 
 }  // namespace rtc

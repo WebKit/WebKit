@@ -14,6 +14,7 @@
 #include "rtc_base/fakesslidentity.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslfingerprint.h"
 #include "rtc_base/sslidentity.h"
@@ -179,7 +180,7 @@ IdentityAndInfo CreateFakeIdentityAndInfoFromDers(
   const rtc::SSLCertChain& chain = info.identity->cert_chain();
   std::unique_ptr<rtc::SSLFingerprint> fp;
   for (size_t i = 0; i < chain.GetSize(); i++) {
-    fp.reset(rtc::SSLFingerprint::Create("sha-1", &chain.Get(i)));
+    fp = rtc::SSLFingerprint::Create("sha-1", chain.Get(i));
     EXPECT_TRUE(fp);
     info.fingerprints.push_back(fp->GetRfc4572Fingerprint());
   }
@@ -200,7 +201,7 @@ class SSLIdentityTest : public testing::Test {
     ASSERT_TRUE(identity_ecdsa1_);
     ASSERT_TRUE(identity_ecdsa2_);
 
-    test_cert_.reset(rtc::SSLCertificate::FromPEMString(kTestCertificate));
+    test_cert_ = rtc::SSLCertificate::FromPEMString(kTestCertificate);
     ASSERT_TRUE(test_cert_);
   }
 

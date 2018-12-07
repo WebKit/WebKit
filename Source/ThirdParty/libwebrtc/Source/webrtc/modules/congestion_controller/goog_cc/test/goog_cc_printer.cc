@@ -8,6 +8,9 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include "modules/congestion_controller/goog_cc/test/goog_cc_printer.h"
+
+#include <math.h>
+
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 
 namespace webrtc {
@@ -33,9 +36,11 @@ void GoogCcStatePrinter::PrintValues(FILE* out) {
   RTC_CHECK(controller_);
   auto* detector = controller_->delay_based_bwe_->delay_detector_.get();
   auto* trendline_estimator = reinterpret_cast<TrendlineEstimator*>(detector);
-  fprintf(out, "%i %i %i %.6lf %.6lf %.6lf",
+  fprintf(out, "%i %f %i %.6lf %.6lf %.6lf",
           controller_->delay_based_bwe_->rate_control_.rate_control_state_,
-          controller_->delay_based_bwe_->rate_control_.rate_control_region_,
+          controller_->delay_based_bwe_->rate_control_
+                  .link_capacity_estimate_kbps_.value_or(NAN) *
+              1000 / 8,
           controller_->alr_detector_->alr_started_time_ms_.has_value(),
           trendline_estimator->prev_trend_,
           trendline_estimator->prev_modified_trend_,

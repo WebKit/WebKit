@@ -15,6 +15,8 @@ rtc_static_library("bitrate_controller") {
     "bitrate_controller_impl.cc",
     "bitrate_controller_impl.h",
     "include/bitrate_controller.h",
+    "loss_based_bandwidth_estimation.cc",
+    "loss_based_bandwidth_estimation.h",
     "send_side_bandwidth_estimation.cc",
     "send_side_bandwidth_estimation.h",
   ]
@@ -31,10 +33,16 @@ rtc_static_library("bitrate_controller") {
 
   deps = [
     "..:module_api",
+    "../../api/transport:network_control",
+    "../../api/units:data_rate",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
     "../../logging:rtc_event_bwe",
     "../../logging:rtc_event_log_api",
     "../../rtc_base:checks",
+    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/experiments:field_trial_parser",
     "../../system_wrappers",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",

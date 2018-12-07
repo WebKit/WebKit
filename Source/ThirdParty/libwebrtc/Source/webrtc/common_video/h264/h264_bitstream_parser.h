@@ -17,10 +17,6 @@
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
 
-namespace rtc {
-class BitBufferWriter;
-}
-
 namespace webrtc {
 
 // Stateful H264 bitstream parser (due to SPS/PPS). Used to parse out QP values

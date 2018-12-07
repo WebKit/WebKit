@@ -37,6 +37,7 @@
 #include "rtc_base/proxyinfo.h"
 #include "rtc_base/ratetracker.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/weak_ptr.h"
@@ -49,7 +50,7 @@ class ConnectionRequest;
 extern const char LOCAL_PORT_TYPE[];
 extern const char STUN_PORT_TYPE[];
 extern const char PRFLX_PORT_TYPE[];
-extern const char RELAY_PORT_TYPE[];
+RTC_EXPORT extern const char RELAY_PORT_TYPE[];
 
 // RFC 6544, TCP candidate encoding rules.
 extern const int DISCARD_PORT;
@@ -81,6 +82,18 @@ enum class IceCandidatePairState {
   FAILED,       // Check for this connection failed.
   // According to spec there should also be a frozen state, but nothing is ever
   // frozen because we have not implemented ICE freezing logic.
+};
+
+enum class MdnsNameRegistrationStatus {
+  // IP concealment with mDNS is not enabled or the name registration process is
+  // not started yet.
+  kNotStarted,
+  // A request to create and register an mDNS name for a local IP address of a
+  // host candidate is sent to the mDNS responder.
+  kInProgress,
+  // The name registration is complete and the created name is returned by the
+  // mDNS responder.
+  kCompleted,
 };
 
 // Stats that we can return about the port of a STUN candidate.
@@ -305,7 +318,7 @@ class Port : public PortInterface,
                                     const char* data,
                                     size_t size,
                                     const rtc::SocketAddress& remote_addr,
-                                    const rtc::PacketTime& packet_time);
+                                    int64_t packet_time_us);
 
   // Shall the port handle packet from this |remote_addr|.
   // This method is overridden by TurnPort.
@@ -392,7 +405,7 @@ class Port : public PortInterface,
                   const std::string& type,
                   uint32_t type_preference,
                   uint32_t relay_preference,
-                  bool final);
+                  bool is_final);
 
   void AddAddress(const rtc::SocketAddress& address,
                   const rtc::SocketAddress& base_address,
@@ -407,6 +420,8 @@ class Port : public PortInterface,
                   bool is_final);
 
   void FinishAddingAddress(const Candidate& c, bool is_final);
+
+  virtual void PostAddAddress(bool is_final);
 
   // Adds the given connection to the map keyed by the remote candidate address.
   // If an existing connection has the same address, the existing one will be
@@ -442,6 +457,13 @@ class Port : public PortInterface,
   virtual void HandleConnectionDestroyed(Connection* conn) {}
 
   void CopyPortInformationToPacketInfo(rtc::PacketInfo* info) const;
+
+  MdnsNameRegistrationStatus mdns_name_registration_status() const {
+    return mdns_name_registration_status_;
+  }
+  void set_mdns_name_registration_status(MdnsNameRegistrationStatus status) {
+    mdns_name_registration_status_ = status;
+  }
 
  private:
   void Construct();
@@ -487,8 +509,14 @@ class Port : public PortInterface,
   int16_t network_cost_;
   State state_ = State::INIT;
   int64_t last_time_all_connections_removed_ = 0;
+  MdnsNameRegistrationStatus mdns_name_registration_status_ =
+      MdnsNameRegistrationStatus::kNotStarted;
 
   rtc::WeakPtrFactory<Port> weak_factory_;
+
+  bool MaybeObfuscateAddress(Candidate* c,
+                             const std::string& type,
+                             bool is_final);
 
   friend class Connection;
 };
@@ -578,15 +606,12 @@ class Connection : public CandidatePairInterface,
   // Error if Send() returns < 0
   virtual int GetError() = 0;
 
-  sigslot::signal4<Connection*, const char*, size_t, const rtc::PacketTime&>
-      SignalReadPacket;
+  sigslot::signal4<Connection*, const char*, size_t, int64_t> SignalReadPacket;
 
   sigslot::signal1<Connection*> SignalReadyToSend;
 
   // Called when a packet is received on this connection.
-  void OnReadPacket(const char* data,
-                    size_t size,
-                    const rtc::PacketTime& packet_time);
+  void OnReadPacket(const char* data, size_t size, int64_t packet_time_us);
 
   // Called when the socket is currently able to send.
   void OnReadyToSend();

@@ -12,13 +12,18 @@
 #define MODULES_AUDIO_PROCESSING_AEC3_SUPPRESSION_GAIN_H_
 
 #include <array>
+#include <memory>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
+#include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/moving_average.h"
 #include "modules/audio_processing/aec3/render_signal_analyzer.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -102,13 +107,16 @@ class SuppressionGain {
     // Updates the state selection based on latest spectral estimates.
     void Update(rtc::ArrayView<const float> nearend_spectrum,
                 rtc::ArrayView<const float> residual_echo_spectrum,
-                rtc::ArrayView<const float> comfort_noise_spectrum);
+                rtc::ArrayView<const float> comfort_noise_spectrum,
+                bool initial_state);
 
    private:
     const float enr_threshold_;
+    const float enr_exit_threshold_;
     const float snr_threshold_;
     const int hold_duration_;
     const int trigger_threshold_;
+    const bool use_during_initial_phase_;
 
     bool nearend_state_ = false;
     int trigger_counter_ = 0;
@@ -137,7 +145,6 @@ class SuppressionGain {
   LowNoiseRenderDetector low_render_detector_;
   bool initial_state_ = true;
   int initial_state_change_counter_ = 0;
-  const bool enable_new_suppression_;
   aec3::MovingAverage moving_average_;
   const GainParameters nearend_params_;
   const GainParameters normal_params_;

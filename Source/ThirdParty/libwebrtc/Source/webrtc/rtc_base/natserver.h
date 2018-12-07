@@ -81,12 +81,12 @@ class NATServer : public sigslot::has_slots<> {
                            const char* buf,
                            size_t size,
                            const SocketAddress& addr,
-                           const PacketTime& packet_time);
+                           const int64_t& packet_time_us);
   void OnExternalUDPPacket(AsyncPacketSocket* socket,
                            const char* buf,
                            size_t size,
                            const SocketAddress& remote_addr,
-                           const PacketTime& packet_time);
+                           const int64_t& packet_time_us);
 
  private:
   typedef std::set<SocketAddress, AddrCmp> AddressSet;

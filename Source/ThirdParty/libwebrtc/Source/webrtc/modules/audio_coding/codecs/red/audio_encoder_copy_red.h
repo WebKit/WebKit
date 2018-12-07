@@ -11,9 +11,12 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_RED_AUDIO_ENCODER_COPY_RED_H_
 #define MODULES_AUDIO_CODING_CODECS_RED_AUDIO_ENCODER_COPY_RED_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
-#include <vector>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"

@@ -18,6 +18,7 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
@@ -25,7 +26,7 @@ namespace webrtc {
 namespace {
 constexpr float kEpsilon = 1e-3f;
 constexpr float kX2BandEnergyThreshold = 44015068.0f;
-constexpr int kErleHold = 100;
+constexpr int kBlocksToHoldErle = 100;
 constexpr int kPointsToAccumulate = 6;
 }  // namespace
 
@@ -54,7 +55,7 @@ void FullBandErleEstimator::Update(rtc::ArrayView<const float> X2,
       const float Y2_sum = std::accumulate(Y2.begin(), Y2.end(), 0.0f);
       const float E2_sum = std::accumulate(E2.begin(), E2.end(), 0.0f);
       if (instantaneous_erle_.Update(Y2_sum, E2_sum)) {
-        hold_counter_time_domain_ = kErleHold;
+        hold_counter_time_domain_ = kBlocksToHoldErle;
         erle_time_domain_log2_ +=
             0.1f * ((instantaneous_erle_.GetInstErleLog2().value()) -
                     erle_time_domain_log2_);

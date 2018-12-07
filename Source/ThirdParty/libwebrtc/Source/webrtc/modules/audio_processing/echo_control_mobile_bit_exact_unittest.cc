@@ -64,9 +64,7 @@ void RunBitexactnessTest(int sample_rate_hz,
                          EchoControlMobileImpl::RoutingMode routing_mode,
                          bool comfort_noise_enabled,
                          const rtc::ArrayView<const float>& output_reference) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoControlMobileImpl echo_control_mobile(&crit_render, &crit_capture);
+  EchoControlMobileImpl echo_control_mobile;
   SetupComponent(sample_rate_hz, routing_mode, comfort_noise_enabled,
                  &echo_control_mobile);
 

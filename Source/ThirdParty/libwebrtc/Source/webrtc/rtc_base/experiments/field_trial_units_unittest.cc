@@ -58,5 +58,25 @@ TEST(FieldTrialParserUnitsTest, ParsesOtherUnitParameters) {
   EXPECT_EQ(*exp.max_buffer.GetOptional(), DataSize::bytes(8));
   EXPECT_EQ(exp.period.Get(), TimeDelta::ms(300));
 }
+TEST(FieldTrialParserUnitsTest, IgnoresOutOfRange) {
+  FieldTrialConstrained<DataRate> rate("r", DataRate::kbps(30),
+                                       DataRate::kbps(10), DataRate::kbps(100));
+  FieldTrialConstrained<TimeDelta> delta("d", TimeDelta::ms(30),
+                                         TimeDelta::ms(10), TimeDelta::ms(100));
+  FieldTrialConstrained<DataSize> size(
+      "s", DataSize::bytes(30), DataSize::bytes(10), DataSize::bytes(100));
+  ParseFieldTrial({&rate, &delta, &size}, "r:0,d:0,s:0");
+  EXPECT_EQ(rate->kbps(), 30);
+  EXPECT_EQ(delta->ms(), 30);
+  EXPECT_EQ(size->bytes(), 30);
+  ParseFieldTrial({&rate, &delta, &size}, "r:300,d:300,s:300");
+  EXPECT_EQ(rate->kbps(), 30);
+  EXPECT_EQ(delta->ms(), 30);
+  EXPECT_EQ(size->bytes(), 30);
+  ParseFieldTrial({&rate, &delta, &size}, "r:50,d:50,s:50");
+  EXPECT_EQ(rate->kbps(), 50);
+  EXPECT_EQ(delta->ms(), 50);
+  EXPECT_EQ(size->bytes(), 50);
+}
 
 }  // namespace webrtc

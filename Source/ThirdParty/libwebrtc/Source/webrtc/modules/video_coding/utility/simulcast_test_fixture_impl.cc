@@ -15,9 +15,10 @@
 #include <memory>
 #include <vector>
 
+#include "api/video/encoded_image.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "common_video/include/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
@@ -817,6 +818,68 @@ void SimulcastTestFixtureImpl::TestStrideEncodeDecode() {
   encoder_callback.GetLastEncodedFrame(&encoded_frame);
   decoder_->Decode(encoded_frame, false, NULL, 0);
   EXPECT_EQ(2, decoder_callback.DecodedFrames());
+}
+
+void SimulcastTestFixtureImpl::TestDecodeWidthHeightSet() {
+  MockEncodedImageCallback encoder_callback;
+  MockDecodedImageCallback decoder_callback;
+
+  EncodedImage encoded_frame[3];
+  SetRates(kMaxBitrates[2], 30);  // To get all three streams.
+  encoder_->RegisterEncodeCompleteCallback(&encoder_callback);
+  decoder_->RegisterDecodeCompleteCallback(&decoder_callback);
+
+  EXPECT_CALL(encoder_callback, OnEncodedImage(_, _, _))
+      .Times(3)
+      .WillRepeatedly(
+          testing::Invoke([&](const EncodedImage& encoded_image,
+                              const CodecSpecificInfo* codec_specific_info,
+                              const RTPFragmentationHeader* fragmentation) {
+            EXPECT_EQ(encoded_image._frameType, kVideoFrameKey);
+
+            size_t index = encoded_image.SpatialIndex().value_or(0);
+            encoded_frame[index]._buffer = new uint8_t[encoded_image._size];
+            encoded_frame[index]._size = encoded_image._size;
+            encoded_frame[index]._length = encoded_image._length;
+            encoded_frame[index]._frameType = encoded_image._frameType;
+            encoded_frame[index]._completeFrame = encoded_image._completeFrame;
+            memcpy(encoded_frame[index]._buffer, encoded_image._buffer,
+                   encoded_image._length);
+            return EncodedImageCallback::Result(
+                EncodedImageCallback::Result::OK, 0);
+          }));
+  EXPECT_EQ(0, encoder_->Encode(*input_frame_, NULL, NULL));
+
+  EXPECT_CALL(decoder_callback, Decoded(_, _, _))
+      .WillOnce(testing::Invoke([](VideoFrame& decodedImage,
+                                   absl::optional<int32_t> decode_time_ms,
+                                   absl::optional<uint8_t> qp) {
+        EXPECT_EQ(decodedImage.width(), kDefaultWidth / 4);
+        EXPECT_EQ(decodedImage.height(), kDefaultHeight / 4);
+      }));
+  EXPECT_EQ(0, decoder_->Decode(encoded_frame[0], false, NULL, 0));
+
+  EXPECT_CALL(decoder_callback, Decoded(_, _, _))
+      .WillOnce(testing::Invoke([](VideoFrame& decodedImage,
+                                   absl::optional<int32_t> decode_time_ms,
+                                   absl::optional<uint8_t> qp) {
+        EXPECT_EQ(decodedImage.width(), kDefaultWidth / 2);
+        EXPECT_EQ(decodedImage.height(), kDefaultHeight / 2);
+      }));
+  EXPECT_EQ(0, decoder_->Decode(encoded_frame[1], false, NULL, 0));
+
+  EXPECT_CALL(decoder_callback, Decoded(_, _, _))
+      .WillOnce(testing::Invoke([](VideoFrame& decodedImage,
+                                   absl::optional<int32_t> decode_time_ms,
+                                   absl::optional<uint8_t> qp) {
+        EXPECT_EQ(decodedImage.width(), kDefaultWidth);
+        EXPECT_EQ(decodedImage.height(), kDefaultHeight);
+      }));
+  EXPECT_EQ(0, decoder_->Decode(encoded_frame[2], false, NULL, 0));
+
+  for (int i = 0; i < 3; ++i) {
+    delete [] encoded_frame[i]._buffer;
+  }
 }
 
 }  // namespace test

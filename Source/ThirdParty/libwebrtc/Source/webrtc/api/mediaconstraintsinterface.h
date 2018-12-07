@@ -21,10 +21,11 @@
 #ifndef API_MEDIACONSTRAINTSINTERFACE_H_
 #define API_MEDIACONSTRAINTSINTERFACE_H_
 
+#include <stddef.h>
 #include <string>
 #include <vector>
 
-#include "absl/types/optional.h"
+#include "api/audio_options.h"
 #include "api/peerconnectioninterface.h"
 
 namespace webrtc {

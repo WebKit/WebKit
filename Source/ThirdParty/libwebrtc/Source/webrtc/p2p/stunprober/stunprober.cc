@@ -77,7 +77,7 @@ class StunProber::Requester : public sigslot::has_slots<> {
                               const char* buf,
                               size_t size,
                               const rtc::SocketAddress& addr,
-                              const rtc::PacketTime& time);
+                              const int64_t& packet_time_us);
 
   const std::vector<Request*>& requests() { return requests_; }
 
@@ -204,7 +204,7 @@ void StunProber::Requester::OnStunResponseReceived(
     const char* buf,
     size_t size,
     const rtc::SocketAddress& addr,
-    const rtc::PacketTime& time) {
+    const int64_t& /* packet_time_us */) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   RTC_DCHECK(socket_);
   Request* request = GetRequestByAddress(addr.ipaddr());

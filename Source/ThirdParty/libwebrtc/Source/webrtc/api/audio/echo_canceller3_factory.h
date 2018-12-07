@@ -15,10 +15,11 @@
 
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class EchoCanceller3Factory : public EchoControlFactory {
+class RTC_EXPORT EchoCanceller3Factory : public EchoControlFactory {
  public:
   // Factory producing EchoCanceller3 instances with the default configuration.
   EchoCanceller3Factory();

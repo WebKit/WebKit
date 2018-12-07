@@ -10,8 +10,8 @@
 
 #include <memory>
 
+#include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
-#include "common_video/include/video_frame.h"
 #include "modules/video_coding/utility/quality_scaler.h"
 #include "rtc_base/event.h"
 #include "rtc_base/fakeclock.h"
@@ -406,7 +406,7 @@ TEST_F(OveruseFrameDetectorTest, UpdatesExistingSamples) {
 TEST_F(OveruseFrameDetectorTest, RunOnTqNormalUsage) {
   rtc::TaskQueue queue("OveruseFrameDetectorTestQueue");
 
-  rtc::Event event(false, false);
+  rtc::Event event;
   queue.PostTask([this, &event] {
     overuse_detector_->StartCheckForOveruse(options_, observer_);
     event.Set();
@@ -870,7 +870,7 @@ TEST_F(OveruseFrameDetectorTest2, UpdatesExistingSamples) {
 TEST_F(OveruseFrameDetectorTest2, RunOnTqNormalUsage) {
   rtc::TaskQueue queue("OveruseFrameDetectorTestQueue");
 
-  rtc::Event event(false, false);
+  rtc::Event event;
   queue.PostTask([this, &event] {
     overuse_detector_->StartCheckForOveruse(options_, observer_);
     event.Set();

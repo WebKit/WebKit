@@ -323,6 +323,10 @@ IceTransportState P2PTransportChannel::GetState() const {
   return state_;
 }
 
+webrtc::IceTransportState P2PTransportChannel::GetIceTransportState() const {
+  return standardized_state_;
+}
+
 const std::string& P2PTransportChannel::transport_name() const {
   return transport_name_;
 }
@@ -385,6 +389,41 @@ IceTransportState P2PTransportChannel::ComputeState() const {
 
   ice_event_log_.DumpCandidatePairDescriptionToMemoryAsConfigEvents();
   return IceTransportState::STATE_COMPLETED;
+}
+
+// Compute the current RTCIceTransportState as described in
+// https://www.w3.org/TR/webrtc/#dom-rtcicetransportstate
+// TODO(bugs.webrtc.org/9308): Return IceTransportState::kDisconnected when it
+// makes sense.
+// TODO(bugs.webrtc.org/9218): Avoid prematurely signalling kFailed once we have
+// implemented end-of-candidates signalling.
+webrtc::IceTransportState P2PTransportChannel::ComputeIceTransportState()
+    const {
+  bool has_connection = false;
+  for (Connection* connection : connections_) {
+    if (connection->active()) {
+      has_connection = true;
+      break;
+    }
+  }
+
+  switch (gathering_state_) {
+    case kIceGatheringComplete:
+      if (has_connection)
+        return webrtc::IceTransportState::kCompleted;
+      else
+        return webrtc::IceTransportState::kFailed;
+    case kIceGatheringNew:
+      return webrtc::IceTransportState::kNew;
+    case kIceGatheringGathering:
+      if (has_connection)
+        return webrtc::IceTransportState::kConnected;
+      else
+        return webrtc::IceTransportState::kChecking;
+    default:
+      RTC_NOTREACHED();
+      return webrtc::IceTransportState::kFailed;
+  }
 }
 
 void P2PTransportChannel::SetIceParameters(const IceParameters& ice_params) {
@@ -1827,6 +1866,9 @@ void P2PTransportChannel::SwitchSelectedConnection(Connection* conn) {
 // example, we call this at the end of SortConnectionsAndUpdateState.
 void P2PTransportChannel::UpdateState() {
   IceTransportState state = ComputeState();
+  webrtc::IceTransportState current_standardized_state =
+      ComputeIceTransportState();
+
   if (state_ != state) {
     RTC_LOG(LS_INFO) << ToString()
                      << ": Transport channel state changed from "
@@ -1868,6 +1910,10 @@ void P2PTransportChannel::UpdateState() {
     SignalStateChanged(this);
   }
 
+  if (standardized_state_ != current_standardized_state) {
+    standardized_state_ = current_standardized_state;
+    SignalIceTransportStateChanged(this);
+  }
   // If our selected connection is "presumed writable" (TURN-TURN with no
   // CreatePermission required), act like we're already writable to the upper
   // layers, so they can start media quicker.
@@ -2319,7 +2365,7 @@ bool P2PTransportChannel::PrunePort(PortInterface* port) {
 void P2PTransportChannel::OnReadPacket(Connection* connection,
                                        const char* data,
                                        size_t len,
-                                       const rtc::PacketTime& packet_time) {
+                                       int64_t packet_time_us) {
   RTC_DCHECK(network_thread_ == rtc::Thread::Current());
 
   // Do not deliver, if packet doesn't belong to the correct transport channel.
@@ -2327,7 +2373,7 @@ void P2PTransportChannel::OnReadPacket(Connection* connection,
     return;
 
   // Let the client know of an incoming packet
-  SignalReadPacket(this, data, len, packet_time, 0);
+  SignalReadPacket(this, data, len, packet_time_us, 0);
 
   // May need to switch the sending connection based on the receiving media path
   // if this is the controlled side.

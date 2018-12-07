@@ -10,14 +10,16 @@
 
 #include "rtc_base/platform_thread.h"
 
+#if !defined(WEBRTC_WIN)
+#include <sched.h>
+#endif
+#include <stdint.h>
+#include <time.h>
+#include <algorithm>
+
 #include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/timeutils.h"
-
-#if defined(WEBRTC_LINUX)
-#include <sys/prctl.h>
-#include <sys/syscall.h>
-#endif
 
 namespace rtc {
 namespace {

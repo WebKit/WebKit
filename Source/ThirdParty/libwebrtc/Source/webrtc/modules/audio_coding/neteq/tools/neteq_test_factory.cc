@@ -91,47 +91,60 @@ static bool ValidateExtensionId(int value) {
 }
 
 // Define command line flags.
-DEFINE_int(pcmu, 0, "RTP payload type for PCM-u");
-DEFINE_int(pcma, 8, "RTP payload type for PCM-a");
-DEFINE_int(ilbc, 102, "RTP payload type for iLBC");
-DEFINE_int(isac, 103, "RTP payload type for iSAC");
-DEFINE_int(isac_swb, 104, "RTP payload type for iSAC-swb (32 kHz)");
-DEFINE_int(opus, 111, "RTP payload type for Opus");
-DEFINE_int(pcm16b, 93, "RTP payload type for PCM16b-nb (8 kHz)");
-DEFINE_int(pcm16b_wb, 94, "RTP payload type for PCM16b-wb (16 kHz)");
-DEFINE_int(pcm16b_swb32, 95, "RTP payload type for PCM16b-swb32 (32 kHz)");
-DEFINE_int(pcm16b_swb48, 96, "RTP payload type for PCM16b-swb48 (48 kHz)");
-DEFINE_int(g722, 9, "RTP payload type for G.722");
-DEFINE_int(avt, 106, "RTP payload type for AVT/DTMF (8 kHz)");
-DEFINE_int(avt_16, 114, "RTP payload type for AVT/DTMF (16 kHz)");
-DEFINE_int(avt_32, 115, "RTP payload type for AVT/DTMF (32 kHz)");
-DEFINE_int(avt_48, 116, "RTP payload type for AVT/DTMF (48 kHz)");
-DEFINE_int(red, 117, "RTP payload type for redundant audio (RED)");
-DEFINE_int(cn_nb, 13, "RTP payload type for comfort noise (8 kHz)");
-DEFINE_int(cn_wb, 98, "RTP payload type for comfort noise (16 kHz)");
-DEFINE_int(cn_swb32, 99, "RTP payload type for comfort noise (32 kHz)");
-DEFINE_int(cn_swb48, 100, "RTP payload type for comfort noise (48 kHz)");
-DEFINE_string(replacement_audio_file,
-              "",
-              "A PCM file that will be used to populate "
-              "dummy"
-              " RTP packets");
-DEFINE_string(ssrc,
-              "",
-              "Only use packets with this SSRC (decimal or hex, the latter "
-              "starting with 0x)");
-DEFINE_int(audio_level, 1, "Extension ID for audio level (RFC 6464)");
-DEFINE_int(abs_send_time, 3, "Extension ID for absolute sender time");
-DEFINE_int(transport_seq_no, 5, "Extension ID for transport sequence number");
-DEFINE_int(video_content_type, 7, "Extension ID for video content type");
-DEFINE_int(video_timing, 8, "Extension ID for video timing");
-DEFINE_bool(matlabplot,
-            false,
-            "Generates a matlab script for plotting the delay profile");
-DEFINE_bool(pythonplot,
-            false,
-            "Generates a python script for plotting the delay profile");
-DEFINE_bool(concealment_events, false, "Prints concealment events");
+WEBRTC_DEFINE_int(pcmu, 0, "RTP payload type for PCM-u");
+WEBRTC_DEFINE_int(pcma, 8, "RTP payload type for PCM-a");
+WEBRTC_DEFINE_int(ilbc, 102, "RTP payload type for iLBC");
+WEBRTC_DEFINE_int(isac, 103, "RTP payload type for iSAC");
+WEBRTC_DEFINE_int(isac_swb, 104, "RTP payload type for iSAC-swb (32 kHz)");
+WEBRTC_DEFINE_int(opus, 111, "RTP payload type for Opus");
+WEBRTC_DEFINE_int(pcm16b, 93, "RTP payload type for PCM16b-nb (8 kHz)");
+WEBRTC_DEFINE_int(pcm16b_wb, 94, "RTP payload type for PCM16b-wb (16 kHz)");
+WEBRTC_DEFINE_int(pcm16b_swb32,
+                  95,
+                  "RTP payload type for PCM16b-swb32 (32 kHz)");
+WEBRTC_DEFINE_int(pcm16b_swb48,
+                  96,
+                  "RTP payload type for PCM16b-swb48 (48 kHz)");
+WEBRTC_DEFINE_int(g722, 9, "RTP payload type for G.722");
+WEBRTC_DEFINE_int(avt, 106, "RTP payload type for AVT/DTMF (8 kHz)");
+WEBRTC_DEFINE_int(avt_16, 114, "RTP payload type for AVT/DTMF (16 kHz)");
+WEBRTC_DEFINE_int(avt_32, 115, "RTP payload type for AVT/DTMF (32 kHz)");
+WEBRTC_DEFINE_int(avt_48, 116, "RTP payload type for AVT/DTMF (48 kHz)");
+WEBRTC_DEFINE_int(red, 117, "RTP payload type for redundant audio (RED)");
+WEBRTC_DEFINE_int(cn_nb, 13, "RTP payload type for comfort noise (8 kHz)");
+WEBRTC_DEFINE_int(cn_wb, 98, "RTP payload type for comfort noise (16 kHz)");
+WEBRTC_DEFINE_int(cn_swb32, 99, "RTP payload type for comfort noise (32 kHz)");
+WEBRTC_DEFINE_int(cn_swb48, 100, "RTP payload type for comfort noise (48 kHz)");
+WEBRTC_DEFINE_string(replacement_audio_file,
+                     "",
+                     "A PCM file that will be used to populate "
+                     "dummy"
+                     " RTP packets");
+WEBRTC_DEFINE_string(
+    ssrc,
+    "",
+    "Only use packets with this SSRC (decimal or hex, the latter "
+    "starting with 0x)");
+WEBRTC_DEFINE_int(audio_level, 1, "Extension ID for audio level (RFC 6464)");
+WEBRTC_DEFINE_int(abs_send_time, 3, "Extension ID for absolute sender time");
+WEBRTC_DEFINE_int(transport_seq_no,
+                  5,
+                  "Extension ID for transport sequence number");
+WEBRTC_DEFINE_int(video_content_type, 7, "Extension ID for video content type");
+WEBRTC_DEFINE_int(video_timing, 8, "Extension ID for video timing");
+WEBRTC_DEFINE_bool(matlabplot,
+                   false,
+                   "Generates a matlab script for plotting the delay profile");
+WEBRTC_DEFINE_bool(pythonplot,
+                   false,
+                   "Generates a python script for plotting the delay profile");
+WEBRTC_DEFINE_bool(concealment_events, false, "Prints concealment events");
+WEBRTC_DEFINE_int(max_nr_packets_in_buffer,
+                  50,
+                  "Maximum allowed number of packets in the buffer");
+WEBRTC_DEFINE_bool(enable_fast_accelerate,
+                   false,
+                   "Enables jitter buffer fast accelerate");
 
 // Maps a codec type to a printable name string.
 std::string CodecName(NetEqDecoder codec) {
@@ -309,24 +322,26 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
       {FLAG_video_content_type, kRtpExtensionVideoContentType},
       {FLAG_video_timing, kRtpExtensionVideoTiming}};
 
+  absl::optional<uint32_t> ssrc_filter;
+  // Check if an SSRC value was provided.
+  if (strlen(FLAG_ssrc) > 0) {
+    uint32_t ssrc;
+    RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc)) << "Flag verification has failed.";
+    ssrc_filter = ssrc;
+  }
+
   std::unique_ptr<NetEqInput> input;
   if (RtpFileSource::ValidRtpDump(input_file_name) ||
       RtpFileSource::ValidPcap(input_file_name)) {
-    input.reset(new NetEqRtpDumpInput(input_file_name, rtp_ext_map));
+    input.reset(
+        new NetEqRtpDumpInput(input_file_name, rtp_ext_map, ssrc_filter));
   } else {
-    input.reset(new NetEqEventLogInput(input_file_name, rtp_ext_map));
+    input.reset(new NetEqEventLogInput(input_file_name, ssrc_filter));
   }
 
   std::cout << "Input file: " << input_file_name << std::endl;
   RTC_CHECK(input) << "Cannot open input file";
   RTC_CHECK(!input->ended()) << "Input file is empty";
-
-  // Check if an SSRC value was provided.
-  if (strlen(FLAG_ssrc) > 0) {
-    uint32_t ssrc;
-    RTC_CHECK(ParseSsrc(FLAG_ssrc, &ssrc)) << "Flag verification has failed.";
-    static_cast<NetEqPacketSourceInput*>(input.get())->SelectSsrc(ssrc);
-  }
 
   // Check the sample rate.
   absl::optional<int> sample_rate_hz;
@@ -457,6 +472,8 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTest(
   callbacks.simulation_ended_callback = stats_plotter_.get();
   NetEq::Config config;
   config.sample_rate_hz = *sample_rate_hz;
+  config.max_packets_in_buffer = FLAG_max_nr_packets_in_buffer;
+  config.enable_fast_accelerate = FLAG_enable_fast_accelerate;
   return absl::make_unique<NetEqTest>(config, codecs, ext_codecs_,
                                       std::move(input), std::move(output),
                                       callbacks);

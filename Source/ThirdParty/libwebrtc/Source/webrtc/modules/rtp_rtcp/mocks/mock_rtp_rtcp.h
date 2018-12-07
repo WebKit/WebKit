@@ -27,17 +27,6 @@
 
 namespace webrtc {
 
-class MockRtpData : public RtpData {
- public:
-  MockRtpData();
-  ~MockRtpData();
-
-  MOCK_METHOD3(OnReceivedPayloadData,
-               int32_t(const uint8_t* payload_data,
-                       size_t payload_size,
-                       const WebRtcRTPHeader* rtp_header));
-};
-
 class MockRtpRtcp : public RtpRtcp {
  public:
   MockRtpRtcp();
@@ -52,6 +41,7 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD2(RegisterVideoSendPayload,
                void(int payload_type, const char* payload_name));
   MOCK_METHOD1(DeRegisterSendPayload, int32_t(int8_t payload_type));
+  MOCK_METHOD1(SetExtmapAllowMixed, void(bool extmap_allow_mixed));
   MOCK_METHOD2(RegisterSendRtpHeaderExtension,
                int32_t(RTPExtensionType type, uint8_t id));
   MOCK_METHOD2(RegisterRtpHeaderExtension,
@@ -83,6 +73,7 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_CONST_METHOD0(Sending, bool());
   MOCK_METHOD1(SetSendingMediaStatus, void(bool sending));
   MOCK_CONST_METHOD0(SendingMedia, bool());
+  MOCK_METHOD1(SetAsPartOfAllocation, void(bool));
   MOCK_CONST_METHOD4(BitrateSent,
                      void(uint32_t* total_rate,
                           uint32_t* video_rate,

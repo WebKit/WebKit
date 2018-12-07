@@ -14,14 +14,14 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
 
 namespace webrtc {
 
 absl::optional<AudioDecoderIlbc::Config> AudioDecoderIlbc::SdpToConfig(
     const SdpAudioFormat& format) {
-  return STR_CASE_CMP(format.name.c_str(), "ILBC") == 0 &&
+  return absl::EqualsIgnoreCase(format.name, "ILBC") &&
                  format.clockrate_hz == 8000 && format.num_channels == 1
              ? absl::optional<Config>(Config())
              : absl::nullopt;

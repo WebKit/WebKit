@@ -14,6 +14,7 @@
 #include <array>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/vector_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
@@ -40,7 +41,6 @@ void StationarityEstimator::Reset() {
   noise_.Reset();
   hangovers_.fill(0);
   stationarity_flags_.fill(false);
-  render_reverb_.Reset();
 }
 
 // Update just the noise estimator. Usefull until the delay is known
@@ -54,9 +54,9 @@ void StationarityEstimator::UpdateNoiseEstimator(
 
 void StationarityEstimator::UpdateStationarityFlags(
     const VectorBuffer& spectrum_buffer,
+    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
     int idx_current,
-    int num_lookahead,
-    float reverb_decay) {
+    int num_lookahead) {
   std::array<int, kWindowLength> indexes;
   int num_lookahead_bounded = std::min(num_lookahead, kWindowLength - 1);
   int idx = idx_current;
@@ -79,12 +79,9 @@ void StationarityEstimator::UpdateStationarityFlags(
       spectrum_buffer.DecIndex(indexes[kWindowLength - 1]),
       spectrum_buffer.OffsetIndex(idx_current, -(num_lookahead_bounded + 1)));
 
-  int idx_past = spectrum_buffer.IncIndex(idx_current);
-  render_reverb_.UpdateReverbContributionsNoFreqShaping(
-      spectrum_buffer.buffer[idx_past], 1.0f, reverb_decay);
   for (size_t k = 0; k < stationarity_flags_.size(); ++k) {
     stationarity_flags_[k] = EstimateBandStationarity(
-        spectrum_buffer, render_reverb_.GetPowerSpectrum(), indexes, k);
+        spectrum_buffer, render_reverb_contribution_spectrum, indexes, k);
   }
   UpdateHangover();
   SmoothStationaryPerFreq();
@@ -102,7 +99,7 @@ bool StationarityEstimator::IsBlockStationary() const {
 
 bool StationarityEstimator::EstimateBandStationarity(
     const VectorBuffer& spectrum_buffer,
-    const std::array<float, kFftLengthBy2Plus1>& reverb,
+    rtc::ArrayView<const float> reverb,
     const std::array<int, kWindowLength>& indexes,
     size_t band) const {
   constexpr float kThrStationarity = 10.f;

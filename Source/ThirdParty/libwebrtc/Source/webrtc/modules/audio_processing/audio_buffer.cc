@@ -10,11 +10,13 @@
 
 #include "modules/audio_processing/audio_buffer.h"
 
+#include <string.h>
+#include <cstdint>
+
 #include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
-#include "common_audio/signal_processing/include/signal_processing_library.h"
-#include "modules/audio_processing/common.h"
+#include "modules/audio_processing/splitting_filter.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

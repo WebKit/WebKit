@@ -26,6 +26,7 @@
 #include "media/base/videocommon.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_checker.h"
 #include "rtc_base/timestampaligner.h"
@@ -72,8 +73,9 @@ enum CaptureState {
 //   media engine thread). Hence, the VideoCapture subclasses dont need to be
 //   thread safe.
 //
-class VideoCapturer : public sigslot::has_slots<>,
-                      public rtc::VideoSourceInterface<webrtc::VideoFrame> {
+class RTC_EXPORT VideoCapturer
+    : public sigslot::has_slots<>,
+      public rtc::VideoSourceInterface<webrtc::VideoFrame> {
  public:
   VideoCapturer();
 

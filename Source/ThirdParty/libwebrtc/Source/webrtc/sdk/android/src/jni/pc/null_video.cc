@@ -31,7 +31,8 @@ VideoDecoderFactory* CreateVideoDecoderFactory(
 void* CreateVideoSource(JNIEnv* env,
                         rtc::Thread* signaling_thread,
                         rtc::Thread* worker_thread,
-                        jboolean is_screencast) {
+                        jboolean is_screencast,
+                        jboolean align_timestamps) {
   return nullptr;
 }
 

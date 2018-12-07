@@ -15,6 +15,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -41,8 +42,19 @@ void SendTimeHistory::AddAndRemoveOld(const PacketFeedback& packet) {
   PacketFeedback packet_copy = packet;
   packet_copy.long_sequence_number = unwrapped_seq_num;
   history_.insert(std::make_pair(unwrapped_seq_num, packet_copy));
-  if (packet.send_time_ms >= 0)
+  if (packet.send_time_ms >= 0) {
     AddPacketBytes(packet_copy);
+    last_send_time_ms_ = std::max(last_send_time_ms_, packet.send_time_ms);
+  }
+}
+
+void SendTimeHistory::AddUntracked(size_t packet_size, int64_t send_time_ms) {
+  if (send_time_ms < last_send_time_ms_) {
+    RTC_LOG(LS_WARNING) << "ignoring untracked data for out of order packet.";
+  }
+  pending_untracked_size_ += packet_size;
+  last_untracked_send_time_ms_ =
+      std::max(last_untracked_send_time_ms_, send_time_ms);
 }
 
 bool SendTimeHistory::OnSentPacket(uint16_t sequence_number,
@@ -53,8 +65,17 @@ bool SendTimeHistory::OnSentPacket(uint16_t sequence_number,
     return false;
   bool packet_retransmit = it->second.send_time_ms >= 0;
   it->second.send_time_ms = send_time_ms;
+  last_send_time_ms_ = std::max(last_send_time_ms_, send_time_ms);
   if (!packet_retransmit)
     AddPacketBytes(it->second);
+  if (pending_untracked_size_ > 0) {
+    if (send_time_ms < last_untracked_send_time_ms_)
+      RTC_LOG(LS_WARNING)
+          << "appending acknowledged data for out of order packet. (Diff: "
+          << last_untracked_send_time_ms_ - send_time_ms << " ms.)";
+    it->second.unacknowledged_data += pending_untracked_size_;
+    pending_untracked_size_ = 0;
+  }
   return true;
 }
 
@@ -90,13 +111,13 @@ bool SendTimeHistory::GetFeedback(PacketFeedback* packet_feedback,
   return true;
 }
 
-size_t SendTimeHistory::GetOutstandingBytes(uint16_t local_net_id,
-                                            uint16_t remote_net_id) const {
+DataSize SendTimeHistory::GetOutstandingData(uint16_t local_net_id,
+                                             uint16_t remote_net_id) const {
   auto it = in_flight_bytes_.find({local_net_id, remote_net_id});
   if (it != in_flight_bytes_.end()) {
-    return it->second;
+    return DataSize::bytes(it->second);
   } else {
-    return 0;
+    return DataSize::Zero();
   }
 }
 

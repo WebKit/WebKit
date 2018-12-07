@@ -12,6 +12,7 @@
 
 #include <algorithm>
 
+#include "rtc_base/checks.h"
 #include "rtc_base/timeutils.h"
 
 namespace webrtc {
@@ -22,20 +23,27 @@ inline int64_t DivideRoundToNearest(int64_t x, uint32_t y) {
   return (x + y / 2) / y;
 }
 
-int64_t NtpOffsetUs() {
+int64_t NtpOffsetMsCalledOnce() {
   constexpr int64_t kNtpJan1970Sec = 2208988800;
-  int64_t clock_time = rtc::TimeMicros();
-  int64_t utc_time = rtc::TimeUTCMicros();
-  return utc_time - clock_time + kNtpJan1970Sec * rtc::kNumMicrosecsPerSec;
+  int64_t clock_time = rtc::TimeMillis();
+  int64_t utc_time = rtc::TimeUTCMillis();
+  return utc_time - clock_time + kNtpJan1970Sec * rtc::kNumMillisecsPerSec;
 }
 
 }  // namespace
 
-NtpTime TimeMicrosToNtp(int64_t time_us) {
+int64_t NtpOffsetMs() {
   // Calculate the offset once.
-  static int64_t ntp_offset_us = NtpOffsetUs();
+  static int64_t ntp_offset_ms = NtpOffsetMsCalledOnce();
+  return ntp_offset_ms;
+}
 
-  int64_t time_ntp_us = time_us + ntp_offset_us;
+NtpTime TimeMicrosToNtp(int64_t time_us) {
+  // Since this doesn't return a wallclock time, but only NTP representation
+  // of rtc::TimeMillis() clock, the exact offset doesn't matter.
+  // To simplify conversions between NTP and RTP time, this offset is
+  // limited to milliseconds in resolution.
+  int64_t time_ntp_us = time_us + NtpOffsetMs() * 1000;
   RTC_DCHECK_GE(time_ntp_us, 0);  // Time before year 1900 is unsupported.
 
   // TODO(danilchap): Convert both seconds and fraction together using int128

@@ -11,9 +11,11 @@
 #include "modules/audio_processing/aec3/echo_remover_metrics.h"
 
 #include <math.h>
+#include <stddef.h>
 #include <algorithm>
 #include <numeric>
 
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "system_wrappers/include/metrics.h"
 

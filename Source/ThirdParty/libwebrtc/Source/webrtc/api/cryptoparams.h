@@ -16,6 +16,8 @@
 namespace cricket {
 
 // Parameters for SRTP negotiation, as described in RFC 4568.
+// TODO(benwright) - Rename to SrtpCryptoParams as these only apply to SRTP and
+// not generic crypto parameters for WebRTC.
 struct CryptoParams {
   CryptoParams() : tag(0) {}
   CryptoParams(int t,

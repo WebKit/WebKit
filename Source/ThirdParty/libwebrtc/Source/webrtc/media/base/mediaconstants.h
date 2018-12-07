@@ -13,6 +13,8 @@
 
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
+
 // This file contains constants related to media.
 
 namespace cricket {
@@ -127,12 +129,12 @@ extern const char kComfortNoiseCodecName[];
 
 extern const char kVp8CodecName[];
 extern const char kVp9CodecName[];
-extern const char kH264CodecName[];
+RTC_EXPORT extern const char kH264CodecName[];
 
 // RFC 6184 RTP Payload Format for H.264 video
-extern const char kH264FmtpProfileLevelId[];
-extern const char kH264FmtpLevelAsymmetryAllowed[];
-extern const char kH264FmtpPacketizationMode[];
+RTC_EXPORT extern const char kH264FmtpProfileLevelId[];
+RTC_EXPORT extern const char kH264FmtpLevelAsymmetryAllowed[];
+RTC_EXPORT extern const char kH264FmtpPacketizationMode[];
 extern const char kH264FmtpSpropParameterSets[];
 extern const char kH264ProfileLevelConstrainedBaseline[];
 

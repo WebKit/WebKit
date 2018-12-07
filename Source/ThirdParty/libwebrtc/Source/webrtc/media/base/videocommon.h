@@ -17,6 +17,7 @@
 
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/timeutils.h"
 
 namespace cricket {
@@ -149,7 +150,7 @@ struct VideoFormatPod {
   uint32_t fourcc;  // Color space. FOURCC_ANY means that any color space is OK.
 };
 
-struct VideoFormat : VideoFormatPod {
+struct RTC_EXPORT VideoFormat : VideoFormatPod {
   static const int64_t kMinimumInterval =
       rtc::kNumNanosecsPerSec / 10000;  // 10k fps.
 

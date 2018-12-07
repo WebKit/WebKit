@@ -12,7 +12,6 @@
 #include <string>
 
 #include "absl/memory/memory.h"
-#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/exp_filter.h"

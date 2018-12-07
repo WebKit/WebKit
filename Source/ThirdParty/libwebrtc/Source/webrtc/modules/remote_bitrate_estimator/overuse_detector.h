@@ -10,9 +10,8 @@
 #ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_OVERUSE_DETECTOR_H_
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_OVERUSE_DETECTOR_H_
 
-#include <list>
+#include <stdint.h>
 
-#include "modules/include/module_common_types.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "rtc_base/constructormagic.h"
 

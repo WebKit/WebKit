@@ -42,6 +42,7 @@ class FecControllerDefault : public FecController {
   void UpdateWithEncodedData(const size_t encoded_image_length,
                              const FrameType encoded_image_frametype) override;
   bool UseLossVectorMask() override;
+  float GetProtectionOverheadRateThreshold();
 
  private:
   enum { kBitrateAverageWinMs = 1000 };
@@ -52,6 +53,7 @@ class FecControllerDefault : public FecController {
       RTC_GUARDED_BY(crit_sect_);
   size_t max_payload_size_ RTC_GUARDED_BY(crit_sect_);
   RTC_DISALLOW_COPY_AND_ASSIGN(FecControllerDefault);
+  const float overhead_threshold_;
 };
 
 }  // namespace webrtc

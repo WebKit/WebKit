@@ -34,7 +34,7 @@ class MatchedFilterLagAggregator {
   ~MatchedFilterLagAggregator();
 
   // Resets the aggregator.
-  void Reset();
+  void Reset(bool hard_reset);
 
   // Aggregates the provided lag estimates.
   absl::optional<DelayEstimate> Aggregate(

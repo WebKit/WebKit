@@ -72,6 +72,7 @@ struct NetEqLifetimeStatistics {
   uint64_t jitter_buffer_delay_ms = 0;
   // Below stat is not part of the spec.
   uint64_t voice_concealed_samples = 0;
+  uint64_t delayed_packet_outage_samples = 0;
 };
 
 // Metrics that describe the operations performed in NetEq, and the internal
@@ -112,6 +113,7 @@ class NetEq {
     bool enable_post_decode_vad = false;
     size_t max_packets_in_buffer = 50;
     int max_delay_ms = 2000;
+    int min_delay_ms = 0;
     bool enable_fast_accelerate = false;
     bool enable_muted_state = false;
     absl::optional<AudioCodecPairId> codec_pair_id;
@@ -231,13 +233,6 @@ class NetEq {
   // statistics are never reset.
   virtual NetEqOperationsAndState GetOperationsAndState() const = 0;
 
-  // Writes the current RTCP statistics to |stats|. The statistics are reset
-  // and a new report period is started with the call.
-  virtual void GetRtcpStatistics(RtcpStatistics* stats) = 0;
-
-  // Same as RtcpStatistics(), but does not reset anything.
-  virtual void GetRtcpStatisticsNoReset(RtcpStatistics* stats) = 0;
-
   // Enables post-decode VAD. When enabled, GetAudio() will return
   // kOutputVADPassive when the signal contains no speech.
   virtual void EnableVad() = 0;
@@ -265,10 +260,6 @@ class NetEq {
 
   // Flushes both the packet buffer and the sync buffer.
   virtual void FlushBuffers() = 0;
-
-  // Current usage of packet-buffer and it's limits.
-  virtual void PacketBufferStatistics(int* current_num_packets,
-                                      int* max_num_packets) const = 0;
 
   // Enables NACK and sets the maximum size of the NACK list, which should be
   // positive and no larger than Nack::kNackListSizeLimit. If NACK is already

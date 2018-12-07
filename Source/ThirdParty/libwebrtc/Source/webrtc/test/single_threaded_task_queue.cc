@@ -32,10 +32,7 @@ SingleThreadedTaskQueueForTesting::QueuedTask::~QueuedTask() = default;
 
 SingleThreadedTaskQueueForTesting::SingleThreadedTaskQueueForTesting(
     const char* name)
-    : thread_(Run, this, name),
-      running_(true),
-      next_task_id_(0),
-      wake_up_(false, false) {
+    : thread_(Run, this, name), running_(true), next_task_id_(0) {
   thread_.Start();
 }
 
@@ -83,7 +80,7 @@ SingleThreadedTaskQueueForTesting::PostDelayedTask(Task task,
 }
 
 void SingleThreadedTaskQueueForTesting::SendTask(Task task) {
-  rtc::Event done(true, false);
+  rtc::Event done;
   PostTask([&task, &done]() {
     task();
     done.Set();

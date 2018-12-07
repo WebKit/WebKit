@@ -19,7 +19,6 @@
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringencode.h"
 #include "rtc_base/third_party/base64/base64.h"
 #include "rtc_base/timeutils.h"
 #include "rtc_base/zero_memory.h"

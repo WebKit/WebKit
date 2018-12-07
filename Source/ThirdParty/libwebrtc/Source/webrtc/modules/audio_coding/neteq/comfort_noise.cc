@@ -11,11 +11,18 @@
 #include "modules/audio_coding/neteq/comfort_noise.h"
 
 #include <assert.h>
+#include <cstdint>
+#include <memory>
 
-#include "api/audio_codecs/audio_decoder.h"
+#include "api/array_view.h"
+#include "modules/audio_coding/codecs/cng/webrtc_cng.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/audio_vector.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/dsp_helper.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
+#include "rtc_base/buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

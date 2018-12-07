@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_RNN_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_RNN_VAD_RNN_H_
 
+#include <stddef.h>
+#include <sys/types.h>
 #include <array>
 
 #include "api/array_view.h"

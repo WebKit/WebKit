@@ -11,10 +11,15 @@
 #include "modules/audio_coding/neteq/red_payload_splitter.h"
 
 #include <assert.h>
+#include <stddef.h>
+#include <cstdint>
+#include <list>
+#include <utility>
 #include <vector>
 
 #include "modules/audio_coding/neteq/decoder_database.h"
-#include "rtc_base/checks.h"
+#include "modules/audio_coding/neteq/packet.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 

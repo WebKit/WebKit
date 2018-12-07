@@ -42,8 +42,8 @@ namespace rtc {
 class AsyncPacketSocket;
 class SocketAddress;
 struct PacketOptions;
-struct PacketTime;
 struct SentPacket;
+typedef int64_t PacketTime;
 }
 
 namespace WebCore {

@@ -35,8 +35,10 @@ bool RtcEventVideoSendStreamConfig::IsConfigEvent() const {
   return true;
 }
 
-std::unique_ptr<RtcEvent> RtcEventVideoSendStreamConfig::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventVideoSendStreamConfig(*this));
+std::unique_ptr<RtcEventVideoSendStreamConfig>
+RtcEventVideoSendStreamConfig::Copy() const {
+  return absl::WrapUnique<RtcEventVideoSendStreamConfig>(
+      new RtcEventVideoSendStreamConfig(*this));
 }
 
 }  // namespace webrtc

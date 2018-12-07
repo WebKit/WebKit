@@ -17,6 +17,8 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
+#include "rtc_base/memory_stream.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslidentity.h"
 #include "rtc_base/sslstreamadapter.h"
@@ -587,8 +589,7 @@ class SSLStreamAdapterTestBase : public testing::Test,
       chain = client_ssl_->GetPeerSSLCertChain();
     else
       chain = server_ssl_->GetPeerSSLCertChain();
-    return (chain && chain->GetSize()) ? chain->Get(0).GetUniqueReference()
-                                       : nullptr;
+    return (chain && chain->GetSize()) ? chain->Get(0).Clone() : nullptr;
   }
 
   bool GetSslCipherSuite(bool client, int* retval) {

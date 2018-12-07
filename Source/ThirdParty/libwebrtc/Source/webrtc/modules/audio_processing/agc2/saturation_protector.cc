@@ -11,6 +11,7 @@
 #include "modules/audio_processing/agc2/saturation_protector.h"
 
 #include <algorithm>
+#include <iterator>
 
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -56,9 +57,14 @@ float SaturationProtector::PeakEnveloper::Query() const {
 }
 
 SaturationProtector::SaturationProtector(ApmDataDumper* apm_data_dumper)
+    : SaturationProtector(apm_data_dumper, GetExtraSaturationMarginOffsetDb()) {
+}
+
+SaturationProtector::SaturationProtector(ApmDataDumper* apm_data_dumper,
+                                         float extra_saturation_margin_db)
     : apm_data_dumper_(apm_data_dumper),
       last_margin_(GetInitialSaturationMarginDb()),
-      extra_saturation_margin_db_(GetExtraSaturationMarginOffsetDb()) {}
+      extra_saturation_margin_db_(extra_saturation_margin_db) {}
 
 void SaturationProtector::UpdateMargin(
     const VadWithLevel::LevelAndProbability& vad_data,

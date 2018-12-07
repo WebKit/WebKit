@@ -15,7 +15,7 @@
 // 6762 and RFC 1025 (DNS messages). Note that it is recommended by RFC 6762 to
 // use the name compression scheme defined in RFC 1035 whenever possible. We
 // currently only implement the capability of reading compressed names in mDNS
-// messages in MDnsMessage::Read(); however, the MDnsMessage::Write() does not
+// messages in MdnsMessage::Read(); however, the MdnsMessage::Write() does not
 // support name compression yet.
 //
 // Fuzzer tests (test/fuzzers/mdns_parser_fuzzer.cc) MUST always be performed
@@ -50,7 +50,7 @@ enum class SectionEntryClass {
 };
 
 // RFC 1035, Section 4.1.1.
-class MDnsHeader final {
+class MdnsHeader final {
  public:
   bool Read(MessageBufferReader* buf);
   void Write(rtc::ByteBufferWriter* buf) const;
@@ -74,11 +74,11 @@ class MDnsHeader final {
 
 // Entries in each section after the header share a common structure. Note that
 // this is not a concept defined in RFC 1035.
-class MDnsSectionEntry {
+class MdnsSectionEntry {
  public:
-  MDnsSectionEntry();
-  MDnsSectionEntry(const MDnsSectionEntry& other);
-  virtual ~MDnsSectionEntry();
+  MdnsSectionEntry();
+  MdnsSectionEntry(const MdnsSectionEntry& other);
+  virtual ~MdnsSectionEntry();
   virtual bool Read(MessageBufferReader* buf) = 0;
   virtual bool Write(rtc::ByteBufferWriter* buf) const = 0;
 
@@ -99,11 +99,11 @@ class MDnsSectionEntry {
 };
 
 // RFC 1035, Section 4.1.2.
-class MDnsQuestion final : public MDnsSectionEntry {
+class MdnsQuestion final : public MdnsSectionEntry {
  public:
-  MDnsQuestion();
-  MDnsQuestion(const MDnsQuestion& other);
-  ~MDnsQuestion() override;
+  MdnsQuestion();
+  MdnsQuestion(const MdnsQuestion& other);
+  ~MdnsQuestion() override;
 
   bool Read(MessageBufferReader* buf) override;
   bool Write(rtc::ByteBufferWriter* buf) const override;
@@ -113,11 +113,11 @@ class MDnsQuestion final : public MDnsSectionEntry {
 };
 
 // RFC 1035, Section 4.1.3.
-class MDnsResourceRecord final : public MDnsSectionEntry {
+class MdnsResourceRecord final : public MdnsSectionEntry {
  public:
-  MDnsResourceRecord();
-  MDnsResourceRecord(const MDnsResourceRecord& other);
-  ~MDnsResourceRecord() override;
+  MdnsResourceRecord();
+  MdnsResourceRecord(const MdnsResourceRecord& other);
+  ~MdnsResourceRecord() override;
 
   bool Read(MessageBufferReader* buf) override;
   bool Write(rtc::ByteBufferWriter* buf) const override;
@@ -145,17 +145,17 @@ class MDnsResourceRecord final : public MDnsSectionEntry {
   std::string rdata_;
 };
 
-class MDnsMessage final {
+class MdnsMessage final {
  public:
   // RFC 1035, Section 4.1.
   enum class Section { kQuestion, kAnswer, kAuthority, kAdditional };
 
-  MDnsMessage();
-  ~MDnsMessage();
+  MdnsMessage();
+  ~MdnsMessage();
   // Reads the mDNS message in |buf| and populates the corresponding fields in
-  // MDnsMessage.
+  // MdnsMessage.
   bool Read(MessageBufferReader* buf);
-  // Write an mDNS message to |buf| based on the fields in MDnsMessage.
+  // Write an mDNS message to |buf| based on the fields in MdnsMessage.
   //
   // TODO(qingsi): Implement name compression when writing mDNS messages.
   bool Write(rtc::ByteBufferWriter* buf) const;
@@ -177,29 +177,29 @@ class MDnsMessage final {
   // preferred. False otherwise.
   bool ShouldUnicastResponse() const;
 
-  void AddQuestion(const MDnsQuestion& question);
+  void AddQuestion(const MdnsQuestion& question);
   // TODO(qingsi): Implement AddXRecord for name server and additional records.
-  void AddAnswerRecord(const MDnsResourceRecord& answer);
+  void AddAnswerRecord(const MdnsResourceRecord& answer);
 
-  const std::vector<MDnsQuestion>& question_section() const {
+  const std::vector<MdnsQuestion>& question_section() const {
     return question_section_;
   }
-  const std::vector<MDnsResourceRecord>& answer_section() const {
+  const std::vector<MdnsResourceRecord>& answer_section() const {
     return answer_section_;
   }
-  const std::vector<MDnsResourceRecord>& authority_section() const {
+  const std::vector<MdnsResourceRecord>& authority_section() const {
     return authority_section_;
   }
-  const std::vector<MDnsResourceRecord>& additional_section() const {
+  const std::vector<MdnsResourceRecord>& additional_section() const {
     return additional_section_;
   }
 
  private:
-  MDnsHeader header_;
-  std::vector<MDnsQuestion> question_section_;
-  std::vector<MDnsResourceRecord> answer_section_;
-  std::vector<MDnsResourceRecord> authority_section_;
-  std::vector<MDnsResourceRecord> additional_section_;
+  MdnsHeader header_;
+  std::vector<MdnsQuestion> question_section_;
+  std::vector<MdnsResourceRecord> answer_section_;
+  std::vector<MdnsResourceRecord> authority_section_;
+  std::vector<MdnsResourceRecord> additional_section_;
 };
 
 }  // namespace webrtc

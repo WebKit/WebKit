@@ -15,16 +15,17 @@
 #include "absl/memory/memory.h"
 #include "api/test/create_simulcast_test_fixture.h"
 #include "api/test/simulcast_test_fixture.h"
+#include "api/test/video/function_video_decoder_factory.h"
+#include "api/test/video/function_video_encoder_factory.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "common_video/include/video_frame_buffer.h"
+#include "media/base/mediaconstants.h"
 #include "media/engine/internalencoderfactory.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/simulcast_test_fixture_impl.h"
-#include "test/function_video_decoder_factory.h"
-#include "test/function_video_encoder_factory.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -55,7 +56,6 @@ std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture(
                                     std::move(decoder_factory),
                                     SdpVideoFormat(cricket::kVp8CodecName));
 }
-
 }  // namespace
 
 TEST(SimulcastEncoderAdapterSimulcastTest, TestKeyFrameRequestsOnAllStreams) {
@@ -144,6 +144,12 @@ TEST(SimulcastEncoderAdapterSimulcastTest,
   fixture->TestSpatioTemporalLayers321PatternEncoder();
 }
 
+TEST(SimulcastEncoderAdapterSimulcastTest, TestDecodeWidthHeightSet) {
+  InternalEncoderFactory internal_encoder_factory;
+  auto fixture = CreateSpecificSimulcastTestFixture(&internal_encoder_factory);
+  fixture->TestDecodeWidthHeightSet();
+}
+
 class MockVideoEncoder;
 
 class MockVideoEncoderFactory : public VideoEncoderFactory {
@@ -170,7 +176,9 @@ class MockVideoEncoderFactory : public VideoEncoderFactory {
 class MockVideoEncoder : public VideoEncoder {
  public:
   explicit MockVideoEncoder(MockVideoEncoderFactory* factory)
-      : factory_(factory), callback_(nullptr) {}
+      : factory_(factory),
+        scaling_settings_(VideoEncoder::ScalingSettings::kOff),
+        callback_(nullptr) {}
 
   // TODO(nisse): Valid overrides commented out, because the gmock
   // methods don't use any override declarations, and we want to avoid
@@ -203,10 +211,13 @@ class MockVideoEncoder : public VideoEncoder {
     return 0;
   }
 
-  MOCK_METHOD2(SetChannelParameters, int32_t(uint32_t packetLoss, int64_t rtt));
-
-  bool SupportsNativeHandle() const /* override */ {
-    return supports_native_handle_;
+  EncoderInfo GetEncoderInfo() const override {
+    EncoderInfo info;
+    info.supports_native_handle = supports_native_handle_;
+    info.implementation_name = implementation_name_;
+    info.scaling_settings = scaling_settings_;
+    info.has_trusted_rate_controller = has_trusted_rate_controller_;
+    return info;
   }
 
   virtual ~MockVideoEncoder() { factory_->DestroyVideoEncoder(this); }
@@ -228,17 +239,30 @@ class MockVideoEncoder : public VideoEncoder {
     supports_native_handle_ = enabled;
   }
 
+  void set_implementation_name(const std::string& name) {
+    implementation_name_ = name;
+  }
+
   void set_init_encode_return_value(int32_t value) {
     init_encode_return_value_ = value;
   }
 
-  VideoBitrateAllocation last_set_bitrate() const { return last_set_bitrate_; }
+  void set_scaling_settings(const VideoEncoder::ScalingSettings& settings) {
+    scaling_settings_ = settings;
+  }
 
-  MOCK_CONST_METHOD0(ImplementationName, const char*());
+  void set_has_trusted_rate_controller(bool trusted) {
+    has_trusted_rate_controller_ = trusted;
+  }
+
+  VideoBitrateAllocation last_set_bitrate() const { return last_set_bitrate_; }
 
  private:
   MockVideoEncoderFactory* const factory_;
   bool supports_native_handle_ = false;
+  std::string implementation_name_ = "unknown";
+  VideoEncoder::ScalingSettings scaling_settings_;
+  bool has_trusted_rate_controller_ = false;
   int32_t init_encode_return_value_ = 0;
   VideoBitrateAllocation last_set_bitrate_;
 
@@ -260,7 +284,7 @@ std::unique_ptr<VideoEncoder> MockVideoEncoderFactory::CreateVideoEncoder(
   const char* encoder_name = encoder_names_.empty()
                                  ? "codec_implementation_name"
                                  : encoder_names_[encoders_.size()];
-  ON_CALL(*encoder, ImplementationName()).WillByDefault(Return(encoder_name));
+  encoder->set_implementation_name(encoder_name);
   encoders_.push_back(encoder.get());
   return encoder;
 }
@@ -300,15 +324,6 @@ class TestSimulcastEncoderAdapterFakeHelper {
   // ownership of |factory_|.
   VideoEncoder* CreateMockEncoderAdapter() {
     return new SimulcastEncoderAdapter(factory_.get(), SdpVideoFormat("VP8"));
-  }
-
-  void ExpectCallSetChannelParameters(uint32_t packetLoss, int64_t rtt) {
-    EXPECT_TRUE(!factory_->encoders().empty());
-    for (size_t i = 0; i < factory_->encoders().size(); ++i) {
-      EXPECT_CALL(*factory_->encoders()[i],
-                  SetChannelParameters(packetLoss, rtt))
-          .Times(1);
-    }
   }
 
   MockVideoEncoderFactory* factory() { return factory_.get(); }
@@ -457,14 +472,6 @@ TEST_F(TestSimulcastEncoderAdapterFake, Reinit) {
   EXPECT_EQ(0, adapter_->Release());
 
   EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
-}
-
-TEST_F(TestSimulcastEncoderAdapterFake, SetChannelParameters) {
-  SetupCodec();
-  const uint32_t packetLoss = 5;
-  const int64_t rtt = 30;
-  helper_->ExpectCallSetChannelParameters(packetLoss, rtt);
-  adapter_->SetChannelParameters(packetLoss, rtt);
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake, EncodedCallbackForDifferentEncoders) {
@@ -728,9 +735,11 @@ TEST_F(TestSimulcastEncoderAdapterFake, SupportsNativeHandleForSingleStreams) {
   adapter_->RegisterEncodeCompleteCallback(this);
   ASSERT_EQ(1u, helper_->factory()->encoders().size());
   helper_->factory()->encoders()[0]->set_supports_native_handle(true);
-  EXPECT_TRUE(adapter_->SupportsNativeHandle());
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_TRUE(adapter_->GetEncoderInfo().supports_native_handle);
   helper_->factory()->encoders()[0]->set_supports_native_handle(false);
-  EXPECT_FALSE(adapter_->SupportsNativeHandle());
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_FALSE(adapter_->GetEncoderInfo().supports_native_handle);
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake, SetRatesUnderMinBitrate) {
@@ -763,7 +772,8 @@ TEST_F(TestSimulcastEncoderAdapterFake, SetRatesUnderMinBitrate) {
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake, SupportsImplementationName) {
-  EXPECT_STREQ("SimulcastEncoderAdapter", adapter_->ImplementationName());
+  EXPECT_EQ("SimulcastEncoderAdapter",
+            adapter_->GetEncoderInfo().implementation_name);
   SimulcastTestFixtureImpl::DefaultSettings(
       &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
       kVideoCodecVP8);
@@ -773,8 +783,8 @@ TEST_F(TestSimulcastEncoderAdapterFake, SupportsImplementationName) {
   encoder_names.push_back("codec3");
   helper_->factory()->SetEncoderNames(encoder_names);
   EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
-  EXPECT_STREQ("SimulcastEncoderAdapter (codec1, codec2, codec3)",
-               adapter_->ImplementationName());
+  EXPECT_EQ("SimulcastEncoderAdapter (codec1, codec2, codec3)",
+            adapter_->GetEncoderInfo().implementation_name);
 
   // Single streams should not expose "SimulcastEncoderAdapter" in name.
   EXPECT_EQ(0, adapter_->Release());
@@ -782,7 +792,7 @@ TEST_F(TestSimulcastEncoderAdapterFake, SupportsImplementationName) {
   EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
   adapter_->RegisterEncodeCompleteCallback(this);
   ASSERT_EQ(1u, helper_->factory()->encoders().size());
-  EXPECT_STREQ("codec1", adapter_->ImplementationName());
+  EXPECT_EQ("codec1", adapter_->GetEncoderInfo().implementation_name);
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake,
@@ -798,10 +808,11 @@ TEST_F(TestSimulcastEncoderAdapterFake,
     encoder->set_supports_native_handle(true);
   // If one encoder doesn't support it, then overall support is disabled.
   helper_->factory()->encoders()[0]->set_supports_native_handle(false);
-  EXPECT_FALSE(adapter_->SupportsNativeHandle());
+  EXPECT_FALSE(adapter_->GetEncoderInfo().supports_native_handle);
   // Once all do, then the adapter claims support.
   helper_->factory()->encoders()[0]->set_supports_native_handle(true);
-  EXPECT_TRUE(adapter_->SupportsNativeHandle());
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_TRUE(adapter_->GetEncoderInfo().supports_native_handle);
 }
 
 // TODO(nisse): Reuse definition in webrtc/test/fake_texture_handle.h.
@@ -837,7 +848,8 @@ TEST_F(TestSimulcastEncoderAdapterFake,
   ASSERT_EQ(3u, helper_->factory()->encoders().size());
   for (MockVideoEncoder* encoder : helper_->factory()->encoders())
     encoder->set_supports_native_handle(true);
-  EXPECT_TRUE(adapter_->SupportsNativeHandle());
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_TRUE(adapter_->GetEncoderInfo().supports_native_handle);
 
   rtc::scoped_refptr<VideoFrameBuffer> buffer(
       new rtc::RefCountedObject<FakeNativeBufferNoI420>(1280, 720));
@@ -948,5 +960,50 @@ TEST_F(TestSimulcastEncoderAdapterFake, ActivatesCorrectStreamsInInitEncode) {
   frame_types.resize(3, kVideoFrameKey);
   EXPECT_EQ(0, adapter_->Encode(input_frame, nullptr, &frame_types));
 }
+
+TEST_F(TestSimulcastEncoderAdapterFake, TrustedRateControl) {
+  // Set up common settings for three streams.
+  SimulcastTestFixtureImpl::DefaultSettings(
+      &codec_, static_cast<const int*>(kTestTemporalLayerProfile),
+      kVideoCodecVP8);
+  rate_allocator_.reset(new SimulcastRateAllocator(codec_));
+  adapter_->RegisterEncodeCompleteCallback(this);
+
+  // Only enough start bitrate for the lowest stream.
+  ASSERT_EQ(3u, codec_.numberOfSimulcastStreams);
+  codec_.startBitrate = codec_.simulcastStream[0].targetBitrate +
+                        codec_.simulcastStream[1].minBitrate - 1;
+
+  // Input data.
+  rtc::scoped_refptr<VideoFrameBuffer> buffer(I420Buffer::Create(1280, 720));
+  VideoFrame input_frame(buffer, 100, 1000, kVideoRotation_180);
+
+  // No encoder trusted, so simulcast adapter should not be either.
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_FALSE(adapter_->GetEncoderInfo().has_trusted_rate_controller);
+
+  // Encode with three streams.
+  std::vector<MockVideoEncoder*> original_encoders =
+      helper_->factory()->encoders();
+
+  // All encoders are trusted, so simulcast adapter should be too.
+  original_encoders[0]->set_has_trusted_rate_controller(true);
+  original_encoders[1]->set_has_trusted_rate_controller(true);
+  original_encoders[2]->set_has_trusted_rate_controller(true);
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_TRUE(adapter_->GetEncoderInfo().has_trusted_rate_controller);
+
+  // One encoder not trusted, so simulcast adapter should not be either.
+  original_encoders[2]->set_has_trusted_rate_controller(false);
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_FALSE(adapter_->GetEncoderInfo().has_trusted_rate_controller);
+
+  // No encoder trusted, so simulcast adapter should not be either.
+  original_encoders[0]->set_has_trusted_rate_controller(false);
+  original_encoders[1]->set_has_trusted_rate_controller(false);
+  EXPECT_EQ(0, adapter_->InitEncode(&codec_, 1, 1200));
+  EXPECT_FALSE(adapter_->GetEncoderInfo().has_trusted_rate_controller);
+}
+
 }  // namespace test
 }  // namespace webrtc

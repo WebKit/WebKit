@@ -17,9 +17,9 @@
 #include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include "media/engine/scopedvideoencoder.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
@@ -127,9 +127,9 @@ SimulcastEncoderAdapter::SimulcastEncoderAdapter(VideoEncoderFactory* factory,
       factory_(factory),
       video_format_(format),
       encoded_complete_callback_(nullptr),
-      implementation_name_("SimulcastEncoderAdapter"),
       experimental_boosted_screenshare_qp_(GetScreenshareBoostedQpValue()) {
   RTC_DCHECK(factory_);
+  encoder_info_.implementation_name = "SimulcastEncoderAdapter";
 
   // The adapter is typically created on the worker thread, but operated on
   // the encoder task queue.
@@ -203,7 +203,8 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
     start_bitrates.push_back(stream_bitrate);
   }
 
-  std::string implementation_name;
+  encoder_info_.supports_native_handle = true;
+  encoder_info_.scaling_settings.thresholds = absl::nullopt;
   // Create |number_of_streams| of encoder instances and init them.
   for (int i = 0; i < number_of_streams; ++i) {
     VideoCodec stream_codec;
@@ -212,6 +213,7 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
     if (!doing_simulcast) {
       stream_codec = codec_;
       stream_codec.numberOfSimulcastStreams = 1;
+
     } else {
       // Cap start bitrate to the min bitrate in order to avoid strange codec
       // behavior. Since sending will be false, this should not matter.
@@ -247,6 +249,7 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
       Release();
       return ret;
     }
+
     std::unique_ptr<EncodedImageCallback> callback(
         new AdapterEncodedImageCallback(this, i));
     encoder->RegisterEncodeCompleteCallback(callback.get());
@@ -254,17 +257,45 @@ int SimulcastEncoderAdapter::InitEncode(const VideoCodec* inst,
                               stream_codec.width, stream_codec.height,
                               send_stream);
 
-    if (i != 0) {
-      implementation_name += ", ";
+    if (!doing_simulcast) {
+      // Without simulcast, just pass through the encoder info from the one
+      // active encoder.
+      encoder_info_ = streaminfos_[0].encoder->GetEncoderInfo();
+    } else {
+      const EncoderInfo encoder_impl_info =
+          streaminfos_[i].encoder->GetEncoderInfo();
+
+      if (i == 0) {
+        // Quality scaling not enabled for simulcast.
+        encoder_info_.scaling_settings = VideoEncoder::ScalingSettings::kOff;
+
+        // Encoder name indicates names of all sub-encoders.
+        encoder_info_.implementation_name = "SimulcastEncoderAdapter (";
+        encoder_info_.implementation_name +=
+            encoder_impl_info.implementation_name;
+
+        encoder_info_.supports_native_handle =
+            encoder_impl_info.supports_native_handle;
+        encoder_info_.has_trusted_rate_controller =
+            encoder_impl_info.has_trusted_rate_controller;
+      } else {
+        encoder_info_.implementation_name += ", ";
+        encoder_info_.implementation_name +=
+            encoder_impl_info.implementation_name;
+
+        // Native handle supported only if all encoders supports it.
+        encoder_info_.supports_native_handle &=
+            encoder_impl_info.supports_native_handle;
+
+        // Trusted rate controller only if all encoders have it.
+        encoder_info_.has_trusted_rate_controller &=
+            encoder_impl_info.has_trusted_rate_controller;
+      }
     }
-    implementation_name += streaminfos_[i].encoder->ImplementationName();
   }
 
   if (doing_simulcast) {
-    implementation_name_ =
-        "SimulcastEncoderAdapter (" + implementation_name + ")";
-  } else {
-    implementation_name_ = implementation_name;
+    encoder_info_.implementation_name += ")";
   }
 
   // To save memory, don't store encoders that we don't use.
@@ -377,15 +408,6 @@ int SimulcastEncoderAdapter::RegisterEncodeCompleteCallback(
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-int SimulcastEncoderAdapter::SetChannelParameters(uint32_t packet_loss,
-                                                  int64_t rtt) {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_);
-  for (size_t stream_idx = 0; stream_idx < streaminfos_.size(); ++stream_idx) {
-    streaminfos_[stream_idx].encoder->SetChannelParameters(packet_loss, rtt);
-  }
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
 int SimulcastEncoderAdapter::SetRateAllocation(
     const VideoBitrateAllocation& bitrate,
     uint32_t new_framerate) {
@@ -452,7 +474,6 @@ EncodedImageCallback::Result SimulcastEncoderAdapter::OnEncodedImage(
     const RTPFragmentationHeader* fragmentation) {
   EncodedImage stream_image(encodedImage);
   CodecSpecificInfo stream_codec_specific = *codecSpecificInfo;
-  stream_codec_specific.codec_name = implementation_name_.c_str();
 
   stream_image.SetSpatialIndex(stream_idx);
 
@@ -517,32 +538,8 @@ void SimulcastEncoderAdapter::DestroyStoredEncoders() {
   }
 }
 
-bool SimulcastEncoderAdapter::SupportsNativeHandle() const {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_);
-  // We should not be calling this method before streaminfos_ are configured.
-  RTC_DCHECK(!streaminfos_.empty());
-  for (const auto& streaminfo : streaminfos_) {
-    if (!streaminfo.encoder->SupportsNativeHandle()) {
-      return false;
-    }
-  }
-  return true;
-}
-
-VideoEncoder::ScalingSettings SimulcastEncoderAdapter::GetScalingSettings()
-    const {
-  // TODO(brandtr): Investigate why the sequence checker below fails on mac.
-  // RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_);
-  // Turn off quality scaling for simulcast.
-  if (!Initialized() || NumberOfStreams(codec_) != 1) {
-    return VideoEncoder::ScalingSettings::kOff;
-  }
-  return streaminfos_[0].encoder->GetScalingSettings();
-}
-
-const char* SimulcastEncoderAdapter::ImplementationName() const {
-  RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_);
-  return implementation_name_.c_str();
+VideoEncoder::EncoderInfo SimulcastEncoderAdapter::GetEncoderInfo() const {
+  return encoder_info_;
 }
 
 }  // namespace webrtc

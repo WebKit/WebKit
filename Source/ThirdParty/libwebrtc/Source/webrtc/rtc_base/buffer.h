@@ -149,11 +149,13 @@ class BufferT {
   }
 
   BufferT& operator=(BufferT&& buf) {
-    RTC_DCHECK(IsConsistent());
     RTC_DCHECK(buf.IsConsistent());
+    MaybeZeroCompleteBuffer();
     size_ = buf.size_;
     capacity_ = buf.capacity_;
-    data_ = std::move(buf.data_);
+    using std::swap;
+    swap(data_, buf.data_);
+    buf.data_.reset();
     buf.OnMovedFrom();
     return *this;
   }
@@ -374,10 +376,10 @@ class BufferT {
 
   // Zero the complete buffer if template argument "ZeroOnFree" is true.
   void MaybeZeroCompleteBuffer() {
-    if (ZeroOnFree && capacity_) {
+    if (ZeroOnFree && capacity_ > 0) {
       // It would be sufficient to only zero "size_" elements, as all other
       // methods already ensure that the unused capacity contains no sensitive
-      // data - but better safe than sorry.
+      // data---but better safe than sorry.
       ExplicitZeroMemory(data_.get(), capacity_ * sizeof(T));
     }
   }
@@ -389,7 +391,7 @@ class BufferT {
     ExplicitZeroMemory(data_.get() + size_, count * sizeof(T));
   }
 
-  // Precondition for all methods except Clear and the destructor.
+  // Precondition for all methods except Clear, operator= and the destructor.
   // Postcondition for all methods except move construction and move
   // assignment, which leave the moved-from object in a possibly inconsistent
   // state.
@@ -400,14 +402,15 @@ class BufferT {
   // Called when *this has been moved from. Conceptually it's a no-op, but we
   // can mutate the state slightly to help subsequent sanity checks catch bugs.
   void OnMovedFrom() {
+    RTC_DCHECK(!data_);  // Our heap block should have been stolen.
 #if RTC_DCHECK_IS_ON
+    // Ensure that *this is always inconsistent, to provoke bugs.
+    size_ = 1;
+    capacity_ = 0;
+#else
     // Make *this consistent and empty. Shouldn't be necessary, but better safe
     // than sorry.
     size_ = 0;
-    capacity_ = 0;
-#else
-    // Ensure that *this is always inconsistent, to provoke bugs.
-    size_ = 1;
     capacity_ = 0;
 #endif
   }

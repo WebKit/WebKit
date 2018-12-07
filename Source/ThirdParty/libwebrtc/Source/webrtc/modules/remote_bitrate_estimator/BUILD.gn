@@ -42,7 +42,9 @@ rtc_static_library("remote_bitrate_estimator") {
   deps = [
     "../..:webrtc_common",
     "../../api/units:data_rate",
+    "../../api/units:timestamp",
     "../../modules:module_api",
+    "../../modules:module_api_public",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
@@ -227,6 +229,7 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../test:fileutils",
       "../../test:test_main",
+      "../../test:test_support",
       "//testing/gtest",
     ]
     data = [

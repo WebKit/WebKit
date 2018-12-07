@@ -143,7 +143,7 @@ class SynchronousMethodCall : public rtc::MessageData,
  private:
   void OnMessage(rtc::Message*) override;
 
-  std::unique_ptr<rtc::Event> e_;
+  rtc::Event e_;
   rtc::MessageHandler* proxy_;
 };
 

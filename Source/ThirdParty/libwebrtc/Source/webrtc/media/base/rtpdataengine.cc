@@ -12,6 +12,7 @@
 
 #include <map>
 
+#include "absl/strings/match.h"
 #include "media/base/codec.h"
 #include "media/base/mediaconstants.h"
 #include "media/base/rtputils.h"
@@ -21,7 +22,6 @@
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/sanitizer.h"
-#include "rtc_base/stringutils.h"
 
 namespace cricket {
 
@@ -47,7 +47,7 @@ DataMediaChannel* RtpDataEngine::CreateChannel(const MediaConfig& config) {
 static const DataCodec* FindCodecByName(const std::vector<DataCodec>& codecs,
                                         const std::string& name) {
   for (const DataCodec& codec : codecs) {
-    if (_stricmp(name.c_str(), codec.name.c_str()) == 0)
+    if (absl::EqualsIgnoreCase(name, codec.name))
       return &codec;
   }
   return nullptr;
@@ -194,7 +194,7 @@ bool RtpDataMediaChannel::RemoveRecvStream(uint32_t ssrc) {
 }
 
 void RtpDataMediaChannel::OnPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                           const rtc::PacketTime& packet_time) {
+                                           int64_t /* packet_time_us */) {
   RtpHeader header;
   if (!GetRtpHeader(packet->cdata(), packet->size(), &header)) {
     return;

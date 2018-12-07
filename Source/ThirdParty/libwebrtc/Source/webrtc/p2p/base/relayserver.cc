@@ -115,7 +115,7 @@ void RelayServer::AddInternalSocket(rtc::AsyncPacketSocket* socket) {
 }
 
 void RelayServer::RemoveInternalSocket(rtc::AsyncPacketSocket* socket) {
-  SocketList::iterator iter =
+  auto iter =
       std::find(internal_sockets_.begin(), internal_sockets_.end(), socket);
   RTC_DCHECK(iter != internal_sockets_.end());
   internal_sockets_.erase(iter);
@@ -132,7 +132,7 @@ void RelayServer::AddExternalSocket(rtc::AsyncPacketSocket* socket) {
 }
 
 void RelayServer::RemoveExternalSocket(rtc::AsyncPacketSocket* socket) {
-  SocketList::iterator iter =
+  auto iter =
       std::find(external_sockets_.begin(), external_sockets_.end(), socket);
   RTC_DCHECK(iter != external_sockets_.end());
   external_sockets_.erase(iter);
@@ -148,7 +148,7 @@ void RelayServer::AddInternalServerSocket(rtc::AsyncSocket* socket,
 }
 
 void RelayServer::RemoveInternalServerSocket(rtc::AsyncSocket* socket) {
-  ServerSocketMap::iterator iter = server_sockets_.find(socket);
+  auto iter = server_sockets_.find(socket);
   RTC_DCHECK(iter != server_sockets_.end());
   server_sockets_.erase(iter);
   socket->SignalReadEvent.disconnect(this);
@@ -160,10 +160,9 @@ int RelayServer::GetConnectionCount() const {
 
 rtc::SocketAddressPair RelayServer::GetConnection(int connection) const {
   int i = 0;
-  for (ConnectionMap::const_iterator it = connections_.begin();
-       it != connections_.end(); ++it) {
+  for (const auto& entry : connections_) {
     if (i == connection) {
-      return it->second->addr_pair();
+      return entry.second->addr_pair();
     }
     ++i;
   }
@@ -171,9 +170,8 @@ rtc::SocketAddressPair RelayServer::GetConnection(int connection) const {
 }
 
 bool RelayServer::HasConnection(const rtc::SocketAddress& address) const {
-  for (ConnectionMap::const_iterator it = connections_.begin();
-       it != connections_.end(); ++it) {
-    if (it->second->addr_pair().destination() == address) {
+  for (const auto& entry : connections_) {
+    if (entry.second->addr_pair().destination() == address) {
       return true;
     }
   }
@@ -189,14 +187,14 @@ void RelayServer::OnInternalPacket(rtc::AsyncPacketSocket* socket,
                                    const char* bytes,
                                    size_t size,
                                    const rtc::SocketAddress& remote_addr,
-                                   const rtc::PacketTime& packet_time) {
+                                   const int64_t& /* packet_time_us */) {
   // Get the address of the connection we just received on.
   rtc::SocketAddressPair ap(remote_addr, socket->GetLocalAddress());
   RTC_DCHECK(!ap.destination().IsNil());
 
   // If this did not come from an existing connection, it should be a STUN
   // allocate request.
-  ConnectionMap::iterator piter = connections_.find(ap);
+  auto piter = connections_.find(ap);
   if (piter == connections_.end()) {
     HandleStunAllocate(bytes, size, ap, socket);
     return;
@@ -234,13 +232,13 @@ void RelayServer::OnExternalPacket(rtc::AsyncPacketSocket* socket,
                                    const char* bytes,
                                    size_t size,
                                    const rtc::SocketAddress& remote_addr,
-                                   const rtc::PacketTime& packet_time) {
+                                   const int64_t& /* packet_time_us */) {
   // Get the address of the connection we just received on.
   rtc::SocketAddressPair ap(remote_addr, socket->GetLocalAddress());
   RTC_DCHECK(!ap.destination().IsNil());
 
   // If this connection already exists, then forward the traffic.
-  ConnectionMap::iterator piter = connections_.find(ap);
+  auto piter = connections_.find(ap);
   if (piter != connections_.end()) {
     // TODO(?): Check the HMAC.
     RelayServerConnection* ext_conn = piter->second;
@@ -276,7 +274,7 @@ void RelayServer::OnExternalPacket(rtc::AsyncPacketSocket* socket,
   // TODO(?): Check the HMAC.
 
   // The binding should already be present.
-  BindingMap::iterator biter = bindings_.find(username);
+  auto biter = bindings_.find(username);
   if (biter == bindings_.end()) {
     RTC_LOG(LS_WARNING) << "Dropping packet: no binding with username";
     return;
@@ -351,7 +349,7 @@ void RelayServer::HandleStunAllocate(const char* bytes,
 
   RelayServerBinding* binding;
 
-  BindingMap::iterator biter = bindings_.find(username);
+  auto biter = bindings_.find(username);
   if (biter != bindings_.end()) {
     binding = biter->second;
   } else {
@@ -514,13 +512,13 @@ void RelayServer::AddConnection(RelayServerConnection* conn) {
 }
 
 void RelayServer::RemoveConnection(RelayServerConnection* conn) {
-  ConnectionMap::iterator iter = connections_.find(conn->addr_pair());
+  auto iter = connections_.find(conn->addr_pair());
   RTC_DCHECK(iter != connections_.end());
   connections_.erase(iter);
 }
 
 void RelayServer::RemoveBinding(RelayServerBinding* binding) {
-  BindingMap::iterator iter = bindings_.find(binding->username());
+  auto iter = bindings_.find(binding->username());
   RTC_DCHECK(iter != bindings_.end());
   bindings_.erase(iter);
 

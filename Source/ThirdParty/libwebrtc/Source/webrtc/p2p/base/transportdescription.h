@@ -67,11 +67,13 @@ struct IceParameters {
                 bool ice_renomination)
       : ufrag(ice_ufrag), pwd(ice_pwd), renomination(ice_renomination) {}
 
-  bool operator==(const IceParameters& other) {
+  bool operator==(const IceParameters& other) const {
     return ufrag == other.ufrag && pwd == other.pwd &&
            renomination == other.renomination;
   }
-  bool operator!=(const IceParameters& other) { return !(*this == other); }
+  bool operator!=(const IceParameters& other) const {
+    return !(*this == other);
+  }
 };
 
 extern const char CONNECTIONROLE_ACTIVE_STR[];

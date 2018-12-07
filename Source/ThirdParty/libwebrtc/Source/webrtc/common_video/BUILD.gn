@@ -26,7 +26,6 @@ rtc_static_library("common_video") {
     "h264/sps_vui_rewriter.h",
     "i420_buffer_pool.cc",
     "include/bitrate_adjuster.h",
-    "include/frame_callback.h",
     "include/i420_buffer_pool.h",
     "include/incoming_video_stream.h",
     "include/video_frame.h",
@@ -34,7 +33,6 @@ rtc_static_library("common_video") {
     "incoming_video_stream.cc",
     "libyuv/include/webrtc_libyuv.h",
     "libyuv/webrtc_libyuv.cc",
-    "video_frame.cc",
     "video_frame_buffer.cc",
     "video_render_frames.cc",
     "video_render_frames.h",
@@ -42,6 +40,7 @@ rtc_static_library("common_video") {
 
   deps = [
     "..:webrtc_common",
+    "../api/video:encoded_image",
     "../api/video:video_bitrate_allocation",
     "../api/video:video_bitrate_allocator",
     "../api/video:video_frame",
@@ -96,6 +95,7 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base_tests_utils",
       "../test:fileutils",
       "../test:test_main",
+      "../test:test_support",
       "../test:video_test_common",
       "//testing/gtest",
       "//third_party/libyuv",

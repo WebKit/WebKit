@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/mock_video_decoder.h"
+#include "api/test/mock_video_encoder.h"
 #include "api/test/simulcast_test_fixture.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
@@ -21,7 +23,6 @@
 #include "api/video_codecs/video_encoder_factory.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
-#include "modules/video_coding/include/mock/mock_video_codec_interface.h"
 
 namespace webrtc {
 namespace test {
@@ -50,6 +51,7 @@ class SimulcastTestFixtureImpl final : public SimulcastTestFixture {
   void TestSpatioTemporalLayers333PatternEncoder() override;
   void TestSpatioTemporalLayers321PatternEncoder() override;
   void TestStrideEncodeDecode() override;
+  void TestDecodeWidthHeightSet() override;
 
   static void DefaultSettings(VideoCodec* settings,
                               const int* temporal_layer_profile,

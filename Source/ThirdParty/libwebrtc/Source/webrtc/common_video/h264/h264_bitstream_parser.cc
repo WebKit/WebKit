@@ -9,13 +9,12 @@
  */
 #include "common_video/h264/h264_bitstream_parser.h"
 
-#include <memory>
+#include <stdlib.h>
+#include <cstdint>
 #include <vector>
 
-#include "rtc_base/bitbuffer.h"
-#include "rtc_base/checks.h"
-
 #include "common_video/h264/h264_common.h"
+#include "rtc_base/bitbuffer.h"
 #include "rtc_base/logging.h"
 
 namespace {

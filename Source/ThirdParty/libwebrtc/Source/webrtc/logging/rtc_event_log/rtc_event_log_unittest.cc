@@ -101,13 +101,16 @@ struct EventCounts {
 };
 
 class RtcEventLogSession
-    : public ::testing::TestWithParam<std::tuple<uint64_t, int64_t>> {
+    : public ::testing::TestWithParam<
+          std::tuple<uint64_t, int64_t, RtcEventLog::EncodingType>> {
  public:
   RtcEventLogSession()
       : seed_(std::get<0>(GetParam())),
         prng_(seed_),
+        output_period_ms_(std::get<1>(GetParam())),
+        encoding_type_(std::get<2>(GetParam())),
         gen_(seed_ * 880001UL),
-        output_period_ms_(std::get<1>(GetParam())) {
+        verifier_(encoding_type_) {
     clock_.SetTimeMicros(prng_.Rand<uint32_t>());
     // Find the name of the current test, in order to use it as a temporary
     // filename.
@@ -166,12 +169,15 @@ class RtcEventLogSession
   std::vector<std::unique_ptr<RtcEventRtcpPacketOutgoing>> outgoing_rtcp_list_;
 
   int64_t start_time_us_;
+  int64_t utc_start_time_us_;
   int64_t stop_time_us_;
 
   const uint64_t seed_;
   Random prng_;
+  const int64_t output_period_ms_;
+  const RtcEventLog::EncodingType encoding_type_;
   test::EventGenerator gen_;
-  int64_t output_period_ms_;
+  test::EventVerifier verifier_;
   rtc::ScopedFakeClock clock_;
   std::string temp_filename_;
 };
@@ -284,8 +290,7 @@ void RtcEventLogSession::WriteLog(EventCounts count,
   // Maybe always use the ScopedFakeClock, but conditionally SleepMs()?
 
   // The log file will be flushed to disk when the event_log goes out of scope.
-  std::unique_ptr<RtcEventLog> event_log(
-      RtcEventLog::Create(RtcEventLog::EncodingType::Legacy));
+  std::unique_ptr<RtcEventLog> event_log(RtcEventLog::Create(encoding_type_));
 
   // We can't send or receive packets without configured streams.
   RTC_CHECK_GE(count.video_recv_streams, 1);
@@ -306,6 +311,7 @@ void RtcEventLogSession::WriteLog(EventCounts count,
           absl::make_unique<RtcEventLogOutputFile>(temp_filename_, 10000000),
           output_period_ms_);
       start_time_us_ = rtc::TimeMicros();
+      utc_start_time_us_ = rtc::TimeUTCMicros();
     }
 
     clock_.AdvanceTimeMicros(prng_.Rand(20) * 1000);
@@ -465,19 +471,18 @@ void RtcEventLogSession::ReadAndVerifyLog() {
   // Start and stop events.
   auto& parsed_start_log_events = parsed_log.start_log_events();
   ASSERT_EQ(parsed_start_log_events.size(), static_cast<size_t>(1));
-  EXPECT_TRUE(
-      test::VerifyLoggedStartEvent(start_time_us_, parsed_start_log_events[0]));
+  verifier_.VerifyLoggedStartEvent(start_time_us_, utc_start_time_us_,
+                                   parsed_start_log_events[0]);
 
   auto& parsed_stop_log_events = parsed_log.stop_log_events();
   ASSERT_EQ(parsed_stop_log_events.size(), static_cast<size_t>(1));
-  EXPECT_TRUE(
-      test::VerifyLoggedStopEvent(stop_time_us_, parsed_stop_log_events[0]));
+  verifier_.VerifyLoggedStopEvent(stop_time_us_, parsed_stop_log_events[0]);
 
   auto& parsed_alr_state_events = parsed_log.alr_state_events();
   ASSERT_EQ(parsed_alr_state_events.size(), alr_state_list_.size());
   for (size_t i = 0; i < parsed_alr_state_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedAlrStateEvent(*alr_state_list_[i],
-                                                parsed_alr_state_events[i]));
+    verifier_.VerifyLoggedAlrStateEvent(*alr_state_list_[i],
+                                        parsed_alr_state_events[i]);
   }
 
   const auto& parsed_audio_playout_map = parsed_log.audio_playout_events();
@@ -488,8 +493,8 @@ void RtcEventLogSession::ReadAndVerifyLog() {
     const auto& audio_playout_stream = audio_playout_map_[ssrc];
     ASSERT_EQ(parsed_audio_playout_stream.size(), audio_playout_stream.size());
     for (size_t i = 0; i < parsed_audio_playout_map.size(); i++) {
-      EXPECT_TRUE(test::VerifyLoggedAudioPlayoutEvent(
-          *audio_playout_stream[i], parsed_audio_playout_stream[i]));
+      verifier_.VerifyLoggedAudioPlayoutEvent(*audio_playout_stream[i],
+                                              parsed_audio_playout_stream[i]);
     }
   }
 
@@ -498,22 +503,22 @@ void RtcEventLogSession::ReadAndVerifyLog() {
   ASSERT_EQ(parsed_audio_network_adaptation_events.size(),
             ana_configs_list_.size());
   for (size_t i = 0; i < parsed_audio_network_adaptation_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedAudioNetworkAdaptationEvent(
-        *ana_configs_list_[i], parsed_audio_network_adaptation_events[i]));
+    verifier_.VerifyLoggedAudioNetworkAdaptationEvent(
+        *ana_configs_list_[i], parsed_audio_network_adaptation_events[i]);
   }
 
   auto& parsed_bwe_delay_updates = parsed_log.bwe_delay_updates();
   ASSERT_EQ(parsed_bwe_delay_updates.size(), bwe_delay_list_.size());
   for (size_t i = 0; i < parsed_bwe_delay_updates.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedBweDelayBasedUpdate(
-        *bwe_delay_list_[i], parsed_bwe_delay_updates[i]));
+    verifier_.VerifyLoggedBweDelayBasedUpdate(*bwe_delay_list_[i],
+                                              parsed_bwe_delay_updates[i]);
   }
 
   auto& parsed_bwe_loss_updates = parsed_log.bwe_loss_updates();
   ASSERT_EQ(parsed_bwe_loss_updates.size(), bwe_loss_list_.size());
   for (size_t i = 0; i < parsed_bwe_loss_updates.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedBweLossBasedUpdate(
-        *bwe_loss_list_[i], parsed_bwe_loss_updates[i]));
+    verifier_.VerifyLoggedBweLossBasedUpdate(*bwe_loss_list_[i],
+                                             parsed_bwe_loss_updates[i]);
   }
 
   auto& parsed_bwe_probe_cluster_created_events =
@@ -521,30 +526,30 @@ void RtcEventLogSession::ReadAndVerifyLog() {
   ASSERT_EQ(parsed_bwe_probe_cluster_created_events.size(),
             probe_creation_list_.size());
   for (size_t i = 0; i < parsed_bwe_probe_cluster_created_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedBweProbeClusterCreatedEvent(
-        *probe_creation_list_[i], parsed_bwe_probe_cluster_created_events[i]));
+    verifier_.VerifyLoggedBweProbeClusterCreatedEvent(
+        *probe_creation_list_[i], parsed_bwe_probe_cluster_created_events[i]);
   }
 
   auto& parsed_bwe_probe_failure_events = parsed_log.bwe_probe_failure_events();
   ASSERT_EQ(parsed_bwe_probe_failure_events.size(), probe_failure_list_.size());
   for (size_t i = 0; i < parsed_bwe_probe_failure_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedBweProbeFailureEvent(
-        *probe_failure_list_[i], parsed_bwe_probe_failure_events[i]));
+    verifier_.VerifyLoggedBweProbeFailureEvent(
+        *probe_failure_list_[i], parsed_bwe_probe_failure_events[i]);
   }
 
   auto& parsed_bwe_probe_success_events = parsed_log.bwe_probe_success_events();
   ASSERT_EQ(parsed_bwe_probe_success_events.size(), probe_success_list_.size());
   for (size_t i = 0; i < parsed_bwe_probe_success_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedBweProbeSuccessEvent(
-        *probe_success_list_[i], parsed_bwe_probe_success_events[i]));
+    verifier_.VerifyLoggedBweProbeSuccessEvent(
+        *probe_success_list_[i], parsed_bwe_probe_success_events[i]);
   }
 
   auto& parsed_ice_candidate_pair_configs =
       parsed_log.ice_candidate_pair_configs();
   ASSERT_EQ(parsed_ice_candidate_pair_configs.size(), ice_config_list_.size());
   for (size_t i = 0; i < parsed_ice_candidate_pair_configs.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedIceCandidatePairConfig(
-        *ice_config_list_[i], parsed_ice_candidate_pair_configs[i]));
+    verifier_.VerifyLoggedIceCandidatePairConfig(
+        *ice_config_list_[i], parsed_ice_candidate_pair_configs[i]);
   }
 
   auto& parsed_ice_candidate_pair_events =
@@ -552,8 +557,8 @@ void RtcEventLogSession::ReadAndVerifyLog() {
   ASSERT_EQ(parsed_ice_candidate_pair_events.size(),
             parsed_ice_candidate_pair_events.size());
   for (size_t i = 0; i < parsed_ice_candidate_pair_events.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedIceCandidatePairEvent(
-        *ice_event_list_[i], parsed_ice_candidate_pair_events[i]));
+    verifier_.VerifyLoggedIceCandidatePairEvent(
+        *ice_event_list_[i], parsed_ice_candidate_pair_events[i]);
   }
 
   auto& parsed_incoming_rtp_packets_by_ssrc =
@@ -566,8 +571,8 @@ void RtcEventLogSession::ReadAndVerifyLog() {
     const auto& rtp_stream = incoming_rtp_map_[ssrc];
     ASSERT_EQ(parsed_rtp_stream.size(), rtp_stream.size());
     for (size_t i = 0; i < parsed_rtp_stream.size(); i++) {
-      EXPECT_TRUE(test::VerifyLoggedRtpPacketIncoming(*rtp_stream[i],
-                                                      parsed_rtp_stream[i]));
+      verifier_.VerifyLoggedRtpPacketIncoming(*rtp_stream[i],
+                                              parsed_rtp_stream[i]);
     }
   }
 
@@ -581,47 +586,47 @@ void RtcEventLogSession::ReadAndVerifyLog() {
     const auto& rtp_stream = outgoing_rtp_map_[ssrc];
     ASSERT_EQ(parsed_rtp_stream.size(), rtp_stream.size());
     for (size_t i = 0; i < parsed_rtp_stream.size(); i++) {
-      EXPECT_TRUE(test::VerifyLoggedRtpPacketOutgoing(*rtp_stream[i],
-                                                      parsed_rtp_stream[i]));
+      verifier_.VerifyLoggedRtpPacketOutgoing(*rtp_stream[i],
+                                              parsed_rtp_stream[i]);
     }
   }
 
   auto& parsed_incoming_rtcp_packets = parsed_log.incoming_rtcp_packets();
   ASSERT_EQ(parsed_incoming_rtcp_packets.size(), incoming_rtcp_list_.size());
   for (size_t i = 0; i < parsed_incoming_rtcp_packets.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedRtcpPacketIncoming(
-        *incoming_rtcp_list_[i], parsed_incoming_rtcp_packets[i]));
+    verifier_.VerifyLoggedRtcpPacketIncoming(*incoming_rtcp_list_[i],
+                                             parsed_incoming_rtcp_packets[i]);
   }
 
   auto& parsed_outgoing_rtcp_packets = parsed_log.outgoing_rtcp_packets();
   ASSERT_EQ(parsed_outgoing_rtcp_packets.size(), outgoing_rtcp_list_.size());
   for (size_t i = 0; i < parsed_outgoing_rtcp_packets.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedRtcpPacketOutgoing(
-        *outgoing_rtcp_list_[i], parsed_outgoing_rtcp_packets[i]));
+    verifier_.VerifyLoggedRtcpPacketOutgoing(*outgoing_rtcp_list_[i],
+                                             parsed_outgoing_rtcp_packets[i]);
   }
   auto& parsed_audio_recv_configs = parsed_log.audio_recv_configs();
   ASSERT_EQ(parsed_audio_recv_configs.size(), audio_recv_config_list_.size());
   for (size_t i = 0; i < parsed_audio_recv_configs.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedAudioRecvConfig(
-        *audio_recv_config_list_[i], parsed_audio_recv_configs[i]));
+    verifier_.VerifyLoggedAudioRecvConfig(*audio_recv_config_list_[i],
+                                          parsed_audio_recv_configs[i]);
   }
   auto& parsed_audio_send_configs = parsed_log.audio_send_configs();
   ASSERT_EQ(parsed_audio_send_configs.size(), audio_send_config_list_.size());
   for (size_t i = 0; i < parsed_audio_send_configs.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedAudioSendConfig(
-        *audio_send_config_list_[i], parsed_audio_send_configs[i]));
+    verifier_.VerifyLoggedAudioSendConfig(*audio_send_config_list_[i],
+                                          parsed_audio_send_configs[i]);
   }
   auto& parsed_video_recv_configs = parsed_log.video_recv_configs();
   ASSERT_EQ(parsed_video_recv_configs.size(), video_recv_config_list_.size());
   for (size_t i = 0; i < parsed_video_recv_configs.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedVideoRecvConfig(
-        *video_recv_config_list_[i], parsed_video_recv_configs[i]));
+    verifier_.VerifyLoggedVideoRecvConfig(*video_recv_config_list_[i],
+                                          parsed_video_recv_configs[i]);
   }
   auto& parsed_video_send_configs = parsed_log.video_send_configs();
   ASSERT_EQ(parsed_video_send_configs.size(), video_send_config_list_.size());
   for (size_t i = 0; i < parsed_video_send_configs.size(); i++) {
-    EXPECT_TRUE(test::VerifyLoggedVideoSendConfig(
-        *video_send_config_list_[i], parsed_video_send_configs[i]));
+    verifier_.VerifyLoggedVideoSendConfig(*video_send_config_list_[i],
+                                          parsed_video_send_configs[i]);
   }
 
   // Clean up temporary file - can be pretty slow.
@@ -680,7 +685,25 @@ TEST_P(RtcEventLogSession, StartLoggingInTheMiddle) {
   ReadAndVerifyLog();
 }
 
-TEST(RtcEventLogTest, CircularBufferKeepsMostRecentEvents) {
+INSTANTIATE_TEST_CASE_P(
+    RtcEventLogTest,
+    RtcEventLogSession,
+    ::testing::Combine(
+        ::testing::Values(1234567, 7654321),
+        ::testing::Values(RtcEventLog::kImmediateOutput, 1, 5),
+        ::testing::Values(RtcEventLog::EncodingType::Legacy,
+                          RtcEventLog::EncodingType::NewFormat)));
+
+class RtcEventLogCircularBufferTest
+    : public ::testing::TestWithParam<RtcEventLog::EncodingType> {
+ public:
+  RtcEventLogCircularBufferTest()
+      : encoding_type_(GetParam()), verifier_(encoding_type_) {}
+  const RtcEventLog::EncodingType encoding_type_;
+  const test::EventVerifier verifier_;
+};
+
+TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
   // TODO(terelius): Maybe make a separate RtcEventLogImplTest that can access
   // the size of the cyclic buffer?
   constexpr size_t kNumEvents = 20000;
@@ -699,8 +722,7 @@ TEST(RtcEventLogTest, CircularBufferKeepsMostRecentEvents) {
 
   // When log_dumper goes out of scope, it causes the log file to be flushed
   // to disk.
-  std::unique_ptr<RtcEventLog> log_dumper(
-      RtcEventLog::Create(RtcEventLog::EncodingType::Legacy));
+  std::unique_ptr<RtcEventLog> log_dumper(RtcEventLog::Create(encoding_type_));
 
   for (size_t i = 0; i < kNumEvents; i++) {
     // The purpose of the test is to verify that the log can handle
@@ -714,6 +736,7 @@ TEST(RtcEventLogTest, CircularBufferKeepsMostRecentEvents) {
     fake_clock->AdvanceTimeMicros(10000);
   }
   int64_t start_time_us = rtc::TimeMicros();
+  int64_t utc_start_time_us = rtc::TimeUTCMicros();
   log_dumper->StartLogging(
       absl::make_unique<RtcEventLogOutputFile>(temp_filename, 10000000),
       RtcEventLog::kImmediateOutput);
@@ -727,11 +750,12 @@ TEST(RtcEventLogTest, CircularBufferKeepsMostRecentEvents) {
 
   const auto& start_log_events = parsed_log.start_log_events();
   ASSERT_EQ(start_log_events.size(), 1u);
-  EXPECT_TRUE(test::VerifyLoggedStartEvent(start_time_us, start_log_events[0]));
+  verifier_.VerifyLoggedStartEvent(start_time_us, utc_start_time_us,
+                                   start_log_events[0]);
 
   const auto& stop_log_events = parsed_log.stop_log_events();
   ASSERT_EQ(stop_log_events.size(), 1u);
-  EXPECT_TRUE(test::VerifyLoggedStopEvent(stop_time_us, stop_log_events[0]));
+  verifier_.VerifyLoggedStopEvent(stop_time_us, stop_log_events[0]);
 
   const auto& probe_success_events = parsed_log.bwe_probe_success_events();
   // If the following fails, it probably means that kNumEvents isn't larger
@@ -752,19 +776,20 @@ TEST(RtcEventLogTest, CircularBufferKeepsMostRecentEvents) {
   fake_clock->SetTimeMicros(first_timestamp_us);
   for (size_t i = 1; i < probe_success_events.size(); i++) {
     fake_clock->AdvanceTimeMicros(10000);
-    ASSERT_TRUE(test::VerifyLoggedBweProbeSuccessEvent(
+    verifier_.VerifyLoggedBweProbeSuccessEvent(
         RtcEventProbeResultSuccess(first_id + i, first_bitrate_bps + i * 1000),
-        probe_success_events[i]));
+        probe_success_events[i]);
   }
 }
+
+INSTANTIATE_TEST_CASE_P(
+    RtcEventLogTest,
+    RtcEventLogCircularBufferTest,
+    ::testing::Values(RtcEventLog::EncodingType::Legacy,
+                      RtcEventLog::EncodingType::NewFormat));
 
 // TODO(terelius): Verify parser behavior if the timestamps are not
 // monotonically increasing in the log.
 
-INSTANTIATE_TEST_CASE_P(
-    RtcEventLogTest,
-    RtcEventLogSession,
-    ::testing::Combine(::testing::Values(1234567, 7654321),
-                       ::testing::Values(RtcEventLog::kImmediateOutput, 1, 5)));
 
 }  // namespace webrtc

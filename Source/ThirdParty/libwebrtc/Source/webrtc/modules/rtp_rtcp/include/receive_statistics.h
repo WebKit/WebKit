@@ -12,11 +12,13 @@
 #define MODULES_RTP_RTCP_INCLUDE_RECEIVE_STATISTICS_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "call/rtp_packet_sink_interface.h"
 #include "modules/include/module.h"
 #include "modules/include/module_common_types.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "rtc_base/deprecation.h"
@@ -54,14 +56,14 @@ class ReceiveStatistics : public ReceiveStatisticsProvider,
  public:
   ~ReceiveStatistics() override = default;
 
-  static ReceiveStatistics* Create(Clock* clock);
+  static ReceiveStatistics* Create(Clock* clock) {
+    return Create(clock, nullptr, nullptr).release();
+  }
 
-  // Updates the receive statistics with this packet.
-  // TODO(bugs.webrtc.org/8016): Deprecated. Delete as soon as
-  // downstream code is updated to use OnRtpPacket.
-  RTC_DEPRECATED
-  virtual void IncomingPacket(const RTPHeader& rtp_header,
-                              size_t packet_length) = 0;
+  static std::unique_ptr<ReceiveStatistics> Create(
+      Clock* clock,
+      RtcpStatisticsCallback* rtcp_callback,
+      StreamDataCountersCallback* rtp_callback);
 
   // Increment counter for number of FEC packets received.
   virtual void FecPacketReceived(const RtpPacketReceived& packet) = 0;
@@ -74,14 +76,6 @@ class ReceiveStatistics : public ReceiveStatisticsProvider,
   // Detect retransmissions, enabling updates of the retransmitted counters. The
   // default is false.
   virtual void EnableRetransmitDetection(uint32_t ssrc, bool enable) = 0;
-
-  // Called on new RTCP stats creation.
-  virtual void RegisterRtcpStatisticsCallback(
-      RtcpStatisticsCallback* callback) = 0;
-
-  // Called on new RTP stats creation.
-  virtual void RegisterRtpStatisticsCallback(
-      StreamDataCountersCallback* callback) = 0;
 };
 
 }  // namespace webrtc

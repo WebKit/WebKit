@@ -10,10 +10,9 @@
 
 #include "modules/remote_bitrate_estimator/inter_arrival.h"
 
-#include <algorithm>
 #include <cassert>
 
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

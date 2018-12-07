@@ -130,6 +130,9 @@ TEST(DataRateTest, MathOperations) {
 
   EXPECT_EQ(rate_a / rate_b, static_cast<double>(kValueA) / kValueB);
 
+  EXPECT_EQ((rate_a / 10).bps(), kValueA / 10);
+  EXPECT_NEAR((rate_a / 0.5).bps(), kValueA * 2, 1);
+
   DataRate mutable_rate = DataRate::bps(kValueA);
   mutable_rate += rate_b;
   EXPECT_EQ(mutable_rate.bps(), kValueA + kValueB);

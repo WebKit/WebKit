@@ -42,7 +42,8 @@ class DtlsSrtpTransport : public SrtpTransport {
   void UpdateRecvEncryptedHeaderExtensionIds(
       const std::vector<int>& recv_extension_ids);
 
-  sigslot::signal2<DtlsSrtpTransport*, bool> SignalDtlsSrtpSetupFailure;
+  sigslot::signal<DtlsSrtpTransport*, bool> SignalDtlsSrtpSetupFailure;
+  sigslot::signal<> SignalDtlsStateChange;
 
   RTCError SetSrtpSendKey(const cricket::CryptoParams& params) override {
     return RTCError(RTCErrorType::UNSUPPORTED_OPERATION,

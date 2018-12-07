@@ -11,7 +11,6 @@
 #ifndef RTC_BASE_NETWORKMONITOR_H_
 #define RTC_BASE_NETWORKMONITOR_H_
 
-#include "rtc_base/logging.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"

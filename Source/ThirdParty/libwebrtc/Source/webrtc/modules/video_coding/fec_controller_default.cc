@@ -8,10 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "modules/video_coding/fec_controller_default.h"
+#include <algorithm>
+
+#include "modules/video_coding/fec_controller_default.h"  // NOLINT
+#include "rtc_base/logging.h"
+#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 using rtc::CritScope;
+
+const float kProtectionOverheadRateThreshold = 0.5;
+
 FecControllerDefault::FecControllerDefault(
     Clock* clock,
     VCMProtectionCallback* protection_callback)
@@ -19,13 +26,15 @@ FecControllerDefault::FecControllerDefault(
       protection_callback_(protection_callback),
       loss_prot_logic_(new media_optimization::VCMLossProtectionLogic(
           clock_->TimeInMilliseconds())),
-      max_payload_size_(1460) {}
+      max_payload_size_(1460),
+      overhead_threshold_(GetProtectionOverheadRateThreshold()) {}
 
 FecControllerDefault::FecControllerDefault(Clock* clock)
     : clock_(clock),
       loss_prot_logic_(new media_optimization::VCMLossProtectionLogic(
           clock_->TimeInMilliseconds())),
-      max_payload_size_(1460) {}
+      max_payload_size_(1460),
+      overhead_threshold_(GetProtectionOverheadRateThreshold()) {}
 
 FecControllerDefault::~FecControllerDefault(void) {
   loss_prot_logic_->Release();
@@ -44,6 +53,25 @@ void FecControllerDefault::SetEncodingData(size_t width,
   loss_prot_logic_->UpdateFrameSize(width, height);
   loss_prot_logic_->UpdateNumLayers(num_temporal_layers);
   max_payload_size_ = max_payload_size;
+}
+
+float FecControllerDefault::GetProtectionOverheadRateThreshold() {
+  float overhead_threshold =
+      strtof(webrtc::field_trial::FindFullName(
+                 "WebRTC-ProtectionOverheadRateThreshold")
+                 .c_str(),
+             nullptr);
+  if (overhead_threshold > 0 && overhead_threshold <= 1) {
+    RTC_LOG(LS_INFO) << "ProtectionOverheadRateThreshold is set to "
+                     << overhead_threshold;
+    return overhead_threshold;
+  } else if (overhead_threshold < 0 || overhead_threshold > 1) {
+    RTC_LOG(WARNING) << "ProtectionOverheadRateThreshold field trial is set to "
+                        "an invalid value, expecting a value between (0, 1].";
+  }
+  // WebRTC-ProtectionOverheadRateThreshold field trial string is not found, use
+  // the default value.
+  return kProtectionOverheadRateThreshold;
 }
 
 uint32_t FecControllerDefault::UpdateFecRates(
@@ -125,9 +153,9 @@ uint32_t FecControllerDefault::UpdateFecRates(
         static_cast<float>(sent_nack_rate_bps + sent_fec_rate_bps) /
         sent_total_rate_bps;
   }
-  // Cap the overhead estimate to 50%.
-  if (protection_overhead_rate > 0.5)
-    protection_overhead_rate = 0.5;
+  // Cap the overhead estimate to a threshold, default is 50%.
+  protection_overhead_rate =
+      std::min(protection_overhead_rate, overhead_threshold_);
   // Source coding rate: total rate - protection overhead.
   return estimated_bitrate_bps * (1.0 - protection_overhead_rate);
 }

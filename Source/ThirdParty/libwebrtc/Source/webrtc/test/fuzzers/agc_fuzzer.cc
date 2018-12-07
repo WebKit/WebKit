@@ -109,6 +109,9 @@ void FuzzGainController(test::FuzzDataHelper* fuzz_data, GainControlImpl* gci) {
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 200000) {
+    return;
+  }
   test::FuzzDataHelper fuzz_data(rtc::ArrayView<const uint8_t>(data, size));
   rtc::CriticalSection crit_capture;
   rtc::CriticalSection crit_render;

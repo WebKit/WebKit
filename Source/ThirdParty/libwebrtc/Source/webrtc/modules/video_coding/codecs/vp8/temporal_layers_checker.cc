@@ -17,13 +17,13 @@
 namespace webrtc {
 
 std::unique_ptr<TemporalLayersChecker>
-TemporalLayersChecker::CreateTemporalLayersChecker(TemporalLayersType type,
+TemporalLayersChecker::CreateTemporalLayersChecker(Vp8TemporalLayersType type,
                                                    int num_temporal_layers) {
   switch (type) {
-    case TemporalLayersType::kFixedPattern:
+    case Vp8TemporalLayersType::kFixedPattern:
       return absl::make_unique<DefaultTemporalLayersChecker>(
           num_temporal_layers);
-    case TemporalLayersType::kBitrateDynamic:
+    case Vp8TemporalLayersType::kBitrateDynamic:
       // Conference mode temporal layering for screen content in base stream.
       return absl::make_unique<TemporalLayersChecker>(num_temporal_layers);
   }
@@ -40,10 +40,10 @@ bool TemporalLayersChecker::CheckAndUpdateBufferState(
     bool* need_sync,
     bool frame_is_keyframe,
     uint8_t temporal_layer,
-    webrtc::TemporalLayers::BufferFlags flags,
+    webrtc::Vp8TemporalLayers::BufferFlags flags,
     uint32_t sequence_number,
     uint32_t* lowest_sequence_referenced) {
-  if (flags & TemporalLayers::BufferFlags::kReference) {
+  if (flags & Vp8TemporalLayers::BufferFlags::kReference) {
     if (state->temporal_layer > 0 && !state->is_keyframe) {
       *need_sync = false;
     }
@@ -57,7 +57,7 @@ bool TemporalLayersChecker::CheckAndUpdateBufferState(
       return false;
     }
   }
-  if ((flags & TemporalLayers::BufferFlags::kUpdate)) {
+  if ((flags & Vp8TemporalLayers::BufferFlags::kUpdate)) {
     state->temporal_layer = temporal_layer;
     state->sequence_number = sequence_number;
     state->is_keyframe = frame_is_keyframe;
@@ -69,7 +69,7 @@ bool TemporalLayersChecker::CheckAndUpdateBufferState(
 
 bool TemporalLayersChecker::CheckTemporalConfig(
     bool frame_is_keyframe,
-    const TemporalLayers::FrameConfig& frame_config) {
+    const Vp8TemporalLayers::FrameConfig& frame_config) {
   if (frame_config.drop_frame ||
       frame_config.packetizer_temporal_idx == kNoTemporalIdx) {
     return true;

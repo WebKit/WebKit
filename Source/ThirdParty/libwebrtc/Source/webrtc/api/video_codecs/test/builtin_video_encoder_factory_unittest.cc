@@ -27,11 +27,11 @@ TEST(BuiltinVideoEncoderFactoryTest, AnnouncesVp9AccordingToBuildFlags) {
       break;
     }
   }
-#if defined(RTC_DISABLE_VP9)
-  EXPECT_FALSE(claims_vp9_support);
-#else
+#if defined(RTC_ENABLE_VP9)
   EXPECT_TRUE(claims_vp9_support);
-#endif  // defined(RTC_DISABLE_VP9)
+#else
+  EXPECT_FALSE(claims_vp9_support);
+#endif  // defined(RTC_ENABLE_VP9)
 }
 
 }  // namespace webrtc

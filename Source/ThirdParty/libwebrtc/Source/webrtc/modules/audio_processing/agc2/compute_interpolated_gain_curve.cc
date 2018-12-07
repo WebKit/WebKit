@@ -19,23 +19,24 @@
 
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/agc2_testing_common.h"
-#include "modules/audio_processing/agc2/limiter.h"
+#include "modules/audio_processing/agc2/limiter_db_gain_curve.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace {
 
 std::pair<double, double> ComputeLinearApproximationParams(
-    const Limiter* limiter,
+    const LimiterDbGainCurve* limiter,
     const double x) {
   const double m = limiter->GetGainFirstDerivativeLinear(x);
   const double q = limiter->GetGainLinear(x) - m * x;
   return {m, q};
 }
 
-double ComputeAreaUnderPiecewiseLinearApproximation(const Limiter* limiter,
-                                                    const double x0,
-                                                    const double x1) {
+double ComputeAreaUnderPiecewiseLinearApproximation(
+    const LimiterDbGainCurve* limiter,
+    const double x0,
+    const double x1) {
   RTC_CHECK_LT(x0, x1);
 
   // Linear approximation in x0 and x1.
@@ -60,7 +61,7 @@ double ComputeAreaUnderPiecewiseLinearApproximation(const Limiter* limiter,
 // Computes the approximation error in the limiter region for a given interval.
 // The error is computed as the difference between the areas beneath the limiter
 // curve to approximate and its linear under-approximation.
-double LimiterUnderApproximationNegativeError(const Limiter* limiter,
+double LimiterUnderApproximationNegativeError(const LimiterDbGainCurve* limiter,
                                               const double x0,
                                               const double x1) {
   const double area_limiter = limiter->GetGainIntegralLinear(x0, x1);
@@ -77,7 +78,7 @@ double LimiterUnderApproximationNegativeError(const Limiter* limiter,
 // are assigned by halving intervals (starting with the whole beyond-knee region
 // as a single interval). However, even if sub-optimal, this algorithm works
 // well in practice and it is efficiently implemented using priority queues.
-std::vector<double> SampleLimiterRegion(const Limiter* limiter) {
+std::vector<double> SampleLimiterRegion(const LimiterDbGainCurve* limiter) {
   static_assert(kInterpolatedGainCurveBeyondKneePoints > 2, "");
 
   struct Interval {
@@ -131,7 +132,7 @@ std::vector<double> SampleLimiterRegion(const Limiter* limiter) {
 // Compute the parameters to over-approximate the knee region via linear
 // interpolation. Over-approximating is saturation-safe since the knee region is
 // convex.
-void PrecomputeKneeApproxParams(const Limiter* limiter,
+void PrecomputeKneeApproxParams(const LimiterDbGainCurve* limiter,
                                 test::InterpolatedParameters* parameters) {
   static_assert(kInterpolatedGainCurveKneePoints > 2, "");
   // Get |kInterpolatedGainCurveKneePoints| - 1 equally spaced points.
@@ -165,7 +166,7 @@ void PrecomputeKneeApproxParams(const Limiter* limiter,
 // interpolation and greedy sampling. Under-approximating is saturation-safe
 // since the beyond-knee region is concave.
 void PrecomputeBeyondKneeApproxParams(
-    const Limiter* limiter,
+    const LimiterDbGainCurve* limiter,
     test::InterpolatedParameters* parameters) {
   // Find points on which the linear pieces are tangent to the gain curve.
   const auto samples = SampleLimiterRegion(limiter);
@@ -216,7 +217,7 @@ namespace test {
 
 InterpolatedParameters ComputeInterpolatedGainCurveApproximationParams() {
   InterpolatedParameters parameters;
-  Limiter limiter;
+  LimiterDbGainCurve limiter;
   parameters.computed_approximation_params_x.fill(0.0f);
   parameters.computed_approximation_params_m.fill(0.0f);
   parameters.computed_approximation_params_q.fill(0.0f);

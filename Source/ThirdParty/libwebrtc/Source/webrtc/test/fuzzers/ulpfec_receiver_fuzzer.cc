@@ -25,7 +25,7 @@ class DummyCallback : public RecoveredPacketReceiver {
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   constexpr size_t kMinDataNeeded = 12;
-  if (size < kMinDataNeeded) {
+  if (size < kMinDataNeeded || size > 2000) {
     return;
   }
 

@@ -59,7 +59,16 @@ struct MediaConfig {
     // TODO(bugs.webrtc.org/8504): If all goes well, the flag will be removed
     // together with the old method of estimation.
     bool experiment_cpu_load_estimator = false;
+
+    // Time interval between RTCP report for video
+    int rtcp_report_interval_ms = 1000;
   } video;
+
+  // Audio-specific config.
+  struct Audio {
+    // Time interval between RTCP report for audio
+    int rtcp_report_interval_ms = 5000;
+  } audio;
 
   bool operator==(const MediaConfig& o) const {
     return enable_dscp == o.enable_dscp &&
@@ -71,7 +80,9 @@ struct MediaConfig {
            video.periodic_alr_bandwidth_probing ==
                o.video.periodic_alr_bandwidth_probing &&
            video.experiment_cpu_load_estimator ==
-               o.video.experiment_cpu_load_estimator;
+               o.video.experiment_cpu_load_estimator &&
+           video.rtcp_report_interval_ms == o.video.rtcp_report_interval_ms &&
+           audio.rtcp_report_interval_ms == o.audio.rtcp_report_interval_ms;
   }
 
   bool operator!=(const MediaConfig& o) const { return !(*this == o); }

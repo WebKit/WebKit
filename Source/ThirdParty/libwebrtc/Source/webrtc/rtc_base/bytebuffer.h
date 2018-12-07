@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_BYTEBUFFER_H_
 #define RTC_BASE_BYTEBUFFER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
 #include "rtc_base/buffer.h"

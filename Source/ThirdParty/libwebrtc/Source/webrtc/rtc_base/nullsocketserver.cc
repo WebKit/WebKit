@@ -13,7 +13,7 @@
 
 namespace rtc {
 
-NullSocketServer::NullSocketServer() : event_(false, false) {}
+NullSocketServer::NullSocketServer() = default;
 NullSocketServer::~NullSocketServer() {}
 
 bool NullSocketServer::Wait(int cms, bool process_io) {

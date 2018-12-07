@@ -92,6 +92,11 @@ void AudioEncoder::OnReceivedUplinkBandwidth(
     int target_audio_bitrate_bps,
     absl::optional<int64_t> bwe_period_ms) {}
 
+void AudioEncoder::OnReceivedUplinkAllocation(BitrateAllocationUpdate update) {
+  OnReceivedUplinkBandwidth(update.target_bitrate.bps(),
+                            update.bwe_period.ms());
+}
+
 void AudioEncoder::OnReceivedRtt(int rtt_ms) {}
 
 void AudioEncoder::OnReceivedOverhead(size_t overhead_bytes_per_packet) {}

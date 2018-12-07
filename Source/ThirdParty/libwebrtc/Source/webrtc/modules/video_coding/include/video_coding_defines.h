@@ -15,8 +15,6 @@
 #include <vector>
 
 #include "api/video/video_frame.h"
-// For EncodedImage
-#include "common_video/include/video_frame.h"
 #include "modules/include/module_common_types.h"
 
 namespace webrtc {
@@ -43,7 +41,7 @@ enum {
   // |kDefaultTimingFramesDelayMs|, or if the frame is at least
   // |kDefaultOutliserFrameSizePercent| in size of average frame.
   kDefaultTimingFramesDelayMs = 200,
-  kDefaultOutlierFrameSizePercent = 250,
+  kDefaultOutlierFrameSizePercent = 500,
   // Maximum number of frames for what we store encode start timing information.
   kMaxEncodeStartTimeListSize = 50,
 };

@@ -10,6 +10,8 @@
 
 #include "call/flexfec_receive_stream.h"
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 FlexfecReceiveStream::Config::Config(Transport* rtcp_send_transport)

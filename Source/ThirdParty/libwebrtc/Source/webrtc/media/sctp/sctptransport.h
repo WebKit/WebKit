@@ -14,7 +14,7 @@
 #include <errno.h>
 
 #include <map>
-#include <memory>  // for unique_ptr.
+#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -113,7 +113,7 @@ class SctpTransport : public SctpTransportInternal,
   virtual void OnPacketRead(rtc::PacketTransportInternal* transport,
                             const char* data,
                             size_t len,
-                            const rtc::PacketTime& packet_time,
+                            const int64_t& packet_time_us,
                             int flags);
 
   // Methods related to usrsctp callbacks.

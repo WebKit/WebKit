@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/agc2/agc2_common.h"
 
+#include <stdio.h>
 #include <string>
 
 #include "system_wrappers/include/field_trial.h"

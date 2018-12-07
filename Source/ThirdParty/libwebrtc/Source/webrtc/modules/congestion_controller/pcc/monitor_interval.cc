@@ -31,25 +31,24 @@ PccMonitorInterval::PccMonitorInterval(const PccMonitorInterval& other) =
 void PccMonitorInterval::OnPacketsFeedback(
     const std::vector<PacketResult>& packets_results) {
   for (const PacketResult& packet_result : packets_results) {
-    if (!packet_result.sent_packet.has_value() ||
-        packet_result.sent_packet->send_time <= start_time_) {
+    if (packet_result.sent_packet.send_time <= start_time_) {
       continue;
     }
     // Here we assume that if some packets are reordered with packets sent
     // after the end of the monitor interval, then they are lost. (Otherwise
     // it is not clear how long should we wait for packets feedback to arrive).
-    if (packet_result.sent_packet->send_time >
+    if (packet_result.sent_packet.send_time >
         start_time_ + interval_duration_) {
       feedback_collection_done_ = true;
       return;
     }
     if (packet_result.receive_time.IsInfinite()) {
-      lost_packets_sent_time_.push_back(packet_result.sent_packet->send_time);
+      lost_packets_sent_time_.push_back(packet_result.sent_packet.send_time);
     } else {
       received_packets_.push_back(
-          {packet_result.receive_time - packet_result.sent_packet->send_time,
-           packet_result.sent_packet->send_time});
-      received_packets_size_ += packet_result.sent_packet->size;
+          {packet_result.receive_time - packet_result.sent_packet.send_time,
+           packet_result.sent_packet.send_time});
+      received_packets_size_ += packet_result.sent_packet.size;
     }
   }
 }

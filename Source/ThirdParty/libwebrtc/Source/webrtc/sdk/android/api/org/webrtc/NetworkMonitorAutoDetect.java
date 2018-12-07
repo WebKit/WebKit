@@ -297,7 +297,8 @@ public class NetworkMonitorAutoDetect extends BroadcastReceiver {
           // https://android.googlesource.com/platform/frameworks/base/+/d6a7980d
           NetworkInfo underlyingActiveNetworkInfo = connectivityManager.getActiveNetworkInfo();
           // We use the NetworkInfo of the underlying network if it is not of TYPE_VPN itself.
-          if (underlyingActiveNetworkInfo.getType() != ConnectivityManager.TYPE_VPN) {
+          if (underlyingActiveNetworkInfo != null
+              && underlyingActiveNetworkInfo.getType() != ConnectivityManager.TYPE_VPN) {
             return new NetworkState(networkInfo.isConnected(), ConnectivityManager.TYPE_VPN, -1,
                 underlyingActiveNetworkInfo.getType(), underlyingActiveNetworkInfo.getSubtype());
           }

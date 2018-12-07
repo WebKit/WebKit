@@ -9,6 +9,10 @@
  */
 #include "modules/audio_processing/aec3/decimator.h"
 
+#include <array>
+#include <vector>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

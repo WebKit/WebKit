@@ -25,13 +25,13 @@ constexpr int kNumProbesCluster1 = 8;
 const PacedPacketInfo kPacingInfo0(0, kNumProbesCluster0, 2000);
 const PacedPacketInfo kPacingInfo1(1, kNumProbesCluster1, 4000);
 constexpr float kTargetUtilizationFraction = 0.95f;
-constexpr int64_t kDummyTimestamp = 1000;
+constexpr Timestamp kDummyTimestamp = Timestamp::Seconds<1000>();
 }  // namespace
 
 TEST_F(DelayBasedBweTest, NoCrashEmptyFeedback) {
   std::vector<PacketFeedback> packet_feedback_vector;
   bitrate_estimator_->IncomingPacketFeedbackVector(
-      packet_feedback_vector, absl::nullopt, kDummyTimestamp);
+      packet_feedback_vector, absl::nullopt, absl::nullopt, kDummyTimestamp);
 }
 
 TEST_F(DelayBasedBweTest, NoCrashOnlyLostFeedback) {
@@ -43,7 +43,7 @@ TEST_F(DelayBasedBweTest, NoCrashOnlyLostFeedback) {
                                                   PacketFeedback::kNoSendTime,
                                                   1, 1500, PacedPacketInfo()));
   bitrate_estimator_->IncomingPacketFeedbackVector(
-      packet_feedback_vector, absl::nullopt, kDummyTimestamp);
+      packet_feedback_vector, absl::nullopt, absl::nullopt, kDummyTimestamp);
 }
 
 TEST_F(DelayBasedBweTest, ProbeDetection) {
@@ -144,12 +144,12 @@ TEST_F(DelayBasedBweTest, ProbeDetectionSlowerArrivalHighBitrate) {
 }
 
 TEST_F(DelayBasedBweTest, GetExpectedBwePeriodMs) {
-  int64_t default_interval_ms = bitrate_estimator_->GetExpectedBwePeriodMs();
-  EXPECT_GT(default_interval_ms, 0);
+  auto default_interval = bitrate_estimator_->GetExpectedBwePeriod();
+  EXPECT_GT(default_interval.ms(), 0);
   CapacityDropTestHelper(1, true, 333, 0);
-  int64_t interval_ms = bitrate_estimator_->GetExpectedBwePeriodMs();
-  EXPECT_GT(interval_ms, 0);
-  EXPECT_NE(interval_ms, default_interval_ms);
+  auto interval = bitrate_estimator_->GetExpectedBwePeriod();
+  EXPECT_GT(interval.ms(), 0);
+  EXPECT_NE(interval.ms(), default_interval.ms());
 }
 
 TEST_F(DelayBasedBweTest, InitialBehavior) {
@@ -199,20 +199,20 @@ TEST_F(DelayBasedBweTest, TestLongTimeoutAndWrap) {
 }
 
 TEST_F(DelayBasedBweTest, TestInitialOveruse) {
-  const uint32_t kStartBitrate = 300e3;
-  const uint32_t kInitialCapacityBps = 200e3;
+  const DataRate kStartBitrate = DataRate::kbps(300);
+  const DataRate kInitialCapacity = DataRate::kbps(200);
   const uint32_t kDummySsrc = 0;
   // High FPS to ensure that we send a lot of packets in a short time.
   const int kFps = 90;
 
-  stream_generator_->AddStream(new test::RtpStream(kFps, kStartBitrate));
-  stream_generator_->set_capacity_bps(kInitialCapacityBps);
+  stream_generator_->AddStream(new test::RtpStream(kFps, kStartBitrate.bps()));
+  stream_generator_->set_capacity_bps(kInitialCapacity.bps());
 
   // Needed to initialize the AimdRateControl.
   bitrate_estimator_->SetStartBitrate(kStartBitrate);
 
   // Produce 30 frames (in 1/3 second) and give them to the estimator.
-  uint32_t bitrate_bps = kStartBitrate;
+  int64_t bitrate_bps = kStartBitrate.bps();
   bool seen_overuse = false;
   for (int i = 0; i < 30; ++i) {
     bool overuse = GenerateAndProcessFrame(kDummySsrc, bitrate_bps);
@@ -222,7 +222,8 @@ TEST_F(DelayBasedBweTest, TestInitialOveruse) {
     EXPECT_FALSE(acknowledged_bitrate_estimator_->bitrate_bps().has_value());
     if (overuse) {
       EXPECT_TRUE(bitrate_observer_.updated());
-      EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate / 2, 15000);
+      EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate.bps() / 2,
+                  15000);
       bitrate_bps = bitrate_observer_.latest_bitrate();
       seen_overuse = true;
       break;
@@ -232,7 +233,8 @@ TEST_F(DelayBasedBweTest, TestInitialOveruse) {
     }
   }
   EXPECT_TRUE(seen_overuse);
-  EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate / 2, 15000);
+  EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate.bps() / 2,
+              15000);
 }
 
 class DelayBasedBweTestWithBackoffTimeoutExperiment : public DelayBasedBweTest {
@@ -243,20 +245,20 @@ class DelayBasedBweTestWithBackoffTimeoutExperiment : public DelayBasedBweTest {
 
 // This test subsumes and improves DelayBasedBweTest.TestInitialOveruse above.
 TEST_F(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
-  const uint32_t kStartBitrate = 300e3;
-  const uint32_t kInitialCapacityBps = 200e3;
+  const DataRate kStartBitrate = DataRate::kbps(300);
+  const DataRate kInitialCapacity = DataRate::kbps(200);
   const uint32_t kDummySsrc = 0;
   // High FPS to ensure that we send a lot of packets in a short time.
   const int kFps = 90;
 
-  stream_generator_->AddStream(new test::RtpStream(kFps, kStartBitrate));
-  stream_generator_->set_capacity_bps(kInitialCapacityBps);
+  stream_generator_->AddStream(new test::RtpStream(kFps, kStartBitrate.bps()));
+  stream_generator_->set_capacity_bps(kInitialCapacity.bps());
 
   // Needed to initialize the AimdRateControl.
   bitrate_estimator_->SetStartBitrate(kStartBitrate);
 
   // Produce 30 frames (in 1/3 second) and give them to the estimator.
-  uint32_t bitrate_bps = kStartBitrate;
+  int64_t bitrate_bps = kStartBitrate.bps();
   bool seen_overuse = false;
   for (int frames = 0; frames < 30 && !seen_overuse; ++frames) {
     bool overuse = GenerateAndProcessFrame(kDummySsrc, bitrate_bps);
@@ -266,7 +268,8 @@ TEST_F(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
     EXPECT_FALSE(acknowledged_bitrate_estimator_->bitrate_bps().has_value());
     if (overuse) {
       EXPECT_TRUE(bitrate_observer_.updated());
-      EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate / 2, 15000);
+      EXPECT_NEAR(bitrate_observer_.latest_bitrate(), kStartBitrate.bps() / 2,
+                  15000);
       bitrate_bps = bitrate_observer_.latest_bitrate();
       seen_overuse = true;
     } else if (bitrate_observer_.updated()) {
@@ -282,8 +285,8 @@ TEST_F(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
     EXPECT_FALSE(overuse);
     if (bitrate_observer_.updated()) {
       bitrate_bps = bitrate_observer_.latest_bitrate();
-      EXPECT_GE(bitrate_bps, kStartBitrate / 2 - 15000);
-      EXPECT_LE(bitrate_bps, kInitialCapacityBps + 15000);
+      EXPECT_GE(bitrate_bps, kStartBitrate.bps() / 2 - 15000);
+      EXPECT_LE(bitrate_bps, kInitialCapacity.bps() + 15000);
       bitrate_observer_.Reset();
     }
   }

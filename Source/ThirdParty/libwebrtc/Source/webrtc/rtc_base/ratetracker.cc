@@ -10,8 +10,6 @@
 
 #include "rtc_base/ratetracker.h"
 
-#include <stddef.h>
-
 #include <algorithm>
 
 #include "rtc_base/checks.h"

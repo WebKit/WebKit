@@ -21,15 +21,16 @@
 #include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/networkroute.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 struct PacketOptions;
-struct PacketTime;
 struct SentPacket;
 
-class PacketTransportInternal : public virtual webrtc::PacketTransportInterface,
-                                public sigslot::has_slots<> {
+class RTC_EXPORT PacketTransportInternal
+    : public virtual webrtc::PacketTransportInterface,
+      public sigslot::has_slots<> {
  public:
   virtual const std::string& transport_name() const = 0;
 
@@ -85,7 +86,9 @@ class PacketTransportInternal : public virtual webrtc::PacketTransportInterface,
   sigslot::signal5<PacketTransportInternal*,
                    const char*,
                    size_t,
-                   const rtc::PacketTime&,
+                   // TODO(bugs.webrtc.org/9584): Change to passing the int64_t
+                   // timestamp by value.
+                   const int64_t&,
                    int>
       SignalReadPacket;
 

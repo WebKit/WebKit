@@ -20,7 +20,6 @@ namespace {
 // Loop variables.
 const size_t kBitrates[] = {500};
 const VideoCodecType kVideoCodecType[] = {kVideoCodecVP8};
-const bool kHwCodec[] = {false};
 
 // Codec settings.
 const int kNumSpatialLayers = 1;
@@ -39,12 +38,11 @@ const int kNumFrames = 30;
 class VideoCodecTestParameterized
     : public ::testing::Test,
       public ::testing::WithParamInterface<
-          ::testing::tuple<size_t, VideoCodecType, bool>> {
+          ::testing::tuple<size_t, VideoCodecType>> {
  protected:
   VideoCodecTestParameterized()
       : bitrate_(::testing::get<0>(GetParam())),
-        codec_type_(::testing::get<1>(GetParam())),
-        hw_codec_(::testing::get<2>(GetParam())) {}
+        codec_type_(::testing::get<1>(GetParam())) {}
   ~VideoCodecTestParameterized() override = default;
 
   void RunTest(size_t width,
@@ -56,8 +54,6 @@ class VideoCodecTestParameterized
     config.filepath = ResourcePath(filename, "yuv");
     config.use_single_core = kUseSingleCore;
     config.measure_cpu = kMeasureCpu;
-    config.hw_encoder = hw_codec_;
-    config.hw_decoder = hw_codec_;
     config.num_frames = kNumFrames;
 
     const size_t num_simulcast_streams =
@@ -80,14 +76,13 @@ class VideoCodecTestParameterized
   std::unique_ptr<VideoCodecTestFixture> fixture_;
   const size_t bitrate_;
   const VideoCodecType codec_type_;
-  const bool hw_codec_;
 };
 
-INSTANTIATE_TEST_CASE_P(CodecSettings,
-                        VideoCodecTestParameterized,
-                        ::testing::Combine(::testing::ValuesIn(kBitrates),
-                                           ::testing::ValuesIn(kVideoCodecType),
-                                           ::testing::ValuesIn(kHwCodec)));
+INSTANTIATE_TEST_CASE_P(
+    CodecSettings,
+    VideoCodecTestParameterized,
+    ::testing::Combine(::testing::ValuesIn(kBitrates),
+                       ::testing::ValuesIn(kVideoCodecType)));
 
 TEST_P(VideoCodecTestParameterized, Foreman_352x288_30) {
   RunTest(352, 288, 30, "foreman_cif");

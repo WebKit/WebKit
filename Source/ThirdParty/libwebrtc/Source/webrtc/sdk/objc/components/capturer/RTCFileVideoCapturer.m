@@ -27,14 +27,20 @@ typedef NS_ENUM(NSInteger, RTCFileVideoCapturerStatus) {
   RTCFileVideoCapturerStatusStopped
 };
 
+@interface RTCFileVideoCapturer ()
+@property(nonatomic, assign) CMTime lastPresentationTime;
+@property(nonatomic, strong) NSURL *fileURL;
+@end
+
 @implementation RTCFileVideoCapturer {
   AVAssetReader *_reader;
   AVAssetReaderTrackOutput *_outTrack;
   RTCFileVideoCapturerStatus _status;
-  CMTime _lastPresentationTime;
   dispatch_queue_t _frameQueue;
-  NSURL *_fileURL;
 }
+
+@synthesize lastPresentationTime = _lastPresentationTime;
+@synthesize fileURL = _fileURL;
 
 - (void)startCapturingFromFileNamed:(NSString *)nameOfFile
                             onError:(RTCFileVideoCapturerErrorBlock)errorBlock {
@@ -62,9 +68,9 @@ typedef NS_ENUM(NSInteger, RTCFileVideoCapturerStatus) {
       return;
     }
 
-    _lastPresentationTime = CMTimeMake(0, 0);
+    self.lastPresentationTime = CMTimeMake(0, 0);
 
-    _fileURL = [NSURL fileURLWithPath:pathForFile];
+    self.fileURL = [NSURL fileURLWithPath:pathForFile];
     [self setupReaderOnError:errorBlock];
   });
 }

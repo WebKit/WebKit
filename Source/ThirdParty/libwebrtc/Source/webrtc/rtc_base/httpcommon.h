@@ -11,14 +11,7 @@
 #ifndef RTC_BASE_HTTPCOMMON_H_
 #define RTC_BASE_HTTPCOMMON_H_
 
-#include <map>
-#include <memory>
 #include <string>
-#include <vector>
-
-#include "rtc_base/checks.h"
-#include "rtc_base/stream.h"
-#include "rtc_base/stringutils.h"
 
 namespace rtc {
 

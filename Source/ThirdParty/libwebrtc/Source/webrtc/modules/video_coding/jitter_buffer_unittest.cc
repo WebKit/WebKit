@@ -20,7 +20,6 @@
 #include "modules/video_coding/media_opt_util.h"
 #include "modules/video_coding/packet.h"
 #include "modules/video_coding/test/stream_generator.h"
-#include "modules/video_coding/test/test_util.h"
 #include "rtc_base/location.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
@@ -220,9 +219,7 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
   void SetUp() override {
     clock_.reset(new SimulatedClock(0));
     jitter_buffer_.reset(new VCMJitterBuffer(
-        clock_.get(),
-        std::unique_ptr<EventWrapper>(event_factory_.CreateEvent()), this,
-        this));
+        clock_.get(), absl::WrapUnique(EventWrapper::Create()), this, this));
     jitter_buffer_->Start();
     seq_num_ = 1234;
     timestamp_ = 0;
@@ -313,7 +310,6 @@ class TestBasicJitterBuffer : public ::testing::TestWithParam<std::string>,
   uint8_t data_[1500];
   std::unique_ptr<VCMPacket> packet_;
   std::unique_ptr<SimulatedClock> clock_;
-  NullEventFactory event_factory_;
   std::unique_ptr<VCMJitterBuffer> jitter_buffer_;
 };
 
@@ -339,9 +335,7 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
     max_nack_list_size_ = 150;
     oldest_packet_to_nack_ = 250;
     jitter_buffer_ = new VCMJitterBuffer(
-        clock_.get(),
-        std::unique_ptr<EventWrapper>(event_factory_.CreateEvent()), this,
-        this);
+        clock_.get(), absl::WrapUnique(EventWrapper::Create()), this, this);
     stream_generator_ = new StreamGenerator(0, clock_->TimeInMilliseconds());
     jitter_buffer_->Start();
     jitter_buffer_->SetNackSettings(max_nack_list_size_, oldest_packet_to_nack_,
@@ -433,7 +427,6 @@ class TestRunningJitterBuffer : public ::testing::TestWithParam<std::string>,
   VCMJitterBuffer* jitter_buffer_;
   StreamGenerator* stream_generator_;
   std::unique_ptr<SimulatedClock> clock_;
-  NullEventFactory event_factory_;
   size_t max_nack_list_size_;
   int oldest_packet_to_nack_;
   uint8_t data_buffer_[kDataBufferSize];

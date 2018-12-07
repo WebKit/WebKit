@@ -35,7 +35,6 @@
     self.contentType = (encodedImage.content_type_ == webrtc::VideoContentType::SCREENSHARE) ?
         RTCVideoContentTypeScreenshare :
         RTCVideoContentTypeUnspecified;
-    self.spatialIndex = encodedImage.SpatialIndex() ? *encodedImage.SpatialIndex() : 0;
   }
 
   return self;
@@ -57,11 +56,11 @@
   encodedImage.rotation_ = webrtc::VideoRotation(self.rotation);
   encodedImage._completeFrame = self.completeFrame;
   encodedImage.qp_ = self.qp ? self.qp.intValue : -1;
+  encodedImage.SetSpatialIndex(self.spatialIndex);
   encodedImage.content_type_ = (self.contentType == RTCVideoContentTypeScreenshare) ?
       webrtc::VideoContentType::SCREENSHARE :
       webrtc::VideoContentType::UNSPECIFIED;
-  if (self.spatialIndex)
-    encodedImage.SetSpatialIndex(self.spatialIndex);
+
   return encodedImage;
 }
 

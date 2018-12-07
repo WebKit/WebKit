@@ -98,11 +98,16 @@ class JsepTransport2Test : public testing::Test, public sigslot::has_slots<> {
         RTC_NOTREACHED();
     }
 
+    // TODO(sukhanov): Currently there is no media_transport specific
+    // logic in jseptransport, so jseptransport unittests are created with
+    // media_transport = nullptr. In the future we will probably add
+    // more logic that require unit tests. Note that creation of media_transport
+    // is covered in jseptransportcontroller_unittest.
     auto jsep_transport = absl::make_unique<JsepTransport>(
         kTransportName, /*local_certificate=*/nullptr,
         std::move(unencrypted_rtp_transport), std::move(sdes_transport),
         std::move(dtls_srtp_transport), std::move(rtp_dtls_transport),
-        std::move(rtcp_dtls_transport));
+        std::move(rtcp_dtls_transport), /*media_transport=*/nullptr);
 
     signal_rtcp_mux_active_received_ = false;
     jsep_transport->SignalRtcpMuxActive.connect(
@@ -121,7 +126,7 @@ class JsepTransport2Test : public testing::Test, public sigslot::has_slots<> {
 
     std::unique_ptr<rtc::SSLFingerprint> fingerprint;
     if (cert) {
-      fingerprint.reset(rtc::SSLFingerprint::CreateFromCertificate(cert));
+      fingerprint = rtc::SSLFingerprint::CreateFromCertificate(*cert);
     }
     jsep_description.transport_desc =
         TransportDescription(std::vector<std::string>(), ufrag, pwd,
@@ -378,11 +383,12 @@ TEST_P(JsepTransport2WithRtcpMux, VerifyCertificateFingerprint) {
     ASSERT_NE(nullptr, certificate);
 
     std::string digest_algorithm;
-    ASSERT_TRUE(certificate->ssl_certificate().GetSignatureDigestAlgorithm(
+    ASSERT_TRUE(certificate->GetSSLCertificate().GetSignatureDigestAlgorithm(
         &digest_algorithm));
     ASSERT_FALSE(digest_algorithm.empty());
-    std::unique_ptr<rtc::SSLFingerprint> good_fingerprint(
-        rtc::SSLFingerprint::Create(digest_algorithm, certificate->identity()));
+    std::unique_ptr<rtc::SSLFingerprint> good_fingerprint =
+        rtc::SSLFingerprint::CreateUnique(digest_algorithm,
+                                          *certificate->identity());
     ASSERT_NE(nullptr, good_fingerprint);
 
     EXPECT_TRUE(jsep_transport_
@@ -1045,7 +1051,7 @@ class JsepTransport2HeaderExtensionTest
   void OnReadPacket1(rtc::PacketTransportInternal* transport,
                      const char* data,
                      size_t size,
-                     const rtc::PacketTime& time,
+                     const int64_t& /* packet_time_us */,
                      int flags) {
     RTC_LOG(LS_INFO) << "JsepTransport 1 Received a packet.";
     CompareHeaderExtensions(
@@ -1058,7 +1064,7 @@ class JsepTransport2HeaderExtensionTest
   void OnReadPacket2(rtc::PacketTransportInternal* transport,
                      const char* data,
                      size_t size,
-                     const rtc::PacketTime& time,
+                     const int64_t& /* packet_time_us */,
                      int flags) {
     RTC_LOG(LS_INFO) << "JsepTransport 2 Received a packet.";
     CompareHeaderExtensions(

@@ -11,10 +11,11 @@
 #ifndef MODULES_PACING_BITRATE_PROBER_H_
 #define MODULES_PACING_BITRATE_PROBER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <queue>
 
 #include "api/transport/network_types.h"
-#include "modules/include/module_common_types.h"
 
 namespace webrtc {
 class RtcEventLog;

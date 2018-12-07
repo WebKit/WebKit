@@ -10,8 +10,7 @@
 
 #include "rtc_base/stringencode.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
 
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
@@ -51,67 +50,6 @@ size_t url_decode(char* buffer,
   return bufpos;
 }
 
-size_t utf8_decode(const char* source, size_t srclen, unsigned long* value) {
-  const unsigned char* s = reinterpret_cast<const unsigned char*>(source);
-  if ((s[0] & 0x80) == 0x00) {  // Check s[0] == 0xxxxxxx
-    *value = s[0];
-    return 1;
-  }
-  if ((srclen < 2) || ((s[1] & 0xC0) != 0x80)) {  // Check s[1] != 10xxxxxx
-    return 0;
-  }
-  // Accumulate the trailer byte values in value16, and combine it with the
-  // relevant bits from s[0], once we've determined the sequence length.
-  unsigned long value16 = (s[1] & 0x3F);
-  if ((s[0] & 0xE0) == 0xC0) {  // Check s[0] == 110xxxxx
-    *value = ((s[0] & 0x1F) << 6) | value16;
-    return 2;
-  }
-  if ((srclen < 3) || ((s[2] & 0xC0) != 0x80)) {  // Check s[2] != 10xxxxxx
-    return 0;
-  }
-  value16 = (value16 << 6) | (s[2] & 0x3F);
-  if ((s[0] & 0xF0) == 0xE0) {  // Check s[0] == 1110xxxx
-    *value = ((s[0] & 0x0F) << 12) | value16;
-    return 3;
-  }
-  if ((srclen < 4) || ((s[3] & 0xC0) != 0x80)) {  // Check s[3] != 10xxxxxx
-    return 0;
-  }
-  value16 = (value16 << 6) | (s[3] & 0x3F);
-  if ((s[0] & 0xF8) == 0xF0) {  // Check s[0] == 11110xxx
-    *value = ((s[0] & 0x07) << 18) | value16;
-    return 4;
-  }
-  return 0;
-}
-
-size_t utf8_encode(char* buffer, size_t buflen, unsigned long value) {
-  if ((value <= 0x7F) && (buflen >= 1)) {
-    buffer[0] = static_cast<unsigned char>(value);
-    return 1;
-  }
-  if ((value <= 0x7FF) && (buflen >= 2)) {
-    buffer[0] = 0xC0 | static_cast<unsigned char>(value >> 6);
-    buffer[1] = 0x80 | static_cast<unsigned char>(value & 0x3F);
-    return 2;
-  }
-  if ((value <= 0xFFFF) && (buflen >= 3)) {
-    buffer[0] = 0xE0 | static_cast<unsigned char>(value >> 12);
-    buffer[1] = 0x80 | static_cast<unsigned char>((value >> 6) & 0x3F);
-    buffer[2] = 0x80 | static_cast<unsigned char>(value & 0x3F);
-    return 3;
-  }
-  if ((value <= 0x1FFFFF) && (buflen >= 4)) {
-    buffer[0] = 0xF0 | static_cast<unsigned char>(value >> 18);
-    buffer[1] = 0x80 | static_cast<unsigned char>((value >> 12) & 0x3F);
-    buffer[2] = 0x80 | static_cast<unsigned char>((value >> 6) & 0x3F);
-    buffer[3] = 0x80 | static_cast<unsigned char>(value & 0x3F);
-    return 4;
-  }
-  return 0;
-}
-
 static const char HEX[] = "0123456789abcdef";
 
 char hex_encode(unsigned char val) {
@@ -122,9 +60,9 @@ char hex_encode(unsigned char val) {
 bool hex_decode(char ch, unsigned char* val) {
   if ((ch >= '0') && (ch <= '9')) {
     *val = ch - '0';
-  } else if ((ch >= 'A') && (ch <= 'Z')) {
+  } else if ((ch >= 'A') && (ch <= 'F')) {
     *val = (ch - 'A') + 10;
-  } else if ((ch >= 'a') && (ch <= 'z')) {
+  } else if ((ch >= 'a') && (ch <= 'f')) {
     *val = (ch - 'a') + 10;
   } else {
     return false;

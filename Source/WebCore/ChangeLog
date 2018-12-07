@@ -1,3 +1,14 @@
+2018-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 0d007d7c4f
+        https://bugs.webkit.org/show_bug.cgi?id=192316
+
+        Reviewed by Eric Carlson.
+
+        Update include according new libwebrtc.
+
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+
 2018-12-07  Dean Jackson  <dino@apple.com>
 
         [iOS] Make WebGPU work with remote layer hosting

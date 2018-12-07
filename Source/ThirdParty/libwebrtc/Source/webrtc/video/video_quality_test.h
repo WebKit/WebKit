@@ -17,12 +17,14 @@
 
 #include "api/fec_controller.h"
 #include "api/test/video_quality_test_fixture.h"
+#include "api/video/video_bitrate_allocator_factory.h"
 #include "call/fake_network_pipe.h"
 #include "media/engine/internaldecoderfactory.h"
 #include "media/engine/internalencoderfactory.h"
 #include "test/call_test.h"
 #include "test/frame_generator.h"
 #include "test/layer_filtering_transport.h"
+#include "video/video_analyzer.h"
 #ifdef WEBRTC_WIN
 #include "modules/audio_device/win/core_audio_utility_win.h"
 #endif
@@ -75,8 +77,8 @@ class VideoQualityTest :
   void SetupThumbnailCapturers(size_t num_thumbnail_streams);
   std::unique_ptr<VideoDecoder> CreateVideoDecoder(
       const SdpVideoFormat& format);
-  std::unique_ptr<VideoEncoder> CreateVideoEncoder(
-      const SdpVideoFormat& format);
+  std::unique_ptr<VideoEncoder> CreateVideoEncoder(const SdpVideoFormat& format,
+                                                   VideoAnalyzer* analyzer);
   void SetupVideo(Transport* send_transport, Transport* recv_transport);
   void SetupThumbnails(Transport* send_transport, Transport* recv_transport);
   void StartAudioStreams();
@@ -103,6 +105,9 @@ class VideoQualityTest :
   test::FunctionVideoDecoderFactory video_decoder_factory_;
   InternalDecoderFactory internal_decoder_factory_;
   test::FunctionVideoEncoderFactory video_encoder_factory_;
+  test::FunctionVideoEncoderFactory video_encoder_factory_with_analyzer_;
+  std::unique_ptr<VideoBitrateAllocatorFactory>
+      video_bitrate_allocator_factory_;
   InternalEncoderFactory internal_encoder_factory_;
   std::vector<VideoSendStream::Config> thumbnail_send_configs_;
   std::vector<VideoEncoderConfig> thumbnail_encoder_configs_;
@@ -115,6 +120,9 @@ class VideoQualityTest :
 
   Params params_;
   std::unique_ptr<InjectionComponents> injection_components_;
+
+  // Set non-null when running with analyzer.
+  std::unique_ptr<VideoAnalyzer> analyzer_;
 
   // Note: not same as similarly named member in CallTest. This is the number of
   // separate send streams, the one in CallTest is the number of substreams for

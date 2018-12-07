@@ -11,6 +11,7 @@
 #include "media/base/fakevideocapturer.h"
 
 #include "rtc_base/arraysize.h"
+#include "rtc_base/timeutils.h"
 
 namespace cricket {
 
@@ -95,7 +96,7 @@ cricket::CaptureState FakeVideoCapturer::Start(
   SetCaptureState(cricket::CS_RUNNING);
   frame_source_ = absl::make_unique<FakeFrameSource>(
       format.width, format.height,
-      format.interval / rtc::kNumNanosecsPerMicrosec);
+      format.interval / rtc::kNumNanosecsPerMicrosec, rtc::TimeMicros());
   frame_source_->SetRotation(rotation_);
   return cricket::CS_RUNNING;
 }

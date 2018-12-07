@@ -13,24 +13,29 @@
 #endif
 
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
 #define SECURITY_WIN32
 #include <security.h>
 #endif
 
 #include <algorithm>
 
+#include "absl/strings/match.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/bytebuffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/httpcommon.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/socketadapters.h"
-#include "rtc_base/stringencode.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/zero_memory.h"
@@ -457,7 +462,7 @@ void AsyncHttpsProxySocket::ProcessLine(char* data, size_t len) {
         return;
     }
   } else if ((state_ == PS_AUTHENTICATE) &&
-             (_strnicmp(data, "Proxy-Authenticate:", 19) == 0)) {
+             absl::StartsWithIgnoreCase(data, "Proxy-Authenticate:")) {
     std::string response, auth_method;
     switch (HttpAuthenticate(data + 19, len - 19, proxy_, "CONNECT", "/", user_,
                              pass_, context_, response, auth_method)) {
@@ -485,12 +490,12 @@ void AsyncHttpsProxySocket::ProcessLine(char* data, size_t len) {
         unknown_mechanisms_.clear();
         break;
     }
-  } else if (_strnicmp(data, "Content-Length:", 15) == 0) {
+  } else if (absl::StartsWithIgnoreCase(data, "Content-Length:")) {
     content_length_ = strtoul(data + 15, 0, 0);
-  } else if (_strnicmp(data, "Proxy-Connection: Keep-Alive", 28) == 0) {
+  } else if (absl::StartsWithIgnoreCase(data, "Proxy-Connection: Keep-Alive")) {
     expect_close_ = false;
     /*
-  } else if (_strnicmp(data, "Connection: close", 17) == 0) {
+  } else if (absl::StartsWithIgnoreCase(data, "Connection: close") {
     expect_close_ = true;
     */
   }

@@ -11,30 +11,47 @@
 #ifndef RTC_BASE_SSLFINGERPRINT_H_
 #define RTC_BASE_SSLFINGERPRINT_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
 #include "rtc_base/copyonwritebuffer.h"
-#include "rtc_base/rtccertificate.h"
-#include "rtc_base/sslidentity.h"
 
 namespace rtc {
 
+class RTCCertificate;
 class SSLCertificate;
+class SSLIdentity;
 
 struct SSLFingerprint {
+  // TODO(steveanton): Remove once downstream projects have moved off of this.
   static SSLFingerprint* Create(const std::string& algorithm,
                                 const rtc::SSLIdentity* identity);
+  // TODO(steveanton): Rename to Create once projects have migrated.
+  static std::unique_ptr<SSLFingerprint> CreateUnique(
+      const std::string& algorithm,
+      const rtc::SSLIdentity& identity);
 
-  static SSLFingerprint* Create(const std::string& algorithm,
-                                const rtc::SSLCertificate* cert);
+  static std::unique_ptr<SSLFingerprint> Create(
+      const std::string& algorithm,
+      const rtc::SSLCertificate& cert);
 
+  // TODO(steveanton): Remove once downstream projects have moved off of this.
   static SSLFingerprint* CreateFromRfc4572(const std::string& algorithm,
                                            const std::string& fingerprint);
+  // TODO(steveanton): Rename to CreateFromRfc4572 once projects have migrated.
+  static std::unique_ptr<SSLFingerprint> CreateUniqueFromRfc4572(
+      const std::string& algorithm,
+      const std::string& fingerprint);
 
   // Creates a fingerprint from a certificate, using the same digest algorithm
   // as the certificate's signature.
-  static SSLFingerprint* CreateFromCertificate(const RTCCertificate* cert);
+  static std::unique_ptr<SSLFingerprint> CreateFromCertificate(
+      const RTCCertificate& cert);
 
+  SSLFingerprint(const std::string& algorithm,
+                 ArrayView<const uint8_t> digest_view);
+  // TODO(steveanton): Remove once downstream projects have moved off of this.
   SSLFingerprint(const std::string& algorithm,
                  const uint8_t* digest_in,
                  size_t digest_len);

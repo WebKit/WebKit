@@ -16,6 +16,7 @@
 
 #import "api/peerconnection/RTCConfiguration+Private.h"
 #import "api/peerconnection/RTCConfiguration.h"
+#import "api/peerconnection/RTCCryptoOptions.h"
 #import "api/peerconnection/RTCIceServer.h"
 #import "api/peerconnection/RTCMediaConstraints.h"
 #import "api/peerconnection/RTCPeerConnection.h"
@@ -50,6 +51,10 @@
       RTCContinualGatheringPolicyGatherContinually;
   config.shouldPruneTurnPorts = YES;
   config.activeResetSrtpParams = YES;
+  config.cryptoOptions = [[RTCCryptoOptions alloc] initWithSrtpEnableGcmCryptoSuites:YES
+                                                 srtpEnableAes128Sha1_32CryptoCipher:YES
+                                              srtpEnableEncryptedRtpHeaderExtensions:NO
+                                                        sframeRequireFrameEncryption:NO];
 
   RTCMediaConstraints *contraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:@{}
       optionalConstraints:nil];
@@ -89,6 +94,14 @@
   EXPECT_EQ(config.continualGatheringPolicy, newConfig.continualGatheringPolicy);
   EXPECT_EQ(config.shouldPruneTurnPorts, newConfig.shouldPruneTurnPorts);
   EXPECT_EQ(config.activeResetSrtpParams, newConfig.activeResetSrtpParams);
+  EXPECT_EQ(config.cryptoOptions.srtpEnableGcmCryptoSuites,
+            newConfig.cryptoOptions.srtpEnableGcmCryptoSuites);
+  EXPECT_EQ(config.cryptoOptions.srtpEnableAes128Sha1_32CryptoCipher,
+            newConfig.cryptoOptions.srtpEnableAes128Sha1_32CryptoCipher);
+  EXPECT_EQ(config.cryptoOptions.srtpEnableEncryptedRtpHeaderExtensions,
+            newConfig.cryptoOptions.srtpEnableEncryptedRtpHeaderExtensions);
+  EXPECT_EQ(config.cryptoOptions.sframeRequireFrameEncryption,
+            newConfig.cryptoOptions.sframeRequireFrameEncryption);
 }
 
 @end

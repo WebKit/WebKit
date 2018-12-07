@@ -82,7 +82,7 @@ void LibWebRTCSocket::signalAddressReady(const rtc::SocketAddress& address)
 void LibWebRTCSocket::signalReadPacket(const WebCore::SharedBuffer& buffer, rtc::SocketAddress&& address, int64_t timestamp)
 {
     m_remoteAddress = WTFMove(address);
-    SignalReadPacket(this, buffer.data(), buffer.size(), m_remoteAddress, rtc::PacketTime(timestamp, 0));
+    SignalReadPacket(this, buffer.data(), buffer.size(), m_remoteAddress, timestamp);
 }
 
 void LibWebRTCSocket::signalSentPacket(int rtcPacketID, int64_t sendTimeMs)

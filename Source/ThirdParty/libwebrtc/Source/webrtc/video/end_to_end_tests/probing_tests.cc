@@ -41,8 +41,8 @@ class ProbingTest : public test::EndToEndTest {
         state_(0),
         sender_call_(nullptr) {}
 
-  void ModifySenderCallConfig(Call::Config* config) override {
-    config->bitrate_config.start_bitrate_bps = start_bitrate_bps_;
+  void ModifySenderBitrateConfig(BitrateConstraints* bitrate_config) override {
+    bitrate_config->start_bitrate_bps = start_bitrate_bps_;
   }
 
   void OnCallsCreated(Call* sender_call, Call* receiver_call) override {
@@ -221,7 +221,7 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
         test::SingleThreadedTaskQueueForTesting* task_queue,
         Call* sender_call) override {
       auto network =
-          absl::make_unique<SimulatedNetwork>(DefaultNetworkSimulationConfig());
+          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig());
       send_simulated_network_ = network.get();
       return new test::PacketTransport(
           task_queue, sender_call, this, test::PacketTransport::kSender,
@@ -245,7 +245,7 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
             // bitrate).
             if (stats.send_bandwidth_bps >= 250000 &&
                 stats.send_bandwidth_bps <= 350000) {
-              DefaultNetworkSimulationConfig config;
+              BuiltInNetworkBehaviorConfig config;
               config.link_capacity_kbps = 200;
               send_simulated_network_->SetConfig(config);
 
@@ -260,7 +260,7 @@ TEST_P(ProbingEndToEndTest, ProbeOnVideoEncoderReconfiguration) {
             break;
           case 1:
             if (stats.send_bandwidth_bps <= 210000) {
-              DefaultNetworkSimulationConfig config;
+              BuiltInNetworkBehaviorConfig config;
               config.link_capacity_kbps = 5000;
               send_simulated_network_->SetConfig(config);
 

@@ -11,14 +11,15 @@
 #include "modules/audio_coding/neteq/delay_manager.h"
 
 #include <assert.h>
-#include <math.h>
-
-#include <algorithm>  // max, min
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
 #include <numeric>
+#include <string>
 
-#include "common_audio/signal_processing/include/signal_processing_library.h"
 #include "modules/audio_coding/neteq/delay_peak_detector.h"
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/field_trial.h"
@@ -61,6 +62,7 @@ absl::optional<int> GetForcedLimitProbability() {
 namespace webrtc {
 
 DelayManager::DelayManager(size_t max_packets_in_buffer,
+                           int base_min_target_delay_ms,
                            DelayPeakDetector* peak_detector,
                            const TickTimer* tick_timer)
     : first_packet_received_(false),
@@ -68,13 +70,14 @@ DelayManager::DelayManager(size_t max_packets_in_buffer,
       iat_vector_(kMaxIat + 1, 0),
       iat_factor_(0),
       tick_timer_(tick_timer),
+      base_min_target_delay_ms_(base_min_target_delay_ms),
       base_target_level_(4),                   // In Q0 domain.
       target_level_(base_target_level_ << 8),  // In Q8 domain.
       packet_len_ms_(0),
       streaming_mode_(false),
       last_seq_no_(0),
       last_timestamp_(0),
-      minimum_delay_ms_(0),
+      minimum_delay_ms_(base_min_target_delay_ms_),
       maximum_delay_ms_(target_level_),
       iat_cumulative_sum_(0),
       max_iat_cumulative_sum_(0),
@@ -84,6 +87,8 @@ DelayManager::DelayManager(size_t max_packets_in_buffer,
           field_trial::IsEnabled("WebRTC-Audio-NetEqFramelengthExperiment")),
       forced_limit_probability_(GetForcedLimitProbability()) {
   assert(peak_detector);  // Should never be NULL.
+  RTC_DCHECK_GE(base_min_target_delay_ms_, 0);
+  RTC_DCHECK_LE(minimum_delay_ms_, maximum_delay_ms_);
 
   Reset();
 }
@@ -484,7 +489,7 @@ bool DelayManager::SetMinimumDelay(int delay_ms) {
            static_cast<int>(3 * max_packets_in_buffer_ * packet_len_ms_ / 4))) {
     return false;
   }
-  minimum_delay_ms_ = delay_ms;
+  minimum_delay_ms_ = std::max(delay_ms, base_min_target_delay_ms_);
   return true;
 }
 

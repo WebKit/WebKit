@@ -10,11 +10,13 @@
 
 #include "modules/audio_processing/echo_cancellation_impl.h"
 
+#include <stdint.h>
 #include <string.h>
 
 #include "modules/audio_processing/aec/aec_core.h"
 #include "modules/audio_processing/aec/echo_cancellation.h"
 #include "modules/audio_processing/audio_buffer.h"
+#include "modules/audio_processing/include/config.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -103,11 +105,8 @@ class EchoCancellationImpl::Canceller {
   void* state_;
 };
 
-EchoCancellationImpl::EchoCancellationImpl(rtc::CriticalSection* crit_render,
-                                           rtc::CriticalSection* crit_capture)
-    : crit_render_(crit_render),
-      crit_capture_(crit_capture),
-      drift_compensation_enabled_(false),
+EchoCancellationImpl::EchoCancellationImpl()
+    : drift_compensation_enabled_(false),
       metrics_enabled_(true),
       suppression_level_(kHighSuppression),
       stream_drift_samples_(0),
@@ -116,16 +115,12 @@ EchoCancellationImpl::EchoCancellationImpl(rtc::CriticalSection* crit_render,
       delay_logging_enabled_(true),
       extended_filter_enabled_(false),
       delay_agnostic_enabled_(false),
-      enforce_zero_stream_delay_(EnforceZeroStreamDelay()) {
-  RTC_DCHECK(crit_render);
-  RTC_DCHECK(crit_capture);
-}
+      enforce_zero_stream_delay_(EnforceZeroStreamDelay()) {}
 
 EchoCancellationImpl::~EchoCancellationImpl() = default;
 
 void EchoCancellationImpl::ProcessRenderAudio(
     rtc::ArrayView<const float> packed_render_audio) {
-  rtc::CritScope cs_capture(crit_capture_);
   if (!enabled_) {
     return;
   }
@@ -149,7 +144,6 @@ void EchoCancellationImpl::ProcessRenderAudio(
 
 int EchoCancellationImpl::ProcessCaptureAudio(AudioBuffer* audio,
                                               int stream_delay_ms) {
-  rtc::CritScope cs_capture(crit_capture_);
   if (!enabled_) {
     return AudioProcessing::kNoError;
   }
@@ -206,10 +200,6 @@ int EchoCancellationImpl::ProcessCaptureAudio(AudioBuffer* audio,
 }
 
 int EchoCancellationImpl::Enable(bool enable) {
-  // Run in a single-threaded manner.
-  rtc::CritScope cs_render(crit_render_);
-  rtc::CritScope cs_capture(crit_capture_);
-
   if (enable && !enabled_) {
     enabled_ = enable;  // Must be set before Initialize() is called.
 
@@ -227,68 +217,52 @@ int EchoCancellationImpl::Enable(bool enable) {
 }
 
 bool EchoCancellationImpl::is_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return enabled_;
 }
 
 int EchoCancellationImpl::set_suppression_level(SuppressionLevel level) {
-  {
-    if (MapSetting(level) == -1) {
-      return AudioProcessing::kBadParameterError;
-    }
-    rtc::CritScope cs(crit_capture_);
-    suppression_level_ = level;
+  if (MapSetting(level) == -1) {
+    return AudioProcessing::kBadParameterError;
   }
+  suppression_level_ = level;
   return Configure();
 }
 
 EchoCancellationImpl::SuppressionLevel EchoCancellationImpl::suppression_level()
     const {
-  rtc::CritScope cs(crit_capture_);
   return suppression_level_;
 }
 
 int EchoCancellationImpl::enable_drift_compensation(bool enable) {
-  {
-    rtc::CritScope cs(crit_capture_);
-    drift_compensation_enabled_ = enable;
-  }
+  drift_compensation_enabled_ = enable;
   return Configure();
 }
 
 bool EchoCancellationImpl::is_drift_compensation_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return drift_compensation_enabled_;
 }
 
 void EchoCancellationImpl::set_stream_drift_samples(int drift) {
-  rtc::CritScope cs(crit_capture_);
   was_stream_drift_set_ = true;
   stream_drift_samples_ = drift;
 }
 
 int EchoCancellationImpl::stream_drift_samples() const {
-  rtc::CritScope cs(crit_capture_);
   return stream_drift_samples_;
 }
 
 int EchoCancellationImpl::enable_metrics(bool enable) {
-  {
-    rtc::CritScope cs(crit_capture_);
-    metrics_enabled_ = enable;
-  }
+  metrics_enabled_ = enable;
   return Configure();
 }
 
 bool EchoCancellationImpl::are_metrics_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return enabled_ && metrics_enabled_;
 }
 
 // TODO(ajm): we currently just use the metrics from the first AEC. Think more
 //            aboue the best way to extend this to multi-channel.
 int EchoCancellationImpl::GetMetrics(Metrics* metrics) {
-  rtc::CritScope cs(crit_capture_);
   if (metrics == NULL) {
     return AudioProcessing::kNullPointerError;
   }
@@ -331,46 +305,36 @@ int EchoCancellationImpl::GetMetrics(Metrics* metrics) {
 }
 
 bool EchoCancellationImpl::stream_has_echo() const {
-  rtc::CritScope cs(crit_capture_);
   return stream_has_echo_;
 }
 
 int EchoCancellationImpl::enable_delay_logging(bool enable) {
-  {
-    rtc::CritScope cs(crit_capture_);
-    delay_logging_enabled_ = enable;
-  }
+  delay_logging_enabled_ = enable;
   return Configure();
 }
 
 bool EchoCancellationImpl::is_delay_logging_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return enabled_ && delay_logging_enabled_;
 }
 
 bool EchoCancellationImpl::is_delay_agnostic_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return delay_agnostic_enabled_;
 }
 
 std::string EchoCancellationImpl::GetExperimentsDescription() {
-  rtc::CritScope cs(crit_capture_);
   return refined_adaptive_filter_enabled_ ? "RefinedAdaptiveFilter;" : "";
 }
 
 bool EchoCancellationImpl::is_refined_adaptive_filter_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return refined_adaptive_filter_enabled_;
 }
 
 bool EchoCancellationImpl::is_extended_filter_enabled() const {
-  rtc::CritScope cs(crit_capture_);
   return extended_filter_enabled_;
 }
 
 // TODO(bjornv): How should we handle the multi-channel case?
 int EchoCancellationImpl::GetDelayMetrics(int* median, int* std) {
-  rtc::CritScope cs(crit_capture_);
   float fraction_poor_delays = 0;
   return GetDelayMetrics(median, std, &fraction_poor_delays);
 }
@@ -378,7 +342,6 @@ int EchoCancellationImpl::GetDelayMetrics(int* median, int* std) {
 int EchoCancellationImpl::GetDelayMetrics(int* median,
                                           int* std,
                                           float* fraction_poor_delays) {
-  rtc::CritScope cs(crit_capture_);
   if (median == NULL) {
     return AudioProcessing::kNullPointerError;
   }
@@ -400,7 +363,6 @@ int EchoCancellationImpl::GetDelayMetrics(int* median,
 }
 
 struct AecCore* EchoCancellationImpl::aec_core() const {
-  rtc::CritScope cs(crit_capture_);
   if (!enabled_) {
     return NULL;
   }
@@ -411,9 +373,6 @@ void EchoCancellationImpl::Initialize(int sample_rate_hz,
                                       size_t num_reverse_channels,
                                       size_t num_output_channels,
                                       size_t num_proc_channels) {
-  rtc::CritScope cs_render(crit_render_);
-  rtc::CritScope cs_capture(crit_capture_);
-
   stream_properties_.reset(
       new StreamProperties(sample_rate_hz, num_reverse_channels,
                            num_output_channels, num_proc_channels));
@@ -442,7 +401,6 @@ void EchoCancellationImpl::Initialize(int sample_rate_hz,
 }
 
 int EchoCancellationImpl::GetSystemDelayInSamples() const {
-  rtc::CritScope cs(crit_capture_);
   RTC_DCHECK(enabled_);
   // Report the delay for the first AEC component.
   return WebRtcAec_system_delay(WebRtcAec_aec_core(cancellers_[0]->state()));
@@ -471,7 +429,6 @@ void EchoCancellationImpl::PackRenderAudioBuffer(
 
 void EchoCancellationImpl::SetExtraOptions(const webrtc::Config& config) {
   {
-    rtc::CritScope cs(crit_capture_);
     extended_filter_enabled_ = config.Get<ExtendedFilter>().enabled;
     delay_agnostic_enabled_ = config.Get<DelayAgnostic>().enabled;
     refined_adaptive_filter_enabled_ =
@@ -481,8 +438,6 @@ void EchoCancellationImpl::SetExtraOptions(const webrtc::Config& config) {
 }
 
 int EchoCancellationImpl::Configure() {
-  rtc::CritScope cs_render(crit_render_);
-  rtc::CritScope cs_capture(crit_capture_);
   AecConfig config;
   config.metricsMode = metrics_enabled_;
   config.nlpMode = MapSetting(suppression_level_);

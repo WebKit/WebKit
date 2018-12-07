@@ -11,6 +11,7 @@
 #ifndef COMMON_AUDIO_REAL_FOURIER_OOURA_H_
 #define COMMON_AUDIO_REAL_FOURIER_OOURA_H_
 
+#include <stddef.h>
 #include <complex>
 #include <memory>
 

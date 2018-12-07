@@ -41,7 +41,7 @@ class MockMediaReceiverRtcpObserver : public webrtc::MediaReceiverRtcpObserver {
 constexpr int kTimeoutMs = 1000;
 
 void WaitPostedTasks(rtc::TaskQueue* queue) {
-  rtc::Event done(false, false);
+  rtc::Event done;
   queue->PostTask([&done] { done.Set(); });
   ASSERT_TRUE(done.Wait(kTimeoutMs));
 }
@@ -108,8 +108,8 @@ TEST(RtcpTransceiverTest, CanBeDestroyedWithoutBlocking) {
   auto* rtcp_transceiver = new RtcpTransceiver(config);
   rtcp_transceiver->SendCompoundPacket();
 
-  rtc::Event done(false, false);
-  rtc::Event heavy_task(false, false);
+  rtc::Event done;
+  rtc::Event heavy_task;
   queue.PostTask([&] {
     EXPECT_TRUE(heavy_task.Wait(kTimeoutMs));
     done.Set();
@@ -128,7 +128,7 @@ TEST(RtcpTransceiverTest, MaySendPacketsAfterDestructor) {  // i.e. Be careful!
   config.task_queue = &queue;
   auto* rtcp_transceiver = new RtcpTransceiver(config);
 
-  rtc::Event heavy_task(false, false);
+  rtc::Event heavy_task;
   queue.PostTask([&] { EXPECT_TRUE(heavy_task.Wait(kTimeoutMs)); });
   rtcp_transceiver->SendCompoundPacket();
   delete rtcp_transceiver;
@@ -158,7 +158,7 @@ TEST(RtcpTransceiverTest, DoesntPostToRtcpObserverAfterCallToRemove) {
   config.outgoing_transport = &null_transport;
   config.task_queue = &queue;
   RtcpTransceiver rtcp_transceiver(config);
-  rtc::Event observer_deleted(false, false);
+  rtc::Event observer_deleted;
 
   auto observer = absl::make_unique<MockMediaReceiverRtcpObserver>();
   EXPECT_CALL(*observer, OnSenderReport(kRemoteSsrc, _, 1));
@@ -166,12 +166,11 @@ TEST(RtcpTransceiverTest, DoesntPostToRtcpObserverAfterCallToRemove) {
 
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc, observer.get());
   rtcp_transceiver.ReceivePacket(CreateSenderReport(kRemoteSsrc, 1));
-  rtcp_transceiver.RemoveMediaReceiverRtcpObserver(
-      kRemoteSsrc, observer.get(),
-      /*on_removed=*/rtc::NewClosure([&] {
-        observer.reset();
-        observer_deleted.Set();
-      }));
+  rtcp_transceiver.RemoveMediaReceiverRtcpObserver(kRemoteSsrc, observer.get(),
+                                                   /*on_removed=*/[&] {
+                                                     observer.reset();
+                                                     observer_deleted.Set();
+                                                   });
   rtcp_transceiver.ReceivePacket(CreateSenderReport(kRemoteSsrc, 2));
 
   EXPECT_TRUE(observer_deleted.Wait(kTimeoutMs));
@@ -189,15 +188,14 @@ TEST(RtcpTransceiverTest, RemoveMediaReceiverRtcpObserverIsNonBlocking) {
   auto observer = absl::make_unique<MockMediaReceiverRtcpObserver>();
   rtcp_transceiver.AddMediaReceiverRtcpObserver(kRemoteSsrc, observer.get());
 
-  rtc::Event queue_blocker(false, false);
-  rtc::Event observer_deleted(false, false);
+  rtc::Event queue_blocker;
+  rtc::Event observer_deleted;
   queue.PostTask([&] { EXPECT_TRUE(queue_blocker.Wait(kTimeoutMs)); });
-  rtcp_transceiver.RemoveMediaReceiverRtcpObserver(
-      kRemoteSsrc, observer.get(),
-      /*on_removed=*/rtc::NewClosure([&] {
-        observer.reset();
-        observer_deleted.Set();
-      }));
+  rtcp_transceiver.RemoveMediaReceiverRtcpObserver(kRemoteSsrc, observer.get(),
+                                                   /*on_removed=*/[&] {
+                                                     observer.reset();
+                                                     observer_deleted.Set();
+                                                   });
 
   EXPECT_THAT(observer, Not(IsNull()));
   queue_blocker.Set();
@@ -242,12 +240,12 @@ TEST(RtcpTransceiverTest, DoesntSendPacketsAfterStopCallback) {
   config.schedule_periodic_compound_packets = true;
 
   auto rtcp_transceiver = absl::make_unique<RtcpTransceiver>(config);
-  rtc::Event done(false, false);
+  rtc::Event done;
   rtcp_transceiver->SendCompoundPacket();
-  rtcp_transceiver->Stop(rtc::NewClosure([&] {
+  rtcp_transceiver->Stop([&] {
     EXPECT_CALL(outgoing_transport, SendRtcp).Times(0);
     done.Set();
-  }));
+  });
   rtcp_transceiver = nullptr;
   EXPECT_TRUE(done.Wait(kTimeoutMs));
 }

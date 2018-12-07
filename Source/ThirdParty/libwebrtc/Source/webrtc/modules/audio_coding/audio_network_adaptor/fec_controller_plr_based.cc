@@ -10,7 +10,7 @@
 
 #include "modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.h"
 
-#include <limits>
+#include <string>
 #include <utility>
 
 #include "rtc_base/checks.h"

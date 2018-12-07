@@ -42,11 +42,11 @@ struct PacketDeliveryInfo {
   uint64_t packet_id;
 };
 
-// DefaultNetworkSimulationConfig is a default network behavior configuration
-// for default network behavior that will be used by WebRTC if no custom
+// BuiltInNetworkBehaviorConfig is a built-in network behavior configuration
+// for built-in network behavior that will be used by WebRTC if no custom
 // NetworkBehaviorInterface is provided.
-struct DefaultNetworkSimulationConfig {
-  DefaultNetworkSimulationConfig() {}
+struct BuiltInNetworkBehaviorConfig {
+  BuiltInNetworkBehaviorConfig() {}
   // Queue length in number of packets.
   size_t queue_length_packets = 0;
   // Delay in addition to capacity induced delay.
@@ -74,9 +74,6 @@ class NetworkBehaviorInterface {
   virtual absl::optional<int64_t> NextDeliveryTimeUs() const = 0;
   virtual ~NetworkBehaviorInterface() = default;
 };
-
-// Deprecated. DO NOT USE. Use NetworkBehaviorInterface instead.
-using NetworkSimulationInterface = NetworkBehaviorInterface;
 
 }  // namespace webrtc
 

@@ -12,8 +12,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
+#include <vector>
 
-#include "modules/audio_processing/aec3/aec3_common.h"
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/matrix_buffer.h"
 #include "modules/audio_processing/aec3/stationarity_estimator.h"
 #include "modules/audio_processing/aec3/vector_buffer.h"
@@ -27,16 +29,18 @@ EchoAudibility::EchoAudibility(bool use_render_stationarity_at_init)
 
 EchoAudibility::~EchoAudibility() = default;
 
-void EchoAudibility::Update(const RenderBuffer& render_buffer,
-                            int delay_blocks,
-                            bool external_delay_seen,
-                            float reverb_decay) {
+void EchoAudibility::Update(
+    const RenderBuffer& render_buffer,
+    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
+    int delay_blocks,
+    bool external_delay_seen) {
   UpdateRenderNoiseEstimator(render_buffer.GetSpectrumBuffer(),
                              render_buffer.GetBlockBuffer(),
                              external_delay_seen);
 
   if (external_delay_seen || use_render_stationarity_at_init_) {
-    UpdateRenderStationarityFlags(render_buffer, delay_blocks, reverb_decay);
+    UpdateRenderStationarityFlags(
+        render_buffer, render_reverb_contribution_spectrum, delay_blocks);
   }
 }
 
@@ -48,8 +52,8 @@ void EchoAudibility::Reset() {
 
 void EchoAudibility::UpdateRenderStationarityFlags(
     const RenderBuffer& render_buffer,
-    int delay_blocks,
-    float reverb_decay) {
+    rtc::ArrayView<const float> render_reverb_contribution_spectrum,
+    int delay_blocks) {
   const VectorBuffer& spectrum_buffer = render_buffer.GetSpectrumBuffer();
   int idx_at_delay =
       spectrum_buffer.OffsetIndex(spectrum_buffer.read, delay_blocks);
@@ -57,8 +61,9 @@ void EchoAudibility::UpdateRenderStationarityFlags(
   int num_lookahead = render_buffer.Headroom() - delay_blocks + 1;
   num_lookahead = std::max(0, num_lookahead);
 
-  render_stationarity_.UpdateStationarityFlags(spectrum_buffer, idx_at_delay,
-                                               num_lookahead, reverb_decay);
+  render_stationarity_.UpdateStationarityFlags(
+      spectrum_buffer, render_reverb_contribution_spectrum, idx_at_delay,
+      num_lookahead);
 }
 
 void EchoAudibility::UpdateRenderNoiseEstimator(

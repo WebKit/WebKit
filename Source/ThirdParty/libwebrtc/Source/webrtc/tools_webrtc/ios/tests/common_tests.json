@@ -28,9 +28,6 @@
       "app": "modules_unittests"
     },
     {
-      "app": "ortc_unittests"
-    },
-    {
       "app": "rtc_media_unittests"
     },
     {

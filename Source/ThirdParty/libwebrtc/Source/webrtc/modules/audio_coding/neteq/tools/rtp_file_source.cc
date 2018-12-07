@@ -26,8 +26,9 @@
 namespace webrtc {
 namespace test {
 
-RtpFileSource* RtpFileSource::Create(const std::string& file_name) {
-  RtpFileSource* source = new RtpFileSource();
+RtpFileSource* RtpFileSource::Create(const std::string& file_name,
+                                     absl::optional<uint32_t> ssrc_filter) {
+  RtpFileSource* source = new RtpFileSource(ssrc_filter);
   RTC_CHECK(source->OpenFile(file_name));
   return source;
 }
@@ -72,7 +73,7 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
       continue;
     }
     if (filter_.test(packet->header().payloadType) ||
-        (use_ssrc_filter_ && packet->header().ssrc != ssrc_)) {
+        (ssrc_filter_ && packet->header().ssrc != *ssrc_filter_)) {
       // This payload type should be filtered out. Continue to the next packet.
       continue;
     }
@@ -80,8 +81,10 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
   }
 }
 
-RtpFileSource::RtpFileSource()
-    : PacketSource(), parser_(RtpHeaderParser::Create()) {}
+RtpFileSource::RtpFileSource(absl::optional<uint32_t> ssrc_filter)
+    : PacketSource(),
+      parser_(RtpHeaderParser::Create()),
+      ssrc_filter_(ssrc_filter) {}
 
 bool RtpFileSource::OpenFile(const std::string& file_name) {
   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kRtpDump, file_name));
@@ -89,7 +92,7 @@ bool RtpFileSource::OpenFile(const std::string& file_name) {
     return true;
   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kPcap, file_name));
   if (!rtp_reader_) {
-    RTC_FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
+    FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
                "that .pcapng is not supported.";
   }
   return true;

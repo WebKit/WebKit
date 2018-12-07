@@ -17,14 +17,16 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // A wrapper for DesktopCapturer that also captures mouse using specified
 // MouseCursorMonitor and renders it on the generated streams.
-class DesktopAndCursorComposer : public DesktopCapturer,
-                                 public DesktopCapturer::Callback,
-                                 public MouseCursorMonitor::Callback {
+class RTC_EXPORT DesktopAndCursorComposer
+    : public DesktopCapturer,
+      public DesktopCapturer::Callback,
+      public MouseCursorMonitor::Callback {
  public:
   // Creates a new blender that captures mouse cursor using
   // MouseCursorMonitor::Create(options) and renders it into the frames

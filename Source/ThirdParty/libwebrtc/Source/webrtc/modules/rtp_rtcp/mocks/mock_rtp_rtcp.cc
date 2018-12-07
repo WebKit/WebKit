@@ -12,9 +12,6 @@
 
 namespace webrtc {
 
-MockRtpData::MockRtpData() = default;
-MockRtpData::~MockRtpData() = default;
-
 MockRtpRtcp::MockRtpRtcp() = default;
 MockRtpRtcp::~MockRtpRtcp() = default;
 

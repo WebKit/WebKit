@@ -15,7 +15,7 @@
 
 #include <memory>
 
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 
 namespace webrtc {
 
@@ -29,10 +29,10 @@ class TemporalLayersChecker {
 
   virtual bool CheckTemporalConfig(
       bool frame_is_keyframe,
-      const TemporalLayers::FrameConfig& frame_config);
+      const Vp8TemporalLayers::FrameConfig& frame_config);
 
   static std::unique_ptr<TemporalLayersChecker> CreateTemporalLayersChecker(
-      TemporalLayersType type,
+      Vp8TemporalLayersType type,
       int num_temporal_layers);
 
  private:
@@ -46,7 +46,7 @@ class TemporalLayersChecker {
                                  bool* need_sync,
                                  bool frame_is_keyframe,
                                  uint8_t temporal_layer,
-                                 webrtc::TemporalLayers::BufferFlags flags,
+                                 webrtc::Vp8TemporalLayers::BufferFlags flags,
                                  uint32_t sequence_number,
                                  uint32_t* lowest_sequence_referenced);
   BufferState last_;

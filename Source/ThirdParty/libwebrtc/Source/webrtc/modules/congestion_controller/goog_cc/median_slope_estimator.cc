@@ -10,12 +10,10 @@
 
 #include "modules/congestion_controller/goog_cc/median_slope_estimator.h"
 
-#include <algorithm>
 #include <vector>
 
-#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

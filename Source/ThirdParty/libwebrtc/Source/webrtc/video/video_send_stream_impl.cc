@@ -111,6 +111,14 @@ int CalculateMaxPadBitrateBps(const std::vector<VideoStream>& streams,
   return pad_up_to_bitrate_bps;
 }
 
+RtpSenderFrameEncryptionConfig CreateFrameEncryptionConfig(
+    const VideoSendStream::Config* config) {
+  RtpSenderFrameEncryptionConfig frame_encryption_config;
+  frame_encryption_config.frame_encryptor = config->frame_encryptor;
+  frame_encryption_config.crypto_options = config->crypto_options;
+  return frame_encryption_config;
+}
+
 RtpSenderObservers CreateObservers(CallStats* call_stats,
                                    EncoderRtcpFeedback* encoder_feedback,
                                    SendStatisticsProxy* stats_proxy,
@@ -150,6 +158,16 @@ bool SameStreamsEnabled(const VideoBitrateAllocation& lhs,
   return true;
 }
 }  // namespace
+
+PacingConfig::PacingConfig()
+    : pacing_factor("factor", PacedSender::kDefaultPaceMultiplier),
+      max_pacing_delay("max_delay",
+                       TimeDelta::ms(PacedSender::kMaxQueueLengthMs)) {
+  ParseFieldTrial({&pacing_factor, &max_pacing_delay},
+                  field_trial::FindFullName("WebRTC-Video-Pacing"));
+}
+PacingConfig::PacingConfig(const PacingConfig&) = default;
+PacingConfig::~PacingConfig() = default;
 
 // CheckEncoderActivityTask is used for tracking when the encoder last produced
 // and encoded video frame. If the encoder has not produced anything the last
@@ -221,6 +239,7 @@ VideoSendStreamImpl::VideoSendStreamImpl(
     std::unique_ptr<FecController> fec_controller)
     : has_alr_probing_(config->periodic_alr_bandwidth_probing ||
                        GetAlrSettings(content_type)),
+      pacing_config_(PacingConfig()),
       stats_proxy_(stats_proxy),
       config_(config),
       worker_queue_(worker_queue),
@@ -238,19 +257,20 @@ VideoSendStreamImpl::VideoSendStreamImpl(
                         config_->rtp.ssrcs,
                         video_stream_encoder),
       bandwidth_observer_(transport->GetBandwidthObserver()),
-      rtp_video_sender_(
-          transport_->CreateRtpVideoSender(config_->rtp.ssrcs,
-                                           suspended_ssrcs,
-                                           suspended_payload_states,
-                                           config_->rtp,
-                                           config_->rtcp,
-                                           config_->send_transport,
-                                           CreateObservers(call_stats,
-                                                           &encoder_feedback_,
-                                                           stats_proxy_,
-                                                           send_delay_stats),
-                                           event_log,
-                                           std::move(fec_controller))),
+      rtp_video_sender_(transport_->CreateRtpVideoSender(
+          config_->rtp.ssrcs,
+          suspended_ssrcs,
+          suspended_payload_states,
+          config_->rtp,
+          config_->rtcp_report_interval_ms,
+          config_->send_transport,
+          CreateObservers(call_stats,
+                          &encoder_feedback_,
+                          stats_proxy_,
+                          send_delay_stats),
+          event_log,
+          std::move(fec_controller),
+          CreateFrameEncryptionConfig(config_))),
       weak_ptr_factory_(this) {
   RTC_DCHECK_RUN_ON(worker_queue_);
   RTC_LOG(LS_INFO) << "VideoSendStreamInternal: " << config_->ToString();
@@ -293,9 +313,9 @@ VideoSendStreamImpl::VideoSendStreamImpl(
       transport->SetQueueTimeLimit(alr_settings->max_paced_queue_time);
     } else {
       transport->EnablePeriodicAlrProbing(false);
-      transport->SetPacingFactor(PacedSender::kDefaultPaceMultiplier);
-      configured_pacing_factor_ = PacedSender::kDefaultPaceMultiplier;
-      transport->SetQueueTimeLimit(PacedSender::kMaxQueueLengthMs);
+      transport->SetPacingFactor(pacing_config_.pacing_factor);
+      configured_pacing_factor_ = pacing_config_.pacing_factor;
+      transport->SetQueueTimeLimit(pacing_config_.max_pacing_delay.Get().ms());
     }
   }
 
@@ -563,17 +583,6 @@ EncodedImageCallback::Result VideoSendStreamImpl::OnEncodedImage(
   // Encoded is called on whatever thread the real encoder implementation run
   // on. In the case of hardware encoders, there might be several encoders
   // running in parallel on different threads.
-  const size_t simulcast_idx =
-      (codec_specific_info->codecType != kVideoCodecVP9)
-          ? encoded_image.SpatialIndex().value_or(0)
-          : 0;
-  if (config_->post_encode_callback) {
-    // TODO(nisse): Delete webrtc::EncodedFrame class, pass EncodedImage
-    // instead.
-    config_->post_encode_callback->EncodedFrameCallback(EncodedFrame(
-        encoded_image._buffer, encoded_image._length, encoded_image._frameType,
-        simulcast_idx, encoded_image.Timestamp()));
-  }
   {
     rtc::CritScope lock(&encoder_activity_crit_sect_);
     if (check_encoder_activity_task_)
@@ -613,21 +622,22 @@ std::map<uint32_t, RtpPayloadState> VideoSendStreamImpl::GetRtpPayloadStates()
   return rtp_video_sender_->GetRtpPayloadStates();
 }
 
-uint32_t VideoSendStreamImpl::OnBitrateUpdated(uint32_t bitrate_bps,
-                                               uint8_t fraction_loss,
-                                               int64_t rtt,
-                                               int64_t probing_interval_ms) {
+uint32_t VideoSendStreamImpl::OnBitrateUpdated(BitrateAllocationUpdate update) {
   RTC_DCHECK_RUN_ON(worker_queue_);
   RTC_DCHECK(rtp_video_sender_->IsActive())
       << "VideoSendStream::Start has not been called.";
 
-  rtp_video_sender_->OnBitrateUpdated(bitrate_bps, fraction_loss, rtt,
-                                      stats_proxy_->GetSendFrameRate());
+  rtp_video_sender_->OnBitrateUpdated(
+      update.target_bitrate.bps(),
+      rtc::dchecked_cast<uint8_t>(update.packet_loss_ratio * 256),
+      update.round_trip_time.ms(), stats_proxy_->GetSendFrameRate());
   encoder_target_rate_bps_ = rtp_video_sender_->GetPayloadBitrateBps();
   encoder_target_rate_bps_ =
       std::min(encoder_max_bitrate_bps_, encoder_target_rate_bps_);
-  video_stream_encoder_->OnBitrateUpdated(encoder_target_rate_bps_,
-                                          fraction_loss, rtt);
+  video_stream_encoder_->OnBitrateUpdated(
+      encoder_target_rate_bps_,
+      rtc::dchecked_cast<uint8_t>(update.packet_loss_ratio * 256),
+      update.round_trip_time.ms());
   stats_proxy_->OnSetEncoderTargetRate(encoder_target_rate_bps_);
   return rtp_video_sender_->GetProtectionBitrateBps();
 }

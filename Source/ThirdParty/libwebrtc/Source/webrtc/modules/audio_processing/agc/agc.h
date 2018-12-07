@@ -17,7 +17,6 @@
 
 namespace webrtc {
 
-class AudioFrame;
 class LoudnessHistogram;
 
 class Agc {

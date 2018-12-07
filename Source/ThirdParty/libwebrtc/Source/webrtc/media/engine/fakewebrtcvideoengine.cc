@@ -10,6 +10,7 @@
 
 #include "media/engine/fakewebrtcvideoengine.h"
 
+#include "absl/strings/match.h"
 #include "media/base/codec.h"
 #include "media/engine/simulcast_encoder_adapter.h"
 #include "media/engine/webrtcvideodecoderfactory.h"
@@ -128,9 +129,7 @@ FakeWebRtcVideoDecoderFactory::decoders() {
 // Encoder.
 FakeWebRtcVideoEncoder::FakeWebRtcVideoEncoder(
     FakeWebRtcVideoEncoderFactory* factory)
-    : init_encode_event_(false, false),
-      num_frames_encoded_(0),
-      factory_(factory) {}
+    : num_frames_encoded_(0), factory_(factory) {}
 
 FakeWebRtcVideoEncoder::~FakeWebRtcVideoEncoder() {
   if (factory_) {
@@ -167,11 +166,6 @@ int32_t FakeWebRtcVideoEncoder::Release() {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-int32_t FakeWebRtcVideoEncoder::SetChannelParameters(uint32_t packetLoss,
-                                                     int64_t rtt) {
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
 int32_t FakeWebRtcVideoEncoder::SetRateAllocation(
     const webrtc::VideoBitrateAllocation& allocation,
     uint32_t framerate) {
@@ -194,8 +188,7 @@ int FakeWebRtcVideoEncoder::GetNumEncodedFrames() {
 
 // Video encoder factory.
 FakeWebRtcVideoEncoderFactory::FakeWebRtcVideoEncoderFactory()
-    : created_video_encoder_event_(false, false),
-      num_created_encoders_(0),
+    : num_created_encoders_(0),
       encoders_have_internal_sources_(false),
       vp8_factory_mode_(false) {}
 
@@ -218,7 +211,7 @@ FakeWebRtcVideoEncoderFactory::CreateVideoEncoder(
   rtc::CritScope lock(&crit_);
   std::unique_ptr<webrtc::VideoEncoder> encoder;
   if (IsFormatSupported(formats_, format)) {
-    if (CodecNamesEq(format.name.c_str(), kVp8CodecName) &&
+    if (absl::EqualsIgnoreCase(format.name, kVp8CodecName) &&
         !vp8_factory_mode_) {
       // The simulcast adapter will ask this factory for multiple VP8
       // encoders. Enter vp8_factory_mode so that we now create these encoders

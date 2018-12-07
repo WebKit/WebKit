@@ -30,11 +30,13 @@ rtc_source_set("audio_codecs_api") {
   ]
   deps = [
     "..:array_view",
+    "..:bitrate_allocation",
     "../..:webrtc_common",
     "../../rtc_base:checks",
     "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:sanitizer",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

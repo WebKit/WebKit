@@ -29,27 +29,34 @@ RTC_PUSH_IGNORING_WUNDEF()
 RTC_POP_IGNORING_WUNDEF()
 
 // TODO(andrew): unpack more of the data.
-DEFINE_string(input_file, "input", "The name of the input stream file.");
-DEFINE_string(output_file,
-              "ref_out",
-              "The name of the reference output stream file.");
-DEFINE_string(reverse_file,
-              "reverse",
-              "The name of the reverse input stream file.");
-DEFINE_string(delay_file, "delay.int32", "The name of the delay file.");
-DEFINE_string(drift_file, "drift.int32", "The name of the drift file.");
-DEFINE_string(level_file, "level.int32", "The name of the level file.");
-DEFINE_string(keypress_file, "keypress.bool", "The name of the keypress file.");
-DEFINE_string(callorder_file,
-              "callorder",
-              "The name of the render/capture call order file.");
-DEFINE_string(settings_file, "settings.txt", "The name of the settings file.");
-DEFINE_bool(full, false, "Unpack the full set of files (normally not needed).");
-DEFINE_bool(raw, false, "Write raw data instead of a WAV file.");
-DEFINE_bool(text,
-            false,
-            "Write non-audio files as text files instead of binary files.");
-DEFINE_bool(help, false, "Print this message.");
+WEBRTC_DEFINE_string(input_file, "input", "The name of the input stream file.");
+WEBRTC_DEFINE_string(output_file,
+                     "ref_out",
+                     "The name of the reference output stream file.");
+WEBRTC_DEFINE_string(reverse_file,
+                     "reverse",
+                     "The name of the reverse input stream file.");
+WEBRTC_DEFINE_string(delay_file, "delay.int32", "The name of the delay file.");
+WEBRTC_DEFINE_string(drift_file, "drift.int32", "The name of the drift file.");
+WEBRTC_DEFINE_string(level_file, "level.int32", "The name of the level file.");
+WEBRTC_DEFINE_string(keypress_file,
+                     "keypress.bool",
+                     "The name of the keypress file.");
+WEBRTC_DEFINE_string(callorder_file,
+                     "callorder",
+                     "The name of the render/capture call order file.");
+WEBRTC_DEFINE_string(settings_file,
+                     "settings.txt",
+                     "The name of the settings file.");
+WEBRTC_DEFINE_bool(full,
+                   false,
+                   "Unpack the full set of files (normally not needed).");
+WEBRTC_DEFINE_bool(raw, false, "Write raw data instead of a WAV file.");
+WEBRTC_DEFINE_bool(
+    text,
+    false,
+    "Write non-audio files as text files instead of binary files.");
+WEBRTC_DEFINE_bool(help, false, "Print this message.");
 
 #define PRINT_CONFIG(field_name)                                         \
   if (msg.has_##field_name()) {                                          \
@@ -85,6 +92,10 @@ void WriteCallOrderData(const bool render_call,
                         const std::string& filename) {
   const char call_type = render_call ? 'r' : 'c';
   WriteData(&call_type, sizeof(call_type), file, filename.c_str());
+}
+
+bool WritingCallOrderFile() {
+  return FLAG_full;
 }
 
 }  // namespace
@@ -125,7 +136,9 @@ int do_main(int argc, char* argv[]) {
 
   rtc::StringBuilder callorder_raw_name;
   callorder_raw_name << FLAG_callorder_file << ".char";
-  FILE* callorder_char_file = OpenFile(callorder_raw_name.str(), "wb");
+  FILE* callorder_char_file = WritingCallOrderFile()
+                                  ? OpenFile(callorder_raw_name.str(), "wb")
+                                  : nullptr;
   FILE* settings_file = OpenFile(FLAG_settings_file, "wb");
 
   while (ReadMessageFromFile(debug_file, &event_msg)) {
@@ -163,8 +176,10 @@ int do_main(int argc, char* argv[]) {
                        reverse_raw_file.get());
       }
       if (FLAG_full) {
-        WriteCallOrderData(true /* render_call */, callorder_char_file,
-                           FLAG_callorder_file);
+        if (WritingCallOrderFile()) {
+          WriteCallOrderData(true /* render_call */, callorder_char_file,
+                             FLAG_callorder_file);
+        }
       }
     } else if (event_msg.type() == Event::STREAM) {
       frame_count++;
@@ -222,8 +237,10 @@ int do_main(int argc, char* argv[]) {
       }
 
       if (FLAG_full) {
-        WriteCallOrderData(false /* render_call */, callorder_char_file,
-                           FLAG_callorder_file);
+        if (WritingCallOrderFile()) {
+          WriteCallOrderData(false /* render_call */, callorder_char_file,
+                             FLAG_callorder_file);
+        }
         if (msg.has_delay()) {
           static FILE* delay_file = OpenFile(FLAG_delay_file, "wb");
           int32_t delay = msg.delay();
@@ -359,9 +376,11 @@ int do_main(int argc, char* argv[]) {
         output_wav_file.reset(new WavWriter(
             output_name.str(), output_sample_rate, num_output_channels));
 
-        rtc::StringBuilder callorder_name;
-        callorder_name << FLAG_callorder_file << frame_count << ".char";
-        callorder_char_file = OpenFile(callorder_name.str(), "wb");
+        if (WritingCallOrderFile()) {
+          rtc::StringBuilder callorder_name;
+          callorder_name << FLAG_callorder_file << frame_count << ".char";
+          callorder_char_file = OpenFile(callorder_name.str(), "wb");
+        }
       }
     }
   }

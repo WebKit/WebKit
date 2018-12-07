@@ -13,6 +13,8 @@
 
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace cricket {
 
 // CN_ == "content name".  When we initiate a session, we choose the
@@ -29,7 +31,7 @@ extern const char CN_OTHER[];
 extern const char GROUP_TYPE_BUNDLE[];
 
 extern const int ICE_UFRAG_LENGTH;
-extern const int ICE_PWD_LENGTH;
+RTC_EXPORT extern const int ICE_PWD_LENGTH;
 extern const size_t ICE_UFRAG_MIN_LENGTH;
 extern const size_t ICE_PWD_MIN_LENGTH;
 extern const size_t ICE_UFRAG_MAX_LENGTH;

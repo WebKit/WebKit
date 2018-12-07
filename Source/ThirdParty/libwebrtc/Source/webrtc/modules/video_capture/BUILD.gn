@@ -38,6 +38,7 @@ rtc_static_library("video_capture_module") {
     "../../rtc_base:stringutils",
     "../../rtc_base/synchronization:rw_lock_wrapper",
     "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/libyuv",
   ]
 }
@@ -190,6 +191,7 @@ if (!build_with_chromium) {
         "../../common_video:common_video",
         "../../rtc_base:rtc_base_approved",
         "../../system_wrappers:system_wrappers",
+        "../../test:test_support",
         "../../test:video_test_common",
         "../utility",
         "//testing/gtest",

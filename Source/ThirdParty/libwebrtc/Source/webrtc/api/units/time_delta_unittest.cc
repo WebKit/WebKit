@@ -10,6 +10,8 @@
 
 #include "api/units/time_delta.h"
 
+#include <limits>
+
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -104,6 +106,27 @@ TEST(TimeDeltaTest, ComparisonOperators) {
 
   EXPECT_GT(TimeDelta::PlusInfinity(), large);
   EXPECT_LT(TimeDelta::MinusInfinity(), TimeDelta::Zero());
+}
+
+TEST(TimeDeltaTest, Clamping) {
+  const TimeDelta upper = TimeDelta::ms(800);
+  const TimeDelta lower = TimeDelta::ms(100);
+  const TimeDelta under = TimeDelta::ms(100);
+  const TimeDelta inside = TimeDelta::ms(500);
+  const TimeDelta over = TimeDelta::ms(1000);
+  EXPECT_EQ(under.Clamped(lower, upper), lower);
+  EXPECT_EQ(inside.Clamped(lower, upper), inside);
+  EXPECT_EQ(over.Clamped(lower, upper), upper);
+
+  TimeDelta mutable_delta = lower;
+  mutable_delta.Clamp(lower, upper);
+  EXPECT_EQ(mutable_delta, lower);
+  mutable_delta = inside;
+  mutable_delta.Clamp(lower, upper);
+  EXPECT_EQ(mutable_delta, inside);
+  mutable_delta = over;
+  mutable_delta.Clamp(lower, upper);
+  EXPECT_EQ(mutable_delta, upper);
 }
 
 TEST(TimeDeltaTest, CanBeInititializedFromLargeInt) {

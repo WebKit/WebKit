@@ -10,89 +10,13 @@
 
 #include "media/base/testutils.h"
 
-#include <math.h>
 #include <algorithm>
 #include <memory>
 
 #include "api/video/video_frame.h"
 #include "media/base/videocapturer.h"
-#include "rtc_base/bytebuffer.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/stream.h"
-#include "rtc_base/stringutils.h"
-#include "rtc_base/testutils.h"
 
 namespace cricket {
-
-/////////////////////////////////////////////////////////////////////////
-// Implementation of RawRtpPacket
-/////////////////////////////////////////////////////////////////////////
-void RawRtpPacket::WriteToByteBuffer(uint32_t in_ssrc,
-                                     rtc::ByteBufferWriter* buf) const {
-  if (!buf)
-    return;
-
-  buf->WriteUInt8(ver_to_cc);
-  buf->WriteUInt8(m_to_pt);
-  buf->WriteUInt16(sequence_number);
-  buf->WriteUInt32(timestamp);
-  buf->WriteUInt32(in_ssrc);
-  buf->WriteBytes(payload, sizeof(payload));
-}
-
-bool RawRtpPacket::ReadFromByteBuffer(rtc::ByteBufferReader* buf) {
-  if (!buf)
-    return false;
-
-  bool ret = true;
-  ret &= buf->ReadUInt8(&ver_to_cc);
-  ret &= buf->ReadUInt8(&m_to_pt);
-  ret &= buf->ReadUInt16(&sequence_number);
-  ret &= buf->ReadUInt32(&timestamp);
-  ret &= buf->ReadUInt32(&ssrc);
-  ret &= buf->ReadBytes(payload, sizeof(payload));
-  return ret;
-}
-
-bool RawRtpPacket::SameExceptSeqNumTimestampSsrc(const RawRtpPacket& packet,
-                                                 uint16_t seq,
-                                                 uint32_t ts,
-                                                 uint32_t ssc) const {
-  return sequence_number == seq && timestamp == ts &&
-         ver_to_cc == packet.ver_to_cc && m_to_pt == packet.m_to_pt &&
-         ssrc == ssc && 0 == memcmp(payload, packet.payload, sizeof(payload));
-}
-
-/////////////////////////////////////////////////////////////////////////
-// Implementation of RawRtcpPacket
-/////////////////////////////////////////////////////////////////////////
-void RawRtcpPacket::WriteToByteBuffer(rtc::ByteBufferWriter* buf) const {
-  if (!buf)
-    return;
-
-  buf->WriteUInt8(ver_to_count);
-  buf->WriteUInt8(type);
-  buf->WriteUInt16(length);
-  buf->WriteBytes(payload, sizeof(payload));
-}
-
-bool RawRtcpPacket::ReadFromByteBuffer(rtc::ByteBufferReader* buf) {
-  if (!buf)
-    return false;
-
-  bool ret = true;
-  ret &= buf->ReadUInt8(&ver_to_count);
-  ret &= buf->ReadUInt8(&type);
-  ret &= buf->ReadUInt16(&length);
-  ret &= buf->ReadBytes(payload, sizeof(payload));
-  return ret;
-}
-
-bool RawRtcpPacket::EqualsTo(const RawRtcpPacket& packet) const {
-  return ver_to_count == packet.ver_to_count && type == packet.type &&
-         length == packet.length &&
-         0 == memcmp(payload, packet.payload, sizeof(payload));
-}
 
 // Implementation of VideoCaptureListener.
 VideoCapturerListener::VideoCapturerListener(VideoCapturer* capturer)

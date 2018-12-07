@@ -17,10 +17,10 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/call/transport.h"
-#include "api/video/video_content_type.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -38,6 +38,7 @@
 
 namespace webrtc {
 
+class FrameEncryptorInterface;
 class OverheadObserver;
 class RateLimiter;
 class RtcEventLog;
@@ -63,7 +64,10 @@ class RTPSender {
             SendPacketObserver* send_packet_observer,
             RateLimiter* nack_rate_limiter,
             OverheadObserver* overhead_observer,
-            bool populate_network2_timestamp);
+            bool populate_network2_timestamp,
+            FrameEncryptorInterface* frame_encryptor,
+            bool require_frame_encryption,
+            bool extmap_allow_mixed);
 
   ~RTPSender();
 
@@ -75,7 +79,7 @@ class RTPSender {
   uint32_t FecOverheadRate() const;
   uint32_t NackOverheadRate() const;
 
-  int32_t RegisterPayload(const char* payload_name,
+  int32_t RegisterPayload(absl::string_view payload_name,
                           const int8_t payload_type,
                           const uint32_t frequency,
                           const size_t channels,
@@ -85,6 +89,8 @@ class RTPSender {
 
   void SetSendingMediaStatus(bool enabled);
   bool SendingMedia() const;
+
+  void SetAsPartOfAllocation(bool part_of_allocation);
 
   void GetDataCounters(StreamDataCounters* rtp_stats,
                        StreamDataCounters* rtx_stats) const;
@@ -113,6 +119,8 @@ class RTPSender {
                         const RTPVideoHeader* rtp_header,
                         uint32_t* transport_frame_id_out,
                         int64_t expected_retransmission_time_ms);
+
+  void SetExtmapAllowMixed(bool extmap_allow_mixed);
 
   // RTP header extension
   int32_t RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);
@@ -247,8 +255,8 @@ class RTPSender {
                           int64_t capture_time_ms,
                           uint32_t ssrc);
 
-  bool UpdateTransportSequenceNumber(RtpPacketToSend* packet,
-                                     int* packet_id) const;
+  bool UpdateTransportSequenceNumber(RtpPacketToSend* packet, int* packet_id)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(send_critsect_);
 
   void UpdateRtpStats(const RtpPacketToSend& packet,
                       bool is_rtx,
@@ -277,7 +285,7 @@ class RTPSender {
 
   Transport* transport_;
   bool sending_media_ RTC_GUARDED_BY(send_critsect_);
-
+  bool force_part_of_allocation_ RTC_GUARDED_BY(send_critsect_);
   size_t max_packet_size_;
 
   int8_t last_payload_type_ RTC_GUARDED_BY(send_critsect_);
@@ -342,11 +350,6 @@ class RTPSender {
   const bool populate_network2_timestamp_;
 
   const bool send_side_bwe_with_overhead_;
-
-  const bool unlimited_retransmission_experiment_;
-
-  absl::optional<VideoContentType> video_content_type_
-      RTC_GUARDED_BY(send_critsect_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(RTPSender);
 };

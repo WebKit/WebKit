@@ -11,6 +11,7 @@
 #ifndef COMMON_AUDIO_INCLUDE_AUDIO_UTIL_H_
 #define COMMON_AUDIO_INCLUDE_AUDIO_UTIL_H_
 
+#include <stdint.h>
 #include <algorithm>
 #include <cmath>
 #include <cstring>

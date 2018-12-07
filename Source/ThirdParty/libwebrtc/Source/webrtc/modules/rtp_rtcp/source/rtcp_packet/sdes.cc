@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 
+#include <string.h>
 #include <utility>
 
 #include "modules/rtp_rtcp/source/byte_io.h"

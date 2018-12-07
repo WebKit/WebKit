@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_GAIN_APPLIER_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_GAIN_APPLIER_H_
 
+#include <stddef.h>
+
 #include "modules/audio_processing/include/audio_frame_view.h"
 
 namespace webrtc {

@@ -30,15 +30,9 @@ class VideoCodecInitializer {
   // type used. For instance, VP8 will create an allocator than can handle
   // simulcast and temporal layering.
   // GetBitrateAllocator is called implicitly from here, no need to call again.
-  static bool SetupCodec(
-      const VideoEncoderConfig& config,
-      const std::vector<VideoStream>& streams,
-      VideoCodec* codec,
-      std::unique_ptr<VideoBitrateAllocator>* bitrate_allocator);
-
-  // Create a bitrate allocator for the specified codec.
-  static std::unique_ptr<VideoBitrateAllocator> CreateBitrateAllocator(
-      const VideoCodec& codec);
+  static bool SetupCodec(const VideoEncoderConfig& config,
+                         const std::vector<VideoStream>& streams,
+                         VideoCodec* codec);
 
  private:
   static VideoCodec VideoEncoderConfigToVideoCodec(

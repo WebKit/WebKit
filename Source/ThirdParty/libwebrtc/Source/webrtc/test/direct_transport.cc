@@ -72,6 +72,8 @@ bool DirectTransport::SendRtp(const uint8_t* data,
   if (send_call_) {
     rtc::SentPacket sent_packet(options.packet_id,
                                 clock_->TimeInMilliseconds());
+    sent_packet.info.included_in_feedback = options.included_in_feedback;
+    sent_packet.info.included_in_allocation = options.included_in_allocation;
     sent_packet.info.packet_size_bytes = length;
     sent_packet.info.packet_type = rtc::PacketType::kData;
     send_call_->OnSentPacket(sent_packet);

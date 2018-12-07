@@ -10,6 +10,8 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 
+#include <array>
+
 #include "modules/audio_processing/agc2/rnn_vad/lp_residual.h"
 #include "rtc_base/checks.h"
 

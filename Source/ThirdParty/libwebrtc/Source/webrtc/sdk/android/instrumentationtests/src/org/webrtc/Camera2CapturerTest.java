@@ -302,6 +302,14 @@ public class Camera2CapturerTest {
     fixtures.scaleCameraOutput();
   }
 
+  // This test that frames forwarded to a renderer is cropped to a new orientation if
+  // adaptOutputFormat is called in such a way. This test both Java and C++ parts of of the stack.
+  @Test
+  @MediumTest
+  public void testCropCameraOutput() throws InterruptedException {
+    fixtures.cropCameraOutput();
+  }
+
   // This test that an error is reported if the camera is already opened
   // when CameraVideoCapturer is started.
   @Test

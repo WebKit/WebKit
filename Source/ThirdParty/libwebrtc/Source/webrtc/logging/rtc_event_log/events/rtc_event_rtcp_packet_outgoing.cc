@@ -33,8 +33,10 @@ bool RtcEventRtcpPacketOutgoing::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventRtcpPacketOutgoing::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventRtcpPacketOutgoing(*this));
+std::unique_ptr<RtcEventRtcpPacketOutgoing> RtcEventRtcpPacketOutgoing::Copy()
+    const {
+  return absl::WrapUnique<RtcEventRtcpPacketOutgoing>(
+      new RtcEventRtcpPacketOutgoing(*this));
 }
 
 }  // namespace webrtc

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "api/stats/rtcstats.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -73,7 +74,7 @@ struct RTCNetworkType {
 };
 
 // https://w3c.github.io/webrtc-stats/#certificatestats-dict*
-class RTCCertificateStats final : public RTCStats {
+class RTC_EXPORT RTCCertificateStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -89,7 +90,7 @@ class RTCCertificateStats final : public RTCStats {
 };
 
 // https://w3c.github.io/webrtc-stats/#codec-dict*
-class RTCCodecStats final : public RTCStats {
+class RTC_EXPORT RTCCodecStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -110,7 +111,7 @@ class RTCCodecStats final : public RTCStats {
 };
 
 // https://w3c.github.io/webrtc-stats/#dcstats-dict*
-class RTCDataChannelStats final : public RTCStats {
+class RTC_EXPORT RTCDataChannelStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -132,7 +133,7 @@ class RTCDataChannelStats final : public RTCStats {
 
 // https://w3c.github.io/webrtc-stats/#candidatepair-dict*
 // TODO(hbos): Tracking bug https://bugs.webrtc.org/7062
-class RTCIceCandidatePairStats final : public RTCStats {
+class RTC_EXPORT RTCIceCandidatePairStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -186,7 +187,7 @@ class RTCIceCandidatePairStats final : public RTCStats {
 // crbug.com/632723
 // TODO(qingsi): Add the stats of STUN binding requests (keepalives) and collect
 // them in the new PeerConnection::GetStats.
-class RTCIceCandidateStats : public RTCStats {
+class RTC_EXPORT RTCIceCandidateStats : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -221,7 +222,7 @@ class RTCIceCandidateStats : public RTCStats {
 // |kType| need to be different ("RTCStatsType type") in the local/remote case.
 // https://w3c.github.io/webrtc-stats/#rtcstatstype-str*
 // This forces us to have to override copy() and type().
-class RTCLocalIceCandidateStats final : public RTCIceCandidateStats {
+class RTC_EXPORT RTCLocalIceCandidateStats final : public RTCIceCandidateStats {
  public:
   static const char kType[];
   RTCLocalIceCandidateStats(const std::string& id, int64_t timestamp_us);
@@ -230,7 +231,8 @@ class RTCLocalIceCandidateStats final : public RTCIceCandidateStats {
   const char* type() const override;
 };
 
-class RTCRemoteIceCandidateStats final : public RTCIceCandidateStats {
+class RTC_EXPORT RTCRemoteIceCandidateStats final
+    : public RTCIceCandidateStats {
  public:
   static const char kType[];
   RTCRemoteIceCandidateStats(const std::string& id, int64_t timestamp_us);
@@ -241,7 +243,7 @@ class RTCRemoteIceCandidateStats final : public RTCIceCandidateStats {
 
 // https://w3c.github.io/webrtc-stats/#msstats-dict*
 // TODO(hbos): Tracking bug crbug.com/660827
-class RTCMediaStreamStats final : public RTCStats {
+class RTC_EXPORT RTCMediaStreamStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -256,7 +258,7 @@ class RTCMediaStreamStats final : public RTCStats {
 
 // https://w3c.github.io/webrtc-stats/#mststats-dict*
 // TODO(hbos): Tracking bug crbug.com/659137
-class RTCMediaStreamTrackStats final : public RTCStats {
+class RTC_EXPORT RTCMediaStreamTrackStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -306,10 +308,14 @@ class RTCMediaStreamTrackStats final : public RTCStats {
   RTCStatsMember<double> total_samples_duration;
   RTCStatsMember<uint64_t> concealed_samples;
   RTCStatsMember<uint64_t> concealment_events;
+  // Non-standard audio-only member
+  // TODO(kuddai): Add description to standard. crbug.com/webrtc/10042
+  RTCNonStandardStatsMember<uint64_t> jitter_buffer_flushes;
+  RTCNonStandardStatsMember<uint64_t> delayed_packet_outage_samples;
 };
 
 // https://w3c.github.io/webrtc-stats/#pcstats-dict*
-class RTCPeerConnectionStats final : public RTCStats {
+class RTC_EXPORT RTCPeerConnectionStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -324,7 +330,7 @@ class RTCPeerConnectionStats final : public RTCStats {
 
 // https://w3c.github.io/webrtc-stats/#streamstats-dict*
 // TODO(hbos): Tracking bug crbug.com/657854
-class RTCRTPStreamStats : public RTCStats {
+class RTC_EXPORT RTCRTPStreamStats : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -362,7 +368,7 @@ class RTCRTPStreamStats : public RTCStats {
 // https://w3c.github.io/webrtc-stats/#inboundrtpstats-dict*
 // TODO(hbos): Support the remote case |is_remote = true|.
 // https://bugs.webrtc.org/7065
-class RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
+class RTC_EXPORT RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -406,7 +412,7 @@ class RTCInboundRTPStreamStats final : public RTCRTPStreamStats {
 // https://w3c.github.io/webrtc-stats/#outboundrtpstats-dict*
 // TODO(hbos): Support the remote case |is_remote = true|.
 // https://bugs.webrtc.org/7066
-class RTCOutboundRTPStreamStats final : public RTCRTPStreamStats {
+class RTC_EXPORT RTCOutboundRTPStreamStats final : public RTCRTPStreamStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 
@@ -423,7 +429,7 @@ class RTCOutboundRTPStreamStats final : public RTCRTPStreamStats {
 };
 
 // https://w3c.github.io/webrtc-stats/#transportstats-dict*
-class RTCTransportStats final : public RTCStats {
+class RTC_EXPORT RTCTransportStats final : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 

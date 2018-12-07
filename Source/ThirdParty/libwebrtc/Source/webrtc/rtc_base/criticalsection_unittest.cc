@@ -389,7 +389,7 @@ class PerfTestThread {
 // The test is disabled by default to avoid unecessarily loading the bots.
 TEST(CriticalSectionTest, DISABLED_Performance) {
   PerfTestThread threads[8];
-  Event event(false, false);
+  Event event;
 
   static const int kThreadRepeats = 10000000;
   static const int kExpectedCount = kThreadRepeats * arraysize(threads);

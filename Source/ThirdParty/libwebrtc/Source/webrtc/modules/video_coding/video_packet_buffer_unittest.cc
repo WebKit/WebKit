@@ -120,14 +120,7 @@ TEST_F(TestPacketBuffer, InsertDuplicatePacket) {
   EXPECT_TRUE(Insert(seq_num, kKeyFrame, kFirst, kLast));
 }
 
-#if defined(WEBRTC_ANDROID)
-// Fails on android after clang update
-// TODO(crbug.com/887464): Reenable this
-#define MAYBE_SeqNumWrapOneFrame DISABLED_SeqNumWrapOneFrame
-#else
-#define MAYBE_SeqNumWrapOneFrame SeqNumWrapOneFrame
-#endif
-TEST_F(TestPacketBuffer, MAYBE_SeqNumWrapOneFrame) {
+TEST_F(TestPacketBuffer, SeqNumWrapOneFrame) {
   EXPECT_TRUE(Insert(0xFFFF, kKeyFrame, kFirst, kNotLast));
   EXPECT_TRUE(Insert(0x0, kKeyFrame, kNotFirst, kLast));
 

@@ -46,8 +46,6 @@ class LogObserver {
  private:
   class Callback : public rtc::LogSink {
    public:
-    Callback() : done_(false, false) {}
-
     void OnLogMessage(const std::string& message) override {
       rtc::CritScope lock(&crit_sect_);
       // Ignore log lines that are due to missing AST extensions, these are
@@ -111,14 +109,14 @@ class BitrateEstimatorTest : public test::CallTest {
           &task_queue_,
           absl::make_unique<FakeNetworkPipe>(
               Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                             DefaultNetworkSimulationConfig())),
+                                             BuiltInNetworkBehaviorConfig())),
           sender_call_.get(), payload_type_map_));
       send_transport_->SetReceiver(receiver_call_->Receiver());
       receive_transport_.reset(new test::DirectTransport(
           &task_queue_,
           absl::make_unique<FakeNetworkPipe>(
               Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                             DefaultNetworkSimulationConfig())),
+                                             BuiltInNetworkBehaviorConfig())),
           receiver_call_.get(), payload_type_map_));
       receive_transport_->SetReceiver(sender_call_->Receiver());
 
@@ -126,6 +124,8 @@ class BitrateEstimatorTest : public test::CallTest {
       video_send_config.rtp.ssrcs.push_back(kVideoSendSsrcs[0]);
       video_send_config.encoder_settings.encoder_factory =
           &fake_encoder_factory_;
+      video_send_config.encoder_settings.bitrate_allocator_factory =
+          bitrate_allocator_factory_.get();
       video_send_config.rtp.payload_name = "FAKE";
       video_send_config.rtp.payload_type = kFakeVideoSendPayloadType;
       SetVideoSendConfig(video_send_config);

@@ -48,10 +48,7 @@ RtpPacketReceived CreateRtpPacket(uint32_t ssrc,
     packet.SetCsrcs(csrcs);
   }
   packet.SetPayloadSize(payload_size);
-  if (padding_size > 0) {
-    Random random(17);
-    packet.SetPadding(padding_size, &random);
-  }
+  packet.SetPadding(padding_size);
   return packet;
 }
 
@@ -74,7 +71,9 @@ void IncrementTimestamp(RtpPacketReceived* packet, uint32_t incr) {
 class ReceiveStatisticsTest : public ::testing::Test {
  public:
   ReceiveStatisticsTest()
-      : clock_(0), receive_statistics_(ReceiveStatistics::Create(&clock_)) {
+      : clock_(0),
+        receive_statistics_(
+            ReceiveStatistics::Create(&clock_, nullptr, nullptr)) {
     packet1_ = CreateRtpPacket(kSsrc1, kPacketSize1);
     packet2_ = CreateRtpPacket(kSsrc2, kPacketSize2);
   }
@@ -254,7 +253,7 @@ TEST_F(ReceiveStatisticsTest, RtcpCallbacks) {
     RtcpStatistics stats_;
   } callback;
 
-  receive_statistics_->RegisterRtcpStatisticsCallback(&callback);
+  receive_statistics_ = ReceiveStatistics::Create(&clock_, &callback, nullptr);
   receive_statistics_->EnableRetransmitDetection(kSsrc1, true);
 
   // Add some arbitrary data, with loss and jitter.
@@ -294,33 +293,6 @@ TEST_F(ReceiveStatisticsTest, RtcpCallbacks) {
   EXPECT_EQ(1, statistics.packets_lost);
   EXPECT_EQ(5u, statistics.extended_highest_sequence_number);
   EXPECT_EQ(177u, statistics.jitter);
-
-  receive_statistics_->RegisterRtcpStatisticsCallback(NULL);
-
-  // Add some more data.
-  packet1_.SetSequenceNumber(1);
-  clock_.AdvanceTimeMilliseconds(7);
-  IncrementTimestamp(&packet1_, 3);
-  receive_statistics_->OnRtpPacket(packet1_);
-  IncrementSequenceNumber(&packet1_, 2);
-  clock_.AdvanceTimeMilliseconds(9);
-  IncrementTimestamp(&packet1_, 9);
-  receive_statistics_->OnRtpPacket(packet1_);
-  IncrementSequenceNumber(&packet1_, -1);
-  clock_.AdvanceTimeMilliseconds(13);
-  IncrementTimestamp(&packet1_, 47);
-  receive_statistics_->OnRtpPacket(packet1_);
-  IncrementSequenceNumber(&packet1_, 3);
-  clock_.AdvanceTimeMilliseconds(11);
-  IncrementTimestamp(&packet1_, 17);
-  receive_statistics_->OnRtpPacket(packet1_);
-  IncrementSequenceNumber(&packet1_);
-
-  receive_statistics_->GetStatistician(kSsrc1)->GetStatistics(&statistics,
-                                                              true);
-
-  // Should not have been called after deregister.
-  EXPECT_EQ(1u, callback.num_calls_);
 }
 
 class RtpTestCallback : public StreamDataCountersCallback {
@@ -361,7 +333,7 @@ class RtpTestCallback : public StreamDataCountersCallback {
 
 TEST_F(ReceiveStatisticsTest, RtpCallbacks) {
   RtpTestCallback callback;
-  receive_statistics_->RegisterRtpStatisticsCallback(&callback);
+  receive_statistics_ = ReceiveStatistics::Create(&clock_, nullptr, &callback);
   receive_statistics_->EnableRetransmitDetection(kSsrc1, true);
 
   const size_t kHeaderLength = 20;
@@ -420,19 +392,11 @@ TEST_F(ReceiveStatisticsTest, RtpCallbacks) {
   expected.fec.header_bytes = kHeaderLength;
   expected.fec.packets = 1;
   callback.Matches(5, kSsrc1, expected);
-
-  receive_statistics_->RegisterRtpStatisticsCallback(NULL);
-
-  // New stats, but callback should not be called.
-  IncrementSequenceNumber(&packet1);
-  clock_.AdvanceTimeMilliseconds(5);
-  receive_statistics_->OnRtpPacket(packet1);
-  callback.Matches(5, kSsrc1, expected);
 }
 
 TEST_F(ReceiveStatisticsTest, RtpCallbacksFecFirst) {
   RtpTestCallback callback;
-  receive_statistics_->RegisterRtpStatisticsCallback(&callback);
+  receive_statistics_ = ReceiveStatistics::Create(&clock_, nullptr, &callback);
 
   const uint32_t kHeaderLength = 20;
   RtpPacketReceived packet =

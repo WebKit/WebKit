@@ -11,9 +11,11 @@
 #include "common_video/include/incoming_video_stream.h"
 
 #include <memory>
+#include <utility>
 
+#include "absl/types/optional.h"
 #include "common_video/video_render_frames.h"
-#include "rtc_base/timeutils.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {

@@ -184,6 +184,16 @@ public class PeerConnectionClientTest implements PeerConnectionEvents {
   }
 
   @Override
+  public void onConnected() {
+    Log.d(TAG, "DTLS Connected");
+  }
+
+  @Override
+  public void onDisconnected() {
+    Log.d(TAG, "DTLS Disconnected");
+  }
+
+  @Override
   public void onPeerConnectionClosed() {
     Log.d(TAG, "PeerConnection closed");
     synchronized (closeEvent) {

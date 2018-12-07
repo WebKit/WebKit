@@ -10,6 +10,8 @@
 
 #include "modules/rtp_rtcp/source/packet_loss_stats.h"
 
+#include <cstdint>
+#include <iterator>
 #include <vector>
 
 #include "rtc_base/checks.h"

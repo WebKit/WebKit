@@ -11,7 +11,7 @@
 #include "api/audio_codecs/L16/audio_encoder_L16.h"
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_encoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -35,7 +35,7 @@ absl::optional<AudioEncoderL16::Config> AudioEncoderL16::SdpToConfig(
       config.frame_size_ms = rtc::SafeClamp(10 * (*ptime / 10), 10, 60);
     }
   }
-  return STR_CASE_CMP(format.name.c_str(), "L16") == 0 && config.IsOk()
+  return absl::EqualsIgnoreCase(format.name, "L16") && config.IsOk()
              ? absl::optional<Config>(config)
              : absl::nullopt;
 }

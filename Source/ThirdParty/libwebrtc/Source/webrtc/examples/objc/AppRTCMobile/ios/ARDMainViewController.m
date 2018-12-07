@@ -32,13 +32,16 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
     ARDMainViewDelegate,
     ARDVideoCallViewControllerDelegate,
     RTCAudioSessionDelegate>
+@property(nonatomic, strong) ARDMainView *mainView;
+@property(nonatomic, strong) AVAudioPlayer *audioPlayer;
 @end
 
 @implementation ARDMainViewController {
-  ARDMainView *_mainView;
-  AVAudioPlayer *_audioPlayer;
   BOOL _useManualAudio;
 }
+
+@synthesize mainView = _mainView;
+@synthesize audioPlayer = _audioPlayer;
 
 - (void)viewDidLoad {
   [super viewDidLoad];
@@ -165,13 +168,13 @@ static NSString *const loopbackLaunchProcessArgument = @"loopback";
   // Stop playback on main queue and then configure WebRTC.
   [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeMain
                                block:^{
-    if (_mainView.isAudioLoopPlaying) {
-      RTCLog(@"Stopping audio loop due to WebRTC start.");
-      [_audioPlayer stop];
-    }
-    RTCLog(@"Setting isAudioEnabled to YES.");
-    session.isAudioEnabled = YES;
-  }];
+                                 if (self.mainView.isAudioLoopPlaying) {
+                                   RTCLog(@"Stopping audio loop due to WebRTC start.");
+                                   [self.audioPlayer stop];
+                                 }
+                                 RTCLog(@"Setting isAudioEnabled to YES.");
+                                 session.isAudioEnabled = YES;
+                               }];
 }
 
 - (void)audioSessionDidStopPlayOrRecord:(RTCAudioSession *)session {

@@ -10,14 +10,6 @@
 
 #include "api/rtp_headers.h"
 
-#include <string.h>
-#include <algorithm>
-#include <limits>
-#include <type_traits>
-
-#include "rtc_base/checks.h"
-#include "rtc_base/stringutils.h"
-
 namespace webrtc {
 
 RTPHeaderExtension::RTPHeaderExtension()

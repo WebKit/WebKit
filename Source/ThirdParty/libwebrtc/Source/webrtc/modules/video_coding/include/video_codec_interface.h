@@ -79,6 +79,7 @@ struct CodecSpecificInfo {
     memset(&codecSpecific, 0, sizeof(codecSpecific));
   }
   VideoCodecType codecType;
+  // |codec_name| is deprecated, use name provided by VideoEncoder instead.
   const char* codec_name;
   CodecSpecificInfoUnion codecSpecific;
 };

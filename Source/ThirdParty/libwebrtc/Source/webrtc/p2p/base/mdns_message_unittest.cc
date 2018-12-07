@@ -19,9 +19,9 @@
 #include "rtc_base/socketaddress.h"
 #include "test/gmock.h"
 
-#define ReadMDnsMessage(X, Y) ReadMDnsMessageTestCase(X, Y, sizeof(Y))
-#define WriteMDnsMessageAndCompare(X, Y) \
-  WriteMDnsMessageAndCompareWithTestCast(X, Y, sizeof(Y))
+#define ReadMdnsMessage(X, Y) ReadMdnsMessageTestCase(X, Y, sizeof(Y))
+#define WriteMdnsMessageAndCompare(X, Y) \
+  WriteMdnsMessageAndCompareWithTestCast(X, Y, sizeof(Y))
 
 using ::testing::ElementsAre;
 using ::testing::Pair;
@@ -255,14 +255,14 @@ const uint8_t kCorruptedAnswerWithNameCompression2[] = {
     0xc0, 0xA8, 0x00, 0x01,  // 192.168.0.1
 };
 
-bool ReadMDnsMessageTestCase(MDnsMessage* msg,
+bool ReadMdnsMessageTestCase(MdnsMessage* msg,
                              const uint8_t* testcase,
                              size_t size) {
   MessageBufferReader buf(reinterpret_cast<const char*>(testcase), size);
   return msg->Read(&buf);
 }
 
-void WriteMDnsMessageAndCompareWithTestCast(MDnsMessage* msg,
+void WriteMdnsMessageAndCompareWithTestCast(MdnsMessage* msg,
                                             const uint8_t* testcase,
                                             size_t size) {
   rtc::ByteBufferWriter out;
@@ -276,7 +276,7 @@ void WriteMDnsMessageAndCompareWithTestCast(MDnsMessage* msg,
   EXPECT_EQ(testcase_bytes, bytes);
 }
 
-bool GetQueriedNames(MDnsMessage* msg, std::set<std::string>* names) {
+bool GetQueriedNames(MdnsMessage* msg, std::set<std::string>* names) {
   if (!msg->IsQuery() || msg->question_section().empty()) {
     return false;
   }
@@ -286,7 +286,7 @@ bool GetQueriedNames(MDnsMessage* msg, std::set<std::string>* names) {
   return true;
 }
 
-bool GetResolution(MDnsMessage* msg,
+bool GetResolution(MdnsMessage* msg,
                    std::map<std::string, rtc::IPAddress>* names) {
   if (msg->IsQuery() || msg->answer_section().empty()) {
     return false;
@@ -303,10 +303,10 @@ bool GetResolution(MDnsMessage* msg,
 
 }  // namespace
 
-TEST(MDnsMessageTest, ReadSingleQuestionForIPv4Address) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, ReadSingleQuestionForIPv4Address) {
+  MdnsMessage msg;
   ASSERT_TRUE(
-      ReadMDnsMessage(&msg, kSingleQuestionForIPv4AddrWithUnicastResponse));
+      ReadMdnsMessage(&msg, kSingleQuestionForIPv4AddrWithUnicastResponse));
   EXPECT_TRUE(msg.IsQuery());
   EXPECT_EQ(0x1234, msg.GetId());
   ASSERT_EQ(1u, msg.question_section().size());
@@ -323,9 +323,9 @@ TEST(MDnsMessageTest, ReadSingleQuestionForIPv4Address) {
   EXPECT_THAT(queried_names, ElementsAre("webrtc.org."));
 }
 
-TEST(MDnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6Addr) {
-  MDnsMessage msg;
-  ASSERT_TRUE(ReadMDnsMessage(
+TEST(MdnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6Addr) {
+  MdnsMessage msg;
+  ASSERT_TRUE(ReadMdnsMessage(
       &msg, kTwoQuestionsForIPv4AndIPv6AddrWithMulticastResponse));
   EXPECT_TRUE(msg.IsQuery());
   EXPECT_EQ(0x1234, msg.GetId());
@@ -345,9 +345,9 @@ TEST(MDnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6Addr) {
               UnorderedElementsAre("webrtc4.org.", "webrtc6.org."));
 }
 
-TEST(MDnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6AddrWithNameCompression) {
-  MDnsMessage msg;
-  ASSERT_TRUE(ReadMDnsMessage(
+TEST(MdnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6AddrWithNameCompression) {
+  MdnsMessage msg;
+  ASSERT_TRUE(ReadMdnsMessage(
       &msg,
       kTwoQuestionsForIPv4AndIPv6AddrWithMulticastResponseAndNameCompression));
 
@@ -363,10 +363,10 @@ TEST(MDnsMessageTest, ReadTwoQuestionsForIPv4AndIPv6AddrWithNameCompression) {
               UnorderedElementsAre("www.webrtc.org.", "mdns.webrtc.org."));
 }
 
-TEST(MDnsMessageTest, ReadThreeQuestionsWithTwoPointersToTheSameNameSuffix) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, ReadThreeQuestionsWithTwoPointersToTheSameNameSuffix) {
+  MdnsMessage msg;
   ASSERT_TRUE(
-      ReadMDnsMessage(&msg, kThreeQuestionsWithTwoPointersToTheSameNameSuffix));
+      ReadMdnsMessage(&msg, kThreeQuestionsWithTwoPointersToTheSameNameSuffix));
 
   ASSERT_EQ(3u, msg.question_section().size());
   const auto& question1 = msg.question_section()[0];
@@ -383,10 +383,10 @@ TEST(MDnsMessageTest, ReadThreeQuestionsWithTwoPointersToTheSameNameSuffix) {
                                    "webrtc.org."));
 }
 
-TEST(MDnsMessageTest,
+TEST(MdnsMessageTest,
      ReadThreeQuestionsWithPointerToNameSuffixContainingAnotherPointer) {
-  MDnsMessage msg;
-  ASSERT_TRUE(ReadMDnsMessage(
+  MdnsMessage msg;
+  ASSERT_TRUE(ReadMdnsMessage(
       &msg, kThreeQuestionsWithPointerToNameSuffixContainingAnotherPointer));
 
   ASSERT_EQ(3u, msg.question_section().size());
@@ -404,16 +404,16 @@ TEST(MDnsMessageTest,
                                    "www.mdns.webrtc.org."));
 }
 
-TEST(MDnsMessageTest,
+TEST(MdnsMessageTest,
      ReadQuestionWithCorruptedPointerInNameCompressionShouldFail) {
-  MDnsMessage msg;
-  EXPECT_FALSE(ReadMDnsMessage(&msg, kCorruptedQuestionWithNameCompression1));
-  EXPECT_FALSE(ReadMDnsMessage(&msg, kCorruptedQuestionWithNameCompression2));
+  MdnsMessage msg;
+  EXPECT_FALSE(ReadMdnsMessage(&msg, kCorruptedQuestionWithNameCompression1));
+  EXPECT_FALSE(ReadMdnsMessage(&msg, kCorruptedQuestionWithNameCompression2));
 }
 
-TEST(MDnsMessageTest, ReadSingleAnswerForIPv4Addr) {
-  MDnsMessage msg;
-  ASSERT_TRUE(ReadMDnsMessage(&msg, kSingleAuthoritativeAnswerWithIPv4Addr));
+TEST(MdnsMessageTest, ReadSingleAnswerForIPv4Addr) {
+  MdnsMessage msg;
+  ASSERT_TRUE(ReadMdnsMessage(&msg, kSingleAuthoritativeAnswerWithIPv4Addr));
   EXPECT_FALSE(msg.IsQuery());
   EXPECT_TRUE(msg.IsAuthoritative());
   EXPECT_EQ(0x1234, msg.GetId());
@@ -432,10 +432,10 @@ TEST(MDnsMessageTest, ReadSingleAnswerForIPv4Addr) {
   EXPECT_THAT(resolution, ElementsAre(Pair("webrtc.org.", expected_addr)));
 }
 
-TEST(MDnsMessageTest, ReadTwoAnswersForIPv4AndIPv6Addr) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, ReadTwoAnswersForIPv4AndIPv6Addr) {
+  MdnsMessage msg;
   ASSERT_TRUE(
-      ReadMDnsMessage(&msg, kTwoAuthoritativeAnswersWithIPv4AndIPv6Addr));
+      ReadMdnsMessage(&msg, kTwoAuthoritativeAnswersWithIPv4AndIPv6Addr));
   EXPECT_FALSE(msg.IsQuery());
   EXPECT_TRUE(msg.IsAuthoritative());
   EXPECT_EQ(0x1234, msg.GetId());
@@ -462,9 +462,9 @@ TEST(MDnsMessageTest, ReadTwoAnswersForIPv4AndIPv6Addr) {
                                    Pair("webrtc6.org.", expected_addr_ipv6)));
 }
 
-TEST(MDnsMessageTest, ReadTwoAnswersForIPv4AndIPv6AddrWithNameCompression) {
-  MDnsMessage msg;
-  ASSERT_TRUE(ReadMDnsMessage(
+TEST(MdnsMessageTest, ReadTwoAnswersForIPv4AndIPv6AddrWithNameCompression) {
+  MdnsMessage msg;
+  ASSERT_TRUE(ReadMdnsMessage(
       &msg, kTwoAuthoritativeAnswersWithIPv4AndIPv6AddrWithNameCompression));
 
   std::map<std::string, rtc::IPAddress> resolution;
@@ -478,57 +478,57 @@ TEST(MDnsMessageTest, ReadTwoAnswersForIPv4AndIPv6AddrWithNameCompression) {
                                    Pair("webrtc.org.", expected_addr_ipv6)));
 }
 
-TEST(MDnsMessageTest,
+TEST(MdnsMessageTest,
      ReadAnswerWithCorruptedPointerInNameCompressionShouldFail) {
-  MDnsMessage msg;
-  EXPECT_FALSE(ReadMDnsMessage(&msg, kCorruptedAnswerWithNameCompression1));
-  EXPECT_FALSE(ReadMDnsMessage(&msg, kCorruptedAnswerWithNameCompression2));
+  MdnsMessage msg;
+  EXPECT_FALSE(ReadMdnsMessage(&msg, kCorruptedAnswerWithNameCompression1));
+  EXPECT_FALSE(ReadMdnsMessage(&msg, kCorruptedAnswerWithNameCompression2));
 }
 
-TEST(MDnsMessageTest, WriteSingleQuestionForIPv4Addr) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, WriteSingleQuestionForIPv4Addr) {
+  MdnsMessage msg;
   msg.SetId(0x1234);
   msg.SetQueryOrResponse(true);
 
-  MDnsQuestion question;
+  MdnsQuestion question;
   question.SetName("webrtc.org.");
   question.SetType(SectionEntryType::kA);
   question.SetClass(SectionEntryClass::kIN);
   question.SetUnicastResponse(true);
   msg.AddQuestion(question);
 
-  WriteMDnsMessageAndCompare(&msg,
+  WriteMdnsMessageAndCompare(&msg,
                              kSingleQuestionForIPv4AddrWithUnicastResponse);
 }
 
-TEST(MDnsMessageTest, WriteTwoQuestionsForIPv4AndIPv6Addr) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, WriteTwoQuestionsForIPv4AndIPv6Addr) {
+  MdnsMessage msg;
   msg.SetId(0x1234);
   msg.SetQueryOrResponse(true);
 
-  MDnsQuestion question1;
+  MdnsQuestion question1;
   question1.SetName("webrtc4.org.");
   question1.SetType(SectionEntryType::kA);
   question1.SetClass(SectionEntryClass::kIN);
   msg.AddQuestion(question1);
 
-  MDnsQuestion question2;
+  MdnsQuestion question2;
   question2.SetName("webrtc6.org.");
   question2.SetType(SectionEntryType::kAAAA);
   question2.SetClass(SectionEntryClass::kIN);
   msg.AddQuestion(question2);
 
-  WriteMDnsMessageAndCompare(
+  WriteMdnsMessageAndCompare(
       &msg, kTwoQuestionsForIPv4AndIPv6AddrWithMulticastResponse);
 }
 
-TEST(MDnsMessageTest, WriteSingleAnswerToIPv4Addr) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, WriteSingleAnswerToIPv4Addr) {
+  MdnsMessage msg;
   msg.SetId(0x1234);
   msg.SetQueryOrResponse(false);
   msg.SetAuthoritative(true);
 
-  MDnsResourceRecord answer;
+  MdnsResourceRecord answer;
   answer.SetName("webrtc.org.");
   answer.SetType(SectionEntryType::kA);
   answer.SetClass(SectionEntryClass::kIN);
@@ -537,16 +537,16 @@ TEST(MDnsMessageTest, WriteSingleAnswerToIPv4Addr) {
   answer.SetTtlSeconds(120);
   msg.AddAnswerRecord(answer);
 
-  WriteMDnsMessageAndCompare(&msg, kSingleAuthoritativeAnswerWithIPv4Addr);
+  WriteMdnsMessageAndCompare(&msg, kSingleAuthoritativeAnswerWithIPv4Addr);
 }
 
-TEST(MDnsMessageTest, WriteTwoAnswersToIPv4AndIPv6Addr) {
-  MDnsMessage msg;
+TEST(MdnsMessageTest, WriteTwoAnswersToIPv4AndIPv6Addr) {
+  MdnsMessage msg;
   msg.SetId(0x1234);
   msg.SetQueryOrResponse(false);
   msg.SetAuthoritative(true);
 
-  MDnsResourceRecord answer1;
+  MdnsResourceRecord answer1;
   answer1.SetName("webrtc4.org.");
   answer1.SetType(SectionEntryType::kA);
   answer1.SetClass(SectionEntryClass::kIN);
@@ -555,7 +555,7 @@ TEST(MDnsMessageTest, WriteTwoAnswersToIPv4AndIPv6Addr) {
   answer1.SetTtlSeconds(60);
   msg.AddAnswerRecord(answer1);
 
-  MDnsResourceRecord answer2;
+  MdnsResourceRecord answer2;
   answer2.SetName("webrtc6.org.");
   answer2.SetType(SectionEntryType::kAAAA);
   answer2.SetClass(SectionEntryClass::kIN);
@@ -564,7 +564,7 @@ TEST(MDnsMessageTest, WriteTwoAnswersToIPv4AndIPv6Addr) {
   answer2.SetTtlSeconds(120);
   msg.AddAnswerRecord(answer2);
 
-  WriteMDnsMessageAndCompare(&msg, kTwoAuthoritativeAnswersWithIPv4AndIPv6Addr);
+  WriteMdnsMessageAndCompare(&msg, kTwoAuthoritativeAnswersWithIPv4AndIPv6Addr);
 }
 
 }  // namespace webrtc

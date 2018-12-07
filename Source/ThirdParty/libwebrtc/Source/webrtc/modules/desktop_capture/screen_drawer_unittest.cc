@@ -140,7 +140,12 @@ TEST(ScreenDrawerTest, DISABLED_DrawRectangles) {
   SleepMs(10000);
 }
 
-TEST(ScreenDrawerTest, TwoScreenDrawerLocks) {
+#if defined(THREAD_SANITIZER)  // bugs.webrtc.org/10019
+#define MAYBE_TwoScreenDrawerLocks DISABLED_TwoScreenDrawerLocks
+#else
+#define MAYBE_TwoScreenDrawerLocks TwoScreenDrawerLocks
+#endif
+TEST(ScreenDrawerTest, MAYBE_TwoScreenDrawerLocks) {
 #if defined(WEBRTC_POSIX)
   // ScreenDrawerLockPosix won't be able to unlink the named semaphore. So use a
   // different semaphore name here to avoid deadlock.

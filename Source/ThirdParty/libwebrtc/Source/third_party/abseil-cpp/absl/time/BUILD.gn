@@ -62,8 +62,9 @@ source_set("test_util") {
     ":time",
     "../base",
     "../time/internal/cctz:time_zone",
-    "//testing/gtest",
     "//testing/gmock",
+    "//testing/gtest",
+    "//third_party/googletest/:gmock",
   ]
   visibility = []
   visibility += [ "../time:*" ]

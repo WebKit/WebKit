@@ -11,6 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_REVERB_MODEL_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_REVERB_MODEL_H_
 
+#include <array>
+
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 
@@ -50,9 +52,7 @@ class ReverbModel {
       float reverb_decay);
 
   // Returns the current power spectrum reverberation contributions.
-  const std::array<float, kFftLengthBy2Plus1>& GetPowerSpectrum() const {
-    return reverb_;
-  }
+  rtc::ArrayView<const float> GetPowerSpectrum() const { return reverb_; }
 
  private:
   // Updates the reverberation contributions.

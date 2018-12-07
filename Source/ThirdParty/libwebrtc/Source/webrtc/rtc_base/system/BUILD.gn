@@ -65,3 +65,15 @@ rtc_source_set("rtc_export") {
     "rtc_export.h",
   ]
 }
+
+if (is_mac || is_ios) {
+  rtc_source_set("cocoa_threading") {
+    sources = [
+      "cocoa_threading.h",
+      "cocoa_threading.mm",
+    ]
+    deps = [
+      "..:checks",
+    ]
+  }
+}

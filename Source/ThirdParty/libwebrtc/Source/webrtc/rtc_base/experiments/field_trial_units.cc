@@ -9,6 +9,7 @@
  */
 #include "rtc_base/experiments/field_trial_units.h"
 
+#include <stdio.h>
 #include <limits>
 #include <string>
 
@@ -85,6 +86,10 @@ absl::optional<TimeDelta> ParseTypedParameter<TimeDelta>(std::string str) {
 template class FieldTrialParameter<DataRate>;
 template class FieldTrialParameter<DataSize>;
 template class FieldTrialParameter<TimeDelta>;
+
+template class FieldTrialConstrained<DataRate>;
+template class FieldTrialConstrained<DataSize>;
+template class FieldTrialConstrained<TimeDelta>;
 
 template class FieldTrialOptional<DataRate>;
 template class FieldTrialOptional<DataSize>;

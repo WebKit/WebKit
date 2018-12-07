@@ -10,17 +10,28 @@
 
 #include "modules/audio_processing/agc2/adaptive_agc.h"
 
-#include <algorithm>
-#include <numeric>
-
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/vad_with_level.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 AdaptiveAgc::AdaptiveAgc(ApmDataDumper* apm_data_dumper)
     : speech_level_estimator_(apm_data_dumper),
+      gain_applier_(apm_data_dumper),
+      apm_data_dumper_(apm_data_dumper),
+      noise_level_estimator_(apm_data_dumper) {
+  RTC_DCHECK(apm_data_dumper);
+}
+
+AdaptiveAgc::AdaptiveAgc(ApmDataDumper* apm_data_dumper,
+                         const AudioProcessing::Config::GainController2& config)
+    : speech_level_estimator_(
+          apm_data_dumper,
+          config.adaptive_digital.level_estimator,
+          config.adaptive_digital.use_saturation_protector,
+          config.adaptive_digital.extra_saturation_margin_db),
       gain_applier_(apm_data_dumper),
       apm_data_dumper_(apm_data_dumper),
       noise_level_estimator_(apm_data_dumper) {
@@ -37,9 +48,9 @@ void AdaptiveAgc::Process(AudioFrameView<float> float_frame,
                             signal_with_levels.vad_result.speech_probability);
   apm_data_dumper_->DumpRaw("agc2_vad_rms_dbfs",
                             signal_with_levels.vad_result.speech_rms_dbfs);
-
   apm_data_dumper_->DumpRaw("agc2_vad_peak_dbfs",
                             signal_with_levels.vad_result.speech_peak_dbfs);
+
   speech_level_estimator_.UpdateEstimation(signal_with_levels.vad_result);
 
   signal_with_levels.input_level_dbfs =
@@ -61,7 +72,6 @@ void AdaptiveAgc::Process(AudioFrameView<float> float_frame,
 
   // The gain applier applies the gain.
   gain_applier_.Process(signal_with_levels);
-  ;
 }
 
 void AdaptiveAgc::Reset() {

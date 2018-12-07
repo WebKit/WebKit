@@ -14,7 +14,7 @@
 // TODO(deadbeef): Move SCTP code out of media/, and make it not depend on
 // anything in media/.
 
-#include <memory>  // for unique_ptr
+#include <memory>
 #include <string>
 #include <vector>
 

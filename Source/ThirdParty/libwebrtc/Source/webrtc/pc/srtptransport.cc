@@ -193,7 +193,7 @@ bool SrtpTransport::SendRtcpPacket(rtc::CopyOnWriteBuffer* packet,
 }
 
 void SrtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                        const rtc::PacketTime& packet_time) {
+                                        int64_t packet_time_us) {
   if (!IsSrtpActive()) {
     RTC_LOG(LS_WARNING)
         << "Inactive SRTP transport received an RTP packet. Drop it.";
@@ -207,16 +207,25 @@ void SrtpTransport::OnRtpPacketReceived(rtc::CopyOnWriteBuffer* packet,
     uint32_t ssrc = 0;
     cricket::GetRtpSeqNum(data, len, &seq_num);
     cricket::GetRtpSsrc(data, len, &ssrc);
-    RTC_LOG(LS_ERROR) << "Failed to unprotect RTP packet: size=" << len
-                      << ", seqnum=" << seq_num << ", SSRC=" << ssrc;
+
+    // Limit the error logging to avoid excessive logs when there are lots of
+    // bad packets.
+    const int kFailureLogThrottleCount = 100;
+    if (decryption_failure_count_ % kFailureLogThrottleCount == 0) {
+      RTC_LOG(LS_ERROR) << "Failed to unprotect RTP packet: size=" << len
+                        << ", seqnum=" << seq_num << ", SSRC=" << ssrc
+                        << ", previous failure count: "
+                        << decryption_failure_count_;
+    }
+    ++decryption_failure_count_;
     return;
   }
   packet->SetSize(len);
-  DemuxPacket(packet, packet_time);
+  DemuxPacket(packet, packet_time_us);
 }
 
 void SrtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                         const rtc::PacketTime& packet_time) {
+                                         int64_t packet_time_us) {
   if (!IsSrtpActive()) {
     RTC_LOG(LS_WARNING)
         << "Inactive SRTP transport received an RTCP packet. Drop it.";
@@ -233,7 +242,7 @@ void SrtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
     return;
   }
   packet->SetSize(len);
-  SignalRtcpPacketReceived(packet, packet_time);
+  SignalRtcpPacketReceived(packet, packet_time_us);
 }
 
 void SrtpTransport::OnNetworkRouteChanged(

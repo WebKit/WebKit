@@ -11,9 +11,11 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FORWARD_ERROR_CORRECTION_INTERNAL_H_
 #define MODULES_RTP_RTCP_SOURCE_FORWARD_ERROR_CORRECTION_INTERNAL_H_
 
-#include "modules/include/module_common_types.h"
+#include <stddef.h>
+#include <stdint.h>
 
 #include "api/array_view.h"
+#include "modules/include/module_fec_types.h"
 
 namespace webrtc {
 

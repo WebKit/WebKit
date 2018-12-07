@@ -16,6 +16,7 @@
 
 #include "rtc_base/asyncsocket.h"
 #include "rtc_base/sslcertificate.h"
+#include "rtc_base/sslidentity.h"
 #include "rtc_base/sslstreamadapter.h"
 
 namespace rtc {

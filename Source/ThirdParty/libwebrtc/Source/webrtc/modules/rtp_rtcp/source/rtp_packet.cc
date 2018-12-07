@@ -10,16 +10,15 @@
 
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 
+#include <cstdint>
 #include <cstring>
 #include <utility>
 
 #include "api/rtpparameters.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/random.h"
 
 namespace webrtc {
 namespace {
@@ -212,8 +211,7 @@ rtc::ArrayView<uint8_t> RtpPacket::AllocateRawExtension(int id, size_t length) {
   const bool two_byte_header_required =
       id > RtpExtension::kOneByteHeaderExtensionMaxId ||
       length > RtpExtension::kOneByteHeaderExtensionMaxValueSize || length == 0;
-  RTC_CHECK(!two_byte_header_required ||
-            extensions_.IsMixedOneTwoByteHeaderSupported());
+  RTC_CHECK(!two_byte_header_required || extensions_.ExtmapAllowMixed());
 
   uint16_t profile_id;
   if (extensions_size_ > 0) {
@@ -359,22 +357,20 @@ uint8_t* RtpPacket::SetPayloadSize(size_t size_bytes) {
   return WriteAt(payload_offset_);
 }
 
-bool RtpPacket::SetPadding(uint8_t size_bytes, Random* random) {
-  RTC_DCHECK(random);
-  if (payload_offset_ + payload_size_ + size_bytes > capacity()) {
-    RTC_LOG(LS_WARNING) << "Cannot set padding size " << size_bytes << ", only "
+bool RtpPacket::SetPadding(size_t padding_bytes) {
+  if (payload_offset_ + payload_size_ + padding_bytes > capacity()) {
+    RTC_LOG(LS_WARNING) << "Cannot set padding size " << padding_bytes
+                        << ", only "
                         << (capacity() - payload_offset_ - payload_size_)
                         << " bytes left in buffer.";
     return false;
   }
-  padding_size_ = size_bytes;
+  padding_size_ = rtc::dchecked_cast<uint8_t>(padding_bytes);
   buffer_.SetSize(payload_offset_ + payload_size_ + padding_size_);
   if (padding_size_ > 0) {
     size_t padding_offset = payload_offset_ + payload_size_;
     size_t padding_end = padding_offset + padding_size_;
-    for (size_t offset = padding_offset; offset < padding_end - 1; ++offset) {
-      WriteAt(offset, random->Rand<uint8_t>());
-    }
+    memset(WriteAt(padding_offset), 0, padding_size_ - 1);
     WriteAt(padding_end - 1, padding_size_);
     WriteAt(0, data()[0] | 0x20);  // Set padding bit.
   } else {
@@ -556,7 +552,7 @@ rtc::ArrayView<uint8_t> RtpPacket::AllocateExtension(ExtensionType type,
                                                      size_t length) {
   // TODO(webrtc:7990): Add support for empty extensions (length==0).
   if (length == 0 || length > RtpExtension::kMaxValueSize ||
-      (!extensions_.IsMixedOneTwoByteHeaderSupported() &&
+      (!extensions_.ExtmapAllowMixed() &&
        length > RtpExtension::kOneByteHeaderExtensionMaxValueSize)) {
     return nullptr;
   }
@@ -566,7 +562,7 @@ rtc::ArrayView<uint8_t> RtpPacket::AllocateExtension(ExtensionType type,
     // Extension not registered.
     return nullptr;
   }
-  if (!extensions_.IsMixedOneTwoByteHeaderSupported() &&
+  if (!extensions_.ExtmapAllowMixed() &&
       id > RtpExtension::kOneByteHeaderExtensionMaxId) {
     return nullptr;
   }

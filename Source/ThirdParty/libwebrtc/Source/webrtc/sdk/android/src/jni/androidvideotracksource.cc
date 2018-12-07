@@ -25,10 +25,12 @@ const int kRequiredResolutionAlignment = 2;
 
 AndroidVideoTrackSource::AndroidVideoTrackSource(rtc::Thread* signaling_thread,
                                                  JNIEnv* jni,
-                                                 bool is_screencast)
+                                                 bool is_screencast,
+                                                 bool align_timestamps)
     : AdaptedVideoTrackSource(kRequiredResolutionAlignment),
       signaling_thread_(signaling_thread),
-      is_screencast_(is_screencast) {
+      is_screencast_(is_screencast),
+      align_timestamps_(align_timestamps) {
   RTC_LOG(LS_INFO) << "AndroidVideoTrackSource ctor";
   camera_thread_checker_.DetachFromThread();
 }
@@ -75,7 +77,9 @@ void AndroidVideoTrackSource::OnFrameCaptured(
 
   int64_t camera_time_us = timestamp_ns / rtc::kNumNanosecsPerMicrosec;
   int64_t translated_camera_time_us =
-      timestamp_aligner_.TranslateTimestamp(camera_time_us, rtc::TimeMicros());
+      align_timestamps_ ? timestamp_aligner_.TranslateTimestamp(
+                              camera_time_us, rtc::TimeMicros())
+                        : camera_time_us;
 
   int adapted_width;
   int adapted_height;
@@ -84,10 +88,19 @@ void AndroidVideoTrackSource::OnFrameCaptured(
   int crop_x;
   int crop_y;
 
-  if (!AdaptFrame(width, height, camera_time_us, &adapted_width,
-                  &adapted_height, &crop_width, &crop_height, &crop_x,
-                  &crop_y)) {
-    return;
+  if (rotation % 180 == 0) {
+    if (!AdaptFrame(width, height, camera_time_us, &adapted_width,
+                    &adapted_height, &crop_width, &crop_height, &crop_x,
+                    &crop_y)) {
+      return;
+    }
+  } else {
+    // Swap all width/height and x/y.
+    if (!AdaptFrame(height, width, camera_time_us, &adapted_height,
+                    &adapted_width, &crop_height, &crop_width, &crop_y,
+                    &crop_x)) {
+      return;
+    }
   }
 
   rtc::scoped_refptr<VideoFrameBuffer> buffer =
@@ -103,12 +116,16 @@ void AndroidVideoTrackSource::OnFrameCaptured(
   OnFrame(VideoFrame(buffer, rotation, translated_camera_time_us));
 }
 
-void AndroidVideoTrackSource::OnOutputFormatRequest(int width,
-                                                    int height,
+void AndroidVideoTrackSource::OnOutputFormatRequest(int landscape_width,
+                                                    int landscape_height,
+                                                    int portrait_width,
+                                                    int portrait_height,
                                                     int fps) {
-  cricket::VideoFormat format(width, height,
-                              cricket::VideoFormat::FpsToInterval(fps), 0);
-  video_adapter()->OnOutputFormatRequest(format);
+  video_adapter()->OnOutputFormatRequest(
+      std::make_pair(landscape_width, landscape_height),
+      landscape_width * landscape_height,
+      std::make_pair(portrait_width, portrait_height),
+      portrait_width * portrait_height, fps);
 }
 
 }  // namespace jni

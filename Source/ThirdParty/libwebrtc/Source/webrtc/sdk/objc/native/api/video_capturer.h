@@ -15,6 +15,7 @@
 
 #include "api/mediastreaminterface.h"
 #include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 

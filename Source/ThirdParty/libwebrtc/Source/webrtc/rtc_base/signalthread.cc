@@ -10,8 +10,13 @@
 
 #include "rtc_base/signalthread.h"
 
+#include <memory>
+
 #include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/location.h"
+#include "rtc_base/nullsocketserver.h"
+#include "rtc_base/socketserver.h"
 
 namespace rtc {
 

@@ -11,7 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_AUDIO_VECTOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_AUDIO_VECTOR_H_
 
-#include <string.h>  // Access to size_t.
+#include <string.h>
+#include <cstdint>
 #include <memory>
 
 #include "rtc_base/checks.h"

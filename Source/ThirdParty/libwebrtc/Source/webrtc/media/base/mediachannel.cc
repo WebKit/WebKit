@@ -16,16 +16,19 @@ VideoOptions::VideoOptions() = default;
 VideoOptions::~VideoOptions() = default;
 
 MediaChannel::MediaChannel(const MediaConfig& config)
-    : enable_dscp_(config.enable_dscp), network_interface_(NULL) {}
+    : enable_dscp_(config.enable_dscp) {}
 
-MediaChannel::MediaChannel() : enable_dscp_(false), network_interface_(NULL) {}
+MediaChannel::MediaChannel() : enable_dscp_(false) {}
 
 MediaChannel::~MediaChannel() {}
 
-void MediaChannel::SetInterface(NetworkInterface* iface) {
+void MediaChannel::SetInterface(
+    NetworkInterface* iface,
+    webrtc::MediaTransportInterface* media_transport) {
   rtc::CritScope cs(&network_interface_crit_);
   network_interface_ = iface;
-  SetDscp(enable_dscp_ ? PreferredDscp() : rtc::DSCP_DEFAULT);
+  media_transport_ = media_transport;
+  UpdateDscp();
 }
 
 int MediaChannel::GetRtpSendTimeExtnId() const {
@@ -84,6 +87,10 @@ std::map<std::string, std::string> AudioSendParameters::ToStringMap() const {
   return params;
 }
 
+cricket::MediaType VoiceMediaChannel::media_type() const {
+  return cricket::MediaType::MEDIA_TYPE_AUDIO;
+}
+
 VideoSendParameters::VideoSendParameters() = default;
 VideoSendParameters::~VideoSendParameters() = default;
 
@@ -93,10 +100,18 @@ std::map<std::string, std::string> VideoSendParameters::ToStringMap() const {
   return params;
 }
 
+cricket::MediaType VideoMediaChannel::media_type() const {
+  return cricket::MediaType::MEDIA_TYPE_VIDEO;
+}
+
 DataMediaChannel::DataMediaChannel() = default;
 DataMediaChannel::DataMediaChannel(const MediaConfig& config)
     : MediaChannel(config) {}
 DataMediaChannel::~DataMediaChannel() = default;
+
+cricket::MediaType DataMediaChannel::media_type() const {
+  return cricket::MediaType::MEDIA_TYPE_DATA;
+}
 
 bool DataMediaChannel::GetStats(DataMediaInfo* info) {
   return true;

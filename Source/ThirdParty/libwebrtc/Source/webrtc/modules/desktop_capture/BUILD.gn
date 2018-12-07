@@ -6,6 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+import("//build/config/linux/pkg_config.gni")
 import("//build/config/ui.gni")
 import("../../webrtc.gni")
 
@@ -28,8 +29,8 @@ rtc_static_library("primitives") {
   ]
 
   deps = [
-    "../..:webrtc_common",
     "../../rtc_base:checks",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
   ]
 
@@ -95,7 +96,6 @@ if (rtc_include_tests) {
       ":desktop_capture",
       ":desktop_capture_mock",
       ":primitives",
-      "../..:webrtc_common",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
       "../../system_wrappers:cpu_features_api",
@@ -161,6 +161,23 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
     ]
+  }
+}
+
+if (is_linux) {
+  if (rtc_use_pipewire) {
+    pkg_config("pipewire") {
+      packages = [ "libpipewire-0.2" ]
+
+      defines = [ "WEBRTC_USE_PIPEWIRE" ]
+    }
+
+    pkg_config("gio") {
+      packages = [
+        "gio-2.0",
+        "gio-unix-2.0",
+      ]
+    }
   }
 }
 
@@ -321,39 +338,69 @@ rtc_static_library("desktop_capture_generic") {
     ]
   }
 
+  if (rtc_use_x11 || rtc_use_pipewire) {
+    sources += [
+      "mouse_cursor_monitor_linux.cc",
+      "screen_capturer_linux.cc",
+      "window_capturer_linux.cc",
+    ]
+
+    if (build_with_mozilla) {
+      sources += [ "app_capturer_linux.cc" ]
+    }
+  }
+
   if (rtc_use_x11) {
     sources += [
-      "mouse_cursor_monitor_x11.cc",
-      "screen_capturer_x11.cc",
-      "window_capturer_x11.cc",
-      "window_finder_x11.cc",
-      "window_finder_x11.h",
-      "x11/shared_x_display.cc",
-      "x11/shared_x_display.h",
-      "x11/window_list_utils.cc",
-      "x11/window_list_utils.h",
-      "x11/x_atom_cache.cc",
-      "x11/x_atom_cache.h",
-      "x11/x_error_trap.cc",
-      "x11/x_error_trap.h",
-      "x11/x_server_pixel_buffer.cc",
-      "x11/x_server_pixel_buffer.h",
+      "linux/mouse_cursor_monitor_x11.cc",
+      "linux/mouse_cursor_monitor_x11.h",
+      "linux/screen_capturer_x11.cc",
+      "linux/screen_capturer_x11.h",
+      "linux/shared_x_display.cc",
+      "linux/shared_x_display.h",
+      "linux/window_capturer_x11.cc",
+      "linux/window_capturer_x11.h",
+      "linux/window_finder_x11.cc",
+      "linux/window_finder_x11.h",
+      "linux/window_list_utils.cc",
+      "linux/window_list_utils.h",
+      "linux/x_atom_cache.cc",
+      "linux/x_atom_cache.h",
+      "linux/x_error_trap.cc",
+      "linux/x_error_trap.h",
+      "linux/x_server_pixel_buffer.cc",
+      "linux/x_server_pixel_buffer.h",
     ]
     configs += [ "//build/config/linux:x11" ]
 
     if (build_with_mozilla) {
       sources += [
-        "app_capturer_x11.cc",
-        "app_capturer_x11.h",
-        "x11/desktop_device_info_x11.cc",
-        "x11/desktop_device_info_x11.h",
-        "x11/shared_x_util.cc",
-        "x11/shared_x_util.h",
+        "linux/app_capturer_x11.cc",
+        "linux/desktop_device_info_linux.cc",
+        "linux/desktop_device_info_linux.h",
+        "linux/shared_x_util.cc",
+        "linux/shared_x_util.h",
       ]
     }
   }
 
-  if (!is_win && !is_mac && !rtc_use_x11) {
+  if (rtc_use_pipewire) {
+    sources += [
+      "linux/base_capturer_pipewire.cc",
+      "linux/base_capturer_pipewire.h",
+      "linux/screen_capturer_pipewire.cc",
+      "linux/screen_capturer_pipewire.h",
+      "linux/window_capturer_pipewire.cc",
+      "linux/window_capturer_pipewire.h",
+    ]
+
+    configs += [
+      ":gio",
+      ":pipewire",
+    ]
+  }
+
+  if (!is_win && !is_mac && !rtc_use_x11 && !rtc_use_pipewire) {
     sources += [
       "mouse_cursor_monitor_null.cc",
       "screen_capturer_null.cc",
@@ -370,12 +417,12 @@ rtc_static_library("desktop_capture_generic") {
 
   deps = [
     ":primitives",
-    "../..:webrtc_common",
     "../../api:refcountedbase",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
     "../../rtc_base/synchronization:rw_lock_wrapper",
     "../../rtc_base/system:arch",
+    "../../rtc_base/system:rtc_export",
     "../../system_wrappers",
     "../../system_wrappers:cpu_features_api",
     "../../system_wrappers:metrics",

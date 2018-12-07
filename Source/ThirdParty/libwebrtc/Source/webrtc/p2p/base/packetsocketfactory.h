@@ -17,6 +17,7 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/proxyinfo.h"
 #include "rtc_base/sslcertificate.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
@@ -36,7 +37,7 @@ struct PacketSocketTcpOptions {
 class AsyncPacketSocket;
 class AsyncResolverInterface;
 
-class PacketSocketFactory {
+class RTC_EXPORT PacketSocketFactory {
  public:
   enum Options {
     OPT_STUN = 0x04,

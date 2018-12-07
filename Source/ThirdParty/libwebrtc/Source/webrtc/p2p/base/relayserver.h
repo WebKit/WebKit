@@ -68,33 +68,27 @@ class RelayServer : public rtc::MessageHandler, public sigslot::has_slots<> {
   bool HasConnection(const rtc::SocketAddress& address) const;
 
  private:
-  typedef std::vector<rtc::AsyncPacketSocket*> SocketList;
-  typedef std::map<rtc::AsyncSocket*, cricket::ProtocolType> ServerSocketMap;
-  typedef std::map<std::string, RelayServerBinding*> BindingMap;
-  typedef std::map<rtc::SocketAddressPair, RelayServerConnection*>
-      ConnectionMap;
-
   rtc::Thread* thread_;
   webrtc::Random random_;
   bool log_bindings_;
-  SocketList internal_sockets_;
-  SocketList external_sockets_;
-  SocketList removed_sockets_;
-  ServerSocketMap server_sockets_;
-  BindingMap bindings_;
-  ConnectionMap connections_;
+  std::vector<rtc::AsyncPacketSocket*> internal_sockets_;
+  std::vector<rtc::AsyncPacketSocket*> external_sockets_;
+  std::vector<rtc::AsyncPacketSocket*> removed_sockets_;
+  std::map<rtc::AsyncSocket*, cricket::ProtocolType> server_sockets_;
+  std::map<std::string, RelayServerBinding*> bindings_;
+  std::map<rtc::SocketAddressPair, RelayServerConnection*> connections_;
 
   // Called when a packet is received by the server on one of its sockets.
   void OnInternalPacket(rtc::AsyncPacketSocket* socket,
                         const char* bytes,
                         size_t size,
                         const rtc::SocketAddress& remote_addr,
-                        const rtc::PacketTime& packet_time);
+                        const int64_t& packet_time_us);
   void OnExternalPacket(rtc::AsyncPacketSocket* socket,
                         const char* bytes,
                         size_t size,
                         const rtc::SocketAddress& remote_addr,
-                        const rtc::PacketTime& packet_time);
+                        const int64_t& packet_time_us);
 
   void OnReadEvent(rtc::AsyncSocket* socket);
 

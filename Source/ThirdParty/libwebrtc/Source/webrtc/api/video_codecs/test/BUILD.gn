@@ -21,6 +21,7 @@ if (rtc_include_tests) {
       "..:builtin_video_encoder_factory",
       "..:rtc_software_fallback_wrappers",
       "..:video_codecs_api",
+      "../..:mock_video_encoder",
       "../../../modules/video_coding:video_codec_interface",
       "../../../modules/video_coding:video_coding_utility",
       "../../../modules/video_coding:webrtc_vp8",

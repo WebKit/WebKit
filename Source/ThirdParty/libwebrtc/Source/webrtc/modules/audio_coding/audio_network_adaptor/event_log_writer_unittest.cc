@@ -36,7 +36,7 @@ MATCHER_P(IsRtcEventAnaConfigEqualTo, config, "") {
     return false;
   }
   auto ana_event = static_cast<RtcEventAudioNetworkAdaptation*>(arg);
-  return *ana_event->config_ == config;
+  return ana_event->config() == config;
 }
 
 struct EventLogWriterStates {

@@ -13,7 +13,6 @@
 #include <atomic>
 
 #include "api/call/transport.h"
-#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 namespace internal {

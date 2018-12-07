@@ -33,7 +33,7 @@ class StunServer : public sigslot::has_slots<> {
                 const char* buf,
                 size_t size,
                 const rtc::SocketAddress& remote_addr,
-                const rtc::PacketTime& packet_time);
+                const int64_t& packet_time_us);
 
   // Handlers for the different types of STUN/TURN requests:
   virtual void OnBindingRequest(StunMessage* msg,

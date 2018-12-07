@@ -9,6 +9,7 @@ import("//build/config/arm.gni")
 import("//build/config/features.gni")
 import("//build/config/mips.gni")
 import("//build/config/sanitizers/sanitizers.gni")
+import("//build/config/sysroot.gni")
 import("//build/config/ui.gni")
 import("//build_overrides/build.gni")
 
@@ -35,6 +36,10 @@ if (is_mac) {
 }
 
 declare_args() {
+  # Setting this to true will make RTC_EXPORT (see rtc_base/system/rtc_export.h)
+  # expand to code that will manage symbols visibility.
+  rtc_enable_symbol_export = false
+
   # Setting this to true will define WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT which
   # will tell the pre-processor to remove the default definition of symbols
   # needed to use field_trial. In that case a new implementation needs to be
@@ -102,6 +107,9 @@ declare_args() {
 
   # Set this to false to skip building code that requires X11.
   rtc_use_x11 = use_x11
+
+  # Set this to use PipeWire on the Wayland display server.
+  rtc_use_pipewire = false
 
   # Enable to use the Mozilla internal settings.
   build_with_mozilla = false
@@ -225,7 +233,8 @@ rtc_libvpx_dir = "//third_party/libvpx"
 rtc_opus_dir = "//third_party/opus"
 
 # Desktop capturer is supported only on Windows, OSX and Linux.
-rtc_desktop_capture_supported = is_win || is_mac || (is_linux && rtc_use_x11)
+rtc_desktop_capture_supported =
+    is_win || is_mac || (is_linux && (rtc_use_x11 || rtc_use_pipewire))
 
 ###############################################################################
 # Templates
@@ -649,6 +658,8 @@ if (is_ios) {
     }
   }
 
+  # TODO: Generate module.modulemap file to enable use in Swift
+  # projects. See "mac_framework_bundle_with_umbrella_header".
   template("ios_framework_bundle_with_umbrella_header") {
     forward_variables_from(invoker, [ "output_name" ])
     umbrella_header_path =
@@ -699,12 +710,17 @@ if (is_mac) {
     forward_variables_from(invoker, [ "output_name" ])
     this_target_name = target_name
     umbrella_header_path = "$target_gen_dir/umbrella_header/$output_name.h"
+    modulemap_path = "$target_gen_dir/Modules/module.modulemap"
 
     mac_framework_bundle(target_name) {
       forward_variables_from(invoker, "*", [])
 
       framework_version = "A"
-      framework_contents = [ "Headers" ]
+      framework_contents = [
+        "Headers",
+        "Modules",
+        "Resources",
+      ]
 
       ldflags = [
         "-all_load",
@@ -714,7 +730,9 @@ if (is_mac) {
 
       deps += [
         ":copy_framework_headers_$this_target_name",
+        ":copy_modulemap_$this_target_name",
         ":copy_umbrella_header_$this_target_name",
+        ":modulemap_$this_target_name",
         ":umbrella_header_$this_target_name",
       ]
     }
@@ -724,6 +742,31 @@ if (is_mac) {
 
       outputs = [
         "{{bundle_contents_dir}}/Headers/{{source_file_part}}",
+      ]
+    }
+
+    action("modulemap_$this_target_name") {
+      script = "//tools_webrtc/ios/generate_modulemap.py"
+      args = [
+        "--out",
+        rebase_path(modulemap_path, root_build_dir),
+        "--name",
+        output_name,
+      ]
+      outputs = [
+        modulemap_path,
+      ]
+    }
+
+    bundle_data("copy_modulemap_$this_target_name") {
+      sources = [
+        modulemap_path,
+      ]
+      outputs = [
+        "{{bundle_contents_dir}}/Modules/module.modulemap",
+      ]
+      deps = [
+        ":modulemap_$this_target_name",
       ]
     }
 
@@ -769,14 +812,14 @@ if (is_android) {
                                "visibility",
                              ])
 
-      javac_args = []
+      errorprone_args = []
 
       # Treat warnings as errors.
-      javac_args += [ "-Werror" ]
+      errorprone_args += [ "-Werror" ]
 
       # TODO(crbug.com/824679): Find out why this fails in Chromium
       if (!build_with_chromium) {
-        javac_args += [
+        errorprone_args += [
           "-Xep:ParameterNotNullable:ERROR",
           "-Xep:FieldMissingNullable:ERROR",
           "-Xep:ReturnMissingNullable:ERROR",
@@ -784,8 +827,8 @@ if (is_android) {
       }
 
       # Add any arguments defined by the invoker.
-      if (defined(invoker.javac_args)) {
-        javac_args += invoker.javac_args
+      if (defined(invoker.errorprone_args)) {
+        errorprone_args += invoker.errorprone_args
       }
 
       if (!defined(deps)) {
@@ -809,11 +852,11 @@ if (is_android) {
                              ])
 
       # Treat warnings as errors.
-      javac_args = [ "-Werror" ]
+      errorprone_args = [ "-Werror" ]
 
       # TODO(crbug.com/824679): Find out why this fails in Chromium
       if (!build_with_chromium) {
-        javac_args += [
+        errorprone_args += [
           "-Xep:ParameterNotNullable:ERROR",
           "-Xep:FieldMissingNullable:ERROR",
           "-Xep:ReturnMissingNullable:ERROR",
@@ -841,11 +884,11 @@ if (is_android) {
                              ])
 
       # Treat warnings as errors.
-      javac_args = [ "-Werror" ]
+      errorprone_args = [ "-Werror" ]
 
       # TODO(crbug.com/824679): Find out why this fails in Chromium
       if (!build_with_chromium) {
-        javac_args += [
+        errorprone_args += [
           "-Xep:ParameterNotNullable:ERROR",
           "-Xep:FieldMissingNullable:ERROR",
           "-Xep:ReturnMissingNullable:ERROR",

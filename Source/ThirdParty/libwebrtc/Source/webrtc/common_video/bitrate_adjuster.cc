@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/timeutils.h"
 

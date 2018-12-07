@@ -13,7 +13,6 @@
 #include <assert.h>
 #include <string.h>
 
-#include "common_audio/resampler/include/resampler.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

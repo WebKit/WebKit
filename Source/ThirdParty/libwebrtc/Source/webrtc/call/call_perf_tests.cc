@@ -16,6 +16,7 @@
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/test/simulated_network.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video_codecs/video_encoder_config.h"
 #include "call/call.h"
@@ -64,7 +65,7 @@ class CallPerfTest : public test::CallTest {
 
   void TestMinTransmitBitrate(bool pad_to_min_bitrate);
 
-  void TestCaptureNtpTime(const DefaultNetworkSimulationConfig& net_config,
+  void TestCaptureNtpTime(const BuiltInNetworkBehaviorConfig& net_config,
                           int threshold_ms,
                           int start_time_ms,
                           int run_time_ms);
@@ -152,7 +153,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   const uint32_t kAudioSendSsrc = 1234;
   const uint32_t kAudioRecvSsrc = 5678;
 
-  DefaultNetworkSimulationConfig audio_net_config;
+  BuiltInNetworkBehaviorConfig audio_net_config;
   audio_net_config.queue_delay_ms = 500;
   audio_net_config.loss_percent = 5;
 
@@ -217,7 +218,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
         test::PacketTransport::kSender, video_pt_map,
         absl::make_unique<FakeNetworkPipe>(
             Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                           DefaultNetworkSimulationConfig())));
+                                           BuiltInNetworkBehaviorConfig())));
     video_send_transport->SetReceiver(receiver_call_->Receiver());
 
     receive_transport = absl::make_unique<test::PacketTransport>(
@@ -225,13 +226,14 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
         test::PacketTransport::kReceiver, payload_type_map_,
         absl::make_unique<FakeNetworkPipe>(
             Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                           DefaultNetworkSimulationConfig())));
+                                           BuiltInNetworkBehaviorConfig())));
     receive_transport->SetReceiver(sender_call_->Receiver());
 
     CreateSendConfig(1, 0, 0, video_send_transport.get());
     CreateMatchingReceiveConfigs(receive_transport.get());
 
-    AudioSendStream::Config audio_send_config(audio_send_transport.get());
+    AudioSendStream::Config audio_send_config(audio_send_transport.get(),
+                                              /*media_transport=*/nullptr);
     audio_send_config.rtp.ssrc = kAudioSendSsrc;
     audio_send_config.send_codec_spec = AudioSendStream::Config::SendCodecSpec(
         kAudioSendPayloadType, {"ISAC", 16000, 1});
@@ -337,14 +339,14 @@ TEST_F(CallPerfTest, PlaysOutAudioAndVideoInSyncWithVideoFasterThanAudioDrift) {
 }
 
 void CallPerfTest::TestCaptureNtpTime(
-    const DefaultNetworkSimulationConfig& net_config,
+    const BuiltInNetworkBehaviorConfig& net_config,
     int threshold_ms,
     int start_time_ms,
     int run_time_ms) {
   class CaptureNtpTimeObserver : public test::EndToEndTest,
                                  public rtc::VideoSinkInterface<VideoFrame> {
    public:
-    CaptureNtpTimeObserver(const DefaultNetworkSimulationConfig& net_config,
+    CaptureNtpTimeObserver(const BuiltInNetworkBehaviorConfig& net_config,
                            int threshold_ms,
                            int start_time_ms,
                            int run_time_ms)
@@ -461,7 +463,7 @@ void CallPerfTest::TestCaptureNtpTime(
     }
 
     rtc::CriticalSection crit_;
-    const DefaultNetworkSimulationConfig net_config_;
+    const BuiltInNetworkBehaviorConfig net_config_;
     Clock* const clock_;
     int threshold_ms_;
     int start_time_ms_;
@@ -478,10 +480,10 @@ void CallPerfTest::TestCaptureNtpTime(
   RunBaseTest(&test);
 }
 
-// Flaky tests, disabled on Mac due to webrtc:8291.
-#if !(defined(WEBRTC_MAC))
+// Flaky tests, disabled on Mac and Windows due to webrtc:8291.
+#if !(defined(WEBRTC_MAC) || defined(WEBRTC_WIN))
 TEST_F(CallPerfTest, CaptureNtpTimeWithNetworkDelay) {
-  DefaultNetworkSimulationConfig net_config;
+  BuiltInNetworkBehaviorConfig net_config;
   net_config.queue_delay_ms = 100;
   // TODO(wu): lower the threshold as the calculation/estimatation becomes more
   // accurate.
@@ -492,7 +494,7 @@ TEST_F(CallPerfTest, CaptureNtpTimeWithNetworkDelay) {
 }
 
 TEST_F(CallPerfTest, CaptureNtpTimeWithNetworkJitter) {
-  DefaultNetworkSimulationConfig net_config;
+  BuiltInNetworkBehaviorConfig net_config;
   net_config.queue_delay_ms = 100;
   net_config.delay_standard_deviation_ms = 10;
   // TODO(wu): lower the threshold as the calculation/estimatation becomes more
@@ -724,12 +726,13 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
     BitrateObserver()
         : EndToEndTest(kDefaultTimeoutMs),
           FakeEncoder(Clock::GetRealTimeClock()),
-          time_to_reconfigure_(false, false),
           encoder_inits_(0),
           last_set_bitrate_kbps_(0),
           send_stream_(nullptr),
           frame_generator_(nullptr),
-          encoder_factory_(this) {}
+          encoder_factory_(this),
+          bitrate_allocator_factory_(
+              CreateBuiltinVideoBitrateAllocatorFactory()) {}
 
     int32_t InitEncode(const VideoCodec* config,
                        int32_t number_of_cores,
@@ -767,8 +770,9 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
       return FakeEncoder::SetRateAllocation(rate_allocation, framerate);
     }
 
-    void ModifySenderCallConfig(Call::Config* config) override {
-      config->bitrate_config.start_bitrate_bps = kInitialBitrateKbps * 1000;
+    void ModifySenderBitrateConfig(
+        BitrateConstraints* bitrate_config) override {
+      bitrate_config->start_bitrate_bps = kInitialBitrateKbps * 1000;
     }
 
     void ModifyVideoConfigs(
@@ -776,6 +780,8 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
         std::vector<VideoReceiveStream::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
+      send_config->encoder_settings.bitrate_allocator_factory =
+          bitrate_allocator_factory_.get();
       encoder_config->max_bitrate_bps = 2 * kReconfigureThresholdKbps * 1000;
       encoder_config->video_stream_factory =
           new rtc::RefCountedObject<VideoStreamFactory>();
@@ -811,6 +817,7 @@ TEST_F(CallPerfTest, MAYBE_KeepsHighBitrateWhenReconfiguringSender) {
     VideoSendStream* send_stream_;
     test::FrameGeneratorCapturer* frame_generator_;
     test::VideoEncoderProxyFactory encoder_factory_;
+    std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
     VideoEncoderConfig encoder_config_;
   } test;
 
@@ -865,8 +872,8 @@ void CallPerfTest::TestMinAudioVideoBitrate(
           max_bwe_(max_bwe) {}
 
    protected:
-    DefaultNetworkSimulationConfig GetFakeNetworkPipeConfig() {
-      DefaultNetworkSimulationConfig pipe_config;
+    BuiltInNetworkBehaviorConfig GetFakeNetworkPipeConfig() {
+      BuiltInNetworkBehaviorConfig pipe_config;
       pipe_config.link_capacity_kbps = test_bitrate_from_;
       return pipe_config;
     }
@@ -903,7 +910,7 @@ void CallPerfTest::TestMinAudioVideoBitrate(
                ? test_bitrate <= test_bitrate_to_
                : test_bitrate >= test_bitrate_to_;
            test_bitrate += test_bitrate_step_) {
-        DefaultNetworkSimulationConfig pipe_config;
+        BuiltInNetworkBehaviorConfig pipe_config;
         pipe_config.link_capacity_kbps = test_bitrate;
         send_simulated_network_->SetConfig(pipe_config);
         receive_simulated_network_->SetConfig(pipe_config);

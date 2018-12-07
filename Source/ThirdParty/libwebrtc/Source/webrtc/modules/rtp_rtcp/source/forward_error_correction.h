@@ -11,16 +11,15 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_FORWARD_ERROR_CORRECTION_H_
 #define MODULES_RTP_RTCP_SOURCE_FORWARD_ERROR_CORRECTION_H_
 
+#include <stddef.h>
 #include <stdint.h>
-
 #include <list>
 #include <memory>
 #include <vector>
 
+#include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/refcount.h"
 #include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {

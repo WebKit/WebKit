@@ -14,13 +14,12 @@
 #include <string.h>  // size_t
 #include <memory>
 
-#include "modules/audio_coding/neteq/audio_multi_vector.h"
-#include "modules/audio_coding/neteq/include/neteq.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
 // Forward declarations.
+class AudioMultiVector;
 class PostDecodeVad;
 
 // This class handles estimation of background noise parameters.

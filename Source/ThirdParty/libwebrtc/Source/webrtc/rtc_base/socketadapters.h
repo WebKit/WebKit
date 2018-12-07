@@ -11,13 +11,11 @@
 #ifndef RTC_BASE_SOCKETADAPTERS_H_
 #define RTC_BASE_SOCKETADAPTERS_H_
 
-#include <map>
 #include <string>
 
 #include "rtc_base/asyncsocket.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/cryptstring.h"
-#include "rtc_base/logging.h"
 
 namespace rtc {
 

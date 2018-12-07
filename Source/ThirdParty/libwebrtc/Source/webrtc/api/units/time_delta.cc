@@ -14,7 +14,7 @@
 
 namespace webrtc {
 
-std::string ToString(const TimeDelta& value) {
+std::string ToString(TimeDelta value) {
   char buf[64];
   rtc::SimpleStringBuilder sb(buf);
   if (value.IsPlusInfinity()) {

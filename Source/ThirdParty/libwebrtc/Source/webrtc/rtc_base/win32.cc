@@ -72,9 +72,9 @@ const char* inet_ntop_v4(const void* src, char* dst, socklen_t size) {
   }
   const struct in_addr* as_in_addr =
       reinterpret_cast<const struct in_addr*>(src);
-  rtc::sprintfn(dst, size, "%d.%d.%d.%d", as_in_addr->S_un.S_un_b.s_b1,
-                as_in_addr->S_un.S_un_b.s_b2, as_in_addr->S_un.S_un_b.s_b3,
-                as_in_addr->S_un.S_un_b.s_b4);
+  snprintf(dst, size, "%d.%d.%d.%d", as_in_addr->S_un.S_un_b.s_b1,
+           as_in_addr->S_un.S_un_b.s_b2, as_in_addr->S_un.S_un_b.s_b3,
+           as_in_addr->S_un.S_un_b.s_b4);
   return dst;
 }
 
@@ -127,7 +127,7 @@ const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
     *cursor++ = ':';
     *cursor++ = ':';
     if (maxpos == 4) {
-      cursor += rtc::sprintfn(cursor, INET6_ADDRSTRLEN - 2, "ffff:");
+      cursor += snprintf(cursor, INET6_ADDRSTRLEN - 2, "ffff:");
     }
     const struct in_addr* as_v4 =
         reinterpret_cast<const struct in_addr*>(&(as_shorts[6]));
@@ -136,8 +136,8 @@ const char* inet_ntop_v6(const void* src, char* dst, socklen_t size) {
   } else {
     for (int i = 0; i < run_array_size; ++i) {
       if (runpos[i] == -1) {
-        cursor += rtc::sprintfn(cursor, INET6_ADDRSTRLEN - (cursor - dst), "%x",
-                                NetworkToHost16(as_shorts[i]));
+        cursor += snprintf(cursor, INET6_ADDRSTRLEN - (cursor - dst), "%x",
+                           NetworkToHost16(as_shorts[i]));
         if (i != 7 && runpos[i + 1] != 1) {
           *cursor++ = ':';
         }
@@ -224,8 +224,8 @@ int inet_pton_v6(const char* src, void* dst) {
       *(readcursor + 2) != 0) {
     // Check for periods, which we'll take as a sign of v4 addresses.
     const char* addrstart = readcursor + 2;
-    if (rtc::strchr(addrstart, ".")) {
-      const char* colon = rtc::strchr(addrstart, "::");
+    if (strchr(addrstart, '.')) {
+      const char* colon = strchr(addrstart, ':');
       if (colon) {
         uint16_t a_short;
         int bytesread = 0;

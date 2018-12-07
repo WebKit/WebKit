@@ -27,6 +27,7 @@ using ::testing::_;
 class DelayManagerTest : public ::testing::Test {
  protected:
   static const int kMaxNumberOfPackets = 240;
+  static const int kMinDelayMs = 0;
   static const int kTimeStepMs = 10;
   static const int kFs = 8000;
   static const int kFrameSizeMs = 20;
@@ -56,7 +57,8 @@ void DelayManagerTest::SetUp() {
 
 void DelayManagerTest::RecreateDelayManager() {
   EXPECT_CALL(detector_, Reset()).Times(1);
-  dm_.reset(new DelayManager(kMaxNumberOfPackets, &detector_, &tick_timer_));
+  dm_.reset(new DelayManager(kMaxNumberOfPackets, kMinDelayMs, &detector_,
+                             &tick_timer_));
 }
 
 void DelayManagerTest::SetPacketAudioLength(int lengt_ms) {

@@ -10,6 +10,7 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
 #define MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_
 
+#include "api/rtpparameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
@@ -36,8 +37,14 @@ class RtpHeaderParser {
   virtual bool RegisterRtpHeaderExtension(RTPExtensionType type,
                                           uint8_t id) = 0;
 
+  // Registers an RTP header extension.
+  virtual bool RegisterRtpHeaderExtension(RtpExtension extension) = 0;
+
   // De-registers an RTP header extension.
   virtual bool DeregisterRtpHeaderExtension(RTPExtensionType type) = 0;
+
+  // De-registers an RTP header extension.
+  virtual bool DeregisterRtpHeaderExtension(RtpExtension extension) = 0;
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_INCLUDE_RTP_HEADER_PARSER_H_

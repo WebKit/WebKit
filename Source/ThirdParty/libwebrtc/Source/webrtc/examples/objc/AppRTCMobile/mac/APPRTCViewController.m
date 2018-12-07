@@ -39,6 +39,7 @@ static NSUInteger const kBottomViewHeight = 200;
 @property(nonatomic, weak) id<APPRTCMainViewDelegate> delegate;
 @property(nonatomic, readonly) NSView<RTCVideoRenderer>* localVideoView;
 @property(nonatomic, readonly) NSView<RTCVideoRenderer>* remoteVideoView;
+@property(nonatomic, readonly) NSTextView* logView;
 
 - (void)displayLogMessage:(NSString*)message;
 
@@ -52,7 +53,6 @@ static NSUInteger const kBottomViewHeight = 200;
   NSButton* _connectButton;
   NSButton* _loopbackButton;
   NSTextField* _roomField;
-  NSTextView* _logView;
   CGSize _localVideoSize;
   CGSize _remoteVideoSize;
 }
@@ -60,14 +60,13 @@ static NSUInteger const kBottomViewHeight = 200;
 @synthesize delegate = _delegate;
 @synthesize localVideoView = _localVideoView;
 @synthesize remoteVideoView = _remoteVideoView;
-
+@synthesize logView = _logView;
 
 - (void)displayLogMessage:(NSString *)message {
   dispatch_async(dispatch_get_main_queue(), ^{
-    _logView.string =
-        [NSString stringWithFormat:@"%@%@\n", _logView.string, message];
-    NSRange range = NSMakeRange(_logView.string.length, 0);
-    [_logView scrollRangeToVisible:range];
+    self.logView.string = [NSString stringWithFormat:@"%@%@\n", self.logView.string, message];
+    NSRange range = NSMakeRange(self.logView.string.length, 0);
+    [self.logView scrollRangeToVisible:range];
   });
 }
 

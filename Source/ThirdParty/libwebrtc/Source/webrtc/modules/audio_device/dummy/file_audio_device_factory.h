@@ -11,7 +11,7 @@
 #ifndef AUDIO_DEVICE_FILE_AUDIO_DEVICE_FACTORY_H_
 #define AUDIO_DEVICE_FILE_AUDIO_DEVICE_FACTORY_H_
 
-#include "common_types.h"  // NOLINT(build/include)
+#include <stdint.h>
 
 namespace webrtc {
 

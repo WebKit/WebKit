@@ -1057,15 +1057,19 @@ TEST_P(ReceiveStatisticsProxyTest, FreezesAreReported) {
   const int kFreezeDelayMs = 200;
   const int kCallDurationMs =
       kMinRequiredSamples * kInterFrameDelayMs + kFreezeDelayMs;
+  webrtc::VideoFrame frame(webrtc::I420Buffer::Create(1, 1), 0, 0,
+                           webrtc::kVideoRotation_0);
   for (int i = 0; i < kMinRequiredSamples; ++i) {
     statistics_proxy_->OnDecodedFrame(absl::nullopt, kWidth, kHeight,
                                       content_type);
+    statistics_proxy_->OnRenderedFrame(frame);
     fake_clock_.AdvanceTimeMilliseconds(kInterFrameDelayMs);
   }
   // Add extra freeze.
   fake_clock_.AdvanceTimeMilliseconds(kFreezeDelayMs);
   statistics_proxy_->OnDecodedFrame(absl::nullopt, kWidth, kHeight,
                                     content_type);
+  statistics_proxy_->OnRenderedFrame(frame);
 
   statistics_proxy_.reset();
   const int kExpectedTimeBetweenFreezes =
@@ -1095,9 +1099,12 @@ TEST_P(ReceiveStatisticsProxyTest, PausesAreIgnored) {
   const VideoContentType content_type = GetParam();
   const int kInterFrameDelayMs = 33;
   const int kPauseDurationMs = 10000;
+  webrtc::VideoFrame frame(webrtc::I420Buffer::Create(1, 1), 0, 0,
+                           webrtc::kVideoRotation_0);
   for (int i = 0; i <= kMinRequiredSamples; ++i) {
     statistics_proxy_->OnDecodedFrame(absl::nullopt, kWidth, kHeight,
                                       content_type);
+    statistics_proxy_->OnRenderedFrame(frame);
     fake_clock_.AdvanceTimeMilliseconds(kInterFrameDelayMs);
   }
   // Add a pause.
@@ -1108,6 +1115,7 @@ TEST_P(ReceiveStatisticsProxyTest, PausesAreIgnored) {
   for (int i = 0; i <= kMinRequiredSamples * 3; ++i) {
     statistics_proxy_->OnDecodedFrame(absl::nullopt, kWidth, kHeight,
                                       content_type);
+    statistics_proxy_->OnRenderedFrame(frame);
     fake_clock_.AdvanceTimeMilliseconds(kInterFrameDelayMs);
   }
 

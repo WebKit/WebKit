@@ -10,6 +10,8 @@
 
 #include "common_video/include/i420_buffer_pool.h"
 
+#include <limits>
+
 #include "rtc_base/checks.h"
 
 namespace webrtc {

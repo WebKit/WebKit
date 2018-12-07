@@ -16,7 +16,6 @@
 
 #include "absl/types/optional.h"
 #include "api/video_codecs/sdp_video_format.h"
-#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <functional>
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 namespace aec3 {
 

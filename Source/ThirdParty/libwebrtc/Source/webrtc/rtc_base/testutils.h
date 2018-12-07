@@ -19,9 +19,7 @@
 #include <vector>
 #include "rtc_base/asyncsocket.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/gunit.h"
 #include "rtc_base/stream.h"
-#include "rtc_base/stringutils.h"
 
 namespace webrtc {
 namespace testing {
@@ -135,91 +133,6 @@ class StreamSink : public sigslot::has_slots<> {
   }
 
   EventMap events_;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// StreamSource - Implements stream interface and simulates asynchronous
-// events on the stream, without a network.  Also buffers written data.
-///////////////////////////////////////////////////////////////////////////////
-
-class StreamSource : public StreamInterface {
- public:
-  StreamSource();
-  ~StreamSource() override;
-
-  void Clear() {
-    readable_data_.clear();
-    written_data_.clear();
-    state_ = SS_CLOSED;
-    read_block_ = 0;
-    write_block_ = SIZE_UNKNOWN;
-  }
-  void QueueString(const char* data) { QueueData(data, strlen(data)); }
-#if defined(__GNUC__)
-  // Note: Implicit |this| argument counts as the first argument.
-  __attribute__((__format__(__printf__, 2, 3)))
-#endif
-  void
-  QueueStringF(const char* format, ...) {
-    va_list args;
-    va_start(args, format);
-    char buffer[1024];
-    size_t len = vsprintfn(buffer, sizeof(buffer), format, args);
-    RTC_CHECK(len < sizeof(buffer) - 1);
-    va_end(args);
-    QueueData(buffer, len);
-  }
-  void QueueData(const char* data, size_t len) {
-    readable_data_.insert(readable_data_.end(), data, data + len);
-    if ((SS_OPEN == state_) && (readable_data_.size() == len)) {
-      SignalEvent(this, SE_READ, 0);
-    }
-  }
-  std::string ReadData() {
-    std::string data;
-    // avoid accessing written_data_[0] if it is undefined
-    if (written_data_.size() > 0) {
-      data.insert(0, &written_data_[0], written_data_.size());
-    }
-    written_data_.clear();
-    return data;
-  }
-  void SetState(StreamState state) {
-    int events = 0;
-    if ((SS_OPENING == state_) && (SS_OPEN == state)) {
-      events |= SE_OPEN;
-      if (!readable_data_.empty()) {
-        events |= SE_READ;
-      }
-    } else if ((SS_CLOSED != state_) && (SS_CLOSED == state)) {
-      events |= SE_CLOSE;
-    }
-    state_ = state;
-    if (events) {
-      SignalEvent(this, events, 0);
-    }
-  }
-  // Will cause Read to block when there are pos bytes in the read queue.
-  void SetReadBlock(size_t pos) { read_block_ = pos; }
-  // Will cause Write to block when there are pos bytes in the write queue.
-  void SetWriteBlock(size_t pos) { write_block_ = pos; }
-
-  StreamState GetState() const override;
-  StreamResult Read(void* buffer,
-                    size_t buffer_len,
-                    size_t* read,
-                    int* error) override;
-  StreamResult Write(const void* data,
-                     size_t data_len,
-                     size_t* written,
-                     int* error) override;
-  void Close() override;
-
- private:
-  typedef std::vector<char> Buffer;
-  Buffer readable_data_, written_data_;
-  StreamState state_;
-  size_t read_block_, write_block_;
 };
 
 }  // namespace testing

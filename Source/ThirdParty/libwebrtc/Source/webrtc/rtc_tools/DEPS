@@ -7,6 +7,7 @@ include_rules = [
   "+modules/audio_coding/neteq/tools",
   "+modules/audio_processing",
   "+modules/bitrate_controller",
+  "+modules/remote_bitrate_estimator",
   "+modules/congestion_controller",
   "+modules/pacing",
   "+modules/rtp_rtcp",

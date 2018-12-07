@@ -18,7 +18,6 @@
 #include "absl/memory/memory.h"
 #include "media/base/fakeframesource.h"
 #include "media/base/mediachannel.h"
-#include "media/base/testutils.h"
 #include "media/base/videoadapter.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
@@ -1112,4 +1111,61 @@ TEST_P(VideoAdapterTest, TestAdaptToMax) {
   EXPECT_EQ(640, out_width_);
   EXPECT_EQ(360, out_height_);
 }
+
+// Test adjusting to 16:9 in landscape, and 9:16 in portrait.
+TEST(VideoAdapterTestMultipleOrientation, TestNormal) {
+  VideoAdapter video_adapter;
+  video_adapter.OnOutputFormatRequest(std::make_pair(640, 360), 640 * 360,
+                                      std::make_pair(360, 640), 360 * 640, 30);
+
+  int cropped_width;
+  int cropped_height;
+  int out_width;
+  int out_height;
+  EXPECT_TRUE(video_adapter.AdaptFrameResolution(
+      /* in_width= */ 640, /* in_height= */ 480, /* in_timestamp_ns= */ 0,
+      &cropped_width, &cropped_height, &out_width, &out_height));
+  EXPECT_EQ(640, cropped_width);
+  EXPECT_EQ(360, cropped_height);
+  EXPECT_EQ(640, out_width);
+  EXPECT_EQ(360, out_height);
+
+  EXPECT_TRUE(video_adapter.AdaptFrameResolution(
+      /* in_width= */ 480, /* in_height= */ 640,
+      /* in_timestamp_ns= */ rtc::kNumNanosecsPerSec / 30, &cropped_width,
+      &cropped_height, &out_width, &out_height));
+  EXPECT_EQ(360, cropped_width);
+  EXPECT_EQ(640, cropped_height);
+  EXPECT_EQ(360, out_width);
+  EXPECT_EQ(640, out_height);
+}
+
+// Force output to be 9:16, even for landscape input.
+TEST(VideoAdapterTestMultipleOrientation, TestForcePortrait) {
+  VideoAdapter video_adapter;
+  video_adapter.OnOutputFormatRequest(std::make_pair(360, 640), 640 * 360,
+                                      std::make_pair(360, 640), 360 * 640, 30);
+
+  int cropped_width;
+  int cropped_height;
+  int out_width;
+  int out_height;
+  EXPECT_TRUE(video_adapter.AdaptFrameResolution(
+      /* in_width= */ 640, /* in_height= */ 480, /* in_timestamp_ns= */ 0,
+      &cropped_width, &cropped_height, &out_width, &out_height));
+  EXPECT_EQ(270, cropped_width);
+  EXPECT_EQ(480, cropped_height);
+  EXPECT_EQ(270, out_width);
+  EXPECT_EQ(480, out_height);
+
+  EXPECT_TRUE(video_adapter.AdaptFrameResolution(
+      /* in_width= */ 480, /* in_height= */ 640,
+      /* in_timestamp_ns= */ rtc::kNumNanosecsPerSec / 30, &cropped_width,
+      &cropped_height, &out_width, &out_height));
+  EXPECT_EQ(360, cropped_width);
+  EXPECT_EQ(640, cropped_height);
+  EXPECT_EQ(360, out_width);
+  EXPECT_EQ(640, out_height);
+}
+
 }  // namespace cricket

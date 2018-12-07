@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -24,8 +24,8 @@ namespace webrtc {
 
 absl::optional<AudioEncoderG711::Config> AudioEncoderG711::SdpToConfig(
     const SdpAudioFormat& format) {
-  const bool is_pcmu = STR_CASE_CMP(format.name.c_str(), "PCMU") == 0;
-  const bool is_pcma = STR_CASE_CMP(format.name.c_str(), "PCMA") == 0;
+  const bool is_pcmu = absl::EqualsIgnoreCase(format.name, "PCMU");
+  const bool is_pcma = absl::EqualsIgnoreCase(format.name, "PCMA");
   if (format.clockrate_hz == 8000 && format.num_channels >= 1 &&
       (is_pcmu || is_pcma)) {
     Config config;

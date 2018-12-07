@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "api/video_codecs/video_encoder.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/sequenced_task_checker.h"
 #include "rtc_base/task_queue.h"
@@ -41,11 +40,10 @@ class FakeEncoder : public VideoEncoder {
   int32_t RegisterEncodeCompleteCallback(
       EncodedImageCallback* callback) override;
   int32_t Release() override;
-  int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
   int32_t SetRateAllocation(const VideoBitrateAllocation& rate_allocation,
                             uint32_t framerate) override;
-  const char* ImplementationName() const override;
   int GetConfiguredInputFramerate() const;
+  EncoderInfo GetEncoderInfo() const override;
 
   static const char* kImplementationName;
 
@@ -71,7 +69,7 @@ class FakeEncoder : public VideoEncoder {
                       SimulcastStream simulcast_streams[kMaxSimulcastStreams],
                       int framerate);
 
-  FrameInfo last_frame_info_;
+  FrameInfo last_frame_info_ RTC_GUARDED_BY(crit_sect_);
   Clock* const clock_;
 
   VideoCodec config_ RTC_GUARDED_BY(crit_sect_);
@@ -80,6 +78,7 @@ class FakeEncoder : public VideoEncoder {
   int configured_input_framerate_ RTC_GUARDED_BY(crit_sect_);
   int max_target_bitrate_kbps_ RTC_GUARDED_BY(crit_sect_);
   bool pending_keyframe_ RTC_GUARDED_BY(crit_sect_);
+  uint32_t counter_ RTC_GUARDED_BY(crit_sect_);
   rtc::CriticalSection crit_sect_;
 
   uint8_t encoded_buffer_[100000];

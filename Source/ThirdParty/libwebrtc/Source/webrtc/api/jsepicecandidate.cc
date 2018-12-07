@@ -10,6 +10,9 @@
 
 #include "api/jsepicecandidate.h"
 
+#include <algorithm>
+#include <utility>
+
 namespace webrtc {
 
 std::string JsepIceCandidate::sdp_mid() const {

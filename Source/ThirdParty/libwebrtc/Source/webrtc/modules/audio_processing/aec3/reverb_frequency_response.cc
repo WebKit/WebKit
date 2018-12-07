@@ -10,14 +10,12 @@
 
 #include "modules/audio_processing/aec3/reverb_frequency_response.h"
 
+#include <stddef.h>
 #include <algorithm>
 #include <array>
-#include <cmath>
-#include <memory>
 #include <numeric>
 
 #include "api/array_view.h"
-#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "rtc_base/checks.h"
 #include "system_wrappers/include/field_trial.h"

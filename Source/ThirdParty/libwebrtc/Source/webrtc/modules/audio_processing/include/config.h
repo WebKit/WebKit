@@ -14,6 +14,7 @@
 #include <map>
 
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -57,7 +58,7 @@ enum class ConfigOptionID {
 //    config.Set<Algo1_CostFunction>(new SqrCost());
 //
 // Note: This class is thread-compatible (like STL containers).
-class Config {
+class RTC_EXPORT Config {
  public:
   // Returns the option if set or a default constructed one.
   // Callers that access options too often are encouraged to cache the result.

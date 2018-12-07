@@ -10,8 +10,8 @@
 
 #include "modules/audio_device/dummy/file_audio_device_factory.h"
 
+#include <stdio.h>
 #include <cstdlib>
-#include <cstring>
 
 #include "modules/audio_device/dummy/file_audio_device.h"
 #include "rtc_base/logging.h"

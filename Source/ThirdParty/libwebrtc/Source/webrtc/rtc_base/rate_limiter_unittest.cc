@@ -112,9 +112,7 @@ static const int64_t kMaxTimeoutMs = 30000;
 class ThreadTask {
  public:
   explicit ThreadTask(RateLimiter* rate_limiter)
-      : rate_limiter_(rate_limiter),
-        start_signal_(false, false),
-        end_signal_(false, false) {}
+      : rate_limiter_(rate_limiter) {}
   virtual ~ThreadTask() {}
 
   void Run() {

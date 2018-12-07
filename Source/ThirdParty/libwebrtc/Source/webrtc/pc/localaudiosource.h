@@ -29,7 +29,7 @@ class LocalAudioSource : public Notifier<AudioSourceInterface> {
   SourceState state() const override { return kLive; }
   bool remote() const override { return false; }
 
-  virtual const cricket::AudioOptions& options() const { return options_; }
+  const cricket::AudioOptions options() const override { return options_; }
 
   void AddSink(AudioTrackSinkInterface* sink) override {}
   void RemoveSink(AudioTrackSinkInterface* sink) override {}

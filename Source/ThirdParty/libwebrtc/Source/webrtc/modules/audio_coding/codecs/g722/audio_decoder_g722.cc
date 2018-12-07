@@ -11,6 +11,7 @@
 #include "modules/audio_coding/codecs/g722/audio_decoder_g722.h"
 
 #include <string.h>
+#include <utility>
 
 #include "modules/audio_coding/codecs/g722/g722_interface.h"
 #include "modules/audio_coding/codecs/legacy_encoded_audio_frame.h"

@@ -25,19 +25,20 @@ int FakeFrameDecryptor::Decrypt(cricket::MediaType media_type,
                                 rtc::ArrayView<uint8_t> frame,
                                 size_t* bytes_written) {
   if (fail_decryption_) {
-    return 1;
+    return static_cast<int>(FakeDecryptStatus::FORCED_FAILURE);
   }
 
   RTC_CHECK_EQ(frame.size() + 1, encrypted_frame.size());
   for (size_t i = 0; i < frame.size(); i++) {
-    frame[i] ^= fake_key_;
+    frame[i] = encrypted_frame[i] ^ fake_key_;
   }
 
   if (encrypted_frame[frame.size()] != expected_postfix_byte_) {
-    return 1;
+    return static_cast<int>(FakeDecryptStatus::INVALID_POSTFIX);
   }
 
-  return 0;
+  *bytes_written = frame.size();
+  return static_cast<int>(FakeDecryptStatus::OK);
 }
 
 size_t FakeFrameDecryptor::GetMaxPlaintextByteSize(

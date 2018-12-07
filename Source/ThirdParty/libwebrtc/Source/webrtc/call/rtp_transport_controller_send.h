@@ -20,7 +20,6 @@
 #include "call/rtp_bitrate_configurator.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "call/rtp_video_sender.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/congestion_controller/include/send_side_congestion_controller_interface.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/utility/include/process_thread.h"
@@ -29,7 +28,9 @@
 #include "rtc_base/task_queue.h"
 
 namespace webrtc {
+
 class Clock;
+class FrameEncryptorInterface;
 class RtcEventLog;
 
 // TODO(nisse): When we get the underlying transports here, we should
@@ -52,11 +53,12 @@ class RtpTransportControllerSend final
       const std::map<uint32_t, RtpPayloadState>&
           states,  // move states into RtpTransportControllerSend
       const RtpConfig& rtp_config,
-      const RtcpConfig& rtcp_config,
+      int rtcp_report_interval_ms,
       Transport* send_transport,
       const RtpSenderObservers& observers,
       RtcEventLog* event_log,
-      std::unique_ptr<FecController> fec_controller) override;
+      std::unique_ptr<FecController> fec_controller,
+      const RtpSenderFrameEncryptionConfig& frame_encryption_config) override;
   void DestroyRtpVideoSender(
       RtpVideoSenderInterface* rtp_video_sender) override;
 

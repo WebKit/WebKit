@@ -12,8 +12,6 @@
 
 #include <cmath>
 #include <cstdlib>
-
-#include <algorithm>
 #include <vector>
 
 #include "modules/audio_processing/agc/loudness_histogram.h"

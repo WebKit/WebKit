@@ -47,10 +47,10 @@ rtc_static_library("common_audio") {
   deps = [
     ":common_audio_c",
     ":sinc_resampler",
-    "..:webrtc_common",
     "../rtc_base:checks",
     "../rtc_base:gtest_prod",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base:sanitizer",
     "../rtc_base/memory:aligned_array",
     "../rtc_base/memory:aligned_malloc",
     "../rtc_base/system:arch",
@@ -181,7 +181,6 @@ rtc_source_set("common_audio_c") {
   deps = [
     ":common_audio_c_arm_asm",
     ":common_audio_cc",
-    "..:webrtc_common",
     "../rtc_base:checks",
     "../rtc_base:compile_assert_c",
     "../rtc_base:rtc_base_approved",
@@ -201,7 +200,6 @@ rtc_source_set("common_audio_cc") {
   ]
 
   deps = [
-    "..:webrtc_common",
     "../rtc_base:rtc_base_approved",
     "../system_wrappers",
   ]
@@ -212,7 +210,6 @@ rtc_source_set("sinc_resampler") {
     "resampler/sinc_resampler.h",
   ]
   deps = [
-    "..:webrtc_common",
     "../rtc_base:gtest_prod",
     "../rtc_base:rtc_base_approved",
     "../rtc_base/memory:aligned_malloc",
@@ -381,7 +378,6 @@ if (rtc_include_tests) {
       ":fir_filter",
       ":fir_filter_factory",
       ":sinc_resampler",
-      "..:webrtc_common",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
@@ -389,6 +385,7 @@ if (rtc_include_tests) {
       "../system_wrappers:cpu_features_api",
       "../test:fileutils",
       "../test:test_main",
+      "../test:test_support",
       "//testing/gtest",
     ]
 

@@ -11,16 +11,15 @@
 #ifndef COMMON_TYPES_H_
 #define COMMON_TYPES_H_
 
-#include <stddef.h>
-#include <string.h>
-#include <string>
-#include <vector>
+#include <stddef.h>  // For size_t
+#include <cstdint>
 
-#include "api/array_view.h"
+#include "absl/strings/match.h"
 // TODO(sprang): Remove this include when all usage includes it directly.
 #include "api/video/video_bitrate_allocation.h"
+// TODO(bugs.webrtc.org/7660): Delete include once downstream code is updated.
+#include "api/video/video_codec_type.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/deprecation.h"
 
 #if defined(_MSC_VER)
 // Disable "new behavior: elements of array will be default initialized"
@@ -30,16 +29,6 @@
 
 #define RTP_PAYLOAD_NAME_SIZE 32u
 
-#if defined(WEBRTC_WIN) || defined(WIN32)
-// Compares two strings without regard to case.
-#define STR_CASE_CMP(s1, s2) ::_stricmp(s1, s2)
-// Compares characters of two strings without regard to case.
-#define STR_NCASE_CMP(s1, s2, n) ::_strnicmp(s1, s2, n)
-#else
-#define STR_CASE_CMP(s1, s2) ::strcasecmp(s1, s2)
-#define STR_NCASE_CMP(s1, s2, n) ::strncasecmp(s1, s2, n)
-#endif
-
 namespace webrtc {
 
 enum FrameType {
@@ -48,29 +37,6 @@ enum FrameType {
   kAudioFrameCN = 2,
   kVideoFrameKey = 3,
   kVideoFrameDelta = 4,
-};
-
-// Statistics for an RTCP channel
-struct RtcpStatistics {
-  RtcpStatistics()
-      : fraction_lost(0),
-        packets_lost(0),
-        extended_highest_sequence_number(0),
-        jitter(0) {}
-
-  uint8_t fraction_lost;
-  int32_t packets_lost;  // Defined as a 24 bit signed integer in RTCP
-  uint32_t extended_highest_sequence_number;
-  uint32_t jitter;
-};
-
-class RtcpStatisticsCallback {
- public:
-  virtual ~RtcpStatisticsCallback() {}
-
-  virtual void StatisticsUpdated(const RtcpStatistics& statistics,
-                                 uint32_t ssrc) = 0;
-  virtual void CNameChanged(const char* cname, uint32_t ssrc) = 0;
 };
 
 // Statistics for RTCP packet types.
@@ -207,7 +173,7 @@ struct CodecInst {
 
   bool operator==(const CodecInst& other) const {
     return pltype == other.pltype &&
-           (STR_CASE_CMP(plname, other.plname) == 0) &&
+           absl::EqualsIgnoreCase(plname, other.plname) &&
            plfreq == other.plfreq && pacsize == other.pacsize &&
            channels == other.channels && rate == other.rate;
   }
@@ -217,80 +183,6 @@ struct CodecInst {
 
 // RTP
 enum { kRtpCsrcSize = 15 };  // RFC 3550 page 13
-
-// NETEQ statistics.
-struct NetworkStatistics {
-  // current jitter buffer size in ms
-  uint16_t currentBufferSize;
-  // preferred (optimal) buffer size in ms
-  uint16_t preferredBufferSize;
-  // adding extra delay due to "peaky jitter"
-  bool jitterPeaksFound;
-  // Stats below correspond to similarly-named fields in the WebRTC stats spec.
-  // https://w3c.github.io/webrtc-stats/#dom-rtcmediastreamtrackstats
-  uint64_t totalSamplesReceived;
-  uint64_t concealedSamples;
-  uint64_t concealmentEvents;
-  uint64_t jitterBufferDelayMs;
-  // Stats below DO NOT correspond directly to anything in the WebRTC stats
-  // Loss rate (network + late); fraction between 0 and 1, scaled to Q14.
-  uint16_t currentPacketLossRate;
-  // Late loss rate; fraction between 0 and 1, scaled to Q14.
-  union {
-    RTC_DEPRECATED uint16_t currentDiscardRate;
-  };
-  // fraction (of original stream) of synthesized audio inserted through
-  // expansion (in Q14)
-  uint16_t currentExpandRate;
-  // fraction (of original stream) of synthesized speech inserted through
-  // expansion (in Q14)
-  uint16_t currentSpeechExpandRate;
-  // fraction of synthesized speech inserted through pre-emptive expansion
-  // (in Q14)
-  uint16_t currentPreemptiveRate;
-  // fraction of data removed through acceleration (in Q14)
-  uint16_t currentAccelerateRate;
-  // fraction of data coming from secondary decoding (in Q14)
-  uint16_t currentSecondaryDecodedRate;
-  // Fraction of secondary data, including FEC and RED, that is discarded (in
-  // Q14). Discarding of secondary data can be caused by the reception of the
-  // primary data, obsoleting the secondary data. It can also be caused by early
-  // or late arrival of secondary data.
-  uint16_t currentSecondaryDiscardedRate;
-  // clock-drift in parts-per-million (negative or positive)
-  int32_t clockDriftPPM;
-  // average packet waiting time in the jitter buffer (ms)
-  int meanWaitingTimeMs;
-  // median packet waiting time in the jitter buffer (ms)
-  int medianWaitingTimeMs;
-  // min packet waiting time in the jitter buffer (ms)
-  int minWaitingTimeMs;
-  // max packet waiting time in the jitter buffer (ms)
-  int maxWaitingTimeMs;
-  // added samples in off mode due to packet loss
-  size_t addedSamples;
-};
-
-// Statistics for calls to AudioCodingModule::PlayoutData10Ms().
-struct AudioDecodingCallStats {
-  AudioDecodingCallStats()
-      : calls_to_silence_generator(0),
-        calls_to_neteq(0),
-        decoded_normal(0),
-        decoded_plc(0),
-        decoded_cng(0),
-        decoded_plc_cng(0),
-        decoded_muted_output(0) {}
-
-  int calls_to_silence_generator;  // Number of calls where silence generated,
-                                   // and NetEq was disengaged from decoding.
-  int calls_to_neteq;              // Number of calls to NetEq.
-  int decoded_normal;  // Number of calls where audio RTP packet decoded.
-  int decoded_plc;     // Number of calls resulted in PLC.
-  int decoded_cng;  // Number of calls where comfort noise generated due to DTX.
-  int decoded_plc_cng;       // Number of calls resulted where PLC faded to CNG.
-  int decoded_muted_output;  // Number of calls returning a muted state output.
-};
 
 // ==================================================================
 // Video specific types
@@ -330,18 +222,6 @@ enum Profile {
 
 }  // namespace H264
 
-// Video codec types
-enum VideoCodecType {
-  // There are various memset(..., 0, ...) calls in the code that rely on
-  // kVideoCodecGeneric being zero.
-  kVideoCodecGeneric = 0,
-  kVideoCodecVP8,
-  kVideoCodecVP9,
-  kVideoCodecH264,
-  kVideoCodecI420,
-  kVideoCodecMultiplex,
-};
-
 struct SpatialLayer {
   bool operator==(const SpatialLayer& other) const;
   bool operator!=(const SpatialLayer& other) const { return !(*this == other); }
@@ -360,9 +240,6 @@ struct SpatialLayer {
 // Simulcast is when the same stream is encoded multiple times with different
 // settings such as resolution.
 typedef SpatialLayer SimulcastStream;
-
-// TODO(sprang): Remove this when downstream projects have been updated.
-using BitrateAllocation = VideoBitrateAllocation;
 
 // Bandwidth over-use detector options.  These are used to drive
 // experimentation with bandwidth estimation parameters.

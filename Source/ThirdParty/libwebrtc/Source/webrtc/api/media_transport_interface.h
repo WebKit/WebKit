@@ -1,5 +1,4 @@
-/*
- *  Copyright 2018 The WebRTC project authors. All Rights Reserved.
+/* Copyright 2018 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -18,12 +17,18 @@
 #ifndef API_MEDIA_TRANSPORT_INTERFACE_H_
 #define API_MEDIA_TRANSPORT_INTERFACE_H_
 
+#include <api/transport/network_control.h>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "api/rtcerror.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "api/video/encoded_image.h"
+#include "rtc_base/copyonwritebuffer.h"
+#include "rtc_base/networkroute.h"
 
 namespace rtc {
 class PacketTransportInternal;
@@ -32,16 +37,36 @@ class Thread;
 
 namespace webrtc {
 
+// A collection of settings for creation of media transport.
+struct MediaTransportSettings final {
+  MediaTransportSettings();
+  MediaTransportSettings(const MediaTransportSettings&);
+  MediaTransportSettings& operator=(const MediaTransportSettings&);
+  ~MediaTransportSettings();
+
+  // Group calls are not currently supported, in 1:1 call one side must set
+  // is_caller = true and another is_caller = false.
+  bool is_caller;
+
+  // Must be set if a pre-shared key is used for the call.
+  // TODO(bugs.webrtc.org/9944): This should become zero buffer in the distant
+  // future.
+  absl::optional<std::string> pre_shared_key;
+};
+
 // Represents encoded audio frame in any encoding (type of encoding is opaque).
 // To avoid copying of encoded data use move semantics when passing by value.
-class MediaTransportEncodedAudioFrame {
+class MediaTransportEncodedAudioFrame final {
  public:
   enum class FrameType {
     // Normal audio frame (equivalent to webrtc::kAudioFrameSpeech).
     kSpeech,
 
     // DTX frame (equivalent to webrtc::kAudioFrameCN).
-    kDiscountinuousTransmission,
+    // DTX frame (equivalent to webrtc::kAudioFrameCN).
+    kDiscontinuousTransmission,
+    // TODO(nisse): Mis-spelled version, update users, then delete.
+    kDiscountinuousTransmission = kDiscontinuousTransmission,
   };
 
   MediaTransportEncodedAudioFrame(
@@ -75,14 +100,15 @@ class MediaTransportEncodedAudioFrame {
       uint8_t payload_type,
 
       // Vector with opaque encoded data.
-      std::vector<uint8_t> encoded_data)
-      : sampling_rate_hz_(sampling_rate_hz),
-        starting_sample_index_(starting_sample_index),
-        samples_per_channel_(samples_per_channel),
-        sequence_number_(sequence_number),
-        frame_type_(frame_type),
-        payload_type_(payload_type),
-        encoded_data_(std::move(encoded_data)) {}
+      std::vector<uint8_t> encoded_data);
+
+  ~MediaTransportEncodedAudioFrame();
+  MediaTransportEncodedAudioFrame(const MediaTransportEncodedAudioFrame&);
+  MediaTransportEncodedAudioFrame& operator=(
+      const MediaTransportEncodedAudioFrame& other);
+  MediaTransportEncodedAudioFrame& operator=(
+      MediaTransportEncodedAudioFrame&& other);
+  MediaTransportEncodedAudioFrame(MediaTransportEncodedAudioFrame&&);
 
   // Getters.
   int sampling_rate_hz() const { return sampling_rate_hz_; }
@@ -113,6 +139,16 @@ class MediaTransportEncodedAudioFrame {
   std::vector<uint8_t> encoded_data_;
 };
 
+// Callback to notify about network route changes.
+class MediaTransportNetworkChangeCallback {
+ public:
+  virtual ~MediaTransportNetworkChangeCallback() = default;
+
+  // Called when the network route is changed, with the new network route.
+  virtual void OnNetworkRouteChanged(
+      const rtc::NetworkRoute& new_network_route) = 0;
+};
+
 // Interface for receiving encoded audio frames from MediaTransportInterface
 // implementations.
 class MediaTransportAudioSinkInterface {
@@ -125,16 +161,19 @@ class MediaTransportAudioSinkInterface {
 };
 
 // Represents encoded video frame, along with the codec information.
-class MediaTransportEncodedVideoFrame {
+class MediaTransportEncodedVideoFrame final {
  public:
   MediaTransportEncodedVideoFrame(int64_t frame_id,
                                   std::vector<int64_t> referenced_frame_ids,
                                   VideoCodecType codec_type,
-                                  const webrtc::EncodedImage& encoded_image)
-      : codec_type_(codec_type),
-        encoded_image_(encoded_image),
-        frame_id_(frame_id),
-        referenced_frame_ids_(std::move(referenced_frame_ids)) {}
+                                  const webrtc::EncodedImage& encoded_image);
+  ~MediaTransportEncodedVideoFrame();
+  MediaTransportEncodedVideoFrame(const MediaTransportEncodedVideoFrame&);
+  MediaTransportEncodedVideoFrame& operator=(
+      const MediaTransportEncodedVideoFrame& other);
+  MediaTransportEncodedVideoFrame& operator=(
+      MediaTransportEncodedVideoFrame&& other);
+  MediaTransportEncodedVideoFrame(MediaTransportEncodedVideoFrame&&);
 
   VideoCodecType codec_type() const { return codec_type_; }
   const webrtc::EncodedImage& encoded_image() const { return encoded_image_; }
@@ -183,6 +222,85 @@ class MediaTransportVideoSinkInterface {
   virtual void OnKeyFrameRequested(uint64_t channel_id) = 0;
 };
 
+// State of the media transport.  Media transport begins in the pending state.
+// It transitions to writable when it is ready to send media.  It may transition
+// back to pending if the connection is blocked.  It may transition to closed at
+// any time.  Closed is terminal: a transport will never re-open once closed.
+enum class MediaTransportState {
+  kPending,
+  kWritable,
+  kClosed,
+};
+
+// Callback invoked whenever the state of the media transport changes.
+class MediaTransportStateCallback {
+ public:
+  virtual ~MediaTransportStateCallback() = default;
+
+  // Invoked whenever the state of the media transport changes.
+  virtual void OnStateChanged(MediaTransportState state) = 0;
+};
+
+// Supported types of application data messages.
+enum class DataMessageType {
+  // Application data buffer with the binary bit unset.
+  kText,
+
+  // Application data buffer with the binary bit set.
+  kBinary,
+
+  // Transport-agnostic control messages, such as open or open-ack messages.
+  kControl,
+};
+
+// Parameters for sending data.  The parameters may change from message to
+// message, even within a single channel.  For example, control messages may be
+// sent reliably and in-order, even if the data channel is configured for
+// unreliable delivery.
+struct SendDataParams {
+  SendDataParams();
+
+  DataMessageType type = DataMessageType::kText;
+
+  // Whether to deliver the message in order with respect to other ordered
+  // messages with the same channel_id.
+  bool ordered = false;
+
+  // If set, the maximum number of times this message may be
+  // retransmitted by the transport before it is dropped.
+  // Setting this value to zero disables retransmission.
+  // Must be non-negative. |max_rtx_count| and |max_rtx_ms| may not be set
+  // simultaneously.
+  absl::optional<int> max_rtx_count;
+
+  // If set, the maximum number of milliseconds for which the transport
+  // may retransmit this message before it is dropped.
+  // Setting this value to zero disables retransmission.
+  // Must be non-negative. |max_rtx_count| and |max_rtx_ms| may not be set
+  // simultaneously.
+  absl::optional<int> max_rtx_ms;
+};
+
+// Sink for callbacks related to a data channel.
+class DataChannelSink {
+ public:
+  virtual ~DataChannelSink() = default;
+
+  // Callback issued when data is received by the transport.
+  virtual void OnDataReceived(int channel_id,
+                              DataMessageType type,
+                              const rtc::CopyOnWriteBuffer& buffer) = 0;
+
+  // Callback issued when a remote data channel begins the closing procedure.
+  // Messages sent after the closing procedure begins will not be transmitted.
+  virtual void OnChannelClosing(int channel_id) = 0;
+
+  // Callback issued when a (remote or local) data channel completes the closing
+  // procedure.  Closing channels become closed after all pending data has been
+  // transmitted.
+  virtual void OnChannelClosed(int channel_id) = 0;
+};
+
 // Media transport interface for sending / receiving encoded audio/video frames
 // and receiving bandwidth estimate update from congestion control.
 class MediaTransportInterface {
@@ -217,8 +335,62 @@ class MediaTransportInterface {
   // pass a nullptr.
   virtual void SetReceiveVideoSink(MediaTransportVideoSinkInterface* sink) = 0;
 
+  // Adds a target bitrate observer. Before media transport is destructed
+  // the observer must be unregistered (by calling
+  // RemoveTargetTransferRateObserver).
+  // A newly registered observer will be called back with the latest recorded
+  // target rate, if available.
+  virtual void AddTargetTransferRateObserver(
+      webrtc::TargetTransferRateObserver* observer);
+
+  // Removes an existing |observer| from observers. If observer was never
+  // registered, an error is logged and method does nothing.
+  virtual void RemoveTargetTransferRateObserver(
+      webrtc::TargetTransferRateObserver* observer);
+
+  // Returns the last known target transfer rate as reported to the above
+  // observers.
+  virtual absl::optional<TargetTransferRate> GetLatestTargetTransferRate();
+
+  // Gets the audio packet overhead in bytes. Returned overhead does not include
+  // transport overhead (ipv4/6, turn channeldata, tcp/udp, etc.).
+  // If the transport is capable of fusing packets together, this overhead
+  // might not be a very accurate number.
+  virtual size_t GetAudioPacketOverhead() const;
+
+  // Sets an observer for network change events. If the network route is already
+  // established when the callback is set, |callback| will be called immediately
+  // with the current network route.
+  // Before media transport is destroyed, the callback must be unregistered by
+  // setting it to nullptr.
+  virtual void SetNetworkChangeCallback(
+      MediaTransportNetworkChangeCallback* callback);
+
+  // Sets a state observer callback. Before media transport is destroyed, the
+  // callback must be unregistered by setting it to nullptr.
+  // A newly registered callback will be called with the current state.
+  // Media transport does not invoke this callback concurrently.
+  virtual void SetMediaTransportStateCallback(
+      MediaTransportStateCallback* callback) = 0;
+
+  // Sends a data buffer to the remote endpoint using the given send parameters.
+  // |buffer| may not be larger than 256 KiB. Returns an error if the send
+  // fails.
+  virtual RTCError SendData(int channel_id,
+                            const SendDataParams& params,
+                            const rtc::CopyOnWriteBuffer& buffer) = 0;
+
+  // Closes |channel_id| gracefully.  Returns an error if |channel_id| is not
+  // open.  Data sent after the closing procedure begins will not be
+  // transmitted. The channel becomes closed after pending data is transmitted.
+  virtual RTCError CloseChannel(int channel_id) = 0;
+
+  // Sets a sink for data messages and channel state callbacks. Before media
+  // transport is destroyed, the sink must be unregistered by setting it to
+  // nullptr.
+  virtual void SetDataSink(DataChannelSink* sink) = 0;
+
   // TODO(sukhanov): RtcEventLogs.
-  // TODO(sukhanov): Bandwidth updates.
 };
 
 // If media transport factory is set in peer connection factory, it will be
@@ -236,10 +408,21 @@ class MediaTransportFactory {
   // - Does not take ownership of packet_transport or network_thread.
   // - Does not support group calls, in 1:1 call one side must set
   //   is_caller = true and another is_caller = false.
+  // TODO(bugs.webrtc.org/9938) This constructor will be removed and replaced
+  // with the one below.
   virtual RTCErrorOr<std::unique_ptr<MediaTransportInterface>>
   CreateMediaTransport(rtc::PacketTransportInternal* packet_transport,
                        rtc::Thread* network_thread,
-                       bool is_caller) = 0;
+                       bool is_caller);
+
+  // Creates media transport.
+  // - Does not take ownership of packet_transport or network_thread.
+  // TODO(bugs.webrtc.org/9938): remove default implementation once all children
+  // override it.
+  virtual RTCErrorOr<std::unique_ptr<MediaTransportInterface>>
+  CreateMediaTransport(rtc::PacketTransportInternal* packet_transport,
+                       rtc::Thread* network_thread,
+                       const MediaTransportSettings& settings);
 };
 
 }  // namespace webrtc

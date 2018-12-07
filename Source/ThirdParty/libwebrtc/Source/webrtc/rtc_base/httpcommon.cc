@@ -18,17 +18,23 @@
 #include <security.h>
 #endif
 
+#include <ctype.h>  // for isspace
+#include <stdio.h>  // for sprintf
 #include <algorithm>
+#include <utility>  // for pair
+#include <vector>
 
+#include "absl/strings/match.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/cryptstring.h"
+#include "rtc_base/cryptstring.h"  // for CryptString
 #include "rtc_base/httpcommon.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/socketaddress.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/third_party/base64/base64.h"
-#include "rtc_base/zero_memory.h"
+#include "rtc_base/third_party/base64/base64.h"  // for Base64
+#include "rtc_base/zero_memory.h"                // for ExplicitZeroMemory
 
 namespace rtc {
 namespace {
@@ -260,7 +266,7 @@ HttpAuthResult HttpAuthenticate(const char* challenge,
     return HAR_IGNORE;
 
   // BASIC
-  if (_stricmp(auth_method.c_str(), "basic") == 0) {
+  if (absl::EqualsIgnoreCase(auth_method, "basic")) {
     if (context)
       return HAR_CREDENTIALS;  // Bad credentials
     if (username.empty())
@@ -288,7 +294,7 @@ HttpAuthResult HttpAuthenticate(const char* challenge,
   }
 
   // DIGEST
-  if (_stricmp(auth_method.c_str(), "digest") == 0) {
+  if (absl::EqualsIgnoreCase(auth_method, "digest")) {
     if (context)
       return HAR_CREDENTIALS;  // Bad credentials
     if (username.empty())
@@ -355,8 +361,8 @@ HttpAuthResult HttpAuthenticate(const char* challenge,
 
 #if defined(WEBRTC_WIN)
 #if 1
-  bool want_negotiate = (_stricmp(auth_method.c_str(), "negotiate") == 0);
-  bool want_ntlm = (_stricmp(auth_method.c_str(), "ntlm") == 0);
+  bool want_negotiate = absl::EqualsIgnoreCase(auth_method, "negotiate");
+  bool want_ntlm = absl::EqualsIgnoreCase(auth_method, "ntlm");
   // SPNEGO & NTLM
   if (want_negotiate || want_ntlm) {
     const size_t MAX_MESSAGE = 12000, MAX_SPN = 256;
@@ -371,7 +377,7 @@ HttpAuthResult HttpAuthenticate(const char* challenge,
       return HAR_IGNORE;
     }
 #else
-    sprintfn(spn, MAX_SPN, "HTTP/%s", server.ToString().c_str());
+    snprintf(spn, MAX_SPN, "HTTP/%s", server.ToString().c_str());
 #endif
 
     SecBuffer out_sec;

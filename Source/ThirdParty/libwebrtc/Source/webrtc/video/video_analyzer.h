@@ -25,8 +25,7 @@ namespace webrtc {
 
 class VideoAnalyzer : public PacketReceiver,
                       public Transport,
-                      public rtc::VideoSinkInterface<VideoFrame>,
-                      public EncodedFrameObserver {
+                      public rtc::VideoSinkInterface<VideoFrame> {
  public:
   VideoAnalyzer(test::LayerFilteringTransport* transport,
                 const std::string& test_label,
@@ -61,9 +60,7 @@ class VideoAnalyzer : public PacketReceiver,
                                int64_t packet_time_us) override;
 
   void PreEncodeOnFrame(const VideoFrame& video_frame);
-
-  // EncodedFrameObserver implementation, wired to post_encode_callback.
-  void EncodedFrameCallback(const EncodedFrame& encoded_frame) override;
+  void PostEncodeOnFrame(size_t stream_id, uint32_t timestamp);
 
   bool SendRtp(const uint8_t* packet,
                size_t length,
@@ -72,8 +69,6 @@ class VideoAnalyzer : public PacketReceiver,
   bool SendRtcp(const uint8_t* packet, size_t length) override;
   void OnFrame(const VideoFrame& video_frame) override;
   void Wait();
-
-  rtc::VideoSinkInterface<VideoFrame>* pre_encode_proxy();
 
   void StartMeasuringCpuProcessTime();
   void StopMeasuringCpuProcessTime();
@@ -130,17 +125,6 @@ class VideoAnalyzer : public PacketReceiver,
     size_t encoded_frame_size;
     double psnr;
     double ssim;
-  };
-
-  // This class receives the send-side OnFrame callback and is provided to not
-  // conflict with the receiver-side renderer callback.
-  class PreEncodeProxy : public rtc::VideoSinkInterface<VideoFrame> {
-   public:
-    explicit PreEncodeProxy(VideoAnalyzer* parent);
-    void OnFrame(const VideoFrame& video_frame) override;
-
-   private:
-    VideoAnalyzer* const parent_;
   };
 
   // Implements VideoSinkInterface to receive captured frames from a
@@ -221,7 +205,6 @@ class VideoAnalyzer : public PacketReceiver,
   const size_t selected_stream_;
   const int selected_sl_;
   const int selected_tl_;
-  PreEncodeProxy pre_encode_proxy_;
 
   rtc::CriticalSection comparison_lock_;
   std::vector<Sample> samples_ RTC_GUARDED_BY(comparison_lock_);

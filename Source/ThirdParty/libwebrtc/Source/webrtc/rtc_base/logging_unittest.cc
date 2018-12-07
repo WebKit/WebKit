@@ -221,7 +221,7 @@ TEST(LogTest, SingleStream) {
 
 #if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 TEST(LogTest, Checks) {
-  EXPECT_DEATH(RTC_FATAL() << "message",
+  EXPECT_DEATH(FATAL() << "message",
                "\n\n#\n"
                "# Fatal error in: \\S+, line \\w+\n"
                "# last system error: \\w+\n"
@@ -292,7 +292,7 @@ class LogThread {
   static void ThreadEntry(void* p) { static_cast<LogThread*>(p)->Run(); }
 
   PlatformThread thread_;
-  Event event_{false, false};
+  Event event_;
 };
 
 // Ensure we don't crash when adding/removing streams while threads are going.

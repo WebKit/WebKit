@@ -13,18 +13,14 @@
 #ifndef RTC_BASE_SSLIDENTITY_H_
 #define RTC_BASE_SSLIDENTITY_H_
 
-#include <algorithm>
-#include <memory>
+#include <stdint.h>
+#include <ctime>
 #include <string>
-#include <vector>
-
-#include "rtc_base/buffer.h"
-#include "rtc_base/constructormagic.h"
-#include "rtc_base/messagedigest.h"
-#include "rtc_base/sslcertificate.h"
-#include "rtc_base/timeutils.h"
 
 namespace rtc {
+
+class SSLCertChain;
+class SSLCertificate;
 
 // KT_LAST is intended for vector declarations and loops over all key types;
 // it does not represent any key type in itself.

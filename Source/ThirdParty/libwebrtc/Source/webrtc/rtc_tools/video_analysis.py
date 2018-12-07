@@ -79,7 +79,7 @@ def _ParseArgs():
                     help='Path to the frame analyzer executable.'
                     'Default: %default')
   parser.add_option('--zxing_path', type='string',
-                    help='Path to the zebra xing barcode analyzer.')
+                    help='DEPRECATED.')
   parser.add_option('--ref_rec_dir', type='string', default='ref',
                     help='Path to where reference recordings will be created.'
                     'Ideally keep the ref and test directories on separate'
@@ -118,8 +118,6 @@ def _ParseArgs():
                    'generated!')
   if not os.path.isfile(options.frame_analyzer):
     parser.warning('Cannot find frame_analyzer, no metrics will be generated!')
-  if not os.path.isfile(options.zxing_path):
-    parser.warning('Cannot find Zebra Xing, no metrics will be generated!')
 
   return options
 
@@ -442,12 +440,6 @@ def CompareVideos(options, cropped_ref_file, cropped_test_file):
     '--ref_video=%s' % cropped_ref_file,
     '--test_video=%s' % cropped_test_file,
     '--frame_analyzer=%s' % os.path.abspath(options.frame_analyzer),
-    '--zxing_path=%s' % options.zxing_path,
-    '--ffmpeg_path=%s' % options.ffmpeg,
-    '--stats_file_ref=%s_stats.txt' %
-        os.path.join(os.path.dirname(cropped_ref_file), cropped_ref_file),
-    '--stats_file_test=%s_stats.txt' %
-        os.path.join(os.path.dirname(cropped_test_file), cropped_test_file),
     '--yuv_frame_height=%d' % crop_height,
     '--yuv_frame_width=%d' % crop_width
   ]
@@ -472,7 +464,6 @@ def main():
     --app_name AppRTCMobile \
     --ffmpeg ./ffmpeg --ref_video_device=/dev/video0 \
     --test_video_device=/dev/video1 \
-    --zxing_path ./zxing \
     --test_crop_parameters 'crop=950:420:130:56' \
     --ref_crop_parameters 'hflip, crop=950:420:130:56' \
     --ref_rec_dir /tmp/ref \

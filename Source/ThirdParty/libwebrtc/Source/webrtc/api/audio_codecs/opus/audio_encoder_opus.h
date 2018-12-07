@@ -19,14 +19,13 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Opus encoder API for use as a template parameter to
 // CreateAudioEncoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
-struct AudioEncoderOpus {
+struct RTC_EXPORT AudioEncoderOpus {
   using Config = AudioEncoderOpusConfig;
   static absl::optional<AudioEncoderOpusConfig> SdpToConfig(
       const SdpAudioFormat& audio_format);

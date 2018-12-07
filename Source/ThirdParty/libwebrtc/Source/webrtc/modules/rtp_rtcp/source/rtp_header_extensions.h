@@ -10,19 +10,25 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_HEADER_EXTENSIONS_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_HEADER_EXTENSIONS_H_
 
+#include <stddef.h>
 #include <stdint.h>
 #include <string>
 
 #include "api/array_view.h"
+#include "api/rtp_headers.h"
+#include "api/video/color_space.h"
 #include "api/video/video_content_type.h"
+#include "api/video/video_frame_marking.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {
 
 class AbsoluteSendTime {
  public:
+  using value_type = uint32_t;
   static constexpr RTPExtensionType kId = kRtpExtensionAbsoluteSendTime;
   static constexpr uint8_t kValueSizeBytes = 3;
   static constexpr const char kUri[] =
@@ -57,6 +63,7 @@ class AudioLevel {
 
 class TransmissionOffset {
  public:
+  using value_type = int32_t;
   static constexpr RTPExtensionType kId = kRtpExtensionTransmissionTimeOffset;
   static constexpr uint8_t kValueSizeBytes = 3;
   static constexpr const char kUri[] = "urn:ietf:params:rtp-hdrext:toffset";
@@ -68,6 +75,7 @@ class TransmissionOffset {
 
 class TransportSequenceNumber {
  public:
+  using value_type = uint16_t;
   static constexpr RTPExtensionType kId = kRtpExtensionTransportSequenceNumber;
   static constexpr uint8_t kValueSizeBytes = 2;
   static constexpr const char kUri[] =
@@ -80,6 +88,7 @@ class TransportSequenceNumber {
 
 class VideoOrientation {
  public:
+  using value_type = VideoRotation;
   static constexpr RTPExtensionType kId = kRtpExtensionVideoRotation;
   static constexpr uint8_t kValueSizeBytes = 1;
   static constexpr const char kUri[] = "urn:3gpp:video-orientation";
@@ -94,6 +103,7 @@ class VideoOrientation {
 
 class PlayoutDelayLimits {
  public:
+  using value_type = PlayoutDelay;
   static constexpr RTPExtensionType kId = kRtpExtensionPlayoutDelay;
   static constexpr uint8_t kValueSizeBytes = 3;
   static constexpr const char kUri[] =
@@ -117,6 +127,7 @@ class PlayoutDelayLimits {
 
 class VideoContentTypeExtension {
  public:
+  using value_type = VideoContentType;
   static constexpr RTPExtensionType kId = kRtpExtensionVideoContentType;
   static constexpr uint8_t kValueSizeBytes = 1;
   static constexpr const char kUri[] =
@@ -133,6 +144,7 @@ class VideoContentTypeExtension {
 
 class VideoTimingExtension {
  public:
+  using value_type = VideoSendTiming;
   static constexpr RTPExtensionType kId = kRtpExtensionVideoTiming;
   static constexpr uint8_t kValueSizeBytes = 13;
   static constexpr const char kUri[] =
@@ -155,6 +167,7 @@ class VideoTimingExtension {
 
 class FrameMarkingExtension {
  public:
+  using value_type = FrameMarking;
   static constexpr RTPExtensionType kId = kRtpExtensionFrameMarking;
   static constexpr const char kUri[] =
       "http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07";
@@ -169,10 +182,41 @@ class FrameMarkingExtension {
   static bool IsScalable(uint8_t temporal_id, uint8_t layer_id);
 };
 
+class ColorSpaceExtension {
+ public:
+  using value_type = ColorSpace;
+  static constexpr RTPExtensionType kId = kRtpExtensionColorSpace;
+  static constexpr uint8_t kValueSizeBytes = 30;
+  static constexpr uint8_t kValueSizeBytesWithoutHdrMetadata = 4;
+  // TODO(webrtc:8651): Change to a valid uri.
+  static constexpr const char kUri[] = "rtp-colorspace-uri-placeholder";
+
+  static bool Parse(rtc::ArrayView<const uint8_t> data,
+                    ColorSpace* color_space);
+  static size_t ValueSize(const ColorSpace& color_space) {
+    return color_space.hdr_metadata() ? kValueSizeBytes
+                                      : kValueSizeBytesWithoutHdrMetadata;
+  }
+  static bool Write(rtc::ArrayView<uint8_t> data,
+                    const ColorSpace& color_space);
+
+ private:
+  static constexpr int kChromaticityDenominator = 10000;  // 0.0001 resolution.
+  static constexpr int kLuminanceMaxDenominator = 100;    // 0.01 resolution.
+  static constexpr int kLuminanceMinDenominator = 10000;  // 0.0001 resolution.
+  static size_t ParseChromaticity(const uint8_t* data,
+                                  HdrMasteringMetadata::Chromaticity* p);
+  static size_t ParseLuminance(const uint8_t* data, float* f, int denominator);
+  static size_t WriteChromaticity(uint8_t* data,
+                                  const HdrMasteringMetadata::Chromaticity& p);
+  static size_t WriteLuminance(uint8_t* data, float f, int denominator);
+};
+
 // Base extension class for RTP header extensions which are strings.
 // Subclasses must defined kId and kUri static constexpr members.
 class BaseRtpStringExtension {
  public:
+  using value_type = std::string;
   // String RTP header extensions are limited to 16 bytes because it is the
   // maximum length that can be encoded with one-byte header extensions.
   static constexpr uint8_t kMaxValueSizeBytes = 16;

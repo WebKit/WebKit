@@ -10,6 +10,8 @@
 
 #include "rtc_base/strings/audio_format_to_string.h"
 
+#include <utility>
+
 #include "rtc_base/strings/string_builder.h"
 
 namespace rtc {

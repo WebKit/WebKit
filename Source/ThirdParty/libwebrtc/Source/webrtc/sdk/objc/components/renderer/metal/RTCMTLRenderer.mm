@@ -176,7 +176,8 @@ static const NSInteger kMaxInflightBuffers = 1;
   RTCVideoRotation rotation;
   NSValue *rotationOverride = self.rotationOverride;
   if (rotationOverride) {
-#if defined(__IPHONE_11_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)
+#if defined(__IPHONE_11_0) && defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && \
+    (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)
     if (@available(iOS 11, *)) {
       [rotationOverride getValue:&rotation size:sizeof(rotation)];
     } else

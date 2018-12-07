@@ -14,6 +14,7 @@ import android.content.Context;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.webrtc.Logging.Severity;
+import org.webrtc.PeerConnection;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.LegacyAudioDeviceModule;
 
@@ -122,8 +123,6 @@ public class PeerConnectionFactory {
     public int networkIgnoreMask;
     public boolean disableEncryption;
     public boolean disableNetworkMonitor;
-    public boolean enableAes128Sha1_32CryptoCipher;
-    public boolean enableGcmCryptoSuites;
 
     @CalledByNative("Options")
     int getNetworkIgnoreMask() {
@@ -139,25 +138,20 @@ public class PeerConnectionFactory {
     boolean getDisableNetworkMonitor() {
       return disableNetworkMonitor;
     }
-
-    @CalledByNative("Options")
-    boolean getEnableAes128Sha1_32CryptoCipher() {
-      return enableAes128Sha1_32CryptoCipher;
-    }
-
-    @CalledByNative("Options")
-    boolean getEnableGcmCryptoSuites() {
-      return enableGcmCryptoSuites;
-    }
   }
 
   public static class Builder {
-    private @Nullable Options options;
-    private @Nullable AudioDeviceModule audioDeviceModule = new LegacyAudioDeviceModule();
-    private @Nullable VideoEncoderFactory encoderFactory;
-    private @Nullable VideoDecoderFactory decoderFactory;
-    private @Nullable AudioProcessingFactory audioProcessingFactory;
-    private @Nullable FecControllerFactoryFactoryInterface fecControllerFactoryFactory;
+    @Nullable private Options options;
+    @Nullable private AudioDeviceModule audioDeviceModule = new LegacyAudioDeviceModule();
+    private AudioEncoderFactoryFactory audioEncoderFactoryFactory =
+        new BuiltinAudioEncoderFactoryFactory();
+    private AudioDecoderFactoryFactory audioDecoderFactoryFactory =
+        new BuiltinAudioDecoderFactoryFactory();
+    @Nullable private VideoEncoderFactory videoEncoderFactory;
+    @Nullable private VideoDecoderFactory videoDecoderFactory;
+    @Nullable private AudioProcessingFactory audioProcessingFactory;
+    @Nullable private FecControllerFactoryFactoryInterface fecControllerFactoryFactory;
+    @Nullable private MediaTransportFactoryFactory mediaTransportFactoryFactory;
 
     private Builder() {}
 
@@ -171,13 +165,33 @@ public class PeerConnectionFactory {
       return this;
     }
 
-    public Builder setVideoEncoderFactory(VideoEncoderFactory encoderFactory) {
-      this.encoderFactory = encoderFactory;
+    public Builder setAudioEncoderFactoryFactory(
+        AudioEncoderFactoryFactory audioEncoderFactoryFactory) {
+      if (audioEncoderFactoryFactory == null) {
+        throw new IllegalArgumentException(
+            "PeerConnectionFactory.Builder does not accept a null AudioEncoderFactoryFactory.");
+      }
+      this.audioEncoderFactoryFactory = audioEncoderFactoryFactory;
       return this;
     }
 
-    public Builder setVideoDecoderFactory(VideoDecoderFactory decoderFactory) {
-      this.decoderFactory = decoderFactory;
+    public Builder setAudioDecoderFactoryFactory(
+        AudioDecoderFactoryFactory audioDecoderFactoryFactory) {
+      if (audioDecoderFactoryFactory == null) {
+        throw new IllegalArgumentException(
+            "PeerConnectionFactory.Builder does not accept a null AudioDecoderFactoryFactory.");
+      }
+      this.audioDecoderFactoryFactory = audioDecoderFactoryFactory;
+      return this;
+    }
+
+    public Builder setVideoEncoderFactory(VideoEncoderFactory videoEncoderFactory) {
+      this.videoEncoderFactory = videoEncoderFactory;
+      return this;
+    }
+
+    public Builder setVideoDecoderFactory(VideoDecoderFactory videoDecoderFactory) {
+      this.videoDecoderFactory = videoDecoderFactory;
       return this;
     }
 
@@ -196,9 +210,17 @@ public class PeerConnectionFactory {
       return this;
     }
 
+    /** Sets a MediaTransportFactoryFactory for a PeerConnectionFactory. */
+    public Builder setMediaTransportFactoryFactory(
+        MediaTransportFactoryFactory mediaTransportFactoryFactory) {
+      this.mediaTransportFactoryFactory = mediaTransportFactoryFactory;
+      return this;
+    }
+
     public PeerConnectionFactory createPeerConnectionFactory() {
-      return new PeerConnectionFactory(options, audioDeviceModule, encoderFactory, decoderFactory,
-          audioProcessingFactory, fecControllerFactoryFactory);
+      return new PeerConnectionFactory(options, audioDeviceModule, audioEncoderFactoryFactory,
+          audioDecoderFactoryFactory, videoEncoderFactory, videoDecoderFactory,
+          audioProcessingFactory, fecControllerFactoryFactory, mediaTransportFactoryFactory);
     }
   }
 
@@ -277,15 +299,24 @@ public class PeerConnectionFactory {
   }
 
   private PeerConnectionFactory(Options options, @Nullable AudioDeviceModule audioDeviceModule,
-      @Nullable VideoEncoderFactory encoderFactory, @Nullable VideoDecoderFactory decoderFactory,
+      AudioEncoderFactoryFactory audioEncoderFactoryFactory,
+      AudioDecoderFactoryFactory audioDecoderFactoryFactory,
+      @Nullable VideoEncoderFactory videoEncoderFactory,
+      @Nullable VideoDecoderFactory videoDecoderFactory,
       @Nullable AudioProcessingFactory audioProcessingFactory,
-      @Nullable FecControllerFactoryFactoryInterface fecControllerFactoryFactory) {
+      @Nullable FecControllerFactoryFactoryInterface fecControllerFactoryFactory,
+      @Nullable MediaTransportFactoryFactory mediaTransportFactoryFactory) {
     checkInitializeHasBeenCalled();
     nativeFactory = nativeCreatePeerConnectionFactory(ContextUtils.getApplicationContext(), options,
         audioDeviceModule == null ? 0 : audioDeviceModule.getNativeAudioDeviceModulePointer(),
-        encoderFactory, decoderFactory,
+        audioEncoderFactoryFactory.createNativeAudioEncoderFactory(),
+        audioDecoderFactoryFactory.createNativeAudioDecoderFactory(), videoEncoderFactory,
+        videoDecoderFactory,
         audioProcessingFactory == null ? 0 : audioProcessingFactory.createNative(),
-        fecControllerFactoryFactory == null ? 0 : fecControllerFactoryFactory.createNative());
+        fecControllerFactoryFactory == null ? 0 : fecControllerFactoryFactory.createNative(),
+        mediaTransportFactoryFactory == null
+            ? 0
+            : mediaTransportFactoryFactory.createNativeMediaTransportFactory());
     if (nativeFactory == 0) {
       throw new RuntimeException("Failed to initialize PeerConnectionFactory!");
     }
@@ -369,9 +400,25 @@ public class PeerConnectionFactory {
     return new MediaStream(nativeCreateLocalMediaStream(nativeFactory, label));
   }
 
-  public VideoSource createVideoSource(boolean isScreencast) {
+  /**
+   * Create video source with given parameters. If alignTimestamps is false, the caller is
+   * responsible for aligning the frame timestamps to rtc::TimeNanos(). This can be used to achieve
+   * higher accuracy if there is a big delay between frame creation and frames being delivered to
+   * the returned video source. If alignTimestamps is true, timestamps will be aligned to
+   * rtc::TimeNanos() when they arrive to the returned video source.
+   */
+  public VideoSource createVideoSource(boolean isScreencast, boolean alignTimestamps) {
     checkPeerConnectionFactoryExists();
-    return new VideoSource(nativeCreateVideoSource(nativeFactory, isScreencast));
+    return new VideoSource(nativeCreateVideoSource(nativeFactory, isScreencast, alignTimestamps));
+  }
+
+  /**
+   * Same as above with alignTimestamps set to true.
+   *
+   * @see #createVideoSource(boolean, boolean)
+   */
+  public VideoSource createVideoSource(boolean isScreencast) {
+    return createVideoSource(isScreencast, /* alignTimestamps= */ true);
   }
 
   public VideoTrack createVideoTrack(String id, VideoSource source) {
@@ -486,15 +533,18 @@ public class PeerConnectionFactory {
   private static native void nativeShutdownInternalTracer();
   private static native boolean nativeStartInternalTracingCapture(String tracingFilename);
   private static native void nativeStopInternalTracingCapture();
+
   private static native long nativeCreatePeerConnectionFactory(Context context, Options options,
-      long nativeAudioDeviceModule, VideoEncoderFactory encoderFactory,
-      VideoDecoderFactory decoderFactory, long nativeAudioProcessor,
-      long nativeFecControllerFactory);
+      long nativeAudioDeviceModule, long audioEncoderFactory, long audioDecoderFactory,
+      VideoEncoderFactory encoderFactory, VideoDecoderFactory decoderFactory,
+      long nativeAudioProcessor, long nativeFecControllerFactory, long mediaTransportFactory);
+
   private static native long nativeCreatePeerConnection(long factory,
       PeerConnection.RTCConfiguration rtcConfig, MediaConstraints constraints, long nativeObserver,
       SSLCertificateVerifier sslCertificateVerifier);
   private static native long nativeCreateLocalMediaStream(long factory, String label);
-  private static native long nativeCreateVideoSource(long factory, boolean is_screencast);
+  private static native long nativeCreateVideoSource(
+      long factory, boolean is_screencast, boolean alignTimestamps);
   private static native long nativeCreateVideoTrack(
       long factory, String id, long nativeVideoSource);
   private static native long nativeCreateAudioSource(long factory, MediaConstraints constraints);

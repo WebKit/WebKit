@@ -11,8 +11,8 @@
 #include "modules/audio_coding/codecs/red/audio_encoder_copy_red.h"
 
 #include <string.h>
-
 #include <utility>
+#include <vector>
 
 #include "rtc_base/checks.h"
 

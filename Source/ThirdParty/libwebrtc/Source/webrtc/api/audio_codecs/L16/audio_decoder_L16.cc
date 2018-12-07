@@ -11,7 +11,7 @@
 #include "api/audio_codecs/L16/audio_decoder_L16.h"
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/pcm16b/audio_decoder_pcm16b.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
 #include "rtc_base/numerics/safe_conversions.h"
@@ -23,7 +23,7 @@ absl::optional<AudioDecoderL16::Config> AudioDecoderL16::SdpToConfig(
   Config config;
   config.sample_rate_hz = format.clockrate_hz;
   config.num_channels = rtc::checked_cast<int>(format.num_channels);
-  return STR_CASE_CMP(format.name.c_str(), "L16") == 0 && config.IsOk()
+  return absl::EqualsIgnoreCase(format.name, "L16") && config.IsOk()
              ? absl::optional<Config>(config)
              : absl::nullopt;
 }

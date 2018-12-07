@@ -143,10 +143,10 @@ std::unique_ptr<CertificateInfo> CreateFakeCertificateAndInfoFromDers(
   }
   // Fingerprints for the whole certificate chain, starting with leaf
   // certificate.
-  const rtc::SSLCertChain& chain = info->certificate->ssl_cert_chain();
+  const rtc::SSLCertChain& chain = info->certificate->GetSSLCertificateChain();
   std::unique_ptr<rtc::SSLFingerprint> fp;
   for (size_t i = 0; i < chain.GetSize(); i++) {
-    fp.reset(rtc::SSLFingerprint::Create("sha-1", &chain.Get(i)));
+    fp = rtc::SSLFingerprint::Create("sha-1", chain.Get(i));
     EXPECT_TRUE(fp);
     info->fingerprints.push_back(fp->GetRfc4572Fingerprint());
   }
@@ -704,7 +704,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsSingle) {
           std::vector<std::string>({"(remote) single certificate"}));
   pc_->SetRemoteCertChain(
       kTransportName,
-      remote_certinfo->certificate->ssl_cert_chain().UniqueCopy());
+      remote_certinfo->certificate->GetSSLCertificateChain().Clone());
 
   rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
 
@@ -818,7 +818,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsMultiple) {
           std::vector<std::string>({"(remote) audio"}));
   pc_->SetRemoteCertChain(
       kAudioTransport,
-      audio_remote_certinfo->certificate->ssl_cert_chain().UniqueCopy());
+      audio_remote_certinfo->certificate->GetSSLCertificateChain().Clone());
 
   pc_->AddVideoChannel("video", kVideoTransport);
   std::unique_ptr<CertificateInfo> video_local_certinfo =
@@ -830,7 +830,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsMultiple) {
           std::vector<std::string>({"(remote) video"}));
   pc_->SetRemoteCertChain(
       kVideoTransport,
-      video_remote_certinfo->certificate->ssl_cert_chain().UniqueCopy());
+      video_remote_certinfo->certificate->GetSSLCertificateChain().Clone());
 
   rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
   ExpectReportContainsCertificateInfo(report, *audio_local_certinfo);
@@ -855,7 +855,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCCertificateStatsChain) {
                                             "(remote) chain"});
   pc_->SetRemoteCertChain(
       kTransportName,
-      remote_certinfo->certificate->ssl_cert_chain().UniqueCopy());
+      remote_certinfo->certificate->GetSSLCertificateChain().Clone());
 
   rtc::scoped_refptr<const RTCStatsReport> report = stats_->GetStatsReport();
   ExpectReportContainsCertificateInfo(report, *local_certinfo);
@@ -1426,6 +1426,8 @@ TEST_F(RTCStatsCollectorTest,
   voice_receiver_info.concealed_samples = 123;
   voice_receiver_info.concealment_events = 12;
   voice_receiver_info.jitter_buffer_delay_seconds = 3456;
+  voice_receiver_info.jitter_buffer_flushes = 7;
+  voice_receiver_info.delayed_packet_outage_samples = 15;
 
   stats_->CreateMockRtpSendersReceiversAndChannels(
       {}, {std::make_pair(remote_audio_track.get(), voice_receiver_info)}, {},
@@ -1459,6 +1461,8 @@ TEST_F(RTCStatsCollectorTest,
   expected_remote_audio_track.concealed_samples = 123;
   expected_remote_audio_track.concealment_events = 12;
   expected_remote_audio_track.jitter_buffer_delay = 3456;
+  expected_remote_audio_track.jitter_buffer_flushes = 7;
+  expected_remote_audio_track.delayed_packet_outage_samples = 15;
   ASSERT_TRUE(report->Get(expected_remote_audio_track.id()));
   EXPECT_EQ(expected_remote_audio_track,
             report->Get(expected_remote_audio_track.id())
@@ -1957,7 +1961,7 @@ TEST_F(RTCStatsCollectorTest, CollectRTCTransportStats) {
           {"(remote) local", "(remote) chain"});
   pc_->SetRemoteCertChain(
       kTransportName,
-      remote_certinfo->certificate->ssl_cert_chain().UniqueCopy());
+      remote_certinfo->certificate->GetSSLCertificateChain().Clone());
 
   report = stats_->GetFreshStatsReport();
 

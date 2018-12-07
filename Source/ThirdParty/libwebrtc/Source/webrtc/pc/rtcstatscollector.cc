@@ -454,6 +454,10 @@ ProduceMediaStreamTrackStatsFromVoiceReceiverInfo(
   audio_track_stats->concealed_samples = voice_receiver_info.concealed_samples;
   audio_track_stats->concealment_events =
       voice_receiver_info.concealment_events;
+  audio_track_stats->jitter_buffer_flushes =
+      voice_receiver_info.jitter_buffer_flushes;
+  audio_track_stats->delayed_packet_outage_samples =
+      voice_receiver_info.delayed_packet_outage_samples;
   return audio_track_stats;
 }
 
@@ -1388,7 +1392,7 @@ RTCStatsCollector::PrepareTransportCertificateStats_n(
     rtc::scoped_refptr<rtc::RTCCertificate> local_certificate;
     if (pc_->GetLocalCertificate(transport_name, &local_certificate)) {
       certificate_stats_pair.local =
-          local_certificate->ssl_cert_chain().GetStats();
+          local_certificate->GetSSLCertificateChain().GetStats();
     }
 
     std::unique_ptr<rtc::SSLCertChain> remote_cert_chain =
@@ -1426,7 +1430,7 @@ RTCStatsCollector::PrepareTransceiverStatsInfos_s() const {
     stats.transceiver = transceiver->internal();
     stats.media_type = media_type;
 
-    cricket::BaseChannel* channel = transceiver->internal()->channel();
+    cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (!channel) {
       // The remaining fields require a BaseChannel.
       continue;

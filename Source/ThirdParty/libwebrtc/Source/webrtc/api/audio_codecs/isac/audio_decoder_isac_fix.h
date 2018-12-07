@@ -23,8 +23,6 @@ namespace webrtc {
 
 // iSAC decoder API (fixed-point implementation) for use as a template
 // parameter to CreateAudioDecoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
 struct AudioDecoderIsacFix {
   struct Config {};  // Empty---no config values needed!
   static absl::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);

@@ -15,6 +15,7 @@
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/timeutils.h"
@@ -25,7 +26,6 @@
 #include "sdk/android/src/jni/audio_device/audio_device_module.h"
 #include "sdk/android/src/jni/audio_device/opensles_common.h"
 #include "sdk/android/src/jni/jni_helpers.h"
-#include "system_wrappers/include/event_wrapper.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
@@ -364,7 +364,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
 
   // Set default actions of the mock object. We are delegating to fake
   // implementations (of AudioStreamInterface) here.
-  void HandleCallbacks(EventWrapper* test_is_done,
+  void HandleCallbacks(rtc::Event* test_is_done,
                        AudioStreamInterface* audio_stream,
                        int num_callbacks) {
     test_is_done_ = test_is_done;
@@ -447,7 +447,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
   bool rec_mode() const { return type_ & kRecording; }
 
  private:
-  EventWrapper* test_is_done_;
+  rtc::Event* test_is_done_;
   size_t num_callbacks_;
   int type_;
   size_t play_count_;
@@ -459,7 +459,7 @@ class MockAudioTransportAndroid : public test::MockAudioTransport {
 // AudioDeviceTest test fixture.
 class AudioDeviceTest : public ::testing::Test {
  protected:
-  AudioDeviceTest() : test_is_done_(EventWrapper::Create()) {
+  AudioDeviceTest() {
     // One-time initialization of JVM and application context. Ensures that we
     // can do calls between C++ and Java. Initializes both Java and OpenSL ES
     // implementations.
@@ -683,7 +683,7 @@ class AudioDeviceTest : public ::testing::Test {
 
   JNIEnv* jni_;
   std::unique_ptr<JavaParamRef<jobject>> context_;
-  std::unique_ptr<EventWrapper> test_is_done_;
+  rtc::Event test_is_done_;
   rtc::scoped_refptr<AudioDeviceModule> audio_device_;
   ScopedJavaLocalRef<jobject> audio_manager_;
   AudioParameters output_parameters_;
@@ -880,14 +880,14 @@ TEST_F(AudioDeviceTest, StopRecordingRequiresInitToRestart) {
 // audio samples to play out using the NeedMorePlayData callback.
 TEST_F(AudioDeviceTest, StartPlayoutVerifyCallbacks) {
   MockAudioTransportAndroid mock(kPlayout);
-  mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
+  mock.HandleCallbacks(&test_is_done_, nullptr, kNumCallbacks);
   EXPECT_CALL(mock, NeedMorePlayData(playout_frames_per_10ms_buffer(),
                                      kBytesPerSample, playout_channels(),
                                      playout_sample_rate(), NotNull(), _, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  test_is_done_->Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOutInMilliseconds);
   StopPlayout();
 }
 
@@ -895,7 +895,7 @@ TEST_F(AudioDeviceTest, StartPlayoutVerifyCallbacks) {
 // audio samples via the RecordedDataIsAvailable callback.
 TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
   MockAudioTransportAndroid mock(kRecording);
-  mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
+  mock.HandleCallbacks(&test_is_done_, nullptr, kNumCallbacks);
   EXPECT_CALL(
       mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
                                     kBytesPerSample, record_channels(),
@@ -904,7 +904,7 @@ TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
 
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
-  test_is_done_->Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOutInMilliseconds);
   StopRecording();
 }
 
@@ -912,7 +912,7 @@ TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
 // active in both directions.
 TEST_F(AudioDeviceTest, StartPlayoutAndRecordingVerifyCallbacks) {
   MockAudioTransportAndroid mock(kPlayout | kRecording);
-  mock.HandleCallbacks(test_is_done_.get(), nullptr, kNumCallbacks);
+  mock.HandleCallbacks(&test_is_done_, nullptr, kNumCallbacks);
   EXPECT_CALL(mock, NeedMorePlayData(playout_frames_per_10ms_buffer(),
                                      kBytesPerSample, playout_channels(),
                                      playout_sample_rate(), NotNull(), _, _, _))
@@ -925,7 +925,7 @@ TEST_F(AudioDeviceTest, StartPlayoutAndRecordingVerifyCallbacks) {
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
   StartRecording();
-  test_is_done_->Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOutInMilliseconds);
   StopRecording();
   StopPlayout();
 }
@@ -941,12 +941,11 @@ TEST_F(AudioDeviceTest, RunPlayoutWithFileAsSource) {
   std::string file_name = GetFileName(playout_sample_rate());
   std::unique_ptr<FileAudioStream> file_audio_stream(
       new FileAudioStream(num_callbacks, file_name, playout_sample_rate()));
-  mock.HandleCallbacks(test_is_done_.get(), file_audio_stream.get(),
-                       num_callbacks);
+  mock.HandleCallbacks(&test_is_done_, file_audio_stream.get(), num_callbacks);
   // SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  test_is_done_->Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOutInMilliseconds);
   StopPlayout();
 }
 
@@ -1084,13 +1083,13 @@ TEST_F(AudioDeviceTest, DISABLED_RunPlayoutAndRecordingInFullDuplex) {
   NiceMock<MockAudioTransportAndroid> mock(kPlayout | kRecording);
   std::unique_ptr<FifoAudioStream> fifo_audio_stream(
       new FifoAudioStream(playout_frames_per_10ms_buffer()));
-  mock.HandleCallbacks(test_is_done_.get(), fifo_audio_stream.get(),
+  mock.HandleCallbacks(&test_is_done_, fifo_audio_stream.get(),
                        kFullDuplexTimeInSec * kNumCallbacksPerSecond);
   SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
   StartPlayout();
-  test_is_done_->Wait(
+  test_is_done_.Wait(
       std::max(kTestTimeOutInMilliseconds, 1000 * kFullDuplexTimeInSec));
   StopPlayout();
   StopRecording();
@@ -1117,14 +1116,14 @@ TEST_F(AudioDeviceTest, DISABLED_MeasureLoopbackLatency) {
   NiceMock<MockAudioTransportAndroid> mock(kPlayout | kRecording);
   std::unique_ptr<LatencyMeasuringAudioStream> latency_audio_stream(
       new LatencyMeasuringAudioStream(playout_frames_per_10ms_buffer()));
-  mock.HandleCallbacks(test_is_done_.get(), latency_audio_stream.get(),
+  mock.HandleCallbacks(&test_is_done_, latency_audio_stream.get(),
                        kMeasureLatencyTimeInSec * kNumCallbacksPerSecond);
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   SetMaxPlayoutVolume();
   DisableBuiltInAECIfAvailable();
   StartRecording();
   StartPlayout();
-  test_is_done_->Wait(
+  test_is_done_.Wait(
       std::max(kTestTimeOutInMilliseconds, 1000 * kMeasureLatencyTimeInSec));
   StopPlayout();
   StopRecording();

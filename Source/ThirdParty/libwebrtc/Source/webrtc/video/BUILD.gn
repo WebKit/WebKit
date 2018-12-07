@@ -52,7 +52,7 @@ rtc_static_library("video") {
   }
 
   deps = [
-    "..:webrtc_common",
+    ":frame_dumping_decoder",
     "../api:fec_controller_api",
     "../api:libjingle_peerconnection_api",
     "../api:transport_api",
@@ -133,6 +133,25 @@ rtc_source_set("video_stream_decoder_impl") {
   ]
 }
 
+rtc_source_set("frame_dumping_decoder") {
+  visibility = [ "*" ]
+
+  sources = [
+    "frame_dumping_decoder.cc",
+    "frame_dumping_decoder.h",
+  ]
+
+  deps = [
+    "../api/video:encoded_frame",
+    "../api/video_codecs:video_codecs_api",
+    "../modules/video_coding:video_codec_interface",
+    "../modules/video_coding:video_coding",
+    "../modules/video_coding:video_coding_utility",
+    "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
 rtc_source_set("video_stream_encoder_impl") {
   visibility = [ "*" ]
 
@@ -152,7 +171,9 @@ rtc_source_set("video_stream_encoder_impl") {
   }
 
   deps = [
+    "../api/video:encoded_image",
     "../api/video:video_bitrate_allocator",
+    "../api/video:video_bitrate_allocator_factory",
     "../api/video:video_frame",
     "../api/video:video_frame_i420",
     "../api/video:video_stream_encoder",
@@ -203,15 +224,19 @@ if (rtc_include_tests) {
       "video_quality_test.h",
     ]
     deps = [
+      ":frame_dumping_decoder",
       "../api:fec_controller_api",
       "../api:test_dependency_factory",
       "../api:video_quality_test_fixture_api",
+      "../api/video:builtin_video_bitrate_allocator_factory",
+      "../api/video:video_bitrate_allocator_factory",
       "../call:fake_network",
       "../call:simulated_network",
       "../logging:rtc_event_log_api",
       "../logging:rtc_event_log_impl_output",
       "../media:rtc_audio_video",
       "../media:rtc_internal_video_codecs",
+      "../media:rtc_vp8_encoder_simulcast_proxy",
       "../modules/audio_device:audio_device_api",
       "../modules/audio_device:audio_device_module_from_input_and_output",
       "../modules/audio_device:windows_core_audio_utility",
@@ -350,7 +375,7 @@ if (rtc_include_tests) {
       "replay.cc",
     ]
     deps = [
-      "..:webrtc_common",
+      "../api/test/video:function_video_factory",
       "../api/video_codecs:video_codecs_api",
       "../call:call_interfaces",
       "../common_video",
@@ -384,6 +409,7 @@ if (rtc_include_tests) {
     defines = []
     sources = [
       "call_stats_unittest.cc",
+      "cpu_scaling_tests.cc",
       "encoder_rtcp_feedback_unittest.cc",
       "end_to_end_tests/bandwidth_tests.cc",
       "end_to_end_tests/call_operation_tests.cc",
@@ -391,6 +417,7 @@ if (rtc_include_tests) {
       "end_to_end_tests/config_tests.cc",
       "end_to_end_tests/extended_reports_tests.cc",
       "end_to_end_tests/fec_tests.cc",
+      "end_to_end_tests/frame_encryption_tests.cc",
       "end_to_end_tests/histogram_tests.cc",
       "end_to_end_tests/multi_codec_receive_tests.cc",
       "end_to_end_tests/multi_stream_tester.cc",
@@ -398,7 +425,6 @@ if (rtc_include_tests) {
       "end_to_end_tests/multi_stream_tests.cc",
       "end_to_end_tests/network_state_tests.cc",
       "end_to_end_tests/probing_tests.cc",
-      "end_to_end_tests/receive_time_tests.cc",
       "end_to_end_tests/retransmission_tests.cc",
       "end_to_end_tests/rtp_rtcp_tests.cc",
       "end_to_end_tests/ssrc_tests.cc",
@@ -424,9 +450,15 @@ if (rtc_include_tests) {
       ":video",
       ":video_mocks",
       ":video_stream_encoder_impl",
+      "../api:fake_frame_decryptor",
+      "../api:fake_frame_encryptor",
       "../api:simulated_network_api",
+      "../api/test/video:function_video_factory",
+      "../api/video:builtin_video_bitrate_allocator_factory",
+      "../api/video:encoded_image",
       "../api/video:video_frame",
       "../api/video:video_frame_i420",
+      "../api/video_codecs:create_vp8_temporal_layers",
       "../api/video_codecs:video_codecs_api",
       "../call:call_interfaces",
       "../call:fake_network",
@@ -443,6 +475,7 @@ if (rtc_include_tests) {
       "../media:rtc_media",
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
+      "../media:rtc_simulcast_encoder_adapter",
       "../modules:module_api",
       "../modules/pacing",
       "../modules/rtp_rtcp",

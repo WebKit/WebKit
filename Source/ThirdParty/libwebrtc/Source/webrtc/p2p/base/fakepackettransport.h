@@ -119,7 +119,7 @@ class FakePacketTransport : public PacketTransportInternal {
     last_sent_packet_ = packet;
     if (dest_) {
       dest_->SignalReadPacket(dest_, packet.data<char>(), packet.size(),
-                              CreatePacketTime(0), 0);
+                              TimeMicros(), 0);
     }
   }
 

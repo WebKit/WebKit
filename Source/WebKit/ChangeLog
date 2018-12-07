@@ -1,3 +1,22 @@
+2018-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 0d007d7c4f
+        https://bugs.webkit.org/show_bug.cgi?id=192316
+
+        Reviewed by Eric Carlson.
+
+        Update code base according new libwebrtc backend
+        In particular, use directly int64_t for packet time.
+
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::signalReadPacket):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        * NetworkProcess/webrtc/NetworkRTCSocket.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::signalReadPacket):
+
 2018-12-07  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r238947.

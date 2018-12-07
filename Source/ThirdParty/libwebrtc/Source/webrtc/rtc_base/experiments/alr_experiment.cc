@@ -10,9 +10,10 @@
 
 #include "rtc_base/experiments/alr_experiment.h"
 
+#include <inttypes.h>
+#include <stdio.h>
 #include <string>
 
-#include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 

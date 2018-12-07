@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 
+#include <string.h>
 #include <algorithm>
 
 #include "modules/rtp_rtcp/source/fec_private_tables_bursty.h"

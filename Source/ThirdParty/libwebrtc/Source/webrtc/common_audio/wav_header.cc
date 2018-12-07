@@ -14,13 +14,13 @@
 
 #include "common_audio/wav_header.h"
 
-#include <algorithm>
 #include <cstring>
 #include <limits>
 #include <string>
 
-#include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/sanitizer.h"
 #include "rtc_base/system/arch.h"
 
 namespace webrtc {
@@ -31,6 +31,11 @@ struct ChunkHeader {
   uint32_t Size;
 };
 static_assert(sizeof(ChunkHeader) == 8, "ChunkHeader size");
+
+struct RiffHeader {
+  ChunkHeader header;
+  uint32_t Format;
+};
 
 // We can't nest this definition in WavHeader, because VS2013 gives an error
 // on sizeof(WavHeader::fmt): "error C2070: 'unknown': illegal sizeof operand".
@@ -46,17 +51,99 @@ struct FmtSubchunk {
 static_assert(sizeof(FmtSubchunk) == 24, "FmtSubchunk size");
 const uint32_t kFmtSubchunkSize = sizeof(FmtSubchunk) - sizeof(ChunkHeader);
 
+// Simple wav header. It does not include chunks that are not essential to read
+// audio samples.
 struct WavHeader {
-  struct {
-    ChunkHeader header;
-    uint32_t Format;
-  } riff;
+  WavHeader(const WavHeader&) = default;
+  WavHeader& operator=(const WavHeader&) = default;
+  RiffHeader riff;
   FmtSubchunk fmt;
   struct {
     ChunkHeader header;
   } data;
 };
 static_assert(sizeof(WavHeader) == kWavHeaderSize, "no padding in header");
+
+#ifdef WEBRTC_ARCH_LITTLE_ENDIAN
+static inline void WriteLE16(uint16_t* f, uint16_t x) {
+  *f = x;
+}
+static inline void WriteLE32(uint32_t* f, uint32_t x) {
+  *f = x;
+}
+static inline void WriteFourCC(uint32_t* f, char a, char b, char c, char d) {
+  *f = static_cast<uint32_t>(a) | static_cast<uint32_t>(b) << 8 |
+       static_cast<uint32_t>(c) << 16 | static_cast<uint32_t>(d) << 24;
+}
+
+static inline uint16_t ReadLE16(uint16_t x) {
+  return x;
+}
+static inline uint32_t ReadLE32(uint32_t x) {
+  return x;
+}
+static inline std::string ReadFourCC(uint32_t x) {
+  return std::string(reinterpret_cast<char*>(&x), 4);
+}
+#else
+#error "Write be-to-le conversion functions"
+#endif
+
+static inline uint32_t RiffChunkSize(size_t bytes_in_payload) {
+  return static_cast<uint32_t>(bytes_in_payload + kWavHeaderSize -
+                               sizeof(ChunkHeader));
+}
+
+static inline uint32_t ByteRate(size_t num_channels,
+                                int sample_rate,
+                                size_t bytes_per_sample) {
+  return static_cast<uint32_t>(num_channels * sample_rate * bytes_per_sample);
+}
+
+static inline uint16_t BlockAlign(size_t num_channels,
+                                  size_t bytes_per_sample) {
+  return static_cast<uint16_t>(num_channels * bytes_per_sample);
+}
+
+// Finds a chunk having the sought ID. If found, then |readable| points to the
+// first byte of the sought chunk data. If not found, the end of the file is
+// reached.
+void FindWaveChunk(ChunkHeader* chunk_header,
+                   ReadableWav* readable,
+                   const std::string sought_chunk_id) {
+  RTC_DCHECK_EQ(sought_chunk_id.size(), 4);
+  while (!readable->Eof()) {
+    if (readable->Read(chunk_header, sizeof(*chunk_header)) !=
+        sizeof(*chunk_header))
+      return;  // EOF.
+    if (ReadFourCC(chunk_header->ID) == sought_chunk_id)
+      return;  // Sought chunk found.
+    // Ignore current chunk by skipping its payload.
+    if (!readable->SeekForward(chunk_header->Size))
+      return;  // EOF or error.
+  }
+  return;  // EOF.
+}
+
+bool ReadFmtChunkData(FmtSubchunk* fmt_subchunk, ReadableWav* readable) {
+  // Reads "fmt " chunk payload.
+  if (readable->Read(&(fmt_subchunk->AudioFormat), kFmtSubchunkSize) !=
+      kFmtSubchunkSize)
+    return false;
+  const uint32_t fmt_size = ReadLE32(fmt_subchunk->header.Size);
+  if (fmt_size != kFmtSubchunkSize) {
+    // There is an optional two-byte extension field permitted to be present
+    // with PCM, but which must be zero.
+    int16_t ext_size;
+    if (kFmtSubchunkSize + sizeof(ext_size) != fmt_size)
+      return false;
+    if (readable->Read(&ext_size, sizeof(ext_size)) != sizeof(ext_size))
+      return false;
+    if (ext_size != 0)
+      return false;
+  }
+  return true;
+}
 
 }  // namespace
 
@@ -112,47 +199,6 @@ bool CheckWavParameters(size_t num_channels,
   return true;
 }
 
-#ifdef WEBRTC_ARCH_LITTLE_ENDIAN
-static inline void WriteLE16(uint16_t* f, uint16_t x) {
-  *f = x;
-}
-static inline void WriteLE32(uint32_t* f, uint32_t x) {
-  *f = x;
-}
-static inline void WriteFourCC(uint32_t* f, char a, char b, char c, char d) {
-  *f = static_cast<uint32_t>(a) | static_cast<uint32_t>(b) << 8 |
-       static_cast<uint32_t>(c) << 16 | static_cast<uint32_t>(d) << 24;
-}
-
-static inline uint16_t ReadLE16(uint16_t x) {
-  return x;
-}
-static inline uint32_t ReadLE32(uint32_t x) {
-  return x;
-}
-static inline std::string ReadFourCC(uint32_t x) {
-  return std::string(reinterpret_cast<char*>(&x), 4);
-}
-#else
-#error "Write be-to-le conversion functions"
-#endif
-
-static inline uint32_t RiffChunkSize(size_t bytes_in_payload) {
-  return static_cast<uint32_t>(bytes_in_payload + kWavHeaderSize -
-                               sizeof(ChunkHeader));
-}
-
-static inline uint32_t ByteRate(size_t num_channels,
-                                int sample_rate,
-                                size_t bytes_per_sample) {
-  return static_cast<uint32_t>(num_channels * sample_rate * bytes_per_sample);
-}
-
-static inline uint16_t BlockAlign(size_t num_channels,
-                                  size_t bytes_per_sample) {
-  return static_cast<uint16_t>(num_channels * bytes_per_sample);
-}
-
 void WriteWavHeader(uint8_t* buf,
                     size_t num_channels,
                     int sample_rate,
@@ -162,7 +208,7 @@ void WriteWavHeader(uint8_t* buf,
   RTC_CHECK(CheckWavParameters(num_channels, sample_rate, format,
                                bytes_per_sample, num_samples));
 
-  WavHeader header;
+  auto header = rtc::MsanUninitialized<WavHeader>({});
   const size_t bytes_in_payload = bytes_per_sample * num_samples;
 
   WriteFourCC(&header.riff.header.ID, 'R', 'I', 'F', 'F');
@@ -194,25 +240,38 @@ bool ReadWavHeader(ReadableWav* readable,
                    WavFormat* format,
                    size_t* bytes_per_sample,
                    size_t* num_samples) {
-  WavHeader header;
-  if (readable->Read(&header, kWavHeaderSize - sizeof(header.data)) !=
-      kWavHeaderSize - sizeof(header.data))
+  auto header = rtc::MsanUninitialized<WavHeader>({});
+
+  // Read RIFF chunk.
+  if (readable->Read(&header.riff, sizeof(header.riff)) != sizeof(header.riff))
+    return false;
+  if (ReadFourCC(header.riff.header.ID) != "RIFF")
+    return false;
+  if (ReadFourCC(header.riff.Format) != "WAVE")
     return false;
 
-  const uint32_t fmt_size = ReadLE32(header.fmt.header.Size);
-  if (fmt_size != kFmtSubchunkSize) {
-    // There is an optional two-byte extension field permitted to be present
-    // with PCM, but which must be zero.
-    int16_t ext_size;
-    if (kFmtSubchunkSize + sizeof(ext_size) != fmt_size)
-      return false;
-    if (readable->Read(&ext_size, sizeof(ext_size)) != sizeof(ext_size))
-      return false;
-    if (ext_size != 0)
-      return false;
-  }
-  if (readable->Read(&header.data, sizeof(header.data)) != sizeof(header.data))
+  // Find "fmt " and "data" chunks. While the official Wave file specification
+  // does not put requirements on the chunks order, it is uncommon to find the
+  // "data" chunk before the "fmt " one. The code below fails if this is not the
+  // case.
+  FindWaveChunk(&header.fmt.header, readable, "fmt ");
+  if (ReadFourCC(header.fmt.header.ID) != "fmt ") {
+    RTC_LOG(LS_ERROR) << "Cannot find 'fmt ' chunk.";
     return false;
+  }
+  if (!ReadFmtChunkData(&header.fmt, readable)) {
+    RTC_LOG(LS_ERROR) << "Cannot read 'fmt ' chunk.";
+    return false;
+  }
+  if (readable->Eof()) {
+    RTC_LOG(LS_ERROR) << "'fmt ' chunk placed after 'data' chunk.";
+    return false;
+  }
+  FindWaveChunk(&header.data.header, readable, "data");
+  if (ReadFourCC(header.data.header.ID) != "data") {
+    RTC_LOG(LS_ERROR) << "Cannot find 'data' chunk.";
+    return false;
+  }
 
   // Parse needed fields.
   *format = static_cast<WavFormat>(ReadLE16(header.fmt.AudioFormat));
@@ -223,16 +282,6 @@ bool ReadWavHeader(ReadableWav* readable,
   if (*bytes_per_sample == 0)
     return false;
   *num_samples = bytes_in_payload / *bytes_per_sample;
-
-  // Sanity check remaining fields.
-  if (ReadFourCC(header.riff.header.ID) != "RIFF")
-    return false;
-  if (ReadFourCC(header.riff.Format) != "WAVE")
-    return false;
-  if (ReadFourCC(header.fmt.header.ID) != "fmt ")
-    return false;
-  if (ReadFourCC(header.data.header.ID) != "data")
-    return false;
 
   if (ReadLE32(header.riff.header.Size) < RiffChunkSize(bytes_in_payload))
     return false;

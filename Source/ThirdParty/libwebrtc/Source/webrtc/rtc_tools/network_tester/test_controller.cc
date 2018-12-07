@@ -10,6 +10,9 @@
 
 #include "rtc_tools/network_tester/test_controller.h"
 
+#include "absl/types/optional.h"
+#include "rtc_base/thread.h"
+
 namespace webrtc {
 
 TestController::TestController(int min_port,
@@ -24,17 +27,15 @@ TestController::TestController(int min_port,
   RTC_DCHECK_RUN_ON(&test_controller_thread_checker_);
   packet_sender_checker_.Detach();
   send_data_.fill(42);
-  auto socket =
+  udp_socket_ =
       std::unique_ptr<rtc::AsyncPacketSocket>(socket_factory_.CreateUdpSocket(
           rtc::SocketAddress(rtc::GetAnyIP(AF_INET), 0), min_port, max_port));
-  socket->SignalReadPacket.connect(this, &TestController::OnReadPacket);
-  udp_transport_.reset(
-      new cricket::UdpTransport("network tester transport", std::move(socket)));
+  udp_socket_->SignalReadPacket.connect(this, &TestController::OnReadPacket);
 }
 
 void TestController::SendConnectTo(const std::string& hostname, int port) {
   RTC_DCHECK_RUN_ON(&test_controller_thread_checker_);
-  udp_transport_->SetRemoteAddress(rtc::SocketAddress(hostname, port));
+  remote_address_ = rtc::SocketAddress(hostname, port);
   NetworkTesterPacket packet;
   packet.set_type(NetworkTesterPacket::HAND_SHAKING);
   SendData(packet, absl::nullopt);
@@ -57,8 +58,8 @@ void TestController::SendData(const NetworkTesterPacket& packet,
   packet.SerializeToArray(&send_data_[1], std::numeric_limits<char>::max());
   if (data_size && *data_size > packet_size)
     packet_size = *data_size;
-  udp_transport_->SendPacket(send_data_.data(), packet_size,
-                             rtc::PacketOptions(), 0);
+  udp_socket_->SendTo((const void*)send_data_.data(), packet_size,
+                      remote_address_, rtc::PacketOptions());
 }
 
 void TestController::OnTestDone() {
@@ -80,7 +81,7 @@ void TestController::OnReadPacket(rtc::AsyncPacketSocket* socket,
                                   const char* data,
                                   size_t len,
                                   const rtc::SocketAddress& remote_addr,
-                                  const rtc::PacketTime& packet_time) {
+                                  const int64_t& packet_time_us) {
   RTC_DCHECK_RUN_ON(&test_controller_thread_checker_);
   size_t packet_size = data[0];
   std::string receive_data(&data[1], packet_size);
@@ -91,7 +92,7 @@ void TestController::OnReadPacket(rtc::AsyncPacketSocket* socket,
     case NetworkTesterPacket::HAND_SHAKING: {
       NetworkTesterPacket packet;
       packet.set_type(NetworkTesterPacket::TEST_START);
-      udp_transport_->SetRemoteAddress(remote_addr);
+      remote_address_ = remote_addr;
       SendData(packet, absl::nullopt);
       packet_sender_.reset(new PacketSender(this, config_file_path_));
       packet_sender_->StartSending();
@@ -109,7 +110,7 @@ void TestController::OnReadPacket(rtc::AsyncPacketSocket* socket,
       break;
     }
     case NetworkTesterPacket::TEST_DATA: {
-      packet.set_arrival_timestamp(packet_time.timestamp);
+      packet.set_arrival_timestamp(packet_time_us);
       packet.set_packet_size(len);
       packet_logger_.LogPacket(packet);
       break;

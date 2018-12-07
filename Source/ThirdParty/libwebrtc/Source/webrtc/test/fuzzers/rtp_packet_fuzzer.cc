@@ -121,6 +121,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         packet.GetExtension<RtpGenericFrameDescriptorExtension>(&descriptor);
         break;
       }
+      case kRtpExtensionColorSpace: {
+        ColorSpace color_space;
+        packet.GetExtension<ColorSpaceExtension>(&color_space);
+        break;
+      }
     }
   }
 }

@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 #define MODULES_AUDIO_PROCESSING_RMS_LEVEL_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 

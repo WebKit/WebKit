@@ -15,6 +15,7 @@
 #include "absl/memory/memory.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/ipaddress.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/socketstream.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslidentity.h"
@@ -266,7 +267,7 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
     // (e.g. a WebRTC-based application and an RFC 5766 TURN server), where
     // clients are not required to provide a certificate during handshake.
     // Accordingly, we must disable client authentication here.
-    ssl_stream_adapter_->set_client_auth_enabled(false);
+    ssl_stream_adapter_->SetClientAuthEnabledForTesting(false);
 
     ssl_stream_adapter_->SetIdentity(ssl_identity_->GetReference());
 

@@ -9,6 +9,7 @@
  */
 
 #include "api/test/simulated_network.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -145,7 +146,6 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
           sender_ssrc_(0),
           remb_bitrate_bps_(1000000),
           receive_transport_(nullptr),
-          stop_event_(false, false),
           poller_thread_(&BitrateStatsPollingThread,
                          this,
                          "BitrateStatsPollingThread"),
@@ -160,15 +160,15 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
           task_queue, nullptr, this, test::PacketTransport::kReceiver,
           payload_type_map_,
           absl::make_unique<FakeNetworkPipe>(
-              Clock::GetRealTimeClock(),
-              absl::make_unique<SimulatedNetwork>(
-                  DefaultNetworkSimulationConfig())));
+              Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                             BuiltInNetworkBehaviorConfig())));
       return receive_transport_;
     }
 
-    void ModifySenderCallConfig(Call::Config* config) override {
+    void ModifySenderBitrateConfig(
+        BitrateConstraints* bitrate_config) override {
       // Set a high start bitrate to reduce the test completion time.
-      config->bitrate_config.start_bitrate_bps = remb_bitrate_bps_;
+      bitrate_config->start_bitrate_bps = remb_bitrate_bps_;
     }
 
     void ModifyVideoConfigs(
@@ -274,6 +274,8 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
           task_queue_(task_queue),
           send_stream_(nullptr),
           encoder_factory_(this),
+          bitrate_allocator_factory_(
+              CreateBuiltinVideoBitrateAllocatorFactory()),
           bitrate_kbps_(0) {}
 
     void OnVideoStreamsCreated(
@@ -287,6 +289,8 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
         std::vector<VideoReceiveStream::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
+      send_config->encoder_settings.bitrate_allocator_factory =
+          bitrate_allocator_factory_.get();
       RTC_DCHECK_EQ(1, encoder_config->number_of_streams);
     }
 
@@ -345,6 +349,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
     rtc::CriticalSection crit_;
     VideoSendStream* send_stream_;
     test::VideoEncoderProxyFactory encoder_factory_;
+    std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
     uint32_t bitrate_kbps_ RTC_GUARDED_BY(crit_);
   } test(&task_queue_);
 

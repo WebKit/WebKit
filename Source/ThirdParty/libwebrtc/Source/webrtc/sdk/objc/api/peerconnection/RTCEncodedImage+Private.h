@@ -10,7 +10,7 @@
 
 #import "base/RTCEncodedImage.h"
 
-#include "common_video/include/video_frame.h"
+#include "api/video/encoded_image.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

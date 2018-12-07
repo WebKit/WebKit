@@ -10,6 +10,7 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VIDEO_GENERIC_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VIDEO_GENERIC_H_
 
+#include <stdint.h>
 #include <vector>
 
 #include "api/array_view.h"
@@ -18,6 +19,10 @@
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
+
+class RtpPacketToSend;
+struct RTPVideoHeader;
+
 namespace RtpFormatVideoGeneric {
 static const uint8_t kKeyFrameBit = 0x01;
 static const uint8_t kFirstPacketBit = 0x02;

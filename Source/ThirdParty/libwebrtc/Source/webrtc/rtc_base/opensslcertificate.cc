@@ -10,10 +10,6 @@
 
 #include "rtc_base/opensslcertificate.h"
 
-#include <memory>
-#include <utility>
-#include <vector>
-
 #if defined(WEBRTC_WIN)
 // Must be included first before openssl headers.
 #include "rtc_base/win32.h"  // NOLINT
@@ -21,96 +17,23 @@
 
 #include <openssl/bio.h>
 #include <openssl/bn.h>
-#include <openssl/crypto.h>
-#include <openssl/err.h>
 #include <openssl/pem.h>
-#include <openssl/rsa.h>
+#include <time.h>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/openssl.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/openssldigest.h"
 #include "rtc_base/opensslidentity.h"
 #include "rtc_base/opensslutility.h"
-#ifndef WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
-#include "rtc_base/sslroots.h"
-#endif  // WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
 
 namespace rtc {
-
-//////////////////////////////////////////////////////////////////////
-// OpenSSLCertificate
-//////////////////////////////////////////////////////////////////////
-
-// We could have exposed a myriad of parameters for the crypto stuff,
-// but keeping it simple seems best.
+namespace {
 
 // Random bits for certificate serial number
 static const int SERIAL_RAND_BITS = 64;
-
-// Generate a self-signed certificate, with the public key from the
-// given key pair. Caller is responsible for freeing the returned object.
-static X509* MakeCertificate(EVP_PKEY* pkey, const SSLIdentityParams& params) {
-  RTC_LOG(LS_INFO) << "Making certificate for " << params.common_name;
-  X509* x509 = nullptr;
-  BIGNUM* serial_number = nullptr;
-  X509_NAME* name = nullptr;
-  time_t epoch_off = 0;  // Time offset since epoch.
-
-  if ((x509 = X509_new()) == nullptr)
-    goto error;
-
-  if (!X509_set_pubkey(x509, pkey))
-    goto error;
-
-  // serial number
-  // temporary reference to serial number inside x509 struct
-  ASN1_INTEGER* asn1_serial_number;
-  if ((serial_number = BN_new()) == nullptr ||
-      !BN_pseudo_rand(serial_number, SERIAL_RAND_BITS, 0, 0) ||
-      (asn1_serial_number = X509_get_serialNumber(x509)) == nullptr ||
-      !BN_to_ASN1_INTEGER(serial_number, asn1_serial_number))
-    goto error;
-
-  if (!X509_set_version(x509, 2L))  // version 3
-    goto error;
-
-  // There are a lot of possible components for the name entries. In
-  // our P2P SSL mode however, the certificates are pre-exchanged
-  // (through the secure XMPP channel), and so the certificate
-  // identification is arbitrary. It can't be empty, so we set some
-  // arbitrary common_name. Note that this certificate goes out in
-  // clear during SSL negotiation, so there may be a privacy issue in
-  // putting anything recognizable here.
-  if ((name = X509_NAME_new()) == nullptr ||
-      !X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_UTF8,
-                                  (unsigned char*)params.common_name.c_str(),
-                                  -1, -1, 0) ||
-      !X509_set_subject_name(x509, name) || !X509_set_issuer_name(x509, name))
-    goto error;
-
-  if (!X509_time_adj(X509_get_notBefore(x509), params.not_before, &epoch_off) ||
-      !X509_time_adj(X509_get_notAfter(x509), params.not_after, &epoch_off))
-    goto error;
-
-  if (!X509_sign(x509, pkey, EVP_sha256()))
-    goto error;
-
-  BN_free(serial_number);
-  X509_NAME_free(name);
-  RTC_LOG(LS_INFO) << "Returning certificate";
-  return x509;
-
-error:
-  BN_free(serial_number);
-  X509_NAME_free(name);
-  X509_free(x509);
-  return nullptr;
-}
 
 #if !defined(NDEBUG)
 // Print a certificate to the log, for debugging.
@@ -129,11 +52,77 @@ static void PrintCert(X509* x509) {
 }
 #endif
 
-OpenSSLCertificate::OpenSSLCertificate(X509* x509) : x509_(x509) {
-  AddReference();
+// Generate a self-signed certificate, with the public key from the
+// given key pair. Caller is responsible for freeing the returned object.
+static X509* MakeCertificate(EVP_PKEY* pkey, const SSLIdentityParams& params) {
+  RTC_LOG(LS_INFO) << "Making certificate for " << params.common_name;
+
+  ASN1_INTEGER* asn1_serial_number = nullptr;
+  BIGNUM* serial_number = nullptr;
+  X509* x509 = nullptr;
+  X509_NAME* name = nullptr;
+  time_t epoch_off = 0;  // Time offset since epoch.
+
+  if ((x509 = X509_new()) == nullptr) {
+    goto error;
+  }
+  if (!X509_set_pubkey(x509, pkey)) {
+    goto error;
+  }
+  // serial number - temporary reference to serial number inside x509 struct
+  if ((serial_number = BN_new()) == nullptr ||
+      !BN_pseudo_rand(serial_number, SERIAL_RAND_BITS, 0, 0) ||
+      (asn1_serial_number = X509_get_serialNumber(x509)) == nullptr ||
+      !BN_to_ASN1_INTEGER(serial_number, asn1_serial_number)) {
+    goto error;
+  }
+  // Set version to X509.V3
+  if (!X509_set_version(x509, 2L)) {
+    goto error;
+  }
+
+  // There are a lot of possible components for the name entries. In
+  // our P2P SSL mode however, the certificates are pre-exchanged
+  // (through the secure XMPP channel), and so the certificate
+  // identification is arbitrary. It can't be empty, so we set some
+  // arbitrary common_name. Note that this certificate goes out in
+  // clear during SSL negotiation, so there may be a privacy issue in
+  // putting anything recognizable here.
+  if ((name = X509_NAME_new()) == nullptr ||
+      !X509_NAME_add_entry_by_NID(name, NID_commonName, MBSTRING_UTF8,
+                                  (unsigned char*)params.common_name.c_str(),
+                                  -1, -1, 0) ||
+      !X509_set_subject_name(x509, name) || !X509_set_issuer_name(x509, name)) {
+    goto error;
+  }
+  if (!X509_time_adj(X509_get_notBefore(x509), params.not_before, &epoch_off) ||
+      !X509_time_adj(X509_get_notAfter(x509), params.not_after, &epoch_off)) {
+    goto error;
+  }
+  if (!X509_sign(x509, pkey, EVP_sha256())) {
+    goto error;
+  }
+
+  BN_free(serial_number);
+  X509_NAME_free(name);
+  RTC_LOG(LS_INFO) << "Returning certificate";
+  return x509;
+
+error:
+  BN_free(serial_number);
+  X509_NAME_free(name);
+  X509_free(x509);
+  return nullptr;
 }
 
-OpenSSLCertificate* OpenSSLCertificate::Generate(
+}  // namespace
+
+OpenSSLCertificate::OpenSSLCertificate(X509* x509) : x509_(x509) {
+  RTC_DCHECK(x509_ != nullptr);
+  X509_up_ref(x509_);
+}
+
+std::unique_ptr<OpenSSLCertificate> OpenSSLCertificate::Generate(
     OpenSSLKeyPair* key_pair,
     const SSLIdentityParams& params) {
   SSLIdentityParams actual_params(params);
@@ -149,25 +138,27 @@ OpenSSLCertificate* OpenSSLCertificate::Generate(
 #if !defined(NDEBUG)
   PrintCert(x509);
 #endif
-  OpenSSLCertificate* ret = new OpenSSLCertificate(x509);
+  auto ret = absl::make_unique<OpenSSLCertificate>(x509);
   X509_free(x509);
   return ret;
 }
 
-OpenSSLCertificate* OpenSSLCertificate::FromPEMString(
+std::unique_ptr<OpenSSLCertificate> OpenSSLCertificate::FromPEMString(
     const std::string& pem_string) {
   BIO* bio = BIO_new_mem_buf(const_cast<char*>(pem_string.c_str()), -1);
-  if (!bio)
+  if (!bio) {
     return nullptr;
+  }
+
   BIO_set_mem_eof_return(bio, 0);
   X509* x509 =
       PEM_read_bio_X509(bio, nullptr, nullptr, const_cast<char*>("\0"));
   BIO_free(bio);  // Frees the BIO, but not the pointed-to string.
 
-  if (!x509)
+  if (!x509) {
     return nullptr;
-
-  OpenSSLCertificate* ret = new OpenSSLCertificate(x509);
+  }
+  auto ret = absl::make_unique<OpenSSLCertificate>(x509);
   X509_free(x509);
   return ret;
 }
@@ -229,19 +220,16 @@ bool OpenSSLCertificate::ComputeDigest(const X509* x509,
                                        unsigned char* digest,
                                        size_t size,
                                        size_t* length) {
-  const EVP_MD* md;
-  unsigned int n;
-
-  if (!OpenSSLDigest::GetDigestEVP(algorithm, &md))
+  const EVP_MD* md = nullptr;
+  unsigned int n = 0;
+  if (!OpenSSLDigest::GetDigestEVP(algorithm, &md)) {
     return false;
-
-  if (size < static_cast<size_t>(EVP_MD_size(md)))
+  }
+  if (size < static_cast<size_t>(EVP_MD_size(md))) {
     return false;
-
+  }
   X509_digest(x509, md, digest, &n);
-
   *length = n;
-
   return true;
 }
 
@@ -249,18 +237,18 @@ OpenSSLCertificate::~OpenSSLCertificate() {
   X509_free(x509_);
 }
 
-OpenSSLCertificate* OpenSSLCertificate::GetReference() const {
-  return new OpenSSLCertificate(x509_);
+std::unique_ptr<SSLCertificate> OpenSSLCertificate::Clone() const {
+  return absl::make_unique<OpenSSLCertificate>(x509_);
 }
 
 std::string OpenSSLCertificate::ToPEMString() const {
   BIO* bio = BIO_new(BIO_s_mem());
   if (!bio) {
-    RTC_FATAL() << "unreachable code";
+    RTC_FATAL() << "Unreachable code.";
   }
   if (!PEM_write_bio_X509(bio, x509_)) {
     BIO_free(bio);
-    RTC_FATAL() << "unreachable code";
+    RTC_FATAL() << "Unreachable code.";
   }
   BIO_write(bio, "\0", 1);
   char* buffer;
@@ -273,25 +261,19 @@ std::string OpenSSLCertificate::ToPEMString() const {
 void OpenSSLCertificate::ToDER(Buffer* der_buffer) const {
   // In case of failure, make sure to leave the buffer empty.
   der_buffer->SetSize(0);
-
   // Calculates the DER representation of the certificate, from scratch.
   BIO* bio = BIO_new(BIO_s_mem());
   if (!bio) {
-    RTC_FATAL() << "unreachable code";
+    RTC_FATAL() << "Unreachable code.";
   }
   if (!i2d_X509_bio(bio, x509_)) {
     BIO_free(bio);
-    RTC_FATAL() << "unreachable code";
+    RTC_FATAL() << "Unreachable code.";
   }
-  char* data;
+  char* data = nullptr;
   size_t length = BIO_get_mem_data(bio, &data);
   der_buffer->SetData(data, length);
   BIO_free(bio);
-}
-
-void OpenSSLCertificate::AddReference() const {
-  RTC_DCHECK(x509_ != nullptr);
-  X509_up_ref(x509_);
 }
 
 bool OpenSSLCertificate::operator==(const OpenSSLCertificate& other) const {
@@ -302,11 +284,9 @@ bool OpenSSLCertificate::operator!=(const OpenSSLCertificate& other) const {
   return !(*this == other);
 }
 
-// Documented in sslidentity.h.
 int64_t OpenSSLCertificate::CertificateExpirationTime() const {
   ASN1_TIME* expire_time = X509_get_notAfter(x509_);
   bool long_format;
-
   if (expire_time->type == V_ASN1_UTCTIME) {
     long_format = false;
   } else if (expire_time->type == V_ASN1_GENERALIZEDTIME) {
@@ -314,7 +294,6 @@ int64_t OpenSSLCertificate::CertificateExpirationTime() const {
   } else {
     return -1;
   }
-
   return ASN1TimeToSec(expire_time->data, expire_time->length, long_format);
 }
 

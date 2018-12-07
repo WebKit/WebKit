@@ -18,14 +18,13 @@
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_format.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Opus decoder API for use as a template parameter to
 // CreateAudioDecoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
-struct AudioDecoderOpus {
+struct RTC_EXPORT AudioDecoderOpus {
   struct Config {
     int num_channels;
   };

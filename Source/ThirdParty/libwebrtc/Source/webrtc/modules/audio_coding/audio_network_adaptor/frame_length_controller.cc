@@ -11,10 +11,10 @@
 #include "modules/audio_coding/audio_network_adaptor/frame_length_controller.h"
 
 #include <algorithm>
+#include <iterator>
 #include <utility>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 
 namespace webrtc {
 

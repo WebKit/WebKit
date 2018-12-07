@@ -10,13 +10,15 @@
 
 #include "modules/rtp_rtcp/source/rtp_format.h"
 
-#include <utility>
-
 #include "absl/memory/memory.h"
+#include "absl/types/variant.h"
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 #include "modules/rtp_rtcp/source/rtp_format_video_generic.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 #include "modules/rtp_rtcp/source/rtp_format_vp9.h"
+#include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -63,6 +65,11 @@ std::vector<int> RtpPacketizer::SplitAboutEqually(
   RTC_DCHECK_GE(limits.last_packet_reduction_len, 0);
 
   std::vector<int> result;
+  if (limits.max_payload_len >=
+      limits.single_packet_reduction_len + payload_len) {
+    result.push_back(payload_len);
+    return result;
+  }
   if (limits.max_payload_len - limits.first_packet_reduction_len < 1 ||
       limits.max_payload_len - limits.last_packet_reduction_len < 1) {
     // Capacity is not enough to put a single byte into one of the packets.
@@ -77,6 +84,10 @@ std::vector<int> RtpPacketizer::SplitAboutEqually(
   // Integer divisions with rounding up.
   int num_packets_left =
       (total_bytes + limits.max_payload_len - 1) / limits.max_payload_len;
+  if (num_packets_left == 1) {
+    // Single packet is a special case handled above.
+    num_packets_left = 2;
+  }
 
   if (payload_len < num_packets_left) {
     // Edge case where limits force to have more packets than there are payload

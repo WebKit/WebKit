@@ -190,20 +190,13 @@ def RunTest(android_device, adb_path, build_dir, temp_dir, num_retries,
   # Run comparison script.
   compare_script = os.path.join(SRC_DIR, 'rtc_tools', 'compare_videos.py')
   frame_analyzer = os.path.join(build_dir, 'frame_analyzer_host')
-  zxing_path = os.path.join(TOOLCHAIN_DIR, 'zxing')
-  stats_file_ref = os.path.join(temp_dir, 'stats_ref.txt')
-  stats_file_test = os.path.join(temp_dir, 'stats_test.txt')
 
   args = [
       '--ref_video', reference_video_yuv,
       '--test_video', test_video_yuv,
       '--yuv_frame_width', '640',
       '--yuv_frame_height', '360',
-      '--stats_file_ref', stats_file_ref,
-      '--stats_file_test', stats_file_test,
       '--frame_analyzer', frame_analyzer,
-      '--ffmpeg_path', ffmpeg_path,
-      '--zxing_path', zxing_path,
   ]
   if chartjson_result_file:
     args.extend(['--chartjson_result_file', chartjson_result_file])

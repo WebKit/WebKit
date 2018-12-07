@@ -21,18 +21,17 @@
 
 #include <openssl/bio.h>
 #include <openssl/bn.h>
-#include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
+#include <stdint.h>
+
 #include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/openssl.h"
-#include "rtc_base/openssldigest.h"
 #include "rtc_base/opensslutility.h"
 
 namespace rtc {
@@ -316,7 +315,7 @@ const SSLCertChain& OpenSSLIdentity::cert_chain() const {
 
 OpenSSLIdentity* OpenSSLIdentity::GetReference() const {
   return new OpenSSLIdentity(absl::WrapUnique(key_pair_->GetReference()),
-                             absl::WrapUnique(cert_chain_->Copy()));
+                             cert_chain_->Clone());
 }
 
 bool OpenSSLIdentity::ConfigureIdentity(SSL_CTX* ctx) {

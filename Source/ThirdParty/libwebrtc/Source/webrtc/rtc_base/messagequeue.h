@@ -17,7 +17,6 @@
 #include <list>
 #include <memory>
 #include <queue>
-#include <utility>
 #include <vector>
 
 #include "rtc_base/constructormagic.h"
@@ -28,7 +27,6 @@
 #include "rtc_base/socketserver.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/timeutils.h"
 
 namespace rtc {
 

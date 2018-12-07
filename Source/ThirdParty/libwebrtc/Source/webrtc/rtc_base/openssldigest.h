@@ -11,14 +11,16 @@
 #ifndef RTC_BASE_OPENSSLDIGEST_H_
 #define RTC_BASE_OPENSSLDIGEST_H_
 
-#include <openssl/evp.h>
+#include <openssl/base.h>
+#include <stddef.h>
+#include <string>
 
 #include "rtc_base/messagedigest.h"
 
 namespace rtc {
 
 // An implementation of the digest class that uses OpenSSL.
-class OpenSSLDigest : public MessageDigest {
+class OpenSSLDigest final : public MessageDigest {
  public:
   // Creates an OpenSSLDigest with |algorithm| as the hash algorithm.
   explicit OpenSSLDigest(const std::string& algorithm);

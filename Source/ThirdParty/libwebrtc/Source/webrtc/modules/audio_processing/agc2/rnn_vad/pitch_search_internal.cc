@@ -10,10 +10,12 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search_internal.h"
 
+#include <stdlib.h>
 #include <algorithm>
 #include <cmath>
+#include <complex>
+#include <cstddef>
 #include <numeric>
-#include <utility>
 
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
 #include "rtc_base/checks.h"

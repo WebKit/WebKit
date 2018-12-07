@@ -69,6 +69,14 @@ class MockRtpVideoSender : public RtpVideoSenderInterface {
   MOCK_CONST_METHOD0(GetProtectionBitrateBps, uint32_t());
   MOCK_METHOD3(SetEncodingData, void(size_t, size_t, size_t));
 };
+
+BitrateAllocationUpdate CreateAllocation(int bitrate_bps) {
+  BitrateAllocationUpdate update;
+  update.target_bitrate = DataRate::bps(bitrate_bps);
+  update.packet_loss_ratio = 0;
+  update.round_trip_time = TimeDelta::Zero();
+  return update;
+}
 }  // namespace
 
 class VideoSendStreamImplTest : public ::testing::Test {
@@ -91,7 +99,7 @@ class VideoSendStreamImplTest : public ::testing::Test {
     EXPECT_CALL(transport_controller_, packet_router())
         .WillRepeatedly(Return(&packet_router_));
     EXPECT_CALL(transport_controller_,
-                CreateRtpVideoSender(_, _, _, _, _, _, _, _, _))
+                CreateRtpVideoSender(_, _, _, _, _, _, _, _, _, _))
         .WillRepeatedly(Return(&rtp_video_sender_));
     EXPECT_CALL(rtp_video_sender_, SetActive(_))
         .WillRepeatedly(testing::Invoke(
@@ -367,7 +375,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationWhenEnabled) {
         .Times(1)
         .WillOnce(Return(kBitrateBps));
     static_cast<BitrateAllocatorObserver*>(vss_impl.get())
-        ->OnBitrateUpdated(kBitrateBps, 0, 0, 0);
+        ->OnBitrateUpdated(CreateAllocation(kBitrateBps));
     EXPECT_CALL(rtp_video_sender_, OnBitrateAllocationUpdated(alloc)).Times(1);
     observer->OnBitrateAllocationUpdated(alloc);
 
@@ -376,7 +384,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationWhenEnabled) {
         .Times(1)
         .WillOnce(Return(0));
     static_cast<BitrateAllocatorObserver*>(vss_impl.get())
-        ->OnBitrateUpdated(0, 0, 0, 0);
+        ->OnBitrateUpdated(CreateAllocation(0));
     EXPECT_CALL(rtp_video_sender_, OnBitrateAllocationUpdated(alloc)).Times(0);
     observer->OnBitrateAllocationUpdated(alloc);
 
@@ -396,7 +404,7 @@ TEST_F(VideoSendStreamImplTest, ThrottlesVideoBitrateAllocationWhenTooSimilar) {
         .Times(1)
         .WillOnce(Return(kBitrateBps));
     static_cast<BitrateAllocatorObserver*>(vss_impl.get())
-        ->OnBitrateUpdated(kBitrateBps, 0, 0, 0);
+        ->OnBitrateUpdated(CreateAllocation(kBitrateBps));
     VideoBitrateAllocationObserver* const observer =
         static_cast<VideoBitrateAllocationObserver*>(vss_impl.get());
 
@@ -450,7 +458,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationOnLayerChange) {
         .Times(1)
         .WillOnce(Return(kBitrateBps));
     static_cast<BitrateAllocatorObserver*>(vss_impl.get())
-        ->OnBitrateUpdated(kBitrateBps, 0, 0, 0);
+        ->OnBitrateUpdated(CreateAllocation(kBitrateBps));
     VideoBitrateAllocationObserver* const observer =
         static_cast<VideoBitrateAllocationObserver*>(vss_impl.get());
 
@@ -494,7 +502,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationAfterTimeout) {
         .Times(1)
         .WillRepeatedly(Return(kBitrateBps));
     static_cast<BitrateAllocatorObserver*>(vss_impl.get())
-        ->OnBitrateUpdated(kBitrateBps, 0, 0, 0);
+        ->OnBitrateUpdated(CreateAllocation(kBitrateBps));
     VideoBitrateAllocationObserver* const observer =
         static_cast<VideoBitrateAllocationObserver*>(vss_impl.get());
 

@@ -29,7 +29,8 @@ class AndroidVideoTrackSource : public rtc::AdaptedVideoTrackSource {
  public:
   AndroidVideoTrackSource(rtc::Thread* signaling_thread,
                           JNIEnv* jni,
-                          bool is_screencast = false);
+                          bool is_screencast,
+                          bool align_timestamps);
   ~AndroidVideoTrackSource() override;
 
   bool is_screencast() const override;
@@ -53,15 +54,20 @@ class AndroidVideoTrackSource : public rtc::AdaptedVideoTrackSource {
                        VideoRotation rotation,
                        const JavaRef<jobject>& j_video_frame_buffer);
 
-  void OnOutputFormatRequest(int width, int height, int fps);
+  void OnOutputFormatRequest(int landscape_width,
+                             int landscape_height,
+                             int portrait_width,
+                             int portrait_height,
+                             int fps);
 
  private:
   rtc::Thread* signaling_thread_;
   rtc::AsyncInvoker invoker_;
   rtc::ThreadChecker camera_thread_checker_;
   SourceState state_;
-  rtc::TimestampAligner timestamp_aligner_;
   const bool is_screencast_;
+  rtc::TimestampAligner timestamp_aligner_;
+  const bool align_timestamps_;
 };
 
 }  // namespace jni

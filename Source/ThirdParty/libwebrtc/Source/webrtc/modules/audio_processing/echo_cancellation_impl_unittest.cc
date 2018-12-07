@@ -18,9 +18,7 @@
 
 namespace webrtc {
 TEST(EchoCancellationInternalTest, ExtendedFilter) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoCancellationImpl echo_canceller(&crit_render, &crit_capture);
+  EchoCancellationImpl echo_canceller;
   echo_canceller.Initialize(AudioProcessing::kSampleRate32kHz, 2, 2, 2);
 
   EXPECT_TRUE(echo_canceller.aec_core() == nullptr);
@@ -51,9 +49,7 @@ TEST(EchoCancellationInternalTest, ExtendedFilter) {
 }
 
 TEST(EchoCancellationInternalTest, DelayAgnostic) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoCancellationImpl echo_canceller(&crit_render, &crit_capture);
+  EchoCancellationImpl echo_canceller;
   echo_canceller.Initialize(AudioProcessing::kSampleRate32kHz, 1, 1, 1);
 
   EXPECT_TRUE(echo_canceller.aec_core() == NULL);
@@ -85,9 +81,7 @@ TEST(EchoCancellationInternalTest, DelayAgnostic) {
 }
 
 TEST(EchoCancellationInternalTest, InterfaceConfiguration) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoCancellationImpl echo_canceller(&crit_render, &crit_capture);
+  EchoCancellationImpl echo_canceller;
   echo_canceller.Initialize(AudioProcessing::kSampleRate16kHz, 1, 1, 1);
 
   EXPECT_EQ(0, echo_canceller.enable_drift_compensation(true));

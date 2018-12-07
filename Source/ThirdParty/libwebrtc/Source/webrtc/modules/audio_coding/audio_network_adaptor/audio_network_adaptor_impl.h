@@ -11,17 +11,21 @@
 #ifndef MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_AUDIO_NETWORK_ADAPTOR_IMPL_H_
 #define MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_AUDIO_NETWORK_ADAPTOR_IMPL_H_
 
+#include <stdio.h>
 #include <memory>
 
+#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_encoder.h"
 #include "modules/audio_coding/audio_network_adaptor/controller.h"
-#include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
 #include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
-#include "modules/audio_coding/audio_network_adaptor/event_log_writer.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
+class ControllerManager;
+class EventLogWriter;
 class RtcEventLog;
 
 class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
@@ -78,12 +82,6 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
   absl::optional<AudioEncoderRuntimeConfig> prev_config_;
 
   ANAStats stats_;
-
-  const bool enable_bitrate_adaptation_;
-  const bool enable_dtx_adaptation_;
-  const bool enable_fec_adaptation_;
-  const bool enable_channel_adaptation_;
-  const bool enable_frame_length_adaptation_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioNetworkAdaptorImpl);
 };

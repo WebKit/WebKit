@@ -10,17 +10,21 @@
 
 #include "modules/audio_processing/aec3/render_delay_buffer.h"
 
-#include <string.h>
+#include <stdlib.h>
 #include <algorithm>
+#include <memory>
 #include <numeric>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
-#include "modules/audio_processing/aec3/block_processor.h"
 #include "modules/audio_processing/aec3/decimator.h"
 #include "modules/audio_processing/aec3/fft_buffer.h"
 #include "modules/audio_processing/aec3/fft_data.h"
 #include "modules/audio_processing/aec3/matrix_buffer.h"
+#include "modules/audio_processing/aec3/vector_buffer.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
@@ -33,14 +37,6 @@ namespace {
 bool EnableZeroExternalDelayHeadroom() {
   return !field_trial::IsEnabled(
       "WebRTC-Aec3ZeroExternalDelayHeadroomKillSwitch");
-}
-
-size_t GetDownSamplingFactor(const EchoCanceller3Config& config) {
-  // Do not use down sampling factor 8 if kill switch is triggered.
-  return (config.delay.down_sampling_factor == 8 &&
-          field_trial::IsEnabled("WebRTC-Aec3DownSamplingFactor8KillSwitch"))
-             ? 4
-             : config.delay.down_sampling_factor;
 }
 
 class RenderDelayBufferImpl final : public RenderDelayBuffer {
@@ -177,7 +173,7 @@ RenderDelayBufferImpl::RenderDelayBufferImpl(const EchoCanceller3Config& config,
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
       optimization_(DetectOptimization()),
       config_(config),
-      down_sampling_factor_(GetDownSamplingFactor(config)),
+      down_sampling_factor_(config.delay.down_sampling_factor),
       use_zero_external_delay_headroom_(EnableZeroExternalDelayHeadroom()),
       sub_block_size_(static_cast<int>(down_sampling_factor_ > 0
                                            ? kBlockSize / down_sampling_factor_

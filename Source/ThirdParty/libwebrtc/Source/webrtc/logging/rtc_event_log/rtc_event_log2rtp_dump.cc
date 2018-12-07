@@ -32,31 +32,32 @@ namespace {
 
 using MediaType = webrtc::ParsedRtcEventLogNew::MediaType;
 
-DEFINE_bool(
+WEBRTC_DEFINE_bool(
     audio,
     true,
     "Use --noaudio to exclude audio packets from the converted RTPdump file.");
-DEFINE_bool(
+WEBRTC_DEFINE_bool(
     video,
     true,
     "Use --novideo to exclude video packets from the converted RTPdump file.");
-DEFINE_bool(
+WEBRTC_DEFINE_bool(
     data,
     true,
     "Use --nodata to exclude data packets from the converted RTPdump file.");
-DEFINE_bool(
+WEBRTC_DEFINE_bool(
     rtp,
     true,
     "Use --nortp to exclude RTP packets from the converted RTPdump file.");
-DEFINE_bool(
+WEBRTC_DEFINE_bool(
     rtcp,
     true,
     "Use --nortcp to exclude RTCP packets from the converted RTPdump file.");
-DEFINE_string(ssrc,
-              "",
-              "Store only packets with this SSRC (decimal or hex, the latter "
-              "starting with 0x).");
-DEFINE_bool(help, false, "Prints this message.");
+WEBRTC_DEFINE_string(
+    ssrc,
+    "",
+    "Store only packets with this SSRC (decimal or hex, the latter "
+    "starting with 0x).");
+WEBRTC_DEFINE_bool(help, false, "Prints this message.");
 
 // Parses the input string for a valid SSRC. If a valid SSRC is found, it is
 // written to the output variable |ssrc|, and true is returned. Otherwise,
@@ -97,9 +98,10 @@ bool ShouldSkipStream(MediaType media_type,
 // Convert a LoggedRtpPacketIncoming to a test::RtpPacket. Header extension IDs
 // are allocated according to the provided extension map. This might not match
 // the extension map used in the actual call.
-void ConvertRtpPacket(const webrtc::LoggedRtpPacketIncoming& incoming,
-                      const webrtc::RtpHeaderExtensionMap default_extension_map,
-                      webrtc::test::RtpPacket* packet) {
+void ConvertRtpPacket(
+    const webrtc::LoggedRtpPacketIncoming& incoming,
+    const webrtc::RtpHeaderExtensionMap& default_extension_map,
+    webrtc::test::RtpPacket* packet) {
   webrtc::RtpPacket reconstructed_packet(&default_extension_map);
 
   reconstructed_packet.SetMarker(incoming.rtp.header.markerBit);
@@ -196,8 +198,6 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  std::cout << "Found " << parsed_stream.GetNumberOfEvents()
-            << " events in the input file." << std::endl;
   int rtp_counter = 0, rtcp_counter = 0;
   bool header_only = false;
 

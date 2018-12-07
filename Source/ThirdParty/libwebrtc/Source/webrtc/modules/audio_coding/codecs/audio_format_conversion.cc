@@ -11,11 +11,12 @@
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 
 #include <string.h>
+#include <string>
+#include <utility>
 
-#include "absl/types/optional.h"
+#include "absl/strings/match.h"
 #include "api/array_view.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/sanitizer.h"
 
 namespace webrtc {
@@ -41,11 +42,11 @@ CodecInst MakeCodecInst(int payload_type,
 }  // namespace
 
 SdpAudioFormat CodecInstToSdp(const CodecInst& ci) {
-  if (STR_CASE_CMP(ci.plname, "g722") == 0) {
+  if (absl::EqualsIgnoreCase(ci.plname, "g722")) {
     RTC_CHECK_EQ(16000, ci.plfreq);
     RTC_CHECK(ci.channels == 1 || ci.channels == 2);
     return {"g722", 8000, ci.channels};
-  } else if (STR_CASE_CMP(ci.plname, "opus") == 0) {
+  } else if (absl::EqualsIgnoreCase(ci.plname, "opus")) {
     RTC_CHECK_EQ(48000, ci.plfreq);
     RTC_CHECK(ci.channels == 1 || ci.channels == 2);
     return ci.channels == 1
@@ -57,12 +58,12 @@ SdpAudioFormat CodecInstToSdp(const CodecInst& ci) {
 }
 
 CodecInst SdpToCodecInst(int payload_type, const SdpAudioFormat& audio_format) {
-  if (STR_CASE_CMP(audio_format.name.c_str(), "g722") == 0) {
+  if (absl::EqualsIgnoreCase(audio_format.name, "g722")) {
     RTC_CHECK_EQ(8000, audio_format.clockrate_hz);
     RTC_CHECK(audio_format.num_channels == 1 || audio_format.num_channels == 2);
     return MakeCodecInst(payload_type, "g722", 16000,
                          audio_format.num_channels);
-  } else if (STR_CASE_CMP(audio_format.name.c_str(), "opus") == 0) {
+  } else if (absl::EqualsIgnoreCase(audio_format.name, "opus")) {
     RTC_CHECK_EQ(48000, audio_format.clockrate_hz);
     RTC_CHECK_EQ(2, audio_format.num_channels);
     const int num_channels = [&] {

@@ -31,10 +31,9 @@ const std::vector<RtpExtensionSize> kNoRtpHeaderExtensionSizes;
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   size_t i = 0;
-  if (size < 5) {
+  if (size < 5 || size > 200) {
     return;
   }
-
   SimulatedClock clock(1 + data[i++]);
   FlexfecSender sender(kFlexfecPayloadType, kFlexfecSsrc, kMediaSsrc, kNoMid,
                        kNoRtpHeaderExtensions, kNoRtpHeaderExtensionSizes,

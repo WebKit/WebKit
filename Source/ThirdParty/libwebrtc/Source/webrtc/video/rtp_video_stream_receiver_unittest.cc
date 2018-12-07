@@ -133,7 +133,7 @@ class RtpVideoStreamReceiverTest : public testing::Test {
         &mock_transport_, nullptr, &packet_router_, &config_,
         rtp_receive_statistics_.get(), nullptr, process_thread_.get(),
         &mock_nack_sender_, &mock_key_frame_request_sender_,
-        &mock_on_complete_frame_callback_);
+        &mock_on_complete_frame_callback_, nullptr);
   }
 
   WebRtcRTPHeader GetDefaultPacket() {
@@ -568,10 +568,8 @@ TEST_F(RtpVideoStreamReceiverTest, ParseGenericDescriptorTwoPackets) {
   first_packet_descriptor.SetFirstSubFrameInFrame(true);
   first_packet_descriptor.SetLastSubFrameInFrame(true);
   first_packet_descriptor.SetFrameId(100);
-  first_packet_descriptor.SetTemporalLayer(1);
   first_packet_descriptor.SetSpatialLayersBitmask(1 << kSpatialIndex);
-  first_packet_descriptor.AddFrameDependencyDiff(90);
-  first_packet_descriptor.AddFrameDependencyDiff(80);
+  first_packet_descriptor.SetResolution(480, 360);
   EXPECT_TRUE(first_packet.SetExtension<RtpGenericFrameDescriptorExtension>(
       first_packet_descriptor));
 
@@ -606,10 +604,10 @@ TEST_F(RtpVideoStreamReceiverTest, ParseGenericDescriptorTwoPackets) {
 
   EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame)
       .WillOnce(Invoke([kSpatialIndex](video_coding::EncodedFrame* frame) {
-        EXPECT_EQ(frame->num_references, 2U);
-        EXPECT_EQ(frame->references[0], frame->id.picture_id - 90);
-        EXPECT_EQ(frame->references[1], frame->id.picture_id - 80);
+        EXPECT_EQ(frame->num_references, 0U);
         EXPECT_EQ(frame->id.spatial_layer, kSpatialIndex);
+        EXPECT_EQ(frame->EncodedImage()._encodedWidth, 480u);
+        EXPECT_EQ(frame->EncodedImage()._encodedHeight, 360u);
       }));
 
   rtp_video_stream_receiver_->OnRtpPacket(second_packet);
@@ -627,5 +625,14 @@ TEST_F(RtpVideoStreamReceiverTest, RepeatedSecondarySinkDisallowed) {
   rtp_video_stream_receiver_->RemoveSecondarySink(&secondary_sink);
 }
 #endif
+
+// Initialization of WebRtcRTPHeader is a bit convoluted, with some fields
+// zero-initialized. RtpVideoStreamReceiver depends on proper default values for
+// the playout delay.
+TEST(WebRtcRTPHeader, DefaultPlayoutDelayIsUnspecified) {
+  WebRtcRTPHeader webrtc_rtp_header = {};
+  EXPECT_EQ(webrtc_rtp_header.video_header().playout_delay.min_ms, -1);
+  EXPECT_EQ(webrtc_rtp_header.video_header().playout_delay.max_ms, -1);
+}
 
 }  // namespace webrtc

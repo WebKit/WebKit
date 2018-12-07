@@ -14,6 +14,9 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/refcountedobject.h"
+#include "rtc_base/sslcertificate.h"
+#include "rtc_base/sslidentity.h"
+#include "rtc_base/timeutils.h"
 
 namespace rtc {
 
@@ -29,7 +32,7 @@ RTCCertificate::RTCCertificate(SSLIdentity* identity) : identity_(identity) {
 RTCCertificate::~RTCCertificate() {}
 
 uint64_t RTCCertificate::Expires() const {
-  int64_t expires = ssl_certificate().CertificateExpirationTime();
+  int64_t expires = GetSSLCertificate().CertificateExpirationTime();
   if (expires != -1)
     return static_cast<uint64_t>(expires) * kNumMillisecsPerSec;
   // If the expiration time could not be retrieved return an expired timestamp.
@@ -40,17 +43,22 @@ bool RTCCertificate::HasExpired(uint64_t now) const {
   return Expires() <= now;
 }
 
+const SSLCertificate& RTCCertificate::GetSSLCertificate() const {
+  return identity_->certificate();
+}
+
+// Deprecated: TODO(benwright) - Remove once chromium is updated.
 const SSLCertificate& RTCCertificate::ssl_certificate() const {
   return identity_->certificate();
 }
 
-const SSLCertChain& RTCCertificate::ssl_cert_chain() const {
+const SSLCertChain& RTCCertificate::GetSSLCertificateChain() const {
   return identity_->cert_chain();
 }
 
 RTCCertificatePEM RTCCertificate::ToPEM() const {
   return RTCCertificatePEM(identity_->PrivateKeyToPEMString(),
-                           ssl_certificate().ToPEMString());
+                           GetSSLCertificate().ToPEMString());
 }
 
 scoped_refptr<RTCCertificate> RTCCertificate::FromPEM(

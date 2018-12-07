@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_TICK_TIMER_H_
 #define MODULES_AUDIO_CODING_NETEQ_TICK_TIMER_H_
 
+#include <stdint.h>
 #include <memory>
 
 #include "rtc_base/checks.h"

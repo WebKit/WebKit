@@ -18,6 +18,7 @@
 #include "call/call.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
+#include "modules/utility/include/process_thread.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
 
@@ -90,7 +91,6 @@ FakeNetworkPipe::FakeNetworkPipe(
       dropped_packets_(0),
       sent_packets_(0),
       total_packet_delay_us_(0),
-      next_process_time_us_(clock_->TimeInMicroseconds()),
       last_log_time_us_(clock_->TimeInMicroseconds()) {}
 
 FakeNetworkPipe::FakeNetworkPipe(
@@ -105,7 +105,6 @@ FakeNetworkPipe::FakeNetworkPipe(
       dropped_packets_(0),
       sent_packets_(0),
       total_packet_delay_us_(0),
-      next_process_time_us_(clock_->TimeInMicroseconds()),
       last_log_time_us_(clock_->TimeInMicroseconds()) {}
 
 FakeNetworkPipe::~FakeNetworkPipe() = default;
@@ -154,8 +153,8 @@ bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
                                     bool is_rtcp,
                                     MediaType media_type,
                                     absl::optional<int64_t> packet_time_us) {
-  int64_t time_now_us = clock_->TimeInMicroseconds();
   rtc::CritScope crit(&process_lock_);
+  int64_t time_now_us = clock_->TimeInMicroseconds();
   size_t packet_size = packet.size();
   NetworkPacket net_packet(std::move(packet), time_now_us, time_now_us, options,
                            is_rtcp, media_type, packet_time_us);
@@ -169,6 +168,12 @@ bool FakeNetworkPipe::EnqueuePacket(rtc::CopyOnWriteBuffer packet,
     packets_in_flight_.pop_back();
     ++dropped_packets_;
   }
+  if (network_behavior_->NextDeliveryTimeUs()) {
+    rtc::CritScope crit(&process_thread_lock_);
+    if (process_thread_)
+      process_thread_->WakeUp(nullptr);
+  }
+
   return sent;
 }
 
@@ -201,10 +206,11 @@ size_t FakeNetworkPipe::SentPackets() {
 }
 
 void FakeNetworkPipe::Process() {
-  int64_t time_now_us = clock_->TimeInMicroseconds();
+  int64_t time_now_us;
   std::queue<NetworkPacket> packets_to_deliver;
   {
     rtc::CritScope crit(&process_lock_);
+    time_now_us = clock_->TimeInMicroseconds();
     if (time_now_us - last_log_time_us_ > kLogIntervalMs * 1000) {
       int64_t queueing_delay_us = 0;
       if (!packets_in_flight_.empty())
@@ -250,9 +256,11 @@ void FakeNetworkPipe::Process() {
         // arrived, due to NetworkProcess being called too late. For stats, use
         // the time it should have been on the link.
         total_packet_delay_us_ += added_delay_us;
+        ++sent_packets_;
+      } else {
+        ++dropped_packets_;
       }
     }
-    sent_packets_ += packets_to_deliver.size();
   }
 
   rtc::CritScope crit(&config_lock_);
@@ -261,10 +269,6 @@ void FakeNetworkPipe::Process() {
     packets_to_deliver.pop();
     DeliverNetworkPacket(&packet);
   }
-  absl::optional<int64_t> delivery_us = network_behavior_->NextDeliveryTimeUs();
-  next_process_time_us_ = delivery_us
-                              ? *delivery_us
-                              : time_now_us + kDefaultProcessIntervalMs * 1000;
 }
 
 void FakeNetworkPipe::DeliverNetworkPacket(NetworkPacket* packet) {
@@ -291,8 +295,17 @@ void FakeNetworkPipe::DeliverNetworkPacket(NetworkPacket* packet) {
 
 int64_t FakeNetworkPipe::TimeUntilNextProcess() {
   rtc::CritScope crit(&process_lock_);
-  int64_t delay_us = next_process_time_us_ - clock_->TimeInMicroseconds();
-  return std::max<int64_t>((delay_us + 500) / 1000, 0);
+  absl::optional<int64_t> delivery_us = network_behavior_->NextDeliveryTimeUs();
+  if (delivery_us) {
+    int64_t delay_us = *delivery_us - clock_->TimeInMicroseconds();
+    return std::max<int64_t>((delay_us + 500) / 1000, 0);
+  }
+  return kDefaultProcessIntervalMs;
+}
+
+void FakeNetworkPipe::ProcessThreadAttached(ProcessThread* process_thread) {
+  rtc::CritScope cs(&process_thread_lock_);
+  process_thread_ = process_thread;
 }
 
 bool FakeNetworkPipe::HasTransport() const {
@@ -316,31 +329,8 @@ void FakeNetworkPipe::ResetStats() {
   total_packet_delay_us_ = 0;
 }
 
-void FakeNetworkPipe::AddToPacketDropCount() {
-  rtc::CritScope crit(&process_lock_);
-  ++dropped_packets_;
-}
-
-void FakeNetworkPipe::AddToPacketSentCount(int count) {
-  rtc::CritScope crit(&process_lock_);
-  sent_packets_ += count;
-}
-
-void FakeNetworkPipe::AddToTotalDelay(int delay_us) {
-  rtc::CritScope crit(&process_lock_);
-  total_packet_delay_us_ += delay_us;
-}
-
 int64_t FakeNetworkPipe::GetTimeInMicroseconds() const {
   return clock_->TimeInMicroseconds();
-}
-
-bool FakeNetworkPipe::ShouldProcess(int64_t time_now_us) const {
-  return time_now_us >= next_process_time_us_;
-}
-
-void FakeNetworkPipe::SetTimeToNextProcess(int64_t skip_us) {
-  next_process_time_us_ += skip_us;
 }
 
 }  // namespace webrtc

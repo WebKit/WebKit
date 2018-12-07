@@ -37,6 +37,7 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 #include <webrtc/api/asyncresolverfactory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_decoder_factory.h>
 #include <webrtc/api/audio_codecs/builtin_audio_encoder_factory.h>
+#include <webrtc/api/create_peerconnection_factory.h>
 #include <webrtc/api/peerconnectionfactoryproxy.h>
 #include <webrtc/modules/audio_processing/include/audio_processing.h>
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>

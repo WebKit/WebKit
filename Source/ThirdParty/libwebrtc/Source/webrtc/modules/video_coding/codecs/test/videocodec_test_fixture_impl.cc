@@ -130,9 +130,7 @@ bool RunEncodeInRealTime(const VideoCodecTestFixtureImpl::Config& config) {
 
 std::string FilenameWithParams(
     const VideoCodecTestFixtureImpl::Config& config) {
-  std::string implementation_type = config.hw_encoder ? "hw" : "sw";
   return config.filename + "_" + config.CodecName() + "_" +
-         implementation_type + "_" +
          std::to_string(config.codec_settings.startBitrate);
 }
 
@@ -446,7 +444,7 @@ void VideoCodecTestFixtureImpl::ProcessAllFrames(
   }
 
   // Wait until we know that the last frame has been sent for encode.
-  rtc::Event sync_event(false, false);
+  rtc::Event sync_event;
   task_queue->PostTask([&sync_event] { sync_event.Set(); });
   sync_event.Wait(rtc::Event::kForever);
 
@@ -673,7 +671,7 @@ void VideoCodecTestFixtureImpl::PrintSettings(
   std::string encoder_name;
   std::string decoder_name;
   task_queue->SendTask([this, &encoder_name, &decoder_name] {
-    encoder_name = encoder_->ImplementationName();
+    encoder_name = encoder_->GetEncoderInfo().implementation_name;
     decoder_name = decoders_.at(0)->ImplementationName();
   });
   printf("enc_impl_name: %s\n", encoder_name.c_str());

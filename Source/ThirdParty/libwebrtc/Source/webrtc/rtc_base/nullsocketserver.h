@@ -11,7 +11,9 @@
 #ifndef RTC_BASE_NULLSOCKETSERVER_H_
 #define RTC_BASE_NULLSOCKETSERVER_H_
 
+#include "rtc_base/asyncsocket.h"
 #include "rtc_base/event.h"
+#include "rtc_base/socket.h"
 #include "rtc_base/socketserver.h"
 
 namespace rtc {

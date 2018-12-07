@@ -14,12 +14,13 @@
 #include <assert.h>
 #include <memory>
 
-#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include "modules/audio_coding/neteq/audio_vector.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
 // Forward declarations.
+class AudioMultiVector;
 class BackgroundNoise;
 class RandomVector;
 class StatisticsCalculator;

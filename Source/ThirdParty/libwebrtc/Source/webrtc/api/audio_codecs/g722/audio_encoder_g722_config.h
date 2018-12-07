@@ -13,7 +13,6 @@
 
 namespace webrtc {
 
-// NOTE: This struct is still under development and may change without notice.
 struct AudioEncoderG722Config {
   bool IsOk() const {
     return frame_size_ms > 0 && frame_size_ms % 10 == 0 && num_channels >= 1;

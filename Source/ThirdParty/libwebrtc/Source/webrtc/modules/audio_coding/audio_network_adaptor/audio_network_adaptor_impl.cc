@@ -10,9 +10,14 @@
 
 #include "modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
 
+#include <stdint.h>
 #include <utility>
+#include <vector>
 
-#include "rtc_base/logging.h"
+#include "modules/audio_coding/audio_network_adaptor/controller_manager.h"
+#include "modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
+#include "modules/audio_coding/audio_network_adaptor/event_log_writer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -41,17 +46,7 @@ AudioNetworkAdaptorImpl::AudioNetworkAdaptorImpl(
                                    kEventLogMinBitrateChangeBps,
                                    kEventLogMinBitrateChangeFraction,
                                    kEventLogMinPacketLossChangeFraction)
-              : nullptr),
-      enable_bitrate_adaptation_(
-          webrtc::field_trial::IsEnabled("WebRTC-Audio-BitrateAdaptation")),
-      enable_dtx_adaptation_(
-          webrtc::field_trial::IsEnabled("WebRTC-Audio-DtxAdaptation")),
-      enable_fec_adaptation_(
-          webrtc::field_trial::IsEnabled("WebRTC-Audio-FecAdaptation")),
-      enable_channel_adaptation_(
-          webrtc::field_trial::IsEnabled("WebRTC-Audio-ChannelAdaptation")),
-      enable_frame_length_adaptation_(webrtc::field_trial::IsEnabled(
-          "WebRTC-Audio-FrameLengthAdaptation")) {
+              : nullptr) {
   RTC_DCHECK(controller_manager_);
 }
 
@@ -151,24 +146,6 @@ AudioEncoderRuntimeConfig AudioNetworkAdaptorImpl::GetEncoderRuntimeConfig() {
     }
   }
   prev_config_ = config;
-
-  // Prevent certain controllers from taking action (determined by field trials)
-  if (!enable_bitrate_adaptation_ && config.bitrate_bps) {
-    config.bitrate_bps.reset();
-  }
-  if (!enable_dtx_adaptation_ && config.enable_dtx) {
-    config.enable_dtx.reset();
-  }
-  if (!enable_fec_adaptation_ && config.enable_fec) {
-    config.enable_fec.reset();
-    config.uplink_packet_loss_fraction.reset();
-  }
-  if (!enable_frame_length_adaptation_ && config.frame_length_ms) {
-    config.frame_length_ms.reset();
-  }
-  if (!enable_channel_adaptation_ && config.num_channels) {
-    config.num_channels.reset();
-  }
 
   if (debug_dump_writer_)
     debug_dump_writer_->DumpEncoderRuntimeConfig(config, rtc::TimeMillis());

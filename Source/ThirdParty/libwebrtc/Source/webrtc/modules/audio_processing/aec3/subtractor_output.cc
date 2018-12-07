@@ -33,7 +33,7 @@ void SubtractorOutput::Reset() {
   y2 = 0.f;
 }
 
-void SubtractorOutput::UpdatePowers(rtc::ArrayView<const float> y) {
+void SubtractorOutput::ComputeMetrics(rtc::ArrayView<const float> y) {
   const auto sum_of_squares = [](float a, float b) { return a + b * b; };
   y2 = std::accumulate(y.begin(), y.end(), 0.f, sum_of_squares);
   e2_main = std::accumulate(e_main.begin(), e_main.end(), 0.f, sum_of_squares);
@@ -42,6 +42,14 @@ void SubtractorOutput::UpdatePowers(rtc::ArrayView<const float> y) {
   s2_main = std::accumulate(s_main.begin(), s_main.end(), 0.f, sum_of_squares);
   s2_shadow =
       std::accumulate(s_shadow.begin(), s_shadow.end(), 0.f, sum_of_squares);
+
+  s_main_max_abs = *std::max_element(s_main.begin(), s_main.end());
+  s_main_max_abs = std::max(s_main_max_abs,
+                            -(*std::min_element(s_main.begin(), s_main.end())));
+
+  s_shadow_max_abs = *std::max_element(s_shadow.begin(), s_shadow.end());
+  s_shadow_max_abs = std::max(
+      s_shadow_max_abs, -(*std::min_element(s_shadow.begin(), s_shadow.end())));
 }
 
 }  // namespace webrtc

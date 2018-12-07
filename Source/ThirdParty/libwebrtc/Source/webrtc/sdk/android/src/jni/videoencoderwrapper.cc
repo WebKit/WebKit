@@ -32,8 +32,6 @@ namespace jni {
 VideoEncoderWrapper::VideoEncoderWrapper(JNIEnv* jni,
                                          const JavaRef<jobject>& j_encoder)
     : encoder_(jni, j_encoder), int_array_class_(GetClass(jni, "[I")) {
-  implementation_name_ = GetImplementationName(jni);
-
   initialized_ = false;
   num_resets_ = 0;
 }
@@ -81,6 +79,10 @@ int32_t VideoEncoderWrapper::InitEncodeInternal(JNIEnv* jni) {
   int32_t status = JavaToNativeVideoCodecStatus(
       jni, Java_VideoEncoder_initEncode(jni, encoder_, settings, callback));
   RTC_LOG(LS_INFO) << "initEncode: " << status;
+
+  encoder_info_.supports_native_handle = true;
+  encoder_info_.implementation_name = GetImplementationName(jni);
+  encoder_info_.scaling_settings = GetScalingSettingsInternal(jni);
 
   if (status == WEBRTC_VIDEO_CODEC_OK) {
     initialized_ = true;
@@ -136,14 +138,6 @@ int32_t VideoEncoderWrapper::Encode(
   return HandleReturnCode(jni, ret, "encode");
 }
 
-int32_t VideoEncoderWrapper::SetChannelParameters(uint32_t packet_loss,
-                                                  int64_t rtt) {
-  JNIEnv* jni = AttachCurrentThreadIfNeeded();
-  ScopedJavaLocalRef<jobject> ret = Java_VideoEncoder_setChannelParameters(
-      jni, encoder_, (jshort)packet_loss, (jlong)rtt);
-  return HandleReturnCode(jni, ret, "setChannelParameters");
-}
-
 int32_t VideoEncoderWrapper::SetRateAllocation(
     const VideoBitrateAllocation& allocation,
     uint32_t framerate) {
@@ -156,9 +150,12 @@ int32_t VideoEncoderWrapper::SetRateAllocation(
   return HandleReturnCode(jni, ret, "setRateAllocation");
 }
 
-VideoEncoderWrapper::ScalingSettings VideoEncoderWrapper::GetScalingSettings()
-    const {
-  JNIEnv* jni = AttachCurrentThreadIfNeeded();
+VideoEncoder::EncoderInfo VideoEncoderWrapper::GetEncoderInfo() const {
+  return encoder_info_;
+}
+
+VideoEncoderWrapper::ScalingSettings
+VideoEncoderWrapper::GetScalingSettingsInternal(JNIEnv* jni) const {
   ScopedJavaLocalRef<jobject> j_scaling_settings =
       Java_VideoEncoder_getScalingSettings(jni, encoder_);
   bool isOn =
@@ -204,14 +201,6 @@ VideoEncoderWrapper::ScalingSettings VideoEncoderWrapper::GetScalingSettings()
     default:
       return ScalingSettings::kOff;
   }
-}
-
-bool VideoEncoderWrapper::SupportsNativeHandle() const {
-  return true;
-}
-
-const char* VideoEncoderWrapper::ImplementationName() const {
-  return implementation_name_.c_str();
 }
 
 void VideoEncoderWrapper::OnEncodedFrame(JNIEnv* jni,
@@ -385,7 +374,6 @@ CodecSpecificInfo VideoEncoderWrapper::ParseCodecSpecificInfo(
   CodecSpecificInfo info;
   memset(&info, 0, sizeof(info));
   info.codecType = codec_settings_.codecType;
-  info.codec_name = implementation_name_.c_str();
 
   switch (codec_settings_.codecType) {
     case kVideoCodecVP8:

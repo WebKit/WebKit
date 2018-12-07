@@ -14,16 +14,18 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace cricket {
 
 struct PacketOptions;
 
 // Finds data location within a TURN Channel Message or TURN Send Indication
 // message.
-bool UnwrapTurnPacket(const uint8_t* packet,
-                      size_t packet_size,
-                      size_t* content_position,
-                      size_t* content_size);
+bool RTC_EXPORT UnwrapTurnPacket(const uint8_t* packet,
+                                 size_t packet_size,
+                                 size_t* content_position,
+                                 size_t* content_size);
 
 }  // namespace cricket
 

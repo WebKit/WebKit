@@ -10,6 +10,7 @@
 
 #include "modules/audio_coding/neteq/timestamp_scaler.h"
 
+#include "api/audio_codecs/audio_format.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "rtc_base/checks.h"
 

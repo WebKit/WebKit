@@ -11,8 +11,8 @@
 #include "modules/audio_coding/neteq/decision_logic.h"
 
 #include <assert.h>
-#include <algorithm>
-#include <limits>
+#include <stdio.h>
+#include <string>
 
 #include "modules/audio_coding/neteq/buffer_level_filter.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
@@ -20,8 +20,9 @@
 #include "modules/audio_coding/neteq/expand.h"
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "modules/audio_coding/neteq/sync_buffer.h"
-#include "modules/include/module_common_types.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace {

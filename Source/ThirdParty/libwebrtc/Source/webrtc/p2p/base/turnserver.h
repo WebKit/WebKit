@@ -105,9 +105,10 @@ class TurnServerAllocation : public rtc::MessageHandler,
   void HandleChannelBindRequest(const TurnMessage* msg);
 
   void OnExternalPacket(rtc::AsyncPacketSocket* socket,
-                        const char* data, size_t size,
+                        const char* data,
+                        size_t size,
                         const rtc::SocketAddress& addr,
-                        const rtc::PacketTime& packet_time);
+                        const int64_t& packet_time_us);
 
   static int ComputeLifetime(const TurnMessage* msg);
   bool HasPermission(const rtc::IPAddress& addr);
@@ -256,9 +257,11 @@ class TurnServer : public sigslot::has_slots<> {
 
  private:
   std::string GenerateNonce(int64_t now) const;
-  void OnInternalPacket(rtc::AsyncPacketSocket* socket, const char* data,
-                        size_t size, const rtc::SocketAddress& address,
-                        const rtc::PacketTime& packet_time);
+  void OnInternalPacket(rtc::AsyncPacketSocket* socket,
+                        const char* data,
+                        size_t size,
+                        const rtc::SocketAddress& address,
+                        const int64_t& packet_time_us);
 
   void OnNewInternalConnection(rtc::AsyncSocket* socket);
 

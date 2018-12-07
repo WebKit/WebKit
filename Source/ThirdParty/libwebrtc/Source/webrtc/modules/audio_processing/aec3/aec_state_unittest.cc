@@ -25,7 +25,7 @@ TEST(AecState, NormalUsage) {
   absl::optional<DelayEstimate> delay_estimate =
       DelayEstimate(DelayEstimate::Quality::kRefined, 10);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, 3));
+      RenderDelayBuffer::Create2(config, 3));
   std::array<float, kFftLengthBy2Plus1> E2_main = {};
   std::array<float, kFftLengthBy2Plus1> Y2 = {};
   std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
@@ -56,7 +56,7 @@ TEST(AecState, NormalUsage) {
   std::fill(x[0].begin(), x[0].end(), 101.f);
   for (int k = 0; k < 3000; ++k) {
     render_delay_buffer->Insert(x);
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, converged_filter_frequency_response,
                  impulse_response, *render_delay_buffer->GetRenderBuffer(),
                  E2_main, Y2, output, y);
@@ -65,7 +65,7 @@ TEST(AecState, NormalUsage) {
 
   // Verify that linear AEC usability becomes false after an echo path change is
   // reported
-  output.UpdatePowers(y);
+  output.ComputeMetrics(y);
   state.HandleEchoPathChange(EchoPathVariability(
       false, EchoPathVariability::DelayAdjustment::kBufferReadjustment, false));
   state.Update(delay_estimate, converged_filter_frequency_response,
@@ -76,7 +76,7 @@ TEST(AecState, NormalUsage) {
   // Verify that the active render detection works as intended.
   std::fill(x[0].begin(), x[0].end(), 101.f);
   render_delay_buffer->Insert(x);
-  output.UpdatePowers(y);
+  output.ComputeMetrics(y);
   state.HandleEchoPathChange(EchoPathVariability(
       true, EchoPathVariability::DelayAdjustment::kNewDetectedDelay, false));
   state.Update(delay_estimate, converged_filter_frequency_response,
@@ -86,7 +86,7 @@ TEST(AecState, NormalUsage) {
 
   for (int k = 0; k < 1000; ++k) {
     render_delay_buffer->Insert(x);
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, converged_filter_frequency_response,
                  impulse_response, *render_delay_buffer->GetRenderBuffer(),
                  E2_main, Y2, output, y);
@@ -110,7 +110,7 @@ TEST(AecState, NormalUsage) {
 
   Y2.fill(10.f * 10000.f * 10000.f);
   for (size_t k = 0; k < 1000; ++k) {
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, converged_filter_frequency_response,
                  impulse_response, *render_delay_buffer->GetRenderBuffer(),
                  E2_main, Y2, output, y);
@@ -128,7 +128,7 @@ TEST(AecState, NormalUsage) {
   E2_main.fill(1.f * 10000.f * 10000.f);
   Y2.fill(10.f * E2_main[0]);
   for (size_t k = 0; k < 1000; ++k) {
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, converged_filter_frequency_response,
                  impulse_response, *render_delay_buffer->GetRenderBuffer(),
                  E2_main, Y2, output, y);
@@ -152,7 +152,7 @@ TEST(AecState, NormalUsage) {
   E2_main.fill(1.f * 10000.f * 10000.f);
   Y2.fill(5.f * E2_main[0]);
   for (size_t k = 0; k < 1000; ++k) {
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, converged_filter_frequency_response,
                  impulse_response, *render_delay_buffer->GetRenderBuffer(),
                  E2_main, Y2, output, y);
@@ -179,7 +179,7 @@ TEST(AecState, ConvergedFilterDelay) {
   EchoCanceller3Config config;
   AecState state(config);
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, 3));
+      RenderDelayBuffer::Create2(config, 3));
   absl::optional<DelayEstimate> delay_estimate;
   std::array<float, kFftLengthBy2Plus1> E2_main;
   std::array<float, kFftLengthBy2Plus1> Y2;
@@ -208,7 +208,7 @@ TEST(AecState, ConvergedFilterDelay) {
     impulse_response[k * kBlockSize + 1] = 1.f;
 
     state.HandleEchoPathChange(echo_path_variability);
-    output.UpdatePowers(y);
+    output.ComputeMetrics(y);
     state.Update(delay_estimate, frequency_response, impulse_response,
                  *render_delay_buffer->GetRenderBuffer(), E2_main, Y2, output,
                  y);

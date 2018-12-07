@@ -124,29 +124,6 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer) {
                        buffer);
 }
 
-int ConvertNV12ToRGB565(const uint8_t* src_frame,
-                        uint8_t* dst_frame,
-                        int width,
-                        int height) {
-  int abs_height = (height < 0) ? -height : height;
-  const uint8_t* yplane = src_frame;
-  const uint8_t* uvInterlaced = src_frame + (width * abs_height);
-
-  return libyuv::NV12ToRGB565(yplane, width, uvInterlaced, (width + 1) >> 1,
-                              dst_frame, width, width, height);
-}
-
-int ConvertRGB24ToARGB(const uint8_t* src_frame,
-                       uint8_t* dst_frame,
-                       int width,
-                       int height,
-                       int dst_stride) {
-  if (dst_stride == 0)
-    dst_stride = width;
-  return libyuv::RGB24ToARGB(src_frame, width, dst_frame, dst_stride, width,
-                             height);
-}
-
 int ConvertVideoType(VideoType video_type) {
   switch (video_type) {
     case VideoType::kUnknown:

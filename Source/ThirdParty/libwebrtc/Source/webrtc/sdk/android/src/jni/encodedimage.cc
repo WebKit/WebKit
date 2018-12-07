@@ -10,7 +10,7 @@
 
 #include "sdk/android/src/jni/encodedimage.h"
 
-#include "common_video/include/video_frame.h"
+#include "api/video/encoded_image.h"
 #include "rtc_base/timeutils.h"
 #include "sdk/android/generated_video_jni/jni/EncodedImage_jni.h"
 #include "sdk/android/native_api/jni/java_types.h"

@@ -146,6 +146,7 @@ std::vector<ProbeClusterConfig> ProbeController::OnMaxTotalAllocatedBitrate(
     max_total_allocated_bitrate_ = max_total_allocated_bitrate;
     return InitiateProbing(at_time_ms, {max_total_allocated_bitrate}, false);
   }
+  max_total_allocated_bitrate_ = max_total_allocated_bitrate;
   return std::vector<ProbeClusterConfig>();
 }
 
@@ -256,6 +257,16 @@ std::vector<ProbeClusterConfig> ProbeController::RequestProbe(
         last_bwe_drop_probing_time_ms_ = at_time_ms;
       }
     }
+  }
+  return std::vector<ProbeClusterConfig>();
+}
+
+std::vector<ProbeClusterConfig> ProbeController::InitiateCapacityProbing(
+    int64_t bitrate_bps,
+    int64_t at_time_ms) {
+  if (state_ != State::kWaitingForProbingResult) {
+    RTC_DCHECK(network_available_);
+    return InitiateProbing(at_time_ms, {2 * bitrate_bps}, true);
   }
   return std::vector<ProbeClusterConfig>();
 }

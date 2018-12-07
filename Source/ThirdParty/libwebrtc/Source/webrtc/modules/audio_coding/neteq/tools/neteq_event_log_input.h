@@ -28,7 +28,7 @@ class RtcEventLogSource;
 class NetEqEventLogInput final : public NetEqPacketSourceInput {
  public:
   NetEqEventLogInput(const std::string& file_name,
-                     const RtpHeaderExtensionMap& hdr_ext_map);
+                     absl::optional<uint32_t> ssrc_filter);
 
   absl::optional<int64_t> NextOutputEventTime() const override;
   void AdvanceOutputEvent() override;

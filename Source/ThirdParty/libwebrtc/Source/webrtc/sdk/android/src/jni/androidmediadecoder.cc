@@ -35,7 +35,6 @@
 #include "third_party/libyuv/include/libyuv/video_common.h"
 
 using rtc::Bind;
-using rtc::Thread;
 using rtc::ThreadManager;
 namespace webrtc {
 namespace jni {
@@ -121,7 +120,7 @@ class MediaCodecVideoDecoder : public VideoDecoder, public rtc::MessageHandler {
 
   // State that is constant for the lifetime of this object once the ctor
   // returns.
-  std::unique_ptr<Thread>
+  std::unique_ptr<rtc::Thread>
       codec_thread_;  // Thread on which to operate MediaCodec.
   ScopedJavaGlobalRef<jobject> j_media_codec_video_decoder_;
 
@@ -137,7 +136,7 @@ MediaCodecVideoDecoder::MediaCodecVideoDecoder(JNIEnv* jni,
       inited_(false),
       sw_fallback_required_(false),
       use_surface_(use_surface),
-      codec_thread_(Thread::Create()),
+      codec_thread_(rtc::Thread::Create()),
       j_media_codec_video_decoder_(
           jni,
           Java_MediaCodecVideoDecoder_Constructor(jni)) {

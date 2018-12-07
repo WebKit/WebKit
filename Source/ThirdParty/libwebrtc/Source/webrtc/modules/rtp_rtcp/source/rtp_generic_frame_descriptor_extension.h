@@ -21,6 +21,7 @@ namespace webrtc {
 
 class RtpGenericFrameDescriptorExtension {
  public:
+  using value_type = RtpGenericFrameDescriptor;
   static constexpr RTPExtensionType kId = kRtpExtensionGenericFrameDescriptor;
   static constexpr char kUri[] =
       "http://www.webrtc.org/experiments/rtp-hdrext/"

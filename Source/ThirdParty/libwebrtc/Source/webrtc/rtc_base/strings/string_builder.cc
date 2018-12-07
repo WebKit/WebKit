@@ -10,6 +10,12 @@
 
 #include "rtc_base/strings/string_builder.h"
 
+#include <stdarg.h>
+#include <cstring>
+
+#include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_minmax.h"
+
 namespace rtc {
 
 SimpleStringBuilder::SimpleStringBuilder(rtc::ArrayView<char> buffer)

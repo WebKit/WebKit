@@ -1,0 +1,36 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
+index 44ec3f50c19..58b3345f9db 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/logging.cc
+@@ -75,7 +75,12 @@ CriticalSection& logCriticalScope() {
+ void LogSink::OnLogMessage(const std::string& msg,
+                            LoggingSeverity severity,
+                            const char* tag) {
+-  OnLogMessage(tag + (": " + msg));
++  OnLogMessage(tag + (": " + msg), severity);
++}
++
++void LogSink::OnLogMessage(const std::string& msg,
++                           LoggingSeverity /* severity */) {
++  OnLogMessage(msg);
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/task_queue_libevent.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/task_queue_libevent.cc
+index 905bbdac0e2..27b8801bb0d 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/task_queue_libevent.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/task_queue_libevent.cc
+@@ -22,7 +22,13 @@
+ #include <type_traits>
+ #include <utility>
+ 
++#if defined(WEBRTC_LINUX)
++#include <event2/event.h>
++#include <event2/event_compat.h>
++#include <event2/event_struct.h>
++#else
+ #include "base/third_party/libevent/event.h"
++#endif
+ #include "rtc_base/checks.h"
+ #include "rtc_base/criticalsection.h"
+ #include "rtc_base/logging.h"

@@ -15,7 +15,6 @@
 
 #include "media/base/fakevideocapturer.h"
 #include "media/base/fakevideorenderer.h"
-#include "media/base/testutils.h"
 #include "media/base/videocapturer.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"

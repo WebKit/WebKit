@@ -11,7 +11,14 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_CANCELLER3_H_
 
+#include <stddef.h>
+#include <memory>
+#include <vector>
+
+#include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
+#include "api/audio/echo_control.h"
+#include "modules/audio_processing/aec3/api_call_jitter_metrics.h"
 #include "modules/audio_processing/aec3/block_delay_buffer.h"
 #include "modules/audio_processing/aec3/block_framer.h"
 #include "modules/audio_processing/aec3/block_processor.h"
@@ -19,9 +26,11 @@
 #include "modules/audio_processing/aec3/frame_blocker.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/swap_queue.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -132,6 +141,7 @@ class EchoCanceller3 : public EchoControl {
   std::vector<rtc::ArrayView<float>> sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
   BlockDelayBuffer block_delay_buffer_ RTC_GUARDED_BY(capture_race_checker_);
+  ApiCallJitterMetrics api_call_metrics_ RTC_GUARDED_BY(capture_race_checker_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(EchoCanceller3);
 };

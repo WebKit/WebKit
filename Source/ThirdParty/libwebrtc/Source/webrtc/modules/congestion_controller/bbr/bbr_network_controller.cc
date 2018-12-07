@@ -401,16 +401,15 @@ bool BbrNetworkController::IsProbingForMoreBandwidth() const {
 
 NetworkControlUpdate BbrNetworkController::OnTransportPacketsFeedback(
     TransportPacketsFeedback msg) {
+  if (msg.packet_feedbacks.empty())
+    return NetworkControlUpdate();
+
   Timestamp feedback_recv_time = msg.feedback_time;
-  absl::optional<SentPacket> last_sent_packet =
-      msg.PacketsWithFeedback().back().sent_packet;
-  if (!last_sent_packet.has_value()) {
-    RTC_LOG(LS_WARNING) << "Last ack packet not in history, no RTT update";
-  } else {
-    Timestamp send_time = last_sent_packet->send_time;
-    TimeDelta send_delta = feedback_recv_time - send_time;
-    rtt_stats_.UpdateRtt(send_delta, TimeDelta::Zero(), feedback_recv_time);
-  }
+  SentPacket last_sent_packet = msg.PacketsWithFeedback().back().sent_packet;
+
+  Timestamp send_time = last_sent_packet.send_time;
+  TimeDelta send_delta = feedback_recv_time - send_time;
+  rtt_stats_.UpdateRtt(send_delta, TimeDelta::Zero(), feedback_recv_time);
 
   const DataSize total_data_acked_before = sampler_->total_data_acked();
 
@@ -431,7 +430,7 @@ NetworkControlUpdate BbrNetworkController::OnTransportPacketsFeedback(
   // Input the new data into the BBR model of the connection.
   if (!acked_packets.empty()) {
     int64_t last_acked_packet =
-        acked_packets.rbegin()->sent_packet->sequence_number;
+        acked_packets.rbegin()->sent_packet.sequence_number;
 
     is_round_start = UpdateRoundTripCounter(last_acked_packet);
     min_rtt_expired =
@@ -472,7 +471,7 @@ NetworkControlUpdate BbrNetworkController::OnTransportPacketsFeedback(
   DataSize data_acked = sampler_->total_data_acked() - total_data_acked_before;
   DataSize data_lost = DataSize::Zero();
   for (const PacketResult& packet : lost_packets) {
-    data_lost += packet.sent_packet->size;
+    data_lost += packet.sent_packet.size;
   }
 
   // After the model is updated, recalculate the pacing rate and congestion
@@ -483,7 +482,7 @@ NetworkControlUpdate BbrNetworkController::OnTransportPacketsFeedback(
   // Cleanup internal state.
   if (!acked_packets.empty()) {
     sampler_->RemoveObsoletePackets(
-        acked_packets.back().sent_packet->sequence_number);
+        acked_packets.back().sent_packet.sequence_number);
   }
   return CreateRateUpdate(msg.feedback_time);
 }
@@ -550,7 +549,7 @@ void BbrNetworkController::EnterProbeBandwidthMode(Timestamp now) {
 void BbrNetworkController::DiscardLostPackets(
     const std::vector<PacketResult>& lost_packets) {
   for (const PacketResult& packet : lost_packets) {
-    sampler_->OnPacketLost(packet.sent_packet->sequence_number);
+    sampler_->OnPacketLost(packet.sent_packet.sequence_number);
   }
 }
 
@@ -569,8 +568,8 @@ bool BbrNetworkController::UpdateBandwidthAndMinRtt(
     const std::vector<PacketResult>& acked_packets) {
   TimeDelta sample_rtt = TimeDelta::PlusInfinity();
   for (const auto& packet : acked_packets) {
-    BandwidthSample bandwidth_sample = sampler_->OnPacketAcknowledged(
-        now, packet.sent_packet->sequence_number);
+    BandwidthSample bandwidth_sample =
+        sampler_->OnPacketAcknowledged(now, packet.sent_packet.sequence_number);
     last_sample_is_app_limited_ = bandwidth_sample.is_app_limited;
     if (!bandwidth_sample.rtt.IsZero()) {
       sample_rtt = std::min(sample_rtt, bandwidth_sample.rtt);

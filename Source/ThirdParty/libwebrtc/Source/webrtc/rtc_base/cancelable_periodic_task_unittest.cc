@@ -68,7 +68,7 @@ TEST(CancelablePeriodicTaskTest, CanCallCancelOnEmptyHandle) {
 }
 
 TEST(CancelablePeriodicTaskTest, CancelTaskBeforeItRuns) {
-  rtc::Event done(false, false);
+  rtc::Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).Times(0);
   EXPECT_CALL(mock, Delete).WillOnce(Invoke([&done] { done.Set(); }));
@@ -84,7 +84,7 @@ TEST(CancelablePeriodicTaskTest, CancelTaskBeforeItRuns) {
 }
 
 TEST(CancelablePeriodicTaskTest, CancelDelayedTaskBeforeItRuns) {
-  rtc::Event done(false, false);
+  rtc::Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).Times(0);
   EXPECT_CALL(mock, Delete).WillOnce(Invoke([&done] { done.Set(); }));
@@ -100,7 +100,7 @@ TEST(CancelablePeriodicTaskTest, CancelDelayedTaskBeforeItRuns) {
 }
 
 TEST(CancelablePeriodicTaskTest, CancelTaskAfterItRuns) {
-  rtc::Event done(false, false);
+  rtc::Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).WillOnce(Return(100));
   EXPECT_CALL(mock, Delete).WillOnce(Invoke([&done] { done.Set(); }));
@@ -117,7 +117,7 @@ TEST(CancelablePeriodicTaskTest, CancelTaskAfterItRuns) {
 
 TEST(CancelablePeriodicTaskTest, ZeroReturnValueRepostsTheTask) {
   NiceMock<MockClosure> closure;
-  rtc::Event done(false, false);
+  rtc::Event done;
   EXPECT_CALL(closure, Call()).WillOnce(Return(0)).WillOnce(Invoke([&done] {
     done.Set();
     return kTimeoutMs;
@@ -130,7 +130,7 @@ TEST(CancelablePeriodicTaskTest, ZeroReturnValueRepostsTheTask) {
 
 TEST(CancelablePeriodicTaskTest, StartPeriodicTask) {
   MockFunction<int()> closure;
-  rtc::Event done(false, false);
+  rtc::Event done;
   EXPECT_CALL(closure, Call())
       .WillOnce(Return(20))
       .WillOnce(Return(20))
@@ -146,7 +146,7 @@ TEST(CancelablePeriodicTaskTest, StartPeriodicTask) {
 
 // Validates perfect forwarding doesn't keep reference to deleted copy.
 TEST(CancelablePeriodicTaskTest, CreateWithCopyOfAClosure) {
-  rtc::Event done(false, false);
+  rtc::Event done;
   MockClosure mock;
   EXPECT_CALL(mock, Call).WillOnce(Invoke([&done] {
     done.Set();
@@ -166,7 +166,7 @@ TEST(CancelablePeriodicTaskTest, CreateWithCopyOfAClosure) {
 }
 
 TEST(CancelablePeriodicTaskTest, DeletingHandleDoesntStopTheTask) {
-  rtc::Event run(false, false);
+  rtc::Event run;
   rtc::TaskQueue task_queue("queue");
   auto task = rtc::CreateCancelablePeriodicTask(([&] {
     run.Set();

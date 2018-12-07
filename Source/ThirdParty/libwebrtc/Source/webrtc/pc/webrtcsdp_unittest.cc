@@ -22,6 +22,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/messagedigest.h"
 #include "rtc_base/stringencode.h"
 #include "rtc_base/stringutils.h"
 
@@ -89,6 +90,7 @@ static const char kAttributeCryptoVideo[] =
 static const char kFingerprint[] =
     "a=fingerprint:sha-1 "
     "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
+static const char kExtmapAllowMixed[] = "a=extmap-allow-mixed\r\n";
 static const int kExtmapId = 1;
 static const char kExtmapUri[] = "http://example.com/082005/ext.htm#ttime";
 static const char kExtmap[] =
@@ -621,8 +623,8 @@ static const char kUnifiedPlanSdpFullStringWithSpecialMsid[] =
     "generation 2\r\n"
     "a=ice-ufrag:ufrag_voice\r\na=ice-pwd:pwd_voice\r\n"
     "a=mid:audio_content_name\r\n"
-    "a=msid:local_stream_1 audio_track_id_1\r\n"
     "a=sendrecv\r\n"
+    "a=msid:local_stream_1 audio_track_id_1\r\n"
     "a=rtcp-mux\r\n"
     "a=rtcp-rsize\r\n"
     "a=crypto:1 AES_CM_128_HMAC_SHA1_32 "
@@ -641,9 +643,9 @@ static const char kUnifiedPlanSdpFullStringWithSpecialMsid[] =
     "a=rtcp:9 IN IP4 0.0.0.0\r\n"
     "a=ice-ufrag:ufrag_voice_2\r\na=ice-pwd:pwd_voice_2\r\n"
     "a=mid:audio_content_name_2\r\n"
+    "a=sendrecv\r\n"
     "a=msid:local_stream_1 audio_track_id_2\r\n"
     "a=msid:local_stream_2 audio_track_id_2\r\n"
-    "a=sendrecv\r\n"
     "a=rtcp-mux\r\n"
     "a=rtcp-rsize\r\n"
     "a=crypto:1 AES_CM_128_HMAC_SHA1_32 "
@@ -664,8 +666,8 @@ static const char kUnifiedPlanSdpFullStringWithSpecialMsid[] =
     "a=rtcp:9 IN IP4 0.0.0.0\r\n"
     "a=ice-ufrag:ufrag_voice_3\r\na=ice-pwd:pwd_voice_3\r\n"
     "a=mid:audio_content_name_3\r\n"
-    "a=msid:- audio_track_id_3\r\n"
     "a=sendrecv\r\n"
+    "a=msid:- audio_track_id_3\r\n"
     "a=rtcp-mux\r\n"
     "a=rtcp-rsize\r\n"
     "a=crypto:1 AES_CM_128_HMAC_SHA1_32 "
@@ -674,7 +676,10 @@ static const char kUnifiedPlanSdpFullStringWithSpecialMsid[] =
     "a=rtpmap:111 opus/48000/2\r\n"
     "a=rtpmap:103 ISAC/16000\r\n"
     "a=rtpmap:104 ISAC/32000\r\n"
-    "a=ssrc:7 cname:stream_2_cname\r\n";
+    "a=ssrc:7 cname:stream_2_cname\r\n"
+    "a=ssrc:7 msid:- audio_track_id_3\r\n"
+    "a=ssrc:7 mslabel:-\r\n"
+    "a=ssrc:7 label:audio_track_id_3\r\n";
 
 // One candidate reference string as per W3c spec.
 // candidate:<blah> not a=candidate:<blah>CRLF
@@ -1160,7 +1165,7 @@ class WebRtcSdpTest : public testing::Test {
   // with 3 audio MediaContentDescriptions with special StreamParams that
   // contain 0 or multiple stream ids: - audio track 1 has 1 media stream id -
   // audio track 2 has 2 media stream ids - audio track 3 has 0 media stream ids
-  void MakeUnifiedPlanDescriptionMultipleStreamIds() {
+  void MakeUnifiedPlanDescriptionMultipleStreamIds(const int msid_signaling) {
     desc_.RemoveContentByName(kVideoContentName);
     desc_.RemoveTransportInfoByName(kVideoContentName);
     RemoveVideoCandidates();
@@ -1188,9 +1193,7 @@ class WebRtcSdpTest : public testing::Test {
     desc_.AddContent(kAudioContentName3, MediaProtocolType::kRtp, audio_desc_3);
     EXPECT_TRUE(desc_.AddTransportInfo(TransportInfo(
         kAudioContentName3, TransportDescription(kUfragVoice3, kPwdVoice3))));
-    // Make sure to create both a=msid lines.
-    desc_.set_msid_signaling(cricket::kMsidSignalingMediaSection |
-                             cricket::kMsidSignalingSsrcAttribute);
+    desc_.set_msid_signaling(msid_signaling);
     ASSERT_TRUE(jdesc_.Initialize(desc_.Copy(), jdesc_.session_id(),
                                   jdesc_.session_version()));
   }
@@ -1281,6 +1284,9 @@ class WebRtcSdpTest : public testing::Test {
 
     // streams
     EXPECT_EQ(cd1->streams(), cd2->streams());
+
+    // extmap-allow-mixed
+    EXPECT_EQ(cd1->extmap_allow_mixed_enum(), cd2->extmap_allow_mixed_enum());
 
     // extmap
     ASSERT_EQ(cd1->rtp_header_extensions().size(),
@@ -1398,6 +1404,7 @@ class WebRtcSdpTest : public testing::Test {
 
     // global attributes
     EXPECT_EQ(desc1.msid_supported(), desc2.msid_supported());
+    EXPECT_EQ(desc1.extmap_allow_mixed(), desc2.extmap_allow_mixed());
   }
 
   bool CompareSessionDescription(const JsepSessionDescription& desc1,
@@ -1495,8 +1502,7 @@ class WebRtcSdpTest : public testing::Test {
   void AddFingerprint() {
     desc_.RemoveTransportInfoByName(kAudioContentName);
     desc_.RemoveTransportInfoByName(kVideoContentName);
-    rtc::SSLFingerprint fingerprint(rtc::DIGEST_SHA_1, kIdentityDigest,
-                                    sizeof(kIdentityDigest));
+    rtc::SSLFingerprint fingerprint(rtc::DIGEST_SHA_1, kIdentityDigest);
     EXPECT_TRUE(desc_.AddTransportInfo(TransportInfo(
         kAudioContentName,
         TransportDescription(std::vector<std::string>(), kUfragVoice, kPwdVoice,
@@ -1537,6 +1543,27 @@ class WebRtcSdpTest : public testing::Test {
       stream.ssrcs.clear();
       stream.ssrc_groups.clear();
       stream.cname.clear();
+    }
+  }
+
+  // Removes all a=ssrc lines from the SDP string, except for the
+  // "a=ssrc:... cname:..." lines.
+  void RemoveSsrcMsidLinesFromSdpString(std::string* sdp_string) {
+    const char kAttributeSsrc[] = "a=ssrc";
+    const char kAttributeCname[] = "cname";
+    size_t ssrc_line_pos = sdp_string->find(kAttributeSsrc);
+    while (ssrc_line_pos != std::string::npos) {
+      size_t beg_line_pos = sdp_string->rfind('\n', ssrc_line_pos);
+      size_t end_line_pos = sdp_string->find('\n', ssrc_line_pos);
+      size_t cname_pos = sdp_string->find(kAttributeCname, ssrc_line_pos);
+      if (cname_pos == std::string::npos || cname_pos > end_line_pos) {
+        // Only erase a=ssrc lines that don't contain "cname".
+        sdp_string->erase(beg_line_pos, end_line_pos - beg_line_pos);
+        ssrc_line_pos = sdp_string->find(kAttributeSsrc, beg_line_pos);
+      } else {
+        // Skip the "a=ssrc:... cname" line and find the next "a=ssrc" line.
+        ssrc_line_pos = sdp_string->find(kAttributeSsrc, end_line_pos);
+      }
     }
   }
 
@@ -2070,9 +2097,8 @@ TEST_F(WebRtcSdpTest, SerializeWithSctpDataChannelAndNewPort) {
 
   char default_portstr[16];
   char new_portstr[16];
-  rtc::sprintfn(default_portstr, sizeof(default_portstr), "%d",
-                kDefaultSctpPort);
-  rtc::sprintfn(new_portstr, sizeof(new_portstr), "%d", kNewPort);
+  snprintf(default_portstr, sizeof(default_portstr), "%d", kDefaultSctpPort);
+  snprintf(new_portstr, sizeof(new_portstr), "%d", kNewPort);
   rtc::replace_substrs(default_portstr, strlen(default_portstr), new_portstr,
                        strlen(new_portstr), &expected_sdp);
 
@@ -2092,6 +2118,25 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithDataChannelAndBandwidth) {
   InjectAfter("m=application 9 RTP/SAVPF 101\r\nc=IN IP4 0.0.0.0\r\n",
               "b=AS:100\r\n", &expected_sdp);
   EXPECT_EQ(expected_sdp, message);
+}
+
+TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithExtmapAllowMixed) {
+  jdesc_.description()->set_extmap_allow_mixed(true);
+  TestSerialize(jdesc_);
+}
+
+TEST_F(WebRtcSdpTest, SerializeMediaContentDescriptionWithExtmapAllowMixed) {
+  cricket::MediaContentDescription* video_desc =
+      jdesc_.description()->GetContentDescriptionByName(kVideoContentName);
+  ASSERT_TRUE(video_desc);
+  cricket::MediaContentDescription* audio_desc =
+      jdesc_.description()->GetContentDescriptionByName(kAudioContentName);
+  ASSERT_TRUE(audio_desc);
+  video_desc->set_extmap_allow_mixed_enum(
+      cricket::MediaContentDescription::kMedia);
+  audio_desc->set_extmap_allow_mixed_enum(
+      cricket::MediaContentDescription::kMedia);
+  TestSerialize(jdesc_);
 }
 
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithExtmap) {
@@ -2429,6 +2474,53 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutMsid) {
   EXPECT_TRUE(SdpDeserialize(sdp_without_msid, &jdesc));
   // Verify
   EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc));
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithExtmapAllowMixed) {
+  jdesc_.description()->set_extmap_allow_mixed(true);
+  std::string sdp_with_extmap_allow_mixed = kSdpFullString;
+  InjectAfter("t=0 0\r\n", kExtmapAllowMixed, &sdp_with_extmap_allow_mixed);
+  // Deserialize
+  JsepSessionDescription jdesc_deserialized(kDummyType);
+  EXPECT_TRUE(SdpDeserialize(sdp_with_extmap_allow_mixed, &jdesc_deserialized));
+  // Verify
+  EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc_deserialized));
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutExtmapAllowMixed) {
+  jdesc_.description()->set_extmap_allow_mixed(false);
+  std::string sdp_without_extmap_allow_mixed = kSdpFullString;
+  // Deserialize
+  JsepSessionDescription jdesc_deserialized(kDummyType);
+  EXPECT_TRUE(
+      SdpDeserialize(sdp_without_extmap_allow_mixed, &jdesc_deserialized));
+  // Verify
+  EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc_deserialized));
+}
+
+TEST_F(WebRtcSdpTest, DeserializeMediaContentDescriptionWithExtmapAllowMixed) {
+  cricket::MediaContentDescription* video_desc =
+      jdesc_.description()->GetContentDescriptionByName(kVideoContentName);
+  ASSERT_TRUE(video_desc);
+  cricket::MediaContentDescription* audio_desc =
+      jdesc_.description()->GetContentDescriptionByName(kAudioContentName);
+  ASSERT_TRUE(audio_desc);
+  video_desc->set_extmap_allow_mixed_enum(
+      cricket::MediaContentDescription::kMedia);
+  audio_desc->set_extmap_allow_mixed_enum(
+      cricket::MediaContentDescription::kMedia);
+
+  std::string sdp_with_extmap_allow_mixed = kSdpFullString;
+  InjectAfter("a=mid:audio_content_name\r\n", kExtmapAllowMixed,
+              &sdp_with_extmap_allow_mixed);
+  InjectAfter("a=mid:video_content_name\r\n", kExtmapAllowMixed,
+              &sdp_with_extmap_allow_mixed);
+
+  // Deserialize
+  JsepSessionDescription jdesc_deserialized(kDummyType);
+  EXPECT_TRUE(SdpDeserialize(sdp_with_extmap_allow_mixed, &jdesc_deserialized));
+  // Verify
+  EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc_deserialized));
 }
 
 TEST_F(WebRtcSdpTest, DeserializeCandidate) {
@@ -3362,12 +3454,16 @@ TEST_F(WebRtcSdpTest, SerializeUnifiedPlanSessionDescription) {
 }
 
 // This tests deserializing a Unified Plan SDP that is compatible with both
-// Unified Plan and Plan B style SDP. It tests the case for audio/video tracks
+// Unified Plan and Plan B style SDP, meaning that it contains both "a=ssrc
+// msid" lines and "a=msid " lines. It tests the case for audio/video tracks
 // with no stream ids and multiple stream ids. For parsing this, the Unified
 // Plan a=msid lines should take priority, because the Plan B style a=ssrc msid
 // lines do not support multiple stream ids and no stream ids.
-TEST_F(WebRtcSdpTest, DeserializeUnifiedPlanSessionDescriptionSpecialMsid) {
-  MakeUnifiedPlanDescriptionMultipleStreamIds();
+TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionSpecialMsid) {
+  // Create both msid lines for Plan B and Unified Plan support.
+  MakeUnifiedPlanDescriptionMultipleStreamIds(
+      cricket::kMsidSignalingMediaSection |
+      cricket::kMsidSignalingSsrcAttribute);
 
   JsepSessionDescription deserialized_description(kDummyType);
   EXPECT_TRUE(SdpDeserialize(kUnifiedPlanSdpFullStringWithSpecialMsid,
@@ -3376,8 +3472,50 @@ TEST_F(WebRtcSdpTest, DeserializeUnifiedPlanSessionDescriptionSpecialMsid) {
   EXPECT_TRUE(CompareSessionDescription(jdesc_, deserialized_description));
 }
 
-TEST_F(WebRtcSdpTest, SerializeUnifiedPlanSessionDescriptionSpecialMsid) {
-  MakeUnifiedPlanDescriptionMultipleStreamIds();
+// Tests the serialization of a Unified Plan SDP that is compatible for both
+// Unified Plan and Plan B style SDPs, meaning that it contains both "a=ssrc
+// msid" lines and "a=msid " lines. It tests the case for no stream ids and
+// multiple stream ids.
+TEST_F(WebRtcSdpTest, SerializeSessionDescriptionSpecialMsid) {
+  // Create both msid lines for Plan B and Unified Plan support.
+  MakeUnifiedPlanDescriptionMultipleStreamIds(
+      cricket::kMsidSignalingMediaSection |
+      cricket::kMsidSignalingSsrcAttribute);
+  std::string serialized_sdp = webrtc::SdpSerialize(jdesc_);
+  // We explicitly test that the serialized SDP string is equal to the hard
+  // coded SDP string. This is necessary, because in the parser "a=msid" lines
+  // take priority over "a=ssrc msid" lines. This means if we just used
+  // TestSerialize(), it could serialize an SDP that omits "a=ssrc msid" lines,
+  // and still pass, because the deserialized version would be the same.
+  EXPECT_EQ(kUnifiedPlanSdpFullStringWithSpecialMsid, serialized_sdp);
+}
+
+// Tests that a Unified Plan style SDP (does not contain "a=ssrc msid" lines
+// that signal stream IDs) is deserialized appropriately. It tests the case for
+// no stream ids and multiple stream ids.
+TEST_F(WebRtcSdpTest, UnifiedPlanDeserializeSessionDescriptionSpecialMsid) {
+  // Only create a=msid lines for strictly Unified Plan stream ID support.
+  MakeUnifiedPlanDescriptionMultipleStreamIds(
+      cricket::kMsidSignalingMediaSection);
+
+  JsepSessionDescription deserialized_description(kDummyType);
+  std::string unified_plan_sdp_string =
+      kUnifiedPlanSdpFullStringWithSpecialMsid;
+  RemoveSsrcMsidLinesFromSdpString(&unified_plan_sdp_string);
+  EXPECT_TRUE(
+      SdpDeserialize(unified_plan_sdp_string, &deserialized_description));
+
+  EXPECT_TRUE(CompareSessionDescription(jdesc_, deserialized_description));
+}
+
+// Tests that a Unified Plan style SDP (does not contain "a=ssrc msid" lines
+// that signal stream IDs) is serialized appropriately. It tests the case for no
+// stream ids and multiple stream ids.
+TEST_F(WebRtcSdpTest, UnifiedPlanSerializeSessionDescriptionSpecialMsid) {
+  // Only create a=msid lines for strictly Unified Plan stream ID support.
+  MakeUnifiedPlanDescriptionMultipleStreamIds(
+      cricket::kMsidSignalingMediaSection);
+
   TestSerialize(jdesc_);
 }
 

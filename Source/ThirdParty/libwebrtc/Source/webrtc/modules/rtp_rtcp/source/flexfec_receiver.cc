@@ -10,6 +10,9 @@
 
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
 
+#include <string.h>
+
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/scoped_ref_ptr.h"

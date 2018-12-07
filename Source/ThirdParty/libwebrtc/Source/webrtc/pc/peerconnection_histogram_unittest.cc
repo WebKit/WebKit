@@ -251,6 +251,7 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
       return nullptr;
     }
 
+    observer->SetPeerConnectionInterface(pc.get());
     auto wrapper =
         absl::make_unique<PeerConnectionWrapperForUsageHistogramTest>(
             pc_factory, pc, std::move(observer));

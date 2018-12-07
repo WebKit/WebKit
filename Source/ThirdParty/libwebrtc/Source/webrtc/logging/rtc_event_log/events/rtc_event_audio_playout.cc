@@ -27,8 +27,9 @@ bool RtcEventAudioPlayout::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventAudioPlayout::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventAudioPlayout(*this));
+std::unique_ptr<RtcEventAudioPlayout> RtcEventAudioPlayout::Copy() const {
+  return absl::WrapUnique<RtcEventAudioPlayout>(
+      new RtcEventAudioPlayout(*this));
 }
 
 }  // namespace webrtc

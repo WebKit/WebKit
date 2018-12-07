@@ -32,11 +32,7 @@ class VideoCodecUnitTest : public ::testing::Test {
   VideoCodecUnitTest()
       : encode_complete_callback_(this),
         decode_complete_callback_(this),
-        encoded_frame_event_(false /* manual reset */,
-                             false /* initially signaled */),
         wait_for_encoded_frames_threshold_(1),
-        decoded_frame_event_(false /* manual reset */,
-                             false /* initially signaled */),
         last_input_frame_timestamp_(0) {}
 
  protected:

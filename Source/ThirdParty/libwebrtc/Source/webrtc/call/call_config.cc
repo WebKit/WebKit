@@ -10,6 +10,8 @@
 
 #include "call/call_config.h"
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 CallConfig::CallConfig(RtcEventLog* event_log) : event_log(event_log) {

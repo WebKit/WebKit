@@ -96,7 +96,7 @@ static void FindInvArSpec(const int16_t* ARCoefQ12,
                           const int32_t gainQ10,
                           int32_t* CurveQ16) {
   int32_t CorrQ11[AR_ORDER + 1];
-  int32_t sum, tmpGain;
+  int64_t sum, tmpGain;
   int32_t diffQ16[FRAMESAMPLES / 8];
   const int16_t* CS_ptrQ9;
   int k, n;

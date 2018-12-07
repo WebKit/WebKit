@@ -13,7 +13,6 @@
 
 #include <openssl/ossl_typ.h>
 #include <string>
-#include "rtc_base/sslcertificate.h"
 
 namespace rtc {
 // The openssl namespace holds static helper methods. All methods related

@@ -12,13 +12,12 @@
 #ifndef COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
 #define COMMON_VIDEO_H264_SPS_VUI_REWRITER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 #include "common_video/h264/sps_parser.h"
 #include "rtc_base/buffer.h"
-
-namespace rtc {
-class BitBuffer;
-}
 
 namespace webrtc {
 

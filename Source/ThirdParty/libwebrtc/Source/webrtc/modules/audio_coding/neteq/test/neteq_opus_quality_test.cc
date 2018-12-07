@@ -22,24 +22,26 @@ namespace {
 static const int kOpusBlockDurationMs = 20;
 static const int kOpusSamplingKhz = 48;
 
-DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
+WEBRTC_DEFINE_int(bit_rate_kbps, 32, "Target bit rate (kbps).");
 
-DEFINE_int(complexity,
-           10,
-           "Complexity: 0 ~ 10 -- defined as in Opus"
-           "specification.");
+WEBRTC_DEFINE_int(complexity,
+                  10,
+                  "Complexity: 0 ~ 10 -- defined as in Opus"
+                  "specification.");
 
-DEFINE_int(maxplaybackrate, 48000, "Maximum playback rate (Hz).");
+WEBRTC_DEFINE_int(maxplaybackrate, 48000, "Maximum playback rate (Hz).");
 
-DEFINE_int(application, 0, "Application mode: 0 -- VOIP, 1 -- Audio.");
+WEBRTC_DEFINE_int(application, 0, "Application mode: 0 -- VOIP, 1 -- Audio.");
 
-DEFINE_int(reported_loss_rate, 10, "Reported percentile of packet loss.");
+WEBRTC_DEFINE_int(reported_loss_rate,
+                  10,
+                  "Reported percentile of packet loss.");
 
-DEFINE_bool(fec, false, "Enable FEC for encoding (-nofec to disable).");
+WEBRTC_DEFINE_bool(fec, false, "Enable FEC for encoding (-nofec to disable).");
 
-DEFINE_bool(dtx, false, "Enable DTX for encoding (-nodtx to disable).");
+WEBRTC_DEFINE_bool(dtx, false, "Enable DTX for encoding (-nodtx to disable).");
 
-DEFINE_int(sub_packets, 1, "Number of sub packets to repacketize.");
+WEBRTC_DEFINE_int(sub_packets, 1, "Number of sub packets to repacketize.");
 
 }  // namespace
 

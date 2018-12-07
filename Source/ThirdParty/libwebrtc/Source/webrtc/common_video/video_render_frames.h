@@ -11,8 +11,8 @@
 #ifndef COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
 #define COMMON_VIDEO_VIDEO_RENDER_FRAMES_H_
 
+#include <stddef.h>
 #include <stdint.h>
-
 #include <list>
 
 #include "absl/types/optional.h"

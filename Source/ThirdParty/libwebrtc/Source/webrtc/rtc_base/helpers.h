@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_HELPERS_H_
 #define RTC_BASE_HELPERS_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
 namespace rtc {

@@ -18,7 +18,7 @@
 #include <utility>
 
 #include "p2p/base/basicpacketsocketfactory.h"
-#include "p2p/base/udptransport.h"
+#include "rtc_base/asyncpacketsocket.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_tools/network_tester/packet_logger.h"
@@ -60,7 +60,7 @@ class TestController : public sigslot::has_slots<> {
                     const char* data,
                     size_t len,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time);
+                    const int64_t& packet_time_us);
   rtc::ThreadChecker test_controller_thread_checker_;
   rtc::SequencedTaskChecker packet_sender_checker_;
   rtc::BasicPacketSocketFactory socket_factory_;
@@ -70,7 +70,8 @@ class TestController : public sigslot::has_slots<> {
   bool local_test_done_ RTC_GUARDED_BY(local_test_done_lock_);
   bool remote_test_done_;
   std::array<char, kEthernetMtu> send_data_;
-  std::unique_ptr<cricket::UdpTransport> udp_transport_;
+  std::unique_ptr<rtc::AsyncPacketSocket> udp_socket_;
+  rtc::SocketAddress remote_address_;
   std::unique_ptr<PacketSender> packet_sender_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(TestController);

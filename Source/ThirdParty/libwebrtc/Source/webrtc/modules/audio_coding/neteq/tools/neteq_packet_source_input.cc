@@ -58,15 +58,10 @@ std::unique_ptr<NetEqInput::PacketData> NetEqPacketSourceInput::PopPacket() {
   return packet_data;
 }
 
-void NetEqPacketSourceInput::SelectSsrc(uint32_t ssrc) {
-  source()->SelectSsrc(ssrc);
-  if (packet_ && packet_->header().ssrc != ssrc)
-    LoadNextPacket();
-}
-
 NetEqRtpDumpInput::NetEqRtpDumpInput(const std::string& file_name,
-                                     const RtpHeaderExtensionMap& hdr_ext_map)
-    : source_(RtpFileSource::Create(file_name)) {
+                                     const RtpHeaderExtensionMap& hdr_ext_map,
+                                     absl::optional<uint32_t> ssrc_filter)
+    : source_(RtpFileSource::Create(file_name, ssrc_filter)) {
   for (const auto& ext_pair : hdr_ext_map) {
     source_->RegisterRtpHeaderExtension(ext_pair.second, ext_pair.first);
   }

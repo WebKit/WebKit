@@ -19,10 +19,14 @@
 #include <emmintrin.h>
 #endif
 #include <algorithm>
+#include <cstddef>
+#include <initializer_list>
+#include <iterator>
 #include <numeric>
 
-#include "api/audio/echo_canceller3_config.h"
+#include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {

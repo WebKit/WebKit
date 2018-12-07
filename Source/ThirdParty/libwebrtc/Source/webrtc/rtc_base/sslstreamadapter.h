@@ -70,34 +70,6 @@ bool IsGcmCryptoSuite(int crypto_suite);
 // Returns true if the given crypto suite name uses a GCM cipher.
 bool IsGcmCryptoSuiteName(const std::string& crypto_suite);
 
-struct CryptoOptions {
-  CryptoOptions() {}
-
-  // Helper method to return an instance of the CryptoOptions with GCM crypto
-  // suites disabled. This method should be used instead of depending on current
-  // default values set by the constructor.
-  static CryptoOptions NoGcm();
-
-  // Enable GCM crypto suites from RFC 7714 for SRTP. GCM will only be used
-  // if both sides enable it.
-  bool enable_gcm_crypto_suites = false;
-
-  // If set to true, the (potentially insecure) crypto cipher
-  // SRTP_AES128_CM_SHA1_32 will be included in the list of supported ciphers
-  // during negotiation. It will only be used if both peers support it and no
-  // other ciphers get preferred.
-  bool enable_aes128_sha1_32_crypto_cipher = false;
-
-  // If set to true, encrypted RTP header extensions as defined in RFC 6904
-  // will be negotiated. They will only be used if both peers support them.
-  bool enable_encrypted_rtp_header_extensions = false;
-};
-
-// Returns supported crypto suites, given |crypto_options|.
-// CS_AES_CM_128_HMAC_SHA1_32 will be preferred by default.
-std::vector<int> GetSupportedDtlsSrtpCryptoSuites(
-    const rtc::CryptoOptions& crypto_options);
-
 // SSLStreamAdapter : A StreamInterfaceAdapter that does SSL/TLS.
 // After SSL has been started, the stream will only open on successful
 // SSL verification of certificates, and the communication is
@@ -143,12 +115,6 @@ class SSLStreamAdapter : public StreamAdapterInterface {
 
   explicit SSLStreamAdapter(StreamInterface* stream);
   ~SSLStreamAdapter() override;
-
-  void set_ignore_bad_cert(bool ignore) { ignore_bad_cert_ = ignore; }
-  bool ignore_bad_cert() const { return ignore_bad_cert_; }
-
-  void set_client_auth_enabled(bool enabled) { client_auth_enabled_ = enabled; }
-  bool client_auth_enabled() const { return client_auth_enabled_; }
 
   // Specify our SSL identity: key and certificate. SSLStream takes ownership
   // of the SSLIdentity object and will free it when appropriate. Should be
@@ -263,22 +229,32 @@ class SSLStreamAdapter : public StreamAdapterInterface {
   // depending on specific SSL implementation.
   static std::string SslCipherSuiteToName(int cipher_suite);
 
+  ////////////////////////////////////////////////////////////////////////////
+  // Testing only member functions
+  ////////////////////////////////////////////////////////////////////////////
+
   // Use our timeutils.h source of timing in BoringSSL, allowing us to test
   // using a fake clock.
-  static void enable_time_callback_for_testing();
+  static void EnableTimeCallbackForTesting();
+
+  // Deprecated. Do not use this API outside of testing.
+  // Do not set this to false outside of testing.
+  void SetClientAuthEnabledForTesting(bool enabled) {
+    client_auth_enabled_ = enabled;
+  }
+
+  // Deprecated. Do not use this API outside of testing.
+  // Returns true by default, else false if explicitly set to disable client
+  // authentication.
+  bool GetClientAuthEnabled() const { return client_auth_enabled_; }
 
   sigslot::signal1<SSLHandshakeError> SignalSSLHandshakeError;
 
  private:
-  // If true, the server certificate need not match the configured
-  // server_name, and in fact missing certificate authority and other
-  // verification errors are ignored.
-  bool ignore_bad_cert_;
-
   // If true (default), the client is required to provide a certificate during
   // handshake. If no certificate is given, handshake fails. This applies to
   // server mode only.
-  bool client_auth_enabled_;
+  bool client_auth_enabled_ = true;
 };
 
 }  // namespace rtc

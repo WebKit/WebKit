@@ -14,13 +14,10 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/nethelpers.h"
-#include "rtc_base/stringutils.h"
 
 #ifdef WIN32
 #include "rtc_base/win32socketserver.h"
 #endif
-
-using rtc::sprintfn;
 
 namespace {
 
@@ -136,7 +133,7 @@ void PeerConnectionClient::DoConnect() {
   hanging_get_.reset(CreateClientSocket(server_address_.ipaddr().family()));
   InitSocketSignals();
   char buffer[1024];
-  sprintfn(buffer, sizeof(buffer), "GET /sign_in?%s HTTP/1.0\r\n\r\n",
+  snprintf(buffer, sizeof(buffer), "GET /sign_in?%s HTTP/1.0\r\n\r\n",
            client_name_.c_str());
   onconnect_data_ = buffer;
 
@@ -158,9 +155,9 @@ bool PeerConnectionClient::SendToPeer(int peer_id, const std::string& message) {
     return false;
 
   char headers[1024];
-  sprintfn(headers, sizeof(headers),
+  snprintf(headers, sizeof(headers),
            "POST /message?peer_id=%i&to=%i HTTP/1.0\r\n"
-           "Content-Length: %i\r\n"
+           "Content-Length: %zu\r\n"
            "Content-Type: text/plain\r\n"
            "\r\n",
            my_id_, peer_id, message.length());
@@ -190,7 +187,7 @@ bool PeerConnectionClient::SignOut() {
 
     if (my_id_ != -1) {
       char buffer[1024];
-      sprintfn(buffer, sizeof(buffer),
+      snprintf(buffer, sizeof(buffer),
                "GET /sign_out?peer_id=%i HTTP/1.0\r\n\r\n", my_id_);
       onconnect_data_ = buffer;
       return ConnectControlSocket();
@@ -237,7 +234,7 @@ void PeerConnectionClient::OnConnect(rtc::AsyncSocket* socket) {
 
 void PeerConnectionClient::OnHangingGetConnect(rtc::AsyncSocket* socket) {
   char buffer[1024];
-  sprintfn(buffer, sizeof(buffer), "GET /wait?peer_id=%i HTTP/1.0\r\n\r\n",
+  snprintf(buffer, sizeof(buffer), "GET /wait?peer_id=%i HTTP/1.0\r\n\r\n",
            my_id_);
   int len = static_cast<int>(strlen(buffer));
   int sent = socket->Send(buffer, len);

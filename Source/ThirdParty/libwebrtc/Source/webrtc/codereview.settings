@@ -1,5 +1,4 @@
 # This file is used by git-cl to get repository specific information.
-CC_LIST: webrtc-reviews@webrtc.org
 CODE_REVIEW_SERVER: codereview.webrtc.org
 GERRIT_HOST: True
 PROJECT: webrtc

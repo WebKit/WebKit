@@ -10,25 +10,25 @@
 
 #include "rtc_base/openssladapter.h"
 
-#if defined(WEBRTC_POSIX)
-#include <unistd.h>
-#endif
+#include <errno.h>
 
 #include <openssl/bio.h>
-#include <openssl/crypto.h>
 #include <openssl/err.h>
-#include <openssl/opensslv.h>
 #include <openssl/rand.h>
 #include <openssl/x509.h>
-#include <openssl/x509v3.h>
 #include "rtc_base/openssl.h"
 
+#include <string.h>
+#include <time.h>
+
+#include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
+#include "rtc_base/opensslcertificate.h"
 #include "rtc_base/opensslutility.h"
 #include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/thread.h"
 
 #ifndef OPENSSL_IS_BORINGSSL
@@ -392,15 +392,17 @@ int OpenSSLAdapter::BeginSSL() {
 
   // Do the connect.
   err = ContinueSSL();
-  if (err != 0)
+  if (err != 0) {
     goto ssl_error;
+  }
 
   return err;
 
 ssl_error:
   Cleanup();
-  if (bio)
+  if (bio) {
     BIO_free(bio);
+  }
 
   return err;
 }
@@ -424,14 +426,13 @@ int OpenSSLAdapter::ContinueSSL() {
 
       state_ = SSL_CONNECTED;
       AsyncSocketAdapter::OnConnectEvent(this);
-#if 0  // TODO(benwright): worry about this
-    // Don't let ourselves go away during the callbacks
-    PRefPtr<OpenSSLAdapter> lock(this);
-    RTC_LOG(LS_INFO) << " -- onStreamReadable";
-    AsyncSocketAdapter::OnReadEvent(this);
-    RTC_LOG(LS_INFO) << " -- onStreamWriteable";
-    AsyncSocketAdapter::OnWriteEvent(this);
-#endif
+      // TODO(benwright): Refactor this code path.
+      // Don't let ourselves go away during the callbacks
+      // PRefPtr<OpenSSLAdapter> lock(this);
+      // RTC_LOG(LS_INFO) << " -- onStreamReadable";
+      // AsyncSocketAdapter::OnReadEvent(this);
+      // RTC_LOG(LS_INFO) << " -- onStreamWriteable";
+      // AsyncSocketAdapter::OnWriteEvent(this);
       break;
 
     case SSL_ERROR_WANT_READ:
@@ -462,8 +463,9 @@ void OpenSSLAdapter::Error(const char* context, int err, bool signal) {
                       << ")";
   state_ = SSL_ERROR;
   SetError(err);
-  if (signal)
+  if (signal) {
     AsyncSocketAdapter::OnCloseEvent(this, err);
+  }
 }
 
 void OpenSSLAdapter::Cleanup() {
@@ -528,23 +530,20 @@ int OpenSSLAdapter::DoSslWrite(const void* pv, size_t cb, int* error) {
   return SOCKET_ERROR;
 }
 
-//
+///////////////////////////////////////////////////////////////////////////////
 // AsyncSocket Implementation
-//
+///////////////////////////////////////////////////////////////////////////////
 
 int OpenSSLAdapter::Send(const void* pv, size_t cb) {
   switch (state_) {
     case SSL_NONE:
       return AsyncSocketAdapter::Send(pv, cb);
-
     case SSL_WAIT:
     case SSL_CONNECTING:
       SetError(ENOTCONN);
       return SOCKET_ERROR;
-
     case SSL_CONNECTED:
       break;
-
     case SSL_ERROR:
     default:
       return SOCKET_ERROR;
@@ -567,8 +566,9 @@ int OpenSSLAdapter::Send(const void* pv, size_t cb) {
   }
 
   // OpenSSL will return an error if we try to write zero bytes
-  if (cb == 0)
+  if (cb == 0) {
     return 0;
+  }
 
   ret = DoSslWrite(pv, cb, &error);
 
@@ -595,7 +595,6 @@ int OpenSSLAdapter::Send(const void* pv, size_t cb) {
     // size. The user of this class can consider it sent.
     return rtc::dchecked_cast<int>(cb);
   }
-
   return ret;
 }
 
@@ -608,7 +607,6 @@ int OpenSSLAdapter::SendTo(const void* pv,
   }
 
   SetError(ENOTCONN);
-
   return SOCKET_ERROR;
 }
 
@@ -616,28 +614,26 @@ int OpenSSLAdapter::Recv(void* pv, size_t cb, int64_t* timestamp) {
   switch (state_) {
     case SSL_NONE:
       return AsyncSocketAdapter::Recv(pv, cb, timestamp);
-
     case SSL_WAIT:
     case SSL_CONNECTING:
       SetError(ENOTCONN);
       return SOCKET_ERROR;
-
     case SSL_CONNECTED:
       break;
-
     case SSL_ERROR:
     default:
       return SOCKET_ERROR;
   }
 
   // Don't trust OpenSSL with zero byte reads
-  if (cb == 0)
+  if (cb == 0) {
     return 0;
+  }
 
   ssl_read_needs_write_ = false;
-
   int code = SSL_read(ssl_, pv, checked_cast<int>(cb));
   int error = SSL_get_error(ssl_, code);
+
   switch (error) {
     case SSL_ERROR_NONE:
       return code;
@@ -660,7 +656,6 @@ int OpenSSLAdapter::Recv(void* pv, size_t cb, int64_t* timestamp) {
       Error("SSL_read", (code ? code : -1), false);
       break;
   }
-
   return SOCKET_ERROR;
 }
 
@@ -670,14 +665,11 @@ int OpenSSLAdapter::RecvFrom(void* pv,
                              int64_t* timestamp) {
   if (socket_->GetState() == Socket::CS_CONNECTED) {
     int ret = Recv(pv, cb, timestamp);
-
     *paddr = GetRemoteAddress();
-
     return ret;
   }
 
   SetError(ENOTCONN);
-
   return SOCKET_ERROR;
 }
 
@@ -688,12 +680,11 @@ int OpenSSLAdapter::Close() {
 }
 
 Socket::ConnState OpenSSLAdapter::GetState() const {
-  // if (signal_close_)
-  //  return CS_CONNECTED;
   ConnState state = socket_->GetState();
   if ((state == CS_CONNECTED) &&
-      ((state_ == SSL_WAIT) || (state_ == SSL_CONNECTING)))
+      ((state_ == SSL_WAIT) || (state_ == SSL_CONNECTING))) {
     state = CS_CONNECTING;
+  }
   return state;
 }
 
@@ -736,8 +727,9 @@ void OpenSSLAdapter::OnReadEvent(AsyncSocket* socket) {
     return;
   }
 
-  if (state_ != SSL_CONNECTED)
+  if (state_ != SSL_CONNECTED) {
     return;
+  }
 
   // Don't let ourselves go away during the callbacks
   // PRefPtr<OpenSSLAdapter> lock(this); // TODO(benwright): fix this
@@ -761,8 +753,9 @@ void OpenSSLAdapter::OnWriteEvent(AsyncSocket* socket) {
     return;
   }
 
-  if (state_ != SSL_CONNECTED)
+  if (state_ != SSL_CONNECTED) {
     return;
+  }
 
   // Don't let ourselves go away during the callbacks
   // PRefPtr<OpenSSLAdapter> lock(this); // TODO(benwright): fix this

@@ -13,6 +13,7 @@
 
 #include <limits>
 #include <string>
+#include <type_traits>
 
 #include "absl/types/optional.h"
 

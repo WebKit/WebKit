@@ -11,6 +11,7 @@
 #ifndef COMMON_AUDIO_FIR_FILTER_SSE_H_
 #define COMMON_AUDIO_FIR_FILTER_SSE_H_
 
+#include <stddef.h>
 #include <memory>
 
 #include "common_audio/fir_filter.h"

@@ -32,7 +32,7 @@ class MockLibvpxVp8Interface : public LibvpxInterface {
                                   unsigned int,
                                   unsigned int,
                                   unsigned char*));
-  MOCK_CONST_METHOD1(img_free, vpx_codec_err_t(const vpx_codec_enc_cfg_t*));
+  MOCK_CONST_METHOD1(img_free, void(vpx_image_t* img));
   MOCK_CONST_METHOD2(codec_enc_config_set,
                      vpx_codec_err_t(vpx_codec_ctx_t*,
                                      const vpx_codec_enc_cfg_t*));
@@ -84,7 +84,7 @@ class MockLibvpxVp8Interface : public LibvpxInterface {
                                      uint64_t,
                                      vpx_enc_frame_flags_t,
                                      uint64_t));
-  MOCK_CONST_METHOD3(codec_get_cx_data,
+  MOCK_CONST_METHOD2(codec_get_cx_data,
                      const vpx_codec_cx_pkt_t*(vpx_codec_ctx_t*,
                                                vpx_codec_iter_t*));
 };

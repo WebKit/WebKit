@@ -42,6 +42,7 @@ rtc_source_set("rtc_event_log_api") {
     "../rtc_base:ptr_util",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
@@ -53,7 +54,6 @@ rtc_source_set("rtc_stream_config") {
 
   deps = [
     ":rtc_event_log_api",
-    "..:webrtc_common",
     "../api:libjingle_peerconnection_api",
   ]
 }
@@ -87,6 +87,7 @@ rtc_source_set("rtc_event_audio") {
     ":rtc_event_log_api",
     ":rtc_stream_config",
     "../modules/audio_coding:audio_network_adaptor_config",
+    "../rtc_base:checks",
     "../rtc_base:ptr_util",
     "//third_party/abseil-cpp/absl/memory",
   ]
@@ -130,6 +131,7 @@ rtc_source_set("rtc_event_rtp_rtcp") {
     ":rtc_event_log_api",
     "../api:array_view",
     "../modules/rtp_rtcp:rtp_rtcp_format",
+    "../rtc_base:checks",
     "../rtc_base:ptr_util",
     "../rtc_base:rtc_base_approved",
     "//third_party/abseil-cpp/absl/memory",
@@ -147,40 +149,62 @@ rtc_source_set("rtc_event_video") {
   deps = [
     ":rtc_event_log_api",
     ":rtc_stream_config",
+    "../rtc_base:checks",
     "../rtc_base:ptr_util",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
 
+# TODO(eladalon): Break down into (1) encoder and (2) decoder; we don't need
+# the decoder code in the WebRTC library, only in unit tests and tools.
 rtc_static_library("rtc_event_log_impl_encoder") {
   visibility = [ "*" ]
   sources = [
-    "rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc",
-    "rtc_event_log/encoder/rtc_event_log_encoder_legacy.h",
+    "rtc_event_log/encoder/blob_encoding.cc",
+    "rtc_event_log/encoder/blob_encoding.h",
+    "rtc_event_log/encoder/delta_encoding.cc",
+    "rtc_event_log/encoder/delta_encoding.h",
+    "rtc_event_log/encoder/rtc_event_log_encoder_common.cc",
+    "rtc_event_log/encoder/rtc_event_log_encoder_common.h",
+    "rtc_event_log/encoder/varint.cc",
+    "rtc_event_log/encoder/varint.h",
   ]
 
   defines = []
 
   deps = [
-    ":ice_log",
-    ":rtc_event_audio",
-    ":rtc_event_bwe",
-    ":rtc_event_log_api",
-    ":rtc_event_log_impl_output",
-    ":rtc_event_pacing",
-    ":rtc_event_rtp_rtcp",
-    ":rtc_event_video",
-    ":rtc_stream_config",
-    "../modules/audio_coding:audio_network_adaptor",
-    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
-    "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 
   if (rtc_enable_protobuf) {
     defines += [ "ENABLE_RTC_EVENT_LOG" ]
-    deps += [ ":rtc_event_log_proto" ]
+    deps += [
+      ":ice_log",
+      ":rtc_event_audio",
+      ":rtc_event_bwe",
+      ":rtc_event_log2_proto",
+      ":rtc_event_log_api",
+      ":rtc_event_log_impl_output",
+      ":rtc_event_log_proto",
+      ":rtc_event_pacing",
+      ":rtc_event_rtp_rtcp",
+      ":rtc_event_video",
+      ":rtc_stream_config",
+      "../api:array_view",
+      "../modules/audio_coding:audio_network_adaptor",
+      "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
+      "../modules/rtp_rtcp:rtp_rtcp_format",
+    ]
+    sources += [
+      "rtc_event_log/encoder/rtc_event_log_encoder_legacy.cc",
+      "rtc_event_log/encoder/rtc_event_log_encoder_legacy.h",
+      "rtc_event_log/encoder/rtc_event_log_encoder_new_format.cc",
+      "rtc_event_log/encoder/rtc_event_log_encoder_new_format.h",
+    ]
   }
 }
 
@@ -211,8 +235,7 @@ rtc_static_library("rtc_event_log_impl_base") {
   deps = [
     ":ice_log",
     ":rtc_event_log_api",
-    ":rtc_event_log_impl_encoder",
-    ":rtc_event_log_impl_output",
+    "../api:libjingle_logging_api",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:rtc_task_queue",
@@ -223,7 +246,7 @@ rtc_static_library("rtc_event_log_impl_base") {
 
   if (rtc_enable_protobuf) {
     defines += [ "ENABLE_RTC_EVENT_LOG" ]
-    deps += [ ":rtc_event_log_proto" ]
+    deps += [ ":rtc_event_log_impl_encoder" ]
   }
 }
 
@@ -246,6 +269,7 @@ rtc_source_set("fake_rtc_event_log") {
 
 if (rtc_enable_protobuf) {
   proto_library("rtc_event_log_proto") {
+    visibility = [ "*" ]
     sources = [
       "rtc_event_log/rtc_event_log.proto",
     ]
@@ -253,6 +277,7 @@ if (rtc_enable_protobuf) {
   }
 
   proto_library("rtc_event_log2_proto") {
+    visibility = [ "*" ]
     sources = [
       "rtc_event_log/rtc_event_log2.proto",
     ]
@@ -262,8 +287,6 @@ if (rtc_enable_protobuf) {
   rtc_static_library("rtc_event_log_parser") {
     visibility = [ "*" ]
     sources = [
-      "rtc_event_log/rtc_event_log_parser.cc",
-      "rtc_event_log/rtc_event_log_parser.h",
       "rtc_event_log/rtc_event_log_parser_new.cc",
       "rtc_event_log/rtc_event_log_parser_new.h",
       "rtc_event_log/rtc_event_processor.h",
@@ -274,13 +297,13 @@ if (rtc_enable_protobuf) {
       ":rtc_event_bwe",
       ":rtc_event_log2_proto",
       ":rtc_event_log_api",
+      ":rtc_event_log_impl_encoder",
       ":rtc_event_log_proto",
       ":rtc_stream_config",
-      "..:webrtc_common",
       "../api:libjingle_peerconnection_api",
       "../call:video_stream_api",
       "../modules/audio_coding:audio_network_adaptor",
-      "../modules/congestion_controller:transport_feedback",
+      "../modules/congestion_controller/rtp:transport_feedback",
       "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
       "../modules/rtp_rtcp",
       "../modules/rtp_rtcp:rtp_rtcp_format",
@@ -298,6 +321,9 @@ if (rtc_enable_protobuf) {
       assert(rtc_enable_protobuf)
       defines = [ "ENABLE_RTC_EVENT_LOG" ]
       sources = [
+        "rtc_event_log/encoder/blob_encoding_unittest.cc",
+        "rtc_event_log/encoder/delta_encoding_unittest.cc",
+        "rtc_event_log/encoder/rtc_event_log_encoder_common_unittest.cc",
         "rtc_event_log/encoder/rtc_event_log_encoder_unittest.cc",
         "rtc_event_log/output/rtc_event_log_output_file_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest.cc",
@@ -309,6 +335,7 @@ if (rtc_enable_protobuf) {
         ":ice_log",
         ":rtc_event_audio",
         ":rtc_event_bwe",
+        ":rtc_event_log2_proto",
         ":rtc_event_log_api",
         ":rtc_event_log_impl_base",
         ":rtc_event_log_impl_encoder",
@@ -332,6 +359,7 @@ if (rtc_enable_protobuf) {
         "../test:test_support",
         "//testing/gtest",
         "//third_party/abseil-cpp/absl/memory",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
       if (!build_with_chromium && is_clang) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -360,49 +388,6 @@ if (rtc_enable_protobuf) {
         # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
         suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
       }
-    }
-  }
-
-  if (rtc_include_tests) {
-    rtc_executable("rtc_event_log2text") {
-      testonly = true
-      sources = [
-        "rtc_event_log/rtc_event_log2text.cc",
-      ]
-      deps = [
-        ":rtc_event_log_api",
-        ":rtc_event_log_parser",
-        "../:webrtc_common",
-        "../call:video_stream_api",
-        "../modules/rtp_rtcp:rtp_rtcp_format",
-        "../rtc_base:checks",
-        "../rtc_base:protobuf_utils",
-        "../rtc_base:rtc_base_approved",
-        "../rtc_base:stringutils",
-
-        # TODO(kwiberg): Remove this dependency.
-        "../api/audio_codecs:audio_codecs_api",
-        "../modules/audio_coding:audio_network_adaptor_config",
-        "../modules/rtp_rtcp",
-      ]
-      if (!build_with_chromium && is_clang) {
-        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-      }
-    }
-  }
-  if (rtc_include_tests) {
-    rtc_executable("rtc_event_log2stats") {
-      testonly = true
-      sources = [
-        "rtc_event_log/rtc_event_log2stats.cc",
-      ]
-      deps = [
-        ":rtc_event_log_api",
-        ":rtc_event_log_proto",
-        "../rtc_base:checks",
-        "../rtc_base:rtc_base_approved",
-      ]
     }
   }
 }

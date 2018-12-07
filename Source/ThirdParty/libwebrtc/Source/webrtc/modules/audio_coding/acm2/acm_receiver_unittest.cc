@@ -73,12 +73,12 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
     // If we have a compatible CN specification, stack a CNG on top.
     auto it = cng_payload_types.find(info.sample_rate_hz);
     if (it != cng_payload_types.end()) {
-      AudioEncoderCng::Config config;
+      AudioEncoderCngConfig config;
       config.speech_encoder = std::move(enc);
       config.num_channels = 1;
       config.payload_type = it->second;
       config.vad_mode = Vad::kVadNormal;
-      enc = absl::make_unique<AudioEncoderCng>(std::move(config));
+      enc = CreateComfortNoiseEncoder(std::move(config));
     }
 
     // Actually start using the new encoder.

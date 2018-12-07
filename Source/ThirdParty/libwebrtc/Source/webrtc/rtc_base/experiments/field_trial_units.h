@@ -21,6 +21,10 @@ extern template class FieldTrialParameter<DataRate>;
 extern template class FieldTrialParameter<DataSize>;
 extern template class FieldTrialParameter<TimeDelta>;
 
+extern template class FieldTrialConstrained<DataRate>;
+extern template class FieldTrialConstrained<DataSize>;
+extern template class FieldTrialConstrained<TimeDelta>;
+
 extern template class FieldTrialOptional<DataRate>;
 extern template class FieldTrialOptional<DataSize>;
 extern template class FieldTrialOptional<TimeDelta>;

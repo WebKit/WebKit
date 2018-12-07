@@ -16,9 +16,9 @@
 #include "modules/audio_device/audio_device_generic.h"
 #include "modules/audio_device/mac/audio_mixer_manager_mac.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/thread_annotations.h"
-#include "system_wrappers/include/event_wrapper.h"
 
 #include <AudioToolbox/AudioConverter.h>
 #include <CoreAudio/CoreAudio.h>
@@ -31,7 +31,6 @@ class PlatformThread;
 }  // namespace rtc
 
 namespace webrtc {
-class EventWrapper;
 
 const uint32_t N_REC_SAMPLES_PER_SEC = 48000;
 const uint32_t N_PLAY_SAMPLES_PER_SEC = 48000;
@@ -252,8 +251,8 @@ class AudioDeviceMac : public AudioDeviceGeneric {
 
   rtc::CriticalSection _critSect;
 
-  EventWrapper& _stopEventRec;
-  EventWrapper& _stopEvent;
+  rtc::Event _stopEventRec;
+  rtc::Event _stopEvent;
 
   // TODO(pbos): Replace with direct members, just start/stop, no need to
   // recreate the thread.

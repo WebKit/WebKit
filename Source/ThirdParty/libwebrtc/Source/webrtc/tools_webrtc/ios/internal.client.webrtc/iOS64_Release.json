@@ -22,6 +22,7 @@
   "tests": [
     {
       "include": "real_device_tests.json",
+      "device type": "iPhone 6s",
       "os": "11.4.1",
       "dimensions": [
         {

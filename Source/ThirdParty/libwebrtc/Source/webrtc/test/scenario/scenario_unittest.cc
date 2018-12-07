@@ -21,14 +21,19 @@ TEST(ScenarioTest, StartsAndStopsWithoutErrors) {
   NetworkNodeConfig network_config;
   auto alice_net = s.CreateSimulationNode(network_config);
   auto bob_net = s.CreateSimulationNode(network_config);
+  auto route = s.CreateRoutes(alice, {alice_net}, bob, {bob_net});
 
   VideoStreamConfig video_stream_config;
-  s.CreateVideoStream(alice, {alice_net}, bob, {bob_net}, video_stream_config);
-  s.CreateVideoStream(bob, {bob_net}, alice, {alice_net}, video_stream_config);
+  s.CreateVideoStream(route->forward(), video_stream_config);
+  s.CreateVideoStream(route->reverse(), video_stream_config);
 
   AudioStreamConfig audio_stream_config;
-  s.CreateAudioStream(alice, {alice_net}, bob, {bob_net}, audio_stream_config);
-  s.CreateAudioStream(bob, {bob_net}, alice, {alice_net}, audio_stream_config);
+  audio_stream_config.encoder.min_rate = DataRate::kbps(6);
+  audio_stream_config.encoder.max_rate = DataRate::kbps(64);
+  audio_stream_config.encoder.allocate_bitrate = true;
+  audio_stream_config.stream.in_bandwidth_estimation = false;
+  s.CreateAudioStream(route->forward(), audio_stream_config);
+  s.CreateAudioStream(route->reverse(), audio_stream_config);
 
   CrossTrafficConfig cross_traffic_config;
   s.CreateCrossTraffic({alice_net}, cross_traffic_config);

@@ -15,10 +15,10 @@
 #include <string>
 #include <vector>
 
+#include "api/crypto/cryptooptions.h"
 #include "p2p/base/icetransportinternal.h"
 #include "p2p/base/packettransportinternal.h"
 #include "rtc_base/sslstreamadapter.h"
-#include "rtc_base/stringencode.h"
 
 namespace cricket {
 
@@ -51,7 +51,7 @@ class DtlsTransportInternal : public rtc::PacketTransportInternal {
  public:
   ~DtlsTransportInternal() override;
 
-  virtual const rtc::CryptoOptions& crypto_options() const = 0;
+  virtual const webrtc::CryptoOptions& crypto_options() const = 0;
 
   virtual DtlsTransportState dtls_state() const = 0;
 

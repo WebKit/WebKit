@@ -9,6 +9,7 @@
  */
 
 #include "media/engine/nullwebrtcvideoengine.h"
+#include "absl/memory/memory.h"
 #include "media/engine/webrtcvoiceengine.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -18,8 +19,7 @@
 
 namespace cricket {
 
-class WebRtcMediaEngineNullVideo
-    : public CompositeMediaEngine<WebRtcVoiceEngine, NullWebRtcVideoEngine> {
+class WebRtcMediaEngineNullVideo : public CompositeMediaEngine {
  public:
   WebRtcMediaEngineNullVideo(
       webrtc::AudioDeviceModule* adm,
@@ -27,13 +27,13 @@ class WebRtcMediaEngineNullVideo
           audio_encoder_factory,
       const rtc::scoped_refptr<webrtc::AudioDecoderFactory>&
           audio_decoder_factory)
-      : CompositeMediaEngine<WebRtcVoiceEngine, NullWebRtcVideoEngine>(
-            std::forward_as_tuple(adm,
-                                  audio_encoder_factory,
-                                  audio_decoder_factory,
-                                  nullptr,
-                                  webrtc::AudioProcessingBuilder().Create()),
-            std::forward_as_tuple()) {}
+      : CompositeMediaEngine(absl::make_unique<WebRtcVoiceEngine>(
+                                 adm,
+                                 audio_encoder_factory,
+                                 audio_decoder_factory,
+                                 nullptr,
+                                 webrtc::AudioProcessingBuilder().Create()),
+                             absl::make_unique<NullWebRtcVideoEngine>()) {}
 };
 
 // Simple test to check if NullWebRtcVideoEngine implements the methods

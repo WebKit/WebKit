@@ -14,6 +14,7 @@
 #include "p2p/base/basicpacketsocketfactory.h"
 #include "p2p/base/tcpport.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/helpers.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/virtualsocketserver.h"
 

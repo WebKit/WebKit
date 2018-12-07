@@ -11,18 +11,19 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_STATIONARITY_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_STATIONARITY_ESTIMATOR_H_
 
+#include <stddef.h>
 #include <array>
 #include <memory>
-#include <vector>
 
 #include "api/array_view.h"
-#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_common.h"  // kFftLengthBy2Plus1...
 #include "modules/audio_processing/aec3/reverb_model.h"
-#include "modules/audio_processing/aec3/vector_buffer.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 class ApmDataDumper;
+struct VectorBuffer;
 
 class StationarityEstimator {
  public:
@@ -37,10 +38,11 @@ class StationarityEstimator {
 
   // Update the flag indicating whether this current frame is stationary. For
   // getting a more robust estimation, it looks at future and/or past frames.
-  void UpdateStationarityFlags(const VectorBuffer& spectrum_buffer,
-                               int idx_current,
-                               int num_lookahead,
-                               float reverb_decay);
+  void UpdateStationarityFlags(
+      const VectorBuffer& spectrum_buffer,
+      rtc::ArrayView<const float> render_reverb_contribution_spectrum,
+      int idx_current,
+      int num_lookahead);
 
   // Returns true if the current band is stationary.
   bool IsBandStationary(size_t band) const {
@@ -57,11 +59,10 @@ class StationarityEstimator {
 
   // Get an estimation of the stationarity for the current band by looking
   // at the past/present/future available data.
-  bool EstimateBandStationarity(
-      const VectorBuffer& spectrum_buffer,
-      const std::array<float, kFftLengthBy2Plus1>& reverb,
-      const std::array<int, kWindowLength>& indexes,
-      size_t band) const;
+  bool EstimateBandStationarity(const VectorBuffer& spectrum_buffer,
+                                rtc::ArrayView<const float> reverb,
+                                const std::array<int, kWindowLength>& indexes,
+                                size_t band) const;
 
   // True if all bands at the current point are stationary.
   bool AreAllBandsStationary();
@@ -111,7 +112,6 @@ class StationarityEstimator {
   NoiseSpectrum noise_;
   std::array<int, kFftLengthBy2Plus1> hangovers_;
   std::array<bool, kFftLengthBy2Plus1> stationarity_flags_;
-  ReverbModel render_reverb_;
 };
 
 }  // namespace webrtc

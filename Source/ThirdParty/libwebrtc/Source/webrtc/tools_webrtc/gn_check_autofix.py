@@ -31,6 +31,9 @@ from collections import defaultdict
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+CHROMIUM_DIRS = ['base', 'build', 'buildtools',
+                 'testing', 'third_party', 'tools']
+
 TARGET_RE = re.compile(
     r'(?P<indentation_level>\s*)\w*\("(?P<target_name>\w*)"\) {$')
 
@@ -88,22 +91,48 @@ def FixErrors(filename, missing_deps, deleted_sources):
 
   Run(['gn', 'format', filename])
 
+def FirstNonEmpty(iterable):
+  """Return first item which evaluates to True, or fallback to None."""
+  return next((x for x in iterable if x), None)
+
 def Rebase(base_path, dependency_path, dependency):
-  base_path = base_path.split(os.path.sep)
-  dependency_path = dependency_path.split(os.path.sep)
+  """Adapt paths so they work both in stand-alone WebRTC and Chromium tree.
 
-  first_difference = None
-  shortest_length = min(len(dependency_path), len(base_path))
-  for i in range(shortest_length):
-    if dependency_path[i] != base_path[i]:
-      first_difference = i
-      break
+  To cope with varying top-level directory (WebRTC VS Chromium), we use:
+    * relative paths for WebRTC modules.
+    * absolute paths for shared ones.
+  E.g. '//common_audio/...' -> '../../common_audio/'
+       '//third_party/...' remains as is.
 
-  first_difference = first_difference or shortest_length
-  base_path = base_path[first_difference:]
-  dependency_path = dependency_path[first_difference:]
-  return (os.path.sep.join((['..'] * len(base_path)) + dependency_path) +
-          ':' + dependency)
+  Args:
+    base_path: current module path  (E.g. '//video')
+    dependency_path: path from root (E.g. '//rtc_base/time')
+    dependency: target itself       (E.g. 'timestamp_extrapolator')
+
+  Returns:
+    Full target path (E.g. '../rtc_base/time:timestamp_extrapolator').
+  """
+
+  root = FirstNonEmpty(dependency_path.split('/'))
+  if root in CHROMIUM_DIRS:
+    # Chromium paths must remain absolute. E.g. //third_party//abseil-cpp...
+    rebased = dependency_path
+  else:
+    base_path = base_path.split(os.path.sep)
+    dependency_path = dependency_path.split(os.path.sep)
+
+    first_difference = None
+    shortest_length = min(len(dependency_path), len(base_path))
+    for i in range(shortest_length):
+      if dependency_path[i] != base_path[i]:
+        first_difference = i
+        break
+
+    first_difference = first_difference or shortest_length
+    base_path = base_path[first_difference:]
+    dependency_path = dependency_path[first_difference:]
+    rebased = os.path.sep.join((['..'] * len(base_path)) + dependency_path)
+  return rebased + ':' + dependency
 
 def main():
   deleted_sources = set()

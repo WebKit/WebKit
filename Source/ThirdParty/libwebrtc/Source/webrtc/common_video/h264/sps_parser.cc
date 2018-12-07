@@ -10,12 +10,11 @@
 
 #include "common_video/h264/sps_parser.h"
 
-#include <memory>
+#include <cstdint>
 #include <vector>
 
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/bitbuffer.h"
-#include "rtc_base/logging.h"
 
 namespace {
 typedef absl::optional<webrtc::SpsParser::SpsState> OptionalSps;

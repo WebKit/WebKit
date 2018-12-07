@@ -11,9 +11,10 @@
 #include "modules/pacing/round_robin_packet_queue.h"
 
 #include <algorithm>
+#include <cstdint>
+#include <utility>
 
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -53,8 +54,8 @@ RoundRobinPacketQueue::Stream::Stream() : bytes(0), ssrc(0) {}
 RoundRobinPacketQueue::Stream::Stream(const Stream& stream) = default;
 RoundRobinPacketQueue::Stream::~Stream() {}
 
-RoundRobinPacketQueue::RoundRobinPacketQueue(const Clock* clock)
-    : time_last_updated_(clock->TimeInMilliseconds()) {}
+RoundRobinPacketQueue::RoundRobinPacketQueue(int64_t start_time_us)
+    : time_last_updated_ms_(start_time_us / 1000) {}
 
 RoundRobinPacketQueue::~RoundRobinPacketQueue() {}
 
@@ -132,7 +133,7 @@ void RoundRobinPacketQueue::FinalizePop(const Packet& packet) {
     // by subtracting it now we effectively remove the time spent in in the
     // queue while in a paused state.
     int64_t time_in_non_paused_state_ms =
-        time_last_updated_ - packet.enqueue_time_ms - pause_time_sum_ms_;
+        time_last_updated_ms_ - packet.enqueue_time_ms - pause_time_sum_ms_;
     queue_time_sum_ms_ -= time_in_non_paused_state_ms;
 
     RTC_CHECK(packet.enqueue_time_it != enqueue_times_.end());
@@ -189,11 +190,11 @@ int64_t RoundRobinPacketQueue::OldestEnqueueTimeMs() const {
 }
 
 void RoundRobinPacketQueue::UpdateQueueTime(int64_t timestamp_ms) {
-  RTC_CHECK_GE(timestamp_ms, time_last_updated_);
-  if (timestamp_ms == time_last_updated_)
+  RTC_CHECK_GE(timestamp_ms, time_last_updated_ms_);
+  if (timestamp_ms == time_last_updated_ms_)
     return;
 
-  int64_t delta_ms = timestamp_ms - time_last_updated_;
+  int64_t delta_ms = timestamp_ms - time_last_updated_ms_;
 
   if (paused_) {
     pause_time_sum_ms_ += delta_ms;
@@ -201,7 +202,7 @@ void RoundRobinPacketQueue::UpdateQueueTime(int64_t timestamp_ms) {
     queue_time_sum_ms_ += delta_ms * size_packets_;
   }
 
-  time_last_updated_ = timestamp_ms;
+  time_last_updated_ms_ = timestamp_ms;
 }
 
 void RoundRobinPacketQueue::SetPauseState(bool paused, int64_t timestamp_ms) {

@@ -11,6 +11,7 @@
 #ifndef P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
 #define P2P_BASE_TRANSPORTDESCRIPTIONFACTORY_H_
 
+#include "p2p/base/icecredentialsiterator.h"
 #include "p2p/base/transportdescription.h"
 #include "rtc_base/rtccertificate.h"
 
@@ -54,7 +55,8 @@ class TransportDescriptionFactory {
   // Creates a transport description suitable for use in an offer.
   TransportDescription* CreateOffer(
       const TransportOptions& options,
-      const TransportDescription* current_description) const;
+      const TransportDescription* current_description,
+      IceCredentialsIterator* ice_credentials) const;
   // Create a transport description that is a response to an offer.
   //
   // If |require_transport_attributes| is true, then TRANSPORT category
@@ -66,7 +68,8 @@ class TransportDescriptionFactory {
       const TransportDescription* offer,
       const TransportOptions& options,
       bool require_transport_attributes,
-      const TransportDescription* current_description) const;
+      const TransportDescription* current_description,
+      IceCredentialsIterator* ice_credentials) const;
 
  private:
   bool SetSecurityInfo(TransportDescription* description,

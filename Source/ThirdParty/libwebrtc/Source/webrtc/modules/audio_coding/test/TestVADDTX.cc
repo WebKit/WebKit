@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
 #include "api/audio_codecs/ilbc/audio_decoder_ilbc.h"
@@ -81,13 +82,13 @@ bool TestVadDtx::RegisterCodec(const SdpAudioFormat& codec_format,
   auto encoder = encoder_factory_->MakeAudioEncoder(payload_type, codec_format,
                                                     absl::nullopt);
   if (vad_mode.has_value() &&
-      STR_CASE_CMP(codec_format.name.c_str(), "opus") != 0) {
-    AudioEncoderCng::Config config;
+      !absl::EqualsIgnoreCase(codec_format.name, "opus")) {
+    AudioEncoderCngConfig config;
     config.speech_encoder = std::move(encoder);
     config.num_channels = 1;
     config.payload_type = cn_payload_type;
     config.vad_mode = vad_mode.value();
-    encoder = absl::make_unique<AudioEncoderCng>(std::move(config));
+    encoder = CreateComfortNoiseEncoder(std::move(config));
     added_comfort_noise = true;
   }
   channel_->SetIsStereo(encoder->NumChannels() > 1);

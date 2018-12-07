@@ -10,11 +10,11 @@
 
 #include "audio/transport_feedback_packet_loss_tracker.h"
 
+#include <iterator>
 #include <limits>
 #include <utility>
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/mod_ops.h"
 

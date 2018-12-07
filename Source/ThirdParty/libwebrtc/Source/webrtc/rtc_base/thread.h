@@ -11,19 +11,22 @@
 #ifndef RTC_BASE_THREAD_H_
 #define RTC_BASE_THREAD_H_
 
-#include <algorithm>
+#include <stdint.h>
 #include <list>
 #include <memory>
 #include <string>
-#include <utility>
-#include <vector>
+#include <type_traits>
 
 #if defined(WEBRTC_POSIX)
 #include <pthread.h>
 #endif
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/location.h"
+#include "rtc_base/messagehandler.h"
 #include "rtc_base/messagequeue.h"
 #include "rtc_base/platform_thread_types.h"
+#include "rtc_base/socketserver.h"
+#include "rtc_base/thread_annotations.h"
 
 #if defined(WEBRTC_WIN)
 #include "rtc_base/win32.h"

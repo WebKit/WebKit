@@ -11,6 +11,8 @@
 #ifndef COMMON_AUDIO_RESAMPLER_PUSH_SINC_RESAMPLER_H_
 #define COMMON_AUDIO_RESAMPLER_PUSH_SINC_RESAMPLER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 
 #include "common_audio/resampler/sinc_resampler.h"

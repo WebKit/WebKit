@@ -32,6 +32,8 @@ struct PacketOptions {
   std::vector<uint8_t> application_data;
   // Whether this is a retransmission of an earlier packet.
   bool is_retransmit = false;
+  bool included_in_feedback = false;
+  bool included_in_allocation = false;
 };
 
 class Transport {

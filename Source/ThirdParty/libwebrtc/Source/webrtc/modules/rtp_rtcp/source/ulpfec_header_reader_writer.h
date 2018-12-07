@@ -11,6 +11,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_ULPFEC_HEADER_READER_WRITER_H_
 #define MODULES_RTP_RTCP_SOURCE_ULPFEC_HEADER_READER_WRITER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 
 namespace webrtc {

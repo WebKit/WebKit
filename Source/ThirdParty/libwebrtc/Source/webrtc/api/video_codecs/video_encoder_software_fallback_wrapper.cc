@@ -87,12 +87,9 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
   int32_t Encode(const VideoFrame& frame,
                  const CodecSpecificInfo* codec_specific_info,
                  const std::vector<FrameType>* frame_types) override;
-  int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
   int32_t SetRateAllocation(const VideoBitrateAllocation& bitrate_allocation,
                             uint32_t framerate) override;
-  bool SupportsNativeHandle() const override;
-  ScalingSettings GetScalingSettings() const override;
-  const char* ImplementationName() const override;
+  EncoderInfo GetEncoderInfo() const override;
 
  private:
   bool InitFallbackEncoder();
@@ -162,7 +159,7 @@ VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
   if (forced_fallback_possible_) {
     GetForcedFallbackParamsFromFieldTrialGroup(
         &forced_fallback_.min_pixels_, &forced_fallback_.max_pixels_,
-        encoder_->GetScalingSettings().min_pixels_per_frame -
+        encoder_->GetEncoderInfo().scaling_settings.min_pixels_per_frame -
             1);  // No HW below.
   }
 }
@@ -185,8 +182,6 @@ bool VideoEncoderSoftwareFallbackWrapper::InitFallbackEncoder() {
     fallback_encoder_->RegisterEncodeCompleteCallback(callback_);
   if (rates_set_)
     fallback_encoder_->SetRateAllocation(bitrate_allocation_, framerate_);
-  if (channel_parameters_set_)
-    fallback_encoder_->SetChannelParameters(packet_loss_, rtt_);
 
   // Since we're switching to the fallback encoder, Release the real encoder. It
   // may be re-initialized via InitEncode later, and it will continue to get
@@ -206,7 +201,6 @@ int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
   max_payload_size_ = max_payload_size;
   // Clear stored rate/channel parameters.
   rates_set_ = false;
-  channel_parameters_set_ = false;
   ValidateSettingsForForcedFallback();
 
   // Try to reinit forced software codec if it is in use.
@@ -270,18 +264,6 @@ int32_t VideoEncoderSoftwareFallbackWrapper::Encode(
   return ret;
 }
 
-int32_t VideoEncoderSoftwareFallbackWrapper::SetChannelParameters(
-    uint32_t packet_loss,
-    int64_t rtt) {
-  channel_parameters_set_ = true;
-  packet_loss_ = packet_loss;
-  rtt_ = rtt;
-  int32_t ret = encoder_->SetChannelParameters(packet_loss, rtt);
-  if (use_fallback_encoder_)
-    return fallback_encoder_->SetChannelParameters(packet_loss, rtt);
-  return ret;
-}
-
 int32_t VideoEncoderSoftwareFallbackWrapper::SetRateAllocation(
     const VideoBitrateAllocation& bitrate_allocation,
     uint32_t framerate) {
@@ -294,29 +276,29 @@ int32_t VideoEncoderSoftwareFallbackWrapper::SetRateAllocation(
   return ret;
 }
 
-bool VideoEncoderSoftwareFallbackWrapper::SupportsNativeHandle() const {
-  return use_fallback_encoder_ ? fallback_encoder_->SupportsNativeHandle()
-                               : encoder_->SupportsNativeHandle();
-}
+VideoEncoder::EncoderInfo VideoEncoderSoftwareFallbackWrapper::GetEncoderInfo()
+    const {
+  EncoderInfo fallback_encoder_info = fallback_encoder_->GetEncoderInfo();
+  EncoderInfo default_encoder_info = encoder_->GetEncoderInfo();
 
-VideoEncoder::ScalingSettings
-VideoEncoderSoftwareFallbackWrapper::GetScalingSettings() const {
+  EncoderInfo info =
+      use_fallback_encoder_ ? fallback_encoder_info : default_encoder_info;
+
   if (forced_fallback_possible_) {
     const auto settings = forced_fallback_.active_
-                              ? fallback_encoder_->GetScalingSettings()
-                              : encoder_->GetScalingSettings();
-    return settings.thresholds
-               ? VideoEncoder::ScalingSettings(settings.thresholds->low,
-                                               settings.thresholds->high,
-                                               forced_fallback_.min_pixels_)
-               : VideoEncoder::ScalingSettings::kOff;
+                              ? fallback_encoder_info.scaling_settings
+                              : default_encoder_info.scaling_settings;
+    info.scaling_settings =
+        settings.thresholds
+            ? VideoEncoder::ScalingSettings(settings.thresholds->low,
+                                            settings.thresholds->high,
+                                            forced_fallback_.min_pixels_)
+            : VideoEncoder::ScalingSettings::kOff;
+  } else {
+    info.scaling_settings = default_encoder_info.scaling_settings;
   }
-  return encoder_->GetScalingSettings();
-}
 
-const char* VideoEncoderSoftwareFallbackWrapper::ImplementationName() const {
-  return use_fallback_encoder_ ? fallback_encoder_->ImplementationName()
-                               : encoder_->ImplementationName();
+  return info;
 }
 
 bool VideoEncoderSoftwareFallbackWrapper::IsForcedFallbackActive() const {

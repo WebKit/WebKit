@@ -396,6 +396,7 @@ RtpCapabilities ToRtpCapabilities(
   bool have_red = false;
   bool have_ulpfec = false;
   bool have_flexfec = false;
+  bool have_rtx = false;
   for (const C& cricket_codec : cricket_codecs) {
     if (cricket_codec.name == cricket::kRedCodecName) {
       have_red = true;
@@ -403,8 +404,19 @@ RtpCapabilities ToRtpCapabilities(
       have_ulpfec = true;
     } else if (cricket_codec.name == cricket::kFlexfecCodecName) {
       have_flexfec = true;
+    } else if (cricket_codec.name == cricket::kRtxCodecName) {
+      if (have_rtx) {
+        // There should only be one RTX codec entry
+        continue;
+      }
+      have_rtx = true;
     }
-    capabilities.codecs.push_back(ToRtpCodecCapability(cricket_codec));
+    auto codec_capability = ToRtpCodecCapability(cricket_codec);
+    if (cricket_codec.name == cricket::kRtxCodecName) {
+      // RTX codec should not have any parameter
+      codec_capability.parameters.clear();
+    }
+    capabilities.codecs.push_back(codec_capability);
   }
   for (const RtpExtension& cricket_extension : cricket_extensions) {
     capabilities.header_extensions.emplace_back(cricket_extension.uri,

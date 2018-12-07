@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -40,7 +40,7 @@ int GetIlbcBitrate(int ptime) {
 
 absl::optional<AudioEncoderIlbcConfig> AudioEncoderIlbc::SdpToConfig(
     const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "ILBC") != 0 ||
+  if (!absl::EqualsIgnoreCase(format.name.c_str(), "ILBC") ||
       format.clockrate_hz != 8000 || format.num_channels != 1) {
     return absl::nullopt;
   }

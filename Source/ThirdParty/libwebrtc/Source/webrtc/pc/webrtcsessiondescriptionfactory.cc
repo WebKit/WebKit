@@ -116,7 +116,6 @@ void WebRtcSessionDescriptionFactory::CopyCandidatesFromSessionDescription(
   }
 }
 
-// Private constructor called by other constructors.
 WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     rtc::Thread* signaling_thread,
     cricket::ChannelManager* channel_manager,

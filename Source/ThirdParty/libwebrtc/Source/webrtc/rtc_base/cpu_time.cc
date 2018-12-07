@@ -65,6 +65,9 @@ int64_t GetProcessCpuTimeNanos() {
   } else {
     RTC_LOG_ERR(LS_ERROR) << "GetProcessTimes() failed.";
   }
+#elif defined(WEBRTC_FUCHSIA)
+  RTC_LOG_ERR(LS_ERROR) << "GetProcessCpuTimeNanos() not implemented";
+  return 0;
 #else
   // Not implemented yet.
   static_assert(
@@ -107,10 +110,13 @@ int64_t GetThreadCpuTimeNanos() {
   } else {
     RTC_LOG_ERR(LS_ERROR) << "GetThreadTimes() failed.";
   }
+#elif defined(WEBRTC_FUCHSIA)
+  RTC_LOG_ERR(LS_ERROR) << "GetThreadCpuTimeNanos() not implemented";
+  return 0;
 #else
   // Not implemented yet.
   static_assert(
-      false, "GetProcessCpuTimeNanos() platform support not yet implemented.");
+      false, "GetThreadCpuTimeNanos() platform support not yet implemented.");
 #endif
   return -1;
 }

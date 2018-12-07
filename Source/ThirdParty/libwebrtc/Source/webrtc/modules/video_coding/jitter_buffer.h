@@ -35,7 +35,6 @@ enum VCMNackMode { kNack, kNoNack };
 
 // forward declarations
 class Clock;
-class EventFactory;
 class EventWrapper;
 class VCMFrameBuffer;
 class VCMPacket;

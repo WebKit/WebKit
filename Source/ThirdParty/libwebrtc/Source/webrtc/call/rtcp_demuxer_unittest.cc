@@ -16,7 +16,6 @@
 #include "absl/memory/memory.h"
 #include "api/rtp_headers.h"
 #include "call/rtcp_packet_sink_interface.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"

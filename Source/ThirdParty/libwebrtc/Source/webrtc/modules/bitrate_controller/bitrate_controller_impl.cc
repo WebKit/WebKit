@@ -21,10 +21,10 @@
 
 namespace webrtc {
 namespace {
-absl::optional<DataRate> ToOptionalDataRate(int start_bitrate_bps) {
-  if (start_bitrate_bps == -1)
-    return absl::nullopt;
-  return DataRate::bps(start_bitrate_bps);
+absl::optional<DataRate> ToOptionalDataRate(int send_bitrate_bps) {
+  if (send_bitrate_bps > 0)
+    return DataRate::bps(send_bitrate_bps);
+  return absl::nullopt;
 }
 DataRate MaxRate(int max_bitrate_bps) {
   if (max_bitrate_bps == -1)
@@ -153,14 +153,12 @@ void BitrateControllerImpl::OnDelayBasedBweResult(
     rtc::CritScope cs(&critsect_);
     if (result.probe) {
       bandwidth_estimation_.SetSendBitrate(
-          DataRate::bps(result.target_bitrate_bps),
-          Timestamp::ms(clock_->TimeInMilliseconds()));
+          result.target_bitrate, Timestamp::ms(clock_->TimeInMilliseconds()));
     }
     // Since SetSendBitrate now resets the delay-based estimate, we have to call
     // UpdateDelayBasedEstimate after SetSendBitrate.
     bandwidth_estimation_.UpdateDelayBasedEstimate(
-        Timestamp::ms(clock_->TimeInMilliseconds()),
-        DataRate::bps(result.target_bitrate_bps));
+        Timestamp::ms(clock_->TimeInMilliseconds()), result.target_bitrate);
   }
   MaybeTriggerOnNetworkChanged();
 }

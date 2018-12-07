@@ -11,8 +11,8 @@
 #ifndef RTC_BASE_FILE_H_
 #define RTC_BASE_FILE_H_
 
+#include <stddef.h>
 #include <stdint.h>
-
 #include <string>
 
 #include "rtc_base/constructormagic.h"

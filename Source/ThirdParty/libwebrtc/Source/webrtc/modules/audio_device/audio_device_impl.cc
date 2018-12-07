@@ -10,12 +10,14 @@
 
 #include "modules/audio_device/audio_device_impl.h"
 
-#include "modules/audio_device/audio_device_config.h"
+#include <stddef.h>
+
+#include "modules/audio_device/audio_device_config.h"  // IWYU pragma: keep
 #include "modules/audio_device/audio_device_generic.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/refcount.h"
 #include "rtc_base/refcountedobject.h"
+#include "rtc_base/scoped_ref_ptr.h"
 #include "system_wrappers/include/metrics.h"
 
 #if defined(_WIN32)
@@ -47,10 +49,10 @@
 #include "modules/audio_device/mac/audio_device_mac.h"
 #endif
 #if defined(WEBRTC_DUMMY_FILE_DEVICES)
+#include "modules/audio_device/dummy/file_audio_device.h"
 #include "modules/audio_device/dummy/file_audio_device_factory.h"
 #endif
 #include "modules/audio_device/dummy/audio_device_dummy.h"
-#include "modules/audio_device/dummy/file_audio_device.h"
 
 #define CHECKinitialized_() \
   {                         \

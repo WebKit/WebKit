@@ -78,6 +78,25 @@ class Scenario {
       std::string name,
       std::function<void(CallClientConfig*)> config_modifier);
 
+  CallClientPair* CreateRoutes(CallClient* first,
+                               std::vector<NetworkNode*> send_link,
+                               CallClient* second,
+                               std::vector<NetworkNode*> return_link);
+
+  CallClientPair* CreateRoutes(CallClient* first,
+                               std::vector<NetworkNode*> send_link,
+                               DataSize first_overhead,
+                               CallClient* second,
+                               std::vector<NetworkNode*> return_link,
+                               DataSize second_overhead);
+
+  void ChangeRoute(std::pair<CallClient*, CallClient*> clients,
+                   std::vector<NetworkNode*> over_nodes);
+
+  void ChangeRoute(std::pair<CallClient*, CallClient*> clients,
+                   std::vector<NetworkNode*> over_nodes,
+                   DataSize overhead);
+
   SimulatedTimeClient* CreateSimulatedTimeClient(
       std::string name,
       SimulatedTimeClientConfig config,
@@ -86,28 +105,18 @@ class Scenario {
       std::vector<NetworkNode*> return_link);
 
   VideoStreamPair* CreateVideoStream(
-      CallClient* sender,
-      std::vector<NetworkNode*> send_link,
-      CallClient* receiver,
-      std::vector<NetworkNode*> return_link,
+      std::pair<CallClient*, CallClient*> clients,
       std::function<void(VideoStreamConfig*)> config_modifier);
-  VideoStreamPair* CreateVideoStream(CallClient* sender,
-                                     std::vector<NetworkNode*> send_link,
-                                     CallClient* receiver,
-                                     std::vector<NetworkNode*> return_link,
-                                     VideoStreamConfig config);
+  VideoStreamPair* CreateVideoStream(
+      std::pair<CallClient*, CallClient*> clients,
+      VideoStreamConfig config);
 
   AudioStreamPair* CreateAudioStream(
-      CallClient* sender,
-      std::vector<NetworkNode*> send_link,
-      CallClient* receiver,
-      std::vector<NetworkNode*> return_link,
+      std::pair<CallClient*, CallClient*> clients,
       std::function<void(AudioStreamConfig*)> config_modifier);
-  AudioStreamPair* CreateAudioStream(CallClient* sender,
-                                     std::vector<NetworkNode*> send_link,
-                                     CallClient* receiver,
-                                     std::vector<NetworkNode*> return_link,
-                                     AudioStreamConfig config);
+  AudioStreamPair* CreateAudioStream(
+      std::pair<CallClient*, CallClient*> clients,
+      AudioStreamConfig config);
 
   CrossTrafficSource* CreateCrossTraffic(
       std::vector<NetworkNode*> over_nodes,
@@ -131,9 +140,12 @@ class Scenario {
   // Runs the scenario for the given time or until the exit function returns
   // true.
   void RunFor(TimeDelta duration);
+  void RunUntil(TimeDelta max_duration);
   void RunUntil(TimeDelta max_duration,
                 TimeDelta probe_interval,
                 std::function<bool()> exit_function);
+  void Start();
+  void Stop();
 
   // Triggers sending of dummy packets over the given nodes.
   void TriggerPacketBurst(std::vector<NetworkNode*> over_nodes,
@@ -167,6 +179,7 @@ class Scenario {
   rtc::FakeClock event_log_fake_clock_;
 
   std::vector<std::unique_ptr<CallClient>> clients_;
+  std::vector<std::unique_ptr<CallClientPair>> client_pairs_;
   std::vector<std::unique_ptr<NetworkNode>> network_nodes_;
   std::vector<std::unique_ptr<CrossTrafficSource>> cross_traffic_sources_;
   std::vector<std::unique_ptr<VideoStreamPair>> video_streams_;
@@ -179,7 +192,7 @@ class Scenario {
   std::vector<std::unique_ptr<PendingActivity>> pending_activities_;
   std::vector<std::unique_ptr<StatesPrinter>> printers_;
 
-  int64_t next_receiver_id_ = 40000;
+  int64_t next_route_id_ = 40000;
   rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
   rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
 

@@ -12,7 +12,6 @@
 #define CALL_FLEXFEC_RECEIVE_STREAM_H_
 
 #include <stdint.h>
-
 #include <string>
 #include <vector>
 
@@ -20,7 +19,6 @@
 #include "api/rtp_headers.h"
 #include "api/rtpparameters.h"
 #include "call/rtp_packet_sink_interface.h"
-#include "common_types.h"  // NOLINT(build/include)
 
 namespace webrtc {
 

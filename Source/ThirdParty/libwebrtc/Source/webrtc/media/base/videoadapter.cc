@@ -169,8 +169,18 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   // OnOutputFormatRequest and OnResolutionFramerateRequest.
   int max_pixel_count = resolution_request_max_pixel_count_;
 
-  if (max_pixel_count_)
-    max_pixel_count = std::min(max_pixel_count, *max_pixel_count_);
+  // Select target aspect ratio and max pixel count depending on input frame
+  // orientation.
+  absl::optional<std::pair<int, int>> target_aspect_ratio;
+  if (in_width > in_height) {
+    target_aspect_ratio = target_landscape_aspect_ratio_;
+    if (max_landscape_pixel_count_)
+      max_pixel_count = std::min(max_pixel_count, *max_landscape_pixel_count_);
+  } else {
+    target_aspect_ratio = target_portrait_aspect_ratio_;
+    if (max_portrait_pixel_count_)
+      max_pixel_count = std::min(max_pixel_count, *max_portrait_pixel_count_);
+  }
 
   int target_pixel_count =
       std::min(resolution_request_target_pixel_count_, max_pixel_count);
@@ -195,19 +205,14 @@ bool VideoAdapter::AdaptFrameResolution(int in_width,
   }
 
   // Calculate how the input should be cropped.
-  if (!target_aspect_ratio_ || target_aspect_ratio_->first <= 0 ||
-      target_aspect_ratio_->second <= 0) {
+  if (!target_aspect_ratio || target_aspect_ratio->first <= 0 ||
+      target_aspect_ratio->second <= 0) {
     *cropped_width = in_width;
     *cropped_height = in_height;
   } else {
-    // Adjust |target_aspect_ratio_| orientation to match input.
-    if ((in_width > in_height) !=
-        (target_aspect_ratio_->first > target_aspect_ratio_->second)) {
-      std::swap(target_aspect_ratio_->first, target_aspect_ratio_->second);
-    }
     const float requested_aspect =
-        target_aspect_ratio_->first /
-        static_cast<float>(target_aspect_ratio_->second);
+        target_aspect_ratio->first /
+        static_cast<float>(target_aspect_ratio->second);
     *cropped_width =
         std::min(in_width, static_cast<int>(in_height * requested_aspect));
     *cropped_height =
@@ -274,9 +279,33 @@ void VideoAdapter::OnOutputFormatRequest(
     const absl::optional<std::pair<int, int>>& target_aspect_ratio,
     const absl::optional<int>& max_pixel_count,
     const absl::optional<int>& max_fps) {
+  absl::optional<std::pair<int, int>> target_landscape_aspect_ratio;
+  absl::optional<std::pair<int, int>> target_portrait_aspect_ratio;
+  if (target_aspect_ratio && target_aspect_ratio->first > 0 &&
+      target_aspect_ratio->second > 0) {
+    // Maintain input orientation.
+    const int max_side =
+        std::max(target_aspect_ratio->first, target_aspect_ratio->second);
+    const int min_side =
+        std::min(target_aspect_ratio->first, target_aspect_ratio->second);
+    target_landscape_aspect_ratio = std::make_pair(max_side, min_side);
+    target_portrait_aspect_ratio = std::make_pair(min_side, max_side);
+  }
+  OnOutputFormatRequest(target_landscape_aspect_ratio, max_pixel_count,
+                        target_portrait_aspect_ratio, max_pixel_count, max_fps);
+}
+
+void VideoAdapter::OnOutputFormatRequest(
+    const absl::optional<std::pair<int, int>>& target_landscape_aspect_ratio,
+    const absl::optional<int>& max_landscape_pixel_count,
+    const absl::optional<std::pair<int, int>>& target_portrait_aspect_ratio,
+    const absl::optional<int>& max_portrait_pixel_count,
+    const absl::optional<int>& max_fps) {
   rtc::CritScope cs(&critical_section_);
-  target_aspect_ratio_ = target_aspect_ratio;
-  max_pixel_count_ = max_pixel_count;
+  target_landscape_aspect_ratio_ = target_landscape_aspect_ratio;
+  max_landscape_pixel_count_ = max_landscape_pixel_count;
+  target_portrait_aspect_ratio_ = target_portrait_aspect_ratio;
+  max_portrait_pixel_count_ = max_portrait_pixel_count;
   max_fps_ = max_fps;
   next_frame_timestamp_ns_ = absl::nullopt;
 }

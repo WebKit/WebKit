@@ -88,12 +88,13 @@ struct PacedPacketInfo {
 struct SentPacket {
   Timestamp send_time = Timestamp::PlusInfinity();
   DataSize size = DataSize::Zero();
+  DataSize prior_unacked_data = DataSize::Zero();
   PacedPacketInfo pacing_info;
   // Transport independent sequence number, any tracked packet should have a
   // sequence number that is unique over the whole call and increasing by 1 for
   // each packet.
   int64_t sequence_number;
-  // Data in flight when the packet was sent, including the packet.
+  // Tracked data in flight when the packet was sent, excluding unacked data.
   DataSize data_in_flight = DataSize::Zero();
 };
 
@@ -125,7 +126,7 @@ struct PacketResult {
   PacketResult(const PacketResult&);
   ~PacketResult();
 
-  absl::optional<SentPacket> sent_packet;
+  SentPacket sent_packet;
   Timestamp receive_time = Timestamp::PlusInfinity();
 };
 
@@ -138,6 +139,9 @@ struct TransportPacketsFeedback {
   DataSize data_in_flight = DataSize::Zero();
   DataSize prior_in_flight = DataSize::Zero();
   std::vector<PacketResult> packet_feedbacks;
+
+  // Arrival times for messages without send time information.
+  std::vector<Timestamp> sendless_arrival_times;
 
   std::vector<PacketResult> ReceivedWithSendInfo() const;
   std::vector<PacketResult> LostWithSendInfo() const;

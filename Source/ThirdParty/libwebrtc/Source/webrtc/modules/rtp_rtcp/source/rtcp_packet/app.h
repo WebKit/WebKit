@@ -11,6 +11,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_APP_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "rtc_base/buffer.h"
 

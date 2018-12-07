@@ -17,34 +17,6 @@ namespace webrtc {
 const char MediaStreamTrackInterface::kVideoKind[] = "video";
 const char MediaStreamTrackInterface::kAudioKind[] = "audio";
 
-void AudioProcessorInterface::GetStats(AudioProcessorStats* /*stats*/) {
-  RTC_NOTREACHED() << "Old-style GetStats() is called but it has no "
-                   << "implementation.";
-  RTC_LOG(LS_ERROR) << "Old-style GetStats() is called but it has no "
-                    << "implementation.";
-}
-
-// TODO(ivoc): Remove this when the function becomes pure virtual.
-AudioProcessorInterface::AudioProcessorStatistics
-AudioProcessorInterface::GetStats(bool /*has_remote_tracks*/) {
-  AudioProcessorStats stats;
-  GetStats(&stats);
-  AudioProcessorStatistics new_stats;
-  new_stats.apm_statistics.divergent_filter_fraction =
-      stats.aec_divergent_filter_fraction;
-  new_stats.apm_statistics.delay_median_ms = stats.echo_delay_median_ms;
-  new_stats.apm_statistics.delay_standard_deviation_ms =
-      stats.echo_delay_std_ms;
-  new_stats.apm_statistics.echo_return_loss = stats.echo_return_loss;
-  new_stats.apm_statistics.echo_return_loss_enhancement =
-      stats.echo_return_loss_enhancement;
-  new_stats.apm_statistics.residual_echo_likelihood =
-      stats.residual_echo_likelihood;
-  new_stats.apm_statistics.residual_echo_likelihood_recent_max =
-      stats.residual_echo_likelihood_recent_max;
-  return new_stats;
-}
-
 VideoTrackInterface::ContentHint VideoTrackInterface::content_hint() const {
   return ContentHint::kNone;
 }
@@ -56,6 +28,10 @@ bool AudioTrackInterface::GetSignalLevel(int* level) {
 rtc::scoped_refptr<AudioProcessorInterface>
 AudioTrackInterface::GetAudioProcessor() {
   return nullptr;
+}
+
+const cricket::AudioOptions AudioSourceInterface::options() const {
+  return {};
 }
 
 }  // namespace webrtc

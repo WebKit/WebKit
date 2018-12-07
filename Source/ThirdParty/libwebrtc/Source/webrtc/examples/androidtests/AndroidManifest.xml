@@ -14,7 +14,7 @@
       package="org.appspot.apprtc.test">
 
     <uses-permission android:name="android.permission.RUN_INSTRUMENTATION" />
-    <uses-sdk android:minSdkVersion="13" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="21" />
 
     <application>
         <uses-library android:name="android.test.runner" />

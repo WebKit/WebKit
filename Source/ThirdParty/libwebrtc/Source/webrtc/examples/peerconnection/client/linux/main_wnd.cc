@@ -18,10 +18,7 @@
 #include "examples/peerconnection/client/defaults.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringutils.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
-
-using rtc::sprintfn;
 
 namespace {
 
@@ -150,7 +147,7 @@ GtkMainWnd::GtkMainWnd(const char* server,
       autoconnect_(autoconnect),
       autocall_(autocall) {
   char buffer[10];
-  sprintfn(buffer, sizeof(buffer), "%i", port);
+  snprintf(buffer, sizeof(buffer), "%i", port);
   port_ = buffer;
 }
 

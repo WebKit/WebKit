@@ -11,7 +11,6 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_VAD_WITH_LEVEL_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_VAD_WITH_LEVEL_H_
 
-#include "api/array_view.h"
 #include "common_audio/resampler/include/push_resampler.h"
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"

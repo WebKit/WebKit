@@ -12,7 +12,6 @@
 
 #include <string>
 
-#include "common_types.h"  // NOLINT(build/include)
 #include "test/rtp_file_reader.h"
 
 namespace webrtc {

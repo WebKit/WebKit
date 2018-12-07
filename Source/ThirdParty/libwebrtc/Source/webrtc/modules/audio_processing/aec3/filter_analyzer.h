@@ -11,20 +11,20 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_FILTER_ANALYZER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_FILTER_ANALYZER_H_
 
+#include <stddef.h>
 #include <array>
+#include <memory>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/cascaded_biquad_filter.h"
-#include "modules/audio_processing/aec3/render_buffer.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
 class ApmDataDumper;
+class RenderBuffer;
 
 // Class for analyzing the properties of an adaptive filter.
 class FilterAnalyzer {

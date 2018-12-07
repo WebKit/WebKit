@@ -12,7 +12,7 @@
 
 #include <cstring>
 
-#include "common_video/include/video_frame.h"
+#include "api/video/encoded_image.h"
 #include "common_video/include/video_frame_buffer.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/include/module_common_types.h"
@@ -53,6 +53,7 @@ MultiplexEncoderAdapter::MultiplexEncoderAdapter(
     : factory_(factory),
       associated_format_(associated_format),
       encoded_complete_callback_(nullptr),
+      key_frame_interval_(0),
       supports_augmented_data_(supports_augmented_data) {}
 
 MultiplexEncoderAdapter::~MultiplexEncoderAdapter() {
@@ -92,6 +93,11 @@ int MultiplexEncoderAdapter::InitEncode(const VideoCodec* inst,
       break;
   }
 
+  encoder_info_ = EncoderInfo();
+  encoder_info_.implementation_name = "MultiplexEncoderAdapter (";
+  // This needs to be false so that we can do the split in Encode().
+  encoder_info_.supports_native_handle = false;
+
   for (size_t i = 0; i < kAlphaCodecStreams; ++i) {
     std::unique_ptr<VideoEncoder> encoder =
         factory_->CreateVideoEncoder(associated_format_);
@@ -104,8 +110,17 @@ int MultiplexEncoderAdapter::InitEncode(const VideoCodec* inst,
     adapter_callbacks_.emplace_back(new AdapterEncodedImageCallback(
         this, static_cast<AlphaCodecStream>(i)));
     encoder->RegisterEncodeCompleteCallback(adapter_callbacks_.back().get());
+
+    const EncoderInfo& encoder_impl_info = encoder->GetEncoderInfo();
+    encoder_info_.implementation_name += encoder_impl_info.implementation_name;
+    if (i != kAlphaCodecStreams - 1) {
+      encoder_info_.implementation_name += ", ";
+    }
+
     encoders_.emplace_back(std::move(encoder));
   }
+  encoder_info_.implementation_name += ")";
+
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -187,16 +202,6 @@ int MultiplexEncoderAdapter::RegisterEncodeCompleteCallback(
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-int MultiplexEncoderAdapter::SetChannelParameters(uint32_t packet_loss,
-                                                  int64_t rtt) {
-  for (auto& encoder : encoders_) {
-    const int rv = encoder->SetChannelParameters(packet_loss, rtt);
-    if (rv)
-      return rv;
-  }
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
 int MultiplexEncoderAdapter::SetRateAllocation(
     const VideoBitrateAllocation& bitrate,
     uint32_t framerate) {
@@ -238,8 +243,8 @@ int MultiplexEncoderAdapter::Release() {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-const char* MultiplexEncoderAdapter::ImplementationName() const {
-  return "MultiplexEncoderAdapter";
+VideoEncoder::EncoderInfo MultiplexEncoderAdapter::GetEncoderInfo() const {
+  return encoder_info_;
 }
 
 EncodedImageCallback::Result MultiplexEncoderAdapter::OnEncodedImage(

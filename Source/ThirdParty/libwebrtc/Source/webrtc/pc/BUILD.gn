@@ -31,6 +31,7 @@ rtc_static_library("rtc_pc_base") {
   sources = [
     "channel.cc",
     "channel.h",
+    "channelinterface.h",
     "channelmanager.cc",
     "channelmanager.h",
     "dtlssrtptransport.cc",
@@ -87,6 +88,7 @@ rtc_static_library("rtc_pc_base") {
     "../rtc_base/third_party/sigslot",
     "../system_wrappers:metrics",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 
@@ -203,6 +205,7 @@ rtc_static_library("peerconnection") {
     "../rtc_base:rtc_base_approved",
     "../rtc_base:stringutils",
     "../rtc_base/experiments:congestion_controller_experiment",
+    "../rtc_base/system:rtc_export",
     "../rtc_base/third_party/base64",
     "../rtc_base/third_party/sigslot",
     "../stats",
@@ -210,60 +213,9 @@ rtc_static_library("peerconnection") {
     "../system_wrappers:field_trial",
     "../system_wrappers:metrics",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
-}
-
-rtc_static_library("builtin_video_bitrate_allocator_factory") {
-  sources = [
-    "builtin_video_bitrate_allocator_factory.cc",
-    "builtin_video_bitrate_allocator_factory.h",
-  ]
-
-  deps = [
-    "../api/video:video_bitrate_allocator_factory",
-    "../media:rtc_media_base",
-    "../modules/video_coding:video_coding_utility",
-    "../modules/video_coding:webrtc_vp9_helpers",
-    "../rtc_base:ptr_util",
-    "../rtc_base/system:fallthrough",
-    "//third_party/abseil-cpp/absl/memory",
-  ]
-}
-
-# This target implements CreatePeerConnectionFactory methods that will create a
-# PeerConnection will full functionality (audio, video and data). Applications
-# that wish to reduce their binary size by ommitting functionality they don't
-# need should use CreateModularCreatePeerConnectionFactory instead, using the
-# "peerconnection" build target and other targets specific to their
-# requrements. See comment in peerconnectionfactoryinterface.h.
-rtc_static_library("create_pc_factory") {
-  sources = [
-    "createpeerconnectionfactory.cc",
-  ]
-
-  deps = [
-    "../api:callfactory_api",
-    "../api:libjingle_peerconnection_api",
-    "../api/audio:audio_mixer_api",
-    "../api/audio_codecs:audio_codecs_api",
-    "../api/video_codecs:video_codecs_api",
-    "../call",
-    "../call:call_interfaces",
-    "../logging:rtc_event_log_api",
-    "../logging:rtc_event_log_impl_base",
-    "../media:rtc_audio_video",
-    "../media:rtc_media_base",
-    "../modules/audio_device:audio_device",
-    "../modules/audio_processing:audio_processing",
-    "../rtc_base:rtc_base",
-    "../rtc_base:rtc_base_approved",
-  ]
-
-  if (!build_with_chromium && is_clang) {
-    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-  }
 }
 
 rtc_source_set("libjingle_peerconnection") {
@@ -273,8 +225,8 @@ rtc_source_set("libjingle_peerconnection") {
     "software_video_codecs",  # TODO(bugs.webrtc.org/7925): Remove.
   ]
   deps = [
-    ":create_pc_factory",
     ":peerconnection",
+    "../api:create_peerconnection_factory",
     "../api:libjingle_peerconnection_api",
   ]
 }
@@ -293,6 +245,7 @@ if (rtc_include_tests) {
       "rtcpmuxfilter_unittest.cc",
       "rtptransport_unittest.cc",
       "rtptransporttestutil.h",
+      "sessiondescription_unittest.cc",
       "srtpfilter_unittest.cc",
       "srtpsession_unittest.cc",
       "srtptestutil.h",
@@ -316,6 +269,7 @@ if (rtc_include_tests) {
       ":rtc_pc",
       ":rtc_pc_base",
       "../api:array_view",
+      "../api:fake_media_transport",
       "../api:libjingle_peerconnection_api",
       "../call:rtp_interfaces",
       "../logging:rtc_event_log_api",
@@ -325,6 +279,7 @@ if (rtc_include_tests) {
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
       "../rtc_base:checks",
+      "../rtc_base:gunit_helpers",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_main",
@@ -353,6 +308,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":pc_test_utils",
+      "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
       "../api:rtc_stats_api",
       "../api/audio_codecs:builtin_audio_decoder_factory",
@@ -363,6 +319,7 @@ if (rtc_include_tests) {
       "../p2p:p2p_test_utils",
       "../p2p:rtc_p2p",
       "../pc:peerconnection",
+      "../rtc_base:gunit_helpers",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_utils",
@@ -391,6 +348,7 @@ if (rtc_include_tests) {
       "test/fakevideotrackrenderer.h",
       "test/fakevideotracksource.h",
       "test/framegeneratorcapturervideotracksource.h",
+      "test/mock_channelinterface.h",
       "test/mock_datachannel.h",
       "test/mock_rtpreceiverinternal.h",
       "test/mock_rtpsenderinternal.h",
@@ -406,6 +364,7 @@ if (rtc_include_tests) {
       ":peerconnection",
       ":rtc_pc_base",
       "..:webrtc_common",
+      "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
       "../api:libjingle_peerconnection_test_api",
       "../api:rtc_stats_api",
@@ -419,12 +378,13 @@ if (rtc_include_tests) {
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
       "../modules/audio_device:audio_device",
+      "../modules/audio_processing:api",
       "../modules/audio_processing:audio_processing",
       "../p2p:p2p_test_utils",
       "../rtc_base:checks",
+      "../rtc_base:gunit_helpers",
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
-      "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:rtc_task_queue",
       "../rtc_base/third_party/sigslot",
       "../test:test_support",
@@ -470,6 +430,7 @@ if (rtc_include_tests) {
       "rtpmediautils_unittest.cc",
       "rtpparametersconversion_unittest.cc",
       "rtpsenderreceiver_unittest.cc",
+      "rtptransceiver_unittest.cc",
       "sctputils_unittest.cc",
       "statscollector_unittest.cc",
       "test/fakeaudiocapturemodule_unittest.cc",
@@ -492,17 +453,23 @@ if (rtc_include_tests) {
     deps = [
       ":peerconnection",
       ":rtc_pc_base",
-      "../api:fake_frame_crypto",
+      "../api:create_peerconnection_factory",
+      "../api:fake_frame_decryptor",
+      "../api:fake_frame_encryptor",
       "../api:libjingle_peerconnection_api",
+      "../api:loopback_media_transport",
       "../api:mock_rtp",
       "../api/units:time_delta",
       "../logging:fake_rtc_event_log",
       "../rtc_base:checks",
+      "../rtc_base:gunit_helpers",
+      "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:stringutils",
       "../rtc_base/third_party/base64",
       "../system_wrappers:metrics",
       "../test:fileutils",
       "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/strings",
     ]
     if (is_android) {
       deps += [ ":android_black_magic" ]
@@ -513,6 +480,7 @@ if (rtc_include_tests) {
       ":pc_test_utils",
       "..:webrtc_common",
       "../api:callfactory_api",
+      "../api:fake_media_transport",
       "../api:libjingle_peerconnection_test_api",
       "../api:rtc_stats_api",
       "../api/audio_codecs:audio_codecs_api",
@@ -531,6 +499,7 @@ if (rtc_include_tests) {
       "../media:rtc_data",  # TODO(phoglund): AFAIK only used for one sctp constant.
       "../media:rtc_media_base",
       "../media:rtc_media_tests_utils",
+      "../modules/audio_processing:api",
       "../modules/audio_processing:audio_processing",
       "../modules/utility:utility",
       "../p2p:p2p_test_utils",
@@ -539,7 +508,6 @@ if (rtc_include_tests) {
       "../rtc_base:rtc_base",
       "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_base_tests_main",
-      "../rtc_base:rtc_base_tests_utils",
       "../rtc_base:rtc_task_queue",
       "../rtc_base:safe_conversions",
       "../test:audio_codec_mocks",

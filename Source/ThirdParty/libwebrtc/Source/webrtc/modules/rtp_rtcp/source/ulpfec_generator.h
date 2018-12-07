@@ -11,10 +11,13 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
 #define MODULES_RTP_RTCP_SOURCE_ULPFEC_GENERATOR_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <list>
 #include <memory>
 #include <vector>
 
+#include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 
 namespace webrtc {

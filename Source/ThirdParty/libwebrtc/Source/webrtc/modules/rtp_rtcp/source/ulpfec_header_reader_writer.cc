@@ -10,11 +10,12 @@
 
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
 
-#include <utility>
+#include <string.h>
 
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/forward_error_correction_internal.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 

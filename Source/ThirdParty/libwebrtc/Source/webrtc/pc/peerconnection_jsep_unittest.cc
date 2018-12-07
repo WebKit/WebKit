@@ -95,6 +95,7 @@ class PeerConnectionJsepTest : public ::testing::Test {
       return nullptr;
     }
 
+    observer->SetPeerConnectionInterface(pc.get());
     return absl::make_unique<PeerConnectionWrapper>(pc_factory, pc,
                                                     std::move(observer));
   }

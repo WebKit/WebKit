@@ -146,7 +146,7 @@ class VCMGenericEncoder {
 
   int32_t RequestFrame(const std::vector<FrameType>& frame_types);
   bool InternalSource() const;
-  bool SupportsNativeHandle() const;
+  VideoEncoder::EncoderInfo GetEncoderInfo() const;
 
  private:
   rtc::RaceChecker race_checker_;

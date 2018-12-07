@@ -15,7 +15,6 @@
 #ifdef UNIT_TEST
 #include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 #endif              // UNIT_TEST
-#include <vector>
 #include "rtc_base/ipaddress.h"
 
 #undef SetPort

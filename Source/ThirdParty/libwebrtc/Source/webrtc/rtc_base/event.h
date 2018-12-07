@@ -11,7 +11,6 @@
 #ifndef RTC_BASE_EVENT_H_
 #define RTC_BASE_EVENT_H_
 
-#include "rtc_base/constructormagic.h"
 #if defined(WEBRTC_WIN)
 #include <windows.h>
 #elif defined(WEBRTC_POSIX)
@@ -26,7 +25,10 @@ class Event {
  public:
   static const int kForever = -1;
 
+  Event();
   Event(bool manual_reset, bool initially_signaled);
+  Event(const Event&) = delete;
+  Event& operator=(const Event&) = delete;
   ~Event();
 
   void Set();
@@ -45,8 +47,6 @@ class Event {
   const bool is_manual_reset_;
   bool event_status_;
 #endif
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(Event);
 };
 
 // This class is provided for compatibility with Chromium.

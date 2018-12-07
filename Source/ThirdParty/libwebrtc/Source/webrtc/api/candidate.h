@@ -18,16 +18,16 @@
 #include <string>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/helpers.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
 // Candidate for ICE based connection discovery.
 // TODO(phoglund): remove things in here that are not needed in the public API.
 
-class Candidate {
+class RTC_EXPORT Candidate {
  public:
   Candidate();
   // TODO(pthatcher): Match the ordering and param list as per RFC 5245

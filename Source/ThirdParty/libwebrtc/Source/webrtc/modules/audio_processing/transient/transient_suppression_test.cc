@@ -23,26 +23,28 @@
 #include "test/gtest.h"
 #include "test/testsupport/fileutils.h"
 
-DEFINE_string(in_file_name, "", "PCM file that contains the signal.");
-DEFINE_string(detection_file_name,
-              "",
-              "PCM file that contains the detection signal.");
-DEFINE_string(reference_file_name,
-              "",
-              "PCM file that contains the reference signal.");
+WEBRTC_DEFINE_string(in_file_name, "", "PCM file that contains the signal.");
+WEBRTC_DEFINE_string(detection_file_name,
+                     "",
+                     "PCM file that contains the detection signal.");
+WEBRTC_DEFINE_string(reference_file_name,
+                     "",
+                     "PCM file that contains the reference signal.");
 
-DEFINE_int(chunk_size_ms,
-           10,
-           "Time between each chunk of samples in milliseconds.");
+WEBRTC_DEFINE_int(chunk_size_ms,
+                  10,
+                  "Time between each chunk of samples in milliseconds.");
 
-DEFINE_int(sample_rate_hz, 16000, "Sampling frequency of the signal in Hertz.");
-DEFINE_int(detection_rate_hz,
-           0,
-           "Sampling frequency of the detection signal in Hertz.");
+WEBRTC_DEFINE_int(sample_rate_hz,
+                  16000,
+                  "Sampling frequency of the signal in Hertz.");
+WEBRTC_DEFINE_int(detection_rate_hz,
+                  0,
+                  "Sampling frequency of the detection signal in Hertz.");
 
-DEFINE_int(num_channels, 1, "Number of channels.");
+WEBRTC_DEFINE_int(num_channels, 1, "Number of channels.");
 
-DEFINE_bool(help, false, "Print this message.");
+WEBRTC_DEFINE_bool(help, false, "Print this message.");
 
 namespace webrtc {
 

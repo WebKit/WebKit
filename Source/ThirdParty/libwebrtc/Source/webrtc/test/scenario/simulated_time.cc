@@ -144,7 +144,7 @@ TransportPacketsFeedback SimulatedSender::PullFeedbackReport(
         }
       }
 
-      data_in_flight_ -= feedback.sent_packet->size;
+      data_in_flight_ -= feedback.sent_packet.size;
       report.packet_feedbacks.push_back(feedback);
     }
   }
@@ -252,11 +252,12 @@ SimulatedTimeClient::SimulatedTimeClient(
       return_link_(return_link),
       sender_(send_link.front(), send_receiver_id),
       feedback_(config, return_receiver_id, return_link.front()) {
+  current_contraints_.at_time = at_time;
+  current_contraints_.starting_rate = config.transport.rates.start_rate;
+  current_contraints_.min_data_rate = config.transport.rates.min_rate;
+  current_contraints_.max_data_rate = config.transport.rates.max_rate;
   NetworkControllerConfig initial_config;
-  initial_config.constraints.at_time = at_time;
-  initial_config.constraints.starting_rate = config.transport.rates.start_rate;
-  initial_config.constraints.min_data_rate = config.transport.rates.min_rate;
-  initial_config.constraints.max_data_rate = config.transport.rates.max_rate;
+  initial_config.constraints = current_contraints_;
   congestion_controller_ = network_controller_factory_.Create(initial_config);
   for (auto& stream_config : stream_configs)
     packet_streams_.emplace_back(new PacketStream(stream_config));
@@ -283,9 +284,9 @@ bool SimulatedTimeClient::TryDeliverPacket(rtc::CopyOnWriteBuffer raw_buffer,
   for (PacketResult& feedback : report.packet_feedbacks) {
     if (packet_log_)
       fprintf(packet_log_, "%" PRId64 " %" PRId64 " %.3lf %.3lf %.3lf\n",
-              feedback.sent_packet->sequence_number,
-              feedback.sent_packet->size.bytes(),
-              feedback.sent_packet->send_time.seconds<double>(),
+              feedback.sent_packet.sequence_number,
+              feedback.sent_packet.size.bytes(),
+              feedback.sent_packet.send_time.seconds<double>(),
               feedback.receive_time.seconds<double>(),
               at_time.seconds<double>());
   }
@@ -307,6 +308,7 @@ void SimulatedTimeClient::Update(NetworkControlUpdate update) {
     DataRate rate_per_stream =
         update.target_rate->target_rate * ratio_per_stream;
     target_rate_ = update.target_rate->target_rate;
+    link_capacity_ = update.target_rate->network_estimate.bandwidth;
     for (auto& stream : packet_streams_)
       stream->OnTargetRateUpdate(rate_per_stream);
   }
@@ -336,8 +338,20 @@ void SimulatedTimeClient::ProcessFrames(Timestamp at_time) {
   }
 }
 
+void SimulatedTimeClient::TriggerFakeReroute(Timestamp at_time) {
+  NetworkRouteChange msg;
+  msg.at_time = at_time;
+  msg.constraints = current_contraints_;
+  msg.constraints.at_time = at_time;
+  Update(congestion_controller_->OnNetworkRouteChange(msg));
+}
+
 TimeDelta SimulatedTimeClient::GetNetworkControllerProcessInterval() const {
   return network_controller_factory_.GetProcessInterval();
+}
+
+DataRate SimulatedTimeClient::link_capacity() const {
+  return link_capacity_;
 }
 
 double SimulatedTimeClient::target_rate_kbps() const {

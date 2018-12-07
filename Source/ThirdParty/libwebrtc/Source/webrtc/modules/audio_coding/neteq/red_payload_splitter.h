@@ -16,7 +16,6 @@
 
 namespace webrtc {
 
-// Forward declarations.
 class DecoderDatabase;
 
 // This class handles splitting of RED payloads into smaller parts.

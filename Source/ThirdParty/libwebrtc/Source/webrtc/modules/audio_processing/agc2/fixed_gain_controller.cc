@@ -10,13 +10,9 @@
 
 #include "modules/audio_processing/agc2/fixed_gain_controller.h"
 
-#include <algorithm>
-#include <cmath>
-
 #include "api/array_view.h"
 #include "common_audio/include/audio_util.h"
 #include "modules/audio_processing/agc2/agc2_common.h"
-#include "modules/audio_processing/agc2/interpolated_gain_curve.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
@@ -39,7 +35,7 @@ FixedGainController::FixedGainController(ApmDataDumper* apm_data_dumper)
 FixedGainController::FixedGainController(ApmDataDumper* apm_data_dumper,
                                          std::string histogram_name_prefix)
     : apm_data_dumper_(apm_data_dumper),
-      gain_curve_applier_(48000, apm_data_dumper_, histogram_name_prefix) {
+      limiter_(48000, apm_data_dumper_, histogram_name_prefix) {
   // Do update histograms.xml when adding name prefixes.
   RTC_DCHECK(histogram_name_prefix == "" || histogram_name_prefix == "Test" ||
              histogram_name_prefix == "AudioMixer" ||
@@ -61,12 +57,12 @@ void FixedGainController::SetGain(float gain_to_apply_db) {
   // Reset the gain curve applier to quickly react on abrupt level changes
   // caused by large changes of the applied gain.
   if (previous_applied_gained != gain_to_apply_) {
-    gain_curve_applier_.Reset();
+    limiter_.Reset();
   }
 }
 
 void FixedGainController::SetSampleRate(size_t sample_rate_hz) {
-  gain_curve_applier_.SetSampleRate(sample_rate_hz);
+  limiter_.SetSampleRate(sample_rate_hz);
 }
 
 void FixedGainController::Process(AudioFrameView<float> signal) {
@@ -84,7 +80,7 @@ void FixedGainController::Process(AudioFrameView<float> signal) {
   }
 
   // Use the limiter.
-  gain_curve_applier_.Process(signal);
+  limiter_.Process(signal);
 
   // Dump data for debug.
   const auto channel_view = signal.channel(0);
@@ -100,6 +96,6 @@ void FixedGainController::Process(AudioFrameView<float> signal) {
 }
 
 float FixedGainController::LastAudioLevel() const {
-  return gain_curve_applier_.LastAudioLevel();
+  return limiter_.LastAudioLevel();
 }
 }  // namespace webrtc

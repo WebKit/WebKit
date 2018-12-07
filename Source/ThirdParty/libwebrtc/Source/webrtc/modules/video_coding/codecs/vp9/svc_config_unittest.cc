@@ -49,12 +49,13 @@ TEST(SvcConfig, ScreenSharing) {
   std::vector<SpatialLayer> spatial_layers =
       GetSvcConfig(1920, 1080, 30, 3, 3, true);
 
-  EXPECT_EQ(spatial_layers.size(), 2UL);
+  EXPECT_EQ(spatial_layers.size(), 3UL);
 
-  for (const SpatialLayer& layer : spatial_layers) {
+  for (size_t i = 0; i < 3; ++i) {
+    const SpatialLayer& layer = spatial_layers[i];
     EXPECT_EQ(layer.width, 1920);
     EXPECT_EQ(layer.height, 1080);
-    EXPECT_EQ(layer.maxFramerate, 5);
+    EXPECT_EQ(layer.maxFramerate, (i < 2) ? 5 : 30);
     EXPECT_EQ(layer.numberOfTemporalLayers, 1);
     EXPECT_LE(layer.minBitrate, layer.maxBitrate);
     EXPECT_LE(layer.minBitrate, layer.targetBitrate);

@@ -10,13 +10,13 @@
 
 #include "modules/rtp_rtcp/source/rtp_format_vp8.h"
 
+#include <stdint.h>
 #include <string.h>  // memcpy
-
-#include <limits>
-#include <utility>
 #include <vector>
 
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/interface/common_constants.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 

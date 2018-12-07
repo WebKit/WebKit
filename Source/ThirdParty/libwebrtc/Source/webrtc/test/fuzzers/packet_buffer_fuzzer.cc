@@ -21,6 +21,9 @@ class NullCallback : public video_coding::OnReceivedFrameCallback {
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 200000) {
+    return;
+  }
   VCMPacket packet;
   NullCallback callback;
   SimulatedClock clock(0);

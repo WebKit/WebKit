@@ -19,7 +19,7 @@ namespace webrtc {
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
   MessageBufferReader buf(reinterpret_cast<const char*>(data), size);
-  auto mdns_msg = absl::make_unique<MDnsMessage>();
+  auto mdns_msg = absl::make_unique<MdnsMessage>();
   mdns_msg->Read(&buf);
 }
 

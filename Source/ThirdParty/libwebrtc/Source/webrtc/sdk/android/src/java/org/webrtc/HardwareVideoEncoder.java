@@ -404,12 +404,6 @@ class HardwareVideoEncoder implements VideoEncoder {
   }
 
   @Override
-  public VideoCodecStatus setChannelParameters(short packetLoss, long roundTripTimeMs) {
-    encodeThreadChecker.checkIsOnValidThread();
-    return VideoCodecStatus.OK; // No op.
-  }
-
-  @Override
   public VideoCodecStatus setRateAllocation(BitrateAllocation bitrateAllocation, int framerate) {
     encodeThreadChecker.checkIsOnValidThread();
     if (framerate > MAX_VIDEO_FRAMERATE) {

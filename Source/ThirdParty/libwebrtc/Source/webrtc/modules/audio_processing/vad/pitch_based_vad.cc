@@ -10,7 +10,6 @@
 
 #include "modules/audio_processing/vad/pitch_based_vad.h"
 
-#include <math.h>
 #include <string.h>
 
 #include "modules/audio_processing/vad/common.h"

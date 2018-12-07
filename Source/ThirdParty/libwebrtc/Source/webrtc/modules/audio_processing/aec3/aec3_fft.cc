@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 
 #include "rtc_base/checks.h"
 

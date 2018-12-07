@@ -13,27 +13,71 @@
 #ifndef MODULES_BITRATE_CONTROLLER_SEND_SIDE_BANDWIDTH_ESTIMATION_H_
 #define MODULES_BITRATE_CONTROLLER_SEND_SIDE_BANDWIDTH_ESTIMATION_H_
 
+#include <stdint.h>
 #include <deque>
 #include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/bitrate_controller/loss_based_bandwidth_estimation.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 
 class RtcEventLog;
 
+class LinkCapacityTracker {
+ public:
+  LinkCapacityTracker();
+  ~LinkCapacityTracker();
+  void OnOveruse(DataRate acknowledged_rate, Timestamp at_time);
+  void OnStartingRate(DataRate start_rate);
+  void OnRateUpdate(DataRate acknowledged, Timestamp at_time);
+  void OnRttBackoff(DataRate backoff_rate, Timestamp at_time);
+  DataRate estimate() const;
+
+ private:
+  FieldTrialParameter<TimeDelta> tracking_rate;
+  double capacity_estimate_bps_ = 0;
+  Timestamp last_link_capacity_update_ = Timestamp::MinusInfinity();
+};
+
+class RttBasedBackoff {
+ public:
+  RttBasedBackoff();
+  ~RttBasedBackoff();
+  void OnRouteChange();
+  void UpdatePropagationRtt(Timestamp at_time, TimeDelta propagation_rtt);
+  TimeDelta RttLowerBound(Timestamp at_time) const;
+
+  FieldTrialParameter<TimeDelta> rtt_limit_;
+  FieldTrialParameter<double> drop_fraction_;
+  FieldTrialParameter<TimeDelta> drop_interval_;
+  FieldTrialFlag persist_on_route_change_;
+
+ public:
+  Timestamp last_propagation_rtt_update_;
+  TimeDelta last_propagation_rtt_;
+};
+
 class SendSideBandwidthEstimation {
  public:
   SendSideBandwidthEstimation() = delete;
   explicit SendSideBandwidthEstimation(RtcEventLog* event_log);
-  virtual ~SendSideBandwidthEstimation();
+  ~SendSideBandwidthEstimation();
 
+  void OnRouteChange();
   void CurrentEstimate(int* bitrate, uint8_t* loss, int64_t* rtt) const;
-
+  DataRate GetEstimatedLinkCapacity() const;
   // Call periodically to update estimate.
   void UpdateEstimate(Timestamp at_time);
+  void OnSentPacket(SentPacket sent_packet);
+  void UpdatePropagationRtt(Timestamp at_time, TimeDelta propagation_rtt);
 
   // Call when we receive a RTCP message with TMMBR or REMB.
   void UpdateReceiverEstimate(Timestamp at_time, DataRate bandwidth);
@@ -62,6 +106,9 @@ class SendSideBandwidthEstimation {
   void SetSendBitrate(DataRate bitrate, Timestamp at_time);
   void SetMinMaxBitrate(DataRate min_bitrate, DataRate max_bitrate);
   int GetMinBitrate() const;
+  void SetAcknowledgedRate(absl::optional<DataRate> acknowledged_rate,
+                           Timestamp at_time);
+  void IncomingPacketFeedbackVector(const TransportPacketsFeedback& report);
 
  private:
   enum UmaState { kNoUpdate, kFirstDone, kDone };
@@ -75,9 +122,14 @@ class SendSideBandwidthEstimation {
   // min bitrate used during last kBweIncreaseIntervalMs.
   void UpdateMinHistory(Timestamp at_time);
 
+  DataRate MaybeRampupOrBackoff(DataRate new_bitrate, Timestamp at_time);
+
   // Cap |bitrate| to [min_bitrate_configured_, max_bitrate_configured_] and
   // set |current_bitrate_| to the capped value and updates the event log.
   void CapBitrateToThresholds(Timestamp at_time, DataRate bitrate);
+
+  RttBasedBackoff rtt_backoff_;
+  LinkCapacityTracker link_capacity_;
 
   std::deque<std::pair<Timestamp, DataRate> > min_bitrate_history_;
 
@@ -85,6 +137,7 @@ class SendSideBandwidthEstimation {
   int lost_packets_since_last_loss_update_;
   int expected_packets_since_last_loss_update_;
 
+  absl::optional<DataRate> acknowledged_rate_;
   DataRate current_bitrate_;
   DataRate min_bitrate_configured_;
   DataRate max_bitrate_configured_;
@@ -113,6 +166,7 @@ class SendSideBandwidthEstimation {
   float low_loss_threshold_;
   float high_loss_threshold_;
   DataRate bitrate_threshold_;
+  LossBasedBandwidthEstimation loss_based_bandwidth_estimation_;
 };
 }  // namespace webrtc
 #endif  // MODULES_BITRATE_CONTROLLER_SEND_SIDE_BANDWIDTH_ESTIMATION_H_

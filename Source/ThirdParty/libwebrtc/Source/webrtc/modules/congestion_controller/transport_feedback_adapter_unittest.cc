@@ -52,7 +52,7 @@ class LegacyTransportFeedbackAdapterTest : public ::testing::Test {
   virtual ~LegacyTransportFeedbackAdapterTest() {}
 
   virtual void SetUp() {
-    adapter_.reset(new TransportFeedbackAdapter(&clock_));
+    adapter_.reset(new LegacyTransportFeedbackAdapter(&clock_));
   }
 
   virtual void TearDown() { adapter_.reset(); }
@@ -75,7 +75,7 @@ class LegacyTransportFeedbackAdapterTest : public ::testing::Test {
   static constexpr uint32_t kSsrc = 8492;
 
   SimulatedClock clock_;
-  std::unique_ptr<TransportFeedbackAdapter> adapter_;
+  std::unique_ptr<LegacyTransportFeedbackAdapter> adapter_;
 };
 
 TEST_F(LegacyTransportFeedbackAdapterTest, ObserverSanity) {

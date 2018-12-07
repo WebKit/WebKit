@@ -10,8 +10,6 @@
 
 #include "modules/audio_processing/include/audio_processing.h"
 
-#include "rtc_base/checks.h"
-
 namespace webrtc {
 
 void CustomProcessing::SetRuntimeSetting(

@@ -19,10 +19,11 @@
 #include "absl/types/optional.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/call/transport.h"
+#include "api/crypto/cryptooptions.h"
+#include "api/media_transport_interface.h"
 #include "api/rtpparameters.h"
 #include "api/rtpreceiverinterface.h"
 #include "call/rtp_config.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
@@ -62,6 +63,7 @@ class AudioReceiveStream {
     float secondary_discarded_rate = 0.0f;
     float accelerate_rate = 0.0f;
     float preemptive_expand_rate = 0.0f;
+    uint64_t delayed_packet_outage_samples = 0;
     int32_t decoding_calls_to_silence_generator = 0;
     int32_t decoding_calls_to_neteq = 0;
     int32_t decoding_normal = 0;
@@ -70,6 +72,7 @@ class AudioReceiveStream {
     int32_t decoding_plc_cng = 0;
     int32_t decoding_muted_output = 0;
     int64_t capture_start_ntp_time_ms = 0;
+    uint64_t jitter_buffer_flushes = 0;
   };
 
   struct Config {
@@ -106,9 +109,12 @@ class AudioReceiveStream {
 
     Transport* rtcp_send_transport = nullptr;
 
+    MediaTransportInterface* media_transport = nullptr;
+
     // NetEq settings.
     size_t jitter_buffer_max_packets = 50;
     bool jitter_buffer_fast_accelerate = false;
+    int jitter_buffer_min_delay_ms = 0;
 
     // Identifier for an A/V synchronization group. Empty string to disable.
     // TODO(pbos): Synchronize streams in a sync group, not just one video
@@ -121,6 +127,9 @@ class AudioReceiveStream {
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory;
 
     absl::optional<AudioCodecPairId> codec_pair_id;
+
+    // Per PeerConnection crypto options.
+    webrtc::CryptoOptions crypto_options;
 
     // An optional custom frame decryptor that allows the entire frame to be
     // decrypted in whatever way the caller choses. This is not required by

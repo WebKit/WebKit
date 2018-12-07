@@ -35,8 +35,10 @@ bool RtcEventIceCandidatePair::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventIceCandidatePair::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventIceCandidatePair(*this));
+std::unique_ptr<RtcEventIceCandidatePair> RtcEventIceCandidatePair::Copy()
+    const {
+  return absl::WrapUnique<RtcEventIceCandidatePair>(
+      new RtcEventIceCandidatePair(*this));
 }
 
 }  // namespace webrtc

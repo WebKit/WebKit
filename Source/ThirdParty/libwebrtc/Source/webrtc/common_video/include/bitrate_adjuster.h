@@ -11,10 +11,13 @@
 #ifndef COMMON_VIDEO_INCLUDE_BITRATE_ADJUSTER_H_
 #define COMMON_VIDEO_INCLUDE_BITRATE_ADJUSTER_H_
 
-#include <functional>
+#include <stddef.h>
+#include <stdint.h>
 
+#include "absl/types/optional.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

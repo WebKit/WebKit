@@ -279,5 +279,32 @@ TEST(RtpGenericFrameDescriptorExtensionTest, WriteTwoFrameDependencies) {
   EXPECT_THAT(buffer, ElementsAreArray(kRaw));
 }
 
+TEST(RtpGenericFrameDescriptorExtensionTest,
+     ParseResolutionOnIndependentFrame) {
+  constexpr int kWidth = 0x2468;
+  constexpr int kHeight = 0x6543;
+  constexpr uint8_t kRaw[] = {0x80, 0x01, 0x00, 0x00, 0x24, 0x68, 0x65, 0x43};
+  RtpGenericFrameDescriptor descriptor;
+
+  ASSERT_TRUE(RtpGenericFrameDescriptorExtension::Parse(kRaw, &descriptor));
+  EXPECT_EQ(descriptor.Width(), kWidth);
+  EXPECT_EQ(descriptor.Height(), kHeight);
+}
+
+TEST(RtpGenericFrameDescriptorExtensionTest,
+     WriteResolutionOnIndependentFrame) {
+  constexpr int kWidth = 0x2468;
+  constexpr int kHeight = 0x6543;
+  constexpr uint8_t kRaw[] = {0x80, 0x01, 0x00, 0x00, 0x24, 0x68, 0x65, 0x43};
+  RtpGenericFrameDescriptor descriptor;
+  descriptor.SetFirstPacketInSubFrame(true);
+  descriptor.SetResolution(kWidth, kHeight);
+
+  ASSERT_EQ(RtpGenericFrameDescriptorExtension::ValueSize(descriptor),
+            sizeof(kRaw));
+  uint8_t buffer[sizeof(kRaw)];
+  EXPECT_TRUE(RtpGenericFrameDescriptorExtension::Write(buffer, descriptor));
+  EXPECT_THAT(buffer, ElementsAreArray(kRaw));
+}
 }  // namespace
 }  // namespace webrtc

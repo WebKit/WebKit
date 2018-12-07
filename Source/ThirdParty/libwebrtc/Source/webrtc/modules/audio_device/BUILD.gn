@@ -24,6 +24,16 @@ config("audio_device_warnings_config") {
   }
 }
 
+rtc_source_set("audio_device_default") {
+  visibility = [ "*" ]
+  sources = [
+    "include/audio_device_default.h",
+  ]
+  deps = [
+    ":audio_device_api",
+  ]
+}
+
 rtc_source_set("audio_device") {
   visibility = [ "*" ]
   public_deps = [
@@ -203,8 +213,8 @@ rtc_source_set("audio_device_impl") {
   deps = [
     ":audio_device_api",
     ":audio_device_buffer",
+    ":audio_device_default",
     ":audio_device_generic",
-    "../..:webrtc_common",
     "../../api:array_view",
     "../../common_audio",
     "../../common_audio:common_audio_c",

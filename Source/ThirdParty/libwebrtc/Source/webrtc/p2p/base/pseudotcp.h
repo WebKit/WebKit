@@ -14,6 +14,7 @@
 #include <list>
 
 #include "rtc_base/stream.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
@@ -45,7 +46,7 @@ class IPseudoTcpNotify {
 // PseudoTcp
 //////////////////////////////////////////////////////////////////////
 
-class PseudoTcp {
+class RTC_EXPORT PseudoTcp {
  public:
   static uint32_t Now();
 

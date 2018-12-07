@@ -12,6 +12,7 @@
 
 #include <string.h>
 #include <algorithm>
+#include <cstdint>
 
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"

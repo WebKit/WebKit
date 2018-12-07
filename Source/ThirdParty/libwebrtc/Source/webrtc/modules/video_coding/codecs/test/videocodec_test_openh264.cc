@@ -32,8 +32,6 @@ VideoCodecTestFixture::Config CreateConfig() {
   config.num_frames = kNumFrames;
   // Only allow encoder/decoder to use single core, for predictability.
   config.use_single_core = true;
-  config.hw_encoder = false;
-  config.hw_decoder = false;
   return config;
 }
 }  // namespace

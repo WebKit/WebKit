@@ -30,10 +30,7 @@ TEST_F(MultiStreamEndToEndTest, SendsAndReceivesMultipleStreams) {
     VideoOutputObserver(const MultiStreamTester::CodecSettings& settings,
                         uint32_t ssrc,
                         test::FrameGeneratorCapturer** frame_generator)
-        : settings_(settings),
-          ssrc_(ssrc),
-          frame_generator_(frame_generator),
-          done_(false, false) {}
+        : settings_(settings), ssrc_(ssrc), frame_generator_(frame_generator) {}
 
     void OnFrame(const VideoFrame& video_frame) override {
       EXPECT_EQ(settings_.width, video_frame.width());

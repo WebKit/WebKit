@@ -39,8 +39,7 @@ class MockRtpSenderInternal : public RtpSenderInternal {
                      rtc::scoped_refptr<FrameEncryptorInterface>());
 
   // RtpSenderInternal methods.
-  MOCK_METHOD1(SetVoiceMediaChannel, void(cricket::VoiceMediaChannel*));
-  MOCK_METHOD1(SetVideoMediaChannel, void(cricket::VideoMediaChannel*));
+  MOCK_METHOD1(SetMediaChannel, void(cricket::MediaChannel*));
   MOCK_METHOD1(SetSsrc, void(uint32_t));
   MOCK_METHOD1(set_stream_ids, void(const std::vector<std::string>&));
   MOCK_METHOD1(set_init_send_encodings,

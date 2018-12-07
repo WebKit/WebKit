@@ -27,10 +27,13 @@ class RenderDelayController {
   static RenderDelayController* Create(const EchoCanceller3Config& config,
                                        int non_causal_offset,
                                        int sample_rate_hz);
+  static RenderDelayController* Create2(const EchoCanceller3Config& config,
+                                        int sample_rate_hz);
   virtual ~RenderDelayController() = default;
 
-  // Resets the delay controller.
-  virtual void Reset() = 0;
+  // Resets the delay controller. If the delay confidence is reset, the reset
+  // behavior is as if the call is restarted.
+  virtual void Reset(bool reset_delay_confidence) = 0;
 
   // Logs a render call.
   virtual void LogRenderCall() = 0;
@@ -41,6 +44,9 @@ class RenderDelayController {
       size_t render_delay_buffer_delay,
       const absl::optional<int>& echo_remover_delay,
       rtc::ArrayView<const float> capture) = 0;
+
+  // Returns true if clockdrift has been detected.
+  virtual bool HasClockdrift() const = 0;
 };
 }  // namespace webrtc
 

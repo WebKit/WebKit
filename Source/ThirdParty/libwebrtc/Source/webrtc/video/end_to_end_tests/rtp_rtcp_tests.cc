@@ -282,13 +282,13 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
         test::PacketTransport::kSender, payload_type_map_,
         absl::make_unique<FakeNetworkPipe>(
             Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                           DefaultNetworkSimulationConfig())));
+                                           BuiltInNetworkBehaviorConfig())));
     receive_transport = absl::make_unique<test::PacketTransport>(
         &task_queue_, nullptr, &observer, test::PacketTransport::kReceiver,
         payload_type_map_,
         absl::make_unique<FakeNetworkPipe>(
             Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                           DefaultNetworkSimulationConfig())));
+                                           BuiltInNetworkBehaviorConfig())));
     send_transport->SetReceiver(receiver_call_->Receiver());
     receive_transport->SetReceiver(sender_call_->Receiver());
 
@@ -474,7 +474,7 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
   task_queue_.SendTask([&]() {
     CreateCalls();
 
-    DefaultNetworkSimulationConfig lossy_delayed_link;
+    BuiltInNetworkBehaviorConfig lossy_delayed_link;
     lossy_delayed_link.loss_percent = 2;
     lossy_delayed_link.queue_delay_ms = 50;
 
@@ -486,7 +486,7 @@ TEST_F(RtpRtcpEndToEndTest, DISABLED_TestFlexfecRtpStatePreservation) {
             absl::make_unique<SimulatedNetwork>(lossy_delayed_link)));
     send_transport->SetReceiver(receiver_call_->Receiver());
 
-    DefaultNetworkSimulationConfig flawless_link;
+    BuiltInNetworkBehaviorConfig flawless_link;
     receive_transport = absl::make_unique<test::PacketTransport>(
         &task_queue_, nullptr, &observer, test::PacketTransport::kReceiver,
         payload_type_map_,

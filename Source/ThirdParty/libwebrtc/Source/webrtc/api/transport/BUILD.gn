@@ -19,7 +19,15 @@ rtc_source_set("bitrate_settings") {
   ]
 }
 
+rtc_source_set("enums") {
+  visibility = [ "*" ]
+  sources = [
+    "enums.h",
+  ]
+}
+
 rtc_static_library("network_control") {
+  visibility = [ "*" ]
   sources = [
     "network_control.h",
     "network_types.cc",
@@ -32,6 +40,19 @@ rtc_static_library("network_control") {
     "../units:time_delta",
     "../units:timestamp",
     "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_static_library("goog_cc") {
+  visibility = [ "*" ]
+  sources = [
+    "goog_cc_factory.cc",
+    "goog_cc_factory.h",
+  ]
+  deps = [
+    ":network_control",
+    "../../modules/congestion_controller/goog_cc",
+    "//third_party/abseil-cpp/absl/memory",
   ]
 }
 

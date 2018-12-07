@@ -18,7 +18,6 @@
 #include "api/video/video_stream_encoder_interface.h"
 #include "call/bitrate_allocator.h"
 #include "call/rtp_video_sender_interface.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/utility/include/process_thread.h"
 #include "rtc_base/weak_ptr.h"
 #include "video/call_stats.h"
@@ -29,6 +28,16 @@
 
 namespace webrtc {
 namespace internal {
+
+// Pacing buffer config; overridden by ALR config if provided.
+struct PacingConfig {
+  PacingConfig();
+  PacingConfig(const PacingConfig&);
+  PacingConfig& operator=(const PacingConfig&) = default;
+  ~PacingConfig();
+  FieldTrialParameter<double> pacing_factor;
+  FieldTrialParameter<TimeDelta> max_pacing_delay;
+};
 
 // VideoSendStreamImpl implements internal::VideoSendStream.
 // It is created and destroyed on |worker_queue|. The intent is to decrease the
@@ -83,10 +92,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   class CheckEncoderActivityTask;
 
   // Implements BitrateAllocatorObserver.
-  uint32_t OnBitrateUpdated(uint32_t bitrate_bps,
-                            uint8_t fraction_loss,
-                            int64_t rtt,
-                            int64_t probing_interval_ms) override;
+  uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override;
 
   void OnEncoderConfigurationChanged(std::vector<VideoStream> streams,
                                      int min_transmit_bitrate_bps) override;
@@ -115,6 +121,7 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   void SignalEncoderActive();
 
   const bool has_alr_probing_;
+  const PacingConfig pacing_config_;
 
   SendStatisticsProxy* const stats_proxy_;
   const VideoSendStream::Config* const config_;

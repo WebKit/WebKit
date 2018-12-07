@@ -10,9 +10,9 @@
 
 #include "rtc_base/messagedigest.h"
 
-#include <memory>
-
 #include <string.h>
+#include <cstdint>
+#include <memory>
 
 #include "rtc_base/openssldigest.h"
 #include "rtc_base/stringencode.h"

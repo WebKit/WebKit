@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <memory>
 #include <set>
+#include <utility>
 
 #include "p2p/base/dtlstransport.h"
 #include "p2p/base/fakeicetransport.h"
@@ -19,6 +20,7 @@
 #include "rtc_base/dscp.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
+#include "rtc_base/rtccertificate.h"
 #include "rtc_base/ssladapter.h"
 #include "rtc_base/sslidentity.h"
 #include "rtc_base/sslstreamadapter.h"
@@ -47,8 +49,8 @@ void SetRemoteFingerprintFromCert(
     DtlsTransport* transport,
     const rtc::scoped_refptr<rtc::RTCCertificate>& cert,
     bool modify_digest = false) {
-  rtc::SSLFingerprint* fingerprint =
-      rtc::SSLFingerprint::CreateFromCertificate(cert);
+  std::unique_ptr<rtc::SSLFingerprint> fingerprint =
+      rtc::SSLFingerprint::CreateFromCertificate(*cert);
   if (modify_digest) {
     ++fingerprint->digest[0];
   }
@@ -57,7 +59,6 @@ void SetRemoteFingerprintFromCert(
       fingerprint->algorithm,
       reinterpret_cast<const uint8_t*>(fingerprint->digest.data()),
       fingerprint->digest.size()));
-  delete fingerprint;
 }
 
 class DtlsTestClient : public sigslot::has_slots<> {
@@ -76,18 +77,18 @@ class DtlsTestClient : public sigslot::has_slots<> {
   }
   // Set up fake ICE transport and real DTLS transport under test.
   void SetupTransports(IceRole role, int async_delay_ms = 0) {
-    fake_ice_transport_.reset(new FakeIceTransport("fake", 0));
-    fake_ice_transport_->SetAsync(true);
-    fake_ice_transport_->SetAsyncDelay(async_delay_ms);
-    fake_ice_transport_->SetIceRole(role);
-    fake_ice_transport_->SetIceTiebreaker((role == ICEROLE_CONTROLLING) ? 1
-                                                                        : 2);
+    std::unique_ptr<FakeIceTransport> fake_ice_transport;
+    fake_ice_transport.reset(new FakeIceTransport("fake", 0));
+    fake_ice_transport->SetAsync(true);
+    fake_ice_transport->SetAsyncDelay(async_delay_ms);
+    fake_ice_transport->SetIceRole(role);
+    fake_ice_transport->SetIceTiebreaker((role == ICEROLE_CONTROLLING) ? 1 : 2);
     // Hook the raw packets so that we can verify they are encrypted.
-    fake_ice_transport_->SignalReadPacket.connect(
+    fake_ice_transport->SignalReadPacket.connect(
         this, &DtlsTestClient::OnFakeIceTransportReadPacket);
 
-    dtls_transport_.reset(
-        new DtlsTransport(fake_ice_transport_.get(), rtc::CryptoOptions()));
+    dtls_transport_ = absl::make_unique<DtlsTransport>(
+        std::move(fake_ice_transport), webrtc::CryptoOptions());
     dtls_transport_->SetSslMaxProtocolVersion(ssl_max_version_);
     // Note: Certificate may be null here if testing passthrough.
     dtls_transport_->SetLocalCertificate(certificate_);
@@ -99,13 +100,16 @@ class DtlsTestClient : public sigslot::has_slots<> {
         this, &DtlsTestClient::OnTransportSentPacket);
   }
 
-  FakeIceTransport* fake_ice_transport() { return fake_ice_transport_.get(); }
+  FakeIceTransport* fake_ice_transport() {
+    return static_cast<FakeIceTransport*>(dtls_transport_->ice_transport());
+  }
 
   DtlsTransport* dtls_transport() { return dtls_transport_.get(); }
 
   // Simulate fake ICE transports connecting.
   bool Connect(DtlsTestClient* peer, bool asymmetric) {
-    fake_ice_transport_->SetDestination(peer->fake_ice_transport(), asymmetric);
+    fake_ice_transport()->SetDestination(peer->fake_ice_transport(),
+                                         asymmetric);
     return true;
   }
 
@@ -232,7 +236,7 @@ class DtlsTestClient : public sigslot::has_slots<> {
   void OnTransportReadPacket(rtc::PacketTransportInternal* transport,
                              const char* data,
                              size_t size,
-                             const rtc::PacketTime& packet_time,
+                             const int64_t& /* packet_time_us */,
                              int flags) {
     uint32_t packet_num = 0;
     ASSERT_TRUE(VerifyPacket(data, size, &packet_num));
@@ -254,7 +258,7 @@ class DtlsTestClient : public sigslot::has_slots<> {
   void OnFakeIceTransportReadPacket(rtc::PacketTransportInternal* transport,
                                     const char* data,
                                     size_t size,
-                                    const rtc::PacketTime& time,
+                                    const int64_t& /* packet_time_us */,
                                     int flags) {
     // Flags shouldn't be set on the underlying Transport packets.
     ASSERT_EQ(0, flags);
@@ -513,8 +517,8 @@ TEST_F(DtlsTransportTest, TestCertificatesBeforeConnect) {
   // remote certificate, because connection has not yet occurred.
   auto certificate1 = client1_.dtls_transport()->GetLocalCertificate();
   auto certificate2 = client2_.dtls_transport()->GetLocalCertificate();
-  ASSERT_NE(certificate1->ssl_certificate().ToPEMString(),
-            certificate2->ssl_certificate().ToPEMString());
+  ASSERT_NE(certificate1->GetSSLCertificate().ToPEMString(),
+            certificate2->GetSSLCertificate().ToPEMString());
   ASSERT_FALSE(client1_.dtls_transport()->GetRemoteSSLCertChain());
   ASSERT_FALSE(client2_.dtls_transport()->GetRemoteSSLCertChain());
 }
@@ -527,8 +531,8 @@ TEST_F(DtlsTransportTest, TestCertificatesAfterConnect) {
   // After connection, each side has a distinct local certificate.
   auto certificate1 = client1_.dtls_transport()->GetLocalCertificate();
   auto certificate2 = client2_.dtls_transport()->GetLocalCertificate();
-  ASSERT_NE(certificate1->ssl_certificate().ToPEMString(),
-            certificate2->ssl_certificate().ToPEMString());
+  ASSERT_NE(certificate1->GetSSLCertificate().ToPEMString(),
+            certificate2->GetSSLCertificate().ToPEMString());
 
   // Each side's remote certificate is the other side's local certificate.
   std::unique_ptr<rtc::SSLCertChain> remote_cert1 =
@@ -536,13 +540,13 @@ TEST_F(DtlsTransportTest, TestCertificatesAfterConnect) {
   ASSERT_TRUE(remote_cert1);
   ASSERT_EQ(1u, remote_cert1->GetSize());
   ASSERT_EQ(remote_cert1->Get(0).ToPEMString(),
-            certificate2->ssl_certificate().ToPEMString());
+            certificate2->GetSSLCertificate().ToPEMString());
   std::unique_ptr<rtc::SSLCertChain> remote_cert2 =
       client2_.dtls_transport()->GetRemoteSSLCertChain();
   ASSERT_TRUE(remote_cert2);
   ASSERT_EQ(1u, remote_cert2->GetSize());
   ASSERT_EQ(remote_cert2->Get(0).ToPEMString(),
-            certificate1->ssl_certificate().ToPEMString());
+            certificate1->GetSSLCertificate().ToPEMString());
 }
 
 // Test that packets are retransmitted according to the expected schedule.

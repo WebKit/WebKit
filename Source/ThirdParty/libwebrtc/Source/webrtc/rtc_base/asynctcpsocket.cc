@@ -18,6 +18,7 @@
 #include "rtc_base/byteorder.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/timeutils.h"  // for TimeMillis
 
 #if defined(WEBRTC_POSIX)
 #include <errno.h>
@@ -320,7 +321,7 @@ void AsyncTCPSocket::ProcessInput(char* data, size_t* len) {
       return;
 
     SignalReadPacket(this, data + kPacketLenSize, pkt_len, remote_addr,
-                     CreatePacketTime(0));
+                     TimeMicros());
 
     *len -= kPacketLenSize + pkt_len;
     if (*len > 0) {

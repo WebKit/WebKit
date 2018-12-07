@@ -323,13 +323,11 @@ int32_t H264DecoderImpl::Decode(const EncodedImage& input_image,
   // without copying the underlying buffer.
   if (av_frame_->width != i420_buffer->width() ||
       av_frame_->height != i420_buffer->height()) {
-    rtc::scoped_refptr<VideoFrameBuffer> cropped_buf(
-        new rtc::RefCountedObject<WrappedI420Buffer>(
-            av_frame_->width, av_frame_->height,
-            i420_buffer->DataY(), i420_buffer->StrideY(),
-            i420_buffer->DataU(), i420_buffer->StrideU(),
-            i420_buffer->DataV(), i420_buffer->StrideV(),
-            rtc::KeepRefUntilDone(i420_buffer)));
+    rtc::scoped_refptr<VideoFrameBuffer> cropped_buf = WrapI420Buffer(
+        av_frame_->width, av_frame_->height, i420_buffer->DataY(),
+        i420_buffer->StrideY(), i420_buffer->DataU(), i420_buffer->StrideU(),
+        i420_buffer->DataV(), i420_buffer->StrideV(),
+        rtc::KeepRefUntilDone(i420_buffer));
     VideoFrame cropped_frame =
         VideoFrame::Builder()
             .set_video_frame_buffer(cropped_buf)

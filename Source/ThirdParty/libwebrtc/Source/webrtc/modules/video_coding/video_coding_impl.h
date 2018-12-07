@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "common_video/include/frame_callback.h"
+#include "absl/types/optional.h"
 #include "modules/video_coding/decoder_database.h"
 #include "modules/video_coding/encoder_database.h"
 #include "modules/video_coding/frame_buffer.h"
@@ -94,7 +94,8 @@ class VideoSender {
       VideoBitrateAllocationObserver* bitrate_updated_callback);
 
   int32_t AddVideoFrame(const VideoFrame& videoFrame,
-                        const CodecSpecificInfo* codecSpecificInfo);
+                        const CodecSpecificInfo* codecSpecificInfo,
+                        absl::optional<VideoEncoder::EncoderInfo> encoder_info);
 
   int32_t IntraFrameRequest(size_t stream_index);
   int32_t EnableFrameDropper(bool enable);
@@ -113,7 +114,18 @@ class VideoSender {
   VCMEncodedFrameCallback _encodedFrameCallback RTC_GUARDED_BY(encoder_crit_);
   EncodedImageCallback* const post_encode_callback_;
   VCMEncoderDataBase _codecDataBase RTC_GUARDED_BY(encoder_crit_);
-  bool frame_dropper_enabled_ RTC_GUARDED_BY(encoder_crit_);
+
+  // |frame_dropper_requested_| specifies if the user of this class has
+  // requested frame dropping to be enabled, via EnableFrameDropper().
+  // Depending on video encoder configuration, this setting may be overridden
+  // and the frame dropper be force disabled. If so,
+  // |force_disable_frame_dropper_| will be set to true.
+  // If frame dropper is requested, and is not force disabled, frame dropping
+  // might still be disabled if VideoEncoder::GetEncoderInfo() indicates that
+  // the encoder has a trusted rate controller. This is determined on a
+  // per-frame basis, as the encoder behavior might dynamically change.
+  bool frame_dropper_requested_ RTC_GUARDED_BY(encoder_crit_);
+  bool force_disable_frame_dropper_ RTC_GUARDED_BY(encoder_crit_);
 
   // Must be accessed on the construction thread of VideoSender.
   VideoCodec current_codec_;
@@ -128,7 +140,6 @@ class VideoSender {
 class VideoReceiver : public Module {
  public:
   VideoReceiver(Clock* clock,
-                EventFactory* event_factory,
                 VCMTiming* timing,
                 NackSender* nack_sender = nullptr,
                 KeyFrameRequestSender* keyframe_request_sender = nullptr);

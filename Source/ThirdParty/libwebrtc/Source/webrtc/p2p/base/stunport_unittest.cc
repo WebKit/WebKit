@@ -75,10 +75,10 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
   }
 
   void CreateStunPort(const ServerAddresses& stun_servers) {
-    stun_port_.reset(cricket::StunPort::Create(
+    stun_port_ = cricket::StunPort::Create(
         rtc::Thread::Current(), &socket_factory_, &network_, 0, 0,
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
-        std::string(), absl::nullopt));
+        std::string(), absl::nullopt);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If |stun_keepalive_lifetime_| is negative, let the stun port
     // choose its lifetime from the network type.
@@ -100,10 +100,10 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
     }
     ASSERT_TRUE(socket_ != NULL);
     socket_->SignalReadPacket.connect(this, &StunPortTestBase::OnReadPacket);
-    stun_port_.reset(cricket::UDPPort::Create(
+    stun_port_ = cricket::UDPPort::Create(
         rtc::Thread::Current(), &socket_factory_, &network_, socket_.get(),
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), std::string(),
-        false, absl::nullopt));
+        false, absl::nullopt);
     ASSERT_TRUE(stun_port_ != NULL);
     ServerAddresses stun_servers;
     stun_servers.insert(server_addr);
@@ -119,15 +119,15 @@ class StunPortTestBase : public testing::Test, public sigslot::has_slots<> {
                     const char* data,
                     size_t size,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time) {
+                    const int64_t& /* packet_time_us */) {
     stun_port_->HandleIncomingPacket(socket, data, size, remote_addr,
-                                     rtc::PacketTime());
+                                     /* packet_time_us */ -1);
   }
 
   void SendData(const char* data, size_t len) {
     stun_port_->HandleIncomingPacket(socket_.get(), data, len,
                                      rtc::SocketAddress("22.22.22.22", 0),
-                                     rtc::PacketTime());
+                                     /* packet_time_us */ -1);
   }
 
  protected:
@@ -216,7 +216,7 @@ TEST_F(StunPortTest, TestPrepareAddressFail) {
 
 // Test that we can get an address from a STUN server specified by a hostname.
 // Crashes on Linux, see webrtc:7416
-#if defined(WEBRTC_LINUX)
+#if defined(WEBRTC_LINUX) || defined(WEBRTC_WIN)
 #define MAYBE_TestPrepareAddressHostname DISABLED_TestPrepareAddressHostname
 #else
 #define MAYBE_TestPrepareAddressHostname TestPrepareAddressHostname

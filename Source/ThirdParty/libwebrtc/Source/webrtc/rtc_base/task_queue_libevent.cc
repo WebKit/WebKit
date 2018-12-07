@@ -10,11 +10,17 @@
 
 #include "rtc_base/task_queue.h"
 
+#include <errno.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <signal.h>
-#include <string.h>
+#include <stdint.h>
+#include <time.h>
 #include <unistd.h>
 #include <list>
+#include <memory>
+#include <type_traits>
+#include <utility>
 
 #if defined(WEBRTC_LINUX)
 #include <event2/event.h>
@@ -23,17 +29,18 @@
 #else
 #include "base/third_party/libevent/event.h"
 #endif
-
 #include "rtc_base/checks.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/platform_thread_types.h"
 #include "rtc_base/refcount.h"
 #include "rtc_base/refcountedobject.h"
+#include "rtc_base/scoped_ref_ptr.h"
 #include "rtc_base/system/unused.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/task_queue_posix.h"
+#include "rtc_base/thread_annotations.h"
 #include "rtc_base/timeutils.h"
 
 namespace rtc {

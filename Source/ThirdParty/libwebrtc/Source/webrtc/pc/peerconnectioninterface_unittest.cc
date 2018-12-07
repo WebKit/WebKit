@@ -17,6 +17,7 @@
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/create_peerconnection_factory.h"
 #include "api/jsepsessiondescription.h"
 #include "api/mediastreaminterface.h"
 #include "api/peerconnectioninterface.h"
@@ -1397,6 +1398,8 @@ TEST_P(PeerConnectionInterfaceTest,
   rtc::scoped_refptr<PeerConnectionInterface> pc(
       pc_factory->CreatePeerConnection(config, std::move(port_allocator),
                                        nullptr, &observer_));
+  EXPECT_TRUE(pc.get());
+  observer_.SetPeerConnectionInterface(pc.get());
 
   // Now validate that the config fields set above were applied to the
   // PortAllocator, as flags or otherwise.
@@ -1424,15 +1427,22 @@ TEST_P(PeerConnectionInterfaceTest, GetConfigurationAfterCreatePeerConnection) {
 // Check that GetConfiguration returns the last configuration passed into
 // SetConfiguration.
 TEST_P(PeerConnectionInterfaceTest, GetConfigurationAfterSetConfiguration) {
-  CreatePeerConnection();
+  PeerConnectionInterface::RTCConfiguration starting_config;
+  starting_config.bundle_policy =
+      webrtc::PeerConnection::kBundlePolicyMaxBundle;
+  CreatePeerConnection(starting_config);
 
   PeerConnectionInterface::RTCConfiguration config = pc_->GetConfiguration();
   config.type = PeerConnectionInterface::kRelay;
+  config.use_media_transport = true;
+  config.use_media_transport_for_data_channels = true;
   EXPECT_TRUE(pc_->SetConfiguration(config));
 
   PeerConnectionInterface::RTCConfiguration returned_config =
       pc_->GetConfiguration();
   EXPECT_EQ(PeerConnectionInterface::kRelay, returned_config.type);
+  EXPECT_TRUE(returned_config.use_media_transport);
+  EXPECT_TRUE(returned_config.use_media_transport_for_data_channels);
 }
 
 TEST_P(PeerConnectionInterfaceTest, SetConfigurationFailsAfterClose) {
@@ -3938,6 +3948,21 @@ TEST_P(PeerConnectionInterfaceTest,
   EXPECT_FALSE(DoSetLocalDescription(std::move(offer)));
 }
 
+TEST_P(PeerConnectionInterfaceTest, ExtmapAllowMixedIsConfigurable) {
+  RTCConfiguration config;
+  // Default behavior is false.
+  CreatePeerConnection(config);
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  EXPECT_FALSE(offer->description()->extmap_allow_mixed());
+  // Possible to set to true.
+  config.offer_extmap_allow_mixed = true;
+  CreatePeerConnection(config);
+  offer.release();
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  EXPECT_TRUE(offer->description()->extmap_allow_mixed());
+}
+
 INSTANTIATE_TEST_CASE_P(PeerConnectionInterfaceTest,
                         PeerConnectionInterfaceTest,
                         Values(SdpSemantics::kPlanB,
@@ -3954,12 +3979,24 @@ class PeerConnectionMediaConfigTest : public testing::Test {
     rtc::scoped_refptr<PeerConnectionInterface> pc(
         pcf_->CreatePeerConnection(config, nullptr, nullptr, &observer_));
     EXPECT_TRUE(pc.get());
+    observer_.SetPeerConnectionInterface(pc.get());
     return pc->GetConfiguration().media_config;
   }
 
   rtc::scoped_refptr<PeerConnectionFactoryForTest> pcf_;
   MockPeerConnectionObserver observer_;
 };
+
+// This sanity check validates the test infrastructure itself.
+TEST_F(PeerConnectionMediaConfigTest, TestCreateAndClose) {
+  PeerConnectionInterface::RTCConfiguration config;
+  rtc::scoped_refptr<PeerConnectionInterface> pc(
+      pcf_->CreatePeerConnection(config, nullptr, nullptr, &observer_));
+  EXPECT_TRUE(pc.get());
+  observer_.SetPeerConnectionInterface(pc.get());  // Required.
+  pc->Close();                                     // No abort -> ok.
+  SUCCEED();
+}
 
 // This test verifies the default behaviour with no constraints and a
 // default RTCConfiguration.

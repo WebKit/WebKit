@@ -9,6 +9,7 @@
 import("../../webrtc.gni")
 
 rtc_source_set("data_rate") {
+  visibility = [ "*" ]
   sources = [
     "data_rate.cc",
     "data_rate.h",
@@ -18,11 +19,13 @@ rtc_source_set("data_rate") {
     ":data_size",
     ":time_delta",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/units:unit_base",
   ]
 }
 
 rtc_source_set("data_size") {
+  visibility = [ "*" ]
   sources = [
     "data_size.cc",
     "data_size.h",
@@ -30,10 +33,13 @@ rtc_source_set("data_size") {
 
   deps = [
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/units:unit_base",
   ]
 }
+
 rtc_source_set("time_delta") {
+  visibility = [ "*" ]
   sources = [
     "time_delta.cc",
     "time_delta.h",
@@ -41,11 +47,13 @@ rtc_source_set("time_delta") {
 
   deps = [
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/units:unit_base",
   ]
 }
 
 rtc_source_set("timestamp") {
+  visibility = [ "*" ]
   sources = [
     "timestamp.cc",
     "timestamp.h",
@@ -54,7 +62,8 @@ rtc_source_set("timestamp") {
   deps = [
     ":time_delta",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/units:unit_base",
   ]
 }
 

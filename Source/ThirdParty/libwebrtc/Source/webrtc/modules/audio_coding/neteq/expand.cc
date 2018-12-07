@@ -17,6 +17,7 @@
 #include <limits>     // numeric_limits<T>
 
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_coding/neteq/audio_multi_vector.h"
 #include "modules/audio_coding/neteq/background_noise.h"
 #include "modules/audio_coding/neteq/cross_correlation.h"
 #include "modules/audio_coding/neteq/dsp_helper.h"
@@ -322,8 +323,7 @@ void Expand::SetParametersForNormalAfterExpand() {
   current_lag_index_ = 0;
   lag_index_direction_ = 0;
   stop_muting_ = true;  // Do not mute signal any more.
-  statistics_->LogDelayedPacketOutageEvent(
-      rtc::dchecked_cast<int>(expand_duration_samples_) / (fs_hz_ / 1000));
+  statistics_->LogDelayedPacketOutageEvent(expand_duration_samples_, fs_hz_);
 }
 
 void Expand::SetParametersForMergeAfterExpand() {

@@ -47,42 +47,47 @@ static bool ValidateFilename(const std::string& value, bool write) {
   return true;
 }
 
-DEFINE_string(
+WEBRTC_DEFINE_string(
     in_filename,
     DefaultInFilename().c_str(),
     "Filename for input audio (specify sample rate with --input_sample_rate, "
     "and channels with --channels).");
 
-DEFINE_int(input_sample_rate, 16000, "Sample rate of input file in Hz.");
+WEBRTC_DEFINE_int(input_sample_rate, 16000, "Sample rate of input file in Hz.");
 
-DEFINE_int(channels, 1, "Number of channels in input audio.");
+WEBRTC_DEFINE_int(channels, 1, "Number of channels in input audio.");
 
-DEFINE_string(out_filename,
-              DefaultOutFilename().c_str(),
-              "Name of output audio file.");
+WEBRTC_DEFINE_string(out_filename,
+                     DefaultOutFilename().c_str(),
+                     "Name of output audio file.");
 
-DEFINE_int(runtime_ms, 10000, "Simulated runtime (milliseconds).");
+WEBRTC_DEFINE_int(runtime_ms, 10000, "Simulated runtime (milliseconds).");
 
-DEFINE_int(packet_loss_rate, 10, "Percentile of packet loss.");
+WEBRTC_DEFINE_int(packet_loss_rate, 10, "Percentile of packet loss.");
 
-DEFINE_int(random_loss_mode,
-           kUniformLoss,
-           "Random loss mode: 0--no loss, 1--uniform loss, 2--Gilbert Elliot "
-           "loss, 3--fixed loss.");
+WEBRTC_DEFINE_int(
+    random_loss_mode,
+    kUniformLoss,
+    "Random loss mode: 0--no loss, 1--uniform loss, 2--Gilbert Elliot "
+    "loss, 3--fixed loss.");
 
-DEFINE_int(burst_length,
-           30,
-           "Burst length in milliseconds, only valid for Gilbert Elliot loss.");
+WEBRTC_DEFINE_int(
+    burst_length,
+    30,
+    "Burst length in milliseconds, only valid for Gilbert Elliot loss.");
 
-DEFINE_float(drift_factor, 0.0, "Time drift factor.");
+WEBRTC_DEFINE_float(drift_factor, 0.0, "Time drift factor.");
 
-DEFINE_int(preload_packets, 0, "Preload the buffer with this many packets.");
+WEBRTC_DEFINE_int(preload_packets,
+                  0,
+                  "Preload the buffer with this many packets.");
 
-DEFINE_string(loss_events,
-              "",
-              "List of loss events time and duration separated by comma: "
-              "<first_event_time> <first_event_duration>, <second_event_time> "
-              "<second_event_duration>, ...");
+WEBRTC_DEFINE_string(
+    loss_events,
+    "",
+    "List of loss events time and duration separated by comma: "
+    "<first_event_time> <first_event_duration>, <second_event_time> "
+    "<second_event_duration>, ...");
 
 // ProbTrans00Solver() is to calculate the transition probability from no-loss
 // state to itself in a modified Gilbert Elliot packet loss model. The result is

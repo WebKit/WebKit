@@ -11,7 +11,6 @@
 #include "rtc_base/third_party/base64/base64.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringutils.h"
 
 #include "rtc_base/testbase64.h"
 
@@ -430,10 +429,10 @@ TEST(Base64, EncodeDecodeBattery) {
 
       // try putting some extra stuff after the equals signs, or in between them
       if (equals == 2) {
-        sprintfn(first_equals, 6, " = = ");
+        snprintf(first_equals, 6, " = = ");
         len = first_equals - encode_buffer + 5;
       } else {
-        sprintfn(first_equals, 6, " = ");
+        snprintf(first_equals, 6, " = ");
         len = first_equals - encode_buffer + 3;
       }
       decoded2.assign("this junk should be ignored");

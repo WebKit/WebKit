@@ -22,6 +22,7 @@
 #include "rtc_base/ipaddress.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socketaddress.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_checker.h"
 
@@ -49,7 +50,7 @@ enum NatType {
   NATTYPE_NON_SYMMETRIC  // Behind a non-symmetric NAT.
 };
 
-class StunProber : public sigslot::has_slots<> {
+class RTC_EXPORT StunProber : public sigslot::has_slots<> {
  public:
   enum Status {       // Used in UMA_HISTOGRAM_ENUMERATION.
     SUCCESS,          // Successfully received bytes from the server.

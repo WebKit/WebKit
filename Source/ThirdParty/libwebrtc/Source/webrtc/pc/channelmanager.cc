@@ -14,10 +14,10 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "media/base/rtpdataengine.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/trace_event.h"
 
 namespace cricket {
@@ -66,7 +66,7 @@ void ChannelManager::GetSupportedAudioSendCodecs(
   if (!media_engine_) {
     return;
   }
-  *codecs = media_engine_->audio_send_codecs();
+  *codecs = media_engine_->voice().send_codecs();
 }
 
 void ChannelManager::GetSupportedAudioReceiveCodecs(
@@ -74,7 +74,7 @@ void ChannelManager::GetSupportedAudioReceiveCodecs(
   if (!media_engine_) {
     return;
   }
-  *codecs = media_engine_->audio_recv_codecs();
+  *codecs = media_engine_->voice().recv_codecs();
 }
 
 void ChannelManager::GetSupportedAudioRtpHeaderExtensions(
@@ -82,7 +82,7 @@ void ChannelManager::GetSupportedAudioRtpHeaderExtensions(
   if (!media_engine_) {
     return;
   }
-  *ext = media_engine_->GetAudioCapabilities().header_extensions;
+  *ext = media_engine_->voice().GetCapabilities().header_extensions;
 }
 
 void ChannelManager::GetSupportedVideoCodecs(
@@ -92,10 +92,10 @@ void ChannelManager::GetSupportedVideoCodecs(
   }
   codecs->clear();
 
-  std::vector<VideoCodec> video_codecs = media_engine_->video_codecs();
+  std::vector<VideoCodec> video_codecs = media_engine_->video().codecs();
   for (const auto& video_codec : video_codecs) {
     if (!enable_rtx_ &&
-        _stricmp(kRtxCodecName, video_codec.name.c_str()) == 0) {
+        absl::EqualsIgnoreCase(kRtxCodecName, video_codec.name)) {
       continue;
     }
     codecs->push_back(video_codec);
@@ -107,7 +107,7 @@ void ChannelManager::GetSupportedVideoRtpHeaderExtensions(
   if (!media_engine_) {
     return;
   }
-  *ext = media_engine_->GetVideoCapabilities().header_extensions;
+  *ext = media_engine_->video().GetCapabilities().header_extensions;
 }
 
 void ChannelManager::GetSupportedDataCodecs(
@@ -156,16 +156,17 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
     webrtc::Call* call,
     const cricket::MediaConfig& media_config,
     webrtc::RtpTransportInternal* rtp_transport,
+    webrtc::MediaTransportInterface* media_transport,
     rtc::Thread* signaling_thread,
     const std::string& content_name,
     bool srtp_required,
-    const rtc::CryptoOptions& crypto_options,
+    const webrtc::CryptoOptions& crypto_options,
     const AudioOptions& options) {
   if (!worker_thread_->IsCurrent()) {
     return worker_thread_->Invoke<VoiceChannel*>(RTC_FROM_HERE, [&] {
       return CreateVoiceChannel(call, media_config, rtp_transport,
-                                signaling_thread, content_name, srtp_required,
-                                crypto_options, options);
+                                media_transport, signaling_thread, content_name,
+                                srtp_required, crypto_options, options);
     });
   }
 
@@ -176,8 +177,8 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
     return nullptr;
   }
 
-  VoiceMediaChannel* media_channel =
-      media_engine_->CreateChannel(call, media_config, options);
+  VoiceMediaChannel* media_channel = media_engine_->voice().CreateMediaChannel(
+      call, media_config, options, crypto_options);
   if (!media_channel) {
     return nullptr;
   }
@@ -187,7 +188,7 @@ VoiceChannel* ChannelManager::CreateVoiceChannel(
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options);
 
-  voice_channel->Init_w(rtp_transport);
+  voice_channel->Init_w(rtp_transport, media_transport);
 
   VoiceChannel* voice_channel_ptr = voice_channel.get();
   voice_channels_.push_back(std::move(voice_channel));
@@ -226,7 +227,7 @@ VideoChannel* ChannelManager::CreateVideoChannel(
     rtc::Thread* signaling_thread,
     const std::string& content_name,
     bool srtp_required,
-    const rtc::CryptoOptions& crypto_options,
+    const webrtc::CryptoOptions& crypto_options,
     const VideoOptions& options) {
   if (!worker_thread_->IsCurrent()) {
     return worker_thread_->Invoke<VideoChannel*>(RTC_FROM_HERE, [&] {
@@ -243,8 +244,8 @@ VideoChannel* ChannelManager::CreateVideoChannel(
     return nullptr;
   }
 
-  VideoMediaChannel* media_channel =
-      media_engine_->CreateVideoChannel(call, media_config, options);
+  VideoMediaChannel* media_channel = media_engine_->video().CreateMediaChannel(
+      call, media_config, options, crypto_options);
   if (!media_channel) {
     return nullptr;
   }
@@ -253,7 +254,9 @@ VideoChannel* ChannelManager::CreateVideoChannel(
       worker_thread_, network_thread_, signaling_thread,
       absl::WrapUnique(media_channel), content_name, srtp_required,
       crypto_options);
-  video_channel->Init_w(rtp_transport);
+
+  // TODO(sukhanov): Add media_transport support for video channel.
+  video_channel->Init_w(rtp_transport, /*media_transport=*/nullptr);
 
   VideoChannel* video_channel_ptr = video_channel.get();
   video_channels_.push_back(std::move(video_channel));
@@ -291,7 +294,7 @@ RtpDataChannel* ChannelManager::CreateRtpDataChannel(
     rtc::Thread* signaling_thread,
     const std::string& content_name,
     bool srtp_required,
-    const rtc::CryptoOptions& crypto_options) {
+    const webrtc::CryptoOptions& crypto_options) {
   if (!worker_thread_->IsCurrent()) {
     return worker_thread_->Invoke<RtpDataChannel*>(RTC_FROM_HERE, [&] {
       return CreateRtpDataChannel(media_config, rtp_transport, signaling_thread,
@@ -346,13 +349,13 @@ void ChannelManager::DestroyRtpDataChannel(RtpDataChannel* data_channel) {
 bool ChannelManager::StartAecDump(rtc::PlatformFile file,
                                   int64_t max_size_bytes) {
   return worker_thread_->Invoke<bool>(RTC_FROM_HERE, [&] {
-    return media_engine_->StartAecDump(file, max_size_bytes);
+    return media_engine_->voice().StartAecDump(file, max_size_bytes);
   });
 }
 
 void ChannelManager::StopAecDump() {
   worker_thread_->Invoke<void>(RTC_FROM_HERE,
-                               [&] { media_engine_->StopAecDump(); });
+                               [&] { media_engine_->voice().StopAecDump(); });
 }
 
 }  // namespace cricket

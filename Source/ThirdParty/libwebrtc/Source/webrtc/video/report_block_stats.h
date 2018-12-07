@@ -14,7 +14,7 @@
 #include <map>
 #include <vector>
 
-#include "common_types.h"  // NOLINT(build/include)
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {

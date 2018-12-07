@@ -12,6 +12,7 @@
 
 #include <utility>
 
+#include "absl/strings/match.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
@@ -41,11 +42,11 @@ VideoEncoderFactory::CodecInfo InternalEncoderFactory::QueryVideoEncoder(
 
 std::unique_ptr<VideoEncoder> InternalEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
-  if (cricket::CodecNamesEq(format.name, cricket::kVp8CodecName))
+  if (absl::EqualsIgnoreCase(format.name, cricket::kVp8CodecName))
     return VP8Encoder::Create();
-  if (cricket::CodecNamesEq(format.name, cricket::kVp9CodecName))
+  if (absl::EqualsIgnoreCase(format.name, cricket::kVp9CodecName))
     return VP9Encoder::Create(cricket::VideoCodec(format));
-  if (cricket::CodecNamesEq(format.name, cricket::kH264CodecName))
+  if (absl::EqualsIgnoreCase(format.name, cricket::kH264CodecName))
     return H264Encoder::Create(cricket::VideoCodec(format));
   RTC_LOG(LS_ERROR) << "Trying to created encoder of unsupported format "
                     << format.name;

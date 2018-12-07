@@ -40,9 +40,9 @@ TEST(JavaVideoSourceTest, CreateJavaVideoSource) {
   rtc::ThreadManager::Instance()->WrapCurrentThread();
 
   rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
-      CreateJavaVideoSource(env,
-                            rtc::ThreadManager::Instance()->CurrentThread(),
-                            false /* is_screencast */);
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, true /* align_timestamps */);
 
   ASSERT_NE(nullptr, video_track_source);
   EXPECT_NE(nullptr,
@@ -57,9 +57,9 @@ TEST(JavaVideoSourceTest, OnFrameCapturedFrameIsDeliveredToSink) {
   rtc::ThreadManager::Instance()->WrapCurrentThread();
 
   rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
-      CreateJavaVideoSource(env,
-                            rtc::ThreadManager::Instance()->CurrentThread(),
-                            false /* is_screencast */);
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, true /* align_timestamps */);
   video_track_source->AddOrUpdateSink(&test_video_sink, rtc::VideoSinkWants());
 
   jni::Java_JavaVideoSourceTestHelper_startCapture(
@@ -68,8 +68,9 @@ TEST(JavaVideoSourceTest, OnFrameCapturedFrameIsDeliveredToSink) {
   const int width = 20;
   const int height = 32;
   const int rotation = 180;
+  const int64_t timestamp = 987654321;
   jni::Java_JavaVideoSourceTestHelper_deliverFrame(
-      env, width, height, rotation,
+      env, width, height, rotation, timestamp,
       video_track_source->GetJavaVideoCapturerObserver(env));
 
   std::vector<VideoFrame> frames = test_video_sink.GetFrames();
@@ -80,15 +81,49 @@ TEST(JavaVideoSourceTest, OnFrameCapturedFrameIsDeliveredToSink) {
   EXPECT_EQ(rotation, frame.rotation());
 }
 
+TEST(JavaVideoSourceTest,
+     OnFrameCapturedFrameIsDeliveredToSinkWithPreservedTimestamp) {
+  TestVideoSink test_video_sink;
+
+  JNIEnv* env = AttachCurrentThreadIfNeeded();
+  // Wrap test thread so it can be used as the signaling thread.
+  rtc::ThreadManager::Instance()->WrapCurrentThread();
+
+  rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, false /* align_timestamps */);
+  video_track_source->AddOrUpdateSink(&test_video_sink, rtc::VideoSinkWants());
+
+  jni::Java_JavaVideoSourceTestHelper_startCapture(
+      env, video_track_source->GetJavaVideoCapturerObserver(env),
+      true /* success */);
+  const int width = 20;
+  const int height = 32;
+  const int rotation = 180;
+  const int64_t timestamp = 987654321;
+  jni::Java_JavaVideoSourceTestHelper_deliverFrame(
+      env, width, height, rotation, 987654321,
+      video_track_source->GetJavaVideoCapturerObserver(env));
+
+  std::vector<VideoFrame> frames = test_video_sink.GetFrames();
+  ASSERT_EQ(1u, frames.size());
+  webrtc::VideoFrame frame = frames[0];
+  EXPECT_EQ(width, frame.width());
+  EXPECT_EQ(height, frame.height());
+  EXPECT_EQ(rotation, frame.rotation());
+  EXPECT_EQ(timestamp / 1000, frame.timestamp_us());
+}
+
 TEST(JavaVideoSourceTest, CapturerStartedSuccessStateBecomesLive) {
   JNIEnv* env = AttachCurrentThreadIfNeeded();
   // Wrap test thread so it can be used as the signaling thread.
   rtc::ThreadManager::Instance()->WrapCurrentThread();
 
   rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
-      CreateJavaVideoSource(env,
-                            rtc::ThreadManager::Instance()->CurrentThread(),
-                            false /* is_screencast */);
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, true /* align_timestamps */);
 
   jni::Java_JavaVideoSourceTestHelper_startCapture(
       env, video_track_source->GetJavaVideoCapturerObserver(env),
@@ -104,9 +139,9 @@ TEST(JavaVideoSourceTest, CapturerStartedFailureStateBecomesEnded) {
   rtc::ThreadManager::Instance()->WrapCurrentThread();
 
   rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
-      CreateJavaVideoSource(env,
-                            rtc::ThreadManager::Instance()->CurrentThread(),
-                            false /* is_screencast */);
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, true /* align_timestamps */);
 
   jni::Java_JavaVideoSourceTestHelper_startCapture(
       env, video_track_source->GetJavaVideoCapturerObserver(env),
@@ -122,9 +157,9 @@ TEST(JavaVideoSourceTest, CapturerStoppedStateBecomesEnded) {
   rtc::ThreadManager::Instance()->WrapCurrentThread();
 
   rtc::scoped_refptr<JavaVideoTrackSourceInterface> video_track_source =
-      CreateJavaVideoSource(env,
-                            rtc::ThreadManager::Instance()->CurrentThread(),
-                            false /* is_screencast */);
+      CreateJavaVideoSource(
+          env, rtc::ThreadManager::Instance()->CurrentThread(),
+          false /* is_screencast */, true /* align_timestamps */);
 
   jni::Java_JavaVideoSourceTestHelper_startCapture(
       env, video_track_source->GetJavaVideoCapturerObserver(env),

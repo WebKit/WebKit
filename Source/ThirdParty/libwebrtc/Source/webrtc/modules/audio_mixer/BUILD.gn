@@ -37,7 +37,6 @@ rtc_static_library("audio_mixer_impl") {
 
   deps = [
     ":audio_frame_manipulator",
-    "../..:webrtc_common",
     "../../api:array_view",
     "../../api/audio:audio_frame_api",
     "../../api/audio:audio_mixer_api",
@@ -48,6 +47,7 @@ rtc_static_library("audio_mixer_impl") {
     "../../system_wrappers",
     "../../system_wrappers:metrics",
     "../audio_processing",
+    "../audio_processing:api",
     "../audio_processing:apm_logging",
     "../audio_processing:audio_frame_view",
     "../audio_processing/agc2:fixed_digital",

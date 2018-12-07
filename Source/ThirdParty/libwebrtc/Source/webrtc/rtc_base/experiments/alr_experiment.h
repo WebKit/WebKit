@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_EXPERIMENTS_ALR_EXPERIMENT_H_
 #define RTC_BASE_EXPERIMENTS_ALR_EXPERIMENT_H_
 
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 
 namespace webrtc {

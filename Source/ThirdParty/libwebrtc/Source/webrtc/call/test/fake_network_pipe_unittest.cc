@@ -73,7 +73,7 @@ class FakeNetworkPipeTest : public ::testing::Test {
 
 // Test the capacity link and verify we get as many packets as we expect.
 TEST_F(FakeNetworkPipeTest, CapacityTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 20;
   config.link_capacity_kbps = 80;
   MockReceiver receiver;
@@ -113,7 +113,7 @@ TEST_F(FakeNetworkPipeTest, CapacityTest) {
 
 // Test the extra network delay.
 TEST_F(FakeNetworkPipeTest, ExtraDelayTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 20;
   config.queue_delay_ms = 100;
   config.link_capacity_kbps = 80;
@@ -149,7 +149,7 @@ TEST_F(FakeNetworkPipeTest, ExtraDelayTest) {
 // Test the number of buffers and packets are dropped when sending too many
 // packets too quickly.
 TEST_F(FakeNetworkPipeTest, QueueLengthTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 2;
   config.link_capacity_kbps = 80;
   MockReceiver receiver;
@@ -173,7 +173,7 @@ TEST_F(FakeNetworkPipeTest, QueueLengthTest) {
 
 // Test we get statistics as expected.
 TEST_F(FakeNetworkPipeTest, StatisticsTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 2;
   config.queue_delay_ms = 20;
   config.link_capacity_kbps = 80;
@@ -205,7 +205,7 @@ TEST_F(FakeNetworkPipeTest, StatisticsTest) {
 // Change the link capacity half-way through the test and verify that the
 // delivery times change accordingly.
 TEST_F(FakeNetworkPipeTest, ChangingCapacityWithEmptyPipeTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 20;
   config.link_capacity_kbps = 80;
   MockReceiver receiver;
@@ -266,7 +266,7 @@ TEST_F(FakeNetworkPipeTest, ChangingCapacityWithEmptyPipeTest) {
 // Change the link capacity half-way through the test and verify that the
 // delivery times change accordingly.
 TEST_F(FakeNetworkPipeTest, ChangingCapacityWithPacketsInPipeTest) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 20;
   config.link_capacity_kbps = 80;
   MockReceiver receiver;
@@ -321,7 +321,7 @@ TEST_F(FakeNetworkPipeTest, ChangingCapacityWithPacketsInPipeTest) {
 
 // At first disallow reordering and then allow reordering.
 TEST_F(FakeNetworkPipeTest, DisallowReorderingThenAllowReordering) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = 1000;
   config.link_capacity_kbps = 800;
   config.queue_delay_ms = 100;
@@ -374,7 +374,7 @@ TEST_F(FakeNetworkPipeTest, BurstLoss) {
   const int kNumPackets = 10000;
   const int kPacketSize = 10;
 
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.queue_length_packets = kNumPackets;
   config.loss_percent = kLossPercent;
   config.avg_burst_loss_length = kAvgBurstLength;
@@ -409,7 +409,7 @@ TEST_F(FakeNetworkPipeTest, BurstLoss) {
 }
 
 TEST_F(FakeNetworkPipeTest, SetReceiver) {
-  DefaultNetworkSimulationConfig config;
+  BuiltInNetworkBehaviorConfig config;
   config.link_capacity_kbps = 800;
   MockReceiver receiver;
   auto simulated_network = absl::make_unique<SimulatedNetwork>(config);

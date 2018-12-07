@@ -159,6 +159,11 @@ RTCError PeerConnectionInterface::SetBitrate(
   return SetBitrate(bitrate);
 }
 
+PeerConnectionInterface::PeerConnectionState
+PeerConnectionInterface::peer_connection_state() {
+  return PeerConnectionInterface::PeerConnectionState::kNew;
+}
+
 bool PeerConnectionInterface::StartRtcEventLog(rtc::PlatformFile file,
                                                int64_t max_size_bytes) {
   return false;

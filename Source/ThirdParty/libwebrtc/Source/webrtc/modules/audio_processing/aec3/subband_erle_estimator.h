@@ -11,11 +11,13 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_SUBBAND_ERLE_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_SUBBAND_ERLE_ESTIMATOR_H_
 
+#include <stddef.h>
 #include <array>
 #include <memory>
+#include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 
@@ -24,7 +26,7 @@ namespace webrtc {
 // Estimates the echo return loss enhancement for each frequency subband.
 class SubbandErleEstimator {
  public:
-  SubbandErleEstimator(float min_erle, float max_erle_lf, float max_erle_hf);
+  explicit SubbandErleEstimator(const EchoCanceller3Config& config);
   ~SubbandErleEstimator();
 
   // Resets the ERLE estimator.
@@ -41,55 +43,35 @@ class SubbandErleEstimator {
   const std::array<float, kFftLengthBy2Plus1>& Erle() const { return erle_; }
 
   // Returns the ERLE estimate at onsets.
-  const std::array<float, kFftLengthBy2Plus1>& ErleOnsets() const {
-    return erle_onsets_;
-  }
+  rtc::ArrayView<const float> ErleOnsets() const { return erle_onsets_; }
 
   void Dump(const std::unique_ptr<ApmDataDumper>& data_dumper) const;
 
  private:
-  void UpdateBands(rtc::ArrayView<const float> X2,
-                   rtc::ArrayView<const float> Y2,
-                   rtc::ArrayView<const float> E2,
-                   size_t start,
-                   size_t stop,
-                   float max_erle,
-                   bool onset_detection);
-  void DecreaseErlePerBandForLowRenderSignals();
-
-  class ErleInstantaneous {
-   public:
-    ErleInstantaneous();
-    ~ErleInstantaneous();
-    // Updates the ERLE for a band with a new block. Returns absl::nullopt
-    // if not enough points were accumulated for doing the estimation,
-    // otherwise, it returns the ERLE. When the ERLE is returned, the
-    // low_render_energy flag contains information on whether the estimation was
-    // done using low level render signals.
-    absl::optional<float> Update(float X2,
-                                 float Y2,
-                                 float E2,
-                                 size_t band,
-                                 bool* low_render_energy);
-    // Resets the ERLE estimator to its initial state.
-    void Reset();
-
-   private:
-    std::array<float, kFftLengthBy2Plus1> Y2_acum_;
-    std::array<float, kFftLengthBy2Plus1> E2_acum_;
+  struct AccumulatedSpectra {
+    std::array<float, kFftLengthBy2Plus1> Y2_;
+    std::array<float, kFftLengthBy2Plus1> E2_;
     std::array<bool, kFftLengthBy2Plus1> low_render_energy_;
     std::array<int, kFftLengthBy2Plus1> num_points_;
   };
 
-  ErleInstantaneous instantaneous_erle_;
+  void UpdateAccumulatedSpectra(rtc::ArrayView<const float> X2,
+                                rtc::ArrayView<const float> Y2,
+                                rtc::ArrayView<const float> E2);
+
+  void ResetAccumulatedSpectra();
+
+  void UpdateBands(bool onset_detection);
+  void DecreaseErlePerBandForLowRenderSignals();
+
+  const float min_erle_;
+  const std::array<float, kFftLengthBy2Plus1> max_erle_;
+  const bool adapt_on_low_render_;
+  AccumulatedSpectra accum_spectra_;
   std::array<float, kFftLengthBy2Plus1> erle_;
   std::array<float, kFftLengthBy2Plus1> erle_onsets_;
   std::array<bool, kFftLengthBy2Plus1> coming_onset_;
   std::array<int, kFftLengthBy2Plus1> hold_counters_;
-  const float min_erle_;
-  const float max_erle_lf_;
-  const float max_erle_hf_;
-  const bool adapt_on_low_render_;
 };
 
 }  // namespace webrtc

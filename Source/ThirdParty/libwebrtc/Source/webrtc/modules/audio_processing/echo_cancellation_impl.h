@@ -11,12 +11,16 @@
 #ifndef MODULES_AUDIO_PROCESSING_ECHO_CANCELLATION_IMPL_H_
 #define MODULES_AUDIO_PROCESSING_ECHO_CANCELLATION_IMPL_H_
 
+#include <stddef.h>
 #include <memory>
+#include <string>
 #include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -28,8 +32,7 @@ class AudioBuffer;
 // for PC and IP phone applications.
 class EchoCancellationImpl {
  public:
-  EchoCancellationImpl(rtc::CriticalSection* crit_render,
-                       rtc::CriticalSection* crit_capture);
+  explicit EchoCancellationImpl();
   ~EchoCancellationImpl();
 
   void ProcessRenderAudio(rtc::ArrayView<const float> packed_render_audio);
@@ -80,17 +83,23 @@ class EchoCancellationImpl {
   // P_a:    Internal signal power at the point before the AEC's non-linear
   //         processor.
   struct Metrics {
+    struct Statistic {
+      int instant = 0;  // Instantaneous value.
+      int average = 0;  // Long-term average.
+      int maximum = 0;  // Long-term maximum.
+      int minimum = 0;  // Long-term minimum.
+    };
     // RERL = ERL + ERLE
-    AudioProcessing::Statistic residual_echo_return_loss;
+    Statistic residual_echo_return_loss;
 
     // ERL = 10log_10(P_far / P_echo)
-    AudioProcessing::Statistic echo_return_loss;
+    Statistic echo_return_loss;
 
     // ERLE = 10log_10(P_echo / P_out)
-    AudioProcessing::Statistic echo_return_loss_enhancement;
+    Statistic echo_return_loss_enhancement;
 
     // (Pre non-linear processing suppression) A_NLP = 10log_10(P_echo / P_a)
-    AudioProcessing::Statistic a_nlp;
+    Statistic a_nlp;
 
     // Fraction of time that the AEC linear filter is divergent, in a 1-second
     // non-overlapped aggregation window.
@@ -150,28 +159,23 @@ class EchoCancellationImpl {
   void AllocateRenderQueue();
   int Configure();
 
-  rtc::CriticalSection* const crit_render_ RTC_ACQUIRED_BEFORE(crit_capture_);
-  rtc::CriticalSection* const crit_capture_;
-
   bool enabled_ = false;
-  bool drift_compensation_enabled_ RTC_GUARDED_BY(crit_capture_);
-  bool metrics_enabled_ RTC_GUARDED_BY(crit_capture_);
-  SuppressionLevel suppression_level_ RTC_GUARDED_BY(crit_capture_);
-  int stream_drift_samples_ RTC_GUARDED_BY(crit_capture_);
-  bool was_stream_drift_set_ RTC_GUARDED_BY(crit_capture_);
-  bool stream_has_echo_ RTC_GUARDED_BY(crit_capture_);
-  bool delay_logging_enabled_ RTC_GUARDED_BY(crit_capture_);
-  bool extended_filter_enabled_ RTC_GUARDED_BY(crit_capture_);
-  bool delay_agnostic_enabled_ RTC_GUARDED_BY(crit_capture_);
-  bool refined_adaptive_filter_enabled_ RTC_GUARDED_BY(crit_capture_) = false;
+  bool drift_compensation_enabled_;
+  bool metrics_enabled_;
+  SuppressionLevel suppression_level_;
+  int stream_drift_samples_;
+  bool was_stream_drift_set_;
+  bool stream_has_echo_;
+  bool delay_logging_enabled_;
+  bool extended_filter_enabled_;
+  bool delay_agnostic_enabled_;
+  bool refined_adaptive_filter_enabled_ = false;
 
   // Only active on Chrome OS devices.
-  const bool enforce_zero_stream_delay_ RTC_GUARDED_BY(crit_capture_);
+  const bool enforce_zero_stream_delay_;
 
   std::vector<std::unique_ptr<Canceller>> cancellers_;
   std::unique_ptr<StreamProperties> stream_properties_;
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(EchoCancellationImpl);
 };
 
 }  // namespace webrtc

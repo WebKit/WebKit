@@ -14,7 +14,7 @@ namespace webrtc {
 namespace internal {
 
 SynchronousMethodCall::SynchronousMethodCall(rtc::MessageHandler* proxy)
-    : e_(), proxy_(proxy) {}
+    : proxy_(proxy) {}
 
 SynchronousMethodCall::~SynchronousMethodCall() = default;
 
@@ -23,15 +23,14 @@ void SynchronousMethodCall::Invoke(const rtc::Location& posted_from,
   if (t->IsCurrent()) {
     proxy_->OnMessage(nullptr);
   } else {
-    e_.reset(new rtc::Event(false, false));
     t->Post(posted_from, this, 0);
-    e_->Wait(rtc::Event::kForever);
+    e_.Wait(rtc::Event::kForever);
   }
 }
 
 void SynchronousMethodCall::OnMessage(rtc::Message*) {
   proxy_->OnMessage(nullptr);
-  e_->Set();
+  e_.Set();
 }
 
 }  // namespace internal

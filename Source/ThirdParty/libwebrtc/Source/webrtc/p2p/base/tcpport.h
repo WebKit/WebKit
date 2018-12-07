@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/memory/memory.h"
 #include "p2p/base/port.h"
 #include "rtc_base/asyncpacketsocket.h"
 
@@ -30,16 +31,18 @@ class TCPConnection;
 // call this TCPPort::OnReadPacket (3 arg) to dispatch to a connection.
 class TCPPort : public Port {
  public:
-  static TCPPort* Create(rtc::Thread* thread,
-                         rtc::PacketSocketFactory* factory,
-                         rtc::Network* network,
-                         uint16_t min_port,
-                         uint16_t max_port,
-                         const std::string& username,
-                         const std::string& password,
-                         bool allow_listen) {
-    return new TCPPort(thread, factory, network, min_port, max_port, username,
-                       password, allow_listen);
+  static std::unique_ptr<TCPPort> Create(rtc::Thread* thread,
+                                         rtc::PacketSocketFactory* factory,
+                                         rtc::Network* network,
+                                         uint16_t min_port,
+                                         uint16_t max_port,
+                                         const std::string& username,
+                                         const std::string& password,
+                                         bool allow_listen) {
+    // Using `new` to access a non-public constructor.
+    return absl::WrapUnique(new TCPPort(thread, factory, network, min_port,
+                                        max_port, username, password,
+                                        allow_listen));
   }
   ~TCPPort() override;
 
@@ -91,7 +94,7 @@ class TCPPort : public Port {
                     const char* data,
                     size_t size,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time);
+                    const int64_t& packet_time_us);
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
                     const rtc::SentPacket& sent_packet) override;
@@ -159,7 +162,7 @@ class TCPConnection : public Connection {
                     const char* data,
                     size_t size,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time);
+                    const int64_t& packet_time_us);
   void OnReadyToSend(rtc::AsyncPacketSocket* socket);
 
   std::unique_ptr<rtc::AsyncPacketSocket> socket_;

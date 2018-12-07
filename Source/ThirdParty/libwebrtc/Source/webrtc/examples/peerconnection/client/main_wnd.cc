@@ -17,13 +17,10 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringutils.h"
 #include "third_party/libyuv/include/libyuv/convert_argb.h"
 
 ATOM MainWnd::wnd_class_ = 0;
 const wchar_t MainWnd::kClassName[] = L"WebRTC_MainWnd";
-
-using rtc::sprintfn;
 
 namespace {
 
@@ -86,8 +83,8 @@ MainWnd::MainWnd(const char* server,
       server_(server),
       auto_connect_(auto_connect),
       auto_call_(auto_call) {
-  char buffer[10] = {0};
-  sprintfn(buffer, sizeof(buffer), "%i", port);
+  char buffer[10];
+  snprintf(buffer, sizeof(buffer), "%i", port);
   port_ = buffer;
 }
 

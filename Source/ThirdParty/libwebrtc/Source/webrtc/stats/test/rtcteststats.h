@@ -15,10 +15,11 @@
 #include <vector>
 
 #include "api/stats/rtcstats.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class RTCTestStats : public RTCStats {
+class RTC_EXPORT RTCTestStats : public RTCStats {
  public:
   WEBRTC_RTCSTATS_DECL();
 

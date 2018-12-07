@@ -11,8 +11,13 @@
 #ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_AIMD_RATE_CONTROL_H_
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_AIMD_RATE_CONTROL_H_
 
+#include <stdint.h>
+
+#include "absl/types/optional.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
-#include "rtc_base/constructormagic.h"
+
+#include "api/units/data_rate.h"
+#include "api/units/timestamp.h"
 
 namespace webrtc {
 
@@ -30,28 +35,28 @@ class AimdRateControl {
   // either if it has been explicitly set via SetStartBitrate/SetEstimate, or if
   // we have measured a throughput.
   bool ValidEstimate() const;
-  void SetStartBitrate(int start_bitrate_bps);
-  void SetMinBitrate(int min_bitrate_bps);
-  int64_t GetFeedbackInterval() const;
+  void SetStartBitrate(DataRate start_bitrate);
+  void SetMinBitrate(DataRate min_bitrate);
+  TimeDelta GetFeedbackInterval() const;
 
   // Returns true if the bitrate estimate hasn't been changed for more than
   // an RTT, or if the estimated_throughput is less than half of the current
   // estimate. Should be used to decide if we should reduce the rate further
   // when over-using.
-  bool TimeToReduceFurther(int64_t now_ms,
-                           uint32_t estimated_throughput_bps) const;
+  bool TimeToReduceFurther(Timestamp at_time,
+                           DataRate estimated_throughput) const;
   // As above. To be used if overusing before we have measured a throughput.
-  bool InitialTimeToReduceFurther(int64_t now_ms) const;
+  bool InitialTimeToReduceFurther(Timestamp at_time) const;
 
-  uint32_t LatestEstimate() const;
-  void SetRtt(int64_t rtt);
-  uint32_t Update(const RateControlInput* input, int64_t now_ms);
-  void SetEstimate(int bitrate_bps, int64_t now_ms);
+  DataRate LatestEstimate() const;
+  void SetRtt(TimeDelta rtt);
+  DataRate Update(const RateControlInput* input, Timestamp at_time);
+  void SetEstimate(DataRate bitrate, Timestamp at_time);
 
   // Returns the increase rate when used bandwidth is near the link capacity.
-  int GetNearMaxIncreaseRateBps() const;
+  double GetNearMaxIncreaseRateBpsPerSecond() const;
   // Returns the expected time between overuse signals (assuming steady state).
-  int GetExpectedBandwidthPeriodMs() const;
+  TimeDelta GetExpectedBandwidthPeriod() const;
 
  private:
   friend class GoogCcStatePrinter;
@@ -62,41 +67,40 @@ class AimdRateControl {
   // in the "decrease" state the bitrate will be decreased to slightly below the
   // current throughput. When in the "hold" state the bitrate will be kept
   // constant to allow built up queues to drain.
-  uint32_t ChangeBitrate(uint32_t current_bitrate,
+  DataRate ChangeBitrate(DataRate current_bitrate,
                          const RateControlInput& input,
-                         int64_t now_ms);
-  // Clamps new_bitrate_bps to within the configured min bitrate and a linear
+                         Timestamp at_time);
+  // Clamps new_bitrate to within the configured min bitrate and a linear
   // function of the throughput, so that the new bitrate can't grow too
   // large compared to the bitrate actually being received by the other end.
-  uint32_t ClampBitrate(uint32_t new_bitrate_bps,
-                        uint32_t estimated_throughput_bps) const;
-  uint32_t MultiplicativeRateIncrease(int64_t now_ms,
-                                      int64_t last_ms,
-                                      uint32_t current_bitrate_bps) const;
-  uint32_t AdditiveRateIncrease(int64_t now_ms, int64_t last_ms) const;
-  void UpdateChangePeriod(int64_t now_ms);
-  void UpdateMaxThroughputEstimate(float estimated_throughput_kbps);
-  void ChangeState(const RateControlInput& input, int64_t now_ms);
+  DataRate ClampBitrate(DataRate new_bitrate,
+                        DataRate estimated_throughput) const;
+  DataRate MultiplicativeRateIncrease(Timestamp at_time,
+                                      Timestamp last_ms,
+                                      DataRate current_bitrate) const;
+  DataRate AdditiveRateIncrease(Timestamp at_time, Timestamp last_time) const;
+  void UpdateChangePeriod(Timestamp at_time);
+  void UpdateLinkCapacityEstimate(double estimated_throughput_kbps);
+  void ChangeState(const RateControlInput& input, Timestamp at_time);
 
-  uint32_t min_configured_bitrate_bps_;
-  uint32_t max_configured_bitrate_bps_;
-  uint32_t current_bitrate_bps_;
-  uint32_t latest_estimated_throughput_bps_;
-  float avg_max_bitrate_kbps_;
-  float var_max_bitrate_kbps_;
+  DataRate min_configured_bitrate_;
+  DataRate max_configured_bitrate_;
+  DataRate current_bitrate_;
+  DataRate latest_estimated_throughput_;
+  absl::optional<double> link_capacity_estimate_kbps_;
+  double var_link_capacity_estimate_kbps_;
   RateControlState rate_control_state_;
-  RateControlRegion rate_control_region_;
-  int64_t time_last_bitrate_change_;
-  int64_t time_last_bitrate_decrease_;
-  int64_t time_first_throughput_estimate_;
+  Timestamp time_last_bitrate_change_;
+  Timestamp time_last_bitrate_decrease_;
+  Timestamp time_first_throughput_estimate_;
   bool bitrate_is_initialized_;
-  float beta_;
-  int64_t rtt_;
+  double beta_;
+  TimeDelta rtt_;
   const bool in_experiment_;
   const bool smoothing_experiment_;
   const bool in_initial_backoff_interval_experiment_;
-  int64_t initial_backoff_interval_ms_;
-  absl::optional<int> last_decrease_;
+  TimeDelta initial_backoff_interval_;
+  absl::optional<DataRate> last_decrease_;
 };
 }  // namespace webrtc
 

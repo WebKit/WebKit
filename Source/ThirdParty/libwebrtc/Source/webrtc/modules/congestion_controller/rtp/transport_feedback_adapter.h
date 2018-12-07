@@ -17,6 +17,7 @@
 #include "api/transport/network_types.h"
 #include "modules/congestion_controller/rtp/send_time_history.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/network/sent_packet.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/clock.h"
@@ -29,7 +30,6 @@ namespace rtcp {
 class TransportFeedback;
 }  // namespace rtcp
 
-namespace webrtc_cc {
 class TransportFeedbackAdapter {
  public:
   explicit TransportFeedbackAdapter(const Clock* clock);
@@ -42,22 +42,22 @@ class TransportFeedbackAdapter {
                  uint16_t sequence_number,
                  size_t length,
                  const PacedPacketInfo& pacing_info);
-  void OnSentPacket(uint16_t sequence_number, int64_t send_time_ms);
 
-  // TODO(holmer): This method should return DelayBasedBwe::Result so that we
-  // can get rid of the dependency on BitrateController. Requires changes
-  // to the CongestionController interface.
-  void OnTransportFeedback(const rtcp::TransportFeedback& feedback);
+  absl::optional<SentPacket> ProcessSentPacket(
+      const rtc::SentPacket& sent_packet);
+
+  absl::optional<TransportPacketsFeedback> ProcessTransportFeedback(
+      const rtcp::TransportFeedback& feedback);
+
   std::vector<PacketFeedback> GetTransportFeedbackVector() const;
-  absl::optional<PacketFeedback> GetPacket(uint16_t sequence_number) const;
-
-  void SetTransportOverhead(int transport_overhead_bytes_per_packet);
 
   void SetNetworkIds(uint16_t local_id, uint16_t remote_id);
 
-  size_t GetOutstandingBytes() const;
+  DataSize GetOutstandingData() const;
 
  private:
+  void OnTransportFeedback(const rtcp::TransportFeedback& feedback);
+
   std::vector<PacketFeedback> GetPacketFeedbackVector(
       const rtcp::TransportFeedback& feedback);
 
@@ -75,7 +75,6 @@ class TransportFeedbackAdapter {
       RTC_GUARDED_BY(&observers_lock_);
 };
 
-}  // namespace webrtc_cc
 }  // namespace webrtc
 
 #endif  // MODULES_CONGESTION_CONTROLLER_RTP_TRANSPORT_FEEDBACK_ADAPTER_H_

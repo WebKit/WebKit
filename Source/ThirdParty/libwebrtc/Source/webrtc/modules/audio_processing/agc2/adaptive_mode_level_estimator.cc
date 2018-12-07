@@ -12,13 +12,27 @@
 
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
 namespace webrtc {
 
 AdaptiveModeLevelEstimator::AdaptiveModeLevelEstimator(
     ApmDataDumper* apm_data_dumper)
-    : saturation_protector_(apm_data_dumper),
+    : level_estimator_(
+          AudioProcessing::Config::GainController2::LevelEstimator::kRms),
+      use_saturation_protector_(true),
+      saturation_protector_(apm_data_dumper),
+      apm_data_dumper_(apm_data_dumper) {}
+
+AdaptiveModeLevelEstimator::AdaptiveModeLevelEstimator(
+    ApmDataDumper* apm_data_dumper,
+    AudioProcessing::Config::GainController2::LevelEstimator level_estimator,
+    bool use_saturation_protector,
+    float extra_saturation_margin_db)
+    : level_estimator_(level_estimator),
+      use_saturation_protector_(use_saturation_protector),
+      saturation_protector_(apm_data_dumper, extra_saturation_margin_db),
       apm_data_dumper_(apm_data_dumper) {}
 
 void AdaptiveModeLevelEstimator::UpdateEstimation(
@@ -42,20 +56,38 @@ void AdaptiveModeLevelEstimator::UpdateEstimation(
 
   const float leak_factor = buffer_is_full ? kFullBufferLeakFactor : 1.f;
 
+  // Read speech level estimation.
+  float speech_level_dbfs = 0.f;
+  using LevelEstimatorType =
+      AudioProcessing::Config::GainController2::LevelEstimator;
+  switch (level_estimator_) {
+    case LevelEstimatorType::kRms:
+      speech_level_dbfs = vad_data.speech_rms_dbfs;
+      break;
+    case LevelEstimatorType::kPeak:
+      speech_level_dbfs = vad_data.speech_peak_dbfs;
+      break;
+  }
+
+  // Update speech level estimation.
   estimate_numerator_ = estimate_numerator_ * leak_factor +
-                        vad_data.speech_rms_dbfs * vad_data.speech_probability;
+                        speech_level_dbfs * vad_data.speech_probability;
   estimate_denominator_ =
       estimate_denominator_ * leak_factor + vad_data.speech_probability;
-
   last_estimate_with_offset_dbfs_ = estimate_numerator_ / estimate_denominator_;
 
-  saturation_protector_.UpdateMargin(vad_data, last_estimate_with_offset_dbfs_);
-  DebugDumpEstimate();
+  if (use_saturation_protector_) {
+    saturation_protector_.UpdateMargin(vad_data,
+                                       last_estimate_with_offset_dbfs_);
+    DebugDumpEstimate();
+  }
 }
 
 float AdaptiveModeLevelEstimator::LatestLevelEstimate() const {
   return rtc::SafeClamp<float>(
-      last_estimate_with_offset_dbfs_ + saturation_protector_.LastMargin(),
+      last_estimate_with_offset_dbfs_ +
+          (use_saturation_protector_ ? saturation_protector_.LastMargin()
+                                     : 0.f),
       -90.f, 30.f);
 }
 

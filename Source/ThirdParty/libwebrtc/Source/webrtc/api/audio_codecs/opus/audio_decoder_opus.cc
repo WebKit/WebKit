@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 
 namespace webrtc {
@@ -35,7 +35,7 @@ absl::optional<AudioDecoderOpus::Config> AudioDecoderOpus::SdpToConfig(
     }
     return 1;  // Default to mono.
   }();
-  if (STR_CASE_CMP(format.name.c_str(), "opus") == 0 &&
+  if (absl::EqualsIgnoreCase(format.name, "opus") &&
       format.clockrate_hz == 48000 && format.num_channels == 2 &&
       num_channels) {
     return Config{*num_channels};

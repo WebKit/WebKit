@@ -18,14 +18,13 @@
 #include "api/audio_codecs/audio_codec_pair_id.h"
 #include "api/audio_codecs/audio_decoder.h"
 #include "api/audio_codecs/audio_format.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // iSAC decoder API (floating-point implementation) for use as a template
 // parameter to CreateAudioDecoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
-struct AudioDecoderIsacFloat {
+struct RTC_EXPORT AudioDecoderIsacFloat {
   struct Config {
     bool IsOk() const {
       return sample_rate_hz == 16000 || sample_rate_hz == 32000;

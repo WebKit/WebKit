@@ -10,7 +10,7 @@
 
 #include "rtc_base/openssldigest.h"
 
-#include "rtc_base/checks.h"
+#include "rtc_base/checks.h"  // RTC_DCHECK, RTC_CHECK
 #include "rtc_base/openssl.h"
 
 namespace rtc {

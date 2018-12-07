@@ -27,7 +27,7 @@ class AudioBweTest : public test::EndToEndTest {
  protected:
   virtual std::string AudioInputFile() = 0;
 
-  virtual DefaultNetworkSimulationConfig GetNetworkPipeConfig() = 0;
+  virtual BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() = 0;
 
   size_t GetNumVideoStreams() const override;
   size_t GetNumAudioStreams() const override;

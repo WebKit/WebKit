@@ -32,6 +32,7 @@ SendSideBweSender::SendSideBweSender(int kbps,
                                                      &event_log_)),
       acknowledged_bitrate_estimator_(
           absl::make_unique<AcknowledgedBitrateEstimator>()),
+      probe_bitrate_estimator_(new ProbeBitrateEstimator(nullptr)),
       bwe_(new DelayBasedBwe(nullptr)),
       feedback_observer_(bitrate_controller_.get()),
       clock_(clock),
@@ -44,7 +45,7 @@ SendSideBweSender::SendSideBweSender(int kbps,
   bitrate_controller_->SetStartBitrate(1000 * kbps);
   bitrate_controller_->SetMinMaxBitrate(1000 * kMinBitrateKbps,
                                         1000 * kMaxBitrateKbps);
-  bwe_->SetMinBitrate(1000 * kMinBitrateKbps);
+  bwe_->SetMinBitrate(DataRate::kbps(kMinBitrateKbps));
 }
 
 SendSideBweSender::~SendSideBweSender() {}
@@ -72,16 +73,22 @@ void SendSideBweSender::GiveFeedback(const FeedbackPacket& feedback) {
 
   int64_t rtt_ms =
       clock_->TimeInMilliseconds() - feedback.latest_send_time_ms();
-  bwe_->OnRttUpdate(rtt_ms);
+  bwe_->OnRttUpdate(TimeDelta::ms(rtt_ms));
   BWE_TEST_LOGGING_PLOT(1, "RTT", clock_->TimeInMilliseconds(), rtt_ms);
 
   std::sort(packet_feedback_vector.begin(), packet_feedback_vector.end(),
             PacketFeedbackComparator());
   acknowledged_bitrate_estimator_->IncomingPacketFeedbackVector(
       packet_feedback_vector);
+  for (PacketFeedback& packet : packet_feedback_vector) {
+    if (packet.send_time_ms != PacketFeedback::kNoSendTime &&
+        packet.pacing_info.probe_cluster_id != PacedPacketInfo::kNotAProbe)
+      probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);
+  }
   DelayBasedBwe::Result result = bwe_->IncomingPacketFeedbackVector(
-      packet_feedback_vector, acknowledged_bitrate_estimator_->bitrate_bps(),
-      clock_->TimeInMilliseconds());
+      packet_feedback_vector, acknowledged_bitrate_estimator_->bitrate(),
+      probe_bitrate_estimator_->FetchAndResetLastEstimatedBitrate(),
+      Timestamp::ms(clock_->TimeInMilliseconds()));
   if (result.updated)
     bitrate_controller_->OnDelayBasedBweResult(result);
 

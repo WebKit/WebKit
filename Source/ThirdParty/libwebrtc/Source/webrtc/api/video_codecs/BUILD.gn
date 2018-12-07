@@ -28,15 +28,18 @@ rtc_source_set("video_codecs_api") {
     "video_encoder_config.cc",
     "video_encoder_config.h",
     "video_encoder_factory.h",
+    "vp8_temporal_layers.h",
   ]
 
   deps = [
     "../..:webrtc_common",
-    "../../common_video",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/system:rtc_export",
+    "../video:encoded_image",
     "../video:video_bitrate_allocation",
     "../video:video_frame",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -56,6 +59,7 @@ rtc_static_library("builtin_video_decoder_factory") {
     ":video_codecs_api",
     "../../media:rtc_internal_video_codecs",
     "../../rtc_base:ptr_util",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
   ]
 }
@@ -75,8 +79,29 @@ rtc_static_library("builtin_video_encoder_factory") {
     ":video_codecs_api",
     "../../media:rtc_internal_video_codecs",
     "../../media:rtc_media_base",
+    "../../media:rtc_vp8_encoder_simulcast_proxy",
     "../../rtc_base:ptr_util",
+    "../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_static_library("create_vp8_temporal_layers") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  sources = [
+    "create_vp8_temporal_layers.cc",
+    "create_vp8_temporal_layers.h",
+  ]
+
+  deps = [
+    ":video_codecs_api",
+    "../..:webrtc_common",
+    "../../modules/video_coding:video_codec_interface",
+    "../../modules/video_coding:webrtc_vp8_temporal_layers",
+    "../../system_wrappers:system_wrappers",
+    "//third_party/abseil-cpp/absl/memory:memory",
   ]
 }
 

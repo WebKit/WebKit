@@ -28,7 +28,7 @@ namespace webrtc {
 // capacity introduced delay.
 class SimulatedNetwork : public NetworkBehaviorInterface {
  public:
-  using Config = DefaultNetworkSimulationConfig;
+  using Config = BuiltInNetworkBehaviorConfig;
   explicit SimulatedNetwork(Config config, uint64_t random_seed = 1);
   ~SimulatedNetwork() override;
 
@@ -49,6 +49,7 @@ class SimulatedNetwork : public NetworkBehaviorInterface {
     int64_t arrival_time_us;
   };
   rtc::CriticalSection config_lock_;
+  bool reset_capacity_delay_error_ RTC_GUARDED_BY(config_lock_) = false;
 
   // |process_lock| guards the data structures involved in delay and loss
   // processes, such as the packet queues.
@@ -56,7 +57,7 @@ class SimulatedNetwork : public NetworkBehaviorInterface {
   std::queue<PacketInfo> capacity_link_ RTC_GUARDED_BY(process_lock_);
   Random random_;
 
-  std::deque<PacketInfo> delay_link_;
+  std::deque<PacketInfo> delay_link_ RTC_GUARDED_BY(process_lock_);
 
   // Link configuration.
   Config config_ RTC_GUARDED_BY(config_lock_);

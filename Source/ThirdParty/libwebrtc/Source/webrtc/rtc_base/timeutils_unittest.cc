@@ -262,7 +262,7 @@ TEST(FakeClock, SettingTimeWakesThreads) {
   worker->Start();
 
   // Post an event that won't be executed for 10 seconds.
-  Event message_handler_dispatched(false, false);
+  Event message_handler_dispatched;
   auto functor = [&message_handler_dispatched] {
     message_handler_dispatched.Set();
   };

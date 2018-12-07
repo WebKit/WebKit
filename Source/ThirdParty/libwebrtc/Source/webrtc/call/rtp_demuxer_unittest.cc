@@ -17,7 +17,6 @@
 #include "absl/memory/memory.h"
 #include "call/ssrc_binding_observer.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"

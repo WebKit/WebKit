@@ -46,11 +46,9 @@ FrameBuffer::FrameBuffer(Clock* clock,
                          VCMTiming* timing,
                          VCMReceiveStatisticsCallback* stats_callback)
     : clock_(clock),
-      new_continuous_frame_event_(false, false),
       jitter_estimator_(jitter_estimator),
       timing_(timing),
       inter_frame_delay_(clock_->TimeInMilliseconds()),
-      last_decoded_frame_timestamp_(0),
       last_decoded_frame_it_(frames_.end()),
       last_continuous_frame_it_(frames_.end()),
       num_frames_history_(0),
@@ -115,10 +113,19 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
         if (keyframe_required && !frame->is_keyframe())
           continue;
 
+        // TODO(https://bugs.webrtc.org/9974): consider removing this check
+        // as it may make a stream undecodable after a very long delay between
+        // frames.
+        if (last_decoded_frame_timestamp_ &&
+            AheadOf(*last_decoded_frame_timestamp_, frame->Timestamp())) {
+          continue;
+        }
+
         next_frame_it_ = frame_it;
-        if (frame->RenderTime() == -1)
+        if (frame->RenderTime() == -1) {
           frame->SetRenderTime(
               timing_->RenderTimeMs(frame->Timestamp(), now_ms));
+        }
         wait_ms = timing_->MaxWaitingTime(frame->RenderTime(), now_ms);
 
         // This will cause the frame buffer to prefer high framerate rather
@@ -174,33 +181,6 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
       UpdateJitterDelay();
       UpdateTimingFrameInfo();
       PropagateDecodability(next_frame_it_->second);
-
-      // Sanity check for RTP timestamp monotonicity.
-      if (last_decoded_frame_it_ != frames_.end()) {
-        const VideoLayerFrameId& last_decoded_frame_key =
-            last_decoded_frame_it_->first;
-        const VideoLayerFrameId& frame_key = next_frame_it_->first;
-
-        const bool frame_is_higher_spatial_layer_of_last_decoded_frame =
-            last_decoded_frame_timestamp_ == frame->Timestamp() &&
-            last_decoded_frame_key.picture_id == frame_key.picture_id &&
-            last_decoded_frame_key.spatial_layer < frame_key.spatial_layer;
-
-        if (AheadOrAt(last_decoded_frame_timestamp_, frame->Timestamp()) &&
-            !frame_is_higher_spatial_layer_of_last_decoded_frame) {
-          // TODO(brandtr): Consider clearing the entire buffer when we hit
-          // these conditions.
-          RTC_LOG(LS_WARNING)
-              << "Frame with (timestamp:picture_id:spatial_id) ("
-              << frame->Timestamp() << ":" << frame->id.picture_id << ":"
-              << static_cast<int>(frame->id.spatial_layer) << ")"
-              << " sent to decoder after frame with"
-              << " (timestamp:picture_id:spatial_id) ("
-              << last_decoded_frame_timestamp_ << ":"
-              << last_decoded_frame_key.picture_id << ":"
-              << static_cast<int>(last_decoded_frame_key.spatial_layer) << ").";
-        }
-      }
 
       AdvanceLastDecodedFrame(next_frame_it_);
       last_decoded_frame_timestamp_ = frame->Timestamp();
@@ -265,6 +245,11 @@ void FrameBuffer::Stop() {
   rtc::CritScope lock(&crit_);
   stopped_ = true;
   new_continuous_frame_event_.Set();
+}
+
+void FrameBuffer::Clear() {
+  rtc::CritScope lock(&crit_);
+  ClearFramesAndHistory();
 }
 
 void FrameBuffer::UpdateRtt(int64_t rtt_ms) {
@@ -348,7 +333,7 @@ int64_t FrameBuffer::InsertFrame(std::unique_ptr<EncodedFrame> frame) {
 
   if (last_decoded_frame_it_ != frames_.end() &&
       id <= last_decoded_frame_it_->first) {
-    if (AheadOf(frame->Timestamp(), last_decoded_frame_timestamp_) &&
+    if (AheadOf(frame->Timestamp(), *last_decoded_frame_timestamp_) &&
         frame->is_keyframe()) {
       // If this frame has a newer timestamp but an earlier picture id then we
       // assume there has been a jump in the picture id due to some encoder

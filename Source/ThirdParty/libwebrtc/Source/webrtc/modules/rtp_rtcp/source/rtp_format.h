@@ -11,17 +11,17 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_H_
 
+#include <stdint.h>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "api/array_view.h"
 #include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module_common_types.h"
-#include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructormagic.h"
+#include "modules/rtp_rtcp/source/rtp_video_header.h"
 
 namespace webrtc {
+
 class RtpPacketToSend;
 
 class RtpPacketizer {
@@ -30,6 +30,8 @@ class RtpPacketizer {
     int max_payload_len = 1200;
     int first_packet_reduction_len = 0;
     int last_packet_reduction_len = 0;
+    // Reduction len for packet that is first & last at the same time.
+    int single_packet_reduction_len = 0;
   };
   static std::unique_ptr<RtpPacketizer> Create(
       VideoCodecType type,

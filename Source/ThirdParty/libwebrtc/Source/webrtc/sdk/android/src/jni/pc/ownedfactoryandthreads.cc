@@ -21,9 +21,9 @@ PeerConnectionFactoryInterface* factoryFromJava(jlong j_p) {
 }
 
 OwnedFactoryAndThreads::OwnedFactoryAndThreads(
-    std::unique_ptr<Thread> network_thread,
-    std::unique_ptr<Thread> worker_thread,
-    std::unique_ptr<Thread> signaling_thread,
+    std::unique_ptr<rtc::Thread> network_thread,
+    std::unique_ptr<rtc::Thread> worker_thread,
+    std::unique_ptr<rtc::Thread> signaling_thread,
     rtc::NetworkMonitorFactory* network_monitor_factory,
     PeerConnectionFactoryInterface* factory)
     : network_thread_(std::move(network_thread)),

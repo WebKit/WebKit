@@ -62,10 +62,10 @@ class RelayPortTest : public testing::Test, public sigslot::has_slots<> {
   }
 
   void OnReadPacket(rtc::AsyncPacketSocket* socket,
-                    const char* data,
-                    size_t size,
-                    const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time) {
+                    const char* /* data */,
+                    size_t /* size */,
+                    const rtc::SocketAddress& /* remote_addr */,
+                    const int64_t& /* packet_time_us */) {
     received_packet_count_[socket]++;
   }
 

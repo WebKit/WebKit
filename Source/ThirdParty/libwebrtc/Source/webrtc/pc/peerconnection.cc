@@ -22,6 +22,7 @@
 #include "api/jsepsessiondescription.h"
 #include "api/mediastreamproxy.h"
 #include "api/mediastreamtrackproxy.h"
+#include "api/umametrics.h"
 #include "call/call.h"
 #include "logging/rtc_event_log/icelogger.h"
 #include "logging/rtc_event_log/output/rtc_event_log_output_file.h"
@@ -630,6 +631,35 @@ absl::optional<int> RTCConfigurationToIceConfigOptionalInt(
   return rtc_configuration_parameter;
 }
 
+cricket::DataMessageType ToCricketDataMessageType(DataMessageType type) {
+  switch (type) {
+    case DataMessageType::kText:
+      return cricket::DMT_TEXT;
+    case DataMessageType::kBinary:
+      return cricket::DMT_BINARY;
+    case DataMessageType::kControl:
+      return cricket::DMT_CONTROL;
+    default:
+      return cricket::DMT_NONE;
+  }
+  return cricket::DMT_NONE;
+}
+
+DataMessageType ToWebrtcDataMessageType(cricket::DataMessageType type) {
+  switch (type) {
+    case cricket::DMT_TEXT:
+      return DataMessageType::kText;
+    case cricket::DMT_BINARY:
+      return DataMessageType::kBinary;
+    case cricket::DMT_CONTROL:
+      return DataMessageType::kControl;
+    case cricket::DMT_NONE:
+    default:
+      RTC_NOTREACHED();
+  }
+  return DataMessageType::kControl;
+}
+
 }  // namespace
 
 // Upon completion, posts a task to execute the callback of the
@@ -684,6 +714,7 @@ bool PeerConnectionInterface::RTCConfiguration::operator==(
     CandidateNetworkPolicy candidate_network_policy;
     int audio_jitter_buffer_max_packets;
     bool audio_jitter_buffer_fast_accelerate;
+    int audio_jitter_buffer_min_delay_ms;
     int ice_connection_receiving_timeout;
     int ice_backup_candidate_pair_ping_interval;
     ContinualGatheringPolicy continual_gathering_policy;
@@ -704,6 +735,10 @@ bool PeerConnectionInterface::RTCConfiguration::operator==(
     SdpSemantics sdp_semantics;
     absl::optional<rtc::AdapterType> network_preference;
     bool active_reset_srtp_params;
+    bool use_media_transport;
+    bool use_media_transport_for_data_channels;
+    absl::optional<CryptoOptions> crypto_options;
+    bool offer_extmap_allow_mixed;
   };
   static_assert(sizeof(stuff_being_tested_for_equality) == sizeof(*this),
                 "Did you add something to RTCConfiguration and forget to "
@@ -716,6 +751,8 @@ bool PeerConnectionInterface::RTCConfiguration::operator==(
          audio_jitter_buffer_max_packets == o.audio_jitter_buffer_max_packets &&
          audio_jitter_buffer_fast_accelerate ==
              o.audio_jitter_buffer_fast_accelerate &&
+         audio_jitter_buffer_min_delay_ms ==
+             o.audio_jitter_buffer_min_delay_ms &&
          ice_connection_receiving_timeout ==
              o.ice_connection_receiving_timeout &&
          ice_backup_candidate_pair_ping_interval ==
@@ -751,7 +788,12 @@ bool PeerConnectionInterface::RTCConfiguration::operator==(
          turn_customizer == o.turn_customizer &&
          sdp_semantics == o.sdp_semantics &&
          network_preference == o.network_preference &&
-         active_reset_srtp_params == o.active_reset_srtp_params;
+         active_reset_srtp_params == o.active_reset_srtp_params &&
+         use_media_transport == o.use_media_transport &&
+         use_media_transport_for_data_channels ==
+             o.use_media_transport_for_data_channels &&
+         crypto_options == o.crypto_options &&
+         offer_extmap_allow_mixed == o.offer_extmap_allow_mixed;
 }
 
 bool PeerConnectionInterface::RTCConfiguration::operator!=(
@@ -820,6 +862,7 @@ PeerConnection::~PeerConnection() {
   webrtc_session_desc_factory_.reset();
   sctp_invoker_.reset();
   sctp_factory_.reset();
+  media_transport_invoker_.reset();
   transport_controller_.reset();
 
   // port_allocator_ lives on the network thread and should be destroyed there.
@@ -929,18 +972,40 @@ bool PeerConnection::Initialize(
   config.disable_encryption = options.disable_encryption;
   config.bundle_policy = configuration.bundle_policy;
   config.rtcp_mux_policy = configuration.rtcp_mux_policy;
-  config.crypto_options = options.crypto_options;
+  // TODO(bugs.webrtc.org/9891) - Remove options.crypto_options then remove this
+  // stub.
+  config.crypto_options = configuration.crypto_options.has_value()
+                              ? *configuration.crypto_options
+                              : options.crypto_options;
   config.transport_observer = this;
   config.event_log = event_log_.get();
 #if defined(ENABLE_EXTERNAL_AUTH)
   config.enable_external_auth = true;
 #endif
   config.active_reset_srtp_params = configuration.active_reset_srtp_params;
+
+  if (configuration.use_media_transport ||
+      configuration.use_media_transport_for_data_channels) {
+    if (!factory_->media_transport_factory()) {
+      RTC_DCHECK(false)
+          << "PeerConnecton is initialized with use_media_transport = true or "
+          << "use_media_transport_for_data_channels = true "
+          << "but media transport factory is not set in PeerConnectionFactory";
+      return false;
+    }
+
+    config.media_transport_factory = factory_->media_transport_factory();
+  }
+
   transport_controller_.reset(new JsepTransportController(
       signaling_thread(), network_thread(), port_allocator_.get(),
       async_resolver_factory_.get(), config));
   transport_controller_->SignalIceConnectionState.connect(
       this, &PeerConnection::OnTransportControllerConnectionState);
+  transport_controller_->SignalStandardizedIceConnectionState.connect(
+      this, &PeerConnection::SetStandardizedIceConnectionState);
+  transport_controller_->SignalConnectionState.connect(
+      this, &PeerConnection::SetConnectionState);
   transport_controller_->SignalIceGatheringState.connect(
       this, &PeerConnection::OnTransportControllerGatheringState);
   transport_controller_->SignalIceCandidatesGathered.connect(
@@ -979,10 +1044,18 @@ bool PeerConnection::Initialize(
     }
   }
 
-  // Enable creation of RTP data channels if the kEnableRtpDataChannels is set.
-  // It takes precendence over the disable_sctp_data_channels
-  // PeerConnectionFactoryInterface::Options.
-  if (configuration.enable_rtp_data_channel) {
+  if (configuration.use_media_transport_for_data_channels) {
+    if (configuration.enable_rtp_data_channel) {
+      RTC_LOG(LS_ERROR) << "enable_rtp_data_channel and "
+                           "use_media_transport_for_data_channels are "
+                           "incompatible and cannot both be set to true";
+      return false;
+    }
+    data_channel_type_ = cricket::DCT_MEDIA_TRANSPORT;
+  } else if (configuration.enable_rtp_data_channel) {
+    // Enable creation of RTP data channels if the kEnableRtpDataChannels is
+    // set. It takes precendence over the disable_sctp_data_channels
+    // PeerConnectionFactoryInterface::Options.
     data_channel_type_ = cricket::DCT_RTP;
   } else {
     // DTLS has to be enabled to use SCTP.
@@ -1001,6 +1074,9 @@ bool PeerConnection::Initialize(
 
   audio_options_.audio_jitter_buffer_fast_accelerate =
       configuration.audio_jitter_buffer_fast_accelerate;
+
+  audio_options_.audio_jitter_buffer_min_delay_ms =
+      configuration.audio_jitter_buffer_min_delay_ms;
 
   // Whether the certificate generator/certificate is null or not determines
   // what PeerConnectionDescriptionFactory will do, so make sure that we give it
@@ -1024,7 +1100,7 @@ bool PeerConnection::Initialize(
   }
 
   webrtc_session_desc_factory_->set_enable_encrypted_rtp_header_extensions(
-      options.crypto_options.enable_encrypted_rtp_header_extensions);
+      GetCryptoOptions().srtp.enable_encrypted_rtp_header_extensions);
 
   // Add default audio/video transceivers for Plan B SDP.
   if (!IsUnifiedPlan()) {
@@ -1183,7 +1259,7 @@ PeerConnection::AddTrackPlanB(
   auto new_sender =
       CreateSender(media_type, track->id(), track, adjusted_stream_ids, {});
   if (track->kind() == MediaStreamTrackInterface::kAudioKind) {
-    new_sender->internal()->SetVoiceMediaChannel(voice_media_channel());
+    new_sender->internal()->SetMediaChannel(voice_media_channel());
     GetAudioTransceiver()->internal()->AddSender(new_sender);
     const RtpSenderInfo* sender_info =
         FindSenderInfo(local_audio_sender_infos_,
@@ -1193,7 +1269,7 @@ PeerConnection::AddTrackPlanB(
     }
   } else {
     RTC_DCHECK_EQ(MediaStreamTrackInterface::kVideoKind, track->kind());
-    new_sender->internal()->SetVideoMediaChannel(video_media_channel());
+    new_sender->internal()->SetMediaChannel(video_media_channel());
     GetVideoTransceiver()->internal()->AddSender(new_sender);
     const RtpSenderInfo* sender_info =
         FindSenderInfo(local_video_sender_infos_,
@@ -1523,14 +1599,14 @@ rtc::scoped_refptr<RtpSenderInterface> PeerConnection::CreateSender(
   if (kind == MediaStreamTrackInterface::kAudioKind) {
     auto* audio_sender = new AudioRtpSender(
         worker_thread(), rtc::CreateRandomUuid(), stats_.get());
-    audio_sender->SetVoiceMediaChannel(voice_media_channel());
+    audio_sender->SetMediaChannel(voice_media_channel());
     new_sender = RtpSenderProxyWithInternal<RtpSenderInternal>::Create(
         signaling_thread(), audio_sender);
     GetAudioTransceiver()->internal()->AddSender(new_sender);
   } else if (kind == MediaStreamTrackInterface::kVideoKind) {
     auto* video_sender =
         new VideoRtpSender(worker_thread(), rtc::CreateRandomUuid());
-    video_sender->SetVideoMediaChannel(video_media_channel());
+    video_sender->SetMediaChannel(video_media_channel());
     new_sender = RtpSenderProxyWithInternal<RtpSenderInternal>::Create(
         signaling_thread(), video_sender);
     GetVideoTransceiver()->internal()->AddSender(new_sender);
@@ -1647,7 +1723,7 @@ void PeerConnection::GetStats(
         break;
     }
   }
-  // If there is no |internal_sender| then |selector| is either null or does not
+  // If there is no |internal_sender| then |selector| is either null or does not
   // belong to the PeerConnection (in Plan B, senders can be removed from the
   // PeerConnection). This means that "all the stats objects representing the
   // selector" is an empty set. Invoking GetStatsReport() with a null selector
@@ -1675,7 +1751,7 @@ void PeerConnection::GetStats(
         break;
     }
   }
-  // If there is no |internal_receiver| then |selector| is either null or does
+  // If there is no |internal_receiver| then |selector| is either null or does
   // not belong to the PeerConnection (in Plan B, receivers can be removed from
   // the PeerConnection). This means that "all the stats objects representing
   // the selector" is an empty set. Invoking GetStatsReport() with a null
@@ -1690,6 +1766,16 @@ PeerConnectionInterface::SignalingState PeerConnection::signaling_state() {
 PeerConnectionInterface::IceConnectionState
 PeerConnection::ice_connection_state() {
   return ice_connection_state_;
+}
+
+PeerConnectionInterface::IceConnectionState
+PeerConnection::standardized_ice_connection_state() {
+  return standardized_ice_connection_state_;
+}
+
+PeerConnectionInterface::PeerConnectionState
+PeerConnection::peer_connection_state() {
+  return connection_state_;
 }
 
 PeerConnectionInterface::IceGatheringState
@@ -1995,6 +2081,16 @@ RTCError PeerConnection::ApplyLocalDescription(
   // |local_description()|.
   RTC_DCHECK(local_description());
 
+  if (!is_caller_) {
+    if (remote_description()) {
+      // Remote description was applied first, so this PC is the callee.
+      is_caller_ = false;
+    } else {
+      // Local description is applied first, so this PC is the caller.
+      is_caller_ = true;
+    }
+  }
+
   RTCError error = PushdownTransportDescription(cricket::CS_LOCAL, type);
   if (!error.ok()) {
     return error;
@@ -2077,7 +2173,7 @@ RTCError PeerConnection::ApplyLocalDescription(
   // If setting the description decided our SSL role, allocate any necessary
   // SCTP sids.
   rtc::SSLRole role;
-  if (data_channel_type() == cricket::DCT_SCTP && GetSctpSslRole(&role)) {
+  if (DataChannel::IsSctpLike(data_channel_type_) && GetSctpSslRole(&role)) {
     AllocateSctpSids(role);
   }
 
@@ -2352,7 +2448,7 @@ RTCError PeerConnection::ApplyRemoteDescription(
   // If setting the description decided our SSL role, allocate any necessary
   // SCTP sids.
   rtc::SSLRole role;
-  if (data_channel_type() == cricket::DCT_SCTP && GetSctpSslRole(&role)) {
+  if (DataChannel::IsSctpLike(data_channel_type_) && GetSctpSslRole(&role)) {
     AllocateSctpSids(role);
   }
 
@@ -2646,11 +2742,11 @@ RTCError PeerConnection::UpdateTransceiverChannel(
     const cricket::ContentGroup* bundle_group) {
   RTC_DCHECK(IsUnifiedPlan());
   RTC_DCHECK(transceiver);
-  cricket::BaseChannel* channel = transceiver->internal()->channel();
+  cricket::ChannelInterface* channel = transceiver->internal()->channel();
   if (content.rejected) {
     if (channel) {
       transceiver->internal()->SetChannel(nullptr);
-      DestroyBaseChannel(channel);
+      DestroyChannelInterface(channel);
     }
   } else {
     if (!channel) {
@@ -2683,7 +2779,7 @@ RTCError PeerConnection::UpdateDataChannel(
   if (content.rejected) {
     DestroyDataChannel();
   } else {
-    if (!rtp_data_channel_ && !sctp_transport_) {
+    if (!rtp_data_channel_ && !sctp_transport_ && !media_transport_) {
       if (!CreateDataChannel(content.name)) {
         LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                              "Failed to create data channel.");
@@ -2870,6 +2966,49 @@ bool PeerConnection::SetConfiguration(const RTCConfiguration& configuration,
     return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
   }
 
+  if (local_description() &&
+      configuration.use_media_transport != configuration_.use_media_transport) {
+    RTC_LOG(LS_ERROR) << "Can't change media_transport after calling "
+                         "SetLocalDescription.";
+    return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
+  }
+
+  if (remote_description() &&
+      configuration.use_media_transport != configuration_.use_media_transport) {
+    RTC_LOG(LS_ERROR) << "Can't change media_transport after calling "
+                         "SetRemoteDescription.";
+    return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
+  }
+
+  if (local_description() &&
+      configuration.use_media_transport_for_data_channels !=
+          configuration_.use_media_transport_for_data_channels) {
+    RTC_LOG(LS_ERROR) << "Can't change media_transport_for_data_channels "
+                         "after calling SetLocalDescription.";
+    return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
+  }
+
+  if (remote_description() &&
+      configuration.use_media_transport_for_data_channels !=
+          configuration_.use_media_transport_for_data_channels) {
+    RTC_LOG(LS_ERROR) << "Can't change media_transport_for_data_channels "
+                         "after calling SetRemoteDescription.";
+    return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
+  }
+
+  if (local_description() &&
+      configuration.crypto_options != configuration_.crypto_options) {
+    RTC_LOG(LS_ERROR) << "Can't change crypto_options after calling "
+                         "SetLocalDescription.";
+    return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
+  }
+
+  if (configuration.use_media_transport_for_data_channels ||
+      configuration.use_media_transport) {
+    RTC_CHECK(configuration.bundle_policy == kBundlePolicyMaxBundle)
+        << "Media transport requires MaxBundle policy.";
+  }
+
   // The simplest (and most future-compatible) way to tell if the config was
   // modified in an invalid way is to copy each property we do support
   // modifying, then use operator==. There are far more properties we don't
@@ -2894,6 +3033,9 @@ bool PeerConnection::SetConfiguration(const RTCConfiguration& configuration,
   modified_config.network_preference = configuration.network_preference;
   modified_config.active_reset_srtp_params =
       configuration.active_reset_srtp_params;
+  modified_config.use_media_transport = configuration.use_media_transport;
+  modified_config.use_media_transport_for_data_channels =
+      configuration.use_media_transport_for_data_channels;
   if (configuration != modified_config) {
     RTC_LOG(LS_ERROR) << "Modifying the configuration in an unsupported way.";
     return SafeSetError(RTCErrorType::INVALID_MODIFICATION, error);
@@ -2951,6 +3093,11 @@ bool PeerConnection::SetConfiguration(const RTCConfiguration& configuration,
   }
 
   transport_controller_->SetIceConfig(ParseIceConfig(modified_config));
+  transport_controller_->SetMediaTransportFactory(
+      modified_config.use_media_transport ||
+              modified_config.use_media_transport_for_data_channels
+          ? factory_->media_transport_factory()
+          : nullptr);
 
   if (configuration_.active_reset_srtp_params !=
       modified_config.active_reset_srtp_params) {
@@ -3119,7 +3266,7 @@ void PeerConnection::SetAudioPlayout(bool playout) {
     return;
   }
   auto audio_state =
-      factory_->channel_manager()->media_engine()->GetAudioState();
+      factory_->channel_manager()->media_engine()->voice().GetAudioState();
   audio_state->SetPlayout(playout);
 }
 
@@ -3131,7 +3278,7 @@ void PeerConnection::SetAudioRecording(bool recording) {
     return;
   }
   auto audio_state =
-      factory_->channel_manager()->media_engine()->GetAudioState();
+      factory_->channel_manager()->media_engine()->voice().GetAudioState();
   audio_state->SetRecording(recording);
 }
 
@@ -3141,7 +3288,7 @@ PeerConnection::GetRemoteAudioSSLCertificate() {
   if (!chain || !chain->GetSize()) {
     return nullptr;
   }
-  return chain->Get(0).GetUniqueReference();
+  return chain->Get(0).Clone();
 }
 
 std::unique_ptr<rtc::SSLCertChain>
@@ -3170,9 +3317,13 @@ bool PeerConnection::StartRtcEventLog(rtc::PlatformFile file,
   const size_t max_size = (max_size_bytes < 0)
                               ? RtcEventLog::kUnlimitedOutput
                               : rtc::saturated_cast<size_t>(max_size_bytes);
+  int64_t output_period_ms = webrtc::RtcEventLog::kImmediateOutput;
+  if (field_trial::IsEnabled("WebRTC-RtcEventLogNewFormat")) {
+    output_period_ms = 5000;
+  }
   return StartRtcEventLog(
       absl::make_unique<RtcEventLogOutputFile>(file, max_size),
-      webrtc::RtcEventLog::kImmediateOutput);
+      output_period_ms);
 }
 
 bool PeerConnection::StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output,
@@ -3347,7 +3498,7 @@ void PeerConnection::CreateAudioReceiver(
   // the constructor taking stream IDs instead.
   auto* audio_receiver = new AudioRtpReceiver(
       worker_thread(), remote_sender_info.sender_id, streams);
-  audio_receiver->SetVoiceMediaChannel(voice_media_channel());
+  audio_receiver->SetMediaChannel(voice_media_channel());
   audio_receiver->SetupMediaChannel(remote_sender_info.first_ssrc);
   auto receiver = RtpReceiverProxyWithInternal<RtpReceiverInternal>::Create(
       signaling_thread(), audio_receiver);
@@ -3365,7 +3516,7 @@ void PeerConnection::CreateVideoReceiver(
   // the constructor taking stream IDs instead.
   auto* video_receiver = new VideoRtpReceiver(
       worker_thread(), remote_sender_info.sender_id, streams);
-  video_receiver->SetVideoMediaChannel(video_media_channel());
+  video_receiver->SetMediaChannel(video_media_channel());
   video_receiver->SetupMediaChannel(remote_sender_info.first_ssrc);
   auto receiver = RtpReceiverProxyWithInternal<RtpReceiverInternal>::Create(
       signaling_thread(), video_receiver);
@@ -3408,7 +3559,7 @@ void PeerConnection::AddAudioTrack(AudioTrackInterface* track,
   // Normal case; we've never seen this track before.
   auto new_sender = CreateSender(cricket::MEDIA_TYPE_AUDIO, track->id(), track,
                                  {stream->id()}, {});
-  new_sender->internal()->SetVoiceMediaChannel(voice_media_channel());
+  new_sender->internal()->SetMediaChannel(voice_media_channel());
   GetAudioTransceiver()->internal()->AddSender(new_sender);
   // If the sender has already been configured in SDP, we call SetSsrc,
   // which will connect the sender to the underlying transport. This can
@@ -3453,7 +3604,7 @@ void PeerConnection::AddVideoTrack(VideoTrackInterface* track,
   // Normal case; we've never seen this track before.
   auto new_sender = CreateSender(cricket::MEDIA_TYPE_VIDEO, track->id(), track,
                                  {stream->id()}, {});
-  new_sender->internal()->SetVideoMediaChannel(video_media_channel());
+  new_sender->internal()->SetMediaChannel(video_media_channel());
   GetVideoTransceiver()->internal()->AddSender(new_sender);
   const RtpSenderInfo* sender_info =
       FindSenderInfo(local_video_sender_infos_, stream->id(), track->id());
@@ -3493,6 +3644,29 @@ void PeerConnection::SetIceConnectionState(IceConnectionState new_state) {
 
   ice_connection_state_ = new_state;
   Observer()->OnIceConnectionChange(ice_connection_state_);
+}
+
+void PeerConnection::SetStandardizedIceConnectionState(
+    PeerConnectionInterface::IceConnectionState new_state) {
+  RTC_DCHECK(signaling_thread()->IsCurrent());
+  if (standardized_ice_connection_state_ == new_state)
+    return;
+  if (IsClosed())
+    return;
+  standardized_ice_connection_state_ = new_state;
+  // TODO(jonasolsson): Pass this value on to OnIceConnectionChange instead of
+  // the old one once disconnects are handled properly.
+}
+
+void PeerConnection::SetConnectionState(
+    PeerConnectionInterface::PeerConnectionState new_state) {
+  RTC_DCHECK(signaling_thread()->IsCurrent());
+  if (connection_state_ == new_state)
+    return;
+  if (IsClosed())
+    return;
+  connection_state_ = new_state;
+  Observer()->OnConnectionChange(new_state);
 }
 
 void PeerConnection::OnIceGatheringChange(
@@ -3542,6 +3716,10 @@ void PeerConnection::ChangeSignalingState(
   if (signaling_state == kClosed) {
     ice_connection_state_ = kIceConnectionClosed;
     Observer()->OnIceConnectionChange(ice_connection_state_);
+    standardized_ice_connection_state_ =
+        PeerConnectionInterface::IceConnectionState::kIceConnectionClosed;
+    connection_state_ = PeerConnectionInterface::PeerConnectionState::kClosed;
+    Observer()->OnConnectionChange(connection_state_);
     if (ice_gathering_state_ != kIceGatheringComplete) {
       ice_gathering_state_ = kIceGatheringComplete;
       Observer()->OnIceGatheringChange(ice_gathering_state_);
@@ -3641,8 +3819,15 @@ void PeerConnection::GetOptionsForOffer(
   }
 
   session_options->rtcp_cname = rtcp_cname_;
-  session_options->crypto_options = factory_->options().crypto_options;
+  session_options->crypto_options = GetCryptoOptions();
   session_options->is_unified_plan = IsUnifiedPlan();
+  session_options->pooled_ice_credentials =
+      network_thread()->Invoke<std::vector<cricket::IceParameters>>(
+          RTC_FROM_HERE,
+          rtc::Bind(&cricket::PortAllocator::GetPooledIceCredentials,
+                    port_allocator_.get()));
+  session_options->offer_extmap_allow_mixed =
+      configuration_.offer_extmap_allow_mixed;
 }
 
 void PeerConnection::GetOptionsForPlanBOffer(
@@ -3901,8 +4086,13 @@ void PeerConnection::GetOptionsForAnswer(
   }
 
   session_options->rtcp_cname = rtcp_cname_;
-  session_options->crypto_options = factory_->options().crypto_options;
+  session_options->crypto_options = GetCryptoOptions();
   session_options->is_unified_plan = IsUnifiedPlan();
+  session_options->pooled_ice_credentials =
+      network_thread()->Invoke<std::vector<cricket::IceParameters>>(
+          RTC_FROM_HERE,
+          rtc::Bind(&cricket::PortAllocator::GetPooledIceCredentials,
+                    port_allocator_.get()));
 }
 
 void PeerConnection::GetOptionsForPlanBAnswer(
@@ -4069,6 +4259,8 @@ absl::optional<std::string> PeerConnection::GetDataMid() const {
       return rtp_data_channel_->content_name();
     case cricket::DCT_SCTP:
       return sctp_mid_;
+    case cricket::DCT_MEDIA_TRANSPORT:
+      return media_transport_data_mid_;
     default:
       return absl::nullopt;
   }
@@ -4431,7 +4623,7 @@ rtc::scoped_refptr<DataChannel> PeerConnection::InternalCreateDataChannel(
   }
   InternalDataChannelInit new_config =
       config ? (*config) : InternalDataChannelInit();
-  if (data_channel_type() == cricket::DCT_SCTP) {
+  if (DataChannel::IsSctpLike(data_channel_type_)) {
     if (new_config.id < 0) {
       rtc::SSLRole role;
       if ((GetSctpSslRole(&role)) &&
@@ -4462,7 +4654,7 @@ rtc::scoped_refptr<DataChannel> PeerConnection::InternalCreateDataChannel(
     }
     rtp_data_channels_[channel->label()] = channel;
   } else {
-    RTC_DCHECK(channel->data_channel_type() == cricket::DCT_SCTP);
+    RTC_DCHECK(DataChannel::IsSctpLike(data_channel_type_));
     sctp_data_channels_.push_back(channel);
     channel->SignalClosed.connect(this,
                                   &PeerConnection::OnSctpDataChannelClosed);
@@ -4540,6 +4732,27 @@ void PeerConnection::OnDataChannelOpenMessage(
       DataChannelProxy::Create(signaling_thread(), channel);
   Observer()->OnDataChannel(std::move(proxy_channel));
   NoteUsageEvent(UsageEvent::DATA_ADDED);
+}
+
+bool PeerConnection::HandleOpenMessage_s(
+    const cricket::ReceiveDataParams& params,
+    const rtc::CopyOnWriteBuffer& buffer) {
+  if (params.type == cricket::DMT_CONTROL && IsOpenMessage(buffer)) {
+    // Received OPEN message; parse and signal that a new data channel should
+    // be created.
+    std::string label;
+    InternalDataChannelInit config;
+    config.id = params.ssrc;
+    if (!ParseDataChannelOpenMessage(buffer, &label, &config)) {
+      RTC_LOG(LS_WARNING) << "Failed to parse the OPEN message for ssrc "
+                          << params.ssrc;
+      return true;
+    }
+    config.open_handshake_role = InternalDataChannelInit::kAcker;
+    OnDataChannelOpenMessage(label, config);
+    return true;
+  }
+  return false;
 }
 
 rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>
@@ -4769,10 +4982,10 @@ void PeerConnection::StopRtcEventLog_w() {
   }
 }
 
-cricket::BaseChannel* PeerConnection::GetChannel(
+cricket::ChannelInterface* PeerConnection::GetChannel(
     const std::string& content_name) {
   for (auto transceiver : transceivers_) {
-    cricket::BaseChannel* channel = transceiver->internal()->channel();
+    cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel && channel->content_name() == content_name) {
       return channel;
     }
@@ -4785,19 +4998,25 @@ cricket::BaseChannel* PeerConnection::GetChannel(
 }
 
 bool PeerConnection::GetSctpSslRole(rtc::SSLRole* role) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
   if (!local_description() || !remote_description()) {
     RTC_LOG(LS_INFO)
         << "Local and Remote descriptions must be applied to get the "
            "SSL Role of the SCTP transport.";
     return false;
   }
-  if (!sctp_transport_) {
+  if (!sctp_transport_ && !media_transport_) {
     RTC_LOG(LS_INFO) << "Non-rejected SCTP m= section is needed to get the "
                         "SSL Role of the SCTP transport.";
     return false;
   }
 
-  auto dtls_role = transport_controller_->GetDtlsRole(*sctp_mid_);
+  absl::optional<rtc::SSLRole> dtls_role;
+  if (sctp_mid_) {
+    dtls_role = transport_controller_->GetDtlsRole(*sctp_mid_);
+  } else if (is_caller_) {
+    dtls_role = *is_caller_ ? rtc::SSL_SERVER : rtc::SSL_CLIENT;
+  }
   if (dtls_role) {
     *role = *dtls_role;
     return true;
@@ -4883,7 +5102,7 @@ RTCError PeerConnection::PushdownMediaDescription(
   for (auto transceiver : transceivers_) {
     const ContentInfo* content_info =
         FindMediaSectionForTransceiver(transceiver, sdesc);
-    cricket::BaseChannel* channel = transceiver->internal()->channel();
+    cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (!channel || !content_info || content_info->rejected) {
       continue;
     }
@@ -5043,10 +5262,21 @@ bool PeerConnection::GetRemoteTrackIdBySsrc(uint32_t ssrc,
 bool PeerConnection::SendData(const cricket::SendDataParams& params,
                               const rtc::CopyOnWriteBuffer& payload,
                               cricket::SendDataResult* result) {
-  if (!rtp_data_channel_ && !sctp_transport_) {
-    RTC_LOG(LS_ERROR) << "SendData called when rtp_data_channel_ "
-                         "and sctp_transport_ are NULL.";
+  if (!rtp_data_channel_ && !sctp_transport_ && !media_transport_) {
+    RTC_LOG(LS_ERROR) << "SendData called when rtp_data_channel_, "
+                         "sctp_transport_, and media_transport_ are NULL.";
     return false;
+  }
+  if (media_transport_) {
+    SendDataParams send_params;
+    send_params.type = ToWebrtcDataMessageType(params.type);
+    send_params.ordered = params.ordered;
+    if (params.max_rtx_count >= 0) {
+      send_params.max_rtx_count = params.max_rtx_count;
+    } else if (params.max_rtx_ms >= 0) {
+      send_params.max_rtx_ms = params.max_rtx_ms;
+    }
+    return media_transport_->SendData(params.sid, send_params, payload).ok();
   }
   return rtp_data_channel_
              ? rtp_data_channel_->SendData(params, payload, result)
@@ -5057,13 +5287,23 @@ bool PeerConnection::SendData(const cricket::SendDataParams& params,
 }
 
 bool PeerConnection::ConnectDataChannel(DataChannel* webrtc_data_channel) {
-  if (!rtp_data_channel_ && !sctp_transport_) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  if (!rtp_data_channel_ && !sctp_transport_ && !media_transport_) {
     // Don't log an error here, because DataChannels are expected to call
     // ConnectDataChannel in this state. It's the only way to initially tell
     // whether or not the underlying transport is ready.
     return false;
   }
-  if (rtp_data_channel_) {
+  if (media_transport_) {
+    SignalMediaTransportWritable_s.connect(webrtc_data_channel,
+                                           &DataChannel::OnChannelReady);
+    SignalMediaTransportReceivedData_s.connect(webrtc_data_channel,
+                                               &DataChannel::OnDataReceived);
+    SignalMediaTransportChannelClosing_s.connect(
+        webrtc_data_channel, &DataChannel::OnClosingProcedureStartedRemotely);
+    SignalMediaTransportChannelClosed_s.connect(
+        webrtc_data_channel, &DataChannel::OnClosingProcedureComplete);
+  } else if (rtp_data_channel_) {
     rtp_data_channel_->SignalReadyToSendData.connect(
         webrtc_data_channel, &DataChannel::OnChannelReady);
     rtp_data_channel_->SignalDataReceived.connect(webrtc_data_channel,
@@ -5082,13 +5322,19 @@ bool PeerConnection::ConnectDataChannel(DataChannel* webrtc_data_channel) {
 }
 
 void PeerConnection::DisconnectDataChannel(DataChannel* webrtc_data_channel) {
-  if (!rtp_data_channel_ && !sctp_transport_) {
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  if (!rtp_data_channel_ && !sctp_transport_ && !media_transport_) {
     RTC_LOG(LS_ERROR)
         << "DisconnectDataChannel called when rtp_data_channel_ and "
            "sctp_transport_ are NULL.";
     return;
   }
-  if (rtp_data_channel_) {
+  if (media_transport_) {
+    SignalMediaTransportWritable_s.disconnect(webrtc_data_channel);
+    SignalMediaTransportReceivedData_s.disconnect(webrtc_data_channel);
+    SignalMediaTransportChannelClosing_s.disconnect(webrtc_data_channel);
+    SignalMediaTransportChannelClosed_s.disconnect(webrtc_data_channel);
+  } else if (rtp_data_channel_) {
     rtp_data_channel_->SignalReadyToSendData.disconnect(webrtc_data_channel);
     rtp_data_channel_->SignalDataReceived.disconnect(webrtc_data_channel);
   } else {
@@ -5100,6 +5346,10 @@ void PeerConnection::DisconnectDataChannel(DataChannel* webrtc_data_channel) {
 }
 
 void PeerConnection::AddSctpDataStream(int sid) {
+  if (media_transport_) {
+    // No-op.  Media transport does not need to add streams.
+    return;
+  }
   if (!sctp_transport_) {
     RTC_LOG(LS_ERROR)
         << "AddSctpDataStream called when sctp_transport_ is NULL.";
@@ -5111,6 +5361,10 @@ void PeerConnection::AddSctpDataStream(int sid) {
 }
 
 void PeerConnection::RemoveSctpDataStream(int sid) {
+  if (media_transport_) {
+    media_transport_->CloseChannel(sid);
+    return;
+  }
   if (!sctp_transport_) {
     RTC_LOG(LS_ERROR) << "RemoveSctpDataStream called when sctp_transport_ is "
                          "NULL.";
@@ -5122,8 +5376,41 @@ void PeerConnection::RemoveSctpDataStream(int sid) {
 }
 
 bool PeerConnection::ReadyToSendData() const {
+  RTC_DCHECK_RUN_ON(signaling_thread());
   return (rtp_data_channel_ && rtp_data_channel_->ready_to_send_data()) ||
+         (media_transport_ && media_transport_ready_to_send_data_) ||
          sctp_ready_to_send_data_;
+}
+
+void PeerConnection::OnDataReceived(int channel_id,
+                                    DataMessageType type,
+                                    const rtc::CopyOnWriteBuffer& buffer) {
+  cricket::ReceiveDataParams params;
+  params.sid = channel_id;
+  params.type = ToCricketDataMessageType(type);
+  media_transport_invoker_->AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread(), [this, params, buffer] {
+        RTC_DCHECK_RUN_ON(signaling_thread());
+        if (!HandleOpenMessage_s(params, buffer)) {
+          SignalMediaTransportReceivedData_s(params, buffer);
+        }
+      });
+}
+
+void PeerConnection::OnChannelClosing(int channel_id) {
+  media_transport_invoker_->AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread(), [this, channel_id] {
+        RTC_DCHECK_RUN_ON(signaling_thread());
+        SignalMediaTransportChannelClosing_s(channel_id);
+      });
+}
+
+void PeerConnection::OnChannelClosed(int channel_id) {
+  media_transport_invoker_->AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread(), [this, channel_id] {
+        RTC_DCHECK_RUN_ON(signaling_thread());
+        SignalMediaTransportChannelClosed_s(channel_id);
+      });
 }
 
 absl::optional<std::string> PeerConnection::sctp_transport_name() const {
@@ -5150,7 +5437,7 @@ std::map<std::string, std::string> PeerConnection::GetTransportNamesByMid()
     const {
   std::map<std::string, std::string> transport_names_by_mid;
   for (auto transceiver : transceivers_) {
-    cricket::BaseChannel* channel = transceiver->internal()->channel();
+    cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel) {
       transport_names_by_mid[channel->content_name()] =
           channel->transport_name();
@@ -5327,7 +5614,7 @@ void PeerConnection::OnTransportControllerDtlsHandshakeError(
 
 void PeerConnection::EnableSending() {
   for (auto transceiver : transceivers_) {
-    cricket::BaseChannel* channel = transceiver->internal()->channel();
+    cricket::ChannelInterface* channel = transceiver->internal()->channel();
     if (channel && !channel->enabled()) {
       channel->Enable(true);
     }
@@ -5486,7 +5773,7 @@ RTCError PeerConnection::CreateChannels(const SessionDescription& desc) {
 
   const cricket::ContentInfo* data = cricket::GetFirstDataContent(&desc);
   if (data_channel_type_ != cricket::DCT_NONE && data && !data->rejected &&
-      !rtp_data_channel_ && !sctp_transport_) {
+      !rtp_data_channel_ && !sctp_transport_ && !media_transport_) {
     if (!CreateDataChannel(data->name)) {
       LOG_AND_RETURN_ERROR(RTCErrorType::INTERNAL_ERROR,
                            "Failed to create data channel.");
@@ -5499,13 +5786,16 @@ RTCError PeerConnection::CreateChannels(const SessionDescription& desc) {
 // TODO(steveanton): Perhaps this should be managed by the RtpTransceiver.
 cricket::VoiceChannel* PeerConnection::CreateVoiceChannel(
     const std::string& mid) {
-  RtpTransportInternal* rtp_transport =
-      transport_controller_->GetRtpTransport(mid);
-  RTC_DCHECK(rtp_transport);
+  RtpTransportInternal* rtp_transport = GetRtpTransport(mid);
+  MediaTransportInterface* media_transport = nullptr;
+  if (configuration_.use_media_transport) {
+    media_transport = GetMediaTransport(mid);
+  }
+
   cricket::VoiceChannel* voice_channel = channel_manager()->CreateVoiceChannel(
-      call_.get(), configuration_.media_config, rtp_transport,
-      signaling_thread(), mid, SrtpRequired(),
-      factory_->options().crypto_options, audio_options_);
+      call_.get(), configuration_.media_config, rtp_transport, media_transport,
+      signaling_thread(), mid, SrtpRequired(), GetCryptoOptions(),
+      audio_options_);
   if (!voice_channel) {
     return nullptr;
   }
@@ -5521,13 +5811,13 @@ cricket::VoiceChannel* PeerConnection::CreateVoiceChannel(
 // TODO(steveanton): Perhaps this should be managed by the RtpTransceiver.
 cricket::VideoChannel* PeerConnection::CreateVideoChannel(
     const std::string& mid) {
-  RtpTransportInternal* rtp_transport =
-      transport_controller_->GetRtpTransport(mid);
-  RTC_DCHECK(rtp_transport);
+  RtpTransportInternal* rtp_transport = GetRtpTransport(mid);
+
+  // TODO(sukhanov): Propagate media_transport to video channel.
   cricket::VideoChannel* video_channel = channel_manager()->CreateVideoChannel(
       call_.get(), configuration_.media_config, rtp_transport,
-      signaling_thread(), mid, SrtpRequired(),
-      factory_->options().crypto_options, video_options_);
+      signaling_thread(), mid, SrtpRequired(), GetCryptoOptions(),
+      video_options_);
   if (!video_channel) {
     return nullptr;
   }
@@ -5541,37 +5831,49 @@ cricket::VideoChannel* PeerConnection::CreateVideoChannel(
 }
 
 bool PeerConnection::CreateDataChannel(const std::string& mid) {
-  bool sctp = (data_channel_type_ == cricket::DCT_SCTP);
-  if (sctp) {
-    if (!sctp_factory_) {
-      RTC_LOG(LS_ERROR)
-          << "Trying to create SCTP transport, but didn't compile with "
-             "SCTP support (HAVE_SCTP)";
+  switch (data_channel_type_) {
+    case cricket::DCT_MEDIA_TRANSPORT:
+      if (network_thread()->Invoke<bool>(
+              RTC_FROM_HERE,
+              rtc::Bind(&PeerConnection::SetupMediaTransportForDataChannels_n,
+                        this, mid))) {
+        for (const auto& channel : sctp_data_channels_) {
+          channel->OnTransportChannelCreated();
+        }
+        return true;
+      }
       return false;
-    }
-    if (!network_thread()->Invoke<bool>(
-            RTC_FROM_HERE,
-            rtc::Bind(&PeerConnection::CreateSctpTransport_n, this, mid))) {
-      return false;
-    }
-    for (const auto& channel : sctp_data_channels_) {
-      channel->OnTransportChannelCreated();
-    }
-  } else {
-    RtpTransportInternal* rtp_transport =
-        transport_controller_->GetRtpTransport(mid);
-    RTC_DCHECK(rtp_transport);
-    rtp_data_channel_ = channel_manager()->CreateRtpDataChannel(
-        configuration_.media_config, rtp_transport, signaling_thread(), mid,
-        SrtpRequired(), factory_->options().crypto_options);
-    if (!rtp_data_channel_) {
-      return false;
-    }
-    rtp_data_channel_->SignalDtlsSrtpSetupFailure.connect(
-        this, &PeerConnection::OnDtlsSrtpSetupFailure);
-    rtp_data_channel_->SignalSentPacket.connect(
-        this, &PeerConnection::OnSentPacket_w);
-    rtp_data_channel_->SetRtpTransport(rtp_transport);
+    case cricket::DCT_SCTP:
+      if (!sctp_factory_) {
+        RTC_LOG(LS_ERROR)
+            << "Trying to create SCTP transport, but didn't compile with "
+               "SCTP support (HAVE_SCTP)";
+        return false;
+      }
+      if (!network_thread()->Invoke<bool>(
+              RTC_FROM_HERE,
+              rtc::Bind(&PeerConnection::CreateSctpTransport_n, this, mid))) {
+        return false;
+      }
+      for (const auto& channel : sctp_data_channels_) {
+        channel->OnTransportChannelCreated();
+      }
+      return true;
+    case cricket::DCT_RTP:
+    default:
+      RtpTransportInternal* rtp_transport = GetRtpTransport(mid);
+      rtp_data_channel_ = channel_manager()->CreateRtpDataChannel(
+          configuration_.media_config, rtp_transport, signaling_thread(), mid,
+          SrtpRequired(), GetCryptoOptions());
+      if (!rtp_data_channel_) {
+        return false;
+      }
+      rtp_data_channel_->SignalDtlsSrtpSetupFailure.connect(
+          this, &PeerConnection::OnDtlsSrtpSetupFailure);
+      rtp_data_channel_->SignalSentPacket.connect(
+          this, &PeerConnection::OnSentPacket_w);
+      rtp_data_channel_->SetRtpTransport(rtp_transport);
+      return true;
   }
 
   return true;
@@ -5661,22 +5963,8 @@ void PeerConnection::OnSctpTransportDataReceived_n(
 void PeerConnection::OnSctpTransportDataReceived_s(
     const cricket::ReceiveDataParams& params,
     const rtc::CopyOnWriteBuffer& payload) {
-  RTC_DCHECK(signaling_thread()->IsCurrent());
-  if (params.type == cricket::DMT_CONTROL && IsOpenMessage(payload)) {
-    // Received OPEN message; parse and signal that a new data channel should
-    // be created.
-    std::string label;
-    InternalDataChannelInit config;
-    config.id = params.ssrc;
-    if (!ParseDataChannelOpenMessage(payload, &label, &config)) {
-      RTC_LOG(LS_WARNING) << "Failed to parse the OPEN message for sid "
-                          << params.ssrc;
-      return;
-    }
-    config.open_handshake_role = InternalDataChannelInit::kAcker;
-    OnDataChannelOpenMessage(label, config);
-  } else {
-    // Otherwise just forward the signal.
+  RTC_DCHECK_RUN_ON(signaling_thread());
+  if (!HandleOpenMessage_s(params, payload)) {
     SignalSctpDataReceived(params, payload);
   }
 }
@@ -5697,6 +5985,49 @@ void PeerConnection::OnSctpClosingProcedureComplete_n(int sid) {
       RTC_FROM_HERE, signaling_thread(),
       rtc::Bind(&sigslot::signal1<int>::operator(),
                 &SignalSctpClosingProcedureComplete, sid));
+}
+
+bool PeerConnection::SetupMediaTransportForDataChannels_n(
+    const std::string& mid) {
+  media_transport_ = transport_controller_->GetMediaTransport(mid);
+  if (!media_transport_) {
+    RTC_LOG(LS_ERROR) << "Media transport is not available for data channels";
+    return false;
+  }
+
+  media_transport_invoker_ = absl::make_unique<rtc::AsyncInvoker>();
+  media_transport_->SetDataSink(this);
+  media_transport_data_mid_ = mid;
+  transport_controller_->SignalMediaTransportStateChanged.connect(
+      this, &PeerConnection::OnMediaTransportStateChanged_n);
+  // Check the initial state right away, in case transport is already writable.
+  OnMediaTransportStateChanged_n();
+  return true;
+}
+
+void PeerConnection::TeardownMediaTransportForDataChannels_n() {
+  if (!media_transport_) {
+    return;
+  }
+  transport_controller_->SignalMediaTransportStateChanged.disconnect(this);
+  media_transport_data_mid_.reset();
+  media_transport_->SetDataSink(nullptr);
+  media_transport_invoker_ = nullptr;
+  media_transport_ = nullptr;
+}
+
+void PeerConnection::OnMediaTransportStateChanged_n() {
+  if (!media_transport_data_mid_ ||
+      transport_controller_->GetMediaTransportState(
+          *media_transport_data_mid_) != MediaTransportState::kWritable) {
+    return;
+  }
+  media_transport_invoker_->AsyncInvoke<void>(
+      RTC_FROM_HERE, signaling_thread(), [this] {
+        RTC_DCHECK_RUN_ON(signaling_thread());
+        media_transport_ready_to_send_data_ = true;
+        SignalMediaTransportWritable_s(media_transport_ready_to_send_data_);
+      });
 }
 
 // Returns false if bundle is enabled and rtcp_mux is disabled.
@@ -6169,7 +6500,7 @@ void PeerConnection::OnSentPacket_w(const rtc::SentPacket& sent_packet) {
 
 const std::string PeerConnection::GetTransportName(
     const std::string& content_name) {
-  cricket::BaseChannel* channel = GetChannel(content_name);
+  cricket::ChannelInterface* channel = GetChannel(content_name);
   if (channel) {
     return channel->transport_name();
   }
@@ -6188,17 +6519,17 @@ void PeerConnection::DestroyTransceiverChannel(
         transceiver) {
   RTC_DCHECK(transceiver);
 
-  cricket::BaseChannel* channel = transceiver->internal()->channel();
+  cricket::ChannelInterface* channel = transceiver->internal()->channel();
   if (channel) {
     transceiver->internal()->SetChannel(nullptr);
-    DestroyBaseChannel(channel);
+    DestroyChannelInterface(channel);
   }
 }
 
 void PeerConnection::DestroyDataChannel() {
   if (rtp_data_channel_) {
     OnDataChannelDestroyed();
-    DestroyBaseChannel(rtp_data_channel_);
+    DestroyChannelInterface(rtp_data_channel_);
     rtp_data_channel_ = nullptr;
   }
 
@@ -6213,9 +6544,18 @@ void PeerConnection::DestroyDataChannel() {
     network_thread()->Invoke<void>(RTC_FROM_HERE,
                                    [this] { DestroySctpTransport_n(); });
   }
+
+  if (media_transport_) {
+    OnDataChannelDestroyed();
+    network_thread()->Invoke<void>(RTC_FROM_HERE, [this] {
+      RTC_DCHECK_RUN_ON(network_thread());
+      TeardownMediaTransportForDataChannels_n();
+    });
+  }
 }
 
-void PeerConnection::DestroyBaseChannel(cricket::BaseChannel* channel) {
+void PeerConnection::DestroyChannelInterface(
+    cricket::ChannelInterface* channel) {
   RTC_DCHECK(channel);
   switch (channel->media_type()) {
     case cricket::MEDIA_TYPE_AUDIO:
@@ -6239,7 +6579,8 @@ void PeerConnection::DestroyBaseChannel(cricket::BaseChannel* channel) {
 bool PeerConnection::OnTransportChanged(
     const std::string& mid,
     RtpTransportInternal* rtp_transport,
-    cricket::DtlsTransportInternal* dtls_transport) {
+    cricket::DtlsTransportInternal* dtls_transport,
+    MediaTransportInterface* media_transport) {
   bool ret = true;
   auto base_channel = GetChannel(mid);
   if (base_channel) {
@@ -6248,6 +6589,9 @@ bool PeerConnection::OnTransportChanged(
   if (sctp_transport_ && mid == sctp_mid_) {
     sctp_transport_->SetDtlsTransport(dtls_transport);
   }
+
+  call_->MediaTransportChange(media_transport);
+
   return ret;
 }
 
@@ -6259,6 +6603,14 @@ PeerConnectionObserver* PeerConnection::Observer() const {
   // TODO(hta): Remove or replace with DCHECK if nothing is found.
   RTC_CHECK(observer_);
   return observer_;
+}
+
+CryptoOptions PeerConnection::GetCryptoOptions() {
+  // TODO(bugs.webrtc.org/9891) - Remove PeerConnectionFactory::CryptoOptions
+  // after it has been removed.
+  return configuration_.crypto_options.has_value()
+             ? *configuration_.crypto_options
+             : factory_->options().crypto_options;
 }
 
 void PeerConnection::ClearStatsCache() {

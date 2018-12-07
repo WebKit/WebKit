@@ -14,7 +14,7 @@
 #include <stddef.h>  // For size_t.
 
 #ifdef __cplusplus
-#include <type_traits>
+#include "absl/meta/type_traits.h"
 #endif
 
 #if defined(__has_feature)
@@ -98,10 +98,10 @@ namespace sanitizer_impl {
 
 template <typename T>
 constexpr bool IsTriviallyCopyable() {
-  return static_cast<bool>(std::is_trivially_copy_constructible<T>::value &&
-                           (std::is_trivially_copy_assignable<T>::value ||
+  return static_cast<bool>(absl::is_trivially_copy_constructible<T>::value &&
+                           (absl::is_trivially_copy_assignable<T>::value ||
                             !std::is_copy_assignable<T>::value) &&
-                           std::is_trivially_destructible<T>::value);
+                           absl::is_trivially_destructible<T>::value);
 }
 
 }  // namespace sanitizer_impl
@@ -123,9 +123,11 @@ inline void MsanMarkUninitialized(const T& mem) {
 
 template <typename T>
 inline T MsanUninitialized(T t) {
+#if RTC_HAS_MSAN
   // TODO(bugs.webrtc.org/8762): Switch to std::is_trivially_copyable when it
   // becomes available in downstream projects.
   static_assert(sanitizer_impl::IsTriviallyCopyable<T>(), "");
+#endif
   rtc_MsanMarkUninitialized(&t, sizeof(T), 1);
   return t;
 }

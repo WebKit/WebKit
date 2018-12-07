@@ -16,6 +16,7 @@
 
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 // Multiplex codec is a completely modular/optional codec that allows users to
@@ -36,7 +37,7 @@ namespace webrtc {
 // and decoder instance(s) using these factories.
 // - Use Multiplex*coderFactory classes in CreatePeerConnectionFactory() calls.
 // - Select "multiplex" codec in SDP negotiation.
-class MultiplexEncoderFactory : public VideoEncoderFactory {
+class RTC_EXPORT MultiplexEncoderFactory : public VideoEncoderFactory {
  public:
   // |supports_augmenting_data| defines if the encoder would support augmenting
   // data. If set, the encoder expects to receive video frame buffers of type
@@ -54,7 +55,7 @@ class MultiplexEncoderFactory : public VideoEncoderFactory {
   const bool supports_augmenting_data_;
 };
 
-class MultiplexDecoderFactory : public VideoDecoderFactory {
+class RTC_EXPORT MultiplexDecoderFactory : public VideoDecoderFactory {
  public:
   // |supports_augmenting_data| defines if the decoder would support augmenting
   // data. If set, the decoder is expected to output video frame buffers of type

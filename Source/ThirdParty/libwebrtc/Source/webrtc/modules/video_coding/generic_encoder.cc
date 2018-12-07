@@ -101,25 +101,13 @@ int32_t VCMGenericEncoder::Encode(const VideoFrame& frame,
 
 void VCMGenericEncoder::SetEncoderParameters(const EncoderParameters& params) {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  bool channel_parameters_have_changed;
   bool rates_have_changed;
   {
     rtc::CritScope lock(&params_lock_);
-    channel_parameters_have_changed =
-        params.loss_rate != encoder_params_.loss_rate ||
-        params.rtt != encoder_params_.rtt;
     rates_have_changed =
         params.target_bitrate != encoder_params_.target_bitrate ||
         params.input_frame_rate != encoder_params_.input_frame_rate;
     encoder_params_ = params;
-  }
-  if (channel_parameters_have_changed) {
-    int res = encoder_->SetChannelParameters(params.loss_rate, params.rtt);
-    if (res != 0) {
-      RTC_LOG(LS_WARNING) << "Error set encoder parameters (loss = "
-                          << params.loss_rate << ", rtt = " << params.rtt
-                          << "): " << res;
-    }
   }
   if (rates_have_changed) {
     int res = encoder_->SetRateAllocation(params.target_bitrate,
@@ -164,9 +152,9 @@ bool VCMGenericEncoder::InternalSource() const {
   return internal_source_;
 }
 
-bool VCMGenericEncoder::SupportsNativeHandle() const {
+VideoEncoder::EncoderInfo VCMGenericEncoder::GetEncoderInfo() const {
   RTC_DCHECK_RUNS_SERIALIZED(&race_checker_);
-  return encoder_->SupportsNativeHandle();
+  return encoder_->GetEncoderInfo();
 }
 
 VCMEncodedFrameCallback::VCMEncodedFrameCallback(

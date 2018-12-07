@@ -12,8 +12,8 @@
 
 #include <utility>
 
+#include "absl/strings/ascii.h"
 #include "api/audio_codecs/audio_format.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "media/base/mediaconstants.h"
 
 namespace cricket {
@@ -140,7 +140,8 @@ bool PayloadTypeMapper::SdpAudioFormatOrdering::operator()(
     const webrtc::SdpAudioFormat& b) const {
   if (a.clockrate_hz == b.clockrate_hz) {
     if (a.num_channels == b.num_channels) {
-      int name_cmp = STR_CASE_CMP(a.name.c_str(), b.name.c_str());
+      int name_cmp =
+          absl::AsciiStrToLower(a.name).compare(absl::AsciiStrToLower(b.name));
       if (name_cmp == 0)
         return a.parameters < b.parameters;
       return name_cmp < 0;

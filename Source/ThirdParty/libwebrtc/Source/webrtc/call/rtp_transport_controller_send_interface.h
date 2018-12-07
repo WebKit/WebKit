@@ -20,10 +20,12 @@
 
 #include "absl/types/optional.h"
 #include "api/bitrate_constraints.h"
+#include "api/crypto/cryptooptions.h"
 #include "api/fec_controller.h"
 #include "api/transport/bitrate_settings.h"
 #include "call/rtp_config.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace rtc {
@@ -35,6 +37,7 @@ namespace webrtc {
 
 class CallStats;
 class CallStatsObserver;
+class FrameEncryptorInterface;
 class TargetTransferRateObserver;
 class Transport;
 class Module;
@@ -60,6 +63,11 @@ struct RtpSenderObservers {
   RtcpPacketTypeCounterObserver* rtcp_type_observer;
   SendSideDelayObserver* send_delay_observer;
   SendPacketObserver* send_packet_observer;
+};
+
+struct RtpSenderFrameEncryptionConfig {
+  FrameEncryptorInterface* frame_encryptor = nullptr;
+  CryptoOptions crypto_options;
 };
 
 // An RtpTransportController should own everything related to the RTP
@@ -97,11 +105,12 @@ class RtpTransportControllerSendInterface {
       // TODO(holmer): Move states into RtpTransportControllerSend.
       const std::map<uint32_t, RtpPayloadState>& states,
       const RtpConfig& rtp_config,
-      const RtcpConfig& rtcp_config,
+      int rtcp_report_interval_ms,
       Transport* send_transport,
       const RtpSenderObservers& observers,
       RtcEventLog* event_log,
-      std::unique_ptr<FecController> fec_controller) = 0;
+      std::unique_ptr<FecController> fec_controller,
+      const RtpSenderFrameEncryptionConfig& frame_encryption_config) = 0;
   virtual void DestroyRtpVideoSender(
       RtpVideoSenderInterface* rtp_video_sender) = 0;
 

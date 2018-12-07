@@ -11,8 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_AUDIO_MULTI_VECTOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_AUDIO_MULTI_VECTOR_H_
 
-#include <string.h>  // Access to size_t.
-
+#include <stdint.h>
+#include <string.h>
 #include <vector>
 
 #include "api/array_view.h"

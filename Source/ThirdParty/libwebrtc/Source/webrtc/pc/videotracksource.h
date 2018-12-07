@@ -15,13 +15,14 @@
 #include "api/notifier.h"
 #include "api/video/video_sink_interface.h"
 #include "media/base/mediachannel.h"
+#include "rtc_base/system/rtc_export.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
 // VideoTrackSource is a convenience base class for implementations of
 // VideoTrackSourceInterface.
-class VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
+class RTC_EXPORT VideoTrackSource : public Notifier<VideoTrackSourceInterface> {
  public:
   explicit VideoTrackSource(bool remote);
   void SetState(SourceState new_state);

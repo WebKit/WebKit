@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "rtc_base/constructormagic.h"
+#include "test/fake_encoder.h"
 #include "test/frame_generator_capturer.h"
 #include "test/scenario/call_client.h"
 #include "test/scenario/column_printer.h"
@@ -25,15 +26,15 @@ namespace webrtc {
 namespace test {
 // SendVideoStream provides an interface for changing parameters and retrieving
 // states at run time.
-class SendVideoStream : public NetworkReceiverInterface {
+class SendVideoStream {
  public:
   RTC_DISALLOW_COPY_AND_ASSIGN(SendVideoStream);
   ~SendVideoStream();
   void SetCaptureFramerate(int framerate);
-  void SetMaxFramerate(absl::optional<int> max_framerate);
   VideoSendStream::Stats GetStats() const;
   ColumnPrinter StatsPrinter();
   void Start();
+  void UpdateConfig(std::function<void(VideoStreamConfig*)> modifier);
 
  private:
   friend class Scenario;
@@ -43,25 +44,28 @@ class SendVideoStream : public NetworkReceiverInterface {
   SendVideoStream(CallClient* sender,
                   VideoStreamConfig config,
                   Transport* send_transport);
-  bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                        uint64_t receiver,
-                        Timestamp at_time) override;
 
+  rtc::CriticalSection crit_;
   std::vector<uint32_t> ssrcs_;
   std::vector<uint32_t> rtx_ssrcs_;
   VideoSendStream* send_stream_ = nullptr;
   CallClient* const sender_;
-  const VideoStreamConfig config_;
+  VideoStreamConfig config_ RTC_GUARDED_BY(crit_);
   std::unique_ptr<VideoEncoderFactory> encoder_factory_;
+  std::vector<test::FakeEncoder*> fake_encoders_ RTC_GUARDED_BY(crit_);
+  std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
   std::unique_ptr<TestVideoCapturer> video_capturer_;
   FrameGeneratorCapturer* frame_generator_ = nullptr;
+  int next_local_network_id_ = 0;
+  int next_remote_network_id_ = 0;
 };
 
 // ReceiveVideoStream represents a video receiver. It can't be used directly.
-class ReceiveVideoStream : public NetworkReceiverInterface {
+class ReceiveVideoStream {
  public:
   RTC_DISALLOW_COPY_AND_ASSIGN(ReceiveVideoStream);
   ~ReceiveVideoStream();
+  void Start();
 
  private:
   friend class Scenario;
@@ -71,9 +75,7 @@ class ReceiveVideoStream : public NetworkReceiverInterface {
                      SendVideoStream* send_stream,
                      size_t chosen_stream,
                      Transport* feedback_transport);
-  bool TryDeliverPacket(rtc::CopyOnWriteBuffer packet,
-                        uint64_t receiver,
-                        Timestamp at_time) override;
+
   VideoReceiveStream* receive_stream_ = nullptr;
   FlexfecReceiveStream* flecfec_stream_ = nullptr;
   std::unique_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> renderer_;
@@ -95,18 +97,10 @@ class VideoStreamPair {
  private:
   friend class Scenario;
   VideoStreamPair(CallClient* sender,
-                  std::vector<NetworkNode*> send_link,
-                  uint64_t send_receiver_id,
                   CallClient* receiver,
-                  std::vector<NetworkNode*> return_link,
-                  uint64_t return_receiver_id,
                   VideoStreamConfig config);
 
   const VideoStreamConfig config_;
-  std::vector<NetworkNode*> send_link_;
-  std::vector<NetworkNode*> return_link_;
-  NetworkNodeTransport send_transport_;
-  NetworkNodeTransport return_transport_;
 
   SendVideoStream send_stream_;
   ReceiveVideoStream receive_stream_;

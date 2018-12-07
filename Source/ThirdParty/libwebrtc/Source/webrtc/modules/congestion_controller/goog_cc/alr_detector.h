@@ -11,10 +11,11 @@
 #ifndef MODULES_CONGESTION_CONTROLLER_GOOG_CC_ALR_DETECTOR_H_
 #define MODULES_CONGESTION_CONTROLLER_GOOG_CC_ALR_DETECTOR_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "absl/types/optional.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/pacing/interval_budget.h"
-#include "rtc_base/rate_statistics.h"
 
 namespace webrtc {
 

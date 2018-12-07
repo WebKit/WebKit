@@ -31,8 +31,7 @@ class LockedIsacBandwidthInfo;
 
 namespace acm2 {
 
-class RentACodec {
- public:
+struct RentACodec {
   enum class CodecId {
 #if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
     kISAC,
@@ -133,64 +132,9 @@ class RentACodec {
     return payload_type >= 0 && payload_type <= 127;
   }
 
-  static rtc::ArrayView<const CodecInst> Database();
-
-  static absl::optional<bool> IsSupportedNumChannels(CodecId codec_id,
-                                                     size_t num_channels);
-
   static absl::optional<NetEqDecoder> NetEqDecoderFromCodecId(
       CodecId codec_id,
       size_t num_channels);
-
-  // Parse codec_inst and extract payload types. If the given CodecInst was for
-  // the wrong sort of codec, return kSkip; otherwise, if the rate was illegal,
-  // return kBadFreq; otherwise, update the given RTP timestamp rate (Hz) ->
-  // payload type map and return kOk.
-  enum class RegistrationResult { kOk, kSkip, kBadFreq };
-  static RegistrationResult RegisterCngPayloadType(std::map<int, int>* pt_map,
-                                                   const CodecInst& codec_inst);
-  static RegistrationResult RegisterRedPayloadType(std::map<int, int>* pt_map,
-                                                   const CodecInst& codec_inst);
-
-  RentACodec();
-  ~RentACodec();
-
-  // Creates and returns an audio encoder built to the given specification.
-  // Returns null in case of error.
-  std::unique_ptr<AudioEncoder> RentEncoder(const CodecInst& codec_inst);
-
-  struct StackParameters {
-    StackParameters();
-    ~StackParameters();
-
-    std::unique_ptr<AudioEncoder> speech_encoder;
-
-    bool use_codec_fec = false;
-    bool use_red = false;
-    bool use_cng = false;
-    ACMVADMode vad_mode = VADNormal;
-
-    // Maps from RTP timestamp rate (in Hz) to payload type.
-    std::map<int, int> cng_payload_types;
-    std::map<int, int> red_payload_types;
-  };
-
-  // Creates and returns an audio encoder stack constructed to the given
-  // specification. If the specification isn't compatible with the encoder, it
-  // will be changed to match (things will be switched off). The speech encoder
-  // will be stolen. If the specification isn't complete, returns nullptr.
-  std::unique_ptr<AudioEncoder> RentEncoderStack(StackParameters* param);
-
-  // Creates and returns an iSAC decoder.
-  std::unique_ptr<AudioDecoder> RentIsacDecoder(int sample_rate_hz);
-
- private:
-  std::unique_ptr<AudioEncoder> speech_encoder_;
-  std::unique_ptr<AudioEncoder> cng_encoder_;
-  std::unique_ptr<AudioEncoder> red_encoder_;
-  rtc::scoped_refptr<LockedIsacBandwidthInfo> isac_bandwidth_info_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RentACodec);
 };
 
 }  // namespace acm2

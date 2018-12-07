@@ -55,10 +55,9 @@ TEST_P(TransportFeedbackEndToEndTest, AssignsTransportSequenceNumbers) {
                           absl::make_unique<FakeNetworkPipe>(
                               Clock::GetRealTimeClock(),
                               absl::make_unique<SimulatedNetwork>(
-                                  DefaultNetworkSimulationConfig())),
+                                  BuiltInNetworkBehaviorConfig())),
                           sender_call,
                           payload_type_map),
-          done_(false, false),
           parser_(RtpHeaderParser::Create()),
           first_media_ssrc_(first_media_ssrc),
           rtx_to_media_ssrcs_(ssrc_map),
@@ -415,8 +414,9 @@ TEST_P(TransportFeedbackEndToEndTest,
       EXPECT_TRUE(parser.Parse(data, length));
       return parser.transport_feedback()->num_packets() > 0;
     }
-    void ModifySenderCallConfig(Call::Config* config) override {
-      config->bitrate_config.max_bitrate_bps = 300000;
+    void ModifySenderBitrateConfig(
+        BitrateConstraints* bitrate_config) override {
+      bitrate_config->max_bitrate_bps = 300000;
     }
 
     void PerformTest() override {

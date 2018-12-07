@@ -11,7 +11,7 @@
 #include "api/audio_codecs/isac/audio_encoder_isac_float.h"
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/isac/main/include/audio_encoder_isac.h"
 #include "rtc_base/string_to_number.h"
 
@@ -19,7 +19,7 @@ namespace webrtc {
 
 absl::optional<AudioEncoderIsacFloat::Config>
 AudioEncoderIsacFloat::SdpToConfig(const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "ISAC") == 0 &&
+  if (absl::EqualsIgnoreCase(format.name, "ISAC") &&
       (format.clockrate_hz == 16000 || format.clockrate_hz == 32000) &&
       format.num_channels == 1) {
     Config config;

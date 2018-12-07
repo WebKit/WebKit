@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
 #define MODULES_AUDIO_CODING_CODECS_CNG_WEBRTC_CNG_H_
 
+#include <stdint.h>
 #include <cstddef>
 
 #include "api/array_view.h"

@@ -25,8 +25,8 @@
 #include "rtc_base/win32.h"
 #endif
 
-#include "absl/types/optional.h"
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socketaddress.h"
 
 // Rather than converting errors into a private namespace,
@@ -122,50 +122,6 @@ namespace rtc {
 inline bool IsBlockingError(int e) {
   return (e == EWOULDBLOCK) || (e == EAGAIN) || (e == EINPROGRESS);
 }
-
-enum class PacketType {
-  kUnknown,
-  kData,
-  kIceConnectivityCheck,
-  kIceConnectivityCheckResponse,
-  kStunMessage,
-  kTurnMessage,
-};
-
-enum class PacketInfoProtocolType {
-  kUnknown,
-  kUdp,
-  kTcp,
-  kSsltcp,
-  kTls,
-};
-
-struct PacketInfo {
-  PacketInfo();
-  PacketInfo(const PacketInfo& info);
-  ~PacketInfo();
-
-  PacketType packet_type = PacketType::kUnknown;
-  PacketInfoProtocolType protocol = PacketInfoProtocolType::kUnknown;
-  // A unique id assigned by the network manager, and absl::nullopt if not set.
-  absl::optional<uint16_t> network_id;
-  size_t packet_size_bytes = 0;
-  size_t turn_overhead_bytes = 0;
-  SocketAddress local_socket_address;
-  SocketAddress remote_socket_address;
-};
-
-struct SentPacket {
-  SentPacket();
-  SentPacket(int64_t packet_id, int64_t send_time_ms);
-  SentPacket(int64_t packet_id,
-             int64_t send_time_ms,
-             const rtc::PacketInfo& info);
-
-  int64_t packet_id = -1;
-  int64_t send_time_ms = -1;
-  rtc::PacketInfo info;
-};
 
 // General interface for the socket implementations of various networks.  The
 // methods match those of normal UNIX sockets very closely.

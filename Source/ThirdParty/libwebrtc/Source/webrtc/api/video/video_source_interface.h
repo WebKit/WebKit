@@ -15,12 +15,13 @@
 
 #include "absl/types/optional.h"
 #include "api/video/video_sink_interface.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
 // VideoSinkWants is used for notifying the source of properties a video frame
 // should have when it is delivered to a certain sink.
-struct VideoSinkWants {
+struct RTC_EXPORT VideoSinkWants {
   VideoSinkWants();
   VideoSinkWants(const VideoSinkWants&);
   ~VideoSinkWants();

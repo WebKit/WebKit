@@ -11,12 +11,10 @@
 #ifndef AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H_
 #define AUDIO_DEVICE_AUDIO_MIXER_MANAGER_PULSE_LINUX_H_
 
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
-#include "rtc_base/thread_checker.h"
-
 #include <pulse/pulseaudio.h>
 #include <stdint.h>
+
+#include "rtc_base/thread_checker.h"
 
 #ifndef UINT32_MAX
 #define UINT32_MAX ((uint32_t)-1)

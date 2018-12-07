@@ -18,7 +18,19 @@
 #include "examples/peerconnection/server/data_socket.h"
 #include "examples/peerconnection/server/peer_channel.h"
 #include "examples/peerconnection/server/utils.h"
+#include "rtc_base/flags.h"
 #include "rtc_tools/simple_command_line_parser.h"
+#include "system_wrappers/include/field_trial.h"
+#include "test/field_trial.h"
+
+WEBRTC_DEFINE_string(
+    force_fieldtrials,
+    "",
+    "Field trials control experimental features. This flag specifies the field "
+    "trials in effect. E.g. running with "
+    "--force_fieldtrials=WebRTC-FooFeature/Enabled/ "
+    "will assign the group Enabled to field trial WebRTC-FooFeature. Multiple "
+    "trials are separated by \"/\"");
 
 static const size_t kMaxConnections = (FD_SETSIZE - 2);
 
@@ -61,6 +73,11 @@ int main(int argc, char* argv[]) {
     parser.PrintUsageMessage();
     return 0;
   }
+
+  webrtc::test::ValidateFieldTrialsStringOrDie(FLAG_force_fieldtrials);
+  // InitFieldTrialsFromString stores the char*, so the char array must outlive
+  // the application.
+  webrtc::field_trial::InitFieldTrialsFromString(FLAG_force_fieldtrials);
 
   int port = strtol((parser.GetFlag("port")).c_str(), NULL, 10);
 

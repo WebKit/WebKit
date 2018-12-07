@@ -147,6 +147,24 @@ TEST(BitrateProberTest, ScaleBytesUsedForProbing) {
   EXPECT_FALSE(prober.IsProbing());
 }
 
+TEST(BitrateProberTest, HighBitrateProbing) {
+  BitrateProber prober;
+  constexpr int kBitrateBps = 1000000000;  // 1 Gbps.
+  constexpr int kPacketSizeBytes = 1000;
+  constexpr int kExpectedBytesSent = (kBitrateBps / 8000) * 15;
+
+  prober.CreateProbeCluster(kBitrateBps, 0);
+  prober.OnIncomingPacket(kPacketSizeBytes);
+  int bytes_sent = 0;
+  while (bytes_sent < kExpectedBytesSent) {
+    ASSERT_TRUE(prober.IsProbing());
+    prober.ProbeSent(0, kPacketSizeBytes);
+    bytes_sent += kPacketSizeBytes;
+  }
+
+  EXPECT_FALSE(prober.IsProbing());
+}
+
 TEST(BitrateProberTest, ProbeClusterTimeout) {
   BitrateProber prober;
   constexpr int kBitrateBps = 300000;  // 300 kbps

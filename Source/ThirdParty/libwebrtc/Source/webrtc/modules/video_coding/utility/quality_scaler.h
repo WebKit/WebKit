@@ -17,8 +17,8 @@
 #include "absl/types/optional.h"
 #include "api/video_codecs/video_encoder.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "modules/video_coding/utility/moving_average.h"
 #include "rtc_base/experiments/quality_scaling_experiment.h"
+#include "rtc_base/numerics/moving_average.h"
 #include "rtc_base/sequenced_task_checker.h"
 
 namespace webrtc {
@@ -79,9 +79,10 @@ class QualityScaler {
   const VideoEncoder::QpThresholds thresholds_;
   const int64_t sampling_period_ms_;
   bool fast_rampup_ RTC_GUARDED_BY(&task_checker_);
-  MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
-  MovingAverage framedrop_percent_media_opt_ RTC_GUARDED_BY(&task_checker_);
-  MovingAverage framedrop_percent_all_ RTC_GUARDED_BY(&task_checker_);
+  rtc::MovingAverage average_qp_ RTC_GUARDED_BY(&task_checker_);
+  rtc::MovingAverage framedrop_percent_media_opt_
+      RTC_GUARDED_BY(&task_checker_);
+  rtc::MovingAverage framedrop_percent_all_ RTC_GUARDED_BY(&task_checker_);
 
   // Used by QualityScalingExperiment.
   const bool experiment_enabled_;

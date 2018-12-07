@@ -16,12 +16,12 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/audio/echo_canceller3_config.h"
-#include "modules/audio_processing/aec3/aec3_common.h"
+#include "modules/audio_processing/aec3/aec3_common.h"  // kMaxAdaptiveFilter...
 
 namespace webrtc {
 
 class ApmDataDumper;
+struct EchoCanceller3Config;
 
 // Class for estimating the decay of the late reverb.
 class ReverbDecayEstimator {

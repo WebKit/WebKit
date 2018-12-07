@@ -10,6 +10,8 @@
 
 #include "rtc_base/copyonwritebuffer.h"
 
+#include <stddef.h>
+
 namespace rtc {
 
 CopyOnWriteBuffer::CopyOnWriteBuffer() {

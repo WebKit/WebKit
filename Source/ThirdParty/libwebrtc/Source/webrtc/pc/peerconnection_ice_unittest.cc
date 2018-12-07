@@ -21,7 +21,9 @@
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/create_peerconnection_factory.h"
 #include "api/peerconnectionproxy.h"
+#include "api/umametrics.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/test/fakeaudiocapturemodule.h"
@@ -77,6 +79,9 @@ class PeerConnectionWrapperForIceTest : public PeerConnectionWrapper {
 
   void set_network(rtc::FakeNetworkManager* network) { network_ = network; }
 
+  // The port allocator used by this PC.
+  cricket::PortAllocator* port_allocator_;
+
  private:
   rtc::FakeNetworkManager* network_;
 };
@@ -114,15 +119,18 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
     auto observer = absl::make_unique<MockPeerConnectionObserver>();
+    auto port_allocator_copy = port_allocator.get();
     auto pc = pc_factory_->CreatePeerConnection(
         modified_config, std::move(port_allocator), nullptr, observer.get());
     if (!pc) {
       return nullptr;
     }
 
+    observer->SetPeerConnectionInterface(pc.get());
     auto wrapper = absl::make_unique<PeerConnectionWrapperForIceTest>(
         pc_factory_, pc, std::move(observer));
     wrapper->set_network(fake_network);
+    wrapper->port_allocator_ = port_allocator_copy;
     return wrapper;
   }
 
@@ -205,7 +213,12 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
     PeerConnection* pc = static_cast<PeerConnection*>(pc_proxy->internal());
     for (auto transceiver : pc->GetTransceiversInternal()) {
       if (transceiver->media_type() == cricket::MEDIA_TYPE_AUDIO) {
-        cricket::BaseChannel* channel = transceiver->internal()->channel();
+        // TODO(amithi): This test seems to be using a method that should not
+        // be public |rtp_packet_transport|. Because the test is not mocking
+        // the channels or transceiver, workaround will be to |static_cast|
+        // the channel until the method is rewritten.
+        cricket::BaseChannel* channel = static_cast<cricket::BaseChannel*>(
+            transceiver->internal()->channel());
         if (channel) {
           auto dtls_transport = static_cast<cricket::DtlsTransportInternal*>(
               channel->rtp_packet_transport());
@@ -1005,6 +1018,43 @@ TEST_F(PeerConnectionIceConfigTest, SetStunCandidateKeepaliveInterval) {
   actual_stun_keepalive_interval =
       port_allocator_->stun_candidate_keepalive_interval();
   EXPECT_EQ(actual_stun_keepalive_interval.value_or(-1), 321);
+}
+
+TEST_P(PeerConnectionIceTest, IceCredentialsCreateOffer) {
+  RTCConfiguration config;
+  config.ice_candidate_pool_size = 1;
+  auto pc = CreatePeerConnectionWithAudioVideo(config);
+  ASSERT_NE(pc->port_allocator_, nullptr);
+  auto offer = pc->CreateOffer();
+  auto credentials = pc->port_allocator_->GetPooledIceCredentials();
+  ASSERT_EQ(1u, credentials.size());
+
+  auto* desc = offer->description();
+  for (const auto& content : desc->contents()) {
+    auto* transport_info = desc->GetTransportInfoByName(content.name);
+    EXPECT_EQ(transport_info->description.ice_ufrag, credentials[0].ufrag);
+    EXPECT_EQ(transport_info->description.ice_pwd, credentials[0].pwd);
+  }
+}
+
+TEST_P(PeerConnectionIceTest, IceCredentialsCreateAnswer) {
+  RTCConfiguration config;
+  config.ice_candidate_pool_size = 1;
+  auto pc = CreatePeerConnectionWithAudioVideo(config);
+  ASSERT_NE(pc->port_allocator_, nullptr);
+  auto offer = pc->CreateOffer();
+  ASSERT_TRUE(pc->SetRemoteDescription(std::move(offer)));
+  auto answer = pc->CreateAnswer();
+
+  auto credentials = pc->port_allocator_->GetPooledIceCredentials();
+  ASSERT_EQ(1u, credentials.size());
+
+  auto* desc = answer->description();
+  for (const auto& content : desc->contents()) {
+    auto* transport_info = desc->GetTransportInfoByName(content.name);
+    EXPECT_EQ(transport_info->description.ice_ufrag, credentials[0].ufrag);
+    EXPECT_EQ(transport_info->description.ice_pwd, credentials[0].pwd);
+  }
 }
 
 }  // namespace webrtc

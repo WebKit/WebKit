@@ -87,7 +87,7 @@ class ScreenshareLayerTest : public ::testing::Test {
     return flags;
   }
 
-  TemporalLayers::FrameConfig UpdateLayerConfig(uint32_t timestamp) {
+  Vp8TemporalLayers::FrameConfig UpdateLayerConfig(uint32_t timestamp) {
     int64_t timestamp_ms = timestamp / 90;
     clock_.AdvanceTimeMilliseconds(timestamp_ms - clock_.TimeInMilliseconds());
     return layers_->UpdateLayerConfig(timestamp);
@@ -167,7 +167,7 @@ class ScreenshareLayerTest : public ::testing::Test {
   std::unique_ptr<ScreenshareLayers> layers_;
 
   uint32_t timestamp_;
-  TemporalLayers::FrameConfig tl_config_;
+  Vp8TemporalLayers::FrameConfig tl_config_;
   Vp8EncoderConfig cfg_;
   bool config_updated_;
   CodecSpecificInfoVP8 vp8_info_;

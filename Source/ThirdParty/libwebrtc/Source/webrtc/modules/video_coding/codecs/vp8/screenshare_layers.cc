@@ -53,7 +53,7 @@ ScreenshareLayers::ScreenshareLayers(int num_temporal_layers, Clock* clock)
       encode_framerate_(1000.0f, 1000.0f),  // 1 second window, second scale.
       bitrate_updated_(false),
       checker_(TemporalLayersChecker::CreateTemporalLayersChecker(
-          TemporalLayersType::kBitrateDynamic,
+          Vp8TemporalLayersType::kBitrateDynamic,
           num_temporal_layers)) {
   RTC_CHECK_GT(number_of_temporal_layers_, 0);
   RTC_CHECK_LE(number_of_temporal_layers_, kMaxNumTemporalLayers);
@@ -68,7 +68,7 @@ bool ScreenshareLayers::SupportsEncoderFrameDropping() const {
   return false;
 }
 
-TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
+Vp8TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
     uint32_t timestamp) {
   auto it = pending_frame_configs_.find(timestamp);
   if (it != pending_frame_configs_.end()) {
@@ -79,7 +79,7 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
   if (number_of_temporal_layers_ <= 1) {
     // No flags needed for 1 layer screenshare.
     // TODO(pbos): Consider updating only last, and not all buffers.
-    TemporalLayers::FrameConfig tl_config(
+    Vp8TemporalLayers::FrameConfig tl_config(
         kReferenceAndUpdate, kReferenceAndUpdate, kReferenceAndUpdate);
     pending_frame_configs_[timestamp] = tl_config;
     return tl_config;
@@ -100,7 +100,7 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
     // averaging window, or if frame interval is below 90% of desired value,
     // drop frame.
     if (encode_framerate_.Rate(now_ms).value_or(0) > *target_framerate_)
-      return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+      return Vp8TemporalLayers::FrameConfig(kNone, kNone, kNone);
 
     // Primarily check if frame interval is too short using frame timestamps,
     // as if they are correct they won't be affected by queuing in webrtc.
@@ -108,7 +108,7 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
         kOneSecond90Khz / *target_framerate_;
     if (last_timestamp_ != -1 && ts_diff > 0) {
       if (ts_diff < 85 * expected_frame_interval_90khz / 100) {
-        return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+        return Vp8TemporalLayers::FrameConfig(kNone, kNone, kNone);
       }
     } else {
       // Timestamps looks off, use realtime clock here instead.
@@ -116,7 +116,7 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
       if (last_frame_time_ms_ != -1 &&
           now_ms - last_frame_time_ms_ <
               (85 * expected_frame_interval_ms) / 100) {
-        return TemporalLayers::FrameConfig(kNone, kNone, kNone);
+        return Vp8TemporalLayers::FrameConfig(kNone, kNone, kNone);
       }
     }
   }
@@ -182,30 +182,30 @@ TemporalLayers::FrameConfig ScreenshareLayers::UpdateLayerConfig(
       RTC_NOTREACHED();
   }
 
-  TemporalLayers::FrameConfig tl_config;
+  Vp8TemporalLayers::FrameConfig tl_config;
   // TODO(pbos): Consider referencing but not updating the 'alt' buffer for all
   // layers.
   switch (layer_state) {
     case TemporalLayerState::kDrop:
-      tl_config = TemporalLayers::FrameConfig(kNone, kNone, kNone);
+      tl_config = Vp8TemporalLayers::FrameConfig(kNone, kNone, kNone);
       break;
     case TemporalLayerState::kTl0:
       // TL0 only references and updates 'last'.
       tl_config =
-          TemporalLayers::FrameConfig(kReferenceAndUpdate, kNone, kNone);
+          Vp8TemporalLayers::FrameConfig(kReferenceAndUpdate, kNone, kNone);
       tl_config.packetizer_temporal_idx = 0;
       break;
     case TemporalLayerState::kTl1:
       // TL1 references both 'last' and 'golden' but only updates 'golden'.
-      tl_config =
-          TemporalLayers::FrameConfig(kReference, kReferenceAndUpdate, kNone);
+      tl_config = Vp8TemporalLayers::FrameConfig(kReference,
+                                                 kReferenceAndUpdate, kNone);
       tl_config.packetizer_temporal_idx = 1;
       break;
     case TemporalLayerState::kTl1Sync:
       // Predict from only TL0 to allow participants to switch to the high
       // bitrate stream. Updates 'golden' so that TL1 can continue to refer to
       // and update 'golden' from this point on.
-      tl_config = TemporalLayers::FrameConfig(kReference, kUpdate, kNone);
+      tl_config = Vp8TemporalLayers::FrameConfig(kReference, kUpdate, kNone);
       tl_config.packetizer_temporal_idx = 1;
       break;
   }

@@ -50,10 +50,6 @@ JavaToNativePeerConnectionFactoryOptions(JNIEnv* jni,
   bool disable_encryption = Java_Options_getDisableEncryption(jni, options);
   bool disable_network_monitor =
       Java_Options_getDisableNetworkMonitor(jni, options);
-  bool enable_aes128_sha1_32_crypto_cipher =
-      Java_Options_getEnableAes128Sha1_32CryptoCipher(jni, options);
-  bool enable_gcm_crypto_suites =
-      Java_Options_getEnableGcmCryptoSuites(jni, options);
 
   PeerConnectionFactoryInterface::Options native_options;
 
@@ -63,10 +59,6 @@ JavaToNativePeerConnectionFactoryOptions(JNIEnv* jni,
   native_options.disable_encryption = disable_encryption;
   native_options.disable_network_monitor = disable_network_monitor;
 
-  native_options.crypto_options.enable_aes128_sha1_32_crypto_cipher =
-      enable_aes128_sha1_32_crypto_cipher;
-  native_options.crypto_options.enable_gcm_crypto_suites =
-      enable_gcm_crypto_suites;
   return native_options;
 }
 
@@ -199,15 +191,21 @@ static void JNI_PeerConnectionFactory_ShutdownInternalTracer(
   rtc::tracing::ShutdownInternalTracer();
 }
 
+// Following parameters are optional:
+// |audio_device_module|, |jencoder_factory|, |jdecoder_factory|,
+// |audio_processor|, |media_transport_factory|, |fec_controller_factory|.
 jlong CreatePeerConnectionFactoryForJava(
     JNIEnv* jni,
     const JavaParamRef<jobject>& jcontext,
     const JavaParamRef<jobject>& joptions,
     rtc::scoped_refptr<AudioDeviceModule> audio_device_module,
+    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
+    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
     const JavaParamRef<jobject>& jencoder_factory,
     const JavaParamRef<jobject>& jdecoder_factory,
     rtc::scoped_refptr<AudioProcessing> audio_processor,
-    std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory) {
+    std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory,
+    std::unique_ptr<MediaTransportFactory> media_transport_factory) {
   // talk/ assumes pretty widely that the current Thread is ThreadManager'd, but
   // ThreadManager only WrapCurrentThread()s the thread where it is first
   // created.  Since the semantics around when auto-wrapping happens in
@@ -229,8 +227,6 @@ jlong CreatePeerConnectionFactoryForJava(
   RTC_CHECK(signaling_thread->Start()) << "Failed to start thread";
 
   rtc::NetworkMonitorFactory* network_monitor_factory = nullptr;
-  auto audio_encoder_factory = CreateAudioEncoderFactory();
-  auto audio_decoder_factory = CreateAudioDecoderFactory();
 
   PeerConnectionFactoryInterface::Options options;
   bool has_options = !joptions.is_null();
@@ -257,12 +253,19 @@ jlong CreatePeerConnectionFactoryForJava(
       std::unique_ptr<VideoDecoderFactory>(
           CreateVideoDecoderFactory(jni, jdecoder_factory)),
       audio_mixer, audio_processor));
+  PeerConnectionFactoryDependencies dependencies;
+  dependencies.network_thread = network_thread.get();
+  dependencies.worker_thread = worker_thread.get();
+  dependencies.signaling_thread = signaling_thread.get();
+  dependencies.media_engine = std::move(media_engine);
+  dependencies.call_factory = std::move(call_factory);
+  dependencies.event_log_factory = std::move(rtc_event_log_factory);
+  dependencies.fec_controller_factory = std::move(fec_controller_factory);
+  dependencies.media_transport_factory = std::move(media_transport_factory);
 
   rtc::scoped_refptr<PeerConnectionFactoryInterface> factory(
-      CreateModularPeerConnectionFactory(
-          network_thread.get(), worker_thread.get(), signaling_thread.get(),
-          std::move(media_engine), std::move(call_factory),
-          std::move(rtc_event_log_factory), std::move(fec_controller_factory)));
+      CreateModularPeerConnectionFactory(std::move(dependencies)));
+
   RTC_CHECK(factory) << "Failed to create the peer connection factory; "
                      << "WebRTC/libjingle init likely failed on this device";
   // TODO(honghaiz): Maybe put the options as the argument of
@@ -283,21 +286,39 @@ static jlong JNI_PeerConnectionFactory_CreatePeerConnectionFactory(
     const JavaParamRef<jobject>& jcontext,
     const JavaParamRef<jobject>& joptions,
     jlong native_audio_device_module,
+    jlong native_audio_encoder_factory,
+    jlong native_audio_decoder_factory,
     const JavaParamRef<jobject>& jencoder_factory,
     const JavaParamRef<jobject>& jdecoder_factory,
     jlong native_audio_processor,
-    jlong native_fec_controller_factory) {
+    jlong native_fec_controller_factory,
+    jlong native_media_transport_factory) {
   rtc::scoped_refptr<AudioProcessing> audio_processor =
       reinterpret_cast<AudioProcessing*>(native_audio_processor);
+  AudioEncoderFactory* audio_encoder_factory_ptr =
+      reinterpret_cast<AudioEncoderFactory*>(native_audio_encoder_factory);
+  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory(
+      audio_encoder_factory_ptr);
+  // Release the caller's reference count.
+  audio_encoder_factory->Release();
+  AudioDecoderFactory* audio_decoder_factory_ptr =
+      reinterpret_cast<AudioDecoderFactory*>(native_audio_decoder_factory);
+  rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory(
+      audio_decoder_factory_ptr);
+  // Release the caller's reference count.
+  audio_decoder_factory->Release();
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory(
       reinterpret_cast<FecControllerFactoryInterface*>(
           native_fec_controller_factory));
+  std::unique_ptr<MediaTransportFactory> media_transport_factory(
+      reinterpret_cast<MediaTransportFactory*>(native_media_transport_factory));
   return CreatePeerConnectionFactoryForJava(
       jni, jcontext, joptions,
       reinterpret_cast<AudioDeviceModule*>(native_audio_device_module),
-      jencoder_factory, jdecoder_factory,
+      audio_encoder_factory, audio_decoder_factory, jencoder_factory,
+      jdecoder_factory,
       audio_processor ? audio_processor : CreateAudioProcessing(),
-      std::move(fec_controller_factory));
+      std::move(fec_controller_factory), std::move(media_transport_factory));
 }
 
 static void JNI_PeerConnectionFactory_FreeFactory(JNIEnv*,
@@ -396,18 +417,20 @@ static jlong JNI_PeerConnectionFactory_CreatePeerConnection(
       PeerConnectionInterface::RTCConfigurationType::kAggressive);
   JavaToNativeRTCConfiguration(jni, j_rtc_config, &rtc_config);
 
-  // Generate non-default certificate.
-  rtc::KeyType key_type = GetRtcConfigKeyType(jni, j_rtc_config);
-  if (key_type != rtc::KT_DEFAULT) {
-    rtc::scoped_refptr<rtc::RTCCertificate> certificate =
-        rtc::RTCCertificateGenerator::GenerateCertificate(
-            rtc::KeyParams(key_type), absl::nullopt);
-    if (!certificate) {
-      RTC_LOG(LS_ERROR) << "Failed to generate certificate. KeyType: "
-                        << key_type;
-      return 0;
+  if (rtc_config.certificates.empty()) {
+    // Generate non-default certificate.
+    rtc::KeyType key_type = GetRtcConfigKeyType(jni, j_rtc_config);
+    if (key_type != rtc::KT_DEFAULT) {
+      rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+          rtc::RTCCertificateGenerator::GenerateCertificate(
+              rtc::KeyParams(key_type), absl::nullopt);
+      if (!certificate) {
+        RTC_LOG(LS_ERROR) << "Failed to generate certificate. KeyType: "
+                          << key_type;
+        return 0;
+      }
+      rtc_config.certificates.push_back(certificate);
     }
-    rtc_config.certificates.push_back(certificate);
   }
 
   std::unique_ptr<MediaConstraintsInterface> constraints;
@@ -437,12 +460,13 @@ static jlong JNI_PeerConnectionFactory_CreateVideoSource(
     JNIEnv* jni,
     const JavaParamRef<jclass>&,
     jlong native_factory,
-    jboolean is_screencast) {
+    jboolean is_screencast,
+    jboolean align_timestamps) {
   OwnedFactoryAndThreads* factory =
       reinterpret_cast<OwnedFactoryAndThreads*>(native_factory);
   return jlongFromPointer(CreateVideoSource(jni, factory->signaling_thread(),
                                             factory->worker_thread(),
-                                            is_screencast));
+                                            is_screencast, align_timestamps));
 }
 
 static jlong JNI_PeerConnectionFactory_CreateVideoTrack(

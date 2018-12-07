@@ -10,50 +10,50 @@
 
 #include "modules/audio_processing/agc2/limiter.h"
 
+#include "common_audio/include/audio_util.h"
+#include "modules/audio_processing/agc2/agc2_common.h"
+#include "modules/audio_processing/agc2/agc2_testing_common.h"
+#include "modules/audio_processing/agc2/vector_float_frame.h"
+#include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/gunit.h"
 
 namespace webrtc {
 
-TEST(FixedDigitalGainController2Limiter, ConstructDestruct) {
-  Limiter l;
+TEST(Limiter, LimiterShouldConstructAndRun) {
+  const int sample_rate_hz = 48000;
+  ApmDataDumper apm_data_dumper(0);
+
+  Limiter limiter(sample_rate_hz, &apm_data_dumper, "");
+
+  VectorFloatFrame vectors_with_float_frame(1, sample_rate_hz / 100,
+                                            kMaxAbsFloatS16Value);
+  limiter.Process(vectors_with_float_frame.float_frame_view());
 }
 
-TEST(FixedDigitalGainController2Limiter, GainCurveShouldBeMonotone) {
-  Limiter l;
-  float last_output_level = 0.f;
-  bool has_last_output_level = false;
-  for (float level = -90.f; level <= l.max_input_level_db(); level += 0.5f) {
-    const float current_output_level = l.GetOutputLevelDbfs(level);
-    if (!has_last_output_level) {
-      last_output_level = current_output_level;
-      has_last_output_level = true;
-    }
-    EXPECT_LE(last_output_level, current_output_level);
-    last_output_level = current_output_level;
+TEST(Limiter, OutputVolumeAboveThreshold) {
+  const int sample_rate_hz = 48000;
+  const float input_level =
+      (kMaxAbsFloatS16Value + DbfsToFloatS16(test::kLimiterMaxInputLevelDbFs)) /
+      2.f;
+  ApmDataDumper apm_data_dumper(0);
+
+  Limiter limiter(sample_rate_hz, &apm_data_dumper, "");
+
+  // Give the level estimator time to adapt.
+  for (int i = 0; i < 5; ++i) {
+    VectorFloatFrame vectors_with_float_frame(1, sample_rate_hz / 100,
+                                              input_level);
+    limiter.Process(vectors_with_float_frame.float_frame_view());
   }
-}
 
-TEST(FixedDigitalGainController2Limiter, GainCurveShouldBeContinuous) {
-  Limiter l;
-  float last_output_level = 0.f;
-  bool has_last_output_level = false;
-  constexpr float kMaxDelta = 0.5f;
-  for (float level = -90.f; level <= l.max_input_level_db(); level += 0.5f) {
-    const float current_output_level = l.GetOutputLevelDbfs(level);
-    if (!has_last_output_level) {
-      last_output_level = current_output_level;
-      has_last_output_level = true;
-    }
-    EXPECT_LE(current_output_level, last_output_level + kMaxDelta);
-    last_output_level = current_output_level;
-  }
-}
+  VectorFloatFrame vectors_with_float_frame(1, sample_rate_hz / 100,
+                                            input_level);
+  limiter.Process(vectors_with_float_frame.float_frame_view());
+  rtc::ArrayView<const float> channel =
+      vectors_with_float_frame.float_frame_view().channel(0);
 
-TEST(FixedDigitalGainController2Limiter, OutputGainShouldBeLessThanFullScale) {
-  Limiter l;
-  for (float level = -90.f; level <= l.max_input_level_db(); level += 0.5f) {
-    const float current_output_level = l.GetOutputLevelDbfs(level);
-    EXPECT_LE(current_output_level, 0.f);
+  for (const auto& sample : channel) {
+    EXPECT_LT(0.9f * kMaxAbsFloatS16Value, sample);
   }
 }
 

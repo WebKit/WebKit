@@ -139,7 +139,7 @@ class RelayEntry : public rtc::MessageHandler, public sigslot::has_slots<> {
                     const char* data,
                     size_t size,
                     const rtc::SocketAddress& remote_addr,
-                    const rtc::PacketTime& packet_time);
+                    const int64_t& packet_time_us);
 
   void OnSentPacket(rtc::AsyncPacketSocket* socket,
                     const rtc::SentPacket& sent_packet);
@@ -397,9 +397,9 @@ void RelayPort::OnReadPacket(const char* data,
                              size_t size,
                              const rtc::SocketAddress& remote_addr,
                              ProtocolType proto,
-                             const rtc::PacketTime& packet_time) {
+                             int64_t packet_time_us) {
   if (Connection* conn = GetConnection(remote_addr)) {
-    conn->OnReadPacket(data, size, packet_time);
+    conn->OnReadPacket(data, size, packet_time_us);
   } else {
     Port::OnReadPacket(data, size, remote_addr, proto);
   }
@@ -686,7 +686,7 @@ void RelayEntry::OnReadPacket(rtc::AsyncPacketSocket* socket,
                               const char* data,
                               size_t size,
                               const rtc::SocketAddress& remote_addr,
-                              const rtc::PacketTime& packet_time) {
+                              const int64_t& packet_time_us) {
   // RTC_DCHECK(remote_addr == port_->server_addr());
   // TODO(?): are we worried about this?
 
@@ -700,7 +700,7 @@ void RelayEntry::OnReadPacket(rtc::AsyncPacketSocket* socket,
   // by the server,  The actual remote address is the one we recorded.
   if (!port_->HasMagicCookie(data, size)) {
     if (locked_) {
-      port_->OnReadPacket(data, size, ext_addr_, PROTO_UDP, packet_time);
+      port_->OnReadPacket(data, size, ext_addr_, PROTO_UDP, packet_time_us);
     } else {
       RTC_LOG(WARNING) << "Dropping packet: entry not locked";
     }
@@ -753,7 +753,7 @@ void RelayEntry::OnReadPacket(rtc::AsyncPacketSocket* socket,
 
   // Process the actual data and remote address in the normal manner.
   port_->OnReadPacket(data_attr->bytes(), data_attr->length(), remote_addr2,
-                      PROTO_UDP, packet_time);
+                      PROTO_UDP, packet_time_us);
 }
 
 void RelayEntry::OnSentPacket(rtc::AsyncPacketSocket* socket,

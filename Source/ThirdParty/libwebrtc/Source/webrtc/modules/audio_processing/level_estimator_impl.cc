@@ -10,9 +10,13 @@
 
 #include "modules/audio_processing/level_estimator_impl.h"
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "api/array_view.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/rms_level.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 

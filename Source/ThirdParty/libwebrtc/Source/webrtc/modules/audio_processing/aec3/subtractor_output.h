@@ -36,12 +36,14 @@ struct SubtractorOutput {
   float e2_main = 0.f;
   float e2_shadow = 0.f;
   float y2 = 0.f;
+  float s_main_max_abs = 0.f;
+  float s_shadow_max_abs = 0.f;
 
   // Reset the struct content.
   void Reset();
 
   // Updates the powers of the signals.
-  void UpdatePowers(rtc::ArrayView<const float> y);
+  void ComputeMetrics(rtc::ArrayView<const float> y);
 };
 
 }  // namespace webrtc

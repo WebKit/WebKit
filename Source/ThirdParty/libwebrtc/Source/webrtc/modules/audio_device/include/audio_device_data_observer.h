@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_AUDIO_DEVICE_DATA_OBSERVER_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/audio_device/include/audio_device.h"
 #include "rtc_base/scoped_ref_ptr.h"
 

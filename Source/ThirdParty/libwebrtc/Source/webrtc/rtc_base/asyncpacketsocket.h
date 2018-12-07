@@ -12,6 +12,7 @@
 #define RTC_BASE_ASYNCPACKETSOCKET_H_
 
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/dscp.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
@@ -50,25 +51,9 @@ struct PacketOptions {
   PacketInfo info_signaled_after_sent;
 };
 
-// This structure will have the information about when packet is actually
-// received by socket.
-struct PacketTime {
-  PacketTime() : timestamp(-1), not_before(-1) {}
-  PacketTime(int64_t timestamp, int64_t not_before)
-      : timestamp(timestamp), not_before(not_before) {}
-
-  int64_t timestamp;  // Receive time after socket delivers the data.
-
-  // Earliest possible time the data could have arrived, indicating the
-  // potential error in the |timestamp| value, in case the system, is busy. For
-  // example, the time of the last select() call.
-  // If unknown, this value will be set to zero.
-  int64_t not_before;
-};
-
-inline PacketTime CreatePacketTime(int64_t not_before) {
-  return PacketTime(TimeMicros(), not_before);
-}
+// TODO(bugs.webrtc.org/9584): Compatibility alias, delete as soon as downstream
+// code is updated.
+typedef int64_t PacketTime;
 
 // Provides the ability to receive packets asynchronously. Sends are not
 // buffered since it is acceptable to drop packets under high load.
@@ -120,7 +105,9 @@ class AsyncPacketSocket : public sigslot::has_slots<> {
                    const char*,
                    size_t,
                    const SocketAddress&,
-                   const PacketTime&>
+                   // TODO(bugs.webrtc.org/9584): Change to passing the int64_t
+                   // timestamp by value.
+                   const int64_t&>
       SignalReadPacket;
 
   // Emitted each time a packet is sent.

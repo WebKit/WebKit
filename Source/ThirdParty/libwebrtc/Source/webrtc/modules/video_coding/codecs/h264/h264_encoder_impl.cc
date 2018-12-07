@@ -19,6 +19,7 @@
 #include "third_party/openh264/src/codec/api/svc/codec_def.h"
 #include "third_party/openh264/src/codec/api/svc/codec_ver.h"
 
+#include "absl/strings/match.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
@@ -167,7 +168,7 @@ H264EncoderImpl::H264EncoderImpl(const cricket::VideoCodec& codec)
       encoded_image_callback_(nullptr),
       has_reported_init_(false),
       has_reported_error_(false) {
-  RTC_CHECK(cricket::CodecNamesEq(codec.name, cricket::kH264CodecName));
+  RTC_CHECK(absl::EqualsIgnoreCase(codec.name, cricket::kH264CodecName));
   std::string packetization_mode_string;
   if (codec.GetParam(cricket::kH264FmtpPacketizationMode,
                      &packetization_mode_string) &&
@@ -310,7 +311,7 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
   }
 
   SimulcastRateAllocator init_allocator(codec_);
-  BitrateAllocation allocation = init_allocator.GetAllocation(
+  VideoBitrateAllocation allocation = init_allocator.GetAllocation(
       codec_.startBitrate * 1000, codec_.maxFramerate);
   return SetRateAllocation(allocation, codec_.maxFramerate);
 }
@@ -339,7 +340,7 @@ int32_t H264EncoderImpl::RegisterEncodeCompleteCallback(
 }
 
 int32_t H264EncoderImpl::SetRateAllocation(
-    const BitrateAllocation& bitrate,
+    const VideoBitrateAllocation& bitrate,
     uint32_t new_framerate) {
   if (encoders_.empty())
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
@@ -534,10 +535,6 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-const char* H264EncoderImpl::ImplementationName() const {
-  return "OpenH264";
-}
-
 // Initialization parameters.
 // There are two ways to initialize. There is SEncParamBase (cleared with
 // memset(&p, 0, sizeof(SEncParamBase)) used in Initialize, and SEncParamExt
@@ -624,14 +621,13 @@ void H264EncoderImpl::ReportError() {
   has_reported_error_ = true;
 }
 
-int32_t H264EncoderImpl::SetChannelParameters(uint32_t packet_loss,
-                                              int64_t rtt) {
-  return WEBRTC_VIDEO_CODEC_OK;
-}
-
-VideoEncoder::ScalingSettings H264EncoderImpl::GetScalingSettings() const {
-  return VideoEncoder::ScalingSettings(kLowH264QpThreshold,
-                                       kHighH264QpThreshold);
+VideoEncoder::EncoderInfo H264EncoderImpl::GetEncoderInfo() const {
+  EncoderInfo info;
+  info.supports_native_handle = false;
+  info.implementation_name = "OpenH264";
+  info.scaling_settings =
+      VideoEncoder::ScalingSettings(kLowH264QpThreshold, kHighH264QpThreshold);
+  return info;
 }
 
 void H264EncoderImpl::LayerConfig::SetStreamState(bool send_stream) {

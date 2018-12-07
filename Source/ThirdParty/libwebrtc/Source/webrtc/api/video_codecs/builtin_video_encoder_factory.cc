@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "media/base/codec.h"
 #include "media/base/mediaconstants.h"
@@ -59,7 +60,7 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
     if (IsFormatSupported(internal_encoder_factory_->GetSupportedFormats(),
                           format)) {
       internal_encoder =
-          cricket::CodecNamesEq(format.name.c_str(), cricket::kVp8CodecName)
+          absl::EqualsIgnoreCase(format.name, cricket::kVp8CodecName)
               ? absl::make_unique<VP8EncoderSimulcastProxy>(
                     internal_encoder_factory_.get(), format)
               : internal_encoder_factory_->CreateVideoEncoder(format);

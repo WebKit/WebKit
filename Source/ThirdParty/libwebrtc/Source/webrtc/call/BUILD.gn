@@ -38,11 +38,14 @@ rtc_source_set("call_interfaces") {
     "../api/audio_codecs:audio_codecs_api",
     "../api/transport:network_control",
     "../modules/audio_device:audio_device",
+    "../modules/audio_processing:api",
     "../modules/audio_processing:audio_processing",
     "../modules/audio_processing:audio_processing_statistics",
     "../rtc_base:audio_format_to_string",
+    "../rtc_base:checks",
     "../rtc_base:rtc_base",
     "../rtc_base:rtc_base_approved",
+    "../rtc_base/network:sent_packet",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -161,6 +164,9 @@ rtc_source_set("bitrate_allocator") {
     "bitrate_allocator.h",
   ]
   deps = [
+    "../api:bitrate_allocation",
+    "../api/units:data_rate",
+    "../api/units:time_delta",
     "../modules/bitrate_controller",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
@@ -193,7 +199,6 @@ rtc_static_library("call") {
     ":rtp_sender",
     ":simulated_network",
     ":video_stream_api",
-    "..:webrtc_common",
     "../api:callfactory_api",
     "../api:simulated_network_api",
     "../api:transport_api",
@@ -217,6 +222,7 @@ rtc_static_library("call") {
     "../rtc_base:rtc_task_queue",
     "../rtc_base:safe_minmax",
     "../rtc_base:sequenced_task_checker",
+    "../rtc_base/experiments:field_trial_parser",
     "../rtc_base/synchronization:rw_lock_wrapper",
     "../system_wrappers",
     "../system_wrappers:field_trial",
@@ -236,7 +242,6 @@ rtc_source_set("video_stream_api") {
   ]
   deps = [
     ":rtp_interfaces",
-    "../:webrtc_common",
     "../api:libjingle_peerconnection_api",
     "../api:transport_api",
     "../api/video:video_frame",
@@ -257,6 +262,9 @@ rtc_source_set("simulated_network") {
   ]
   deps = [
     "../api:simulated_network_api",
+    "../api/units:data_rate",
+    "../api/units:data_size",
+    "../api/units:time_delta",
     "../rtc_base:rtc_base_approved",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -283,10 +291,10 @@ rtc_source_set("fake_network") {
     ":call_interfaces",
     ":simulated_network",
     ":simulated_packet_receiver",
-    "..:webrtc_common",
     "../api:simulated_network_api",
     "../api:transport_api",
     "../modules:module_api",
+    "../modules/utility",
     "../rtc_base:rtc_base_approved",
     "../rtc_base:sequenced_task_checker",
     "../system_wrappers",
@@ -322,8 +330,9 @@ if (rtc_include_tests) {
       ":rtp_receiver",
       ":rtp_sender",
       ":simulated_network",
-      "..:webrtc_common",
       "../api:array_view",
+      "../api:fake_media_transport",
+      "../api:fake_media_transport",
       "../api:libjingle_peerconnection_api",
       "../api:mock_audio_mixer",
       "../api/audio_codecs:builtin_audio_decoder_factory",
@@ -359,6 +368,7 @@ if (rtc_include_tests) {
       "//testing/gmock",
       "//testing/gtest",
       "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -378,12 +388,13 @@ if (rtc_include_tests) {
       ":call_interfaces",
       ":simulated_network",
       ":video_stream_api",
-      "..:webrtc_common",
       "../api:simulated_network_api",
       "../api/audio_codecs:builtin_audio_encoder_factory",
+      "../api/video:builtin_video_bitrate_allocator_factory",
       "../api/video:video_bitrate_allocation",
       "../api/video_codecs:video_codecs_api",
       "../logging:rtc_event_log_api",
+      "../logging:rtc_event_log_impl_output",
       "../modules/audio_coding",
       "../modules/audio_device",
       "../modules/audio_device:audio_device_impl",
@@ -426,6 +437,7 @@ if (rtc_include_tests) {
       "../modules/pacing",
       "../rtc_base:rate_limiter",
       "../rtc_base:rtc_base",
+      "../rtc_base/network:sent_packet",
       "../test:test_support",
     ]
   }
@@ -437,7 +449,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":bitrate_allocator",
-      "//test:test_support",
+      "../test:test_support",
     ]
   }
   rtc_source_set("mock_call_interfaces") {
@@ -448,11 +460,14 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":call_interfaces",
-      "//test:test_support",
+      "../test:test_support",
     ]
   }
 
   rtc_test("fake_network_unittests") {
+    sources = [
+      "test/fake_network_pipe_unittest.cc",
+    ]
     deps = [
       ":call_interfaces",
       ":fake_network",
@@ -462,10 +477,8 @@ if (rtc_include_tests) {
       "../system_wrappers",
       "../test:test_common",
       "../test:test_main",
+      "../test:test_support",
       "//testing/gtest",
-    ]
-    sources = [
-      "test/fake_network_pipe_unittest.cc",
     ]
   }
 }

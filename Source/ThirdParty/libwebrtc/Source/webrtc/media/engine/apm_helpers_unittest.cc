@@ -164,11 +164,4 @@ TEST(ApmHelpersTest, TypingDetectionStatus_EnableDisable) {
   EXPECT_EQ(VoiceDetection::kVeryLowLikelihood, vd->likelihood());
   EXPECT_FALSE(vd->is_enabled());
 }
-
-// TODO(solenberg): Move this test to a better place - added here for the sake
-// of duplicating all relevant tests from audio_processing_test.cc.
-TEST(ApmHelpersTest, HighPassFilter_DefaultMode) {
-  TestHelper helper;
-  EXPECT_FALSE(helper.apm()->high_pass_filter()->is_enabled());
-}
 }  // namespace webrtc

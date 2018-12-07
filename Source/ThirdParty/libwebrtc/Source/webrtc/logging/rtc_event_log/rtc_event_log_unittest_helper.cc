@@ -12,12 +12,15 @@
 
 #include <string.h>  // memcmp
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <numeric>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
@@ -25,6 +28,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/checks.h"
+#include "test/gtest.h"
 
 namespace webrtc {
 
@@ -62,6 +66,16 @@ void ShuffleInPlace(Random* prng, rtc::ArrayView<T> array) {
     std::swap(array[i], array[other]);
   }
 }
+
+absl::optional<int> GetExtensionId(const std::vector<RtpExtension>& extensions,
+                                   const std::string& uri) {
+  for (const auto& extension : extensions) {
+    if (extension.uri == uri)
+      return extension.id;
+  }
+  return absl::nullopt;
+}
+
 }  // namespace
 
 std::unique_ptr<RtcEventAlrState> EventGenerator::NewAlrState() {
@@ -266,7 +280,8 @@ void EventGenerator::RandomizeRtpPacket(
     size_t padding_size,
     uint32_t ssrc,
     const RtpHeaderExtensionMap& extension_map,
-    RtpPacket* rtp_packet) {
+    RtpPacket* rtp_packet,
+    bool all_configured_exts) {
   constexpr int kMaxPayloadType = 127;
   rtp_packet->SetPayloadType(prng_.Rand(kMaxPayloadType));
   rtp_packet->SetMarker(prng_.Rand<bool>());
@@ -281,16 +296,30 @@ void EventGenerator::RandomizeRtpPacket(
   }
   rtp_packet->SetCsrcs(csrcs);
 
-  if (extension_map.IsRegistered(TransmissionOffset::kId))
+  if (extension_map.IsRegistered(TransmissionOffset::kId) &&
+      (all_configured_exts || prng_.Rand<bool>())) {
     rtp_packet->SetExtension<TransmissionOffset>(prng_.Rand(0x00ffffff));
-  if (extension_map.IsRegistered(AudioLevel::kId))
+  }
+
+  if (extension_map.IsRegistered(AudioLevel::kId) &&
+      (all_configured_exts || prng_.Rand<bool>())) {
     rtp_packet->SetExtension<AudioLevel>(prng_.Rand<bool>(), prng_.Rand(127));
-  if (extension_map.IsRegistered(AbsoluteSendTime::kId))
+  }
+
+  if (extension_map.IsRegistered(AbsoluteSendTime::kId) &&
+      (all_configured_exts || prng_.Rand<bool>())) {
     rtp_packet->SetExtension<AbsoluteSendTime>(prng_.Rand(0x00ffffff));
-  if (extension_map.IsRegistered(VideoOrientation::kId))
+  }
+
+  if (extension_map.IsRegistered(VideoOrientation::kId) &&
+      (all_configured_exts || prng_.Rand<bool>())) {
     rtp_packet->SetExtension<VideoOrientation>(prng_.Rand(3));
-  if (extension_map.IsRegistered(TransportSequenceNumber::kId))
+  }
+
+  if (extension_map.IsRegistered(TransportSequenceNumber::kId) &&
+      (all_configured_exts || prng_.Rand<bool>())) {
     rtp_packet->SetExtension<TransportSequenceNumber>(prng_.Rand<uint16_t>());
+  }
 
   RTC_CHECK_LE(rtp_packet->headers_size() + payload_size, IP_PACKET_SIZE);
 
@@ -299,12 +328,13 @@ void EventGenerator::RandomizeRtpPacket(
   for (size_t i = 0; i < payload_size; i++) {
     payload[i] = prng_.Rand<uint8_t>();
   }
-  RTC_CHECK(rtp_packet->SetPadding(padding_size, &prng_));
+  RTC_CHECK(rtp_packet->SetPadding(padding_size));
 }
 
 std::unique_ptr<RtcEventRtpPacketIncoming> EventGenerator::NewRtpPacketIncoming(
     uint32_t ssrc,
-    const RtpHeaderExtensionMap& extension_map) {
+    const RtpHeaderExtensionMap& extension_map,
+    bool all_configured_exts) {
   constexpr size_t kMaxPaddingLength = 224;
   const bool padding = prng_.Rand(0, 9) == 0;  // Let padding be 10% probable.
   const size_t padding_size = !padding ? 0u : prng_.Rand(0u, kMaxPaddingLength);
@@ -325,14 +355,15 @@ std::unique_ptr<RtcEventRtpPacketIncoming> EventGenerator::NewRtpPacketIncoming(
 
   RtpPacketReceived rtp_packet(&extension_map);
   RandomizeRtpPacket(payload_size, padding_size, ssrc, extension_map,
-                     &rtp_packet);
+                     &rtp_packet, all_configured_exts);
 
   return absl::make_unique<RtcEventRtpPacketIncoming>(rtp_packet);
 }
 
 std::unique_ptr<RtcEventRtpPacketOutgoing> EventGenerator::NewRtpPacketOutgoing(
     uint32_t ssrc,
-    const RtpHeaderExtensionMap& extension_map) {
+    const RtpHeaderExtensionMap& extension_map,
+    bool all_configured_exts) {
   constexpr size_t kMaxPaddingLength = 224;
   const bool padding = prng_.Rand(0, 9) == 0;  // Let padding be 10% probable.
   const size_t padding_size = !padding ? 0u : prng_.Rand(0u, kMaxPaddingLength);
@@ -354,33 +385,34 @@ std::unique_ptr<RtcEventRtpPacketOutgoing> EventGenerator::NewRtpPacketOutgoing(
   RtpPacketToSend rtp_packet(&extension_map,
                              kMaxHeaderSize + payload_size + padding_size);
   RandomizeRtpPacket(payload_size, padding_size, ssrc, extension_map,
-                     &rtp_packet);
+                     &rtp_packet, all_configured_exts);
 
   int probe_cluster_id = prng_.Rand(0, 100000);
   return absl::make_unique<RtcEventRtpPacketOutgoing>(rtp_packet,
                                                       probe_cluster_id);
 }
 
-RtpHeaderExtensionMap EventGenerator::NewRtpHeaderExtensionMap() {
+RtpHeaderExtensionMap EventGenerator::NewRtpHeaderExtensionMap(
+    bool configure_all) {
   RtpHeaderExtensionMap extension_map;
   std::vector<int> id(RtpExtension::kOneByteHeaderExtensionMaxId -
                       RtpExtension::kMinId + 1);
   std::iota(id.begin(), id.end(), RtpExtension::kMinId);
   ShuffleInPlace(&prng_, rtc::ArrayView<int>(id));
 
-  if (prng_.Rand<bool>()) {
+  if (configure_all || prng_.Rand<bool>()) {
     extension_map.Register<AudioLevel>(id[0]);
   }
-  if (prng_.Rand<bool>()) {
+  if (configure_all || prng_.Rand<bool>()) {
     extension_map.Register<TransmissionOffset>(id[1]);
   }
-  if (prng_.Rand<bool>()) {
+  if (configure_all || prng_.Rand<bool>()) {
     extension_map.Register<AbsoluteSendTime>(id[2]);
   }
-  if (prng_.Rand<bool>()) {
+  if (configure_all || prng_.Rand<bool>()) {
     extension_map.Register<VideoOrientation>(id[3]);
   }
-  if (prng_.Rand<bool>()) {
+  if (configure_all || prng_.Rand<bool>()) {
     extension_map.Register<TransportSequenceNumber>(id[4]);
   }
 
@@ -469,396 +501,317 @@ EventGenerator::NewVideoSendStreamConfig(
   return absl::make_unique<RtcEventVideoSendStreamConfig>(std::move(config));
 }
 
-bool VerifyLoggedAlrStateEvent(const RtcEventAlrState& original_event,
-                               const LoggedAlrStateEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.in_alr_ != logged_event.in_alr)
-    return false;
-  return true;
+void EventVerifier::VerifyLoggedAlrStateEvent(
+    const RtcEventAlrState& original_event,
+    const LoggedAlrStateEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.in_alr(), logged_event.in_alr);
 }
 
-bool VerifyLoggedAudioPlayoutEvent(
+void EventVerifier::VerifyLoggedAudioPlayoutEvent(
     const RtcEventAudioPlayout& original_event,
-    const LoggedAudioPlayoutEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.ssrc_ != logged_event.ssrc)
-    return false;
-  return true;
+    const LoggedAudioPlayoutEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.ssrc(), logged_event.ssrc);
 }
 
-bool VerifyLoggedAudioNetworkAdaptationEvent(
+void EventVerifier::VerifyLoggedAudioNetworkAdaptationEvent(
     const RtcEventAudioNetworkAdaptation& original_event,
-    const LoggedAudioNetworkAdaptationEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedAudioNetworkAdaptationEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.config_->bitrate_bps != logged_event.config.bitrate_bps)
-    return false;
-  if (original_event.config_->enable_dtx != logged_event.config.enable_dtx)
-    return false;
-  if (original_event.config_->enable_fec != logged_event.config.enable_fec)
-    return false;
-  if (original_event.config_->frame_length_ms !=
-      logged_event.config.frame_length_ms)
-    return false;
-  if (original_event.config_->num_channels != logged_event.config.num_channels)
-    return false;
-  if (original_event.config_->uplink_packet_loss_fraction !=
-      logged_event.config.uplink_packet_loss_fraction)
-    return false;
+  EXPECT_EQ(original_event.config().bitrate_bps,
+            logged_event.config.bitrate_bps);
+  EXPECT_EQ(original_event.config().enable_dtx, logged_event.config.enable_dtx);
+  EXPECT_EQ(original_event.config().enable_fec, logged_event.config.enable_fec);
+  EXPECT_EQ(original_event.config().frame_length_ms,
+            logged_event.config.frame_length_ms);
+  EXPECT_EQ(original_event.config().num_channels,
+            logged_event.config.num_channels);
 
-  return true;
+  // uplink_packet_loss_fraction
+  ASSERT_EQ(original_event.config().uplink_packet_loss_fraction.has_value(),
+            logged_event.config.uplink_packet_loss_fraction.has_value());
+  if (original_event.config().uplink_packet_loss_fraction.has_value()) {
+    const float original =
+        original_event.config().uplink_packet_loss_fraction.value();
+    const float logged =
+        logged_event.config.uplink_packet_loss_fraction.value();
+    const float uplink_packet_loss_fraction_delta = std::abs(original - logged);
+    EXPECT_LE(uplink_packet_loss_fraction_delta, 0.0001f);
+  }
 }
 
-bool VerifyLoggedBweDelayBasedUpdate(
+void EventVerifier::VerifyLoggedBweDelayBasedUpdate(
     const RtcEventBweUpdateDelayBased& original_event,
-    const LoggedBweDelayBasedUpdate& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.bitrate_bps_ != logged_event.bitrate_bps)
-    return false;
-  if (original_event.detector_state_ != logged_event.detector_state)
-    return false;
-  return true;
+    const LoggedBweDelayBasedUpdate& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.bitrate_bps(), logged_event.bitrate_bps);
+  EXPECT_EQ(original_event.detector_state(), logged_event.detector_state);
 }
 
-bool VerifyLoggedBweLossBasedUpdate(
+void EventVerifier::VerifyLoggedBweLossBasedUpdate(
     const RtcEventBweUpdateLossBased& original_event,
-    const LoggedBweLossBasedUpdate& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.bitrate_bps_ != logged_event.bitrate_bps)
-    return false;
-  if (original_event.fraction_loss_ != logged_event.fraction_lost)
-    return false;
-  if (original_event.total_packets_ != logged_event.expected_packets)
-    return false;
-  return true;
+    const LoggedBweLossBasedUpdate& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.bitrate_bps(), logged_event.bitrate_bps);
+  EXPECT_EQ(original_event.fraction_loss(), logged_event.fraction_lost);
+  EXPECT_EQ(original_event.total_packets(), logged_event.expected_packets);
 }
 
-bool VerifyLoggedBweProbeClusterCreatedEvent(
+void EventVerifier::VerifyLoggedBweProbeClusterCreatedEvent(
     const RtcEventProbeClusterCreated& original_event,
-    const LoggedBweProbeClusterCreatedEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.id_ != logged_event.id)
-    return false;
-  if (original_event.bitrate_bps_ != logged_event.bitrate_bps)
-    return false;
-  if (original_event.min_probes_ != logged_event.min_packets)
-    return false;
-  if (original_event.min_bytes_ != logged_event.min_bytes)
-    return false;
-
-  return true;
+    const LoggedBweProbeClusterCreatedEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.id(), logged_event.id);
+  EXPECT_EQ(original_event.bitrate_bps(), logged_event.bitrate_bps);
+  EXPECT_EQ(original_event.min_probes(), logged_event.min_packets);
+  EXPECT_EQ(original_event.min_bytes(), logged_event.min_bytes);
 }
 
-bool VerifyLoggedBweProbeFailureEvent(
+void EventVerifier::VerifyLoggedBweProbeFailureEvent(
     const RtcEventProbeResultFailure& original_event,
-    const LoggedBweProbeFailureEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.id_ != logged_event.id)
-    return false;
-  if (original_event.failure_reason_ != logged_event.failure_reason)
-    return false;
-  return true;
+    const LoggedBweProbeFailureEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.id(), logged_event.id);
+  EXPECT_EQ(original_event.failure_reason(), logged_event.failure_reason);
 }
 
-bool VerifyLoggedBweProbeSuccessEvent(
+void EventVerifier::VerifyLoggedBweProbeSuccessEvent(
     const RtcEventProbeResultSuccess& original_event,
-    const LoggedBweProbeSuccessEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (original_event.id_ != logged_event.id)
-    return false;
-  if (original_event.bitrate_bps_ != logged_event.bitrate_bps)
-    return false;
-  return true;
+    const LoggedBweProbeSuccessEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  EXPECT_EQ(original_event.id(), logged_event.id);
+  EXPECT_EQ(original_event.bitrate_bps(), logged_event.bitrate_bps);
 }
 
-bool VerifyLoggedIceCandidatePairConfig(
+void EventVerifier::VerifyLoggedIceCandidatePairConfig(
     const RtcEventIceCandidatePairConfig& original_event,
-    const LoggedIceCandidatePairConfig& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedIceCandidatePairConfig& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.type_ != logged_event.type)
-    return false;
-  if (original_event.candidate_pair_id_ != logged_event.candidate_pair_id)
-    return false;
-  if (original_event.candidate_pair_desc_.local_candidate_type !=
-      logged_event.local_candidate_type)
-    return false;
-  if (original_event.candidate_pair_desc_.local_relay_protocol !=
-      logged_event.local_relay_protocol)
-    return false;
-  if (original_event.candidate_pair_desc_.local_network_type !=
-      logged_event.local_network_type)
-    return false;
-  if (original_event.candidate_pair_desc_.local_address_family !=
-      logged_event.local_address_family)
-    return false;
-  if (original_event.candidate_pair_desc_.remote_candidate_type !=
-      logged_event.remote_candidate_type)
-    return false;
-  if (original_event.candidate_pair_desc_.remote_address_family !=
-      logged_event.remote_address_family)
-    return false;
-  if (original_event.candidate_pair_desc_.candidate_pair_protocol !=
-      logged_event.candidate_pair_protocol)
-    return false;
-
-  return true;
+  EXPECT_EQ(original_event.type(), logged_event.type);
+  EXPECT_EQ(original_event.candidate_pair_id(), logged_event.candidate_pair_id);
+  EXPECT_EQ(original_event.candidate_pair_desc().local_candidate_type,
+            logged_event.local_candidate_type);
+  EXPECT_EQ(original_event.candidate_pair_desc().local_relay_protocol,
+            logged_event.local_relay_protocol);
+  EXPECT_EQ(original_event.candidate_pair_desc().local_network_type,
+            logged_event.local_network_type);
+  EXPECT_EQ(original_event.candidate_pair_desc().local_address_family,
+            logged_event.local_address_family);
+  EXPECT_EQ(original_event.candidate_pair_desc().remote_candidate_type,
+            logged_event.remote_candidate_type);
+  EXPECT_EQ(original_event.candidate_pair_desc().remote_address_family,
+            logged_event.remote_address_family);
+  EXPECT_EQ(original_event.candidate_pair_desc().candidate_pair_protocol,
+            logged_event.candidate_pair_protocol);
 }
 
-bool VerifyLoggedIceCandidatePairEvent(
+void EventVerifier::VerifyLoggedIceCandidatePairEvent(
     const RtcEventIceCandidatePair& original_event,
-    const LoggedIceCandidatePairEvent& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedIceCandidatePairEvent& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.type_ != logged_event.type)
-    return false;
-  if (original_event.candidate_pair_id_ != logged_event.candidate_pair_id)
-    return false;
-
-  return true;
+  EXPECT_EQ(original_event.type(), logged_event.type);
+  EXPECT_EQ(original_event.candidate_pair_id(), logged_event.candidate_pair_id);
 }
 
-bool VerifyLoggedRtpHeader(const RtpPacket& original_header,
+void VerifyLoggedRtpHeader(const RtpPacket& original_header,
                            const RTPHeader& logged_header) {
   // Standard RTP header.
-  if (original_header.Marker() != logged_header.markerBit)
-    return false;
-  if (original_header.PayloadType() != logged_header.payloadType)
-    return false;
-  if (original_header.SequenceNumber() != logged_header.sequenceNumber)
-    return false;
-  if (original_header.Timestamp() != logged_header.timestamp)
-    return false;
-  if (original_header.Ssrc() != logged_header.ssrc)
-    return false;
-  if (original_header.Csrcs().size() != logged_header.numCSRCs)
-    return false;
-  for (size_t i = 0; i < logged_header.numCSRCs; i++) {
-    if (original_header.Csrcs()[i] != logged_header.arrOfCSRCs[i])
-      return false;
-  }
+  EXPECT_EQ(original_header.Marker(), logged_header.markerBit);
+  EXPECT_EQ(original_header.PayloadType(), logged_header.payloadType);
+  EXPECT_EQ(original_header.SequenceNumber(), logged_header.sequenceNumber);
+  EXPECT_EQ(original_header.Timestamp(), logged_header.timestamp);
+  EXPECT_EQ(original_header.Ssrc(), logged_header.ssrc);
 
-  if (original_header.headers_size() != logged_header.headerLength)
-    return false;
+  EXPECT_EQ(original_header.headers_size(), logged_header.headerLength);
 
   // TransmissionOffset header extension.
-  if (original_header.HasExtension<TransmissionOffset>() !=
-      logged_header.extension.hasTransmissionTimeOffset)
-    return false;
+  ASSERT_EQ(original_header.HasExtension<TransmissionOffset>(),
+            logged_header.extension.hasTransmissionTimeOffset);
   if (logged_header.extension.hasTransmissionTimeOffset) {
     int32_t offset;
-    original_header.GetExtension<TransmissionOffset>(&offset);
-    if (offset != logged_header.extension.transmissionTimeOffset)
-      return false;
+    ASSERT_TRUE(original_header.GetExtension<TransmissionOffset>(&offset));
+    EXPECT_EQ(offset, logged_header.extension.transmissionTimeOffset);
   }
 
   // AbsoluteSendTime header extension.
-  if (original_header.HasExtension<AbsoluteSendTime>() !=
-      logged_header.extension.hasAbsoluteSendTime)
-    return false;
+  ASSERT_EQ(original_header.HasExtension<AbsoluteSendTime>(),
+            logged_header.extension.hasAbsoluteSendTime);
   if (logged_header.extension.hasAbsoluteSendTime) {
     uint32_t sendtime;
-    original_header.GetExtension<AbsoluteSendTime>(&sendtime);
-    if (sendtime != logged_header.extension.absoluteSendTime)
-      return false;
+    ASSERT_TRUE(original_header.GetExtension<AbsoluteSendTime>(&sendtime));
+    EXPECT_EQ(sendtime, logged_header.extension.absoluteSendTime);
   }
 
   // TransportSequenceNumber header extension.
-  if (original_header.HasExtension<TransportSequenceNumber>() !=
-      logged_header.extension.hasTransportSequenceNumber)
-    return false;
+  ASSERT_EQ(original_header.HasExtension<TransportSequenceNumber>(),
+            logged_header.extension.hasTransportSequenceNumber);
   if (logged_header.extension.hasTransportSequenceNumber) {
     uint16_t seqnum;
-    original_header.GetExtension<TransportSequenceNumber>(&seqnum);
-    if (seqnum != logged_header.extension.transportSequenceNumber)
-      return false;
+    ASSERT_TRUE(original_header.GetExtension<TransportSequenceNumber>(&seqnum));
+    EXPECT_EQ(seqnum, logged_header.extension.transportSequenceNumber);
   }
 
   // AudioLevel header extension.
-  if (original_header.HasExtension<AudioLevel>() !=
-      logged_header.extension.hasAudioLevel)
-    return false;
+  ASSERT_EQ(original_header.HasExtension<AudioLevel>(),
+            logged_header.extension.hasAudioLevel);
   if (logged_header.extension.hasAudioLevel) {
     bool voice_activity;
     uint8_t audio_level;
-    original_header.GetExtension<AudioLevel>(&voice_activity, &audio_level);
-    if (voice_activity != logged_header.extension.voiceActivity)
-      return false;
-    if (audio_level != logged_header.extension.audioLevel)
-      return false;
+    ASSERT_TRUE(original_header.GetExtension<AudioLevel>(&voice_activity,
+                                                         &audio_level));
+    EXPECT_EQ(voice_activity, logged_header.extension.voiceActivity);
+    EXPECT_EQ(audio_level, logged_header.extension.audioLevel);
   }
 
   // VideoOrientation header extension.
-  if (original_header.HasExtension<VideoOrientation>() !=
-      logged_header.extension.hasVideoRotation)
-    return false;
+  ASSERT_EQ(original_header.HasExtension<VideoOrientation>(),
+            logged_header.extension.hasVideoRotation);
   if (logged_header.extension.hasVideoRotation) {
     uint8_t rotation;
-    original_header.GetExtension<VideoOrientation>(&rotation);
-    if (ConvertCVOByteToVideoRotation(rotation) !=
-        logged_header.extension.videoRotation)
-      return false;
+    ASSERT_TRUE(original_header.GetExtension<VideoOrientation>(&rotation));
+    EXPECT_EQ(ConvertCVOByteToVideoRotation(rotation),
+              logged_header.extension.videoRotation);
   }
-
-  return true;
 }
 
-bool VerifyLoggedRtpPacketIncoming(
+void EventVerifier::VerifyLoggedRtpPacketIncoming(
     const RtcEventRtpPacketIncoming& original_event,
-    const LoggedRtpPacketIncoming& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedRtpPacketIncoming& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.header_.headers_size() != logged_event.rtp.header_length)
-    return false;
+  EXPECT_EQ(original_event.header().headers_size(),
+            logged_event.rtp.header_length);
 
-  if (original_event.packet_length_ != logged_event.rtp.total_length)
-    return false;
+  EXPECT_EQ(original_event.packet_length(), logged_event.rtp.total_length);
 
-  if ((original_event.header_.data()[0] & 0x20) != 0 &&  // has padding
-      original_event.packet_length_ - original_event.header_.headers_size() !=
-          logged_event.rtp.header.paddingLength) {
-    // Currently, RTC eventlog encoder-parser can only maintain padding length
-    // if packet is full padding.
-    // TODO(webrtc:9730): Change the condition to something like
-    // original_event.padding_length_ != logged_event.rtp.header.paddingLength.
-    return false;
-  }
+  // Currently, RTC eventlog encoder-parser can only maintain padding length
+  // if packet is full padding.
+  EXPECT_EQ(original_event.padding_length(),
+            logged_event.rtp.header.paddingLength);
 
-  if (!VerifyLoggedRtpHeader(original_event.header_, logged_event.rtp.header))
-    return false;
-
-  return true;
+  VerifyLoggedRtpHeader(original_event.header(), logged_event.rtp.header);
 }
 
-bool VerifyLoggedRtpPacketOutgoing(
+void EventVerifier::VerifyLoggedRtpPacketOutgoing(
     const RtcEventRtpPacketOutgoing& original_event,
-    const LoggedRtpPacketOutgoing& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedRtpPacketOutgoing& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.header_.headers_size() != logged_event.rtp.header_length)
-    return false;
+  EXPECT_EQ(original_event.header().headers_size(),
+            logged_event.rtp.header_length);
 
-  if (original_event.packet_length_ != logged_event.rtp.total_length)
-    return false;
+  EXPECT_EQ(original_event.packet_length(), logged_event.rtp.total_length);
 
-  if ((original_event.header_.data()[0] & 0x20) != 0 &&  // has padding
-      original_event.packet_length_ - original_event.header_.headers_size() !=
-          logged_event.rtp.header.paddingLength) {
-    // Currently, RTC eventlog encoder-parser can only maintain padding length
-    // if packet is full padding.
-    // TODO(webrtc:9730): Change the condition to something like
-    // original_event.padding_length_ != logged_event.rtp.header.paddingLength.
-    return false;
-  }
+  // Currently, RTC eventlog encoder-parser can only maintain padding length
+  // if packet is full padding.
+  EXPECT_EQ(original_event.padding_length(),
+            logged_event.rtp.header.paddingLength);
 
   // TODO(terelius): Probe cluster ID isn't parsed, used or tested. Unless
   // someone has a strong reason to keep it, it'll be removed.
 
-  if (!VerifyLoggedRtpHeader(original_event.header_, logged_event.rtp.header))
-    return false;
-
-  return true;
+  VerifyLoggedRtpHeader(original_event.header(), logged_event.rtp.header);
 }
 
-bool VerifyLoggedRtcpPacketIncoming(
+void EventVerifier::VerifyLoggedRtcpPacketIncoming(
     const RtcEventRtcpPacketIncoming& original_event,
-    const LoggedRtcpPacketIncoming& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedRtcpPacketIncoming& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.packet_.size() != logged_event.rtcp.raw_data.size())
-    return false;
-  if (memcmp(original_event.packet_.data(), logged_event.rtcp.raw_data.data(),
-             original_event.packet_.size()) != 0) {
-    return false;
-  }
-  return true;
+  ASSERT_EQ(original_event.packet().size(), logged_event.rtcp.raw_data.size());
+  EXPECT_EQ(
+      memcmp(original_event.packet().data(), logged_event.rtcp.raw_data.data(),
+             original_event.packet().size()),
+      0);
 }
 
-bool VerifyLoggedRtcpPacketOutgoing(
+void EventVerifier::VerifyLoggedRtcpPacketOutgoing(
     const RtcEventRtcpPacketOutgoing& original_event,
-    const LoggedRtcpPacketOutgoing& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedRtcpPacketOutgoing& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
 
-  if (original_event.packet_.size() != logged_event.rtcp.raw_data.size())
-    return false;
-  if (memcmp(original_event.packet_.data(), logged_event.rtcp.raw_data.data(),
-             original_event.packet_.size()) != 0) {
-    return false;
+  ASSERT_EQ(original_event.packet().size(), logged_event.rtcp.raw_data.size());
+  EXPECT_EQ(
+      memcmp(original_event.packet().data(), logged_event.rtcp.raw_data.data(),
+             original_event.packet().size()),
+      0);
+}
+
+void EventVerifier::VerifyLoggedStartEvent(
+    int64_t start_time_us,
+    int64_t utc_start_time_us,
+    const LoggedStartEvent& logged_event) const {
+  EXPECT_EQ(start_time_us / 1000, logged_event.log_time_ms());
+  if (encoding_type_ == RtcEventLog::EncodingType::NewFormat) {
+    EXPECT_EQ(utc_start_time_us / 1000, logged_event.utc_start_time_ms);
   }
-  return true;
 }
 
-bool VerifyLoggedStartEvent(int64_t start_time_us,
-                            const LoggedStartEvent& logged_event) {
-  if (start_time_us != logged_event.log_time_us())
-    return false;
-  return true;
+void EventVerifier::VerifyLoggedStopEvent(
+    int64_t stop_time_us,
+    const LoggedStopEvent& logged_event) const {
+  EXPECT_EQ(stop_time_us / 1000, logged_event.log_time_ms());
 }
 
-bool VerifyLoggedStopEvent(int64_t stop_time_us,
-                           const LoggedStopEvent& logged_event) {
-  if (stop_time_us != logged_event.log_time_us())
-    return false;
-  return true;
+void VerifyLoggedStreamConfig(const rtclog::StreamConfig& original_config,
+                              const rtclog::StreamConfig& logged_config) {
+  EXPECT_EQ(original_config.local_ssrc, logged_config.local_ssrc);
+  EXPECT_EQ(original_config.remote_ssrc, logged_config.remote_ssrc);
+  EXPECT_EQ(original_config.rtx_ssrc, logged_config.rtx_ssrc);
+
+  EXPECT_EQ(original_config.rtp_extensions.size(),
+            logged_config.rtp_extensions.size());
+  size_t recognized_extensions = 0;
+  for (size_t i = 0; i < kMaxNumExtensions; i++) {
+    auto original_id =
+        GetExtensionId(original_config.rtp_extensions, kExtensions[i].name);
+    auto logged_id =
+        GetExtensionId(logged_config.rtp_extensions, kExtensions[i].name);
+    EXPECT_EQ(original_id, logged_id)
+        << "IDs for " << kExtensions[i].name << " don't match. Original ID "
+        << original_id.value_or(-1) << ". Parsed ID " << logged_id.value_or(-1)
+        << ".";
+    if (original_id) {
+      recognized_extensions++;
+    }
+  }
+  EXPECT_EQ(recognized_extensions, original_config.rtp_extensions.size());
 }
 
-bool VerifyLoggedAudioRecvConfig(
+void EventVerifier::VerifyLoggedAudioRecvConfig(
     const RtcEventAudioReceiveStreamConfig& original_event,
-    const LoggedAudioRecvConfig& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (*original_event.config_ != logged_event.config)
-    return false;
-  return true;
+    const LoggedAudioRecvConfig& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  VerifyLoggedStreamConfig(original_event.config(), logged_event.config);
 }
 
-bool VerifyLoggedAudioSendConfig(
+void EventVerifier::VerifyLoggedAudioSendConfig(
     const RtcEventAudioSendStreamConfig& original_event,
-    const LoggedAudioSendConfig& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (*original_event.config_ != logged_event.config)
-    return false;
-  return true;
+    const LoggedAudioSendConfig& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  VerifyLoggedStreamConfig(original_event.config(), logged_event.config);
 }
 
-bool VerifyLoggedVideoRecvConfig(
+void EventVerifier::VerifyLoggedVideoRecvConfig(
     const RtcEventVideoReceiveStreamConfig& original_event,
-    const LoggedVideoRecvConfig& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
-  if (*original_event.config_ != logged_event.config)
-    return false;
-  return true;
+    const LoggedVideoRecvConfig& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
+  VerifyLoggedStreamConfig(original_event.config(), logged_event.config);
 }
 
-bool VerifyLoggedVideoSendConfig(
+void EventVerifier::VerifyLoggedVideoSendConfig(
     const RtcEventVideoSendStreamConfig& original_event,
-    const LoggedVideoSendConfig& logged_event) {
-  if (original_event.timestamp_us_ != logged_event.log_time_us())
-    return false;
+    const LoggedVideoSendConfig& logged_event) const {
+  EXPECT_EQ(original_event.timestamp_ms(), logged_event.log_time_ms());
   // TODO(terelius): In the past, we allowed storing multiple RtcStreamConfigs
   // in the same RtcEventVideoSendStreamConfig. Look into whether we should drop
   // backwards compatibility in the parser.
-  if (logged_event.configs.size() != 1)
-    return false;
-  if (*original_event.config_ != logged_event.configs[0])
-    return false;
-  return true;
+  ASSERT_EQ(logged_event.configs.size(), 1u);
+  VerifyLoggedStreamConfig(original_event.config(), logged_event.configs[0]);
 }
 
 }  // namespace test

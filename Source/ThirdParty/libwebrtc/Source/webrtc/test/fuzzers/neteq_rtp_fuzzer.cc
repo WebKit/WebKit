@@ -146,6 +146,9 @@ void FuzzOneInputTest(const uint8_t* data, size_t size) {
 }  // namespace test
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 100000) {
+    return;
+  }
   test::FuzzOneInputTest(data, size);
 }
 

@@ -10,6 +10,7 @@
 
 #include "modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.h"
 
+#include <memory>
 #include <utility>
 
 #include "modules/audio_coding/codecs/ilbc/ilbc.h"

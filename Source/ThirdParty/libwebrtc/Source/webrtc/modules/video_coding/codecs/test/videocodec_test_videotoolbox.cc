@@ -28,8 +28,6 @@ VideoCodecTestFixture::Config CreateConfig() {
   config.filename = "foreman_cif";
   config.filepath = ResourcePath(config.filename, "yuv");
   config.num_frames = kForemanNumFrames;
-  config.hw_encoder = true;
-  config.hw_decoder = true;
   return config;
 }
 

@@ -71,8 +71,7 @@ class PortAllocatorTest : public testing::Test, public sigslot::has_slots<> {
 
   int GetAllPooledSessionsReturnCount() {
     int count = 0;
-    while (GetPooledSession()) {
-      TakePooledSession();
+    while (TakePooledSession() != nullptr) {
       ++count;
     }
     return count;
@@ -274,4 +273,30 @@ TEST_F(PortAllocatorTest, DiscardCandidatePool) {
   SetConfigurationWithPoolSize(1);
   allocator_->DiscardCandidatePool();
   EXPECT_EQ(0, GetAllPooledSessionsReturnCount());
+}
+
+TEST_F(PortAllocatorTest, RestrictIceCredentialsChange) {
+  SetConfigurationWithPoolSize(1);
+  EXPECT_EQ(1, GetAllPooledSessionsReturnCount());
+  allocator_->DiscardCandidatePool();
+
+  // Only return pooled sessions with the ice credentials that
+  // match those requested in TakePooledSession().
+  allocator_->set_restrict_ice_credentials_change(true);
+  SetConfigurationWithPoolSize(1);
+  EXPECT_EQ(0, GetAllPooledSessionsReturnCount());
+  allocator_->DiscardCandidatePool();
+
+  SetConfigurationWithPoolSize(1);
+  auto credentials = allocator_->GetPooledIceCredentials();
+  ASSERT_EQ(1u, credentials.size());
+  EXPECT_EQ(nullptr,
+            allocator_->TakePooledSession(kContentName, 0, kIceUfrag, kIcePwd));
+  EXPECT_NE(nullptr,
+            allocator_->TakePooledSession(kContentName, 0, credentials[0].ufrag,
+                                          credentials[0].pwd));
+  EXPECT_EQ(nullptr,
+            allocator_->TakePooledSession(kContentName, 0, credentials[0].ufrag,
+                                          credentials[0].pwd));
+  allocator_->DiscardCandidatePool();
 }

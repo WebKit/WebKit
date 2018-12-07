@@ -10,12 +10,23 @@
 #ifndef CALL_RECEIVE_TIME_CALCULATOR_H_
 #define CALL_RECEIVE_TIME_CALCULATOR_H_
 
-#include <stdint.h>
 #include <memory>
 
-#include "absl/types/optional.h"
+#include "rtc_base/experiments/field_trial_units.h"
 
 namespace webrtc {
+
+struct ReceiveTimeCalculatorConfig {
+  ReceiveTimeCalculatorConfig();
+  ReceiveTimeCalculatorConfig(const ReceiveTimeCalculatorConfig&);
+  ReceiveTimeCalculatorConfig& operator=(const ReceiveTimeCalculatorConfig&) =
+      default;
+  ~ReceiveTimeCalculatorConfig();
+  FieldTrialParameter<TimeDelta> max_packet_time_repair;
+  FieldTrialParameter<TimeDelta> stall_threshold;
+  FieldTrialParameter<TimeDelta> tolerance;
+  FieldTrialParameter<TimeDelta> max_stall;
+};
 
 // The receive time calculator serves the purpose of combining packet time
 // stamps with a safely incremental clock. This assumes that the packet time
@@ -28,20 +39,20 @@ namespace webrtc {
 class ReceiveTimeCalculator {
  public:
   static std::unique_ptr<ReceiveTimeCalculator> CreateFromFieldTrial();
-  // The min delta is used to correct for jumps backwards in time, to allow some
-  // packet reordering a small negative value is appropriate to use. The max
-  // delta difference is used as margin when detecting when packet time
-  // increases more than the safe clock. This should be larger than the largest
-  // expected sysmtem induced delay in the safe clock timestamp.
-  ReceiveTimeCalculator(int64_t min_delta_ms, int64_t max_delta_diff_ms);
-  int64_t ReconcileReceiveTimes(int64_t packet_time_us_, int64_t safe_time_us_);
+  ReceiveTimeCalculator();
+  int64_t ReconcileReceiveTimes(int64_t packet_time_us_,
+                                int64_t system_time_us_,
+                                int64_t safe_time_us_);
 
  private:
-  const int64_t min_delta_us_;
-  const int64_t max_delta_diff_us_;
-  absl::optional<int64_t> receive_time_offset_us_;
-  int64_t last_packet_time_us_ = 0;
-  int64_t last_safe_time_us_ = 0;
+  int64_t last_corrected_time_us_ = -1;
+  int64_t last_packet_time_us_ = -1;
+  int64_t last_system_time_us_ = -1;
+  int64_t last_safe_time_us_ = -1;
+  int64_t total_system_time_passed_us_ = 0;
+  int64_t static_clock_offset_us_ = 0;
+  int64_t small_reset_during_stall_ = false;
+  ReceiveTimeCalculatorConfig config_;
 };
 }  // namespace webrtc
 #endif  // CALL_RECEIVE_TIME_CALCULATOR_H_

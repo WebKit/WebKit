@@ -28,8 +28,8 @@ constexpr int kSampleRate = 48000;
 AudioEndToEndTest::AudioEndToEndTest()
     : EndToEndTest(CallTest::kDefaultTimeoutMs) {}
 
-DefaultNetworkSimulationConfig AudioEndToEndTest::GetNetworkPipeConfig() const {
-  return DefaultNetworkSimulationConfig();
+BuiltInNetworkBehaviorConfig AudioEndToEndTest::GetNetworkPipeConfig() const {
+  return BuiltInNetworkBehaviorConfig();
 }
 
 size_t AudioEndToEndTest::GetNumVideoStreams() const {

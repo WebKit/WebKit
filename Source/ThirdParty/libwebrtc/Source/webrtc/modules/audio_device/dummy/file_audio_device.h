@@ -26,7 +26,6 @@ class PlatformThread;
 }  // namespace rtc
 
 namespace webrtc {
-class EventWrapper;
 
 // This is a fake audio device which plays audio from a file as its microphone
 // and plays out into a file.

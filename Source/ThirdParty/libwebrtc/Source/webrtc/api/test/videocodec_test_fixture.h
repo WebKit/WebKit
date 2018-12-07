@@ -123,10 +123,6 @@ class VideoCodecTestFixture {
           webrtc::H264PacketizationMode::NonInterleaved;
     } h264_codec_settings;
 
-    // Should hardware accelerated codecs be used?
-    bool hw_encoder = false;
-    bool hw_decoder = false;
-
     // Custom checker that will be called for each frame.
     const EncodedFrameChecker* encoded_frame_checker = nullptr;
 

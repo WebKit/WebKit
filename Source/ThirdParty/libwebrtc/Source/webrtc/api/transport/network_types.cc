@@ -38,7 +38,7 @@ std::vector<PacketResult> TransportPacketsFeedback::ReceivedWithSendInfo()
     const {
   std::vector<PacketResult> res;
   for (const PacketResult& fb : packet_feedbacks) {
-    if (fb.receive_time.IsFinite() && fb.sent_packet.has_value()) {
+    if (fb.receive_time.IsFinite()) {
       res.push_back(fb);
     }
   }
@@ -48,7 +48,7 @@ std::vector<PacketResult> TransportPacketsFeedback::ReceivedWithSendInfo()
 std::vector<PacketResult> TransportPacketsFeedback::LostWithSendInfo() const {
   std::vector<PacketResult> res;
   for (const PacketResult& fb : packet_feedbacks) {
-    if (fb.receive_time.IsPlusInfinity() && fb.sent_packet.has_value()) {
+    if (fb.receive_time.IsPlusInfinity()) {
       res.push_back(fb);
     }
   }

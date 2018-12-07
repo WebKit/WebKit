@@ -33,6 +33,7 @@ class SimulcastTestFixture {
   virtual void TestSpatioTemporalLayers333PatternEncoder() = 0;
   virtual void TestSpatioTemporalLayers321PatternEncoder() = 0;
   virtual void TestStrideEncodeDecode() = 0;
+  virtual void TestDecodeWidthHeightSet() = 0;
 };
 
 }  // namespace test

@@ -10,13 +10,12 @@
 
 #include "rtc_base/sslcertificate.h"
 
-#include <ctime>
+#include <algorithm>
 #include <string>
 #include <utility>
 
 #include "absl/memory/memory.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/opensslcertificate.h"
 #include "rtc_base/sslfingerprint.h"
 #include "rtc_base/third_party/base64/base64.h"
@@ -31,7 +30,7 @@ SSLCertificateStats::SSLCertificateStats(
     std::string&& fingerprint,
     std::string&& fingerprint_algorithm,
     std::string&& base64_certificate,
-    std::unique_ptr<SSLCertificateStats>&& issuer)
+    std::unique_ptr<SSLCertificateStats> issuer)
     : fingerprint(std::move(fingerprint)),
       fingerprint_algorithm(std::move(fingerprint_algorithm)),
       base64_certificate(std::move(base64_certificate)),
@@ -55,8 +54,8 @@ std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
   // |SSLCertificate::GetSignatureDigestAlgorithm| is not supported by the
   // implementation of |SSLCertificate::ComputeDigest|. This currently happens
   // with MD5- and SHA-224-signed certificates when linked to libNSS.
-  std::unique_ptr<SSLFingerprint> ssl_fingerprint(
-      SSLFingerprint::Create(digest_algorithm, this));
+  std::unique_ptr<SSLFingerprint> ssl_fingerprint =
+      SSLFingerprint::Create(digest_algorithm, *this);
   if (!ssl_fingerprint)
     return nullptr;
   std::string fingerprint = ssl_fingerprint->GetRfc4572Fingerprint();
@@ -71,49 +70,30 @@ std::unique_ptr<SSLCertificateStats> SSLCertificate::GetStats() const {
                                                 std::move(der_base64), nullptr);
 }
 
-std::unique_ptr<SSLCertificate> SSLCertificate::GetUniqueReference() const {
-  return absl::WrapUnique(GetReference());
-}
-
 //////////////////////////////////////////////////////////////////////
 // SSLCertChain
 //////////////////////////////////////////////////////////////////////
 
+SSLCertChain::SSLCertChain(std::unique_ptr<SSLCertificate> single_cert) {
+  certs_.push_back(std::move(single_cert));
+}
+
 SSLCertChain::SSLCertChain(std::vector<std::unique_ptr<SSLCertificate>> certs)
     : certs_(std::move(certs)) {}
-
-SSLCertChain::SSLCertChain(const std::vector<SSLCertificate*>& certs) {
-  RTC_DCHECK(!certs.empty());
-  certs_.resize(certs.size());
-  std::transform(
-      certs.begin(), certs.end(), certs_.begin(),
-      [](const SSLCertificate* cert) -> std::unique_ptr<SSLCertificate> {
-        return cert->GetUniqueReference();
-      });
-}
-
-SSLCertChain::SSLCertChain(const SSLCertificate* cert) {
-  certs_.push_back(cert->GetUniqueReference());
-}
 
 SSLCertChain::SSLCertChain(SSLCertChain&& rhs) = default;
 
 SSLCertChain& SSLCertChain::operator=(SSLCertChain&&) = default;
 
-SSLCertChain::~SSLCertChain() {}
+SSLCertChain::~SSLCertChain() = default;
 
-SSLCertChain* SSLCertChain::Copy() const {
+std::unique_ptr<SSLCertChain> SSLCertChain::Clone() const {
   std::vector<std::unique_ptr<SSLCertificate>> new_certs(certs_.size());
-  std::transform(certs_.begin(), certs_.end(), new_certs.begin(),
-                 [](const std::unique_ptr<SSLCertificate>& cert)
-                     -> std::unique_ptr<SSLCertificate> {
-                   return cert->GetUniqueReference();
-                 });
-  return new SSLCertChain(std::move(new_certs));
-}
-
-std::unique_ptr<SSLCertChain> SSLCertChain::UniqueCopy() const {
-  return absl::WrapUnique(Copy());
+  std::transform(
+      certs_.begin(), certs_.end(), new_certs.begin(),
+      [](const std::unique_ptr<SSLCertificate>& cert)
+          -> std::unique_ptr<SSLCertificate> { return cert->Clone(); });
+  return absl::make_unique<SSLCertChain>(std::move(new_certs));
 }
 
 std::unique_ptr<SSLCertificateStats> SSLCertChain::GetStats() const {
@@ -135,7 +115,8 @@ std::unique_ptr<SSLCertificateStats> SSLCertChain::GetStats() const {
 }
 
 // static
-SSLCertificate* SSLCertificate::FromPEMString(const std::string& pem_string) {
+std::unique_ptr<SSLCertificate> SSLCertificate::FromPEMString(
+    const std::string& pem_string) {
   return OpenSSLCertificate::FromPEMString(pem_string);
 }
 

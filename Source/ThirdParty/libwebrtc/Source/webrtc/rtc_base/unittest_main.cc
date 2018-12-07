@@ -22,7 +22,6 @@
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/field_trial.h"
-#include "test/testsupport/fileutils.h"
 
 #if defined(WEBRTC_WIN)
 #include "rtc_base/win32socketinit.h"
@@ -32,19 +31,20 @@
 #include "test/ios/test_support.h"
 #endif
 
-DEFINE_bool(help, false, "prints this message");
-DEFINE_string(log, "", "logging options to use");
-DEFINE_string(
+WEBRTC_DEFINE_bool(help, false, "prints this message");
+WEBRTC_DEFINE_string(log, "", "logging options to use");
+WEBRTC_DEFINE_string(
     force_fieldtrials,
     "",
     "Field trials control experimental feature code which can be forced. "
     "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enable/"
     " will assign the group Enable to field trial WebRTC-FooFeature.");
 #if defined(WEBRTC_WIN)
-DEFINE_int(crt_break_alloc, -1, "memory allocation to break on");
-DEFINE_bool(default_error_handlers,
-            false,
-            "leave the default exception/dbg handler functions in place");
+WEBRTC_DEFINE_int(crt_break_alloc, -1, "memory allocation to break on");
+WEBRTC_DEFINE_bool(
+    default_error_handlers,
+    false,
+    "leave the default exception/dbg handler functions in place");
 
 void TestInvalidParameterHandler(const wchar_t* expression,
                                  const wchar_t* function,
@@ -81,7 +81,6 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  webrtc::test::SetExecutablePath(argv[0]);
   webrtc::test::ValidateFieldTrialsStringOrDie(FLAG_force_fieldtrials);
   // InitFieldTrialsFromString stores the char*, so the char array must outlive
   // the application.
@@ -118,7 +117,7 @@ int main(int argc, char* argv[]) {
 
   // Initialize SSL which are used by several tests.
   rtc::InitializeSSL();
-  rtc::SSLStreamAdapter::enable_time_callback_for_testing();
+  rtc::SSLStreamAdapter::EnableTimeCallbackForTesting();
 
 #if defined(WEBRTC_IOS)
   rtc::test::InitTestSuite(RUN_ALL_TESTS, argc, argv, false);
@@ -136,6 +135,14 @@ int main(int argc, char* argv[]) {
   // uninitialized.
   if (!FLAG_default_error_handlers)
     _CrtSetReportHook2(_CRT_RPTHOOK_REMOVE, TestCrtReportHandler);
+#endif
+
+#if defined(ADDRESS_SANITIZER) || defined(LEAK_SANITIZER) ||  \
+    defined(MEMORY_SANITIZER) || defined(THREAD_SANITIZER) || \
+    defined(UNDEFINED_SANITIZER)
+  // We want the test flagged as failed only for sanitizer defects,
+  // in which case the sanitizer will override exit code with 66.
+  return 0;
 #endif
 
   return res;

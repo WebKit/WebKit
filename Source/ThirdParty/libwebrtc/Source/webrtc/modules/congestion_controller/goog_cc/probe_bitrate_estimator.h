@@ -28,7 +28,7 @@ class ProbeBitrateEstimator {
   // Returns the estimated bitrate if the probe completes a valid cluster.
   int HandleProbeAndEstimateBitrate(const PacketFeedback& packet_feedback);
 
-  absl::optional<int> FetchAndResetLastEstimatedBitrateBps();
+  absl::optional<DataRate> FetchAndResetLastEstimatedBitrate();
 
  private:
   struct AggregatedCluster {

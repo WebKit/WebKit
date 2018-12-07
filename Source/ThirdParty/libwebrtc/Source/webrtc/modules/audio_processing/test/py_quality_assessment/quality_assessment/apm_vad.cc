@@ -24,9 +24,9 @@ constexpr int kMaxSampleRate = 48000;
 constexpr size_t kMaxFrameLen =
     kAudioFrameLengthMilliseconds * kMaxSampleRate / 1000;
 
-DEFINE_string(i, "", "Input wav file");
-DEFINE_string(o_probs, "", "VAD probabilities output file");
-DEFINE_string(o_rms, "", "VAD output file");
+WEBRTC_DEFINE_string(i, "", "Input wav file");
+WEBRTC_DEFINE_string(o_probs, "", "VAD probabilities output file");
+WEBRTC_DEFINE_string(o_rms, "", "VAD output file");
 
 int main(int argc, char* argv[]) {
   if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true))

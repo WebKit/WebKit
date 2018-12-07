@@ -17,7 +17,6 @@
 #include "pc/mediasession.h"
 #include "pc/webrtcsdp.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/stringencode.h"
 
 using cricket::SessionDescription;
 
@@ -93,36 +92,8 @@ void UpdateConnectionAddress(
 
 }  // namespace
 
-const char SessionDescriptionInterface::kOffer[] = "offer";
-const char SessionDescriptionInterface::kPrAnswer[] = "pranswer";
-const char SessionDescriptionInterface::kAnswer[] = "answer";
-
 const int JsepSessionDescription::kDefaultVideoCodecId = 100;
 const char JsepSessionDescription::kDefaultVideoCodecName[] = "VP8";
-
-const char* SdpTypeToString(SdpType type) {
-  switch (type) {
-    case SdpType::kOffer:
-      return SessionDescriptionInterface::kOffer;
-    case SdpType::kPrAnswer:
-      return SessionDescriptionInterface::kPrAnswer;
-    case SdpType::kAnswer:
-      return SessionDescriptionInterface::kAnswer;
-  }
-  return "";
-}
-
-absl::optional<SdpType> SdpTypeFromString(const std::string& type_str) {
-  if (type_str == SessionDescriptionInterface::kOffer) {
-    return SdpType::kOffer;
-  } else if (type_str == SessionDescriptionInterface::kPrAnswer) {
-    return SdpType::kPrAnswer;
-  } else if (type_str == SessionDescriptionInterface::kAnswer) {
-    return SdpType::kAnswer;
-  } else {
-    return absl::nullopt;
-  }
-}
 
 // TODO(steveanton): Remove this default implementation once Chromium has been
 // updated.

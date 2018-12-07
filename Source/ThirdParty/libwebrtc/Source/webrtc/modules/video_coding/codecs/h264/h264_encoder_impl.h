@@ -70,12 +70,7 @@ class H264EncoderImpl : public H264Encoder {
                  const CodecSpecificInfo* codec_specific_info,
                  const std::vector<FrameType>* frame_types) override;
 
-  const char* ImplementationName() const override;
-
-  VideoEncoder::ScalingSettings GetScalingSettings() const override;
-
-  // Unsupported / Do nothing.
-  int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
+  EncoderInfo GetEncoderInfo() const override;
 
   // Exposed for testing.
   H264PacketizationMode PacketizationModeForTesting() const {

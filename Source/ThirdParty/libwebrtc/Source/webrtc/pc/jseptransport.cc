@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>  // for std::pair
 
-#include "absl/memory/memory.h"
 #include "api/candidate.h"
 #include "p2p/base/p2pconstants.h"
 #include "p2p/base/p2ptransportchannel.h"
@@ -94,11 +93,13 @@ JsepTransport::JsepTransport(
     std::unique_ptr<webrtc::SrtpTransport> sdes_transport,
     std::unique_ptr<webrtc::DtlsSrtpTransport> dtls_srtp_transport,
     std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
-    std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport)
+    std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport,
+    std::unique_ptr<webrtc::MediaTransportInterface> media_transport)
     : mid_(mid),
       local_certificate_(local_certificate),
       rtp_dtls_transport_(std::move(rtp_dtls_transport)),
-      rtcp_dtls_transport_(std::move(rtcp_dtls_transport)) {
+      rtcp_dtls_transport_(std::move(rtcp_dtls_transport)),
+      media_transport_(std::move(media_transport)) {
   RTC_DCHECK(rtp_dtls_transport_);
   if (unencrypted_rtp_transport) {
     RTC_DCHECK(!sdes_transport);
@@ -114,9 +115,17 @@ JsepTransport::JsepTransport(
     RTC_DCHECK(!sdes_transport);
     dtls_srtp_transport_ = std::move(dtls_srtp_transport);
   }
+
+  if (media_transport_) {
+    media_transport_->SetMediaTransportStateCallback(this);
+  }
 }
 
-JsepTransport::~JsepTransport() {}
+JsepTransport::~JsepTransport() {
+  if (media_transport_) {
+    media_transport_->SetMediaTransportStateCallback(nullptr);
+  }
+}
 
 webrtc::RTCError JsepTransport::SetLocalJsepTransportDescription(
     const JsepTransportDescription& jsep_description,
@@ -315,8 +324,9 @@ webrtc::RTCError JsepTransport::VerifyCertificateFingerprint(
     return webrtc::RTCError(webrtc::RTCErrorType::INVALID_PARAMETER,
                             "Fingerprint provided but no identity available.");
   }
-  std::unique_ptr<rtc::SSLFingerprint> fp_tmp(rtc::SSLFingerprint::Create(
-      fingerprint->algorithm, certificate->identity()));
+  std::unique_ptr<rtc::SSLFingerprint> fp_tmp =
+      rtc::SSLFingerprint::CreateUnique(fingerprint->algorithm,
+                                        *certificate->identity());
   RTC_DCHECK(fp_tmp.get() != NULL);
   if (*fp_tmp == *fingerprint) {
     return webrtc::RTCError::OK();
@@ -505,7 +515,8 @@ webrtc::RTCError JsepTransport::NegotiateAndSetDtlsParameters(
         "Local fingerprint supplied when caller didn't offer DTLS.");
   } else {
     // We are not doing DTLS
-    remote_fingerprint = absl::make_unique<rtc::SSLFingerprint>("", nullptr, 0);
+    remote_fingerprint = absl::make_unique<rtc::SSLFingerprint>(
+        "", rtc::ArrayView<const uint8_t>());
   }
   // Now that we have negotiated everything, push it downward.
   // Note that we cache the result so that if we have race conditions
@@ -631,6 +642,14 @@ bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
   }
   stats->channel_stats.push_back(substats);
   return true;
+}
+
+void JsepTransport::OnStateChanged(webrtc::MediaTransportState state) {
+  // TODO(bugs.webrtc.org/9719) This method currently fires on the network
+  // thread, but media transport does not make such guarantees. We need to make
+  // sure this callback is guaranteed to be executed on the network thread.
+  media_transport_state_ = state;
+  SignalMediaTransportStateChanged();
 }
 
 }  // namespace cricket

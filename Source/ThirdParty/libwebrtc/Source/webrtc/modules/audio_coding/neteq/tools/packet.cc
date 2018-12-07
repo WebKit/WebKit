@@ -49,6 +49,20 @@ Packet::Packet(uint8_t* packet_memory,
   valid_header_ = ParseHeader(parser);
 }
 
+Packet::Packet(const RTPHeader& header,
+               size_t virtual_packet_length_bytes,
+               size_t virtual_payload_length_bytes,
+               double time_ms)
+    : header_(header),
+      payload_memory_(),
+      payload_(NULL),
+      packet_length_bytes_(0),
+      payload_length_bytes_(0),
+      virtual_packet_length_bytes_(virtual_packet_length_bytes),
+      virtual_payload_length_bytes_(virtual_payload_length_bytes),
+      time_ms_(time_ms),
+      valid_header_(true) {}
+
 Packet::Packet(uint8_t* packet_memory, size_t allocated_bytes, double time_ms)
     : payload_memory_(packet_memory),
       payload_(NULL),

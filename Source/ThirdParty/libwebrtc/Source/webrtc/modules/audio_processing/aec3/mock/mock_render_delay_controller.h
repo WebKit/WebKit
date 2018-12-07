@@ -25,7 +25,7 @@ class MockRenderDelayController : public RenderDelayController {
   MockRenderDelayController();
   virtual ~MockRenderDelayController();
 
-  MOCK_METHOD0(Reset, void());
+  MOCK_METHOD1(Reset, void(bool reset_delay_statistics));
   MOCK_METHOD0(LogRenderCall, void());
   MOCK_METHOD4(GetDelay,
                absl::optional<DelayEstimate>(
@@ -33,6 +33,7 @@ class MockRenderDelayController : public RenderDelayController {
                    size_t render_delay_buffer_delay,
                    const absl::optional<int>& echo_remover_delay,
                    rtc::ArrayView<const float> capture));
+  MOCK_CONST_METHOD0(HasClockdrift, bool());
 };
 
 }  // namespace test

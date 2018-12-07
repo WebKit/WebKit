@@ -11,6 +11,8 @@
 #ifndef API_VIDEO_VIDEO_BITRATE_ALLOCATION_H_
 #define API_VIDEO_VIDEO_BITRATE_ALLOCATION_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <limits>
 #include <string>
 #include <vector>

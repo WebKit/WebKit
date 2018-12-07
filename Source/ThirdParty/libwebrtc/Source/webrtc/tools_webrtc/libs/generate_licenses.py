@@ -36,7 +36,6 @@ LIB_TO_LICENSES_DICT = {
     'bazel': ['third_party/bazel/LICENSE'],
     'boringssl': ['third_party/boringssl/src/LICENSE'],
     'errorprone': ['third_party/errorprone/LICENSE'],
-    'expat': ['third_party/expat/files/COPYING'],
     'fiat': ['third_party/boringssl/src/third_party/fiat/LICENSE'],
     'guava': ['third_party/guava/LICENSE'],
     'ijar': ['third_party/ijar/LICENSE'],

@@ -10,10 +10,12 @@
 
 #include "rtc_base/logsinks.h"
 
+#include <string.h>
 #include <cstdio>
 #include <string>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/stream.h"
 
 namespace rtc {
 

@@ -12,14 +12,17 @@
 #define RTC_BASE_RTCCERTIFICATE_H_
 
 #include <stdint.h>
-
 #include <memory>
+#include <string>
 
 #include "rtc_base/refcount.h"
 #include "rtc_base/scoped_ref_ptr.h"
-#include "rtc_base/sslidentity.h"
 
 namespace rtc {
+
+class SSLCertChain;
+class SSLCertificate;
+class SSLIdentity;
 
 // This class contains PEM strings of an RTCCertificate's private key and
 // certificate and acts as a text representation of RTCCertificate. Certificates
@@ -55,11 +58,15 @@ class RTCCertificate : public RefCountInterface {
   // Checks if the certificate has expired, where |now| is expressed in ms
   // relative to epoch, 1970-01-01T00:00:00Z.
   bool HasExpired(uint64_t now) const;
+
+  const SSLCertificate& GetSSLCertificate() const;
+  const SSLCertChain& GetSSLCertificateChain() const;
+
+  // Deprecated: TODO(benwright) - Remove once chromium is updated.
   const SSLCertificate& ssl_certificate() const;
-  const SSLCertChain& ssl_cert_chain() const;
 
   // TODO(hbos): If possible, remove once RTCCertificate and its
-  // ssl_certificate() is used in all relevant places. Should not pass around
+  // GetSSLCertificate() is used in all relevant places. Should not pass around
   // raw SSLIdentity* for the sake of accessing SSLIdentity::certificate().
   // However, some places might need SSLIdentity* for its public/private key...
   SSLIdentity* identity() const { return identity_.get(); }
@@ -77,7 +84,7 @@ class RTCCertificate : public RefCountInterface {
 
  private:
   // The SSLIdentity is the owner of the SSLCertificate. To protect our
-  // ssl_certificate() we take ownership of |identity_|.
+  // GetSSLCertificate() we take ownership of |identity_|.
   std::unique_ptr<SSLIdentity> identity_;
 };
 

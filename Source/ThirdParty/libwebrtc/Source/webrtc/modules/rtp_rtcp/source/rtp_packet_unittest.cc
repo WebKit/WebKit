@@ -19,6 +19,7 @@
 namespace webrtc {
 namespace {
 
+using ::testing::Each;
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 using ::testing::IsEmpty;
@@ -184,6 +185,52 @@ constexpr uint8_t kPacketWithLegacyTimingExtension[] = {
     0x04, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00};
 // clang-format on
+
+HdrMetadata CreateTestHdrMetadata() {
+  // Random but reasonable HDR metadata.
+  HdrMetadata hdr_metadata;
+  hdr_metadata.mastering_metadata.luminance_max = 2000.0;
+  hdr_metadata.mastering_metadata.luminance_min = 2.0001;
+  hdr_metadata.mastering_metadata.primary_r.x = 0.3003;
+  hdr_metadata.mastering_metadata.primary_r.y = 0.4004;
+  hdr_metadata.mastering_metadata.primary_g.x = 0.3201;
+  hdr_metadata.mastering_metadata.primary_g.y = 0.4604;
+  hdr_metadata.mastering_metadata.primary_b.x = 0.3409;
+  hdr_metadata.mastering_metadata.primary_b.y = 0.4907;
+  hdr_metadata.mastering_metadata.white_point.x = 0.4103;
+  hdr_metadata.mastering_metadata.white_point.y = 0.4806;
+  hdr_metadata.max_content_light_level = 2345;
+  hdr_metadata.max_frame_average_light_level = 1789;
+  return hdr_metadata;
+}
+
+ColorSpace CreateTestColorSpace(bool with_hdr_metadata) {
+  ColorSpace color_space(
+      ColorSpace::PrimaryID::kBT709, ColorSpace::TransferID::kGAMMA22,
+      ColorSpace::MatrixID::kSMPTE2085, ColorSpace::RangeID::kFull);
+  if (with_hdr_metadata) {
+    HdrMetadata hdr_metadata = CreateTestHdrMetadata();
+    color_space.set_hdr_metadata(&hdr_metadata);
+  }
+  return color_space;
+}
+
+void TestCreateAndParseColorSpaceExtension(bool with_hdr_metadata) {
+  // Create packet with extension.
+  RtpPacket::ExtensionManager extensions(/*extmap-allow-mixed=*/true);
+  extensions.Register<ColorSpaceExtension>(1);
+  RtpPacket packet(&extensions);
+  const ColorSpace kColorSpace = CreateTestColorSpace(with_hdr_metadata);
+  EXPECT_TRUE(packet.SetExtension<ColorSpaceExtension>(kColorSpace));
+  packet.SetPayloadSize(42);
+
+  // Read packet with the extension.
+  RtpPacketReceived parsed(&extensions);
+  EXPECT_TRUE(parsed.Parse(packet.Buffer()));
+  ColorSpace parsed_color_space;
+  EXPECT_TRUE(parsed.GetExtension<ColorSpaceExtension>(&parsed_color_space));
+  EXPECT_EQ(kColorSpace, parsed_color_space);
+}
 }  // namespace
 
 TEST(RtpPacketTest, CreateMinimum) {
@@ -225,8 +272,7 @@ TEST(RtpPacketTest, CreateWith2Extensions) {
 }
 
 TEST(RtpPacketTest, CreateWithTwoByteHeaderExtensionFirst) {
-  RtpPacketToSend::ExtensionManager extensions;
-  extensions.SetMixedOneTwoByteHeaderSupported(true);
+  RtpPacketToSend::ExtensionManager extensions(true);
   extensions.Register(kRtpExtensionTransmissionTimeOffset,
                       kTransmissionOffsetExtensionId);
   extensions.Register(kRtpExtensionAudioLevel, kAudioLevelExtensionId);
@@ -247,8 +293,7 @@ TEST(RtpPacketTest, CreateWithTwoByteHeaderExtensionFirst) {
 
 TEST(RtpPacketTest, CreateWithTwoByteHeaderExtensionLast) {
   // This test will trigger RtpPacket::PromoteToTwoByteHeaderExtension().
-  RtpPacketToSend::ExtensionManager extensions;
-  extensions.SetMixedOneTwoByteHeaderSupported(true);
+  RtpPacketToSend::ExtensionManager extensions(true);
   extensions.Register(kRtpExtensionTransmissionTimeOffset,
                       kTransmissionOffsetExtensionId);
   extensions.Register(kRtpExtensionAudioLevel, kAudioLevelExtensionId);
@@ -367,11 +412,10 @@ TEST(RtpPacketTest, CreatePurePadding) {
   packet.SetSequenceNumber(kSeqNum);
   packet.SetTimestamp(kTimestamp);
   packet.SetSsrc(kSsrc);
-  Random random(0x123456789);
 
   EXPECT_LT(packet.size(), packet.capacity());
-  EXPECT_FALSE(packet.SetPadding(kPaddingSize + 1, &random));
-  EXPECT_TRUE(packet.SetPadding(kPaddingSize, &random));
+  EXPECT_FALSE(packet.SetPadding(kPaddingSize + 1));
+  EXPECT_TRUE(packet.SetPadding(kPaddingSize));
   EXPECT_EQ(packet.size(), packet.capacity());
 }
 
@@ -383,11 +427,46 @@ TEST(RtpPacketTest, CreateUnalignedPadding) {
   packet.SetTimestamp(kTimestamp);
   packet.SetSsrc(kSsrc);
   packet.SetPayloadSize(kPayloadSize);
-  Random r(0x123456789);
 
   EXPECT_LT(packet.size(), packet.capacity());
-  EXPECT_TRUE(packet.SetPadding(kMaxPaddingSize, &r));
+  EXPECT_TRUE(packet.SetPadding(kMaxPaddingSize));
   EXPECT_EQ(packet.size(), packet.capacity());
+}
+
+TEST(RtpPacketTest, WritesPaddingSizeToLastByte) {
+  const size_t kPaddingSize = 5;
+  RtpPacket packet;
+
+  EXPECT_TRUE(packet.SetPadding(kPaddingSize));
+  EXPECT_EQ(packet.data()[packet.size() - 1], kPaddingSize);
+}
+
+TEST(RtpPacketTest, UsesZerosForPadding) {
+  const size_t kPaddingSize = 5;
+  RtpPacket packet;
+
+  EXPECT_TRUE(packet.SetPadding(kPaddingSize));
+  EXPECT_THAT(rtc::MakeArrayView(packet.data() + 12, kPaddingSize - 1),
+              Each(0));
+}
+
+TEST(RtpPacketTest, CreateOneBytePadding) {
+  size_t kPayloadSize = 123;
+  RtpPacket packet(nullptr, 12 + kPayloadSize + 1);
+  packet.SetPayloadSize(kPayloadSize);
+
+  EXPECT_TRUE(packet.SetPadding(1));
+
+  EXPECT_EQ(packet.size(), 12 + kPayloadSize + 1);
+  EXPECT_EQ(packet.padding_size(), 1u);
+}
+
+TEST(RtpPacketTest, FailsToAddPaddingWithoutCapacity) {
+  size_t kPayloadSize = 123;
+  RtpPacket packet(nullptr, 12 + kPayloadSize);
+  packet.SetPayloadSize(kPayloadSize);
+
+  EXPECT_FALSE(packet.SetPadding(1));
 }
 
 TEST(RtpPacketTest, ParseMinimum) {
@@ -431,6 +510,23 @@ TEST(RtpPacketTest, ParseWithExtension) {
   EXPECT_EQ(kTimeOffset, time_offset);
   EXPECT_EQ(0u, packet.payload_size());
   EXPECT_EQ(0u, packet.padding_size());
+}
+
+TEST(RtpPacketTest, GetExtensionWithoutParametersReturnsOptionalValue) {
+  RtpPacket::ExtensionManager extensions;
+  extensions.Register<TransmissionOffset>(kTransmissionOffsetExtensionId);
+  extensions.Register<RtpStreamId>(kRtpStreamIdExtensionId);
+
+  RtpPacketReceived packet(&extensions);
+  EXPECT_TRUE(packet.Parse(kPacketWithTO, sizeof(kPacketWithTO)));
+
+  auto time_offset = packet.GetExtension<TransmissionOffset>();
+  static_assert(
+      std::is_same<decltype(time_offset),
+                   absl::optional<TransmissionOffset::value_type>>::value,
+      "");
+  EXPECT_EQ(time_offset, kTimeOffset);
+  EXPECT_FALSE(packet.GetExtension<RtpStreamId>().has_value());
 }
 
 TEST(RtpPacketTest, GetRawExtensionWhenPresent) {
@@ -749,6 +845,14 @@ TEST(RtpPacketTest, ParseLegacyTimingFrameExtension) {
   EXPECT_EQ(receivied_timing.encode_start_delta_ms, 1);
   EXPECT_EQ(receivied_timing.pacer_exit_delta_ms, 4);
   EXPECT_EQ(receivied_timing.flags, 0);
+}
+
+TEST(RtpPacketTest, CreateAndParseColorSpaceExtension) {
+  TestCreateAndParseColorSpaceExtension(/*with_hdr_metadata=*/true);
+}
+
+TEST(RtpPacketTest, CreateAndParseColorSpaceExtensionWithoutHdrMetadata) {
+  TestCreateAndParseColorSpaceExtension(/*with_hdr_metadata=*/false);
 }
 
 }  // namespace webrtc

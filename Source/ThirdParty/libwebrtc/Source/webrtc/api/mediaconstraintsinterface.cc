@@ -10,7 +10,9 @@
 
 #include "api/mediaconstraintsinterface.h"
 
+#include "absl/types/optional.h"
 #include "api/peerconnectioninterface.h"
+#include "media/base/mediaconfig.h"
 #include "rtc_base/stringencode.h"
 
 namespace {

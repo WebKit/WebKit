@@ -14,10 +14,12 @@
 
 // Subset of rtc::LoggingSeverity.
 typedef NS_ENUM(NSInteger, RTCLoggingSeverity) {
+  RTCLoggingSeveritySensitive,
   RTCLoggingSeverityVerbose,
   RTCLoggingSeverityInfo,
   RTCLoggingSeverityWarning,
   RTCLoggingSeverityError,
+  RTCLoggingSeverityNone,
 };
 
 // Wrapper for C++ RTC_LOG(sev) macros.

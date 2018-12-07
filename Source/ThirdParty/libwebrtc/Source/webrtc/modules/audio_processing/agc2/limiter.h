@@ -11,62 +11,52 @@
 #ifndef MODULES_AUDIO_PROCESSING_AGC2_LIMITER_H_
 #define MODULES_AUDIO_PROCESSING_AGC2_LIMITER_H_
 
-#include <array>
+#include <string>
+#include <vector>
 
-#include "modules/audio_processing/agc2/agc2_testing_common.h"
+#include "modules/audio_processing/agc2/fixed_digital_level_estimator.h"
+#include "modules/audio_processing/agc2/interpolated_gain_curve.h"
+#include "modules/audio_processing/include/audio_frame_view.h"
+#include "rtc_base/constructormagic.h"
 
 namespace webrtc {
+class ApmDataDumper;
 
-// A class for computing gain curve parameters. The gain curve is
-// defined by constants kLimiterMaxInputLevelDbFs, kLimiterKneeSmoothnessDb,
-// kLimiterCompressionRatio. The curve consints of one linear part,
-// one quadratic polynomial part and another linear part. The
-// constants define the parameters of the parts.
 class Limiter {
  public:
-  Limiter();
+  Limiter(size_t sample_rate_hz,
+          ApmDataDumper* apm_data_dumper,
+          std::string histogram_name_prefix);
+  Limiter(const Limiter& limiter) = delete;
+  Limiter& operator=(const Limiter& limiter) = delete;
+  ~Limiter();
 
-  double max_input_level_db() const { return max_input_level_db_; }
-  double max_input_level_linear() const { return max_input_level_linear_; }
-  double knee_start_linear() const { return knee_start_linear_; }
-  double limiter_start_linear() const { return limiter_start_linear_; }
+  // Applies limiter and hard-clipping to |signal|.
+  void Process(AudioFrameView<float> signal);
+  InterpolatedGainCurve::Stats GetGainCurveStats() const;
 
-  // These methods can be marked 'constexpr' in C++ 14.
-  double GetOutputLevelDbfs(double input_level_dbfs) const;
-  double GetGainLinear(double input_level_linear) const;
-  double GetGainFirstDerivativeLinear(double x) const;
-  double GetGainIntegralLinear(double x0, double x1) const;
+  // Supported rates must be
+  // * supported by FixedDigitalLevelEstimator
+  // * below kMaximalNumberOfSamplesPerChannel*1000/kFrameDurationMs
+  //   so that samples_per_channel fit in the
+  //   per_sample_scaling_factors_ array.
+  void SetSampleRate(size_t sample_rate_hz);
+
+  // Resets the internal state.
+  void Reset();
+
+  float LastAudioLevel() const;
 
  private:
-  double GetKneeRegionOutputLevelDbfs(double input_level_dbfs) const;
-  double GetCompressorRegionOutputLevelDbfs(double input_level_dbfs) const;
+  const InterpolatedGainCurve interp_gain_curve_;
+  FixedDigitalLevelEstimator level_estimator_;
+  ApmDataDumper* const apm_data_dumper_ = nullptr;
 
-  static constexpr double max_input_level_db_ = test::kLimiterMaxInputLevelDbFs;
-  static constexpr double knee_smoothness_db_ = test::kLimiterKneeSmoothnessDb;
-  static constexpr double compression_ratio_ = test::kLimiterCompressionRatio;
-
-  const double max_input_level_linear_;
-
-  // Do not modify signal with level <= knee_start_dbfs_.
-  const double knee_start_dbfs_;
-  const double knee_start_linear_;
-
-  // The upper end of the knee region, which is between knee_start_dbfs_ and
-  // limiter_start_dbfs_.
-  const double limiter_start_dbfs_;
-  const double limiter_start_linear_;
-
-  // Coefficients {a, b, c} of the knee region polynomial
-  // ax^2 + bx + c in the DB scale.
-  const std::array<double, 3> knee_region_polynomial_;
-
-  // Parameters for the computation of the first derivative of GetGainLinear().
-  const double gain_curve_limiter_d1_;
-  const double gain_curve_limiter_d2_;
-
-  // Parameters for the computation of the integral of GetGainLinear().
-  const double gain_curve_limiter_i1_;
-  const double gain_curve_limiter_i2_;
+  // Work array containing the sub-frame scaling factors to be interpolated.
+  std::array<float, kSubFramesInFrame + 1> scaling_factors_ = {};
+  std::array<float, kMaximalNumberOfSamplesPerChannel>
+      per_sample_scaling_factors_ = {};
+  float last_scaling_factor_ = 1.f;
 };
 
 }  // namespace webrtc

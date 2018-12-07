@@ -9,13 +9,13 @@
  */
 
 #include "api/test/simulated_network.h"
+#include "api/test/video/function_video_encoder_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "test/call_test.h"
-#include "test/function_video_encoder_factory.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -50,29 +50,6 @@ int RemoveOlderOrEqual(uint32_t timestamp, std::vector<uint32_t>* timestamps) {
   }
   return num_removed;
 }
-
-class VideoStreamFactoryTest
-    : public VideoEncoderConfig::VideoStreamFactoryInterface {
- public:
-  explicit VideoStreamFactoryTest(size_t num_temporal_layers)
-      : num_temporal_layers_(num_temporal_layers) {}
-
- private:
-  std::vector<VideoStream> CreateEncoderStreams(
-      int width,
-      int height,
-      const VideoEncoderConfig& encoder_config) override {
-    std::vector<VideoStream> streams =
-        test::CreateVideoStreams(width, height, encoder_config);
-
-    for (size_t i = 0; i < encoder_config.number_of_streams; ++i)
-      streams[i].num_temporal_layers = num_temporal_layers_;
-
-    return streams;
-  }
-
-  const size_t num_temporal_layers_;
-};
 
 class FrameObserver : public test::RtpRtcpObserver,
                       public rtc::VideoSinkInterface<VideoFrame> {
@@ -153,18 +130,16 @@ class MultiCodecReceiveTest : public test::CallTest {
           &task_queue_, sender_call_.get(), &observer_,
           test::PacketTransport::kSender, kPayloadTypeMap,
           absl::make_unique<FakeNetworkPipe>(
-              Clock::GetRealTimeClock(),
-              absl::make_unique<SimulatedNetwork>(
-                  DefaultNetworkSimulationConfig()))));
+              Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                             BuiltInNetworkBehaviorConfig()))));
       send_transport_->SetReceiver(receiver_call_->Receiver());
 
       receive_transport_.reset(new test::PacketTransport(
           &task_queue_, receiver_call_.get(), &observer_,
           test::PacketTransport::kReceiver, kPayloadTypeMap,
           absl::make_unique<FakeNetworkPipe>(
-              Clock::GetRealTimeClock(),
-              absl::make_unique<SimulatedNetwork>(
-                  DefaultNetworkSimulationConfig()))));
+              Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
+                                             BuiltInNetworkBehaviorConfig()))));
       receive_transport_->SetReceiver(sender_call_->Receiver());
     });
   }
@@ -219,9 +194,9 @@ void MultiCodecReceiveTest::ConfigureEncoder(const CodecConfig& config) {
       PayloadNameToPayloadType(config.payload_name);
   GetVideoEncoderConfig()->codec_type =
       PayloadStringToCodecType(config.payload_name);
-  GetVideoEncoderConfig()->video_stream_factory =
-      new rtc::RefCountedObject<VideoStreamFactoryTest>(
-          config.num_temporal_layers);
+  EXPECT_EQ(1u, GetVideoEncoderConfig()->simulcast_layers.size());
+  GetVideoEncoderConfig()->simulcast_layers[0].num_temporal_layers =
+      config.num_temporal_layers;
 }
 
 void MultiCodecReceiveTest::RunTestWithCodecs(

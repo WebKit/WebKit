@@ -22,6 +22,7 @@ extern "C" {
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/media_transport_interface.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "modules/audio_device/include/audio_device.h"
@@ -49,7 +50,8 @@ extern "C" {
               nativeVideoEncoderFactory:nullptr
               nativeVideoDecoderFactory:nullptr
                       audioDeviceModule:nullptr
-                  audioProcessingModule:nullptr]);
+                  audioProcessingModule:nullptr
+                  mediaTransportFactory:nullptr]);
 #endif
   RTCPeerConnectionFactoryBuilder* builder = [[RTCPeerConnectionFactoryBuilder alloc] init];
   RTCPeerConnectionFactory* peerConnectionFactory = [builder createPeerConnectionFactory];
@@ -69,7 +71,8 @@ extern "C" {
               nativeVideoEncoderFactory:nullptr
               nativeVideoDecoderFactory:nullptr
                       audioDeviceModule:nullptr
-                  audioProcessingModule:nullptr]);
+                  audioProcessingModule:nullptr
+                  mediaTransportFactory:nullptr]);
 #endif
   RTCPeerConnectionFactoryBuilder* builder = [RTCPeerConnectionFactoryBuilder defaultBuilder];
   RTCPeerConnectionFactory* peerConnectionFactory = [builder createPeerConnectionFactory];

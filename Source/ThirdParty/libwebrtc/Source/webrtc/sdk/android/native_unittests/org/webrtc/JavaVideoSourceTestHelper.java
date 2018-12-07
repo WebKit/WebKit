@@ -24,8 +24,9 @@ public class JavaVideoSourceTestHelper {
   }
 
   @CalledByNative
-  public static void deliverFrame(int width, int height, int rotation, CapturerObserver observer) {
+  public static void deliverFrame(
+      int width, int height, int rotation, long timestampNs, CapturerObserver observer) {
     observer.onFrameCaptured(
-        new VideoFrame(JavaI420Buffer.allocate(width, height), rotation, 0 /* timestampNs= */));
+        new VideoFrame(JavaI420Buffer.allocate(width, height), rotation, timestampNs));
   }
 }

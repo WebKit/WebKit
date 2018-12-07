@@ -112,7 +112,7 @@ void AsyncStunTCPSocket::ProcessInput(char* data, size_t* len) {
     }
 
     SignalReadPacket(this, data, expected_pkt_len, remote_addr,
-                     rtc::CreatePacketTime(0));
+                     rtc::TimeMicros());
 
     *len -= actual_length;
     if (*len > 0) {

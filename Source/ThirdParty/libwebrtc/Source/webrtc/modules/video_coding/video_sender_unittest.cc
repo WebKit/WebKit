@@ -11,11 +11,11 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/mock_video_encoder.h"
 #include "api/video/i420_buffer.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/include/mock/mock_vcm_callbacks.h"
-#include "modules/video_coding/include/mock/mock_video_codec_interface.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "modules/video_coding/utility/default_video_bitrate_allocator.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
@@ -186,7 +186,10 @@ class TestVideoSender : public ::testing::Test {
 
   void AddFrame() {
     assert(generator_.get());
-    sender_->AddVideoFrame(*generator_->NextFrame(), NULL);
+    sender_->AddVideoFrame(*generator_->NextFrame(), nullptr,
+                           encoder_ ? absl::optional<VideoEncoder::EncoderInfo>(
+                                          encoder_->GetEncoderInfo())
+                                    : absl::nullopt);
   }
 
   SimulatedClock clock_;
@@ -369,9 +372,6 @@ TEST_F(TestVideoSenderWithMockEncoder,
   // Expect initial call to SetChannelParameters. Rates are initialized through
   // InitEncode and expects no additional call before the framerate (or bitrate)
   // updates.
-  EXPECT_CALL(encoder_, SetChannelParameters(kLossRate, kRtt))
-      .Times(1)
-      .WillOnce(Return(0));
   sender_->SetChannelParameters(settings_.startBitrate * 1000, kLossRate, kRtt,
                                 rate_allocator_.get(), nullptr);
   while (clock_.TimeInMilliseconds() < start_time + kRateStatsWindowMs) {

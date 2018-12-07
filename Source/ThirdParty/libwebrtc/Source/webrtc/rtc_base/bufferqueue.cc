@@ -10,6 +10,8 @@
 
 #include "rtc_base/bufferqueue.h"
 
+#include <stdint.h>
+#include <string.h>
 #include <algorithm>
 
 namespace rtc {

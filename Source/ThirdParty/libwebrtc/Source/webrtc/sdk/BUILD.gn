@@ -8,8 +8,8 @@
 
 import("../webrtc.gni")
 if (is_ios) {
-  import("//build/config/ios/rules.gni")
   import("//build/config/ios/ios_sdk.gni")
+  import("//build/config/ios/rules.gni")
 }
 if (is_mac) {
   import("//build/config/mac/rules.gni")
@@ -40,6 +40,7 @@ if (is_ios || is_mac) {
       "objc/Framework/Headers",  # TODO(bugs.webrtc.org/9627): Remove this.
     ]
     cflags = [
+      "-Wimplicit-retain-self",
       "-Wstrict-overflow",
       "-Wmissing-field-initializers",
     ]
@@ -262,6 +263,8 @@ if (is_ios || is_mac) {
           "../system_wrappers:metrics",
         ]
 
+        libs = [ "AudioToolbox.framework" ]
+
         if (is_clang) {
           # Suppress warnings from the Chromium Clang plugin
           # (bugs.webrtc.org/163).
@@ -286,6 +289,8 @@ if (is_ios || is_mac) {
         ]
 
         public_configs = [ ":common_config_objc" ]
+
+        libs = [ "AVFoundation.framework" ]
 
         deps = [
           ":audio_session_observer",
@@ -756,8 +761,8 @@ if (is_ios || is_mac) {
       deps = [
         ":base_objc",
         ":helpers_objc",
+        "../api/video:encoded_image",
         "../api/video_codecs:video_codecs_api",
-        "../common_video",
         "../modules:module_api",
         "../modules/video_coding:video_codec_interface",
         "../rtc_base:rtc_base",
@@ -793,6 +798,8 @@ if (is_ios || is_mac) {
         "objc/api/peerconnection/RTCConfiguration+Private.h",
         "objc/api/peerconnection/RTCConfiguration.h",
         "objc/api/peerconnection/RTCConfiguration.mm",
+        "objc/api/peerconnection/RTCCryptoOptions.h",
+        "objc/api/peerconnection/RTCCryptoOptions.mm",
         "objc/api/peerconnection/RTCDataChannel+Private.h",
         "objc/api/peerconnection/RTCDataChannel.h",
         "objc/api/peerconnection/RTCDataChannel.mm",
@@ -903,6 +910,7 @@ if (is_ios || is_mac) {
         ":videorendereradapter_objc",
         ":videosource_objc",
         ":videotoolbox_objc",
+        "../api:create_peerconnection_factory",
         "../api:libjingle_peerconnection_api",
         "../api/audio_codecs:audio_codecs_api",
         "../api/audio_codecs:builtin_audio_decoder_factory",
@@ -913,9 +921,9 @@ if (is_ios || is_mac) {
         "../media:rtc_media_base",
         "../modules:module_api",
         "../modules/audio_device:audio_device_api",
+        "../modules/audio_processing:api",
         "../modules/audio_processing:audio_processing",
         "../modules/video_coding:video_codec_interface",
-        "../pc:create_pc_factory",
         "../pc:peerconnection",
         "../rtc_base:checks",
         "../rtc_base:rtc_base",
@@ -1031,6 +1039,7 @@ if (is_ios || is_mac) {
             "objc/unittests/RTCPeerConnectionFactory_xctest.m",
             "objc/unittests/frame_buffer_helpers.h",
             "objc/unittests/frame_buffer_helpers.mm",
+            "objc/unittests/nalu_rewriter_xctest.mm",
           ]
 
           # TODO(peterhanspers): Reenable these tests on simulator.
@@ -1053,6 +1062,7 @@ if (is_ios || is_mac) {
             ":native_api_audio_device_module",
             ":native_video",
             ":peerconnectionfactory_base_objc",
+            ":video_toolbox_cc",
             ":videocapture_objc",
             ":videocodec_objc",
             ":videoframebuffer_objc",
@@ -1063,8 +1073,8 @@ if (is_ios || is_mac) {
             "../media:rtc_media_base",
             "../media:rtc_media_tests_utils",
             "../modules:module_api",
+            "../rtc_base:gunit_helpers",
             "../rtc_base:rtc_base",
-            "../rtc_base:rtc_base_tests_utils",
             "../system_wrappers:system_wrappers",
             "//third_party/libyuv",
           ]
@@ -1098,7 +1108,7 @@ if (is_ios || is_mac) {
         rtc_ios_xctest_test("sdk_unittests") {
           info_plist = "//test/ios/Info.plist"
           sources = [
-            "objc/unittests/main.m",
+            "objc/unittests/main.mm",
           ]
 
           _bundle_id_suffix = ios_generic_test_bundle_id_suffix
@@ -1107,6 +1117,7 @@ if (is_ios || is_mac) {
             ":peerconnectionfactory_base_objc",
             ":sdk_unittests_bundle_data",
             ":sdk_unittests_sources",
+            "//test:test_support",
           ]
           ldflags = [ "-all_load" ]
         }
@@ -1116,7 +1127,7 @@ if (is_ios || is_mac) {
           info_plist = "//test/ios/Info.plist"
           sources = [
             "objc/unittests/RTCDoNotPutCPlusPlusInFrameworkHeaders_xctest.m",
-            "objc/unittests/main.m",
+            "objc/unittests/main.mm",
           ]
 
           _bundle_id_suffix = ios_generic_test_bundle_id_suffix
@@ -1124,6 +1135,7 @@ if (is_ios || is_mac) {
           deps = [
             ":framework_objc+link",
             ":ios_framework_bundle",
+            "//test:test_support",
           ]
         }
       }
@@ -1170,6 +1182,7 @@ if (is_ios || is_mac) {
           ":videoframebuffer_objc",
           ":videosource_objc",
           ":videotoolbox_objc",
+          "../api:libjingle_peerconnection_api",
           "../api/audio_codecs:audio_codecs_api",
           "../api/audio_codecs:builtin_audio_decoder_factory",
           "../api/audio_codecs:builtin_audio_encoder_factory",
@@ -1177,11 +1190,12 @@ if (is_ios || is_mac) {
           "../media:rtc_media_base",
           "../modules:module_api",
           "../modules/audio_device:audio_device_api",
+          "../modules/audio_processing:api",
           "../modules/audio_processing:audio_processing",
           "../modules/video_coding:video_codec_interface",
-          "../rtc_base:rtc_base_tests_utils",
+          "../rtc_base:gunit_helpers",
           "../rtc_base/system:unused",
-          "//test:test_support",
+          "../test:test_support",
           "//third_party/ocmock",
         ]
 
@@ -1269,6 +1283,7 @@ if (is_ios || is_mac) {
           "objc/api/peerconnection/RTCSessionDescription.h",
           "objc/api/peerconnection/RTCTracing.h",
           "objc/api/peerconnection/RTCCertificate.h",
+          "objc/api/peerconnection/RTCCryptoOptions.h",
           "objc/api/peerconnection/RTCVideoSource.h",
           "objc/api/peerconnection/RTCVideoTrack.h",
           "objc/api/video_codec/RTCVideoCodecConstants.h",
@@ -1357,6 +1372,7 @@ if (is_ios || is_mac) {
           "objc/api/peerconnection/RTCAudioTrack.h",
           "objc/api/peerconnection/RTCCertificate.h",
           "objc/api/peerconnection/RTCConfiguration.h",
+          "objc/api/peerconnection/RTCCryptoOptions.h",
           "objc/api/peerconnection/RTCDataChannel.h",
           "objc/api/peerconnection/RTCDataChannelConfiguration.h",
           "objc/api/peerconnection/RTCDtmfSender.h",
@@ -1590,7 +1606,10 @@ if (is_ios || is_mac) {
     }
 
     rtc_static_library("video_toolbox_cc") {
-      visibility = [ ":videotoolbox_objc" ]
+      visibility = [
+        ":videotoolbox_objc",
+        ":sdk_unittests_sources",
+      ]
       sources = [
         "objc/components/video_codec/helpers.cc",
         "objc/components/video_codec/helpers.h",

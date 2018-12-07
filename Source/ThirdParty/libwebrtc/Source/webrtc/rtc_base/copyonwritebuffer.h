@@ -11,12 +11,15 @@
 #ifndef RTC_BASE_COPYONWRITEBUFFER_H_
 #define RTC_BASE_COPYONWRITEBUFFER_H_
 
+#include <stdint.h>
 #include <algorithm>
+#include <cstring>
+#include <string>
+#include <type_traits>
 #include <utility>
 
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/refcount.h"
 #include "rtc_base/refcountedobject.h"
 #include "rtc_base/scoped_ref_ptr.h"
 

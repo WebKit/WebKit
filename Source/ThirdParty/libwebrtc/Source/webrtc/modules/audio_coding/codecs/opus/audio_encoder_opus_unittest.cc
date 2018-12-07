@@ -272,6 +272,51 @@ TEST(AudioEncoderOpusTest, PacketLossRateOptimized) {
   // clang-format on
 }
 
+TEST(AudioEncoderOpusTest, PacketLossRateLowerBounded) {
+  test::ScopedFieldTrials override_field_trials(
+      "WebRTC-Audio-OpusMinPacketLossRate/Enabled-5/");
+  auto states = CreateCodec(1);
+  auto I = [](float a, float b) { return IntervalSteps(a, b, 10); };
+  constexpr float eps = 1e-8f;
+
+  // clang-format off
+  TestSetPacketLossRate(states.get(), I(0.00f      , 0.01f - eps), 0.05f);
+  TestSetPacketLossRate(states.get(), I(0.01f + eps, 0.06f - eps), 0.05f);
+  TestSetPacketLossRate(states.get(), I(0.06f + eps, 0.11f - eps), 0.05f);
+  TestSetPacketLossRate(states.get(), I(0.11f + eps, 0.22f - eps), 0.10f);
+  TestSetPacketLossRate(states.get(), I(0.22f + eps, 1.00f      ), 0.20f);
+
+  TestSetPacketLossRate(states.get(), I(1.00f      , 0.18f + eps), 0.20f);
+  TestSetPacketLossRate(states.get(), I(0.18f - eps, 0.09f + eps), 0.10f);
+  TestSetPacketLossRate(states.get(), I(0.09f - eps, 0.04f + eps), 0.05f);
+  TestSetPacketLossRate(states.get(), I(0.04f - eps, 0.01f + eps), 0.05f);
+  TestSetPacketLossRate(states.get(), I(0.01f - eps, 0.00f      ), 0.05f);
+  // clang-format on
+}
+
+TEST(AudioEncoderOpusTest, NewPacketLossRateOptimization) {
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-NewOpusPacketLossRateOptimization/Enabled-5-15-0.5/");
+    auto states = CreateCodec(1);
+
+    TestSetPacketLossRate(states.get(), {0.00f}, 0.05f);
+    TestSetPacketLossRate(states.get(), {0.12f}, 0.06f);
+    TestSetPacketLossRate(states.get(), {0.22f}, 0.11f);
+    TestSetPacketLossRate(states.get(), {0.50f}, 0.15f);
+  }
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-NewOpusPacketLossRateOptimization/Enabled/");
+    auto states = CreateCodec(1);
+
+    TestSetPacketLossRate(states.get(), {0.00f}, 0.01f);
+    TestSetPacketLossRate(states.get(), {0.12f}, 0.12f);
+    TestSetPacketLossRate(states.get(), {0.22f}, 0.20f);
+    TestSetPacketLossRate(states.get(), {0.50f}, 0.20f);
+  }
+}
+
 TEST(AudioEncoderOpusTest, SetReceiverFrameLengthRange) {
   auto states = CreateCodec(2);
   // Before calling to |SetReceiverFrameLengthRange|,
@@ -444,6 +489,57 @@ TEST(AudioEncoderOpusTest, BitrateBounded) {
       kOverheadBytesPerPacket * 8 * packet_rate + kMaxBitrateBps + 1;
   states->encoder->OnReceivedUplinkBandwidth(target_bitrate, absl::nullopt);
   EXPECT_EQ(kMaxBitrateBps, states->encoder->GetTargetBitrate());
+}
+
+TEST(AudioEncoderOpusTest, MinPacketLossRate) {
+  constexpr float kDefaultMinPacketLossRate = 0.01;
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-OpusMinPacketLossRate/Enabled/");
+    auto states = CreateCodec(1);
+    EXPECT_EQ(kDefaultMinPacketLossRate, states->encoder->packet_loss_rate());
+  }
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-OpusMinPacketLossRate/Enabled-200/");
+    auto states = CreateCodec(1);
+    EXPECT_EQ(kDefaultMinPacketLossRate, states->encoder->packet_loss_rate());
+  }
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-OpusMinPacketLossRate/Enabled-50/");
+    constexpr float kMinPacketLossRate = 0.5;
+    auto states = CreateCodec(1);
+    EXPECT_EQ(kMinPacketLossRate, states->encoder->packet_loss_rate());
+  }
+}
+
+TEST(AudioEncoderOpusTest, NewPacketLossRateOptimizer) {
+  {
+    auto states = CreateCodec(1);
+    auto optimizer = states->encoder->new_packet_loss_optimizer();
+    EXPECT_EQ(nullptr, optimizer);
+  }
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-NewOpusPacketLossRateOptimization/Enabled/");
+    auto states = CreateCodec(1);
+    auto optimizer = states->encoder->new_packet_loss_optimizer();
+    ASSERT_NE(nullptr, optimizer);
+    EXPECT_FLOAT_EQ(0.01, optimizer->min_packet_loss_rate());
+    EXPECT_FLOAT_EQ(0.20, optimizer->max_packet_loss_rate());
+    EXPECT_FLOAT_EQ(1.00, optimizer->slope());
+  }
+  {
+    test::ScopedFieldTrials override_field_trials(
+        "WebRTC-Audio-NewOpusPacketLossRateOptimization/Enabled-2-50-0.7/");
+    auto states = CreateCodec(1);
+    auto optimizer = states->encoder->new_packet_loss_optimizer();
+    ASSERT_NE(nullptr, optimizer);
+    EXPECT_FLOAT_EQ(0.02, optimizer->min_packet_loss_rate());
+    EXPECT_FLOAT_EQ(0.50, optimizer->max_packet_loss_rate());
+    EXPECT_FLOAT_EQ(0.70, optimizer->slope());
+  }
 }
 
 // Verifies that the complexity adaptation in the config works as intended.

@@ -21,12 +21,14 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP9_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_FORMAT_VP9_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <vector>
 
 #include "api/array_view.h"
-#include "modules/include/module_common_types.h"
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {

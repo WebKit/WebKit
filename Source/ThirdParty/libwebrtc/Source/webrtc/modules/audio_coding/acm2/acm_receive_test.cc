@@ -14,6 +14,7 @@
 
 #include <memory>
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
@@ -30,11 +31,11 @@ namespace {
 // Returns true if the codec should be registered, otherwise false. Changes
 // the number of channels for the Opus codec to always be 1.
 bool ModifyAndUseThisCodec(CodecInst* codec_param) {
-  if (STR_CASE_CMP(codec_param->plname, "CN") == 0 &&
+  if (absl::EqualsIgnoreCase(codec_param->plname, "CN") &&
       codec_param->plfreq == 48000)
     return false;  // Skip 48 kHz comfort noise.
 
-  if (STR_CASE_CMP(codec_param->plname, "telephone-event") == 0)
+  if (absl::EqualsIgnoreCase(codec_param->plname, "telephone-event"))
     return false;  // Skip DTFM.
 
   return true;
@@ -65,39 +66,43 @@ bool RemapPltypeAndUseThisCodec(const char* plname,
     return false;  // Don't use non-mono codecs.
 
   // Re-map pltypes to those used in the NetEq test files.
-  if (STR_CASE_CMP(plname, "PCMU") == 0 && plfreq == 8000) {
+  if (absl::EqualsIgnoreCase(plname, "PCMU") && plfreq == 8000) {
     *pltype = 0;
-  } else if (STR_CASE_CMP(plname, "PCMA") == 0 && plfreq == 8000) {
+  } else if (absl::EqualsIgnoreCase(plname, "PCMA") && plfreq == 8000) {
     *pltype = 8;
-  } else if (STR_CASE_CMP(plname, "CN") == 0 && plfreq == 8000) {
+  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 8000) {
     *pltype = 13;
-  } else if (STR_CASE_CMP(plname, "CN") == 0 && plfreq == 16000) {
+  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 16000) {
     *pltype = 98;
-  } else if (STR_CASE_CMP(plname, "CN") == 0 && plfreq == 32000) {
+  } else if (absl::EqualsIgnoreCase(plname, "CN") && plfreq == 32000) {
     *pltype = 99;
-  } else if (STR_CASE_CMP(plname, "ILBC") == 0) {
+  } else if (absl::EqualsIgnoreCase(plname, "ILBC")) {
     *pltype = 102;
-  } else if (STR_CASE_CMP(plname, "ISAC") == 0 && plfreq == 16000) {
+  } else if (absl::EqualsIgnoreCase(plname, "ISAC") && plfreq == 16000) {
     *pltype = 103;
-  } else if (STR_CASE_CMP(plname, "ISAC") == 0 && plfreq == 32000) {
+  } else if (absl::EqualsIgnoreCase(plname, "ISAC") && plfreq == 32000) {
     *pltype = 104;
-  } else if (STR_CASE_CMP(plname, "telephone-event") == 0 && plfreq == 8000) {
+  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
+             plfreq == 8000) {
     *pltype = 106;
-  } else if (STR_CASE_CMP(plname, "telephone-event") == 0 && plfreq == 16000) {
+  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
+             plfreq == 16000) {
     *pltype = 114;
-  } else if (STR_CASE_CMP(plname, "telephone-event") == 0 && plfreq == 32000) {
+  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
+             plfreq == 32000) {
     *pltype = 115;
-  } else if (STR_CASE_CMP(plname, "telephone-event") == 0 && plfreq == 48000) {
+  } else if (absl::EqualsIgnoreCase(plname, "telephone-event") &&
+             plfreq == 48000) {
     *pltype = 116;
-  } else if (STR_CASE_CMP(plname, "red") == 0) {
+  } else if (absl::EqualsIgnoreCase(plname, "red")) {
     *pltype = 117;
-  } else if (STR_CASE_CMP(plname, "L16") == 0 && plfreq == 8000) {
+  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 8000) {
     *pltype = 93;
-  } else if (STR_CASE_CMP(plname, "L16") == 0 && plfreq == 16000) {
+  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 16000) {
     *pltype = 94;
-  } else if (STR_CASE_CMP(plname, "L16") == 0 && plfreq == 32000) {
+  } else if (absl::EqualsIgnoreCase(plname, "L16") && plfreq == 32000) {
     *pltype = 95;
-  } else if (STR_CASE_CMP(plname, "G722") == 0) {
+  } else if (absl::EqualsIgnoreCase(plname, "G722")) {
     *pltype = 9;
   } else {
     // Don't use any other codecs.

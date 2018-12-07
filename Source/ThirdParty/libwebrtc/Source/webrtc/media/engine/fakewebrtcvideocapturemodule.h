@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "api/video/i420_buffer.h"
-#include "media/base/testutils.h"
 #include "media/engine/webrtcvideocapturer.h"
 #include "rtc_base/task_queue_for_test.h"
 

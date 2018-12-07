@@ -46,11 +46,10 @@ class MultiplexEncoderAdapter : public VideoEncoder {
              const CodecSpecificInfo* codec_specific_info,
              const std::vector<FrameType>* frame_types) override;
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
-  int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
   int SetRateAllocation(const VideoBitrateAllocation& bitrate,
                         uint32_t new_framerate) override;
   int Release() override;
-  const char* ImplementationName() const override;
+  EncoderInfo GetEncoderInfo() const override;
 
   EncodedImageCallback::Result OnEncodedImage(
       AlphaCodecStream stream_idx,
@@ -81,6 +80,8 @@ class MultiplexEncoderAdapter : public VideoEncoder {
 
   const bool supports_augmented_data_;
   int augmenting_data_size_ = 0;
+
+  EncoderInfo encoder_info_;
 };
 
 }  // namespace webrtc

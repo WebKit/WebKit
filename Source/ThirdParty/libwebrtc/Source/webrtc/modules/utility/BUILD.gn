@@ -26,7 +26,6 @@ rtc_static_library("utility") {
 
   deps = [
     "..:module_api",
-    "../..:webrtc_common",
     "../../common_audio",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",

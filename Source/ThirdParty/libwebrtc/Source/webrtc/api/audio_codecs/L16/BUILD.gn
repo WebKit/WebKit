@@ -21,11 +21,12 @@ rtc_static_library("audio_encoder_L16") {
   ]
   deps = [
     "..:audio_codecs_api",
-    "../../..:webrtc_common",
     "../../../modules/audio_coding:pcm16b",
     "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_minmax",
+    "../../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -39,10 +40,11 @@ rtc_static_library("audio_decoder_L16") {
   ]
   deps = [
     "..:audio_codecs_api",
-    "../../..:webrtc_common",
     "../../../modules/audio_coding:pcm16b",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }

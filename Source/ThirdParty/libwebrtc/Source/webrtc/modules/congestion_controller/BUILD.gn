@@ -20,8 +20,6 @@ rtc_static_library("congestion_controller") {
   visibility = [ "*" ]
   configs += [ ":bwe_test_logging" ]
   sources = [
-    "congestion_window_pushback_controller.cc",
-    "congestion_window_pushback_controller.h",
     "include/network_changed_observer.h",
     "include/receive_side_congestion_controller.h",
     "include/send_side_congestion_controller.h",
@@ -43,6 +41,7 @@ rtc_static_library("congestion_controller") {
     "../../rtc_base:checks",
     "../../rtc_base:ptr_util",
     "../../rtc_base:rate_limiter",
+    "../../rtc_base/network:sent_packet",
     "../../system_wrappers",
     "../../system_wrappers:field_trial",
     "../bitrate_controller",
@@ -52,6 +51,7 @@ rtc_static_library("congestion_controller") {
     "goog_cc:delay_based_bwe",
     "goog_cc:estimators",
     "goog_cc:probe_controller",
+    "goog_cc:pushback_controller",
     "//third_party/abseil-cpp/absl/memory",
   ]
 
@@ -98,7 +98,6 @@ if (rtc_include_tests) {
     testonly = true
 
     sources = [
-      "congestion_window_pushback_controller_unittest.cc",
       "receive_side_congestion_controller_unittest.cc",
       "send_side_congestion_controller_unittest.cc",
       "transport_feedback_adapter_unittest.cc",
@@ -111,7 +110,7 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base",
       "../../rtc_base:rtc_base_approved",
-      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base/network:sent_packet",
       "../../system_wrappers",
       "../../test:field_trial",
       "../../test:test_support",

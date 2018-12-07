@@ -18,8 +18,6 @@
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder.h"
 #include "rtc_base/buffer.h"
 
-#if defined(ENABLE_RTC_EVENT_LOG)
-
 namespace webrtc {
 
 namespace rtclog {
@@ -52,7 +50,8 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
  public:
   ~RtcEventLogEncoderLegacy() override = default;
 
-  std::string EncodeLogStart(int64_t timestamp_us) override;
+  std::string EncodeLogStart(int64_t timestamp_us,
+                             int64_t utc_time_us) override;
   std::string EncodeLogEnd(int64_t timestamp_us) override;
 
   std::string EncodeBatch(
@@ -104,7 +103,5 @@ class RtcEventLogEncoderLegacy final : public RtcEventLogEncoder {
 };
 
 }  // namespace webrtc
-
-#endif  // ENABLE_RTC_EVENT_LOG
 
 #endif  // LOGGING_RTC_EVENT_LOG_ENCODER_RTC_EVENT_LOG_ENCODER_LEGACY_H_

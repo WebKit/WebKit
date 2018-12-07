@@ -783,8 +783,8 @@ void StatsCollector::ExtractSessionInfo() {
     StatsReport::Id local_cert_report_id, remote_cert_report_id;
     rtc::scoped_refptr<rtc::RTCCertificate> certificate;
     if (pc_->GetLocalCertificate(transport_name, &certificate)) {
-      StatsReport* r =
-          AddCertificateReports(certificate->ssl_cert_chain().GetStats());
+      StatsReport* r = AddCertificateReports(
+          certificate->GetSSLCertificateChain().GetStats());
       if (r)
         local_cert_report_id = r->id();
     }

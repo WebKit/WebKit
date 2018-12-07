@@ -12,9 +12,9 @@
 
 #include <string>
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
 #include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "modules/audio_coding/test/utility.h"
@@ -626,14 +626,14 @@ void TestStereo::RegisterSendCodec(char side,
   ASSERT_TRUE(my_acm != NULL);
 
   auto encoder_factory = CreateBuiltinAudioEncoderFactory();
-  const int clockrate_hz = STR_CASE_CMP(codec_name, "g722") == 0
+  const int clockrate_hz = absl::EqualsIgnoreCase(codec_name, "g722")
                                ? sampling_freq_hz / 2
                                : sampling_freq_hz;
   const std::string ptime = rtc::ToString(rtc::CheckedDivExact(
       pack_size, rtc::CheckedDivExact(sampling_freq_hz, 1000)));
   SdpAudioFormat::Parameters params = {{"ptime", ptime}};
   RTC_CHECK(channels == 1 || channels == 2);
-  if (STR_CASE_CMP(codec_name, "opus") == 0) {
+  if (absl::EqualsIgnoreCase(codec_name, "opus")) {
     if (channels == 2) {
       params["stereo"] = "1";
     }

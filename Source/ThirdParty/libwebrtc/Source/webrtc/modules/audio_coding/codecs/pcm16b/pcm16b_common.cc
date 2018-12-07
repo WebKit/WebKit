@@ -10,6 +10,9 @@
 
 #include "modules/audio_coding/codecs/pcm16b/pcm16b_common.h"
 
+#include <stdint.h>
+#include <initializer_list>
+
 namespace webrtc {
 
 void Pcm16BAppendSupportedCodecSpecs(std::vector<AudioCodecSpec>* specs) {

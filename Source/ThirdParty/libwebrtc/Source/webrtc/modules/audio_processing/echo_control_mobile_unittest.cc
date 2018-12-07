@@ -18,9 +18,7 @@
 
 namespace webrtc {
 TEST(EchoControlMobileTest, InterfaceConfiguration) {
-  rtc::CriticalSection crit_render;
-  rtc::CriticalSection crit_capture;
-  EchoControlMobileImpl aecm(&crit_render, &crit_capture);
+  EchoControlMobileImpl aecm;
   aecm.Initialize(AudioProcessing::kSampleRate16kHz, 2, 2);
 
   // Turn AECM on
@@ -45,28 +43,6 @@ TEST(EchoControlMobileTest, InterfaceConfiguration) {
   EXPECT_FALSE(aecm.is_comfort_noise_enabled());
   EXPECT_EQ(0, aecm.enable_comfort_noise(true));
   EXPECT_TRUE(aecm.is_comfort_noise_enabled());
-
-  // Set and get echo path
-  const size_t echo_path_size = aecm.echo_path_size_bytes();
-  std::vector<uint8_t> echo_path_in(echo_path_size);
-  std::vector<uint8_t> echo_path_out(echo_path_size);
-  EXPECT_EQ(AudioProcessing::kNullPointerError,
-            aecm.SetEchoPath(nullptr, echo_path_size));
-  EXPECT_EQ(AudioProcessing::kNullPointerError,
-            aecm.GetEchoPath(nullptr, echo_path_size));
-  EXPECT_EQ(AudioProcessing::kBadParameterError,
-            aecm.GetEchoPath(echo_path_out.data(), 1));
-  EXPECT_EQ(0, aecm.GetEchoPath(echo_path_out.data(), echo_path_size));
-  for (size_t i = 0; i < echo_path_size; i++) {
-    echo_path_in[i] = echo_path_out[i] + 1;
-  }
-  EXPECT_EQ(AudioProcessing::kBadParameterError,
-            aecm.SetEchoPath(echo_path_in.data(), 1));
-  EXPECT_EQ(0, aecm.SetEchoPath(echo_path_in.data(), echo_path_size));
-  EXPECT_EQ(0, aecm.GetEchoPath(echo_path_out.data(), echo_path_size));
-  for (size_t i = 0; i < echo_path_size; i++) {
-    EXPECT_EQ(echo_path_in[i], echo_path_out[i]);
-  }
 
   // Turn AECM off
   EXPECT_EQ(0, aecm.Enable(false));

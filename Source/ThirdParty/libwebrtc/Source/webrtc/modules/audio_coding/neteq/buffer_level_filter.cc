@@ -10,7 +10,8 @@
 
 #include "modules/audio_coding/neteq/buffer_level_filter.h"
 
-#include <algorithm>  // Provide access to std::max.
+#include <stdint.h>
+#include <algorithm>
 
 #include "rtc_base/numerics/safe_conversions.h"
 

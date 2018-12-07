@@ -13,12 +13,12 @@
 #include <float.h>
 #include <math.h>
 #include <string.h>
-
 #include <algorithm>
 
 #include "modules/audio_processing/transient/common.h"
 #include "modules/audio_processing/transient/daubechies_8_wavelet_coeffs.h"
 #include "modules/audio_processing/transient/moving_moments.h"
+#include "modules/audio_processing/transient/wpd_node.h"
 #include "modules/audio_processing/transient/wpd_tree.h"
 #include "rtc_base/checks.h"
 

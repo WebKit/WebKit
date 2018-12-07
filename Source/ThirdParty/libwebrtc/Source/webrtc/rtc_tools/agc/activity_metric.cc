@@ -30,32 +30,34 @@
 static const int kAgcAnalWindowSamples = 100;
 static const float kDefaultActivityThreshold = 0.3f;
 
-DEFINE_bool(standalone_vad, true, "enable stand-alone VAD");
-DEFINE_string(true_vad,
-              "",
-              "name of a file containing true VAD in 'int'"
-              " format");
-DEFINE_string(video_vad,
-              "",
-              "name of a file containing video VAD (activity"
-              " probabilities) in double format. One activity per 10ms is"
-              " required. If no file is given the video information is not"
-              " incorporated. Negative activity is interpreted as video is"
-              " not adapted and the statistics are not computed during"
-              " the learning phase. Note that the negative video activities"
-              " are ONLY allowed at the beginning.");
-DEFINE_string(result,
-              "",
-              "name of a file to write the results. The results"
-              " will be appended to the end of the file. This is optional.");
-DEFINE_string(audio_content,
-              "",
-              "name of a file where audio content is written"
-              " to, in double format.");
-DEFINE_float(activity_threshold,
-             kDefaultActivityThreshold,
-             "Activity threshold");
-DEFINE_bool(help, false, "prints this message");
+WEBRTC_DEFINE_bool(standalone_vad, true, "enable stand-alone VAD");
+WEBRTC_DEFINE_string(true_vad,
+                     "",
+                     "name of a file containing true VAD in 'int'"
+                     " format");
+WEBRTC_DEFINE_string(
+    video_vad,
+    "",
+    "name of a file containing video VAD (activity"
+    " probabilities) in double format. One activity per 10ms is"
+    " required. If no file is given the video information is not"
+    " incorporated. Negative activity is interpreted as video is"
+    " not adapted and the statistics are not computed during"
+    " the learning phase. Note that the negative video activities"
+    " are ONLY allowed at the beginning.");
+WEBRTC_DEFINE_string(
+    result,
+    "",
+    "name of a file to write the results. The results"
+    " will be appended to the end of the file. This is optional.");
+WEBRTC_DEFINE_string(audio_content,
+                     "",
+                     "name of a file where audio content is written"
+                     " to, in double format.");
+WEBRTC_DEFINE_float(activity_threshold,
+                    kDefaultActivityThreshold,
+                    "Activity threshold");
+WEBRTC_DEFINE_bool(help, false, "prints this message");
 
 namespace webrtc {
 

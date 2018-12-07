@@ -11,12 +11,14 @@
 #ifndef RTC_BASE_BUFFERQUEUE_H_
 #define RTC_BASE_BUFFERQUEUE_H_
 
+#include <stddef.h>
 #include <deque>
 #include <vector>
 
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace rtc {
 

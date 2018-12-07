@@ -23,8 +23,6 @@ namespace webrtc {
 
 // ILBC decoder API for use as a template parameter to
 // CreateAudioDecoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
 struct AudioDecoderIlbc {
   struct Config {};  // Empty---no config values needed!
   static absl::optional<Config> SdpToConfig(const SdpAudioFormat& audio_format);

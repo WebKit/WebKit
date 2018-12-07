@@ -20,9 +20,13 @@ namespace webrtc {
 class MockDelayManager : public DelayManager {
  public:
   MockDelayManager(size_t max_packets_in_buffer,
+                   int base_min_target_delay_ms,
                    DelayPeakDetector* peak_detector,
                    const TickTimer* tick_timer)
-      : DelayManager(max_packets_in_buffer, peak_detector, tick_timer) {}
+      : DelayManager(max_packets_in_buffer,
+                     base_min_target_delay_ms,
+                     peak_detector,
+                     tick_timer) {}
   virtual ~MockDelayManager() { Die(); }
   MOCK_METHOD0(Die, void());
   MOCK_CONST_METHOD0(iat_vector, const IATVector&());

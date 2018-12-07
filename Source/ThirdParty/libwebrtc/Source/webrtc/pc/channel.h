@@ -29,6 +29,7 @@
 #include "media/base/streamparams.h"
 #include "p2p/base/dtlstransportinternal.h"
 #include "p2p/base/packettransportinternal.h"
+#include "pc/channelinterface.h"
 #include "pc/dtlssrtptransport.h"
 #include "pc/mediasession.h"
 #include "pc/rtptransport.h"
@@ -42,12 +43,12 @@
 
 namespace webrtc {
 class AudioSinkInterface;
+class MediaTransportInterface;
 }  // namespace webrtc
 
 namespace cricket {
 
 struct CryptoParams;
-class MediaContentDescription;
 
 // BaseChannel contains logic common to voice and video, including enable,
 // marshaling calls to a worker and network threads, and connection and media
@@ -67,10 +68,12 @@ class MediaContentDescription;
 // vtable, and the media channel's thread using BaseChannel as the
 // NetworkInterface.
 
-class BaseChannel : public rtc::MessageHandler,
+class BaseChannel : public ChannelInterface,
+                    public rtc::MessageHandler,
                     public sigslot::has_slots<>,
                     public MediaChannel::NetworkInterface,
-                    public webrtc::RtpPacketSinkInterface {
+                    public webrtc::RtpPacketSinkInterface,
+                    public webrtc::MediaTransportNetworkChangeCallback {
  public:
   // If |srtp_required| is true, the channel will not send or receive any
   // RTP/RTCP packets without using SRTP (either using SDES or DTLS-SRTP).
@@ -82,9 +85,10 @@ class BaseChannel : public rtc::MessageHandler,
               std::unique_ptr<MediaChannel> media_channel,
               const std::string& content_name,
               bool srtp_required,
-              rtc::CryptoOptions crypto_options);
+              webrtc::CryptoOptions crypto_options);
   virtual ~BaseChannel();
-  void Init_w(webrtc::RtpTransportInternal* rtp_transport);
+  void Init_w(webrtc::RtpTransportInternal* rtp_transport,
+              webrtc::MediaTransportInterface* media_transport);
 
   // Deinit may be called multiple times and is simply ignored if it's already
   // done.
@@ -92,10 +96,10 @@ class BaseChannel : public rtc::MessageHandler,
 
   rtc::Thread* worker_thread() const { return worker_thread_; }
   rtc::Thread* network_thread() const { return network_thread_; }
-  const std::string& content_name() const { return content_name_; }
+  const std::string& content_name() const override { return content_name_; }
   // TODO(deadbeef): This is redundant; remove this.
-  const std::string& transport_name() const { return transport_name_; }
-  bool enabled() const { return enabled_; }
+  const std::string& transport_name() const override { return transport_name_; }
+  bool enabled() const override { return enabled_; }
 
   // This function returns true if using SRTP (DTLS-based keying or SDES).
   bool srtp_active() const {
@@ -108,17 +112,17 @@ class BaseChannel : public rtc::MessageHandler,
   // encryption, an SrtpTransport for SDES or a DtlsSrtpTransport for DTLS-SRTP.
   // This can be called from any thread and it hops to the network thread
   // internally. It would replace the |SetTransports| and its variants.
-  bool SetRtpTransport(webrtc::RtpTransportInternal* rtp_transport);
+  bool SetRtpTransport(webrtc::RtpTransportInternal* rtp_transport) override;
 
   // Channel control
   bool SetLocalContent(const MediaContentDescription* content,
                        webrtc::SdpType type,
-                       std::string* error_desc);
+                       std::string* error_desc) override;
   bool SetRemoteContent(const MediaContentDescription* content,
                         webrtc::SdpType type,
-                        std::string* error_desc);
+                        std::string* error_desc) override;
 
-  bool Enable(bool enable);
+  bool Enable(bool enable) override;
 
   // TODO(zhihuang): These methods are used for testing and can be removed.
   bool AddRecvStream(const StreamParams& sp);
@@ -138,7 +142,9 @@ class BaseChannel : public rtc::MessageHandler,
   void SignalDtlsSrtpSetupFailure_s(bool rtcp);
 
   // Used for latency measurements.
-  sigslot::signal1<BaseChannel*> SignalFirstPacketReceived;
+  sigslot::signal1<ChannelInterface*>& SignalFirstPacketReceived() override {
+    return SignalFirstPacketReceived_;
+  }
 
   // Forward SignalSentPacket to worker thread.
   sigslot::signal1<const rtc::SentPacket&> SignalSentPacket;
@@ -162,14 +168,17 @@ class BaseChannel : public rtc::MessageHandler,
     return nullptr;
   }
 
+  // Returns media transport, can be null if media transport is not available.
+  webrtc::MediaTransportInterface* media_transport() {
+    return media_transport_;
+  }
+
   // From RtpTransport - public for testing only
   void OnTransportReadyToSend(bool ready);
 
   // Only public for unit tests.  Otherwise, consider protected.
   int SetOption(SocketType type, rtc::Socket::Option o, int val) override;
   int SetOption_n(SocketType type, rtc::Socket::Option o, int val);
-
-  virtual cricket::MediaType media_type() = 0;
 
   // RtpPacketSinkInterface overrides.
   void OnRtpPacket(const webrtc::RtpPacketReceived& packet) override;
@@ -180,9 +189,9 @@ class BaseChannel : public rtc::MessageHandler,
     transport_name_ = transport_name;
   }
 
- protected:
-  virtual MediaChannel* media_channel() const { return media_channel_.get(); }
+  MediaChannel* media_channel() const override { return media_channel_.get(); }
 
+ protected:
   bool was_ever_writable() const { return was_ever_writable_; }
   void set_local_content_direction(webrtc::RtpTransceiverDirection direction) {
     local_content_direction_ = direction;
@@ -225,14 +234,14 @@ class BaseChannel : public rtc::MessageHandler,
                   const rtc::PacketOptions& options);
 
   void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                            const rtc::PacketTime& packet_time);
+                            int64_t packet_time_us);
 
   void OnPacketReceived(bool rtcp,
                         const rtc::CopyOnWriteBuffer& packet,
-                        const rtc::PacketTime& packet_time);
+                        int64_t packet_time_us);
   void ProcessPacket(bool rtcp,
                      const rtc::CopyOnWriteBuffer& packet,
-                     const rtc::PacketTime& packet_time);
+                     int64_t packet_time_us);
 
   void EnableMedia_w();
   void DisableMedia_w();
@@ -295,10 +304,14 @@ class BaseChannel : public rtc::MessageHandler,
   void SignalSentPacket_n(const rtc::SentPacket& sent_packet);
   void SignalSentPacket_w(const rtc::SentPacket& sent_packet);
   bool IsReadyToSendMedia_n() const;
+
+  // MediaTransportNetworkChangeCallback override.
+  void OnNetworkRouteChanged(const rtc::NetworkRoute& network_route) override;
   rtc::Thread* const worker_thread_;
   rtc::Thread* const network_thread_;
   rtc::Thread* const signaling_thread_;
   rtc::AsyncInvoker invoker_;
+  sigslot::signal1<ChannelInterface*> SignalFirstPacketReceived_;
 
   const std::string content_name_;
 
@@ -307,13 +320,18 @@ class BaseChannel : public rtc::MessageHandler,
 
   webrtc::RtpTransportInternal* rtp_transport_ = nullptr;
 
+  // Optional media transport (experimental).
+  // If provided, audio and video will be sent through media_transport instead
+  // of RTP/RTCP. Currently media_transport can co-exist with rtp_transport.
+  webrtc::MediaTransportInterface* media_transport_ = nullptr;
+
   std::vector<std::pair<rtc::Socket::Option, int> > socket_options_;
   std::vector<std::pair<rtc::Socket::Option, int> > rtcp_socket_options_;
   bool writable_ = false;
   bool was_ever_writable_ = false;
   bool has_received_packet_ = false;
   const bool srtp_required_ = true;
-  rtc::CryptoOptions crypto_options_;
+  webrtc::CryptoOptions crypto_options_;
 
   // MediaChannel related members that should be accessed from the worker
   // thread.
@@ -343,7 +361,7 @@ class VoiceChannel : public BaseChannel {
                std::unique_ptr<VoiceMediaChannel> channel,
                const std::string& content_name,
                bool srtp_required,
-               rtc::CryptoOptions crypto_options);
+               webrtc::CryptoOptions crypto_options);
   ~VoiceChannel();
 
   // downcasts a MediaChannel
@@ -351,10 +369,9 @@ class VoiceChannel : public BaseChannel {
     return static_cast<VoiceMediaChannel*>(BaseChannel::media_channel());
   }
 
-  webrtc::RtpParameters GetRtpSendParameters_w(uint32_t ssrc) const;
-  webrtc::RTCError SetRtpSendParameters_w(uint32_t ssrc,
-                                          webrtc::RtpParameters parameters);
-  cricket::MediaType media_type() override { return cricket::MEDIA_TYPE_AUDIO; }
+  cricket::MediaType media_type() const override {
+    return cricket::MEDIA_TYPE_AUDIO;
+  }
 
  private:
   // overrides from BaseChannel
@@ -383,7 +400,7 @@ class VideoChannel : public BaseChannel {
                std::unique_ptr<VideoMediaChannel> media_channel,
                const std::string& content_name,
                bool srtp_required,
-               rtc::CryptoOptions crypto_options);
+               webrtc::CryptoOptions crypto_options);
   ~VideoChannel();
 
   // downcasts a MediaChannel
@@ -393,7 +410,9 @@ class VideoChannel : public BaseChannel {
 
   void FillBitrateInfo(BandwidthEstimationInfo* bwe_info);
 
-  cricket::MediaType media_type() override { return cricket::MEDIA_TYPE_VIDEO; }
+  cricket::MediaType media_type() const override {
+    return cricket::MEDIA_TYPE_VIDEO;
+  }
 
  private:
   // overrides from BaseChannel
@@ -422,7 +441,7 @@ class RtpDataChannel : public BaseChannel {
                  std::unique_ptr<DataMediaChannel> channel,
                  const std::string& content_name,
                  bool srtp_required,
-                 rtc::CryptoOptions crypto_options);
+                 webrtc::CryptoOptions crypto_options);
   ~RtpDataChannel();
   // TODO(zhihuang): Remove this once the RtpTransport can be shared between
   // BaseChannels.
@@ -445,7 +464,9 @@ class RtpDataChannel : public BaseChannel {
   // That occurs when the channel is enabled, the transport is writable,
   // both local and remote descriptions are set, and the channel is unblocked.
   sigslot::signal1<bool> SignalReadyToSendData;
-  cricket::MediaType media_type() override { return cricket::MEDIA_TYPE_DATA; }
+  cricket::MediaType media_type() const override {
+    return cricket::MEDIA_TYPE_DATA;
+  }
 
  protected:
   // downcasts a MediaChannel.

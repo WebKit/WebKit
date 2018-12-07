@@ -9,6 +9,9 @@
  */
 
 #include "call/audio_send_stream.h"
+
+#include <stddef.h>
+
 #include "rtc_base/stringencode.h"
 #include "rtc_base/strings/audio_format_to_string.h"
 #include "rtc_base/strings/string_builder.h"
@@ -18,8 +21,12 @@ namespace webrtc {
 AudioSendStream::Stats::Stats() = default;
 AudioSendStream::Stats::~Stats() = default;
 
+AudioSendStream::Config::Config(Transport* send_transport,
+                                MediaTransportInterface* media_transport)
+    : send_transport(send_transport), media_transport(media_transport) {}
+
 AudioSendStream::Config::Config(Transport* send_transport)
-    : send_transport(send_transport) {}
+    : Config(send_transport, nullptr) {}
 
 AudioSendStream::Config::~Config() = default;
 
@@ -27,7 +34,9 @@ std::string AudioSendStream::Config::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
   ss << "{rtp: " << rtp.ToString();
+  ss << ", rtcp_report_interval_ms: " << rtcp_report_interval_ms;
   ss << ", send_transport: " << (send_transport ? "(Transport)" : "null");
+  ss << ", media_transport: " << (media_transport ? "(Transport)" : "null");
   ss << ", min_bitrate_bps: " << min_bitrate_bps;
   ss << ", max_bitrate_bps: " << max_bitrate_bps;
   ss << ", send_codec_spec: "
@@ -44,6 +53,7 @@ std::string AudioSendStream::Config::Rtp::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
   ss << "{ssrc: " << ssrc;
+  ss << ", extmap-allow-mixed: " << (extmap_allow_mixed ? "true" : "false");
   ss << ", extensions: [";
   for (size_t i = 0; i < extensions.size(); ++i) {
     ss << extensions[i].ToString();
@@ -52,7 +62,6 @@ std::string AudioSendStream::Config::Rtp::ToString() const {
     }
   }
   ss << ']';
-  ss << ", nack: " << nack.ToString();
   ss << ", c_name: " << c_name;
   ss << '}';
   return ss.str();

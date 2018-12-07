@@ -39,7 +39,7 @@ class TransportObserver : public RtpPacketSinkInterface,
   }
 
   void OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                            const rtc::PacketTime& packet_time) {
+                            int64_t packet_time_us) {
     rtcp_count_++;
     last_recv_rtcp_packet_ = *packet;
   }

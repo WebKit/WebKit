@@ -31,7 +31,7 @@ TEST(DecisionLogic, CreateAndDestroy) {
   TickTimer tick_timer;
   PacketBuffer packet_buffer(10, &tick_timer);
   DelayPeakDetector delay_peak_detector(&tick_timer);
-  DelayManager delay_manager(240, &delay_peak_detector, &tick_timer);
+  DelayManager delay_manager(240, 0, &delay_peak_detector, &tick_timer);
   BufferLevelFilter buffer_level_filter;
   DecisionLogic* logic = DecisionLogic::Create(
       fs_hz, output_size_samples, false, &decoder_database, packet_buffer,
@@ -48,7 +48,7 @@ TEST(DecisionLogic, PostponeDecodingAfterExpansionSettings) {
   TickTimer tick_timer;
   PacketBuffer packet_buffer(10, &tick_timer);
   DelayPeakDetector delay_peak_detector(&tick_timer);
-  DelayManager delay_manager(240, &delay_peak_detector, &tick_timer);
+  DelayManager delay_manager(240, 0, &delay_peak_detector, &tick_timer);
   BufferLevelFilter buffer_level_filter;
   {
     test::ScopedFieldTrials field_trial(

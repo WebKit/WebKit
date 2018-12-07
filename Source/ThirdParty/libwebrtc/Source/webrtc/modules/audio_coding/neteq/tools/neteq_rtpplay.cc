@@ -17,17 +17,17 @@
 #include "system_wrappers/include/field_trial.h"
 #include "test/field_trial.h"
 
-DEFINE_bool(codec_map,
-            false,
-            "Prints the mapping between RTP payload type and "
-            "codec");
-DEFINE_string(
+WEBRTC_DEFINE_bool(codec_map,
+                   false,
+                   "Prints the mapping between RTP payload type and "
+                   "codec");
+WEBRTC_DEFINE_string(
     force_fieldtrials,
     "",
     "Field trials control experimental feature code which can be forced. "
     "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enable/"
     " will assign the group Enable to field trial WebRTC-FooFeature.");
-DEFINE_bool(help, false, "Prints this message");
+WEBRTC_DEFINE_bool(help, false, "Prints this message");
 
 int main(int argc, char* argv[]) {
   webrtc::test::NetEqTestFactory factory;

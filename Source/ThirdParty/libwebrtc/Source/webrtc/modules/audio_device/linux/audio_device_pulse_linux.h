@@ -13,10 +13,16 @@
 
 #include <memory>
 
+#include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/audio_device_generic.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/audio_device_defines.h"
 #include "modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
+#include "modules/audio_device/linux/pulseaudiosymboltable_linux.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
+#include "rtc_base/thread_annotations.h"
 #include "rtc_base/thread_checker.h"
 
 #if defined(WEBRTC_USE_X11)
@@ -24,6 +30,8 @@
 #endif
 
 #include <pulse/pulseaudio.h>
+#include <stddef.h>
+#include <stdint.h>
 
 // We define this flag if it's missing from our headers, because we want to be
 // able to compile against old headers but still use PA_STREAM_ADJUST_LATENCY
@@ -96,7 +104,6 @@ typedef webrtc::adm_linux_pulse::PulseAudioSymbolTable WebRTCPulseSymbolTable;
 WebRTCPulseSymbolTable* GetPulseSymbolTable();
 
 namespace webrtc {
-class EventWrapper;
 
 class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
  public:
@@ -255,10 +262,10 @@ class AudioDeviceLinuxPulse : public AudioDeviceGeneric {
   AudioDeviceBuffer* _ptrAudioBuffer;
 
   rtc::CriticalSection _critSect;
-  EventWrapper& _timeEventRec;
-  EventWrapper& _timeEventPlay;
-  EventWrapper& _recStartEvent;
-  EventWrapper& _playStartEvent;
+  rtc::Event _timeEventRec;
+  rtc::Event _timeEventPlay;
+  rtc::Event _recStartEvent;
+  rtc::Event _playStartEvent;
 
   // TODO(pbos): Remove unique_ptr and use directly without resetting.
   std::unique_ptr<rtc::PlatformThread> _ptrThreadPlay;

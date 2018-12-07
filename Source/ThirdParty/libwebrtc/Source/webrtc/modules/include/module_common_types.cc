@@ -11,6 +11,7 @@
 #include "modules/include/module_common_types.h"
 
 #include <string.h>
+#include <cstdint>
 #include <utility>
 
 #include "rtc_base/numerics/safe_conversions.h"

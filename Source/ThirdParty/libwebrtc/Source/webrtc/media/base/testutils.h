@@ -20,12 +20,6 @@
 #include "rtc_base/arraysize.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
-namespace rtc {
-class ByteBufferReader;
-class ByteBufferWriter;
-class StreamInterface;
-}  // namespace rtc
-
 namespace webrtc {
 class VideoFrame;
 }
@@ -42,40 +36,6 @@ inline std::vector<T> MakeVector(const T a[], size_t s) {
   return std::vector<T>(a, a + s);
 }
 #define MAKE_VECTOR(a) cricket::MakeVector(a, arraysize(a))
-
-struct RtpDumpPacket;
-class RtpDumpWriter;
-
-struct RawRtpPacket {
-  void WriteToByteBuffer(uint32_t in_ssrc, rtc::ByteBufferWriter* buf) const;
-  bool ReadFromByteBuffer(rtc::ByteBufferReader* buf);
-  // Check if this packet is the same as the specified packet except the
-  // sequence number and timestamp, which should be the same as the specified
-  // parameters.
-  bool SameExceptSeqNumTimestampSsrc(const RawRtpPacket& packet,
-                                     uint16_t seq,
-                                     uint32_t ts,
-                                     uint32_t ssc) const;
-  int size() const { return 28; }
-
-  uint8_t ver_to_cc;
-  uint8_t m_to_pt;
-  uint16_t sequence_number;
-  uint32_t timestamp;
-  uint32_t ssrc;
-  char payload[16];
-};
-
-struct RawRtcpPacket {
-  void WriteToByteBuffer(rtc::ByteBufferWriter* buf) const;
-  bool ReadFromByteBuffer(rtc::ByteBufferReader* buf);
-  bool EqualsTo(const RawRtcpPacket& packet) const;
-
-  uint8_t ver_to_count;
-  uint8_t type;
-  uint16_t length;
-  char payload[16];
-};
 
 // Test helper for testing VideoCapturer implementations.
 class VideoCapturerListener

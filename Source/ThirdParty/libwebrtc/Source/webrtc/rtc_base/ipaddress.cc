@@ -11,24 +11,17 @@
 #if defined(WEBRTC_POSIX)
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #ifdef OPENBSD
 #include <netinet/in_systm.h>
 #endif
 #ifndef __native_client__
 #include <netinet/ip.h>
 #endif
-#include <arpa/inet.h>
 #include <netdb.h>
-#include <unistd.h>
 #endif
 
-#include <stdio.h>
-
 #include "rtc_base/byteorder.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/ipaddress.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/nethelpers.h"
 #include "rtc_base/stringutils.h"
 
@@ -162,11 +155,10 @@ std::string IPAddress::ToSensitiveString() const {
       std::string result;
       result.resize(INET6_ADDRSTRLEN);
       in6_addr addr = ipv6_address();
-      size_t len =
-          rtc::sprintfn(&(result[0]), result.size(), "%x:%x:%x:x:x:x:x:x",
-                        (addr.s6_addr[0] << 8) + addr.s6_addr[1],
-                        (addr.s6_addr[2] << 8) + addr.s6_addr[3],
-                        (addr.s6_addr[4] << 8) + addr.s6_addr[5]);
+      size_t len = snprintf(&(result[0]), result.size(), "%x:%x:%x:x:x:x:x:x",
+                            (addr.s6_addr[0] << 8) + addr.s6_addr[1],
+                            (addr.s6_addr[2] << 8) + addr.s6_addr[3],
+                            (addr.s6_addr[4] << 8) + addr.s6_addr[5]);
       result.resize(len);
       return result;
     }

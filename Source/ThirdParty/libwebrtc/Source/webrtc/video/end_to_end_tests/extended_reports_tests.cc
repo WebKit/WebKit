@@ -8,9 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/video_codecs/video_encoder_config.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "test/call_test.h"
+#include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
 
@@ -21,12 +23,14 @@ class ExtendedReportsEndToEndTest : public test::CallTest {};
 class RtcpXrObserver : public test::EndToEndTest {
  public:
   RtcpXrObserver(bool enable_rrtr,
-                 bool enable_target_bitrate,
-                 bool enable_zero_target_bitrate)
+                 bool expect_target_bitrate,
+                 bool enable_zero_target_bitrate,
+                 VideoEncoderConfig::ContentType content_type)
       : EndToEndTest(test::CallTest::kDefaultTimeoutMs),
         enable_rrtr_(enable_rrtr),
-        enable_target_bitrate_(enable_target_bitrate),
+        expect_target_bitrate_(expect_target_bitrate),
         enable_zero_target_bitrate_(enable_zero_target_bitrate),
+        content_type_(content_type),
         sent_rtcp_sr_(0),
         sent_rtcp_rr_(0),
         sent_rtcp_rrtr_(0),
@@ -95,7 +99,7 @@ class RtcpXrObserver : public test::EndToEndTest {
 
     if (sent_rtcp_sr_ > kNumRtcpReportPacketsToObserve &&
         sent_rtcp_rr_ > kNumRtcpReportPacketsToObserve &&
-        (sent_rtcp_target_bitrate_ || !enable_target_bitrate_) &&
+        (sent_rtcp_target_bitrate_ || !expect_target_bitrate_) &&
         (sent_zero_rtcp_target_bitrate_ || !enable_zero_target_bitrate_)) {
       if (enable_rrtr_) {
         EXPECT_GT(sent_rtcp_rrtr_, 0);
@@ -104,7 +108,7 @@ class RtcpXrObserver : public test::EndToEndTest {
         EXPECT_EQ(sent_rtcp_rrtr_, 0);
         EXPECT_EQ(sent_rtcp_dlrr_, 0);
       }
-      EXPECT_EQ(enable_target_bitrate_, sent_rtcp_target_bitrate_);
+      EXPECT_EQ(expect_target_bitrate_, sent_rtcp_target_bitrate_);
       EXPECT_EQ(enable_zero_target_bitrate_, sent_zero_rtcp_target_bitrate_);
       observation_complete_.Set();
     }
@@ -144,10 +148,7 @@ class RtcpXrObserver : public test::EndToEndTest {
       (*receive_configs)[0].decoders[0].video_format =
           SdpVideoFormat(send_config->rtp.payload_name);
     }
-    if (enable_target_bitrate_) {
-      // TargetBitrate only signaled for screensharing.
-      encoder_config->content_type = VideoEncoderConfig::ContentType::kScreen;
-    }
+    encoder_config->content_type = content_type_;
     (*receive_configs)[0].rtp.rtcp_mode = RtcpMode::kReducedSize;
     (*receive_configs)[0].rtp.rtcp_xr.receiver_reference_time_report =
         enable_rrtr_;
@@ -162,50 +163,65 @@ class RtcpXrObserver : public test::EndToEndTest {
 
   rtc::CriticalSection crit_;
   const bool enable_rrtr_;
-  const bool enable_target_bitrate_;
+  const bool expect_target_bitrate_;
   const bool enable_zero_target_bitrate_;
+  const VideoEncoderConfig::ContentType content_type_;
   int sent_rtcp_sr_;
   int sent_rtcp_rr_ RTC_GUARDED_BY(&crit_);
   int sent_rtcp_rrtr_ RTC_GUARDED_BY(&crit_);
   bool sent_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
   bool sent_zero_rtcp_target_bitrate_ RTC_GUARDED_BY(&crit_);
   int sent_rtcp_dlrr_;
-  DefaultNetworkSimulationConfig forward_transport_config_;
+  BuiltInNetworkBehaviorConfig forward_transport_config_;
   SimulatedNetwork* send_simulated_network_;
 };
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsWithRrtrWithoutTargetBitrate) {
-  RtcpXrObserver test(/*enable_rrtr=*/true, /*enable_target_bitrate=*/false,
-                      /*enable_zero_target_bitrate=*/false);
+  RtcpXrObserver test(/*enable_rrtr=*/true, /*expect_target_bitrate=*/false,
+                      /*enable_zero_target_bitrate=*/false,
+                      VideoEncoderConfig::ContentType::kRealtimeVideo);
   RunBaseTest(&test);
 }
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsWithoutRrtrWithoutTargetBitrate) {
-  RtcpXrObserver test(/*enable_rrtr=*/false, /*enable_target_bitrate=*/false,
-                      /*enable_zero_target_bitrate=*/false);
+  RtcpXrObserver test(/*enable_rrtr=*/false, /*expect_target_bitrate=*/false,
+                      /*enable_zero_target_bitrate=*/false,
+                      VideoEncoderConfig::ContentType::kRealtimeVideo);
   RunBaseTest(&test);
 }
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsWithRrtrWithTargetBitrate) {
-  RtcpXrObserver test(/*enable_rrtr=*/true, /*enable_target_bitrate=*/true,
-                      /*enable_zero_target_bitrate=*/false);
+  RtcpXrObserver test(/*enable_rrtr=*/true, /*expect_target_bitrate=*/true,
+                      /*enable_zero_target_bitrate=*/false,
+                      VideoEncoderConfig::ContentType::kScreen);
   RunBaseTest(&test);
 }
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsWithoutRrtrWithTargetBitrate) {
-  RtcpXrObserver test(/*enable_rrtr=*/false, /*enable_target_bitrate=*/true,
-                      /*enable_zero_target_bitrate=*/false);
+  RtcpXrObserver test(/*enable_rrtr=*/false, /*expect_target_bitrate=*/true,
+                      /*enable_zero_target_bitrate=*/false,
+                      VideoEncoderConfig::ContentType::kScreen);
+  RunBaseTest(&test);
+}
+
+TEST_F(ExtendedReportsEndToEndTest,
+       TestExtendedReportsWithoutRrtrWithTargetBitrateFromFieldTrial) {
+  test::ScopedFieldTrials field_trials("WebRTC-Target-Bitrate-Rtcp/Enabled/");
+  RtcpXrObserver test(/*enable_rrtr=*/false, /*expect_target_bitrate=*/true,
+                      /*enable_zero_target_bitrate=*/false,
+                      VideoEncoderConfig::ContentType::kRealtimeVideo);
   RunBaseTest(&test);
 }
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsCanSignalZeroTargetBitrate) {
-  RtcpXrObserver test(/*enable_rrtr=*/false, /*enable_target_bitrate=*/true,
-                      /*enable_zero_target_bitrate=*/true);
+  RtcpXrObserver test(/*enable_rrtr=*/false, /*expect_target_bitrate=*/true,
+                      /*enable_zero_target_bitrate=*/true,
+                      VideoEncoderConfig::ContentType::kScreen);
   RunBaseTest(&test);
 }
 }  // namespace webrtc

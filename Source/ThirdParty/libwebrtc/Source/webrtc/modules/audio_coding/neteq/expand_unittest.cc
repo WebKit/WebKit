@@ -51,14 +51,16 @@ TEST(Expand, CreateUsingFactory) {
 namespace {
 class FakeStatisticsCalculator : public StatisticsCalculator {
  public:
-  void LogDelayedPacketOutageEvent(int outage_duration_ms) override {
-    last_outage_duration_ms_ = outage_duration_ms;
+  void LogDelayedPacketOutageEvent(int num_samples, int fs_hz) override {
+    last_outage_duration_samples_ = num_samples;
   }
 
-  int last_outage_duration_ms() const { return last_outage_duration_ms_; }
+  int last_outage_duration_samples() const {
+    return last_outage_duration_samples_;
+  }
 
  private:
-  int last_outage_duration_ms_ = 0;
+  int last_outage_duration_samples_ = 0;
 };
 
 // This is the same size that is given to the SyncBuffer object in NetEq.
@@ -120,13 +122,12 @@ TEST_F(ExpandTest, DelayedPacketOutage) {
     EXPECT_EQ(0, expand_.Process(&output));
     EXPECT_GT(output.Size(), 0u);
     sum_output_len_samples += output.Size();
-    EXPECT_EQ(0, statistics_.last_outage_duration_ms());
+    EXPECT_EQ(0, statistics_.last_outage_duration_samples());
   }
   expand_.SetParametersForNormalAfterExpand();
   // Convert |sum_output_len_samples| to milliseconds.
-  EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples /
-                                   (test_sample_rate_hz_ / 1000)),
-            statistics_.last_outage_duration_ms());
+  EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples),
+            statistics_.last_outage_duration_samples());
 }
 
 // This test is similar to DelayedPacketOutage, but ends by calling
@@ -140,10 +141,10 @@ TEST_F(ExpandTest, LostPacketOutage) {
     EXPECT_EQ(0, expand_.Process(&output));
     EXPECT_GT(output.Size(), 0u);
     sum_output_len_samples += output.Size();
-    EXPECT_EQ(0, statistics_.last_outage_duration_ms());
+    EXPECT_EQ(0, statistics_.last_outage_duration_samples());
   }
   expand_.SetParametersForMergeAfterExpand();
-  EXPECT_EQ(0, statistics_.last_outage_duration_ms());
+  EXPECT_EQ(0, statistics_.last_outage_duration_samples());
 }
 
 // This test is similar to the DelayedPacketOutage test above, but with the
@@ -161,13 +162,12 @@ TEST_F(ExpandTest, CheckOutageStatsAfterReset) {
       expand_.Reset();
       sum_output_len_samples = 0;
     }
-    EXPECT_EQ(0, statistics_.last_outage_duration_ms());
+    EXPECT_EQ(0, statistics_.last_outage_duration_samples());
   }
   expand_.SetParametersForNormalAfterExpand();
   // Convert |sum_output_len_samples| to milliseconds.
-  EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples /
-                                   (test_sample_rate_hz_ / 1000)),
-            statistics_.last_outage_duration_ms());
+  EXPECT_EQ(rtc::checked_cast<int>(sum_output_len_samples),
+            statistics_.last_outage_duration_samples());
 }
 
 namespace {

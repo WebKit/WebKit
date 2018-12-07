@@ -16,7 +16,6 @@
 #include <set>
 
 #include "call/video_send_stream.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"

@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "api/test/simulated_network.h"
+#include "api/test/video/function_video_encoder_factory.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
@@ -22,7 +24,6 @@
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
 #include "test/encoder_settings.h"
-#include "test/function_video_encoder_factory.h"
 
 namespace webrtc {
 
@@ -54,6 +55,8 @@ void MultiStreamTester::RunTest() {
   test::FrameGeneratorCapturer* frame_generators[kNumStreams];
   test::FunctionVideoEncoderFactory encoder_factory(
       []() { return VP8Encoder::Create(); });
+  std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory =
+      CreateBuiltinVideoBitrateAllocatorFactory();
   InternalDecoderFactory decoder_factory;
 
   task_queue_->SendTask([&]() {
@@ -75,6 +78,8 @@ void MultiStreamTester::RunTest() {
       VideoSendStream::Config send_config(sender_transport.get());
       send_config.rtp.ssrcs.push_back(ssrc);
       send_config.encoder_settings.encoder_factory = &encoder_factory;
+      send_config.encoder_settings.bitrate_allocator_factory =
+          bitrate_allocator_factory.get();
       send_config.rtp.payload_name = "VP8";
       send_config.rtp.payload_type = kVideoPayloadType;
       VideoEncoderConfig encoder_config;
@@ -143,9 +148,9 @@ test::DirectTransport* MultiStreamTester::CreateSendTransport(
     Call* sender_call) {
   return new test::DirectTransport(
       task_queue,
-      absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                         absl::make_unique<SimulatedNetwork>(
-                                             DefaultNetworkSimulationConfig())),
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
       sender_call, payload_type_map_);
 }
 
@@ -154,9 +159,9 @@ test::DirectTransport* MultiStreamTester::CreateReceiveTransport(
     Call* receiver_call) {
   return new test::DirectTransport(
       task_queue,
-      absl::make_unique<FakeNetworkPipe>(Clock::GetRealTimeClock(),
-                                         absl::make_unique<SimulatedNetwork>(
-                                             DefaultNetworkSimulationConfig())),
+      absl::make_unique<FakeNetworkPipe>(
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
       receiver_call, payload_type_map_);
 }
 }  // namespace webrtc

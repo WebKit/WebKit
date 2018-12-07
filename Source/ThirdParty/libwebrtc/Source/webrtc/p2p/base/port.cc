@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/match.h"
 #include "p2p/base/portallocator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crc32.h"
@@ -27,7 +28,6 @@
 #include "rtc_base/network.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/third_party/base64/base64.h"
 
 namespace {
@@ -183,7 +183,7 @@ const char* ProtoToString(ProtocolType proto) {
 
 bool StringToProto(const char* value, ProtocolType* proto) {
   for (size_t i = 0; i <= PROTO_LAST; ++i) {
-    if (_stricmp(PROTO_NAMES[i], value) == 0) {
+    if (absl::EqualsIgnoreCase(PROTO_NAMES[i], value)) {
       *proto = static_cast<ProtocolType>(i);
       return true;
     }
@@ -399,9 +399,9 @@ void Port::AddAddress(const rtc::SocketAddress& address,
                       const std::string& type,
                       uint32_t type_preference,
                       uint32_t relay_preference,
-                      bool final) {
+                      bool is_final) {
   AddAddress(address, base_address, related_address, protocol, relay_protocol,
-             tcptype, type, type_preference, relay_preference, "", final);
+             tcptype, type, type_preference, relay_preference, "", is_final);
 }
 
 void Port::AddAddress(const rtc::SocketAddress& address,
@@ -430,44 +430,60 @@ void Port::AddAddress(const rtc::SocketAddress& address,
   c.set_network_name(network_->name());
   c.set_network_type(network_->type());
   c.set_url(url);
+  c.set_related_address(related_address);
+
+  bool pending = MaybeObfuscateAddress(&c, type, is_final);
+
+  if (!pending) {
+    FinishAddingAddress(c, is_final);
+  }
+}
+
+bool Port::MaybeObfuscateAddress(Candidate* c,
+                                 const std::string& type,
+                                 bool is_final) {
   // TODO(bugs.webrtc.org/9723): Use a config to control the feature of IP
   // handling with mDNS.
-  if (network_->GetMDnsResponder() != nullptr) {
-    // Obfuscate the IP address of a host candidates by an mDNS hostname.
-    if (type == LOCAL_PORT_TYPE) {
-      auto weak_ptr = weak_factory_.GetWeakPtr();
-      auto callback = [weak_ptr, c, is_final](const rtc::IPAddress& addr,
-                                              const std::string& name) mutable {
-        RTC_DCHECK(c.address().ipaddr() == addr);
-        rtc::SocketAddress hostname_address(name, c.address().port());
-        // In Port and Connection, we need the IP address information to
-        // correctly handle the update of candidate type to prflx. The removal
-        // of IP address when signaling this candidate will take place in
-        // BasicPortAllocatorSession::OnCandidateReady, via SanitizeCandidate.
-        hostname_address.SetResolvedIP(addr);
-        c.set_address(hostname_address);
-        RTC_DCHECK(c.related_address() == rtc::SocketAddress());
-        if (weak_ptr != nullptr) {
-          weak_ptr->FinishAddingAddress(c, is_final);
-        }
-      };
-      network_->GetMDnsResponder()->CreateNameForAddress(c.address().ipaddr(),
-                                                         callback);
-      return;
-    }
-    // For other types of candidates, the related address should be set to
-    // 0.0.0.0 or ::0.
-    c.set_related_address(rtc::SocketAddress());
-  } else {
-    c.set_related_address(related_address);
+  if (network_->GetMdnsResponder() == nullptr) {
+    return false;
   }
-  FinishAddingAddress(c, is_final);
+  if (type != LOCAL_PORT_TYPE) {
+    return false;
+  }
+
+  auto copy = *c;
+  auto weak_ptr = weak_factory_.GetWeakPtr();
+  auto callback = [weak_ptr, copy, is_final](const rtc::IPAddress& addr,
+                                             const std::string& name) mutable {
+    RTC_DCHECK(copy.address().ipaddr() == addr);
+    rtc::SocketAddress hostname_address(name, copy.address().port());
+    // In Port and Connection, we need the IP address information to
+    // correctly handle the update of candidate type to prflx. The removal
+    // of IP address when signaling this candidate will take place in
+    // BasicPortAllocatorSession::OnCandidateReady, via SanitizeCandidate.
+    hostname_address.SetResolvedIP(addr);
+    copy.set_address(hostname_address);
+    copy.set_related_address(rtc::SocketAddress());
+    if (weak_ptr != nullptr) {
+      weak_ptr->set_mdns_name_registration_status(
+          MdnsNameRegistrationStatus::kCompleted);
+      weak_ptr->FinishAddingAddress(copy, is_final);
+    }
+  };
+  set_mdns_name_registration_status(MdnsNameRegistrationStatus::kInProgress);
+  network_->GetMdnsResponder()->CreateNameForAddress(copy.address().ipaddr(),
+                                                     callback);
+  return true;
 }
 
 void Port::FinishAddingAddress(const Candidate& c, bool is_final) {
   candidates_.push_back(c);
   SignalCandidateReady(this, c);
 
+  PostAddAddress(is_final);
+}
+
+void Port::PostAddAddress(bool is_final) {
   if (is_final) {
     SignalPortComplete(this);
   }
@@ -773,7 +789,7 @@ bool Port::HandleIncomingPacket(rtc::AsyncPacketSocket* socket,
                                 const char* data,
                                 size_t size,
                                 const rtc::SocketAddress& remote_addr,
-                                const rtc::PacketTime& packet_time) {
+                                int64_t packet_time_us) {
   RTC_NOTREACHED();
   return false;
 }
@@ -1236,7 +1252,7 @@ void Connection::OnSendStunPacket(const void* data,
 
 void Connection::OnReadPacket(const char* data,
                               size_t size,
-                              const rtc::PacketTime& packet_time) {
+                              int64_t packet_time_us) {
   std::unique_ptr<IceMessage> msg;
   std::string remote_ufrag;
   const rtc::SocketAddress& addr(remote_candidate_.address());
@@ -1246,7 +1262,7 @@ void Connection::OnReadPacket(const char* data,
     last_data_received_ = rtc::TimeMillis();
     UpdateReceiving(last_data_received_);
     recv_rate_tracker_.AddSamples(size);
-    SignalReadPacket(this, data, size, packet_time);
+    SignalReadPacket(this, data, size, packet_time_us);
 
     // If timed out sending writability checks, start up again
     if (!pruned_ && (write_state_ == STATE_WRITE_TIMEOUT)) {

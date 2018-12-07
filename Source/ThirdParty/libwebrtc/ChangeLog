@@ -1,3 +1,20 @@
+2018-12-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc up to 0d007d7c4f
+        https://bugs.webkit.org/show_bug.cgi?id=192316
+
+        Reviewed by Eric Carlson.
+
+        Updating to latest libwebrtc will allows cherry-picking important bug fixes.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/third_party/abseil-cpp: refreshed.
+        * Source/webrtc: refreshed.
+        * WebKit/0001-libwebrtc-changes.patch: Removed.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2018-12-01  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Build opus decoder support in libwebrtc

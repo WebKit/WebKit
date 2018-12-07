@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_MOVING_AVERAGE_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_MOVING_AVERAGE_H_
 
+#include <stddef.h>
 #include <vector>
 
 #include "api/array_view.h"

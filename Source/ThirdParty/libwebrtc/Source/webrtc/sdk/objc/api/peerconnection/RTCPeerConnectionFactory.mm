@@ -50,6 +50,7 @@
 // TODO(zhihuang): Remove nogncheck once MediaEngineInterface is moved to C++
 // API layer.
 #include "absl/memory/memory.h"
+#include "api/media_transport_interface.h"
 #include "media/engine/webrtcmediaengine.h"  // nogncheck
 
 @implementation RTCPeerConnectionFactory {
@@ -80,12 +81,15 @@
                        nativeVideoDecoderFactory:webrtc::ObjCToNativeVideoDecoderFactory(
                                                      [[RTCVideoDecoderFactoryH264 alloc] init])
                                audioDeviceModule:[self audioDeviceModule]
-                           audioProcessingModule:nullptr];
+                           audioProcessingModule:nullptr
+                           mediaTransportFactory:nullptr];
 #endif
 }
 
 - (instancetype)initWithEncoderFactory:(nullable id<RTCVideoEncoderFactory>)encoderFactory
-                        decoderFactory:(nullable id<RTCVideoDecoderFactory>)decoderFactory {
+                        decoderFactory:(nullable id<RTCVideoDecoderFactory>)decoderFactory
+                 mediaTransportFactory:
+                     (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory {
 #ifdef HAVE_NO_MEDIA
   return [self initWithNoMedia];
 #else
@@ -102,8 +106,15 @@
                        nativeVideoEncoderFactory:std::move(native_encoder_factory)
                        nativeVideoDecoderFactory:std::move(native_decoder_factory)
                                audioDeviceModule:[self audioDeviceModule]
-                           audioProcessingModule:nullptr];
+                           audioProcessingModule:nullptr
+                           mediaTransportFactory:std::move(mediaTransportFactory)];
 #endif
+}
+- (instancetype)initWithEncoderFactory:(nullable id<RTCVideoEncoderFactory>)encoderFactory
+                        decoderFactory:(nullable id<RTCVideoDecoderFactory>)decoderFactory {
+  return [self initWithEncoderFactory:encoderFactory
+                       decoderFactory:decoderFactory
+                mediaTransportFactory:nullptr];
 }
 
 - (instancetype)initNative {
@@ -152,20 +163,57 @@
                                     (nullable webrtc::AudioDeviceModule *)audioDeviceModule
                             audioProcessingModule:
                                 (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule {
+  return [self initWithNativeAudioEncoderFactory:audioEncoderFactory
+                       nativeAudioDecoderFactory:audioDecoderFactory
+                       nativeVideoEncoderFactory:std::move(videoEncoderFactory)
+                       nativeVideoDecoderFactory:std::move(videoDecoderFactory)
+                               audioDeviceModule:audioDeviceModule
+                           audioProcessingModule:audioProcessingModule
+                           mediaTransportFactory:nullptr];
+}
+
+- (instancetype)
+    initWithNativeAudioEncoderFactory:
+        (rtc::scoped_refptr<webrtc::AudioEncoderFactory>)audioEncoderFactory
+            nativeAudioDecoderFactory:
+                (rtc::scoped_refptr<webrtc::AudioDecoderFactory>)audioDecoderFactory
+            nativeVideoEncoderFactory:
+                (std::unique_ptr<webrtc::VideoEncoderFactory>)videoEncoderFactory
+            nativeVideoDecoderFactory:
+                (std::unique_ptr<webrtc::VideoDecoderFactory>)videoDecoderFactory
+                    audioDeviceModule:(nullable webrtc::AudioDeviceModule *)audioDeviceModule
+                audioProcessingModule:
+                    (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule
+                mediaTransportFactory:
+                    (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory {
 #ifdef HAVE_NO_MEDIA
   return [self initWithNoMedia];
 #else
   if (self = [self initNative]) {
-    _nativeFactory = webrtc::CreatePeerConnectionFactory(_networkThread.get(),
-                                                         _workerThread.get(),
-                                                         _signalingThread.get(),
-                                                         audioDeviceModule,
-                                                         audioEncoderFactory,
-                                                         audioDecoderFactory,
-                                                         std::move(videoEncoderFactory),
-                                                         std::move(videoDecoderFactory),
-                                                         nullptr,  // audio mixer
-                                                         audioProcessingModule);
+    if (!audioProcessingModule) audioProcessingModule = webrtc::AudioProcessingBuilder().Create();
+
+    std::unique_ptr<cricket::MediaEngineInterface> media_engine =
+        cricket::WebRtcMediaEngineFactory::Create(audioDeviceModule,
+                                                  audioEncoderFactory,
+                                                  audioDecoderFactory,
+                                                  std::move(videoEncoderFactory),
+                                                  std::move(videoDecoderFactory),
+                                                  nullptr,  // audio mixer
+                                                  audioProcessingModule);
+
+    std::unique_ptr<webrtc::CallFactoryInterface> call_factory = webrtc::CreateCallFactory();
+
+    std::unique_ptr<webrtc::RtcEventLogFactoryInterface> event_log_factory =
+        webrtc::CreateRtcEventLogFactory();
+    webrtc::PeerConnectionFactoryDependencies dependencies;
+    dependencies.network_thread = _networkThread.get();
+    dependencies.worker_thread = _workerThread.get();
+    dependencies.signaling_thread = _signalingThread.get();
+    dependencies.media_engine = std::move(media_engine);
+    dependencies.call_factory = std::move(call_factory);
+    dependencies.event_log_factory = std::move(event_log_factory);
+    dependencies.media_transport_factory = std::move(mediaTransportFactory);
+    _nativeFactory = webrtc::CreateModularPeerConnectionFactory(std::move(dependencies));
     NSAssert(_nativeFactory, @"Failed to initialize PeerConnectionFactory!");
   }
   return self;

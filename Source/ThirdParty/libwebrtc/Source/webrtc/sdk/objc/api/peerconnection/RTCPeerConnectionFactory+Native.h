@@ -17,6 +17,7 @@ namespace webrtc {
 class AudioDeviceModule;
 class AudioEncoderFactory;
 class AudioDecoderFactory;
+class MediaTransportFactory;
 class VideoEncoderFactory;
 class VideoDecoderFactory;
 class AudioProcessing;
@@ -49,6 +50,25 @@ NS_ASSUME_NONNULL_BEGIN
                             audioProcessingModule:
                                 (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule;
 
+- (instancetype)
+    initWithNativeAudioEncoderFactory:
+        (rtc::scoped_refptr<webrtc::AudioEncoderFactory>)audioEncoderFactory
+            nativeAudioDecoderFactory:
+                (rtc::scoped_refptr<webrtc::AudioDecoderFactory>)audioDecoderFactory
+            nativeVideoEncoderFactory:
+                (std::unique_ptr<webrtc::VideoEncoderFactory>)videoEncoderFactory
+            nativeVideoDecoderFactory:
+                (std::unique_ptr<webrtc::VideoDecoderFactory>)videoDecoderFactory
+                    audioDeviceModule:(nullable webrtc::AudioDeviceModule *)audioDeviceModule
+                audioProcessingModule:
+                    (rtc::scoped_refptr<webrtc::AudioProcessing>)audioProcessingModule
+                mediaTransportFactory:
+                    (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory;
+
+- (instancetype)initWithEncoderFactory:(nullable id<RTCVideoEncoderFactory>)encoderFactory
+                        decoderFactory:(nullable id<RTCVideoDecoderFactory>)decoderFactory
+                 mediaTransportFactory:
+                     (std::unique_ptr<webrtc::MediaTransportFactory>)mediaTransportFactory;
 @end
 
 NS_ASSUME_NONNULL_END

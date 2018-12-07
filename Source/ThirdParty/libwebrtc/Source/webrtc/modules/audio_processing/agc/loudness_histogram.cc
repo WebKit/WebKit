@@ -10,8 +10,8 @@
 
 #include "modules/audio_processing/agc/loudness_histogram.h"
 
+#include <string.h>
 #include <cmath>
-#include <cstring>
 
 #include "rtc_base/checks.h"
 

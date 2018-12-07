@@ -9,6 +9,7 @@
  */
 
 #include <array>
+#include <type_traits>
 #include <vector>
 
 #include "api/array_view.h"
@@ -16,7 +17,7 @@
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/agc2/compute_interpolated_gain_curve.h"
 #include "modules/audio_processing/agc2/interpolated_gain_curve.h"
-#include "modules/audio_processing/agc2/limiter.h"
+#include "modules/audio_processing/agc2/limiter_db_gain_curve.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
@@ -27,7 +28,8 @@ namespace {
 constexpr double kLevelEpsilon = 1e-2 * kMaxAbsFloatS16Value;
 constexpr float kInterpolatedGainCurveTolerance = 1.f / 32768.f;
 ApmDataDumper apm_data_dumper(0);
-const Limiter limiter;
+static_assert(std::is_trivially_destructible<LimiterDbGainCurve>::value, "");
+const LimiterDbGainCurve limiter;
 
 }  // namespace
 

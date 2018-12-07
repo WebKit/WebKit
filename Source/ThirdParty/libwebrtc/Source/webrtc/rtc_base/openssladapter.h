@@ -11,25 +11,28 @@
 #ifndef RTC_BASE_OPENSSLADAPTER_H_
 #define RTC_BASE_OPENSSLADAPTER_H_
 
-#include <openssl/ossl_typ.h>
-
-#include <map>
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "absl/memory/memory.h"
+#include "rtc_base/asyncsocket.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/messagehandler.h"
 #include "rtc_base/messagequeue.h"
-#include "rtc_base/opensslcertificate.h"
 #include "rtc_base/opensslidentity.h"
 #include "rtc_base/opensslsessioncache.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socketaddress.h"
 #include "rtc_base/ssladapter.h"
+#include "rtc_base/sslcertificate.h"
+#include "rtc_base/sslidentity.h"
+#include "rtc_base/sslstreamadapter.h"
 
 namespace rtc {
 
-class OpenSSLAdapter : public SSLAdapter, public MessageHandler {
+class OpenSSLAdapter final : public SSLAdapter, public MessageHandler {
  public:
   static bool InitializeSSL();
   static bool CleanupSSL();

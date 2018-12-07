@@ -28,32 +28,25 @@ namespace webrtc {
 
 enum { kMaxReceiverDelayMs = 10000 };
 
-VCMReceiver::VCMReceiver(VCMTiming* timing,
-                         Clock* clock,
-                         EventFactory* event_factory)
+VCMReceiver::VCMReceiver(VCMTiming* timing, Clock* clock)
     : VCMReceiver::VCMReceiver(timing,
                                clock,
-                               event_factory,
+                               absl::WrapUnique(EventWrapper::Create()),
+                               absl::WrapUnique(EventWrapper::Create()),
                                nullptr,  // NackSender
                                nullptr)  // KeyframeRequestSender
 {}
 
 VCMReceiver::VCMReceiver(VCMTiming* timing,
                          Clock* clock,
-                         EventFactory* event_factory,
                          NackSender* nack_sender,
                          KeyFrameRequestSender* keyframe_request_sender)
-    : VCMReceiver(
-          timing,
-          clock,
-          std::unique_ptr<EventWrapper>(event_factory
-                                            ? event_factory->CreateEvent()
-                                            : EventWrapper::Create()),
-          std::unique_ptr<EventWrapper>(event_factory
-                                            ? event_factory->CreateEvent()
-                                            : EventWrapper::Create()),
-          nack_sender,
-          keyframe_request_sender) {}
+    : VCMReceiver(timing,
+                  clock,
+                  absl::WrapUnique(EventWrapper::Create()),
+                  absl::WrapUnique(EventWrapper::Create()),
+                  nack_sender,
+                  keyframe_request_sender) {}
 
 VCMReceiver::VCMReceiver(VCMTiming* timing,
                          Clock* clock,

@@ -64,6 +64,13 @@ VideoFrame::Builder& VideoFrame::Builder::set_color_space(
   return *this;
 }
 
+VideoFrame::Builder& VideoFrame::Builder::set_color_space(
+    const ColorSpace* color_space) {
+  color_space_ =
+      color_space ? absl::make_optional(*color_space) : absl::nullopt;
+  return *this;
+}
+
 VideoFrame::VideoFrame(const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
                        webrtc::VideoRotation rotation,
                        int64_t timestamp_us)

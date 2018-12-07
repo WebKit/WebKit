@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_RTCCERTIFICATEGENERATOR_H_
 #define RTC_BASE_RTCCERTIFICATEGENERATOR_H_
 
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 #include "rtc_base/refcount.h"
 #include "rtc_base/rtccertificate.h"

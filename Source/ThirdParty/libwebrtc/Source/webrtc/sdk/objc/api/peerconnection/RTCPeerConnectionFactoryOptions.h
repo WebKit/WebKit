@@ -31,10 +31,6 @@ RTC_OBJC_EXPORT
 
 @property(nonatomic, assign) BOOL ignoreEthernetNetworkAdapter;
 
-@property(nonatomic, assign) BOOL enableAes128Sha1_32CryptoCipher;
-
-@property(nonatomic, assign) BOOL enableGcmCryptoSuites;
-
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 @end

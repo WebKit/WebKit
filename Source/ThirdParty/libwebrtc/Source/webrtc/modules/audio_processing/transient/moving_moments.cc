@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/transient/moving_moments.h"
 
-#include <cmath>
+#include <algorithm>
 
 #include "rtc_base/checks.h"
 

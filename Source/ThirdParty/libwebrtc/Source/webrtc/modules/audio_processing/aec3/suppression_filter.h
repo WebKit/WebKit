@@ -16,13 +16,15 @@
 
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec3_fft.h"
+#include "modules/audio_processing/aec3/fft_data.h"
+#include "modules/audio_processing/utility/ooura_fft.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
 class SuppressionFilter {
  public:
-  explicit SuppressionFilter(int sample_rate_hz);
+  SuppressionFilter(Aec3Optimization optimization, int sample_rate_hz);
   ~SuppressionFilter();
   void ApplyGain(const FftData& comfort_noise,
                  const FftData& comfort_noise_high_bands,
@@ -32,6 +34,7 @@ class SuppressionFilter {
                  std::vector<std::vector<float>>* e);
 
  private:
+  const Aec3Optimization optimization_;
   const int sample_rate_hz_;
   const OouraFft ooura_fft_;
   const Aec3Fft fft_;

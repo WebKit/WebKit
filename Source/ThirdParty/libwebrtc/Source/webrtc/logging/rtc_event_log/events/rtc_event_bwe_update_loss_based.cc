@@ -38,8 +38,10 @@ bool RtcEventBweUpdateLossBased::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventBweUpdateLossBased::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventBweUpdateLossBased(*this));
+std::unique_ptr<RtcEventBweUpdateLossBased> RtcEventBweUpdateLossBased::Copy()
+    const {
+  return absl::WrapUnique<RtcEventBweUpdateLossBased>(
+      new RtcEventBweUpdateLossBased(*this));
 }
 
 }  // namespace webrtc

@@ -10,6 +10,9 @@
 
 #include "common_audio/channel_buffer.h"
 
+#include <cstdint>
+
+#include "common_audio/include/audio_util.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

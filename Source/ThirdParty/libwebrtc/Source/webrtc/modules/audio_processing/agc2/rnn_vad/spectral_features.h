@@ -13,6 +13,7 @@
 
 #include <array>
 #include <complex>
+#include <cstddef>
 #include <vector>
 
 #include "api/array_view.h"

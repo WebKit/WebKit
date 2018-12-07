@@ -18,10 +18,10 @@
 
 #include "api/call/transport.h"
 #include "api/units/timestamp.h"
+#include "call/call.h"
 #include "call/simulated_network.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/copyonwritebuffer.h"
-#include "test/scenario/call_client.h"
 #include "test/scenario/column_printer.h"
 #include "test/scenario/scenario_config.h"
 
@@ -119,23 +119,30 @@ class SimulationNode : public NetworkNode {
 
 class NetworkNodeTransport : public Transport {
  public:
-  NetworkNodeTransport(CallClient* sender,
-                       NetworkNode* send_net,
-                       uint64_t receiver,
-                       DataSize packet_overhead);
+  NetworkNodeTransport(const Clock* sender_clock, Call* sender_call);
   ~NetworkNodeTransport() override;
 
   bool SendRtp(const uint8_t* packet,
                size_t length,
                const PacketOptions& options) override;
   bool SendRtcp(const uint8_t* packet, size_t length) override;
-  uint64_t ReceiverId() const;
+
+  void Connect(NetworkNode* send_node,
+               uint64_t receiver_id,
+               DataSize packet_overhead);
+
+  DataSize packet_overhead() {
+    rtc::CritScope crit(&crit_sect_);
+    return packet_overhead_;
+  }
 
  private:
-  CallClient* const sender_;
-  NetworkNode* const send_net_;
-  const uint64_t receiver_id_;
-  const DataSize packet_overhead_;
+  rtc::CriticalSection crit_sect_;
+  const Clock* const sender_clock_;
+  Call* const sender_call_;
+  NetworkNode* send_net_ RTC_GUARDED_BY(crit_sect_) = nullptr;
+  uint64_t receiver_id_ RTC_GUARDED_BY(crit_sect_) = 0;
+  DataSize packet_overhead_ RTC_GUARDED_BY(crit_sect_) = DataSize::Zero();
 };
 
 // CrossTrafficSource is created by a Scenario and generates cross traffic. It

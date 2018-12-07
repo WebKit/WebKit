@@ -186,11 +186,6 @@ public:
         return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    int32_t SetChannelParameters(uint32_t, int64_t) final
-    {
-        return WEBRTC_VIDEO_CODEC_OK;
-    }
-
     int32_t Encode(const webrtc::VideoFrame& frame,
         const webrtc::CodecSpecificInfo* codecInfo,
         const std::vector<webrtc::FrameType>* frameTypes) final

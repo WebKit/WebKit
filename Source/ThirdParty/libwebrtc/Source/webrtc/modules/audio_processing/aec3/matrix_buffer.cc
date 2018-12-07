@@ -10,7 +10,7 @@
 
 #include "modules/audio_processing/aec3/matrix_buffer.h"
 
-#include "modules/audio_processing/aec3/aec3_common.h"
+#include <algorithm>
 
 namespace webrtc {
 

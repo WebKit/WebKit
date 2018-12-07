@@ -112,8 +112,6 @@ class AudioDecoderFactoryT : public AudioDecoderFactory {
 // decoder types in the order they were specified in the template argument
 // list, stopping at the first one that claims to be able to do the job.
 //
-// NOTE: This function is still under development and may change without notice.
-//
 // TODO(kwiberg): Point at CreateBuiltinAudioDecoderFactory() for an example of
 // how it is used.
 template <typename... Ts>

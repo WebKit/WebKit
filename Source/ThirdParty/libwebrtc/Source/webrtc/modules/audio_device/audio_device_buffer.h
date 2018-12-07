@@ -11,9 +11,11 @@
 #ifndef MODULES_AUDIO_DEVICE_AUDIO_DEVICE_BUFFER_H_
 #define MODULES_AUDIO_DEVICE_AUDIO_DEVICE_BUFFER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <atomic>
 
-#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/task_queue.h"

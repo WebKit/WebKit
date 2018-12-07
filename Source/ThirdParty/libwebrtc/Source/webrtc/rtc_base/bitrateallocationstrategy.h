@@ -11,12 +11,13 @@
 #ifndef RTC_BASE_BITRATEALLOCATIONSTRATEGY_H_
 #define RTC_BASE_BITRATEALLOCATIONSTRATEGY_H_
 
-#include <map>
-#include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
+
 #include "api/array_view.h"
-#include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/experiments/field_trial_units.h"
 
 namespace rtc {
 
@@ -56,10 +57,12 @@ class BitrateAllocationStrategy {
     std::string track_id;
   };
 
+  // These are only used by AudioPriorityBitrateAllocationStrategy. They are
+  // exposed here to they can be unit tested.
   static std::vector<uint32_t> SetAllBitratesToMinimum(
-      const ArrayView<const TrackConfig*> track_configs);
+      const std::vector<BitrateAllocationStrategy::TrackConfig>& track_configs);
   static std::vector<uint32_t> DistributeBitratesEvenly(
-      const ArrayView<const TrackConfig*> track_configs,
+      const std::vector<BitrateAllocationStrategy::TrackConfig>& track_configs,
       uint32_t available_bitrate);
 
   // Strategy is expected to allocate all available_bitrate up to the sum of
@@ -74,11 +77,25 @@ class BitrateAllocationStrategy {
   // available_bitrate decrease.
   virtual std::vector<uint32_t> AllocateBitrates(
       uint32_t available_bitrate,
-      const ArrayView<const TrackConfig*> track_configs) = 0;
+      std::vector<BitrateAllocationStrategy::TrackConfig> track_configs) = 0;
 
   virtual ~BitrateAllocationStrategy() = default;
 };
+}  // namespace rtc
 
+namespace webrtc {
+struct AudioPriorityConfig {
+  FieldTrialOptional<DataRate> min_rate;
+  FieldTrialOptional<DataRate> max_rate;
+  FieldTrialOptional<DataRate> target_rate;
+  AudioPriorityConfig();
+  AudioPriorityConfig(const AudioPriorityConfig&);
+  AudioPriorityConfig& operator=(const AudioPriorityConfig&) = default;
+  ~AudioPriorityConfig();
+};
+}  // namespace webrtc
+
+namespace rtc {
 // Simple allocation strategy giving priority to audio until
 // sufficient_audio_bitrate is reached. Bitrate is distributed evenly between
 // the tracks after sufficient_audio_bitrate is reached. This implementation
@@ -90,9 +107,11 @@ class AudioPriorityBitrateAllocationStrategy
                                          uint32_t sufficient_audio_bitrate);
   std::vector<uint32_t> AllocateBitrates(
       uint32_t available_bitrate,
-      const ArrayView<const TrackConfig*> track_configs) override;
+      std::vector<BitrateAllocationStrategy::TrackConfig> track_configs)
+      override;
 
  private:
+  webrtc::AudioPriorityConfig config_;
   std::string audio_track_id_;
   uint32_t sufficient_audio_bitrate_;
 };

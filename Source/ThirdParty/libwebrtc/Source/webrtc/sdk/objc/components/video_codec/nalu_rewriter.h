@@ -44,7 +44,8 @@ bool H264CMSampleBufferToAnnexBBuffer(
 bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
                                       size_t annexb_buffer_size,
                                       CMVideoFormatDescriptionRef video_format,
-                                      CMSampleBufferRef* out_sample_buffer);
+                                      CMSampleBufferRef* out_sample_buffer,
+                                      CMMemoryPoolRef memory_pool);
 
 // Returns a video format description created from the sps/pps information in
 // the Annex B buffer. If there is no such information, nullptr is returned.

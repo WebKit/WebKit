@@ -5,4 +5,10 @@ specific_include_rules = {
   ".*": [
     "+video"
   ],
+  "loopback_media_transport\.h": [
+    "+rtc_base/asyncinvoker.h",
+    "+rtc_base/criticalsection.h",
+    "+rtc_base/thread.h",
+    "+rtc_base/thread_checker.h",
+  ],
 }

@@ -31,6 +31,8 @@
 @synthesize tcpCandidatePolicy = _tcpCandidatePolicy;
 @synthesize candidateNetworkPolicy = _candidateNetworkPolicy;
 @synthesize continualGatheringPolicy = _continualGatheringPolicy;
+@synthesize disableIPV6 = _disableIPV6;
+@synthesize disableIPV6OnWiFi = _disableIPV6OnWiFi;
 @synthesize maxIPv6Networks = _maxIPv6Networks;
 @synthesize disableLinkLocalNetworks = _disableLinkLocalNetworks;
 @synthesize audioJitterBufferMaxPackets = _audioJitterBufferMaxPackets;
@@ -48,6 +50,11 @@
 @synthesize sdpSemantics = _sdpSemantics;
 @synthesize turnCustomizer = _turnCustomizer;
 @synthesize activeResetSrtpParams = _activeResetSrtpParams;
+@synthesize useMediaTransport = _useMediaTransport;
+@synthesize useMediaTransportForDataChannels = _useMediaTransportForDataChannels;
+@synthesize cryptoOptions = _cryptoOptions;
+@synthesize rtcpAudioReportIntervalMs = _rtcpAudioReportIntervalMs;
+@synthesize rtcpVideoReportIntervalMs = _rtcpVideoReportIntervalMs;
 
 - (instancetype)init {
   // Copy defaults.
@@ -86,6 +93,8 @@
     config.continual_gathering_policy;
     _continualGatheringPolicy =
         [[self class] continualGatheringPolicyForNativePolicy:nativePolicy];
+    _disableIPV6 = config.disable_ipv6;
+    _disableIPV6OnWiFi = config.disable_ipv6_on_wifi;
     _maxIPv6Networks = config.max_ipv6_networks;
     _disableLinkLocalNetworks = config.disable_link_local_networks;
     _audioJitterBufferMaxPackets = config.audio_jitter_buffer_max_packets;
@@ -93,6 +102,8 @@
     _iceConnectionReceivingTimeout = config.ice_connection_receiving_timeout;
     _iceBackupCandidatePairPingInterval =
         config.ice_backup_candidate_pair_ping_interval;
+    _useMediaTransport = config.use_media_transport;
+    _useMediaTransportForDataChannels = config.use_media_transport_for_data_channels;
     _keyType = RTCEncryptionKeyTypeECDSA;
     _iceCandidatePoolSize = config.ice_candidate_pool_size;
     _shouldPruneTurnPorts = config.prune_turn_ports;
@@ -110,14 +121,27 @@
     _sdpSemantics = [[self class] sdpSemanticsForNativeSdpSemantics:config.sdp_semantics];
     _turnCustomizer = config.turn_customizer;
     _activeResetSrtpParams = config.active_reset_srtp_params;
+    if (config.crypto_options) {
+      _cryptoOptions = [[RTCCryptoOptions alloc]
+               initWithSrtpEnableGcmCryptoSuites:config.crypto_options->srtp
+                                                     .enable_gcm_crypto_suites
+             srtpEnableAes128Sha1_32CryptoCipher:config.crypto_options->srtp
+                                                     .enable_aes128_sha1_32_crypto_cipher
+          srtpEnableEncryptedRtpHeaderExtensions:config.crypto_options->srtp
+                                                     .enable_encrypted_rtp_header_extensions
+                    sframeRequireFrameEncryption:config.crypto_options->sframe
+                                                     .require_frame_encryption];
+    }
+    _rtcpAudioReportIntervalMs = config.audio_rtcp_report_interval_ms();
+    _rtcpVideoReportIntervalMs = config.video_rtcp_report_interval_ms();
   }
   return self;
 }
 
 - (NSString *)description {
-  static NSString *formatString =
-      @"RTCConfiguration: "
-      @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n%d\n%@\n%@\n%d\n%d\n%d\n}\n";
+  static NSString *formatString = @"RTCConfiguration: "
+                                  @"{\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%d\n"
+                                  @"%d\n%@\n%@\n%d\n%d\n%d\n%d\n%d\n%@\n}\n";
 
   return [NSString
       stringWithFormat:formatString,
@@ -139,8 +163,11 @@
                        _iceCheckMinInterval,
                        _iceRegatherIntervalRange,
                        _disableLinkLocalNetworks,
+                       _disableIPV6,
+                       _disableIPV6OnWiFi,
                        _maxIPv6Networks,
-                       _activeResetSrtpParams];
+                       _activeResetSrtpParams,
+                       _useMediaTransport];
 }
 
 #pragma mark - Private
@@ -166,6 +193,8 @@
       nativeCandidateNetworkPolicyForPolicy:_candidateNetworkPolicy];
   nativeConfig->continual_gathering_policy = [[self class]
       nativeContinualGatheringPolicyForPolicy:_continualGatheringPolicy];
+  nativeConfig->disable_ipv6 = _disableIPV6;
+  nativeConfig->disable_ipv6_on_wifi = _disableIPV6OnWiFi;
   nativeConfig->max_ipv6_networks = _maxIPv6Networks;
   nativeConfig->disable_link_local_networks = _disableLinkLocalNetworks;
   nativeConfig->audio_jitter_buffer_max_packets = _audioJitterBufferMaxPackets;
@@ -175,6 +204,8 @@
       _iceConnectionReceivingTimeout;
   nativeConfig->ice_backup_candidate_pair_ping_interval =
       _iceBackupCandidatePairPingInterval;
+  nativeConfig->use_media_transport = _useMediaTransport;
+  nativeConfig->use_media_transport_for_data_channels = _useMediaTransportForDataChannels;
   rtc::KeyType keyType =
       [[self class] nativeEncryptionKeyTypeForKeyType:_keyType];
   if (_certificate != nullptr) {
@@ -222,6 +253,20 @@
     nativeConfig->turn_customizer = _turnCustomizer;
   }
   nativeConfig->active_reset_srtp_params = _activeResetSrtpParams ? true : false;
+  if (_cryptoOptions) {
+    webrtc::CryptoOptions nativeCryptoOptions;
+    nativeCryptoOptions.srtp.enable_gcm_crypto_suites =
+        _cryptoOptions.srtpEnableGcmCryptoSuites ? true : false;
+    nativeCryptoOptions.srtp.enable_aes128_sha1_32_crypto_cipher =
+        _cryptoOptions.srtpEnableAes128Sha1_32CryptoCipher ? true : false;
+    nativeCryptoOptions.srtp.enable_encrypted_rtp_header_extensions =
+        _cryptoOptions.srtpEnableEncryptedRtpHeaderExtensions ? true : false;
+    nativeCryptoOptions.sframe.require_frame_encryption =
+        _cryptoOptions.sframeRequireFrameEncryption ? true : false;
+    nativeConfig->crypto_options = absl::optional<webrtc::CryptoOptions>(nativeCryptoOptions);
+  }
+  nativeConfig->set_audio_rtcp_report_interval_ms(_rtcpAudioReportIntervalMs);
+  nativeConfig->set_video_rtcp_report_interval_ms(_rtcpVideoReportIntervalMs);
   return nativeConfig.release();
 }
 

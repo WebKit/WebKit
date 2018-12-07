@@ -24,9 +24,6 @@
 
 #ifdef WIN32
 #define chdir _chdir
-static const char* kPathDelimiter = "\\";
-#else
-static const char* kPathDelimiter = "/";
 #endif
 
 using ::testing::EndsWith;

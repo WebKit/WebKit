@@ -24,6 +24,8 @@
 
 namespace rtc {
 
+Event::Event() : Event(false, false) {}
+
 #if defined(WEBRTC_WIN)
 
 Event::Event(bool manual_reset, bool initially_signaled) {

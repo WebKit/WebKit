@@ -165,7 +165,7 @@ TEST(MatchedFilter, LagEstimation) {
                            config.delay.delay_candidate_detection_threshold);
 
       std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-          RenderDelayBuffer::Create(config, 3));
+          RenderDelayBuffer::Create2(config, 3));
 
       // Analyze the correlation between render and capture.
       for (size_t k = 0; k < (600 + delay_samples / sub_block_size); ++k) {
@@ -261,7 +261,7 @@ TEST(MatchedFilter, LagNotReliableForUncorrelatedRenderAndCapture) {
     std::fill(capture.begin(), capture.end(), 0.f);
     ApmDataDumper data_dumper(0);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create(config, 3));
+        RenderDelayBuffer::Create2(config, 3));
     MatchedFilter filter(&data_dumper, DetectOptimization(), sub_block_size,
                          kWindowSizeSubBlocks, kNumMatchedFilters,
                          kAlignmentShiftSubBlocks, 150,
@@ -306,7 +306,7 @@ TEST(MatchedFilter, LagNotUpdatedForLowLevelRender) {
                          config.delay.delay_estimate_smoothing,
                          config.delay.delay_candidate_detection_threshold);
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create(config, 3));
+        RenderDelayBuffer::Create2(EchoCanceller3Config(), 3));
     Decimator capture_decimator(down_sampling_factor);
 
     // Analyze the correlation between render and capture.

@@ -11,18 +11,18 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_RESIDUAL_ECHO_ESTIMATOR_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_RESIDUAL_ECHO_ESTIMATOR_H_
 
-#include <algorithm>
 #include <array>
 #include <memory>
-#include <vector>
 
-#include "api/array_view.h"
+#include "absl/types/optional.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
 #include "modules/audio_processing/aec3/reverb_model.h"
 #include "modules/audio_processing/aec3/reverb_model_fallback.h"
+#include "modules/audio_processing/aec3/vector_buffer.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -39,7 +39,7 @@ class ResidualEchoEstimator {
                 std::array<float, kFftLengthBy2Plus1>* R2);
 
   // Returns the reverberant power spectrum contributions to the echo residual.
-  const std::array<float, kFftLengthBy2Plus1>& GetReverbPowerSpectrum() const {
+  rtc::ArrayView<const float> GetReverbPowerSpectrum() const {
     if (echo_reverb_) {
       return echo_reverb_->GetPowerSpectrum();
     } else {
@@ -65,7 +65,6 @@ class ResidualEchoEstimator {
                          const std::array<float, kFftLengthBy2Plus1>& X2,
                          const std::array<float, kFftLengthBy2Plus1>& Y2,
                          std::array<float, kFftLengthBy2Plus1>* R2);
-
 
   // Estimates the echo generating signal power as gated maximal power over a
   // time window.

@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #if defined(WEBRTC_MAC)
 #include <mach/mach_time.h>
+#include "rtc_base/numerics/safe_conversions.h"
 #endif
 #endif
 
@@ -28,7 +29,6 @@
 #endif
 
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/timeutils.h"
 
 namespace rtc {
@@ -154,7 +154,7 @@ int64_t TimestampWrapAroundHandler::Unwrap(uint32_t ts) {
   return ts + (num_wrap_ << 32);
 }
 
-int64_t TmToSeconds(const std::tm& tm) {
+int64_t TmToSeconds(const tm& tm) {
   static short int mdays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   static short int cumul_mdays[12] = {0,   31,  59,  90,  120, 151,
                                       181, 212, 243, 273, 304, 334};

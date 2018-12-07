@@ -11,6 +11,7 @@
 #ifndef SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 #define SYSTEM_WRAPPERS_INCLUDE_CLOCK_H_
 
+#include <stdint.h>
 #include <memory>
 
 #include "rtc_base/synchronization/rw_lock_wrapper.h"

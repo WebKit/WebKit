@@ -35,6 +35,7 @@
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "rtc_base/criticalsection.h"
+#include "rtc_base/event.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
@@ -42,7 +43,6 @@
 #include "rtc_base/system/arch.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
-#include "system_wrappers/include/event_wrapper.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder.h"
@@ -408,12 +408,12 @@ class AudioCodingModuleTestWithComfortNoiseOldApi
               acm_->RegisterReceiveCodec(
                   rtp_payload_type, SdpAudioFormat("cn", kSampleRateHz, 1)));
     acm_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* enc) {
-      AudioEncoderCng::Config config;
+      AudioEncoderCngConfig config;
       config.speech_encoder = std::move(*enc);
       config.num_channels = 1;
       config.payload_type = rtp_payload_type;
       config.vad_mode = Vad::kVadNormal;
-      *enc = absl::make_unique<AudioEncoderCng>(std::move(config));
+      *enc = CreateComfortNoiseEncoder(std::move(config));
     });
   }
 
@@ -481,7 +481,6 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
         send_thread_(CbSendThread, this, "send"),
         insert_packet_thread_(CbInsertPacketThread, this, "insert_packet"),
         pull_audio_thread_(CbPullAudioThread, this, "pull_audio"),
-        test_complete_(EventWrapper::Create()),
         send_count_(0),
         insert_packet_count_(0),
         pull_audio_count_(0),
@@ -512,8 +511,8 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
     insert_packet_thread_.Stop();
   }
 
-  EventTypeWrapper RunTest() {
-    return test_complete_->Wait(10 * 60 * 1000);  // 10 minutes' timeout.
+  bool RunTest() {
+    return test_complete_.Wait(10 * 60 * 1000);  // 10 minutes' timeout.
   }
 
   virtual bool TestDone() {
@@ -538,12 +537,12 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
     SleepMs(1);
     if (HasFatalFailure()) {
       // End the test early if a fatal failure (ASSERT_*) has occurred.
-      test_complete_->Set();
+      test_complete_.Set();
     }
     ++send_count_;
     InsertAudioAndVerifyEncoding();
     if (TestDone()) {
-      test_complete_->Set();
+      test_complete_.Set();
     }
     return true;
   }
@@ -592,7 +591,7 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
   rtc::PlatformThread send_thread_;
   rtc::PlatformThread insert_packet_thread_;
   rtc::PlatformThread pull_audio_thread_;
-  const std::unique_ptr<EventWrapper> test_complete_;
+  rtc::Event test_complete_;
   int send_count_;
   int insert_packet_count_;
   int pull_audio_count_ RTC_GUARDED_BY(crit_sect_);
@@ -607,7 +606,7 @@ class AudioCodingModuleMtTestOldApi : public AudioCodingModuleTestOldApi {
 #define MAYBE_DoTest DoTest
 #endif
 TEST_F(AudioCodingModuleMtTestOldApi, MAYBE_DoTest) {
-  EXPECT_EQ(kEventSignaled, RunTest());
+  EXPECT_TRUE(RunTest());
 }
 
 // This is a multi-threaded ACM test using iSAC. The test encodes audio
@@ -717,7 +716,7 @@ class AcmIsacMtTestOldApi : public AudioCodingModuleMtTestOldApi {
 #endif
 #if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
 TEST_F(AcmIsacMtTestOldApi, MAYBE_DoTest) {
-  EXPECT_EQ(kEventSignaled, RunTest());
+  EXPECT_TRUE(RunTest());
 }
 #endif
 
@@ -734,7 +733,6 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
         codec_registration_thread_(CbCodecRegistrationThread,
                                    this,
                                    "codec_registration"),
-        test_complete_(EventWrapper::Create()),
         codec_registered_(false),
         receive_packet_count_(0),
         next_insert_packet_time_ms_(0),
@@ -781,8 +779,8 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
     codec_registration_thread_.Stop();
   }
 
-  EventTypeWrapper RunTest() {
-    return test_complete_->Wait(10 * 60 * 1000);  // 10 minutes' timeout.
+  bool RunTest() {
+    return test_complete_.Wait(10 * 60 * 1000);  // 10 minutes' timeout.
   }
 
   static bool CbReceiveThread(void* context) {
@@ -845,7 +843,7 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
     SleepMs(1);
     if (HasFatalFailure()) {
       // End the test early if a fatal failure (ASSERT_*) has occurred.
-      test_complete_->Set();
+      test_complete_.Set();
     }
     rtc::CritScope lock(&crit_sect_);
     if (!codec_registered_ &&
@@ -856,14 +854,14 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
       codec_registered_ = true;
     }
     if (codec_registered_ && receive_packet_count_ > kNumPackets) {
-      test_complete_->Set();
+      test_complete_.Set();
     }
     return true;
   }
 
   rtc::PlatformThread receive_thread_;
   rtc::PlatformThread codec_registration_thread_;
-  const std::unique_ptr<EventWrapper> test_complete_;
+  rtc::Event test_complete_;
   rtc::CriticalSection crit_sect_;
   bool codec_registered_ RTC_GUARDED_BY(crit_sect_);
   int receive_packet_count_ RTC_GUARDED_BY(crit_sect_);
@@ -880,7 +878,7 @@ class AcmReRegisterIsacMtTestOldApi : public AudioCodingModuleTestOldApi {
 #endif
 #if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
 TEST_F(AcmReRegisterIsacMtTestOldApi, MAYBE_DoTest) {
-  EXPECT_EQ(kEventSignaled, RunTest());
+  EXPECT_TRUE(RunTest());
 }
 #endif
 
@@ -1185,20 +1183,32 @@ class AcmSenderBitExactnessOldApi : public ::testing::Test,
 
     // Extract and verify the audio checksum.
     std::string checksum_string = audio_checksum.Finish();
-    EXPECT_EQ(audio_checksum_ref, checksum_string);
+    ExpectChecksumEq(audio_checksum_ref, checksum_string);
 
     // Extract and verify the payload checksum.
     rtc::Buffer checksum_result(payload_checksum_->Size());
     payload_checksum_->Finish(checksum_result.data(), checksum_result.size());
     checksum_string =
         rtc::hex_encode(checksum_result.data<char>(), checksum_result.size());
-    EXPECT_EQ(payload_checksum_ref, checksum_string);
+    ExpectChecksumEq(payload_checksum_ref, checksum_string);
 
     // Verify number of packets produced.
     EXPECT_EQ(expected_packets, packet_count_);
 
     // Delete the output file.
     remove(output_file_name.c_str());
+  }
+
+  // Helper: result must be one the "|"-separated checksums.
+  void ExpectChecksumEq(std::string ref, std::string result) {
+    if (ref.size() == result.size()) {
+      // Only one checksum: clearer message.
+      EXPECT_EQ(ref, result);
+    } else {
+      EXPECT_NE(ref.find(result), std::string::npos)
+          << result << " must be one of these:\n"
+          << ref;
+    }
   }
 
   // Inherited from test::PacketSource.
@@ -1438,21 +1448,35 @@ TEST_F(AcmSenderBitExactnessOldApi, MAYBE_G722_stereo_20ms) {
       50, test::AcmReceiveTestOldApi::kStereoOutput);
 }
 
+namespace {
+// Checksum depends on libopus being compiled with or without SSE.
+const std::string audio_maybe_sse =
+    "3e285b74510e62062fbd8142dacd16e9|"
+    "fd5d57d6d766908e6a7211e2a5c7f78a";
+const std::string payload_maybe_sse =
+    "78cf8f03157358acdc69f6835caa0d9b|"
+    "b693bd95c2ee2354f92340dd09e9da68";
+// Common checksums.
+const std::string audio_checksum =
+    AcmReceiverBitExactnessOldApi::PlatformChecksum(
+        audio_maybe_sse,
+        audio_maybe_sse,
+        "439e97ad1932c49923b5da029c17dd5e",
+        "038ec90f5f3fc2320f3090f8ecef6bb7",
+        "038ec90f5f3fc2320f3090f8ecef6bb7");
+const std::string payload_checksum =
+    AcmReceiverBitExactnessOldApi::PlatformChecksum(
+        payload_maybe_sse,
+        payload_maybe_sse,
+        "ab88b1a049c36bdfeb7e8b057ef6982a",
+        "27fef7b799393347ec3b5694369a1c36",
+        "27fef7b799393347ec3b5694369a1c36");
+};  // namespace
+
 TEST_F(AcmSenderBitExactnessOldApi, Opus_stereo_20ms) {
   ASSERT_NO_FATAL_FAILURE(SetUpTest("opus", 48000, 2, 120, 960, 960));
-  Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "3e285b74510e62062fbd8142dacd16e9",
-          "3e285b74510e62062fbd8142dacd16e9",
-          "439e97ad1932c49923b5da029c17dd5e",
-          "038ec90f5f3fc2320f3090f8ecef6bb7",
-          "038ec90f5f3fc2320f3090f8ecef6bb7"),
-      AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "78cf8f03157358acdc69f6835caa0d9b",
-          "78cf8f03157358acdc69f6835caa0d9b",
-          "ab88b1a049c36bdfeb7e8b057ef6982a",
-          "27fef7b799393347ec3b5694369a1c36",
-          "27fef7b799393347ec3b5694369a1c36"),
-      50, test::AcmReceiveTestOldApi::kStereoOutput);
+  Run(audio_checksum, payload_checksum, 50,
+      test::AcmReceiveTestOldApi::kStereoOutput);
 }
 
 TEST_F(AcmSenderBitExactnessNewApi, MAYBE_OpusFromFormat_stereo_20ms) {
@@ -1460,19 +1484,8 @@ TEST_F(AcmSenderBitExactnessNewApi, MAYBE_OpusFromFormat_stereo_20ms) {
       SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}}));
   ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
       AudioEncoderOpus::MakeAudioEncoder(*config, 120), 120));
-  Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "3e285b74510e62062fbd8142dacd16e9",
-          "3e285b74510e62062fbd8142dacd16e9",
-          "439e97ad1932c49923b5da029c17dd5e",
-          "038ec90f5f3fc2320f3090f8ecef6bb7",
-          "038ec90f5f3fc2320f3090f8ecef6bb7"),
-      AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "78cf8f03157358acdc69f6835caa0d9b",
-          "78cf8f03157358acdc69f6835caa0d9b",
-          "ab88b1a049c36bdfeb7e8b057ef6982a",
-          "27fef7b799393347ec3b5694369a1c36",
-          "27fef7b799393347ec3b5694369a1c36"),
-      50, test::AcmReceiveTestOldApi::kStereoOutput);
+  Run(audio_checksum, payload_checksum, 50,
+      test::AcmReceiveTestOldApi::kStereoOutput);
 }
 
 TEST_F(AcmSenderBitExactnessNewApi, OpusFromFormat_stereo_20ms_voip) {
@@ -1482,15 +1495,19 @@ TEST_F(AcmSenderBitExactnessNewApi, OpusFromFormat_stereo_20ms_voip) {
   config->application = AudioEncoderOpusConfig::ApplicationMode::kVoip;
   ASSERT_NO_FATAL_FAILURE(SetUpTestExternalEncoder(
       AudioEncoderOpus::MakeAudioEncoder(*config, 120), 120));
+  // Checksum depends on libopus being compiled with or without SSE.
+  const std::string audio_maybe_sse =
+      "b0325df4e8104f04e03af23c0b75800e|"
+      "3cd4e1bc2acd9440bb9e97af34080ffc";
+  const std::string payload_maybe_sse =
+      "4eab2259b6fe24c22dd242a113e0b3d9|"
+      "4fc0af0aa06c26454af09832d3ec1b4e";
   Run(AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "b0325df4e8104f04e03af23c0b75800e",
-          "b0325df4e8104f04e03af23c0b75800e",
-          "1c81121f5d9286a5a865d01dbab22ce8",
+          audio_maybe_sse, audio_maybe_sse, "1c81121f5d9286a5a865d01dbab22ce8",
           "11d547f89142e9ef03f37d7ca7f32379",
           "11d547f89142e9ef03f37d7ca7f32379"),
       AcmReceiverBitExactnessOldApi::PlatformChecksum(
-          "4eab2259b6fe24c22dd242a113e0b3d9",
-          "4eab2259b6fe24c22dd242a113e0b3d9",
+          payload_maybe_sse, payload_maybe_sse,
           "839ea60399447268ee0f0262a50b75fd",
           "1815fd5589cad0c6f6cf946c76b81aeb",
           "1815fd5589cad0c6f6cf946c76b81aeb"),

@@ -17,6 +17,7 @@
 #include "media/base/videosourcebase.h"
 #include "pc/mediastreamtrack.h"
 #include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/thread.h"
 #include "rtc_base/thread_checker.h"
 
 namespace webrtc {

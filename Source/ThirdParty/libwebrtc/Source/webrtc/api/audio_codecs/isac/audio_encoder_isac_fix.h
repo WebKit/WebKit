@@ -23,8 +23,6 @@ namespace webrtc {
 
 // iSAC encoder API (fixed-point implementation) for use as a template
 // parameter to CreateAudioEncoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
 struct AudioEncoderIsacFix {
   struct Config {
     bool IsOk() const { return frame_size_ms == 30 || frame_size_ms == 60; }

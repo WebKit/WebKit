@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "rtc_base/system/rtc_export.h"
+
 namespace cricket {
 class Candidate;
 }  // namespace cricket
@@ -46,7 +48,8 @@ std::string SdpSerializeCandidate(const IceCandidateInterface& candidate);
 
 // Serializes a cricket Candidate.
 // candidate - The candidate to be serialized.
-std::string SdpSerializeCandidate(const cricket::Candidate& candidate);
+RTC_EXPORT std::string SdpSerializeCandidate(
+    const cricket::Candidate& candidate);
 
 // Deserializes the passed in SDP string to a JsepSessionDescription.
 // message - SDP string to be Deserialized.
@@ -76,10 +79,10 @@ bool SdpDeserializeCandidate(const std::string& message,
 // candidate - The cricket Candidate from the SDP string.
 // error - The detail error information when parsing fails.
 // return - true on success, false on failure.
-bool SdpDeserializeCandidate(const std::string& transport_name,
-                             const std::string& message,
-                             cricket::Candidate* candidate,
-                             SdpParseError* error);
+RTC_EXPORT bool SdpDeserializeCandidate(const std::string& transport_name,
+                                        const std::string& message,
+                                        cricket::Candidate* candidate,
+                                        SdpParseError* error);
 
 }  // namespace webrtc
 

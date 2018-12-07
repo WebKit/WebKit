@@ -33,8 +33,10 @@ bool RtcEventProbeResultFailure::IsConfigEvent() const {
   return false;
 }
 
-std::unique_ptr<RtcEvent> RtcEventProbeResultFailure::Copy() const {
-  return absl::WrapUnique<RtcEvent>(new RtcEventProbeResultFailure(*this));
+std::unique_ptr<RtcEventProbeResultFailure> RtcEventProbeResultFailure::Copy()
+    const {
+  return absl::WrapUnique<RtcEventProbeResultFailure>(
+      new RtcEventProbeResultFailure(*this));
 }
 
 }  // namespace webrtc

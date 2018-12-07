@@ -24,7 +24,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/messagedigest.h"
 #include "rtc_base/socketadapters.h"
-#include "rtc_base/stringencode.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 
@@ -199,9 +198,10 @@ void TurnServer::OnInternalSocketClose(rtc::AsyncPacketSocket* socket,
 }
 
 void TurnServer::OnInternalPacket(rtc::AsyncPacketSocket* socket,
-                                  const char* data, size_t size,
+                                  const char* data,
+                                  size_t size,
                                   const rtc::SocketAddress& addr,
-                                  const rtc::PacketTime& packet_time) {
+                                  const int64_t& /* packet_time_us */) {
   RTC_DCHECK(thread_checker_.CalledOnValidThread());
   // Fail if the packet is too small to even contain a channel header.
   if (size < TURN_CHANNEL_HEADER_SIZE) {
@@ -842,9 +842,10 @@ void TurnServerAllocation::HandleChannelData(const char* data, size_t size) {
 
 void TurnServerAllocation::OnExternalPacket(
     rtc::AsyncPacketSocket* socket,
-    const char* data, size_t size,
+    const char* data,
+    size_t size,
     const rtc::SocketAddress& addr,
-    const rtc::PacketTime& packet_time) {
+    const int64_t& /* packet_time_us */) {
   RTC_DCHECK(external_socket_.get() == socket);
   Channel* channel = FindChannel(addr);
   if (channel) {

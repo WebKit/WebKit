@@ -26,12 +26,14 @@ class RtcEventAlrState final : public RtcEvent {
 
   bool IsConfigEvent() const override;
 
-  std::unique_ptr<RtcEvent> Copy() const override;
+  std::unique_ptr<RtcEventAlrState> Copy() const;
 
-  const bool in_alr_;
+  bool in_alr() const { return in_alr_; }
 
  private:
   RtcEventAlrState(const RtcEventAlrState& other);
+
+  const bool in_alr_;
 };
 
 }  // namespace webrtc

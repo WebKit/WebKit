@@ -487,10 +487,7 @@ void PopulateAudioFrame(AudioFrame* frame,
 }
 
 AudioProcessingImplLockTest::AudioProcessingImplLockTest()
-    : test_complete_(false, false),
-      render_call_event_(false, false),
-      capture_call_event_(false, false),
-      render_thread_(RenderProcessorThreadFunc, this, "render"),
+    : render_thread_(RenderProcessorThreadFunc, this, "render"),
       capture_thread_(CaptureProcessorThreadFunc, this, "capture"),
       stats_thread_(StatsProcessorThreadFunc, this, "stats"),
       apm_(AudioProcessingBuilder().Create()),

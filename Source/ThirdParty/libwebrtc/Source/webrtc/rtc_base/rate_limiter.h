@@ -11,11 +11,13 @@
 #ifndef RTC_BASE_RATE_LIMITER_H_
 #define RTC_BASE_RATE_LIMITER_H_
 
-#include <limits>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/rate_statistics.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 

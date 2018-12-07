@@ -858,7 +858,7 @@ void SctpTransport::OnWritableState(rtc::PacketTransportInternal* transport) {
 void SctpTransport::OnPacketRead(rtc::PacketTransportInternal* transport,
                                  const char* data,
                                  size_t len,
-                                 const rtc::PacketTime& packet_time,
+                                 const int64_t& /* packet_time_us */,
                                  int flags) {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DCHECK_EQ(transport_, transport);

@@ -26,13 +26,13 @@ constexpr size_t kMaxFrameLen = kMaxFrameLenMs * kMaxSampleRate / 1000;
 
 const double kOneDbReduction = DbToRatio(-1.0);
 
-DEFINE_string(i, "", "Input wav file");
-DEFINE_string(oc, "", "Config output file");
-DEFINE_string(ol, "", "Levels output file");
-DEFINE_float(a, 5.f, "Attack (ms)");
-DEFINE_float(d, 20.f, "Decay (ms)");
-DEFINE_int(f, 10, "Frame length (ms)");
-DEFINE_bool(help, false, "prints this message");
+WEBRTC_DEFINE_string(i, "", "Input wav file");
+WEBRTC_DEFINE_string(oc, "", "Config output file");
+WEBRTC_DEFINE_string(ol, "", "Levels output file");
+WEBRTC_DEFINE_float(a, 5.f, "Attack (ms)");
+WEBRTC_DEFINE_float(d, 20.f, "Decay (ms)");
+WEBRTC_DEFINE_int(f, 10, "Frame length (ms)");
+WEBRTC_DEFINE_bool(help, false, "prints this message");
 
 int main(int argc, char* argv[]) {
   if (rtc::FlagList::SetFlagsFromCommandLine(&argc, argv, true)) {

@@ -10,10 +10,9 @@
 
 #include "modules/audio_coding/neteq/delay_peak_detector.h"
 
-#include <algorithm>  // max
+#include <algorithm>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {

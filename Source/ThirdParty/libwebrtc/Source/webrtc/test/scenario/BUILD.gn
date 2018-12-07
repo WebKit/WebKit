@@ -37,14 +37,15 @@ if (rtc_include_tests) {
       "../:test_common",
       "../:test_support",
       "../:video_test_common",
-      "../..:webrtc_common",
       "../../api:libjingle_peerconnection_api",
       "../../api:transport_api",
       "../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../api/audio_codecs:builtin_audio_encoder_factory",
+      "../../api/test/video:function_video_factory",
       "../../api/units:data_rate",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
+      "../../api/video:builtin_video_bitrate_allocator_factory",
       "../../api/video:video_frame",
       "../../api/video:video_frame_i420",
       "../../api/video_codecs:video_codecs_api",
@@ -82,6 +83,7 @@ if (rtc_include_tests) {
       "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_base_tests_utils",
       "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:safe_minmax",
       "../../rtc_base:sequenced_task_checker",
       "../../rtc_base:stringutils",
       "../../system_wrappers",
@@ -93,6 +95,9 @@ if (rtc_include_tests) {
       deps += [ "../../modules/video_coding:android_codec_factory_helper" ]
     } else if (is_ios || is_mac) {
       deps += [ "../../modules/video_coding:objc_codec_factory_helper" ]
+    }
+    if (rtc_enable_protobuf) {
+      deps += [ "../../modules/audio_coding:ana_config_proto" ]
     }
     if (!build_with_chromium && is_clang) {
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -111,11 +116,10 @@ if (rtc_include_tests) {
       "../../logging:mocks",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
-      "../../rtc_base:rtc_base_tests_utils",
       "../../system_wrappers",
+      "../../system_wrappers:field_trial",
       "../../test:field_trial",
       "../../test:test_support",
-      "//system_wrappers:field_trial",
       "//testing/gmock",
       "//third_party/abseil-cpp/absl/memory",
     ]

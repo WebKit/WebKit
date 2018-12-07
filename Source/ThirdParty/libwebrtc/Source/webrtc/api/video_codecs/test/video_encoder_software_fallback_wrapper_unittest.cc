@@ -8,23 +8,26 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/video_codecs/video_encoder_software_fallback_wrapper.h"
-
 #include <utility>
 
+#include "api/test/mock_video_encoder.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video_codecs/video_encoder_software_fallback_wrapper.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fakeclock.h"
 #include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
+using ::testing::Return;
+
 namespace {
 const int kWidth = 320;
 const int kHeight = 240;
@@ -34,6 +37,12 @@ const size_t kMaxPayloadSize = 800;
 const int kDefaultMinPixelsPerFrame = 320 * 180;
 const int kLowThreshold = 10;
 const int kHighThreshold = 20;
+
+VideoEncoder::EncoderInfo GetEncoderInfo(bool trusted_rate_controller) {
+  VideoEncoder::EncoderInfo info;
+  info.has_trusted_rate_controller = trusted_rate_controller;
+  return info;
+}
 }  // namespace
 
 class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
@@ -62,9 +71,7 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
       ++encode_count_;
       if (encode_complete_callback_ &&
           encode_return_code_ == WEBRTC_VIDEO_CODEC_OK) {
-        CodecSpecificInfo info;
-        info.codec_name = ImplementationName();
-        encode_complete_callback_->OnEncodedImage(EncodedImage(), &info,
+        encode_complete_callback_->OnEncodedImage(EncodedImage(), nullptr,
                                                   nullptr);
       }
       return encode_return_code_;
@@ -81,26 +88,19 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
       return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    int32_t SetChannelParameters(uint32_t packet_loss, int64_t rtt) override {
-      ++set_channel_parameters_count_;
-      return WEBRTC_VIDEO_CODEC_OK;
-    }
-
     int32_t SetRateAllocation(const VideoBitrateAllocation& bitrate_allocation,
                               uint32_t framerate) override {
       ++set_rates_count_;
       return WEBRTC_VIDEO_CODEC_OK;
     }
 
-    bool SupportsNativeHandle() const override {
+    EncoderInfo GetEncoderInfo() const override {
       ++supports_native_handle_count_;
-      return supports_native_handle_;
-    }
-
-    const char* ImplementationName() const override { return "fake-encoder"; }
-
-    VideoEncoder::ScalingSettings GetScalingSettings() const override {
-      return VideoEncoder::ScalingSettings(kLowThreshold, kHighThreshold);
+      EncoderInfo info;
+      info.scaling_settings = ScalingSettings(kLowThreshold, kHighThreshold);
+      info.supports_native_handle = supports_native_handle_;
+      info.implementation_name = "fake-encoder";
+      return info;
     }
 
     int init_encode_count_ = 0;
@@ -109,7 +109,6 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
     int encode_count_ = 0;
     EncodedImageCallback* encode_complete_callback_ = nullptr;
     int release_count_ = 0;
-    int set_channel_parameters_count_ = 0;
     int set_rates_count_ = 0;
     mutable int supports_native_handle_count_ = 0;
     bool supports_native_handle_ = false;
@@ -122,11 +121,9 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
         const CodecSpecificInfo* codec_specific_info,
         const RTPFragmentationHeader* fragmentation) override {
       ++callback_count_;
-      last_codec_name_ = codec_specific_info->codec_name;
       return Result(Result::OK, callback_count_);
     }
     int callback_count_ = 0;
-    std::string last_codec_name_;
   };
 
   void UtilizeFallbackEncoder();
@@ -134,7 +131,8 @@ class VideoEncoderSoftwareFallbackWrapperTest : public ::testing::Test {
   void EncodeFrame();
   void EncodeFrame(int expected_ret);
   void CheckLastEncoderName(const char* expected_name) {
-    EXPECT_STREQ(expected_name, callback_.last_codec_name_.c_str());
+    EXPECT_EQ(expected_name,
+              fallback_wrapper_->GetEncoderInfo().implementation_name);
   }
 
   test::ScopedFieldTrials override_field_trials_;
@@ -272,15 +270,6 @@ TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
 }
 
 TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
-       SetChannelParametersForwardedDuringFallback) {
-  UtilizeFallbackEncoder();
-  EXPECT_EQ(0, fake_encoder_->set_channel_parameters_count_);
-  fallback_wrapper_->SetChannelParameters(1, 1);
-  EXPECT_EQ(1, fake_encoder_->set_channel_parameters_count_);
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_->Release());
-}
-
-TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
        SetRatesForwardedDuringFallback) {
   UtilizeFallbackEncoder();
   EXPECT_EQ(1, fake_encoder_->set_rates_count_);
@@ -291,15 +280,19 @@ TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
 
 TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
        SupportsNativeHandleForwardedWithoutFallback) {
-  fallback_wrapper_->SupportsNativeHandle();
+  fallback_wrapper_->GetEncoderInfo();
   EXPECT_EQ(1, fake_encoder_->supports_native_handle_count_);
 }
 
 TEST_F(VideoEncoderSoftwareFallbackWrapperTest,
        SupportsNativeHandleNotForwardedDuringFallback) {
+  // Fake encoder signals support for native handle, default (libvpx) does not.
+  fake_encoder_->supports_native_handle_ = true;
+  EXPECT_TRUE(fallback_wrapper_->GetEncoderInfo().supports_native_handle);
   UtilizeFallbackEncoder();
-  fallback_wrapper_->SupportsNativeHandle();
-  EXPECT_EQ(0, fake_encoder_->supports_native_handle_count_);
+  EXPECT_FALSE(fallback_wrapper_->GetEncoderInfo().supports_native_handle);
+  // Both times, both encoders are queried.
+  EXPECT_EQ(2, fake_encoder_->supports_native_handle_count_);
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, fallback_wrapper_->Release());
 }
 
@@ -489,7 +482,7 @@ TEST_F(ForcedFallbackTestDisabled, GetScaleSettings) {
   EncodeFrameAndVerifyLastName("fake-encoder");
 
   // Default min pixels per frame should be used.
-  const auto settings = fallback_wrapper_->GetScalingSettings();
+  const auto settings = fallback_wrapper_->GetEncoderInfo().scaling_settings;
   EXPECT_TRUE(settings.thresholds.has_value());
   EXPECT_EQ(kDefaultMinPixelsPerFrame, settings.min_pixels_per_frame);
 }
@@ -500,7 +493,7 @@ TEST_F(ForcedFallbackTestEnabled, GetScaleSettingsWithNoFallback) {
   EncodeFrameAndVerifyLastName("fake-encoder");
 
   // Configured min pixels per frame should be used.
-  const auto settings = fallback_wrapper_->GetScalingSettings();
+  const auto settings = fallback_wrapper_->GetEncoderInfo().scaling_settings;
   EXPECT_EQ(kMinPixelsPerFrame, settings.min_pixels_per_frame);
   ASSERT_TRUE(settings.thresholds);
   EXPECT_EQ(kLowThreshold, settings.thresholds->low);
@@ -513,7 +506,7 @@ TEST_F(ForcedFallbackTestEnabled, GetScaleSettingsWithFallback) {
   EncodeFrameAndVerifyLastName("libvpx");
 
   // Configured min pixels per frame should be used.
-  const auto settings = fallback_wrapper_->GetScalingSettings();
+  const auto settings = fallback_wrapper_->GetEncoderInfo().scaling_settings;
   EXPECT_TRUE(settings.thresholds.has_value());
   EXPECT_EQ(kMinPixelsPerFrame, settings.min_pixels_per_frame);
 }
@@ -525,8 +518,77 @@ TEST_F(ForcedFallbackTestEnabled, ScalingDisabledIfResizeOff) {
   EncodeFrameAndVerifyLastName("libvpx");
 
   // Should be disabled for automatic resize off.
-  const auto settings = fallback_wrapper_->GetScalingSettings();
+  const auto settings = fallback_wrapper_->GetEncoderInfo().scaling_settings;
   EXPECT_FALSE(settings.thresholds.has_value());
+}
+
+TEST(SoftwareFallbackEncoderTest, BothRateControllersNotTrusted) {
+  auto* sw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  auto* hw_encoder = new testing::NiceMock<MockVideoEncoder>();
+
+  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(false)));
+  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(false)));
+
+  std::unique_ptr<VideoEncoder> wrapper =
+      CreateVideoEncoderSoftwareFallbackWrapper(
+          std::unique_ptr<VideoEncoder>(sw_encoder),
+          std::unique_ptr<VideoEncoder>(hw_encoder));
+  EXPECT_FALSE(wrapper->GetEncoderInfo().has_trusted_rate_controller);
+}
+
+TEST(SoftwareFallbackEncoderTest, SwRateControllerTrusted) {
+  auto* sw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  auto* hw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(true)));
+  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(false)));
+
+  std::unique_ptr<VideoEncoder> wrapper =
+      CreateVideoEncoderSoftwareFallbackWrapper(
+          std::unique_ptr<VideoEncoder>(sw_encoder),
+          std::unique_ptr<VideoEncoder>(hw_encoder));
+  EXPECT_FALSE(wrapper->GetEncoderInfo().has_trusted_rate_controller);
+}
+
+TEST(SoftwareFallbackEncoderTest, HwRateControllerTrusted) {
+  auto* sw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  auto* hw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(false)));
+  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(true)));
+
+  std::unique_ptr<VideoEncoder> wrapper =
+      CreateVideoEncoderSoftwareFallbackWrapper(
+          std::unique_ptr<VideoEncoder>(sw_encoder),
+          std::unique_ptr<VideoEncoder>(hw_encoder));
+  EXPECT_TRUE(wrapper->GetEncoderInfo().has_trusted_rate_controller);
+
+  // Trigger fallback to software.
+  EXPECT_CALL(*hw_encoder, Encode)
+      .WillOnce(Return(WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE));
+  VideoFrame frame = VideoFrame::Builder().build();
+  wrapper->Encode(frame, nullptr, nullptr);
+
+  EXPECT_FALSE(wrapper->GetEncoderInfo().has_trusted_rate_controller);
+}
+
+TEST(SoftwareFallbackEncoderTest, BothRateControllersTrusted) {
+  auto* sw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  auto* hw_encoder = new testing::NiceMock<MockVideoEncoder>();
+  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(true)));
+  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfo(true)));
+
+  std::unique_ptr<VideoEncoder> wrapper =
+      CreateVideoEncoderSoftwareFallbackWrapper(
+          std::unique_ptr<VideoEncoder>(sw_encoder),
+          std::unique_ptr<VideoEncoder>(hw_encoder));
+  EXPECT_TRUE(wrapper->GetEncoderInfo().has_trusted_rate_controller);
 }
 
 }  // namespace webrtc

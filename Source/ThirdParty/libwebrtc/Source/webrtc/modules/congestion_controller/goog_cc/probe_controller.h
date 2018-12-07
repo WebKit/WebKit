@@ -60,6 +60,9 @@ class ProbeController {
   RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig> RequestProbe(
       int64_t at_time_ms);
 
+  RTC_WARN_UNUSED_RESULT std::vector<ProbeClusterConfig>
+  InitiateCapacityProbing(int64_t bitrate_bps, int64_t at_time_ms);
+
   // Resets the ProbeController to a state equivalent to as if it was just
   // created EXCEPT for |enable_periodic_alr_probing_|.
   void Reset(int64_t at_time_ms);

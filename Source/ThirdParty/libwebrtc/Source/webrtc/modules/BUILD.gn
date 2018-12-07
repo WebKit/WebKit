@@ -54,6 +54,7 @@ rtc_source_set("module_api") {
     "../api:libjingle_peerconnection_api",
     "../modules/rtp_rtcp:rtp_video_header",
     "../rtc_base:safe_conversions",
+    "../rtc_base/system:rtc_export",
   ]
 }
 
@@ -236,6 +237,7 @@ if (rtc_include_tests) {
     deps = [
       ":module_api",
       "../test:test_main",
+      "../test:test_support",
       "audio_coding:audio_coding_unittests",
       "audio_device:audio_device_unittests",
       "audio_mixer:audio_mixer_unittests",

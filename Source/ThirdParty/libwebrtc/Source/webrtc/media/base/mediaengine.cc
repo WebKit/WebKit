@@ -10,6 +10,8 @@
 
 #include "media/base/mediaengine.h"
 
+#include <utility>
+
 #include "api/video/video_bitrate_allocation.h"
 #include "rtc_base/stringencode.h"
 
@@ -102,6 +104,35 @@ webrtc::RTCError ValidateRtpParameters(
     }
   }
   return webrtc::RTCError::OK();
+}
+
+CompositeMediaEngine::CompositeMediaEngine(
+    std::unique_ptr<VoiceEngineInterface> voice_engine,
+    std::unique_ptr<VideoEngineInterface> video_engine)
+    : voice_engine_(std::move(voice_engine)),
+      video_engine_(std::move(video_engine)) {}
+
+CompositeMediaEngine::~CompositeMediaEngine() = default;
+
+bool CompositeMediaEngine::Init() {
+  voice().Init();
+  return true;
+}
+
+VoiceEngineInterface& CompositeMediaEngine::voice() {
+  return *voice_engine_.get();
+}
+
+VideoEngineInterface& CompositeMediaEngine::video() {
+  return *video_engine_.get();
+}
+
+const VoiceEngineInterface& CompositeMediaEngine::voice() const {
+  return *voice_engine_.get();
+}
+
+const VideoEngineInterface& CompositeMediaEngine::video() const {
+  return *video_engine_.get();
 }
 
 };  // namespace cricket

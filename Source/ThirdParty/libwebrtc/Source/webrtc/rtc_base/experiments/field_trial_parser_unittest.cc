@@ -99,6 +99,19 @@ TEST(FieldTrialParserTest, IgnoresInvalid) {
   EXPECT_EQ(exp.ping.Get(), false);
   EXPECT_EQ(exp.hash.Get(), "a80");
 }
+TEST(FieldTrialParserTest, IgnoresOutOfRange) {
+  FieldTrialConstrained<double> low("low", 10, absl::nullopt, 100);
+  FieldTrialConstrained<double> high("high", 10, 5, absl::nullopt);
+  ParseFieldTrial({&low, &high}, "low:1000,high:0");
+  EXPECT_EQ(low.Get(), 10);
+  EXPECT_EQ(high.Get(), 10);
+  ParseFieldTrial({&low, &high}, "low:inf,high:nan");
+  EXPECT_EQ(low.Get(), 10);
+  EXPECT_EQ(high.Get(), 10);
+  ParseFieldTrial({&low, &high}, "low:20,high:20");
+  EXPECT_EQ(low.Get(), 20);
+  EXPECT_EQ(high.Get(), 20);
+}
 TEST(FieldTrialParserTest, ParsesOptionalParameters) {
   FieldTrialOptional<int> max_count("c", absl::nullopt);
   ParseFieldTrial({&max_count}, "");

@@ -36,14 +36,10 @@ bool UnimplementedRtpParameterHasValue(const RtpParameters& parameters);
 class RtpSenderInternal : public RtpSenderInterface {
  public:
   // Sets the underlying MediaEngine channel associated with this RtpSender.
-  // SetVoiceMediaChannel should be used for audio RtpSenders and
-  // SetVideoMediaChannel should be used for video RtpSenders. Must call the
-  // appropriate SetXxxMediaChannel(nullptr) before the media channel is
-  // destroyed.
-  virtual void SetVoiceMediaChannel(
-      cricket::VoiceMediaChannel* voice_media_channel) = 0;
-  virtual void SetVideoMediaChannel(
-      cricket::VideoMediaChannel* video_media_channel) = 0;
+  // A VoiceMediaChannel should be used for audio RtpSenders and
+  // a VideoMediaChannel should be used for video RtpSenders.
+  // Must call SetMediaChannel(nullptr) before the media channel is destroyed.
+  virtual void SetMediaChannel(cricket::MediaChannel* media_channel) = 0;
 
   // Used to set the SSRC of the sender, once a local description has been set.
   // If |ssrc| is 0, this indiates that the sender should disconnect from the
@@ -156,13 +152,7 @@ class AudioRtpSender : public DtmfProviderInterface,
 
   int AttachmentId() const override { return attachment_id_; }
 
-  void SetVoiceMediaChannel(
-      cricket::VoiceMediaChannel* voice_media_channel) override;
-
-  void SetVideoMediaChannel(
-      cricket::VideoMediaChannel* video_media_channel) override {
-    RTC_NOTREACHED();
-  }
+  void SetMediaChannel(cricket::MediaChannel* media_channel) override;
 
  private:
   // TODO(nisse): Since SSRC == 0 is technically valid, figure out
@@ -253,13 +243,7 @@ class VideoRtpSender : public ObserverInterface,
   void Stop() override;
   int AttachmentId() const override { return attachment_id_; }
 
-  void SetVoiceMediaChannel(
-      cricket::VoiceMediaChannel* voice_media_channel) override {
-    RTC_NOTREACHED();
-  }
-
-  void SetVideoMediaChannel(
-      cricket::VideoMediaChannel* video_media_channel) override;
+  void SetMediaChannel(cricket::MediaChannel* media_channel) override;
 
  private:
   bool can_send_track() const { return track_ && ssrc_; }

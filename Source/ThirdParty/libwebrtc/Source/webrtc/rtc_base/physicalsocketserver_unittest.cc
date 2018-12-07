@@ -547,7 +547,13 @@ Thread* PosixSignalDeliveryTest::signaled_thread_ = nullptr;
 
 // Test receiving a synchronous signal while not in Wait() and then entering
 // Wait() afterwards.
-TEST_F(PosixSignalDeliveryTest, RaiseThenWait) {
+// TODO(webrtc:7864): Fails on real iOS devices
+#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
+#define MAYBE_RaiseThenWait DISABLED_RaiseThenWait
+#else
+#define MAYBE_RaiseThenWait RaiseThenWait
+#endif
+TEST_F(PosixSignalDeliveryTest, MAYBE_RaiseThenWait) {
   ASSERT_TRUE(ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal));
   raise(SIGTERM);
   EXPECT_TRUE(ss_->Wait(0, true));
@@ -557,7 +563,13 @@ TEST_F(PosixSignalDeliveryTest, RaiseThenWait) {
 
 // Test that we can handle getting tons of repeated signals and that we see all
 // the different ones.
-TEST_F(PosixSignalDeliveryTest, InsanelyManySignals) {
+// TODO(webrtc:7864): Fails on real iOS devices
+#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
+#define MAYBE_InsanelyManySignals DISABLED_InsanelyManySignals
+#else
+#define MAYBE_InsanelyManySignals InsanelyManySignals
+#endif
+TEST_F(PosixSignalDeliveryTest, MAYBE_InsanelyManySignals) {
   ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal);
   ss_->SetPosixSignalHandler(SIGINT, &RecordSignal);
   for (int i = 0; i < 10000; ++i) {
@@ -597,7 +609,13 @@ class RaiseSigTermRunnable : public Runnable {
 
 // Test that it works no matter what thread the kernel chooses to give the
 // signal to (since it's not guaranteed to be the one that Wait() runs on).
-TEST_F(PosixSignalDeliveryTest, SignalOnDifferentThread) {
+// TODO(webrtc:7864): Fails on real iOS devices
+#if defined(WEBRTC_IOS) && defined(WEBRTC_ARCH_ARM_FAMILY)
+#define MAYBE_SignalOnDifferentThread DISABLED_SignalOnDifferentThread
+#else
+#define MAYBE_SignalOnDifferentThread SignalOnDifferentThread
+#endif
+TEST_F(PosixSignalDeliveryTest, DISABLED_SignalOnDifferentThread) {
   ss_->SetPosixSignalHandler(SIGTERM, &RecordSignal);
   // Mask out SIGTERM so that it can't be delivered to this thread.
   sigset_t mask;

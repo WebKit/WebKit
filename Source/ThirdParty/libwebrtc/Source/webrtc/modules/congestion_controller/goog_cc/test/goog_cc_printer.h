@@ -12,8 +12,8 @@
 
 #include <memory>
 
+#include "api/transport/goog_cc_factory.h"
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
-#include "modules/congestion_controller/goog_cc/include/goog_cc_factory.h"
 #include "modules/congestion_controller/test/controller_printer.h"
 
 namespace webrtc {

@@ -24,8 +24,6 @@ namespace webrtc {
 
 // ILBC encoder API for use as a template parameter to
 // CreateAudioEncoderFactory<...>().
-//
-// NOTE: This struct is still under development and may change without notice.
 struct AudioEncoderIlbc {
   using Config = AudioEncoderIlbcConfig;
   static absl::optional<AudioEncoderIlbcConfig> SdpToConfig(

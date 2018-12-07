@@ -18,16 +18,16 @@
 
 #include "absl/memory/memory.h"
 #include "modules/bitrate_controller/include/bitrate_controller.h"
-#include "modules/congestion_controller/congestion_window_pushback_controller.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
+#include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/network/sent_packet.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/rate_limiter.h"
-#include "rtc_base/socket.h"
 #include "rtc_base/timeutils.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -143,6 +143,7 @@ SendSideCongestionController::SendSideCongestionController(
       pause_pacer_(false),
       pacer_paused_(false),
       min_bitrate_bps_(congestion_controller::GetMinBitrateBps()),
+      probe_bitrate_estimator_(new ProbeBitrateEstimator(event_log_)),
       delay_based_bwe_(new DelayBasedBwe(event_log_)),
       in_cwnd_experiment_(CwndExperimentEnabled()),
       accepted_queue_ms_(kDefaultAcceptedQueueMs),
@@ -153,7 +154,7 @@ SendSideCongestionController::SendSideCongestionController(
       pacer_pushback_experiment_(IsPacerPushbackExperimentEnabled()),
       congestion_window_pushback_controller_(
           MaybeCreateCongestionWindowPushbackController()) {
-  delay_based_bwe_->SetMinBitrate(min_bitrate_bps_);
+  delay_based_bwe_->SetMinBitrate(DataRate::bps(min_bitrate_bps_));
   if (in_cwnd_experiment_ &&
       !ReadCwndExperimentParameter(&accepted_queue_ms_)) {
     RTC_LOG(LS_WARNING) << "Failed to parse parameters for CwndExperiment "
@@ -163,6 +164,23 @@ SendSideCongestionController::SendSideCongestionController(
 }
 
 SendSideCongestionController::~SendSideCongestionController() {}
+
+void SendSideCongestionController::EnableCongestionWindowPushback(
+    int64_t accepted_queue_ms,
+    uint32_t min_pushback_target_bitrate_bps) {
+  RTC_DCHECK(!congestion_window_pushback_controller_)
+      << "The congestion pushback is already enabled.";
+  RTC_CHECK_GE(accepted_queue_ms, 0)
+      << "Accepted must be greater than or equal to 0.";
+  RTC_CHECK_GE(min_pushback_target_bitrate_bps, 0)
+      << "Min pushback target bitrate must be greater than or equal to 0.";
+
+  in_cwnd_experiment_ = true;
+  accepted_queue_ms_ = accepted_queue_ms;
+  congestion_window_pushback_controller_ =
+      absl::make_unique<CongestionWindowPushbackController>(
+          min_pushback_target_bitrate_bps);
+}
 
 void SendSideCongestionController::RegisterPacketFeedbackObserver(
     PacketFeedbackObserver* observer) {
@@ -204,9 +222,9 @@ void SendSideCongestionController::SetBweBitrates(int min_bitrate_bps,
   {
     rtc::CritScope cs(&bwe_lock_);
     if (start_bitrate_bps > 0)
-      delay_based_bwe_->SetStartBitrate(start_bitrate_bps);
+      delay_based_bwe_->SetStartBitrate(DataRate::bps(start_bitrate_bps));
     min_bitrate_bps_ = min_bitrate_bps;
-    delay_based_bwe_->SetMinBitrate(min_bitrate_bps_);
+    delay_based_bwe_->SetMinBitrate(DataRate::bps(min_bitrate_bps_));
   }
   MaybeTriggerOnNetworkChanged();
 }
@@ -241,10 +259,13 @@ void SendSideCongestionController::OnNetworkRouteChanged(
     rtc::CritScope cs(&bwe_lock_);
     transport_overhead_bytes_per_packet_ = network_route.packet_overhead;
     min_bitrate_bps_ = min_bitrate_bps;
+    probe_bitrate_estimator_.reset(new ProbeBitrateEstimator(event_log_));
     delay_based_bwe_.reset(new DelayBasedBwe(event_log_));
     acknowledged_bitrate_estimator_.reset(new AcknowledgedBitrateEstimator());
-    delay_based_bwe_->SetStartBitrate(bitrate_bps);
-    delay_based_bwe_->SetMinBitrate(min_bitrate_bps);
+    if (bitrate_bps > 0) {
+      delay_based_bwe_->SetStartBitrate(DataRate::bps(bitrate_bps));
+    }
+    delay_based_bwe_->SetMinBitrate(DataRate::bps(min_bitrate_bps));
   }
   {
     rtc::CritScope cs(&probe_lock_);
@@ -321,7 +342,7 @@ void SendSideCongestionController::OnSentPacket(
 void SendSideCongestionController::OnRttUpdate(int64_t avg_rtt_ms,
                                                int64_t max_rtt_ms) {
   rtc::CritScope cs(&bwe_lock_);
-  delay_based_bwe_->OnRttUpdate(avg_rtt_ms);
+  delay_based_bwe_->OnRttUpdate(TimeDelta::ms(avg_rtt_ms));
 }
 
 int64_t SendSideCongestionController::TimeUntilNextProcess() {
@@ -397,9 +418,16 @@ void SendSideCongestionController::OnTransportFeedback(
   DelayBasedBwe::Result result;
   {
     rtc::CritScope cs(&bwe_lock_);
+    for (const auto& packet : feedback_vector) {
+      if (packet.send_time_ms != PacketFeedback::kNoSendTime &&
+          packet.pacing_info.probe_cluster_id != PacedPacketInfo::kNotAProbe) {
+        probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);
+      }
+    }
     result = delay_based_bwe_->IncomingPacketFeedbackVector(
-        feedback_vector, acknowledged_bitrate_estimator_->bitrate_bps(),
-        clock_->TimeInMilliseconds());
+        feedback_vector, acknowledged_bitrate_estimator_->bitrate(),
+        probe_bitrate_estimator_->FetchAndResetLastEstimatedBitrate(),
+        Timestamp::ms(clock_->TimeInMilliseconds()));
   }
   if (result.updated) {
     bitrate_controller_->OnDelayBasedBweResult(result);
@@ -501,7 +529,7 @@ void SendSideCongestionController::MaybeTriggerOnNetworkChanged() {
     int64_t probing_interval_ms;
     {
       rtc::CritScope cs(&bwe_lock_);
-      probing_interval_ms = delay_based_bwe_->GetExpectedBwePeriodMs();
+      probing_interval_ms = delay_based_bwe_->GetExpectedBwePeriod().ms();
     }
     {
       rtc::CritScope cs(&observer_lock_);

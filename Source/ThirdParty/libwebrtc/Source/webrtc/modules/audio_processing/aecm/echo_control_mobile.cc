@@ -14,10 +14,12 @@
 #include <stdio.h>
 #endif
 #include <stdlib.h>
+#include <string.h>
 
 extern "C" {
 #include "common_audio/ring_buffer.h"
 #include "common_audio/signal_processing/include/signal_processing_library.h"
+#include "modules/audio_processing/aecm/aecm_defines.h"
 }
 #include "modules/audio_processing/aecm/aecm_core.h"
 

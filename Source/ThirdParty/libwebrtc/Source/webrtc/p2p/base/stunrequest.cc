@@ -18,7 +18,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/stringencode.h"
+#include "rtc_base/timeutils.h"  // For TimeMillis
 
 namespace cricket {
 

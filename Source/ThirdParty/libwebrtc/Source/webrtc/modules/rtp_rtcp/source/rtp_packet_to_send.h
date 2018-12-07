@@ -10,9 +10,12 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_PACKET_TO_SEND_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_PACKET_TO_SEND_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet.h"
 

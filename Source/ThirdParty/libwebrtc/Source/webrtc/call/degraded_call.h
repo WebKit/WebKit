@@ -28,8 +28,8 @@ class DegradedCall : public Call, private Transport, private PacketReceiver {
  public:
   explicit DegradedCall(
       std::unique_ptr<Call> call,
-      absl::optional<DefaultNetworkSimulationConfig> send_config,
-      absl::optional<DefaultNetworkSimulationConfig> receive_config);
+      absl::optional<BuiltInNetworkBehaviorConfig> send_config,
+      absl::optional<BuiltInNetworkBehaviorConfig> receive_config);
   ~DegradedCall() override;
 
   // Implements Call.
@@ -91,13 +91,14 @@ class DegradedCall : public Call, private Transport, private PacketReceiver {
   Clock* const clock_;
   const std::unique_ptr<Call> call_;
 
-  const absl::optional<DefaultNetworkSimulationConfig> send_config_;
+  void MediaTransportChange(MediaTransportInterface* media_transport) override;
+  const absl::optional<BuiltInNetworkBehaviorConfig> send_config_;
   const std::unique_ptr<ProcessThread> send_process_thread_;
   SimulatedNetwork* send_simulated_network_;
   std::unique_ptr<FakeNetworkPipe> send_pipe_;
   size_t num_send_streams_;
 
-  const absl::optional<DefaultNetworkSimulationConfig> receive_config_;
+  const absl::optional<BuiltInNetworkBehaviorConfig> receive_config_;
   SimulatedNetwork* receive_simulated_network_;
   std::unique_ptr<FakeNetworkPipe> receive_pipe_;
 };

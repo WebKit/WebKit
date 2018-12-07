@@ -13,6 +13,9 @@
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 20000) {
+    return;
+  }
   static const int kSampleRateHz = 16000;
   static const size_t kAllocatedOuputSizeSamples = 16000 / 10;  // 100 ms.
   int16_t output[kAllocatedOuputSizeSamples];

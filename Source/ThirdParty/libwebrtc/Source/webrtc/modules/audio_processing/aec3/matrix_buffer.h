@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_MATRIX_BUFFER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_MATRIX_BUFFER_H_
 
+#include <stddef.h>
 #include <vector>
 
 #include "rtc_base/checks.h"

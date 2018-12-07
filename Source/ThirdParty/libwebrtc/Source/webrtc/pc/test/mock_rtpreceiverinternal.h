@@ -41,8 +41,7 @@ class MockRtpReceiverInternal : public RtpReceiverInternal {
 
   // RtpReceiverInternal methods.
   MOCK_METHOD0(Stop, void());
-  MOCK_METHOD1(SetVoiceMediaChannel, void(cricket::VoiceMediaChannel*));
-  MOCK_METHOD1(SetVideoMediaChannel, void(cricket::VideoMediaChannel*));
+  MOCK_METHOD1(SetMediaChannel, void(cricket::MediaChannel*));
   MOCK_METHOD1(SetupMediaChannel, void(uint32_t));
   MOCK_CONST_METHOD0(ssrc, uint32_t());
   MOCK_METHOD0(NotifyFirstPacketReceived, void());

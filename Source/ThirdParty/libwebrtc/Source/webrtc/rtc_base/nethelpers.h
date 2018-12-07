@@ -12,18 +12,17 @@
 #define RTC_BASE_NETHELPERS_H_
 
 #if defined(WEBRTC_POSIX)
-#include <netdb.h>
-#include <stddef.h>
+#include <sys/socket.h>
 #elif WEBRTC_WIN
 #include <winsock2.h>  // NOLINT
 #endif
 
-#include <list>
+#include <vector>
 
 #include "rtc_base/asyncresolverinterface.h"
+#include "rtc_base/ipaddress.h"
 #include "rtc_base/signalthread.h"
 #include "rtc_base/socketaddress.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
 

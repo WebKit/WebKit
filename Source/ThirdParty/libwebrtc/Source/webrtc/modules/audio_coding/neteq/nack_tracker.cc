@@ -10,9 +10,9 @@
 
 #include "modules/audio_coding/neteq/nack_tracker.h"
 
-#include <assert.h>  // For assert.
-
-#include <algorithm>  // For std::max.
+#include <assert.h>
+#include <cstdint>
+#include <utility>
 
 #include "rtc_base/checks.h"
 

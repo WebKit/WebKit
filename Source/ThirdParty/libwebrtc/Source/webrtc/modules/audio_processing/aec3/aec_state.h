@@ -11,9 +11,8 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_AEC_STATE_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_AEC_STATE_H_
 
-#include <math.h>
-
-#include <algorithm>
+#include <stddef.h>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -28,6 +27,7 @@
 #include "modules/audio_processing/aec3/erle_estimator.h"
 #include "modules/audio_processing/aec3/filter_analyzer.h"
 #include "modules/audio_processing/aec3/render_buffer.h"
+#include "modules/audio_processing/aec3/render_reverb_model.h"
 #include "modules/audio_processing/aec3/reverb_model_estimator.h"
 #include "modules/audio_processing/aec3/subtractor_output.h"
 #include "modules/audio_processing/aec3/subtractor_output_analyzer.h"
@@ -46,11 +46,17 @@ class AecState {
   // Returns whether the echo subtractor can be used to determine the residual
   // echo.
   bool UsableLinearEstimate() const {
+    if (use_legacy_filter_quality_) {
+      return legacy_filter_quality_state_.LinearFilterUsable();
+    }
     return filter_quality_state_.LinearFilterUsable();
   }
 
   // Returns whether the echo subtractor output should be used as output.
   bool UseLinearFilterOutput() const {
+    if (use_legacy_filter_quality_) {
+      return legacy_filter_quality_state_.LinearFilterUsable();
+    }
     return filter_quality_state_.LinearFilterUsable();
   }
 
@@ -99,7 +105,11 @@ class AecState {
   bool SaturatedCapture() const { return capture_signal_saturation_; }
 
   // Returns whether the echo signal is saturated.
-  bool SaturatedEcho() const { return saturation_detector_.SaturatedEcho(); }
+  bool SaturatedEcho() const {
+    return use_legacy_saturation_behavior_
+               ? legacy_saturation_detector_.SaturatedEcho()
+               : saturation_detector_.SaturatedEcho();
+  }
 
   // Updates the capture signal saturation.
   void UpdateCaptureSaturation(bool capture_signal_saturation) {
@@ -122,7 +132,11 @@ class AecState {
 
   // Returns the upper limit for the echo suppression gain.
   float SuppressionGainLimit() const {
-    return suppression_gain_limiter_.Limit();
+    if (use_suppressor_gain_limiter_) {
+      return suppression_gain_limiter_.Limit();
+    } else {
+      return 1.f;
+    }
   }
 
   // Returns whether the suppression gain limiter is active.
@@ -153,13 +167,14 @@ class AecState {
   }
 
  private:
-  void UpdateSuppressorGainLimit(bool render_activity);
-  bool DetectEchoSaturation(rtc::ArrayView<const float> x,
-                            float echo_path_gain);
-
   static int instance_count_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
   const EchoCanceller3Config config_;
+  const bool use_legacy_saturation_behavior_;
+  const bool enable_erle_resets_at_gain_changes_;
+  const bool enable_erle_updates_during_reverb_;
+  const bool use_legacy_filter_quality_;
+  const bool use_suppressor_gain_limiter_;
 
   // Class for controlling the transition from the intial state, which in turn
   // controls when the filter parameters for the initial state should be used.
@@ -255,7 +270,37 @@ class AecState {
   // suppressor.
   class FilteringQualityAnalyzer {
    public:
-    explicit FilteringQualityAnalyzer(const EchoCanceller3Config& config);
+    FilteringQualityAnalyzer(const EchoCanceller3Config& config);
+
+    // Returns whether the the linear filter can be used for the echo
+    // canceller output.
+    bool LinearFilterUsable() const { return usable_linear_estimate_; }
+
+    // Resets the state of the analyzer.
+    void Reset();
+
+    // Updates the analysis based on new data.
+    void Update(bool active_render,
+                bool transparent_mode,
+                bool saturated_capture,
+                bool consistent_estimate_,
+                const absl::optional<DelayEstimate>& external_delay,
+                bool converged_filter);
+
+   private:
+    bool usable_linear_estimate_ = false;
+    size_t filter_update_blocks_since_reset_ = 0;
+    size_t filter_update_blocks_since_start_ = 0;
+    bool convergence_seen_ = false;
+  } filter_quality_state_;
+
+  // Class containing the legacy functionality for analyzing how well the linear
+  // filter is, and can be expected to perform on the current signals. The
+  // purpose of this is for using to select the echo suppression functionality
+  // as well as the input to the echo suppressor.
+  class LegacyFilteringQualityAnalyzer {
+   public:
+    explicit LegacyFilteringQualityAnalyzer(const EchoCanceller3Config& config);
 
     // Returns whether the the linear filter is can be used for the echo
     // canceller output.
@@ -284,14 +329,32 @@ class AecState {
     size_t active_non_converged_sequence_size_ = 0;
     bool recent_convergence_during_activity_ = false;
     bool recent_convergence_ = false;
-  } filter_quality_state_;
+  } legacy_filter_quality_state_;
 
-  // Class for detecting whether the echo is to be considered to be saturated.
-  // The purpose of this is to allow customized behavior in the echo suppressor
-  // for when the echo is saturated.
+  // Class for detecting whether the echo is to be considered to be
+  // saturated.
   class SaturationDetector {
    public:
-    explicit SaturationDetector(const EchoCanceller3Config& config);
+    // Returns whether the echo is to be considered saturated.
+    bool SaturatedEcho() const { return saturated_echo_; };
+
+    // Updates the detection decision based on new data.
+    void Update(rtc::ArrayView<const float> x,
+                bool saturated_capture,
+                bool usable_linear_estimate,
+                const SubtractorOutput& subtractor_output,
+                float echo_path_gain);
+
+   private:
+    bool saturated_echo_ = false;
+  } saturation_detector_;
+
+  // Legacy class for detecting whether the echo is to be considered to be
+  // saturated. This is kept as a fallback solution to use instead of the class
+  // SaturationDetector,
+  class LegacySaturationDetector {
+   public:
+    explicit LegacySaturationDetector(const EchoCanceller3Config& config);
 
     // Returns whether the echo is to be considered saturated.
     bool SaturatedEcho() const { return saturated_echo_; };
@@ -308,7 +371,7 @@ class AecState {
     const bool echo_can_saturate_;
     size_t not_saturated_sequence_size_;
     bool saturated_echo_ = false;
-  } saturation_detector_;
+  } legacy_saturation_detector_;
 
   ErlEstimator erl_estimator_;
   ErleEstimator erle_estimator_;
@@ -321,8 +384,8 @@ class AecState {
   absl::optional<DelayEstimate> external_delay_;
   EchoAudibility echo_audibility_;
   ReverbModelEstimator reverb_model_estimator_;
+  RenderReverbModel render_reverb_;
   SubtractorOutputAnalyzer subtractor_output_analyzer_;
-  bool enable_erle_resets_at_gain_changes_ = true;
 };
 
 }  // namespace webrtc

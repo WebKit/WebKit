@@ -19,13 +19,13 @@ namespace {
 // RFC 1035, Section 4.1.1.
 //
 // QR bit.
-constexpr uint16_t kMDnsFlagMaskQueryOrResponse = 0x8000;
+constexpr uint16_t kMdnsFlagMaskQueryOrResponse = 0x8000;
 // AA bit.
-constexpr uint16_t kMDnsFlagMaskAuthoritative = 0x0400;
+constexpr uint16_t kMdnsFlagMaskAuthoritative = 0x0400;
 // RFC 1035, Section 4.1.2, QCLASS and RFC 6762, Section 18.12, repurposing of
 // top bit of QCLASS as the unicast response bit.
-constexpr uint16_t kMDnsQClassMaskUnicastResponse = 0x8000;
-constexpr size_t kMDnsHeaderSizeBytes = 12;
+constexpr uint16_t kMdnsQClassMaskUnicastResponse = 0x8000;
+constexpr size_t kMdnsHeaderSizeBytes = 12;
 
 bool ReadDomainName(MessageBufferReader* buf, std::string* name) {
   size_t name_start_pos = buf->CurrentOffset();
@@ -64,7 +64,7 @@ bool ReadDomainName(MessageBufferReader* buf, std::string* name) {
     // A legitimate pointer only refers to a prior occurrence of the same name,
     // and we should only move strictly backward to a prior name field after the
     // header.
-    if (pos_jump_to >= name_start_pos || pos_jump_to < kMDnsHeaderSizeBytes) {
+    if (pos_jump_to >= name_start_pos || pos_jump_to < kMdnsHeaderSizeBytes) {
       return false;
     }
     MessageBufferReader new_buf(buf->MessageData(), buf->MessageLength());
@@ -88,27 +88,27 @@ void WriteDomainName(rtc::ByteBufferWriter* buf, const std::string& name) {
 
 }  // namespace
 
-void MDnsHeader::SetQueryOrResponse(bool is_query) {
+void MdnsHeader::SetQueryOrResponse(bool is_query) {
   if (is_query) {
-    flags &= ~kMDnsFlagMaskQueryOrResponse;
+    flags &= ~kMdnsFlagMaskQueryOrResponse;
   } else {
-    flags |= kMDnsFlagMaskQueryOrResponse;
+    flags |= kMdnsFlagMaskQueryOrResponse;
   }
 }
 
-void MDnsHeader::SetAuthoritative(bool is_authoritative) {
+void MdnsHeader::SetAuthoritative(bool is_authoritative) {
   if (is_authoritative) {
-    flags |= kMDnsFlagMaskAuthoritative;
+    flags |= kMdnsFlagMaskAuthoritative;
   } else {
-    flags &= ~kMDnsFlagMaskAuthoritative;
+    flags &= ~kMdnsFlagMaskAuthoritative;
   }
 }
 
-bool MDnsHeader::IsAuthoritative() const {
-  return flags & kMDnsFlagMaskAuthoritative;
+bool MdnsHeader::IsAuthoritative() const {
+  return flags & kMdnsFlagMaskAuthoritative;
 }
 
-bool MDnsHeader::Read(MessageBufferReader* buf) {
+bool MdnsHeader::Read(MessageBufferReader* buf) {
   if (!buf->ReadUInt16(&id) || !buf->ReadUInt16(&flags) ||
       !buf->ReadUInt16(&qdcount) || !buf->ReadUInt16(&ancount) ||
       !buf->ReadUInt16(&nscount) || !buf->ReadUInt16(&arcount)) {
@@ -118,7 +118,7 @@ bool MDnsHeader::Read(MessageBufferReader* buf) {
   return true;
 }
 
-void MDnsHeader::Write(rtc::ByteBufferWriter* buf) const {
+void MdnsHeader::Write(rtc::ByteBufferWriter* buf) const {
   buf->WriteUInt16(id);
   buf->WriteUInt16(flags);
   buf->WriteUInt16(qdcount);
@@ -127,15 +127,15 @@ void MDnsHeader::Write(rtc::ByteBufferWriter* buf) const {
   buf->WriteUInt16(arcount);
 }
 
-bool MDnsHeader::IsQuery() const {
-  return !(flags & kMDnsFlagMaskQueryOrResponse);
+bool MdnsHeader::IsQuery() const {
+  return !(flags & kMdnsFlagMaskQueryOrResponse);
 }
 
-MDnsSectionEntry::MDnsSectionEntry() = default;
-MDnsSectionEntry::~MDnsSectionEntry() = default;
-MDnsSectionEntry::MDnsSectionEntry(const MDnsSectionEntry& other) = default;
+MdnsSectionEntry::MdnsSectionEntry() = default;
+MdnsSectionEntry::~MdnsSectionEntry() = default;
+MdnsSectionEntry::MdnsSectionEntry(const MdnsSectionEntry& other) = default;
 
-void MDnsSectionEntry::SetType(SectionEntryType type) {
+void MdnsSectionEntry::SetType(SectionEntryType type) {
   switch (type) {
     case SectionEntryType::kA:
       type_ = 1;
@@ -148,7 +148,7 @@ void MDnsSectionEntry::SetType(SectionEntryType type) {
   }
 }
 
-SectionEntryType MDnsSectionEntry::GetType() const {
+SectionEntryType MdnsSectionEntry::GetType() const {
   switch (type_) {
     case 1:
       return SectionEntryType::kA;
@@ -159,7 +159,7 @@ SectionEntryType MDnsSectionEntry::GetType() const {
   }
 }
 
-void MDnsSectionEntry::SetClass(SectionEntryClass cls) {
+void MdnsSectionEntry::SetClass(SectionEntryClass cls) {
   switch (cls) {
     case SectionEntryClass::kIN:
       class_ = 1;
@@ -169,7 +169,7 @@ void MDnsSectionEntry::SetClass(SectionEntryClass cls) {
   }
 }
 
-SectionEntryClass MDnsSectionEntry::GetClass() const {
+SectionEntryClass MdnsSectionEntry::GetClass() const {
   switch (class_) {
     case 1:
       return SectionEntryClass::kIN;
@@ -178,11 +178,11 @@ SectionEntryClass MDnsSectionEntry::GetClass() const {
   }
 }
 
-MDnsQuestion::MDnsQuestion() = default;
-MDnsQuestion::MDnsQuestion(const MDnsQuestion& other) = default;
-MDnsQuestion::~MDnsQuestion() = default;
+MdnsQuestion::MdnsQuestion() = default;
+MdnsQuestion::MdnsQuestion(const MdnsQuestion& other) = default;
+MdnsQuestion::~MdnsQuestion() = default;
 
-bool MDnsQuestion::Read(MessageBufferReader* buf) {
+bool MdnsQuestion::Read(MessageBufferReader* buf) {
   if (!ReadDomainName(buf, &name_)) {
     RTC_LOG(LS_ERROR) << "Invalid name.";
     return false;
@@ -194,31 +194,31 @@ bool MDnsQuestion::Read(MessageBufferReader* buf) {
   return true;
 }
 
-bool MDnsQuestion::Write(rtc::ByteBufferWriter* buf) const {
+bool MdnsQuestion::Write(rtc::ByteBufferWriter* buf) const {
   WriteDomainName(buf, name_);
   buf->WriteUInt16(type_);
   buf->WriteUInt16(class_);
   return true;
 }
 
-void MDnsQuestion::SetUnicastResponse(bool should_unicast) {
+void MdnsQuestion::SetUnicastResponse(bool should_unicast) {
   if (should_unicast) {
-    class_ |= kMDnsQClassMaskUnicastResponse;
+    class_ |= kMdnsQClassMaskUnicastResponse;
   } else {
-    class_ &= ~kMDnsQClassMaskUnicastResponse;
+    class_ &= ~kMdnsQClassMaskUnicastResponse;
   }
 }
 
-bool MDnsQuestion::ShouldUnicastResponse() const {
-  return class_ & kMDnsQClassMaskUnicastResponse;
+bool MdnsQuestion::ShouldUnicastResponse() const {
+  return class_ & kMdnsQClassMaskUnicastResponse;
 }
 
-MDnsResourceRecord::MDnsResourceRecord() = default;
-MDnsResourceRecord::MDnsResourceRecord(const MDnsResourceRecord& other) =
+MdnsResourceRecord::MdnsResourceRecord() = default;
+MdnsResourceRecord::MdnsResourceRecord(const MdnsResourceRecord& other) =
     default;
-MDnsResourceRecord::~MDnsResourceRecord() = default;
+MdnsResourceRecord::~MdnsResourceRecord() = default;
 
-bool MDnsResourceRecord::Read(MessageBufferReader* buf) {
+bool MdnsResourceRecord::Read(MessageBufferReader* buf) {
   if (!ReadDomainName(buf, &name_)) {
     return false;
   }
@@ -239,17 +239,17 @@ bool MDnsResourceRecord::Read(MessageBufferReader* buf) {
   }
   return false;
 }
-bool MDnsResourceRecord::ReadARData(MessageBufferReader* buf) {
+bool MdnsResourceRecord::ReadARData(MessageBufferReader* buf) {
   // A RDATA contains a 32-bit IPv4 address.
   return buf->ReadString(&rdata_, 4);
 }
 
-bool MDnsResourceRecord::ReadQuadARData(MessageBufferReader* buf) {
+bool MdnsResourceRecord::ReadQuadARData(MessageBufferReader* buf) {
   // AAAA RDATA contains a 128-bit IPv6 address.
   return buf->ReadString(&rdata_, 16);
 }
 
-bool MDnsResourceRecord::Write(rtc::ByteBufferWriter* buf) const {
+bool MdnsResourceRecord::Write(rtc::ByteBufferWriter* buf) const {
   WriteDomainName(buf, name_);
   buf->WriteUInt16(type_);
   buf->WriteUInt16(class_);
@@ -270,15 +270,15 @@ bool MDnsResourceRecord::Write(rtc::ByteBufferWriter* buf) const {
   return true;
 }
 
-void MDnsResourceRecord::WriteARData(rtc::ByteBufferWriter* buf) const {
+void MdnsResourceRecord::WriteARData(rtc::ByteBufferWriter* buf) const {
   buf->WriteString(rdata_);
 }
 
-void MDnsResourceRecord::WriteQuadARData(rtc::ByteBufferWriter* buf) const {
+void MdnsResourceRecord::WriteQuadARData(rtc::ByteBufferWriter* buf) const {
   buf->WriteString(rdata_);
 }
 
-bool MDnsResourceRecord::SetIPAddressInRecordData(
+bool MdnsResourceRecord::SetIPAddressInRecordData(
     const rtc::IPAddress& address) {
   int af = address.family();
   if (af != AF_INET && af != AF_INET6) {
@@ -293,7 +293,7 @@ bool MDnsResourceRecord::SetIPAddressInRecordData(
   return true;
 }
 
-bool MDnsResourceRecord::GetIPAddressFromRecordData(
+bool MdnsResourceRecord::GetIPAddressFromRecordData(
     rtc::IPAddress* address) const {
   if (GetType() != SectionEntryType::kA &&
       GetType() != SectionEntryType::kAAAA) {
@@ -310,16 +310,16 @@ bool MDnsResourceRecord::GetIPAddressFromRecordData(
   return rtc::IPFromString(std::string(out), address);
 }
 
-MDnsMessage::MDnsMessage() = default;
-MDnsMessage::~MDnsMessage() = default;
+MdnsMessage::MdnsMessage() = default;
+MdnsMessage::~MdnsMessage() = default;
 
-bool MDnsMessage::Read(MessageBufferReader* buf) {
+bool MdnsMessage::Read(MessageBufferReader* buf) {
   RTC_DCHECK_EQ(0u, buf->CurrentOffset());
   if (!header_.Read(buf)) {
     return false;
   }
 
-  auto read_question = [&buf](std::vector<MDnsQuestion>* section,
+  auto read_question = [&buf](std::vector<MdnsQuestion>* section,
                               uint16_t count) {
     section->resize(count);
     for (auto& question : (*section)) {
@@ -329,7 +329,7 @@ bool MDnsMessage::Read(MessageBufferReader* buf) {
     }
     return true;
   };
-  auto read_rr = [&buf](std::vector<MDnsResourceRecord>* section,
+  auto read_rr = [&buf](std::vector<MdnsResourceRecord>* section,
                         uint16_t count) {
     section->resize(count);
     for (auto& rr : (*section)) {
@@ -349,10 +349,10 @@ bool MDnsMessage::Read(MessageBufferReader* buf) {
   return true;
 }
 
-bool MDnsMessage::Write(rtc::ByteBufferWriter* buf) const {
+bool MdnsMessage::Write(rtc::ByteBufferWriter* buf) const {
   header_.Write(buf);
 
-  auto write_rr = [&buf](const std::vector<MDnsResourceRecord>& section) {
+  auto write_rr = [&buf](const std::vector<MdnsResourceRecord>& section) {
     for (auto rr : section) {
       if (!rr.Write(buf)) {
         return false;
@@ -374,7 +374,7 @@ bool MDnsMessage::Write(rtc::ByteBufferWriter* buf) const {
   return true;
 }
 
-bool MDnsMessage::ShouldUnicastResponse() const {
+bool MdnsMessage::ShouldUnicastResponse() const {
   bool should_unicast = false;
   for (const auto& question : question_section_) {
     should_unicast |= question.ShouldUnicastResponse();
@@ -382,12 +382,12 @@ bool MDnsMessage::ShouldUnicastResponse() const {
   return should_unicast;
 }
 
-void MDnsMessage::AddQuestion(const MDnsQuestion& question) {
+void MdnsMessage::AddQuestion(const MdnsQuestion& question) {
   question_section_.push_back(question);
   header_.qdcount = question_section_.size();
 }
 
-void MDnsMessage::AddAnswerRecord(const MDnsResourceRecord& answer) {
+void MdnsMessage::AddAnswerRecord(const MdnsResourceRecord& answer) {
   answer_section_.push_back(answer);
   header_.ancount = answer_section_.size();
 }

@@ -69,7 +69,6 @@
 
 #include <memory>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "api/asyncresolverfactory.h"
@@ -78,10 +77,11 @@
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_options.h"
 #include "api/call/callfactoryinterface.h"
+#include "api/crypto/cryptooptions.h"
 #include "api/datachannelinterface.h"
-#include "api/dtmfsenderinterface.h"
 #include "api/fec_controller.h"
 #include "api/jsep.h"
+#include "api/media_transport_interface.h"
 #include "api/mediastreaminterface.h"
 #include "api/rtcerror.h"
 #include "api/rtceventlogoutput.h"
@@ -94,7 +94,6 @@
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
 #include "api/turncustomizer.h"
-#include "api/umametrics.h"
 #include "logging/rtc_event_log/rtc_event_log_factory_interface.h"
 #include "media/base/mediaconfig.h"
 // TODO(bugs.webrtc.org/6353): cricket::VideoCapturer is deprecated and should
@@ -114,6 +113,7 @@
 #include "rtc_base/socketaddress.h"
 #include "rtc_base/sslcertificate.h"
 #include "rtc_base/sslstreamadapter.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 class SSLIdentity;
@@ -160,7 +160,7 @@ enum class SdpSemantics { kPlanB, kUnifiedPlan };
 
 class PeerConnectionInterface : public rtc::RefCountInterface {
  public:
-  // See https://w3c.github.io/webrtc-pc/#state-definitions
+  // See https://w3c.github.io/webrtc-pc/#dom-rtcsignalingstate
   enum SignalingState {
     kStable,
     kHaveLocalOffer,
@@ -170,12 +170,24 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     kClosed,
   };
 
+  // See https://w3c.github.io/webrtc-pc/#dom-rtcicegatheringstate
   enum IceGatheringState {
     kIceGatheringNew,
     kIceGatheringGathering,
     kIceGatheringComplete
   };
 
+  // See https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnectionstate
+  enum class PeerConnectionState {
+    kNew,
+    kConnecting,
+    kConnected,
+    kDisconnected,
+    kFailed,
+    kClosed,
+  };
+
+  // See https://w3c.github.io/webrtc-pc/#dom-rtciceconnectionstate
   enum IceConnectionState {
     kIceConnectionNew,
     kIceConnectionChecking,
@@ -282,7 +294,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   // organization of the implementation, which isn't stable. So we
   // need getters and setters at least for fields which applications
   // are interested in.
-  struct RTCConfiguration {
+  struct RTC_EXPORT RTCConfiguration {
     // This struct is subject to reorganization, both for naming
     // consistency, and to group settings to match where they are used
     // in the implementation. To do that, we need getter and setter
@@ -326,6 +338,22 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     }
     void set_experiment_cpu_load_estimator(bool enable) {
       media_config.video.experiment_cpu_load_estimator = enable;
+    }
+
+    int audio_rtcp_report_interval_ms() const {
+      return media_config.audio.rtcp_report_interval_ms;
+    }
+    void set_audio_rtcp_report_interval_ms(int audio_rtcp_report_interval_ms) {
+      media_config.audio.rtcp_report_interval_ms =
+          audio_rtcp_report_interval_ms;
+    }
+
+    int video_rtcp_report_interval_ms() const {
+      return media_config.video.rtcp_report_interval_ms;
+    }
+    void set_video_rtcp_report_interval_ms(int video_rtcp_report_interval_ms) {
+      media_config.video.rtcp_report_interval_ms =
+          video_rtcp_report_interval_ms;
     }
 
     static const int kUndefined = -1;
@@ -394,6 +422,7 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     // Use new combined audio/video bandwidth estimation?
     absl::optional<bool> combined_audio_video_bwe;
 
+    // TODO(bugs.webrtc.org/9891) - Move to crypto_options
     // Can be used to disable DTLS-SRTP. This should never be done, but can be
     // useful for testing purposes, for example in setting up a loopback call
     // with a single PeerConnection.
@@ -420,6 +449,9 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     // Whether to use the NetEq "fast mode" which will accelerate audio quicker
     // if it falls behind.
     bool audio_jitter_buffer_fast_accelerate = false;
+
+    // The minimum delay in milliseconds for the audio jitter buffer.
+    int audio_jitter_buffer_min_delay_ms = 0;
 
     // Timeout in milliseconds before an ICE candidate pair is considered to be
     // "not receiving", after which a lower priority candidate pair may be
@@ -556,12 +588,41 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
     // For all other users, specify kUnifiedPlan.
     SdpSemantics sdp_semantics = SdpSemantics::kPlanB;
 
+    // TODO(bugs.webrtc.org/9891) - Move to crypto_options or remove.
     // Actively reset the SRTP parameters whenever the DTLS transports
     // underneath are reset for every offer/answer negotiation.
     // This is only intended to be a workaround for crbug.com/835958
     // WARNING: This would cause RTP/RTCP packets decryption failure if not used
     // correctly. This flag will be deprecated soon. Do not rely on it.
     bool active_reset_srtp_params = false;
+
+    // If MediaTransportFactory is provided in PeerConnectionFactory, this flag
+    // informs PeerConnection that it should use the MediaTransportInterface.
+    // It's invalid to set it to |true| if the MediaTransportFactory wasn't
+    // provided.
+    bool use_media_transport = false;
+
+    // If MediaTransportFactory is provided in PeerConnectionFactory, this flag
+    // informs PeerConnection that it should use the MediaTransportInterface for
+    // data channels.  It's invalid to set it to |true| if the
+    // MediaTransportFactory wasn't provided.  Data channels over media
+    // transport are not compatible with RTP or SCTP data channels.  Setting
+    // both |use_media_transport_for_data_channels| and
+    // |enable_rtp_data_channel| is invalid.
+    bool use_media_transport_for_data_channels = false;
+
+    // Defines advanced optional cryptographic settings related to SRTP and
+    // frame encryption for native WebRTC. Setting this will overwrite any
+    // settings set in PeerConnectionFactory (which is deprecated).
+    absl::optional<CryptoOptions> crypto_options;
+
+    // Configure if we should include the SDP attribute extmap-allow-mixed in
+    // our offer. Although we currently do support this, it's not included in
+    // our offer by default due to a previous bug that caused the SDP parser to
+    // abort parsing if this attribute was present. This is fixed in Chrome 71.
+    // TODO(webrtc:9985): Change default to true once sufficient time has
+    // passed.
+    bool offer_extmap_allow_mixed = false;
 
     //
     // Don't forget to update operator== if adding something.
@@ -972,10 +1033,12 @@ class PeerConnectionInterface : public rtc::RefCountInterface {
   virtual SignalingState signaling_state() = 0;
 
   // Returns the aggregate state of all ICE *and* DTLS transports.
-  // TODO(deadbeef): Implement "PeerConnectionState" according to the standard,
-  // to aggregate ICE+DTLS state, and change the scope of IceConnectionState to
-  // be just the ICE layer. See: crbug.com/webrtc/6145
+  // TODO(jonasolsson): Replace with standardized_ice_connection_state once it
+  // is ready, see crbug.com/webrtc/6145
   virtual IceConnectionState ice_connection_state() = 0;
+
+  // Returns the aggregated state of all ICE and DTLS transports.
+  virtual PeerConnectionState peer_connection_state();
 
   virtual IceGatheringState ice_gathering_state() = 0;
 
@@ -1044,6 +1107,10 @@ class PeerConnectionObserver {
   // state, so it may be "failed" if DTLS fails while ICE succeeds.
   virtual void OnIceConnectionChange(
       PeerConnectionInterface::IceConnectionState new_state) = 0;
+
+  // Called any time the PeerConnectionState changes.
+  virtual void OnConnectionChange(
+      PeerConnectionInterface::PeerConnectionState new_state) {}
 
   // Called any time the IceGatheringState changes.
   virtual void OnIceGatheringChange(
@@ -1156,6 +1223,7 @@ struct PeerConnectionFactoryDependencies final {
   std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory;
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
+  std::unique_ptr<MediaTransportFactory> media_transport_factory;
 };
 
 // PeerConnectionFactoryInterface is the factory interface used for creating
@@ -1175,7 +1243,7 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
  public:
   class Options {
    public:
-    Options() : crypto_options(rtc::CryptoOptions::NoGcm()) {}
+    Options() {}
 
     // If set to true, created PeerConnections won't enforce any SRTP
     // requirement, allowing unsecured media. Should only be used for
@@ -1204,7 +1272,7 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
     rtc::SSLProtocolVersion ssl_max_version = rtc::SSL_PROTOCOL_DTLS_12;
 
     // Sets crypto related options, e.g. enabled cipher suites.
-    rtc::CryptoOptions crypto_options;
+    CryptoOptions crypto_options = CryptoOptions::NoGcm();
   };
 
   // Set the options to be used for subsequently created PeerConnections.
@@ -1306,137 +1374,6 @@ class PeerConnectionFactoryInterface : public rtc::RefCountInterface {
   PeerConnectionFactoryInterface() {}
   ~PeerConnectionFactoryInterface() override = default;
 };
-
-#if defined(USE_BUILTIN_SW_CODECS)
-// Create a new instance of PeerConnectionFactoryInterface.
-//
-// This method relies on the thread it's called on as the "signaling thread"
-// for the PeerConnectionFactory it creates.
-//
-// As such, if the current thread is not already running an rtc::Thread message
-// loop, an application using this method must eventually either call
-// rtc::Thread::Current()->Run(), or call
-// rtc::Thread::Current()->ProcessMessages() within the application's own
-// message loop.
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory);
-
-// Create a new instance of PeerConnectionFactoryInterface.
-//
-// |network_thread|, |worker_thread| and |signaling_thread| are
-// the only mandatory parameters.
-//
-// If non-null, a reference is added to |default_adm|, and ownership of
-// |video_encoder_factory| and |video_decoder_factory| is transferred to the
-// returned factory.
-// TODO(deadbeef): Use rtc::scoped_refptr<> and std::unique_ptr<> to make this
-// ownership transfer and ref counting more obvious.
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory);
-
-// Create a new instance of PeerConnectionFactoryInterface with optional
-// external audio mixed and audio processing modules.
-//
-// If |audio_mixer| is null, an internal audio mixer will be created and used.
-// If |audio_processing| is null, an internal audio processing module will be
-// created and used.
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing);
-
-// Create a new instance of PeerConnectionFactoryInterface with optional
-// external audio mixer, audio processing, and fec controller modules.
-//
-// If |audio_mixer| is null, an internal audio mixer will be created and used.
-// If |audio_processing| is null, an internal audio processing module will be
-// created and used.
-// If |fec_controller_factory| is null, an internal fec controller module will
-// be created and used.
-// If |network_controller_factory| is provided, it will be used if enabled via
-// field trial.
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing,
-    std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory,
-    std::unique_ptr<NetworkControllerFactoryInterface>
-        network_controller_factory = nullptr);
-#endif
-
-// Create a new instance of PeerConnectionFactoryInterface with optional video
-// codec factories. These video factories represents all video codecs, i.e. no
-// extra internal video codecs will be added.
-// When building WebRTC with rtc_use_builtin_sw_codecs = false, this is the
-// only available CreatePeerConnectionFactory overload.
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    rtc::scoped_refptr<AudioDeviceModule> default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    std::unique_ptr<VideoEncoderFactory> video_encoder_factory,
-    std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing);
-
-#if defined(USE_BUILTIN_SW_CODECS)
-// Create a new instance of PeerConnectionFactoryInterface with external audio
-// mixer.
-//
-// If |audio_mixer| is null, an internal audio mixer will be created and used.
-rtc::scoped_refptr<PeerConnectionFactoryInterface>
-CreatePeerConnectionFactoryWithAudioMixer(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer);
-
-// Create a new instance of PeerConnectionFactoryInterface.
-// Same thread is used as worker and network thread.
-inline rtc::scoped_refptr<PeerConnectionFactoryInterface>
-CreatePeerConnectionFactory(
-    rtc::Thread* worker_and_network_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory) {
-  return CreatePeerConnectionFactory(
-      worker_and_network_thread, worker_and_network_thread, signaling_thread,
-      default_adm, audio_encoder_factory, audio_decoder_factory,
-      video_encoder_factory, video_decoder_factory);
-}
-#endif
 
 // This is a lower-level version of the CreatePeerConnectionFactory functions
 // above. It's implemented in the "peerconnection" build target, whereas the

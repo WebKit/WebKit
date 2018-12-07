@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/agc2/rnn_vad/fft_util.h"
 
+#include <stddef.h>
 #include <cmath>
 
 #include "rtc_base/checks.h"

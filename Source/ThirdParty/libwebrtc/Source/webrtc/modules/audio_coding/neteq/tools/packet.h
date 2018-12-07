@@ -50,7 +50,17 @@ class Packet {
          double time_ms,
          const RtpHeaderParser& parser);
 
-  // The following two constructors are the same as above, but without a
+  // Same as above, but creates the packet from an already parsed RTPHeader.
+  // This is typically used when reading RTP dump files that only contain the
+  // RTP headers, and no payload. The |virtual_packet_length_bytes| tells what
+  // size the packet had on wire, including the now discarded payload,
+  // The |virtual_payload_length_bytes| tells the size of the payload.
+  Packet(const RTPHeader& header,
+         size_t virtual_packet_length_bytes,
+         size_t virtual_payload_length_bytes,
+         double time_ms);
+
+  // The following constructors are the same as the first two, but without a
   // parser. Note that when the object is constructed using any of these
   // methods, the header will be parsed using a default RtpHeaderParser object.
   // In particular, RTP header extensions won't be parsed.

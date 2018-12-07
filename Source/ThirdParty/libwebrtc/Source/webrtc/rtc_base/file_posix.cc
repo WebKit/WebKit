@@ -8,17 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "rtc_base/file.h"
-
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <unistd.h>
-
 #include <limits>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/file.h"
+#include "rtc_base/platform_file.h"
 
 namespace rtc {
 

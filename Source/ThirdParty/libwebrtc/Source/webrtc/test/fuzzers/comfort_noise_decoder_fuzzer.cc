@@ -50,6 +50,9 @@ void FuzzOneInputTest(rtc::ArrayView<const uint8_t> data) {
 }  // namespace test
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 5000) {
+    return;
+  }
   test::FuzzOneInputTest(rtc::ArrayView<const uint8_t>(data, size));
 }
 

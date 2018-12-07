@@ -137,6 +137,8 @@ if (is_ios) {
     testonly = true
     visibility = [ ":test_support" ]
     sources = [
+      "ios/coverage_util_ios.h",
+      "ios/coverage_util_ios.mm",
       "ios/test_support.h",
       "ios/test_support.mm",
     ]
@@ -144,6 +146,15 @@ if (is_ios) {
       ":perf_test",
       "../sdk:helpers_objc",
     ]
+    configs += [ ":test_support_objc_config" ]
+  }
+
+  config("test_support_objc_config") {
+    defines = []
+
+    if (use_clang_coverage) {
+      defines += [ "WEBRTC_IOS_ENABLE_COVERAGE" ]
+    }
   }
 }
 
@@ -196,6 +207,32 @@ rtc_source_set("test_support") {
 }
 
 if (rtc_include_tests) {
+  rtc_source_set("test_main_lib") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "test_main_lib.cc",
+      "test_main_lib.h",
+    ]
+
+    deps = [
+      ":field_trial",
+      ":perf_test",
+      ":test_support",
+      "../rtc_base:rtc_base",
+      "../system_wrappers:field_trial",
+      "../system_wrappers:metrics",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/memory:memory",
+
+      # TODO(bugs.webrtc.org/9792): This is needed for downstream projects on
+      # Android, where it's replaced by an internal version of fileutils that
+      # has a certain flag. Remove this once the internal fileutils has been
+      # eliminated.
+      "../test:fileutils",
+    ]
+  }
+
   rtc_source_set("test_main") {
     visibility = [ "*" ]
     testonly = true
@@ -203,17 +240,8 @@ if (rtc_include_tests) {
       "test_main.cc",
     ]
 
-    public_deps = [
-      ":test_support",
-    ]
     deps = [
-      ":field_trial",
-      ":fileutils",
-      ":perf_test",
-      "../rtc_base:rtc_base",
-      "../system_wrappers:field_trial",
-      "../system_wrappers:metrics",
-      "//testing/gtest",
+      ":test_main_lib",
     ]
   }
 
@@ -309,6 +337,8 @@ if (rtc_include_tests) {
       ":video_test_support",
       "../api:create_simulcast_test_fixture_api",
       "../api:simulcast_test_fixture_api",
+      "../api/test/video:function_video_factory",
+      "../api/video:builtin_video_bitrate_allocator_factory",
       "../api/video:video_frame_i420",
       "../modules/rtp_rtcp:rtp_rtcp",
       "../modules/video_capture",
@@ -360,7 +390,10 @@ if (rtc_include_tests) {
 
 if (is_ios) {
   rtc_source_set("fileutils_ios_objc") {
-    visibility = [ ":fileutils" ]
+    visibility = [
+      ":fileutils",
+      ":fileutils_override_impl",
+    ]
     sources = [
       "testsupport/iosfileutils.h",
       "testsupport/iosfileutils.mm",
@@ -376,7 +409,10 @@ if (is_ios) {
 
 if (is_mac) {
   rtc_source_set("fileutils_mac_objc") {
-    visibility = [ ":fileutils" ]
+    visibility = [
+      ":fileutils",
+      ":fileutils_override_impl",
+    ]
     sources = [
       "testsupport/macfileutils.h",
       "testsupport/macfileutils.mm",
@@ -395,6 +431,42 @@ rtc_source_set("fileutils") {
     "testsupport/fileutils.h",
   ]
   deps = [
+    ":fileutils_override_api",
+    ":fileutils_override_impl",
+    "..:webrtc_common",
+    "../rtc_base:checks",
+    "../rtc_base:rtc_base_approved",
+    "../rtc_base/system:arch",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+  if (is_ios) {
+    deps += [ ":fileutils_ios_objc" ]
+  }
+  if (is_mac) {
+    deps += [ ":fileutils_mac_objc" ]
+  }
+  if (is_win) {
+    deps += [ "../rtc_base:rtc_base" ]
+  }
+}
+
+# We separate header into own target to make it possible for downstream
+# projects to override implementation.
+rtc_source_set("fileutils_override_api") {
+  testonly = true
+  sources = [
+    "testsupport/fileutils_override.h",
+  ]
+}
+
+rtc_source_set("fileutils_override_impl") {
+  testonly = true
+  visibility = [ ":fileutils" ]
+  sources = [
+    "testsupport/fileutils_override.cc",
+  ]
+  deps = [
+    ":fileutils_override_api",
     "..:webrtc_common",
     "../rtc_base:checks",
     "../rtc_base:rtc_base_approved",
@@ -523,6 +595,8 @@ rtc_source_set("fake_video_codecs") {
     "fake_decoder.h",
     "fake_encoder.cc",
     "fake_encoder.h",
+    "fake_vp8_decoder.cc",
+    "fake_vp8_decoder.h",
     "fake_vp8_encoder.cc",
     "fake_vp8_encoder.h",
   ]
@@ -532,7 +606,9 @@ rtc_source_set("fake_video_codecs") {
   }
   deps = [
     "..:webrtc_common",
+    "../api/video:encoded_image",
     "../api/video:video_frame_i420",
+    "../api/video_codecs:create_vp8_temporal_layers",
     "../api/video_codecs:video_codecs_api",
     "../common_video:common_video",
     "../modules/video_coding:video_codec_interface",
@@ -560,8 +636,6 @@ rtc_source_set("test_common") {
     "encoder_settings.cc",
     "encoder_settings.h",
     "fake_videorenderer.h",
-    "function_video_decoder_factory.h",
-    "function_video_encoder_factory.h",
     "layer_filtering_transport.cc",
     "layer_filtering_transport.h",
     "mock_transport.cc",
@@ -599,6 +673,9 @@ rtc_source_set("test_common") {
     "../api:transport_api",
     "../api/audio_codecs:builtin_audio_decoder_factory",
     "../api/audio_codecs:builtin_audio_encoder_factory",
+    "../api/test/video:function_video_factory",
+    "../api/video:builtin_video_bitrate_allocator_factory",
+    "../api/video:video_bitrate_allocator_factory",
     "../api/video:video_frame",
     "../api/video_codecs:video_codecs_api",
     "../audio",

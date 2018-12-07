@@ -14,12 +14,15 @@
 
 #include "absl/memory/memory.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
+#include "rtc_base/checks.h"
 
 namespace webrtc {
 
 RtcEventAudioReceiveStreamConfig::RtcEventAudioReceiveStreamConfig(
     std::unique_ptr<rtclog::StreamConfig> config)
-    : config_(std::move(config)) {}
+    : config_(std::move(config)) {
+  RTC_DCHECK(config_);
+}
 
 RtcEventAudioReceiveStreamConfig::RtcEventAudioReceiveStreamConfig(
     const RtcEventAudioReceiveStreamConfig& other)
@@ -36,9 +39,9 @@ bool RtcEventAudioReceiveStreamConfig::IsConfigEvent() const {
   return true;
 }
 
-std::unique_ptr<RtcEvent> RtcEventAudioReceiveStreamConfig::Copy() const {
-  auto config_copy = absl::make_unique<rtclog::StreamConfig>(*config_);
-  return absl::WrapUnique<RtcEvent>(
+std::unique_ptr<RtcEventAudioReceiveStreamConfig>
+RtcEventAudioReceiveStreamConfig::Copy() const {
+  return absl::WrapUnique<RtcEventAudioReceiveStreamConfig>(
       new RtcEventAudioReceiveStreamConfig(*this));
 }
 

@@ -25,7 +25,7 @@
 #include "logging/rtc_event_log/events/rtc_event_probe_result_failure.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/nack.h"
@@ -39,8 +39,10 @@
 RTC_PUSH_IGNORING_WUNDEF()
 #ifdef WEBRTC_ANDROID_PLATFORM_BUILD
 #include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log.pb.h"
+#include "external/webrtc/webrtc/logging/rtc_event_log/rtc_event_log2.pb.h"
 #else
 #include "logging/rtc_event_log/rtc_event_log.pb.h"
+#include "logging/rtc_event_log/rtc_event_log2.pb.h"
 #endif
 RTC_POP_IGNORING_WUNDEF()
 
@@ -55,70 +57,136 @@ struct AudioEncoderRuntimeConfig;
 // considered to outweigh the added memory and runtime overhead incurred by
 // adding a vptr.
 struct LoggedAlrStateEvent {
-  int64_t timestamp_us;
-  bool in_alr;
+  LoggedAlrStateEvent() = default;
+  LoggedAlrStateEvent(int64_t timestamp_us, bool in_alr)
+      : timestamp_us(timestamp_us), in_alr(in_alr) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  bool in_alr;
 };
 
 struct LoggedAudioPlayoutEvent {
-  int64_t timestamp_us;
-  uint32_t ssrc;
+  LoggedAudioPlayoutEvent() = default;
+  LoggedAudioPlayoutEvent(int64_t timestamp_us, uint32_t ssrc)
+      : timestamp_us(timestamp_us), ssrc(ssrc) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  uint32_t ssrc;
 };
 
 struct LoggedAudioNetworkAdaptationEvent {
-  int64_t timestamp_us;
-  AudioEncoderRuntimeConfig config;
+  LoggedAudioNetworkAdaptationEvent() = default;
+  LoggedAudioNetworkAdaptationEvent(int64_t timestamp_us,
+                                    const AudioEncoderRuntimeConfig& config)
+      : timestamp_us(timestamp_us), config(config) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  AudioEncoderRuntimeConfig config;
 };
 
 struct LoggedBweDelayBasedUpdate {
+  LoggedBweDelayBasedUpdate() = default;
+  LoggedBweDelayBasedUpdate(int64_t timestamp_us,
+                            int32_t bitrate_bps,
+                            BandwidthUsage detector_state)
+      : timestamp_us(timestamp_us),
+        bitrate_bps(bitrate_bps),
+        detector_state(detector_state) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   int32_t bitrate_bps;
   BandwidthUsage detector_state;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedBweLossBasedUpdate {
+  LoggedBweLossBasedUpdate() = default;
+  LoggedBweLossBasedUpdate(int64_t timestamp_us,
+                           int32_t bitrate_bps,
+                           uint8_t fraction_lost,
+                           int32_t expected_packets)
+      : timestamp_us(timestamp_us),
+        bitrate_bps(bitrate_bps),
+        fraction_lost(fraction_lost),
+        expected_packets(expected_packets) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   int32_t bitrate_bps;
   uint8_t fraction_lost;
   int32_t expected_packets;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedBweProbeClusterCreatedEvent {
+  LoggedBweProbeClusterCreatedEvent() = default;
+  LoggedBweProbeClusterCreatedEvent(int64_t timestamp_us,
+                                    int32_t id,
+                                    int32_t bitrate_bps,
+                                    uint32_t min_packets,
+                                    uint32_t min_bytes)
+      : timestamp_us(timestamp_us),
+        id(id),
+        bitrate_bps(bitrate_bps),
+        min_packets(min_packets),
+        min_bytes(min_bytes) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   int32_t id;
   int32_t bitrate_bps;
   uint32_t min_packets;
   uint32_t min_bytes;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedBweProbeSuccessEvent {
+  LoggedBweProbeSuccessEvent() = default;
+  LoggedBweProbeSuccessEvent(int64_t timestamp_us,
+                             int32_t id,
+                             int32_t bitrate_bps)
+      : timestamp_us(timestamp_us), id(id), bitrate_bps(bitrate_bps) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   int32_t id;
   int32_t bitrate_bps;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedBweProbeFailureEvent {
+  LoggedBweProbeFailureEvent() = default;
+  LoggedBweProbeFailureEvent(int64_t timestamp_us,
+                             int32_t id,
+                             ProbeFailureReason failure_reason)
+      : timestamp_us(timestamp_us), id(id), failure_reason(failure_reason) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   int32_t id;
   ProbeFailureReason failure_reason;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedIceCandidatePairConfig {
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   IceCandidatePairConfigType type;
   uint32_t candidate_pair_id;
@@ -129,16 +197,23 @@ struct LoggedIceCandidatePairConfig {
   IceCandidateType remote_candidate_type;
   IceCandidatePairAddressFamily remote_address_family;
   IceCandidatePairProtocol candidate_pair_protocol;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedIceCandidatePairEvent {
+  LoggedIceCandidatePairEvent() = default;
+  LoggedIceCandidatePairEvent(int64_t timestamp_us,
+                              IceCandidatePairEventType type,
+                              uint32_t candidate_pair_id)
+      : timestamp_us(timestamp_us),
+        type(type),
+        candidate_pair_id(candidate_pair_id) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   IceCandidatePairEventType type;
   uint32_t candidate_pair_id;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedRtpPacket {
@@ -150,13 +225,15 @@ struct LoggedRtpPacket {
         header(header),
         header_length(header_length),
         total_length(total_length) {}
+
+  int64_t log_time_us() const { return timestamp_us; }
+  int64_t log_time_ms() const { return timestamp_us / 1000; }
+
   int64_t timestamp_us;
   // TODO(terelius): This allocates space for 15 CSRCs even if none are used.
   RTPHeader header;
   size_t header_length;
   size_t total_length;
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
 };
 
 struct LoggedRtpPacketIncoming {
@@ -165,9 +242,10 @@ struct LoggedRtpPacketIncoming {
                           size_t header_length,
                           size_t total_length)
       : rtp(timestamp_us, header, header_length, total_length) {}
-  LoggedRtpPacket rtp;
   int64_t log_time_us() const { return rtp.timestamp_us; }
   int64_t log_time_ms() const { return rtp.timestamp_us / 1000; }
+
+  LoggedRtpPacket rtp;
 };
 
 struct LoggedRtpPacketOutgoing {
@@ -176,21 +254,25 @@ struct LoggedRtpPacketOutgoing {
                           size_t header_length,
                           size_t total_length)
       : rtp(timestamp_us, header, header_length, total_length) {}
-  LoggedRtpPacket rtp;
   int64_t log_time_us() const { return rtp.timestamp_us; }
   int64_t log_time_ms() const { return rtp.timestamp_us / 1000; }
+
+  LoggedRtpPacket rtp;
 };
 
 struct LoggedRtcpPacket {
   LoggedRtcpPacket(uint64_t timestamp_us,
                    const uint8_t* packet,
                    size_t total_length);
+  LoggedRtcpPacket(uint64_t timestamp_us, const std::string& packet);
   LoggedRtcpPacket(const LoggedRtcpPacket&);
   ~LoggedRtcpPacket();
-  int64_t timestamp_us;
-  std::vector<uint8_t> raw_data;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  std::vector<uint8_t> raw_data;
 };
 
 struct LoggedRtcpPacketIncoming {
@@ -198,9 +280,13 @@ struct LoggedRtcpPacketIncoming {
                            const uint8_t* packet,
                            size_t total_length)
       : rtcp(timestamp_us, packet, total_length) {}
-  LoggedRtcpPacket rtcp;
+  LoggedRtcpPacketIncoming(uint64_t timestamp_us, const std::string& packet)
+      : rtcp(timestamp_us, packet) {}
+
   int64_t log_time_us() const { return rtcp.timestamp_us; }
   int64_t log_time_ms() const { return rtcp.timestamp_us / 1000; }
+
+  LoggedRtcpPacket rtcp;
 };
 
 struct LoggedRtcpPacketOutgoing {
@@ -208,97 +294,150 @@ struct LoggedRtcpPacketOutgoing {
                            const uint8_t* packet,
                            size_t total_length)
       : rtcp(timestamp_us, packet, total_length) {}
-  LoggedRtcpPacket rtcp;
+  LoggedRtcpPacketOutgoing(uint64_t timestamp_us, const std::string& packet)
+      : rtcp(timestamp_us, packet) {}
+
   int64_t log_time_us() const { return rtcp.timestamp_us; }
   int64_t log_time_ms() const { return rtcp.timestamp_us / 1000; }
+
+  LoggedRtcpPacket rtcp;
 };
 
 struct LoggedRtcpPacketReceiverReport {
-  int64_t timestamp_us;
-  rtcp::ReceiverReport rr;
+  LoggedRtcpPacketReceiverReport() = default;
+  LoggedRtcpPacketReceiverReport(int64_t timestamp_us,
+                                 const rtcp::ReceiverReport& rr)
+      : timestamp_us(timestamp_us), rr(rr) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtcp::ReceiverReport rr;
 };
 
 struct LoggedRtcpPacketSenderReport {
-  int64_t timestamp_us;
-  rtcp::SenderReport sr;
+  LoggedRtcpPacketSenderReport() = default;
+  LoggedRtcpPacketSenderReport(int64_t timestamp_us,
+                               const rtcp::SenderReport& sr)
+      : timestamp_us(timestamp_us), sr(sr) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtcp::SenderReport sr;
 };
 
 struct LoggedRtcpPacketRemb {
-  int64_t timestamp_us;
-  rtcp::Remb remb;
+  LoggedRtcpPacketRemb() = default;
+  LoggedRtcpPacketRemb(int64_t timestamp_us, const rtcp::Remb& remb)
+      : timestamp_us(timestamp_us), remb(remb) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtcp::Remb remb;
 };
 
 struct LoggedRtcpPacketNack {
-  int64_t timestamp_us;
-  rtcp::Nack nack;
+  LoggedRtcpPacketNack() = default;
+  LoggedRtcpPacketNack(int64_t timestamp_us, const rtcp::Nack& nack)
+      : timestamp_us(timestamp_us), nack(nack) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtcp::Nack nack;
 };
 
 struct LoggedRtcpPacketTransportFeedback {
-  int64_t timestamp_us;
-  rtcp::TransportFeedback transport_feedback;
+  LoggedRtcpPacketTransportFeedback() = default;
+  LoggedRtcpPacketTransportFeedback(
+      int64_t timestamp_us,
+      const rtcp::TransportFeedback& transport_feedback)
+      : timestamp_us(timestamp_us), transport_feedback(transport_feedback) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtcp::TransportFeedback transport_feedback;
 };
 
 struct LoggedStartEvent {
   explicit LoggedStartEvent(int64_t timestamp_us)
-      : timestamp_us(timestamp_us) {}
-  int64_t timestamp_us;
+      : LoggedStartEvent(timestamp_us, timestamp_us / 1000) {}
+
+  LoggedStartEvent(int64_t timestamp_us, int64_t utc_start_time_ms)
+      : timestamp_us(timestamp_us), utc_start_time_ms(utc_start_time_ms) {}
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  int64_t utc_start_time_ms;
 };
 
 struct LoggedStopEvent {
   explicit LoggedStopEvent(int64_t timestamp_us) : timestamp_us(timestamp_us) {}
-  int64_t timestamp_us;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
 };
 
 struct LoggedAudioRecvConfig {
+  LoggedAudioRecvConfig() = default;
   LoggedAudioRecvConfig(int64_t timestamp_us, const rtclog::StreamConfig config)
       : timestamp_us(timestamp_us), config(config) {}
-  int64_t timestamp_us;
-  rtclog::StreamConfig config;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtclog::StreamConfig config;
 };
 
 struct LoggedAudioSendConfig {
+  LoggedAudioSendConfig() = default;
   LoggedAudioSendConfig(int64_t timestamp_us, const rtclog::StreamConfig config)
       : timestamp_us(timestamp_us), config(config) {}
-  int64_t timestamp_us;
-  rtclog::StreamConfig config;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtclog::StreamConfig config;
 };
 
 struct LoggedVideoRecvConfig {
+  LoggedVideoRecvConfig() = default;
   LoggedVideoRecvConfig(int64_t timestamp_us, const rtclog::StreamConfig config)
       : timestamp_us(timestamp_us), config(config) {}
-  int64_t timestamp_us;
-  rtclog::StreamConfig config;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  rtclog::StreamConfig config;
 };
 
 struct LoggedVideoSendConfig {
+  LoggedVideoSendConfig();
   LoggedVideoSendConfig(int64_t timestamp_us,
                         const std::vector<rtclog::StreamConfig>& configs);
   LoggedVideoSendConfig(const LoggedVideoSendConfig&);
   ~LoggedVideoSendConfig();
-  int64_t timestamp_us;
-  std::vector<rtclog::StreamConfig> configs;
+
   int64_t log_time_us() const { return timestamp_us; }
   int64_t log_time_ms() const { return timestamp_us / 1000; }
+
+  int64_t timestamp_us;
+  std::vector<rtclog::StreamConfig> configs;
 };
 
 template <typename T>
@@ -477,30 +616,6 @@ class ParsedRtcEventLogNew {
   friend class RtcEventLogTestHelper;
 
  public:
-  ~ParsedRtcEventLogNew();
-
-  enum class EventType {
-    UNKNOWN_EVENT = 0,
-    LOG_START = 1,
-    LOG_END = 2,
-    RTP_EVENT = 3,
-    RTCP_EVENT = 4,
-    AUDIO_PLAYOUT_EVENT = 5,
-    LOSS_BASED_BWE_UPDATE = 6,
-    DELAY_BASED_BWE_UPDATE = 7,
-    VIDEO_RECEIVER_CONFIG_EVENT = 8,
-    VIDEO_SENDER_CONFIG_EVENT = 9,
-    AUDIO_RECEIVER_CONFIG_EVENT = 10,
-    AUDIO_SENDER_CONFIG_EVENT = 11,
-    AUDIO_NETWORK_ADAPTATION_EVENT = 16,
-    BWE_PROBE_CLUSTER_CREATED_EVENT = 17,
-    BWE_PROBE_FAILURE_EVENT = 18,
-    BWE_PROBE_SUCCESS_EVENT = 19,
-    ALR_STATE_EVENT = 20,
-    ICE_CANDIDATE_PAIR_CONFIG = 21,
-    ICE_CANDIDATE_PAIR_EVENT = 22,
-  };
-
   enum class MediaType { ANY, AUDIO, VIDEO, DATA };
   enum class UnconfiguredHeaderExtensions {
     kDontParse,
@@ -541,6 +656,8 @@ class ParsedRtcEventLogNew {
       UnconfiguredHeaderExtensions parse_unconfigured_header_extensions =
           UnconfiguredHeaderExtensions::kDontParse);
 
+  ~ParsedRtcEventLogNew();
+
   // Clears previously parsed events and resets the ParsedRtcEventLogNew to an
   // empty state.
   void Clear();
@@ -555,110 +672,7 @@ class ParsedRtcEventLogNew {
   bool ParseStream(
       std::istream& stream);  // no-presubmit-check TODO(webrtc:8982)
 
-  // Returns the number of events in an EventStream.
-  size_t GetNumberOfEvents() const;
-
-  // Reads the arrival timestamp (in microseconds) from a rtclog::Event.
-  int64_t GetTimestamp(size_t index) const;
-  int64_t GetTimestamp(const rtclog::Event& event) const;
-
-  // Reads the event type of the rtclog::Event at |index|.
-  EventType GetEventType(size_t index) const;
-  EventType GetEventType(const rtclog::Event& event) const;
-
-  // Reads the header, direction, header length and packet length from the RTP
-  // event at |index|, and stores the values in the corresponding output
-  // parameters. Each output parameter can be set to nullptr if that value
-  // isn't needed.
-  // NB: The header must have space for at least IP_PACKET_SIZE bytes.
-  // Returns: a pointer to a header extensions map acquired from parsing
-  // corresponding Audio/Video Sender/Receiver config events.
-  // Warning: if the same SSRC is reused by both video and audio streams during
-  // call, extensions maps may be incorrect (the last one would be returned).
-  const webrtc::RtpHeaderExtensionMap* GetRtpHeader(
-      size_t index,
-      PacketDirection* incoming,
-      uint8_t* header,
-      size_t* header_length,
-      size_t* total_length,
-      int* probe_cluster_id) const;
-  const webrtc::RtpHeaderExtensionMap* GetRtpHeader(
-      const rtclog::Event& event,
-      PacketDirection* incoming,
-      uint8_t* header,
-      size_t* header_length,
-      size_t* total_length,
-      int* probe_cluster_id) const;
-
-  // Reads packet, direction and packet length from the RTCP event at |index|,
-  // and stores the values in the corresponding output parameters.
-  // Each output parameter can be set to nullptr if that value isn't needed.
-  // NB: The packet must have space for at least IP_PACKET_SIZE bytes.
-  void GetRtcpPacket(size_t index,
-                     PacketDirection* incoming,
-                     uint8_t* packet,
-                     size_t* length) const;
-  void GetRtcpPacket(const rtclog::Event& event,
-                     PacketDirection* incoming,
-                     uint8_t* packet,
-                     size_t* length) const;
-
-  // Reads a video receive config event to a StreamConfig struct.
-  // Only the fields that are stored in the protobuf will be written.
-  rtclog::StreamConfig GetVideoReceiveConfig(size_t index) const;
-
-  // Reads a video send config event to a StreamConfig struct. If the proto
-  // contains multiple SSRCs and RTX SSRCs (this used to be the case for
-  // simulcast streams) then we return one StreamConfig per SSRC,RTX_SSRC pair.
-  // Only the fields that are stored in the protobuf will be written.
-  std::vector<rtclog::StreamConfig> GetVideoSendConfig(size_t index) const;
-
-  // Reads a audio receive config event to a StreamConfig struct.
-  // Only the fields that are stored in the protobuf will be written.
-  rtclog::StreamConfig GetAudioReceiveConfig(size_t index) const;
-
-  // Reads a config event to a StreamConfig struct.
-  // Only the fields that are stored in the protobuf will be written.
-  rtclog::StreamConfig GetAudioSendConfig(size_t index) const;
-
-  // Reads the SSRC from the audio playout event at |index|. The SSRC is stored
-  // in the output parameter ssrc. The output parameter can be set to nullptr
-  // and in that case the function only asserts that the event is well formed.
-  LoggedAudioPlayoutEvent GetAudioPlayout(size_t index) const;
-
-  // Reads bitrate, fraction loss (as defined in RFC 1889) and total number of
-  // expected packets from the loss based BWE event at |index| and stores the
-  // values in
-  // the corresponding output parameters. Each output parameter can be set to
-  // nullptr if that
-  // value isn't needed.
-  LoggedBweLossBasedUpdate GetLossBasedBweUpdate(size_t index) const;
-
-  // Reads bitrate and detector_state from the delay based BWE event at |index|
-  // and stores the values in the corresponding output parameters. Each output
-  // parameter can be set to nullptr if that
-  // value isn't needed.
-  LoggedBweDelayBasedUpdate GetDelayBasedBweUpdate(size_t index) const;
-
-  // Reads a audio network adaptation event to a (non-NULL)
-  // AudioEncoderRuntimeConfig struct. Only the fields that are
-  // stored in the protobuf will be written.
-  LoggedAudioNetworkAdaptationEvent GetAudioNetworkAdaptation(
-      size_t index) const;
-
-  LoggedBweProbeClusterCreatedEvent GetBweProbeClusterCreated(
-      size_t index) const;
-
-  LoggedBweProbeFailureEvent GetBweProbeFailure(size_t index) const;
-  LoggedBweProbeSuccessEvent GetBweProbeSuccess(size_t index) const;
-
   MediaType GetMediaType(uint32_t ssrc, PacketDirection direction) const;
-
-  LoggedAlrStateEvent GetAlrState(size_t index) const;
-
-  LoggedIceCandidatePairConfig GetIceCandidatePairConfig(size_t index) const;
-
-  LoggedIceCandidatePairEvent GetIceCandidatePairEvent(size_t index) const;
 
   // Configured SSRCs.
   const std::set<uint32_t>& incoming_rtx_ssrcs() const {
@@ -841,7 +855,36 @@ class ParsedRtcEventLogNew {
   bool ParseStreamInternal(
       std::istream& stream);  // no-presubmit-check TODO(webrtc:8982)
 
-  void StoreParsedEvent(const rtclog::Event& event);
+  void StoreParsedLegacyEvent(const rtclog::Event& event);
+
+  // Reads the arrival timestamp (in microseconds) from a rtclog::Event.
+  int64_t GetTimestamp(const rtclog::Event& event) const;
+
+  // Reads the header, direction, header length and packet length from the RTP
+  // event at |index|, and stores the values in the corresponding output
+  // parameters. Each output parameter can be set to nullptr if that value
+  // isn't needed.
+  // NB: The header must have space for at least IP_PACKET_SIZE bytes.
+  // Returns: a pointer to a header extensions map acquired from parsing
+  // corresponding Audio/Video Sender/Receiver config events.
+  // Warning: if the same SSRC is reused by both video and audio streams during
+  // call, extensions maps may be incorrect (the last one would be returned).
+  const webrtc::RtpHeaderExtensionMap* GetRtpHeader(
+      const rtclog::Event& event,
+      PacketDirection* incoming,
+      uint8_t* header,
+      size_t* header_length,
+      size_t* total_length,
+      int* probe_cluster_id) const;
+
+  // Reads packet, direction and packet length from the RTCP event at |index|,
+  // and stores the values in the corresponding output parameters.
+  // Each output parameter can be set to nullptr if that value isn't needed.
+  // NB: The packet must have space for at least IP_PACKET_SIZE bytes.
+  void GetRtcpPacket(const rtclog::Event& event,
+                     PacketDirection* incoming,
+                     uint8_t* packet,
+                     size_t* length) const;
 
   rtclog::StreamConfig GetVideoReceiveConfig(const rtclog::Event& event) const;
   std::vector<rtclog::StreamConfig> GetVideoSendConfig(
@@ -873,7 +916,31 @@ class ParsedRtcEventLogNew {
   LoggedIceCandidatePairEvent GetIceCandidatePairEvent(
       const rtclog::Event& event) const;
 
-  std::vector<rtclog::Event> events_;
+  // Parsing functions for new format.
+  void StoreParsedNewFormatEvent(const rtclog2::EventStream& event);
+  void StoreIncomingRtpPackets(const rtclog2::IncomingRtpPackets& proto);
+  void StoreOutgoingRtpPackets(const rtclog2::OutgoingRtpPackets& proto);
+  void StoreIncomingRtcpPackets(const rtclog2::IncomingRtcpPackets& proto);
+  void StoreOutgoingRtcpPackets(const rtclog2::OutgoingRtcpPackets& proto);
+  void StoreAudioPlayoutEvent(const rtclog2::AudioPlayoutEvents& proto);
+  void StoreStartEvent(const rtclog2::BeginLogEvent& proto);
+  void StoreStopEvent(const rtclog2::EndLogEvent& proto);
+  void StoreBweLossBasedUpdate(const rtclog2::LossBasedBweUpdates& proto);
+  void StoreBweDelayBasedUpdate(const rtclog2::DelayBasedBweUpdates& proto);
+  void StoreAudioNetworkAdaptationEvent(
+      const rtclog2::AudioNetworkAdaptations& proto);
+  void StoreBweProbeClusterCreated(const rtclog2::BweProbeCluster& proto);
+  void StoreBweProbeSuccessEvent(const rtclog2::BweProbeResultSuccess& proto);
+  void StoreBweProbeFailureEvent(const rtclog2::BweProbeResultFailure& proto);
+  void StoreAlrStateEvent(const rtclog2::AlrState& proto);
+  void StoreIceCandidatePairConfig(
+      const rtclog2::IceCandidatePairConfig& proto);
+  void StoreIceCandidateEvent(const rtclog2::IceCandidatePairEvent& proto);
+  void StoreAudioRecvConfig(const rtclog2::AudioRecvStreamConfig& proto);
+  void StoreAudioSendConfig(const rtclog2::AudioSendStreamConfig& proto);
+  void StoreVideoRecvConfig(const rtclog2::VideoRecvStreamConfig& proto);
+  void StoreVideoSendConfig(const rtclog2::VideoSendStreamConfig& proto);
+  // End of new parsing functions.
 
   struct Stream {
     Stream(uint32_t ssrc,

@@ -10,6 +10,8 @@
 
 #include "api/candidate.h"
 
+#include "rtc_base/helpers.h"
+#include "rtc_base/ipaddress.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace cricket {

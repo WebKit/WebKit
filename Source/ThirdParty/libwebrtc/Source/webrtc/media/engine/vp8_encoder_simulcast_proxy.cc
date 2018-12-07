@@ -10,9 +10,7 @@
 
 #include "media/engine/vp8_encoder_simulcast_proxy.h"
 
-#include "media/engine/scopedvideoencoder.h"
 #include "media/engine/simulcast_encoder_adapter.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
 VP8EncoderSimulcastProxy::VP8EncoderSimulcastProxy(VideoEncoderFactory* factory,
@@ -57,28 +55,14 @@ int VP8EncoderSimulcastProxy::RegisterEncodeCompleteCallback(
   return encoder_->RegisterEncodeCompleteCallback(callback);
 }
 
-int VP8EncoderSimulcastProxy::SetChannelParameters(uint32_t packet_loss,
-                                                   int64_t rtt) {
-  return encoder_->SetChannelParameters(packet_loss, rtt);
-}
-
 int VP8EncoderSimulcastProxy::SetRateAllocation(
     const VideoBitrateAllocation& bitrate,
     uint32_t new_framerate) {
   return encoder_->SetRateAllocation(bitrate, new_framerate);
 }
 
-VideoEncoder::ScalingSettings VP8EncoderSimulcastProxy::GetScalingSettings()
-    const {
-  return encoder_->GetScalingSettings();
-}
-
-bool VP8EncoderSimulcastProxy::SupportsNativeHandle() const {
-  return encoder_->SupportsNativeHandle();
-}
-
-const char* VP8EncoderSimulcastProxy::ImplementationName() const {
-  return encoder_->ImplementationName();
+VideoEncoder::EncoderInfo VP8EncoderSimulcastProxy::GetEncoderInfo() const {
+  return encoder_->GetEncoderInfo();
 }
 
 }  // namespace webrtc

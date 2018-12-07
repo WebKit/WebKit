@@ -23,7 +23,7 @@ namespace webrtc {
 namespace test {
 namespace {
 
-DEFINE_bool(help, false, "Print help message");
+WEBRTC_DEFINE_bool(help, false, "Print help message");
 
 constexpr size_t kRtpDumpHeaderLength = 8;
 

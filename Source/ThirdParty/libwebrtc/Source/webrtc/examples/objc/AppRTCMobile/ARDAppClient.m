@@ -400,8 +400,13 @@ static int const kKbpsMultiplier = 1000;
     didChangeIceConnectionState:(RTCIceConnectionState)newState {
   RTCLog(@"ICE state changed: %ld", (long)newState);
   dispatch_async(dispatch_get_main_queue(), ^{
-    [_delegate appClient:self didChangeConnectionState:newState];
+    [self.delegate appClient:self didChangeConnectionState:newState];
   });
+}
+
+- (void)peerConnection:(RTCPeerConnection *)peerConnection
+    didChangeConnectionState:(RTCPeerConnectionState)newState {
+  RTCLog(@"ICE+DTLS state changed: %ld", (long)newState);
 }
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection
@@ -450,16 +455,16 @@ static int const kKbpsMultiplier = 1000;
           [[NSError alloc] initWithDomain:kARDAppClientErrorDomain
                                      code:kARDAppClientErrorCreateSDP
                                  userInfo:userInfo];
-      [_delegate appClient:self didError:sdpError];
+      [self.delegate appClient:self didError:sdpError];
       return;
     }
     __weak ARDAppClient *weakSelf = self;
-    [_peerConnection setLocalDescription:sdp
-                       completionHandler:^(NSError *error) {
-                         ARDAppClient *strongSelf = weakSelf;
-                         [strongSelf peerConnection:strongSelf.peerConnection
-                             didSetSessionDescriptionWithError:error];
-                       }];
+    [self.peerConnection setLocalDescription:sdp
+                           completionHandler:^(NSError *error) {
+                             ARDAppClient *strongSelf = weakSelf;
+                             [strongSelf peerConnection:strongSelf.peerConnection
+                                 didSetSessionDescriptionWithError:error];
+                           }];
     ARDSessionDescriptionMessage *message =
         [[ARDSessionDescriptionMessage alloc] initWithDescription:sdp];
     [self sendSignalingMessage:message];
@@ -480,22 +485,21 @@ static int const kKbpsMultiplier = 1000;
           [[NSError alloc] initWithDomain:kARDAppClientErrorDomain
                                      code:kARDAppClientErrorSetSDP
                                  userInfo:userInfo];
-      [_delegate appClient:self didError:sdpError];
+      [self.delegate appClient:self didError:sdpError];
       return;
     }
     // If we're answering and we've just set the remote offer we need to create
     // an answer and set the local description.
-    if (!_isInitiator && !_peerConnection.localDescription) {
+    if (!self.isInitiator && !self.peerConnection.localDescription) {
       RTCMediaConstraints *constraints = [self defaultAnswerConstraints];
       __weak ARDAppClient *weakSelf = self;
-      [_peerConnection answerForConstraints:constraints
-                          completionHandler:^(RTCSessionDescription *sdp,
-                                              NSError *error) {
-        ARDAppClient *strongSelf = weakSelf;
-        [strongSelf peerConnection:strongSelf.peerConnection
-            didCreateSessionDescription:sdp
-                                  error:error];
-      }];
+      [self.peerConnection answerForConstraints:constraints
+                              completionHandler:^(RTCSessionDescription *sdp, NSError *error) {
+                                ARDAppClient *strongSelf = weakSelf;
+                                [strongSelf peerConnection:strongSelf.peerConnection
+                                    didCreateSessionDescription:sdp
+                                                          error:error];
+                              }];
     }
   });
 }

@@ -16,12 +16,13 @@
 #include "rtc_base/refcount.h"
 #include "rtc_base/refcountedobject.h"
 #include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // SharedDesktopFrame is a DesktopFrame that may have multiple instances all
 // sharing the same buffer.
-class SharedDesktopFrame : public DesktopFrame {
+class RTC_EXPORT SharedDesktopFrame : public DesktopFrame {
  public:
   ~SharedDesktopFrame() override;
 

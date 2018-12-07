@@ -22,7 +22,6 @@
 #include "rtc_base/crc32.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/messagedigest.h"
-#include "rtc_base/stringencode.h"
 
 using rtc::ByteBufferReader;
 using rtc::ByteBufferWriter;

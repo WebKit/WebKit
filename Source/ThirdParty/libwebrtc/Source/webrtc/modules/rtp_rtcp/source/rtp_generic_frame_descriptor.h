@@ -50,6 +50,10 @@ class RtpGenericFrameDescriptor {
   uint8_t SpatialLayersBitmask() const;
   void SetSpatialLayersBitmask(uint8_t spatial_layers);
 
+  int Width() const { return width_; }
+  int Height() const { return height_; }
+  void SetResolution(int width, int height);
+
   uint16_t FrameId() const;
   void SetFrameId(uint16_t frame_id);
 
@@ -72,6 +76,9 @@ class RtpGenericFrameDescriptor {
   uint8_t temporal_layer_ = 0;
   size_t num_frame_deps_ = 0;
   uint16_t frame_deps_id_diffs_[kMaxNumFrameDependencies];
+  int width_ = 0;
+  int height_ = 0;
+
   std::vector<uint8_t> byte_representation_;
 };
 

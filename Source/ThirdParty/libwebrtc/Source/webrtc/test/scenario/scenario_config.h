@@ -28,7 +28,12 @@ struct PacketOverhead {
   static constexpr size_t kIpv6 = 40;
   static constexpr size_t kUdp = 8;
   static constexpr size_t kSrtp = 10;
-  static constexpr size_t kTurn = 4;
+  static constexpr size_t kStun = 4;
+  // TURN messages can be sent either with or without an establieshed channel.
+  // In the latter case, a TURN Send/Data Indication is sent which has
+  // significantly more overhead.
+  static constexpr size_t kTurnChannelMessage = 4;
+  static constexpr size_t kTurnIndicationMessage = 36;
   static constexpr size_t kDefault = kIpv4 + kUdp + kSrtp;
 };
 struct TransportControllerConfig {
@@ -46,7 +51,6 @@ struct TransportControllerConfig {
 
 struct CallClientConfig {
   TransportControllerConfig transport;
-  DataRate priority_target_rate = DataRate::Zero();
 };
 
 struct SimulatedTimeClientConfig {
@@ -71,6 +75,10 @@ struct PacketStreamConfig {
 struct VideoStreamConfig {
   bool autostart = true;
   struct Source {
+    enum class ContentType {
+      kVideo,
+      kScreen,
+    } content_type = ContentType::kVideo;
     enum Capture {
       kGenerator,
       kVideoFile,
@@ -103,6 +111,7 @@ struct VideoStreamConfig {
     absl::optional<int> key_frame_interval = 3000;
 
     absl::optional<DataRate> max_data_rate;
+    absl::optional<int> max_framerate;
     size_t num_simulcast_streams = 1;
     using DegradationPreference = DegradationPreference;
     DegradationPreference degradation_preference =
@@ -114,10 +123,10 @@ struct VideoStreamConfig {
     ~Stream();
     bool packet_feedback = true;
     bool use_rtx = true;
+    DataRate pad_to_rate = DataRate::Zero();
     TimeDelta nack_history_time = TimeDelta::ms(1000);
     bool use_flexfec = false;
     bool use_ulpfec = false;
-    DataSize packet_overhead = DataSize::bytes(PacketOverhead::kDefault);
   } stream;
   struct Renderer {
     enum Type { kFake } type = kFake;
@@ -132,6 +141,17 @@ struct AudioStreamConfig {
   struct Source {
     int channels = 1;
   } source;
+  bool network_adaptation = false;
+  struct NetworkAdaptation {
+    struct FrameLength {
+      double min_packet_loss_for_decrease = 0;
+      double max_packet_loss_for_increase = 1;
+      DataRate min_rate_for_20_ms = DataRate::Zero();
+      DataRate max_rate_for_60_ms = DataRate::Infinity();
+      DataRate min_rate_for_60_ms = DataRate::Zero();
+      DataRate max_rate_for_120_ms = DataRate::Infinity();
+    } frame;
+  } adapt;
   struct Encoder {
     Encoder();
     Encoder(const Encoder&);
@@ -140,6 +160,7 @@ struct AudioStreamConfig {
     absl::optional<DataRate> fixed_rate;
     absl::optional<DataRate> min_rate;
     absl::optional<DataRate> max_rate;
+    absl::optional<DataRate> priority_rate;
     TimeDelta initial_frame_length = TimeDelta::ms(20);
   } encoder;
   struct Stream {
@@ -147,8 +168,6 @@ struct AudioStreamConfig {
     Stream(const Stream&);
     ~Stream();
     bool in_bandwidth_estimation = false;
-    bool rate_allocation_priority = false;
-    DataSize packet_overhead = DataSize::bytes(PacketOverhead::kDefault);
   } stream;
   struct Render {
     std::string sync_group;

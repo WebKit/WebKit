@@ -26,6 +26,9 @@ constexpr size_t kMaxPacketsInBuffer = 48;
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 5000) {
+    return;
+  }
   // Object under test.
   std::unique_ptr<ForwardErrorCorrection> fec =
       ForwardErrorCorrection::CreateFlexfec(kFecSsrc, kMediaSsrc);

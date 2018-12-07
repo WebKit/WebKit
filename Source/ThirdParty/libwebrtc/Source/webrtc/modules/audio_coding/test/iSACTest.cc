@@ -23,6 +23,7 @@
 #include <time.h>
 #endif
 
+#include "absl/strings/match.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/isac/audio_encoder_isac_float.h"
 #include "modules/audio_coding/codecs/audio_format_conversion.h"
@@ -92,12 +93,12 @@ void ISACTest::Setup() {
   for (codecCntr = 0; codecCntr < AudioCodingModule::NumberOfCodecs();
        codecCntr++) {
     EXPECT_EQ(0, AudioCodingModule::Codec(codecCntr, &codecParam));
-    if (!STR_CASE_CMP(codecParam.plname, "ISAC") &&
+    if (absl::EqualsIgnoreCase(codecParam.plname, "ISAC") &&
         codecParam.plfreq == 16000) {
       memcpy(&_paramISAC16kHz, &codecParam, sizeof(CodecInst));
       _idISAC16kHz = codecCntr;
     }
-    if (!STR_CASE_CMP(codecParam.plname, "ISAC") &&
+    if (absl::EqualsIgnoreCase(codecParam.plname, "ISAC") &&
         codecParam.plfreq == 32000) {
       memcpy(&_paramISAC32kHz, &codecParam, sizeof(CodecInst));
       _idISAC32kHz = codecCntr;

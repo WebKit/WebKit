@@ -11,6 +11,7 @@
 #ifndef LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_RTCP_PACKET_OUTGOING_H_
 #define LOGGING_RTC_EVENT_LOG_EVENTS_RTC_EVENT_RTCP_PACKET_OUTGOING_H_
 
+#include <stdint.h>
 #include <memory>
 
 #include "api/array_view.h"
@@ -28,12 +29,14 @@ class RtcEventRtcpPacketOutgoing final : public RtcEvent {
 
   bool IsConfigEvent() const override;
 
-  std::unique_ptr<RtcEvent> Copy() const override;
+  std::unique_ptr<RtcEventRtcpPacketOutgoing> Copy() const;
 
-  rtc::Buffer packet_;
+  const rtc::Buffer& packet() const { return packet_; }
 
  private:
   RtcEventRtcpPacketOutgoing(const RtcEventRtcpPacketOutgoing& other);
+
+  rtc::Buffer packet_;
 };
 
 }  // namespace webrtc

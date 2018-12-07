@@ -11,6 +11,7 @@
 #include "rtc_base/socketstream.h"
 
 #include "rtc_base/checks.h"
+#include "rtc_base/socket.h"
 
 namespace rtc {
 

@@ -18,6 +18,7 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "api/transport/goog_cc_factory.h"
 #include "call/audio_receive_stream.h"
 #include "call/audio_send_stream.h"
 #include "call/call.h"
@@ -36,8 +37,9 @@
 #include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
-#include "modules/congestion_controller/include/send_side_congestion_controller.h"
+#include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
 #include "modules/pacing/packet_router.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
@@ -175,13 +177,13 @@ constexpr float kBottomMargin = 0.02f;
 constexpr float kTopMargin = 0.05f;
 
 absl::optional<double> NetworkDelayDiff_AbsSendTime(
-    const LoggedRtpPacket& old_packet,
-    const LoggedRtpPacket& new_packet) {
-  if (old_packet.header.extension.hasAbsoluteSendTime &&
-      new_packet.header.extension.hasAbsoluteSendTime) {
+    const LoggedRtpPacketIncoming& old_packet,
+    const LoggedRtpPacketIncoming& new_packet) {
+  if (old_packet.rtp.header.extension.hasAbsoluteSendTime &&
+      new_packet.rtp.header.extension.hasAbsoluteSendTime) {
     int64_t send_time_diff = WrappingDifference(
-        new_packet.header.extension.absoluteSendTime,
-        old_packet.header.extension.absoluteSendTime, 1ul << 24);
+        new_packet.rtp.header.extension.absoluteSendTime,
+        old_packet.rtp.header.extension.absoluteSendTime, 1ul << 24);
     int64_t recv_time_diff =
         new_packet.log_time_us() - old_packet.log_time_us();
     double delay_change_us =
@@ -193,34 +195,31 @@ absl::optional<double> NetworkDelayDiff_AbsSendTime(
 }
 
 absl::optional<double> NetworkDelayDiff_CaptureTime(
-    const LoggedRtpPacket& old_packet,
-    const LoggedRtpPacket& new_packet) {
-  int64_t send_time_diff = WrappingDifference(
-      new_packet.header.timestamp, old_packet.header.timestamp, 1ull << 32);
+    const LoggedRtpPacketIncoming& old_packet,
+    const LoggedRtpPacketIncoming& new_packet,
+    const double sample_rate) {
+  int64_t send_time_diff =
+      WrappingDifference(new_packet.rtp.header.timestamp,
+                         old_packet.rtp.header.timestamp, 1ull << 32);
   int64_t recv_time_diff = new_packet.log_time_us() - old_packet.log_time_us();
-
-  const double kVideoSampleRate = 90000;
-  // TODO(terelius): We treat all streams as video for now, even though
-  // audio might be sampled at e.g. 16kHz, because it is really difficult to
-  // figure out the true sampling rate of a stream. The effect is that the
-  // delay will be scaled incorrectly for non-video streams.
 
   double delay_change =
       static_cast<double>(recv_time_diff) / 1000 -
-      static_cast<double>(send_time_diff) / kVideoSampleRate * 1000;
+      static_cast<double>(send_time_diff) / sample_rate * 1000;
   if (delay_change < -10000 || 10000 < delay_change) {
     RTC_LOG(LS_WARNING) << "Very large delay change. Timestamps correct?";
-    RTC_LOG(LS_WARNING) << "Old capture time " << old_packet.header.timestamp
-                        << ", received time " << old_packet.log_time_us();
-    RTC_LOG(LS_WARNING) << "New capture time " << new_packet.header.timestamp
-                        << ", received time " << new_packet.log_time_us();
+    RTC_LOG(LS_WARNING) << "Old capture time "
+                        << old_packet.rtp.header.timestamp << ", received time "
+                        << old_packet.log_time_us();
+    RTC_LOG(LS_WARNING) << "New capture time "
+                        << new_packet.rtp.header.timestamp << ", received time "
+                        << new_packet.log_time_us();
     RTC_LOG(LS_WARNING) << "Receive time difference " << recv_time_diff << " = "
                         << static_cast<double>(recv_time_diff) /
                                kNumMicrosecsPerSec
                         << "s";
     RTC_LOG(LS_WARNING) << "Send time difference " << send_time_diff << " = "
-                        << static_cast<double>(send_time_diff) /
-                               kVideoSampleRate
+                        << static_cast<double>(send_time_diff) / sample_rate
                         << "s";
   }
   return delay_change;
@@ -274,9 +273,10 @@ void AccumulatePairs(
   for (size_t i = 1; i < data.size(); i++) {
     float x = fx(data[i]);
     absl::optional<ResultType> y = fy(data[i - 1], data[i]);
-    if (y)
+    if (y) {
       sum += *y;
-    result->points.emplace_back(x, static_cast<float>(sum));
+      result->points.emplace_back(x, static_cast<float>(sum));
+    }
   }
 }
 
@@ -486,17 +486,15 @@ EventLogAnalyzer::EventLogAnalyzer(const ParsedRtcEventLogNew& log,
                    << " (LOG_START, LOG_END) segments in log.";
 }
 
-class BitrateObserver : public NetworkChangedObserver,
-                        public RemoteBitrateObserver {
+class BitrateObserver : public RemoteBitrateObserver {
  public:
   BitrateObserver() : last_bitrate_bps_(0), bitrate_updated_(false) {}
 
-  void OnNetworkChanged(uint32_t bitrate_bps,
-                        uint8_t fraction_lost,
-                        int64_t rtt_ms,
-                        int64_t probing_interval_ms) override {
-    last_bitrate_bps_ = bitrate_bps;
-    bitrate_updated_ = true;
+  void Update(NetworkControlUpdate update) {
+    if (update.target_rate) {
+      last_bitrate_bps_ = update.target_rate->target_rate.bps();
+      bitrate_updated_ = true;
+    }
   }
 
   void OnReceiveBitrateChanged(const std::vector<uint32_t>& ssrcs,
@@ -737,71 +735,58 @@ void EventLogAnalyzer::CreateIncomingPacketLossGraph(Plot* plot) {
   plot->SetTitle("Estimated incoming loss rate");
 }
 
-void EventLogAnalyzer::CreateIncomingDelayDeltaGraph(Plot* plot) {
-  for (const auto& stream : parsed_log_.rtp_packets_by_ssrc(kIncomingPacket)) {
-    // Filter on SSRC.
-    if (!MatchingSsrc(stream.ssrc, desired_ssrc_) ||
-        IsAudioSsrc(kIncomingPacket, stream.ssrc) ||
-        !IsVideoSsrc(kIncomingPacket, stream.ssrc) ||
-        IsRtxSsrc(kIncomingPacket, stream.ssrc)) {
-      continue;
-    }
-
-    TimeSeries capture_time_data(
-        GetStreamName(kIncomingPacket, stream.ssrc) + " capture-time",
-        LineStyle::kBar);
-    auto ToCallTime = [this](const LoggedRtpPacket& packet) {
-      return this->ToCallTimeSec(packet.log_time_us());
-    };
-    ProcessPairs<LoggedRtpPacket, double>(
-        ToCallTime, NetworkDelayDiff_CaptureTime, stream.packet_view,
-        &capture_time_data);
-    plot->AppendTimeSeries(std::move(capture_time_data));
-
-    TimeSeries send_time_data(
-        GetStreamName(kIncomingPacket, stream.ssrc) + " abs-send-time",
-        LineStyle::kBar);
-    ProcessPairs<LoggedRtpPacket, double>(ToCallTime,
-                                          NetworkDelayDiff_AbsSendTime,
-                                          stream.packet_view, &send_time_data);
-    plot->AppendTimeSeries(std::move(send_time_data));
-  }
-
-  plot->SetXAxis(ToCallTimeSec(begin_time_), call_duration_s_, "Time (s)",
-                 kLeftMargin, kRightMargin);
-  plot->SetSuggestedYAxis(0, 1, "Latency change (ms)", kBottomMargin,
-                          kTopMargin);
-  plot->SetTitle("Network latency difference between consecutive packets");
-}
-
 void EventLogAnalyzer::CreateIncomingDelayGraph(Plot* plot) {
-  for (const auto& stream : parsed_log_.rtp_packets_by_ssrc(kIncomingPacket)) {
+  for (const auto& stream : parsed_log_.incoming_rtp_packets_by_ssrc()) {
     // Filter on SSRC.
     if (!MatchingSsrc(stream.ssrc, desired_ssrc_) ||
-        IsAudioSsrc(kIncomingPacket, stream.ssrc) ||
-        !IsVideoSsrc(kIncomingPacket, stream.ssrc) ||
         IsRtxSsrc(kIncomingPacket, stream.ssrc)) {
       continue;
     }
 
+    const std::vector<LoggedRtpPacketIncoming>& packets =
+        stream.incoming_packets;
+    if (packets.size() < 100) {
+      RTC_LOG(LS_WARNING) << "Can't estimate the RTP clock frequency with "
+                          << packets.size() << " packets in the stream.";
+      continue;
+    }
+    int64_t end_time_us = log_segments_.empty()
+                              ? std::numeric_limits<int64_t>::max()
+                              : log_segments_.front().second;
+    absl::optional<uint32_t> estimated_frequency =
+        EstimateRtpClockFrequency(packets, end_time_us);
+    if (!estimated_frequency)
+      continue;
+    const double frequency_hz = *estimated_frequency;
+    if (IsVideoSsrc(kIncomingPacket, stream.ssrc) && frequency_hz != 90000) {
+      RTC_LOG(LS_WARNING)
+          << "Video stream should use a 90 kHz clock but appears to use "
+          << frequency_hz / 1000 << ". Discarding.";
+      continue;
+    }
+
+    auto ToCallTime = [this](const LoggedRtpPacketIncoming& packet) {
+      return this->ToCallTimeSec(packet.log_time_us());
+    };
+    auto ToNetworkDelay = [frequency_hz](
+                              const LoggedRtpPacketIncoming& old_packet,
+                              const LoggedRtpPacketIncoming& new_packet) {
+      return NetworkDelayDiff_CaptureTime(old_packet, new_packet, frequency_hz);
+    };
+
     TimeSeries capture_time_data(
         GetStreamName(kIncomingPacket, stream.ssrc) + " capture-time",
         LineStyle::kLine);
-    auto ToCallTime = [this](const LoggedRtpPacket& packet) {
-      return this->ToCallTimeSec(packet.log_time_us());
-    };
-    AccumulatePairs<LoggedRtpPacket, double>(
-        ToCallTime, NetworkDelayDiff_CaptureTime, stream.packet_view,
-        &capture_time_data);
+    AccumulatePairs<LoggedRtpPacketIncoming, double>(
+        ToCallTime, ToNetworkDelay, packets, &capture_time_data);
     plot->AppendTimeSeries(std::move(capture_time_data));
 
     TimeSeries send_time_data(
         GetStreamName(kIncomingPacket, stream.ssrc) + " abs-send-time",
         LineStyle::kLine);
-    AccumulatePairs<LoggedRtpPacket, double>(
-        ToCallTime, NetworkDelayDiff_AbsSendTime, stream.packet_view,
-        &send_time_data);
-    plot->AppendTimeSeries(std::move(send_time_data));
+    AccumulatePairs<LoggedRtpPacketIncoming, double>(
+        ToCallTime, NetworkDelayDiff_AbsSendTime, packets, &send_time_data);
+    plot->AppendTimeSeriesIfNotEmpty(std::move(send_time_data));
   }
 
   plot->SetXAxis(ToCallTimeSec(begin_time_), call_duration_s_, "Time (s)",
@@ -1081,10 +1066,15 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
   RtcEventLogNullImpl null_event_log;
   PacketRouter packet_router;
   PacedSender pacer(&clock, &packet_router, &null_event_log);
-  SendSideCongestionController cc(&clock, &observer, &null_event_log, &pacer);
+  TransportFeedbackAdapter transport_feedback(&clock);
+  auto factory = GoogCcNetworkControllerFactory(&null_event_log);
+  TimeDelta process_interval = factory.GetProcessInterval();
   // TODO(holmer): Log the call config and use that here instead.
   static const uint32_t kDefaultStartBitrateBps = 300000;
-  cc.SetBweBitrates(0, kDefaultStartBitrateBps, -1);
+  NetworkControllerConfig cc_config;
+  cc_config.constraints.at_time = Timestamp::us(clock.TimeInMicroseconds());
+  cc_config.constraints.starting_rate = DataRate::bps(kDefaultStartBitrateBps);
+  auto goog_cc = factory.Create(cc_config);
 
   TimeSeries time_series("Delay-based estimate", LineStyle::kStep,
                          PointStyle::kHighlight);
@@ -1107,12 +1097,12 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
       return static_cast<int64_t>(rtcp_iterator->log_time_us());
     return std::numeric_limits<int64_t>::max();
   };
+  int64_t next_process_time_us_ = clock.TimeInMicroseconds();
 
   auto NextProcessTime = [&]() {
     if (rtcp_iterator != incoming_rtcp.end() ||
         rtp_iterator != outgoing_rtp.end()) {
-      return clock.TimeInMicroseconds() +
-             std::max<int64_t>(cc.TimeUntilNextProcess() * 1000, 0);
+      return next_process_time_us_;
     }
     return std::numeric_limits<int64_t>::max();
   };
@@ -1129,24 +1119,32 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
   AcknowledgedBitrateEstimator acknowledged_bitrate_estimator(
       absl::make_unique<BitrateEstimator>());
 #endif  // !(BWE_TEST_LOGGING_COMPILE_TIME_ENABLE)
-  int64_t time_us = std::min(NextRtpTime(), NextRtcpTime());
+  int64_t time_us =
+      std::min({NextRtpTime(), NextRtcpTime(), NextProcessTime()});
   int64_t last_update_us = 0;
   while (time_us != std::numeric_limits<int64_t>::max()) {
     clock.AdvanceTimeMicroseconds(time_us - clock.TimeInMicroseconds());
     if (clock.TimeInMicroseconds() >= NextRtcpTime()) {
       RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextRtcpTime());
-      cc.OnTransportFeedback(rtcp_iterator->transport_feedback);
-      std::vector<PacketFeedback> feedback = cc.GetTransportFeedbackVector();
-      SortPacketFeedbackVector(&feedback);
+
+      auto feedback_msg = transport_feedback.ProcessTransportFeedback(
+          rtcp_iterator->transport_feedback);
       absl::optional<uint32_t> bitrate_bps;
-      if (!feedback.empty()) {
+      if (feedback_msg) {
+        observer.Update(goog_cc->OnTransportPacketsFeedback(*feedback_msg));
+        std::vector<PacketFeedback> feedback =
+            transport_feedback.GetTransportFeedbackVector();
+        SortPacketFeedbackVector(&feedback);
+        if (!feedback.empty()) {
 #if !(BWE_TEST_LOGGING_COMPILE_TIME_ENABLE)
-        acknowledged_bitrate_estimator.IncomingPacketFeedbackVector(feedback);
+          acknowledged_bitrate_estimator.IncomingPacketFeedbackVector(feedback);
 #endif  // !(BWE_TEST_LOGGING_COMPILE_TIME_ENABLE)
-        for (const PacketFeedback& packet : feedback)
-          acked_bitrate.Update(packet.payload_size, packet.arrival_time_ms);
-        bitrate_bps = acked_bitrate.Rate(feedback.back().arrival_time_ms);
+          for (const PacketFeedback& packet : feedback)
+            acked_bitrate.Update(packet.payload_size, packet.arrival_time_ms);
+          bitrate_bps = acked_bitrate.Rate(feedback.back().arrival_time_ms);
+        }
       }
+
       float x = ToCallTimeSec(clock.TimeInMicroseconds());
       float y = bitrate_bps.value_or(0) / 1000;
       acked_time_series.points.emplace_back(x, y);
@@ -1161,19 +1159,25 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
       const RtpPacketType& rtp_packet = *rtp_iterator->second;
       if (rtp_packet.rtp.header.extension.hasTransportSequenceNumber) {
         RTC_DCHECK(rtp_packet.rtp.header.extension.hasTransportSequenceNumber);
-        cc.AddPacket(rtp_packet.rtp.header.ssrc,
-                     rtp_packet.rtp.header.extension.transportSequenceNumber,
-                     rtp_packet.rtp.total_length, PacedPacketInfo());
+        transport_feedback.AddPacket(
+            rtp_packet.rtp.header.ssrc,
+            rtp_packet.rtp.header.extension.transportSequenceNumber,
+            rtp_packet.rtp.total_length, PacedPacketInfo());
         rtc::SentPacket sent_packet(
             rtp_packet.rtp.header.extension.transportSequenceNumber,
             rtp_packet.rtp.log_time_us() / 1000);
-        cc.OnSentPacket(sent_packet);
+        auto sent_msg = transport_feedback.ProcessSentPacket(sent_packet);
+        if (sent_msg)
+          observer.Update(goog_cc->OnSentPacket(*sent_msg));
       }
       ++rtp_iterator;
     }
     if (clock.TimeInMicroseconds() >= NextProcessTime()) {
       RTC_DCHECK_EQ(clock.TimeInMicroseconds(), NextProcessTime());
-      cc.Process();
+      ProcessInterval msg;
+      msg.at_time = Timestamp::us(clock.TimeInMicroseconds());
+      observer.Update(goog_cc->OnProcessInterval(msg));
+      next_process_time_us_ += process_interval.us();
     }
     if (observer.GetAndResetBitrateUpdated() ||
         time_us - last_update_us >= 1e6) {
@@ -1277,9 +1281,10 @@ void EventLogAnalyzer::CreateReceiveSideBweSimulationGraph(Plot* plot) {
 void EventLogAnalyzer::CreateNetworkDelayFeedbackGraph(Plot* plot) {
   TimeSeries late_feedback_series("Late feedback results.", LineStyle::kNone,
                                   PointStyle::kHighlight);
-  TimeSeries time_series("Network Delay Change", LineStyle::kLine,
+  TimeSeries time_series("Network delay", LineStyle::kLine,
                          PointStyle::kHighlight);
-  int64_t estimated_base_delay_ms = std::numeric_limits<int64_t>::max();
+  int64_t min_send_receive_diff_ms = std::numeric_limits<int64_t>::max();
+  int64_t min_rtt_ms = std::numeric_limits<int64_t>::max();
 
   int64_t prev_y = 0;
   for (auto packet : GetNetworkTrace(parsed_log_)) {
@@ -1292,16 +1297,22 @@ void EventLogAnalyzer::CreateNetworkDelayFeedbackGraph(Plot* plot) {
     }
     int64_t y = packet.arrival_time_ms - packet.send_time_ms;
     prev_y = y;
-    estimated_base_delay_ms = std::min(y, estimated_base_delay_ms);
+    int64_t rtt_ms = packet.feedback_arrival_time_ms - packet.send_time_ms;
+    min_rtt_ms = std::min(rtt_ms, min_rtt_ms);
+    min_send_receive_diff_ms = std::min(y, min_send_receive_diff_ms);
     time_series.points.emplace_back(x, y);
   }
 
-  // We assume that the base network delay (w/o queues) is the min delay
-  // observed during the call.
+  // We assume that the base network delay (w/o queues) is equal to half
+  // the minimum RTT. Therefore rescale the delays by subtracting the minimum
+  // observed 1-ways delay and add half the minumum RTT.
+  const int64_t estimated_clock_offset_ms =
+      min_send_receive_diff_ms - min_rtt_ms / 2;
   for (TimeSeriesPoint& point : time_series.points)
-    point.y -= estimated_base_delay_ms;
+    point.y -= estimated_clock_offset_ms;
   for (TimeSeriesPoint& point : late_feedback_series.points)
-    point.y -= estimated_base_delay_ms;
+    point.y -= estimated_clock_offset_ms;
+
   // Add the data set to the plot.
   plot->AppendTimeSeriesIfNotEmpty(std::move(time_series));
   plot->AppendTimeSeriesIfNotEmpty(std::move(late_feedback_series));
@@ -1309,7 +1320,7 @@ void EventLogAnalyzer::CreateNetworkDelayFeedbackGraph(Plot* plot) {
   plot->SetXAxis(ToCallTimeSec(begin_time_), call_duration_s_, "Time (s)",
                  kLeftMargin, kRightMargin);
   plot->SetSuggestedYAxis(0, 10, "Delay (ms)", kBottomMargin, kTopMargin);
-  plot->SetTitle("Network Delay Change.");
+  plot->SetTitle("Network delay (based on per-packet feedback)");
 }
 
 void EventLogAnalyzer::CreatePacerDelayGraph(Plot* plot) {

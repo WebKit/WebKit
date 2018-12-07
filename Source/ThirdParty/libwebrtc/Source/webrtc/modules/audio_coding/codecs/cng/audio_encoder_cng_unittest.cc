@@ -50,8 +50,8 @@ class AudioEncoderCngTest : public ::testing::Test {
     cng_.reset();
   }
 
-  AudioEncoderCng::Config MakeCngConfig() {
-    AudioEncoderCng::Config config;
+  AudioEncoderCngConfig MakeCngConfig() {
+    AudioEncoderCngConfig config;
     config.speech_encoder = std::move(mock_encoder_owner_);
     EXPECT_TRUE(config.speech_encoder);
 
@@ -63,7 +63,7 @@ class AudioEncoderCngTest : public ::testing::Test {
     return config;
   }
 
-  void CreateCng(AudioEncoderCng::Config&& config) {
+  void CreateCng(AudioEncoderCngConfig&& config) {
     num_audio_samples_10ms_ = static_cast<size_t>(10 * sample_rate_hz_ / 1000);
     ASSERT_LE(num_audio_samples_10ms_, kMaxNumSamples);
     if (config.speech_encoder) {
@@ -75,7 +75,7 @@ class AudioEncoderCngTest : public ::testing::Test {
       EXPECT_CALL(*mock_encoder_, Max10MsFramesInAPacket())
           .WillOnce(Return(1u));
     }
-    cng_.reset(new AudioEncoderCng(std::move(config)));
+    cng_ = CreateComfortNoiseEncoder(std::move(config));
   }
 
   void Encode() {
@@ -193,7 +193,7 @@ class AudioEncoderCngTest : public ::testing::Test {
     return encoded_info_.payload_type != kCngPayloadType;
   }
 
-  std::unique_ptr<AudioEncoderCng> cng_;
+  std::unique_ptr<AudioEncoder> cng_;
   std::unique_ptr<MockAudioEncoder> mock_encoder_owner_;
   MockAudioEncoder* mock_encoder_;
   MockVad* mock_vad_;  // Ownership is transferred to |cng_|.
@@ -432,7 +432,7 @@ class AudioEncoderCngDeathTest : public AudioEncoderCngTest {
   // deleted.
   void TearDown() override { cng_.reset(); }
 
-  AudioEncoderCng::Config MakeCngConfig() {
+  AudioEncoderCngConfig MakeCngConfig() {
     // Don't provide a Vad mock object, since it would leak when the test dies.
     auto config = AudioEncoderCngTest::MakeCngConfig();
     config.vad = nullptr;

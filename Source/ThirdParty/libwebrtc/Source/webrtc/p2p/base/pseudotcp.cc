@@ -24,7 +24,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/socket.h"
-#include "rtc_base/stringutils.h"
 #include "rtc_base/timeutils.h"
 
 // The following logging is for detailed (packet-level) analysis only.
@@ -186,8 +185,8 @@ void ReportStats() {
   char buffer[256];
   size_t len = 0;
   for (int i = 0; i < S_NUM_STATS; ++i) {
-    len += rtc::sprintfn(buffer, arraysize(buffer), "%s%s:%d",
-                               (i == 0) ? "" : ",", STAT_NAMES[i], g_stats[i]);
+    len += snprintf(buffer, arraysize(buffer), "%s%s:%d",
+                          (i == 0) ? "" : ",", STAT_NAMES[i], g_stats[i]);
     g_stats[i] = 0;
   }
   RTC_LOG(LS_INFO) << "Stats[" << buffer << "]";

@@ -24,7 +24,6 @@
 namespace rtc {
 class CopyOnWriteBuffer;
 struct PacketOptions;
-struct PacketTime;
 }  // namespace rtc
 
 namespace webrtc {
@@ -59,8 +58,7 @@ class RtpTransportInternal : public SrtpTransportInterface,
   // Called whenever an RTCP packet is received. There is no equivalent signal
   // for RTP packets because they would be forwarded to the BaseChannel through
   // the RtpDemuxer callback.
-  sigslot::signal2<rtc::CopyOnWriteBuffer*, const rtc::PacketTime&>
-      SignalRtcpPacketReceived;
+  sigslot::signal2<rtc::CopyOnWriteBuffer*, int64_t> SignalRtcpPacketReceived;
 
   // Called whenever the network route of the P2P layer transport changes.
   // The argument is an optional network route.

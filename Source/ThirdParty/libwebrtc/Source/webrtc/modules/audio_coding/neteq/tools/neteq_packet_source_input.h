@@ -12,8 +12,10 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_NETEQ_PACKET_SOURCE_INPUT_H_
 
 #include <map>
+#include <memory>
 #include <string>
 
+#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
@@ -32,7 +34,6 @@ class NetEqPacketSourceInput : public NetEqInput {
   std::unique_ptr<PacketData> PopPacket() override;
   absl::optional<RTPHeader> NextHeader() const override;
   bool ended() const override { return !next_output_event_ms_; }
-  void SelectSsrc(uint32_t);
 
  protected:
   virtual PacketSource* source() = 0;
@@ -48,7 +49,8 @@ class NetEqPacketSourceInput : public NetEqInput {
 class NetEqRtpDumpInput final : public NetEqPacketSourceInput {
  public:
   NetEqRtpDumpInput(const std::string& file_name,
-                    const RtpHeaderExtensionMap& hdr_ext_map);
+                    const RtpHeaderExtensionMap& hdr_ext_map,
+                    absl::optional<uint32_t> ssrc_filter);
 
   absl::optional<int64_t> NextOutputEventTime() const override;
   void AdvanceOutputEvent() override;

@@ -32,6 +32,8 @@ class NackModule : public Module {
              KeyFrameRequestSender* keyframe_request_sender);
 
   int OnReceivedPacket(uint16_t seq_num, bool is_keyframe);
+  int OnReceivedPacket(uint16_t seq_num, bool is_keyframe, bool is_recovered);
+
   void ClearUpTo(uint16_t seq_num);
   void UpdateRtt(int64_t rtt_ms);
   void Clear();
@@ -50,10 +52,13 @@ class NackModule : public Module {
   // we have tried to nack this packet.
   struct NackInfo {
     NackInfo();
-    NackInfo(uint16_t seq_num, uint16_t send_at_seq_num);
+    NackInfo(uint16_t seq_num,
+             uint16_t send_at_seq_num,
+             int64_t created_at_time);
 
     uint16_t seq_num;
     uint16_t send_at_seq_num;
+    int64_t created_at_time;
     int64_t sent_at_time;
     int retries;
   };
@@ -87,6 +92,8 @@ class NackModule : public Module {
       RTC_GUARDED_BY(crit_);
   std::set<uint16_t, DescendingSeqNumComp<uint16_t>> keyframe_list_
       RTC_GUARDED_BY(crit_);
+  std::set<uint16_t, DescendingSeqNumComp<uint16_t>> recovered_list_
+      RTC_GUARDED_BY(crit_);
   video_coding::Histogram reordering_histogram_ RTC_GUARDED_BY(crit_);
   bool initialized_ RTC_GUARDED_BY(crit_);
   int64_t rtt_ms_ RTC_GUARDED_BY(crit_);
@@ -94,6 +101,9 @@ class NackModule : public Module {
 
   // Only touched on the process thread.
   int64_t next_process_time_ms_;
+
+  // Adds a delay before send nack on packet received.
+  const int64_t send_nack_delay_ms_;
 };
 
 }  // namespace webrtc

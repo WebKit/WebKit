@@ -390,11 +390,11 @@ class ScrollingImageFrameGenerator : public FrameGenerator {
                    (pixels_scrolled_x / 2);
 
     current_frame_ = webrtc::VideoFrame(
-        new rtc::RefCountedObject<webrtc::WrappedI420Buffer>(
-            target_width_, target_height_, &i420_buffer->DataY()[offset_y],
-            i420_buffer->StrideY(), &i420_buffer->DataU()[offset_u],
-            i420_buffer->StrideU(), &i420_buffer->DataV()[offset_v],
-            i420_buffer->StrideV(), KeepRefUntilDone(i420_buffer)),
+        WrapI420Buffer(target_width_, target_height_,
+                       &i420_buffer->DataY()[offset_y], i420_buffer->StrideY(),
+                       &i420_buffer->DataU()[offset_u], i420_buffer->StrideU(),
+                       &i420_buffer->DataV()[offset_v], i420_buffer->StrideV(),
+                       KeepRefUntilDone(i420_buffer)),
         kVideoRotation_0, 0);
   }
 

@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#include "audio/utility/audio_frame_operations.h"
+#include "common_audio/vad/include/webrtc_vad.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

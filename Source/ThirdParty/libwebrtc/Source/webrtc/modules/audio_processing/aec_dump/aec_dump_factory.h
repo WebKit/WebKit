@@ -16,6 +16,7 @@
 
 #include "modules/audio_processing/include/aec_dump.h"
 #include "rtc_base/platform_file.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 class TaskQueue;
@@ -23,7 +24,7 @@ class TaskQueue;
 
 namespace webrtc {
 
-class AecDumpFactory {
+class RTC_EXPORT AecDumpFactory {
  public:
   // The |worker_queue| may not be null and must outlive the created
   // AecDump instance. |max_log_size_bytes == -1| means the log size

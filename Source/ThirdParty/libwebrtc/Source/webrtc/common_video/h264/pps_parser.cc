@@ -10,12 +10,12 @@
 
 #include "common_video/h264/pps_parser.h"
 
-#include <memory>
+#include <cstdint>
 #include <vector>
 
 #include "common_video/h264/h264_common.h"
 #include "rtc_base/bitbuffer.h"
-#include "rtc_base/logging.h"
+#include "rtc_base/checks.h"
 
 #define RETURN_EMPTY_ON_FAIL(x) \
   if (!(x)) {                   \

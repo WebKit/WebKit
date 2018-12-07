@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "common_types.h"  // NOLINT(build/include)
+#include "absl/strings/match.h"
 #include "modules/audio_coding/codecs/g722/audio_encoder_g722.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/numerics/safe_minmax.h"
@@ -24,7 +24,7 @@ namespace webrtc {
 
 absl::optional<AudioEncoderG722Config> AudioEncoderG722::SdpToConfig(
     const SdpAudioFormat& format) {
-  if (STR_CASE_CMP(format.name.c_str(), "g722") != 0 ||
+  if (!absl::EqualsIgnoreCase(format.name, "g722") ||
       format.clockrate_hz != 8000) {
     return absl::nullopt;
   }

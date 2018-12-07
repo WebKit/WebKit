@@ -11,6 +11,8 @@
 #ifndef API_AUDIO_CODECS_AUDIO_DECODER_H_
 #define API_AUDIO_CODECS_AUDIO_DECODER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 #include <vector>
 

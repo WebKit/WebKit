@@ -14,7 +14,7 @@
 #include <memory>
 #include <vector>
 
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "test/fake_encoder.h"
 
 #include "rtc_base/criticalsection.h"
@@ -37,11 +37,11 @@ class FakeVP8Encoder : public FakeEncoder, public EncodedImageCallback {
 
   int32_t Release() override;
 
-  const char* ImplementationName() const override { return "FakeVp8Encoder"; }
-
   Result OnEncodedImage(const EncodedImage& encodedImage,
                         const CodecSpecificInfo* codecSpecificInfo,
                         const RTPFragmentationHeader* fragments) override;
+
+  EncoderInfo GetEncoderInfo() const override;
 
  private:
   void SetupTemporalLayers(const VideoCodec& codec);
@@ -54,7 +54,7 @@ class FakeVP8Encoder : public FakeEncoder, public EncodedImageCallback {
   rtc::SequencedTaskChecker sequence_checker_;
   EncodedImageCallback* callback_ RTC_GUARDED_BY(sequence_checker_);
 
-  std::vector<std::unique_ptr<TemporalLayers>> temporal_layers_
+  std::vector<std::unique_ptr<Vp8TemporalLayers>> temporal_layers_
       RTC_GUARDED_BY(sequence_checker_);
 };
 

@@ -518,6 +518,10 @@ void BasicPortAllocatorSession::GetCandidatesFromPort(
   }
 }
 
+bool BasicPortAllocatorSession::MdnsObfuscationEnabled() const {
+  return allocator_->network_manager()->GetMdnsResponder() != nullptr;
+}
+
 Candidate BasicPortAllocatorSession::SanitizeCandidate(
     const Candidate& c) const {
   RTC_DCHECK_RUN_ON(network_thread_);
@@ -534,7 +538,7 @@ Candidate BasicPortAllocatorSession::SanitizeCandidate(
   bool filter_stun_related_address =
       ((flags() & PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION) &&
        (flags() & PORTALLOCATOR_DISABLE_DEFAULT_LOCAL_CANDIDATE)) ||
-      !(candidate_filter_ & CF_HOST);
+      !(candidate_filter_ & CF_HOST) || MdnsObfuscationEnabled();
   // If the candidate filter doesn't allow reflexive addresses, empty TURN raddr
   // to avoid reflexive address leakage.
   bool filter_turn_related_address = !(candidate_filter_ & CF_REFLEXIVE);
@@ -1362,7 +1366,7 @@ void AllocationSequence::CreateUDPPorts() {
 
   // TODO(mallinath) - Remove UDPPort creating socket after shared socket
   // is enabled completely.
-  UDPPort* port = NULL;
+  std::unique_ptr<UDPPort> port;
   bool emit_local_candidate_for_anyaddress =
       !IsFlagSet(PORTALLOCATOR_DISABLE_DEFAULT_LOCAL_CANDIDATE);
   if (IsFlagSet(PORTALLOCATOR_ENABLE_SHARED_SOCKET) && udp_socket_) {
@@ -1384,7 +1388,7 @@ void AllocationSequence::CreateUDPPorts() {
     // If shared socket is enabled, STUN candidate will be allocated by the
     // UDPPort.
     if (IsFlagSet(PORTALLOCATOR_ENABLE_SHARED_SOCKET)) {
-      udp_port_ = port;
+      udp_port_ = port.get();
       port->SignalDestroyed.connect(this, &AllocationSequence::OnPortDestroyed);
 
       // If STUN is not disabled, setting stun server address to port.
@@ -1398,7 +1402,7 @@ void AllocationSequence::CreateUDPPorts() {
       }
     }
 
-    session_->AddAllocatedPort(port, this, true);
+    session_->AddAllocatedPort(port.release(), this, true);
   }
 }
 
@@ -1408,13 +1412,13 @@ void AllocationSequence::CreateTCPPorts() {
     return;
   }
 
-  Port* port = TCPPort::Create(
+  std::unique_ptr<Port> port = TCPPort::Create(
       session_->network_thread(), session_->socket_factory(), network_,
       session_->allocator()->min_port(), session_->allocator()->max_port(),
       session_->username(), session_->password(),
       session_->allocator()->allow_tcp_listen());
   if (port) {
-    session_->AddAllocatedPort(port, this, true);
+    session_->AddAllocatedPort(port.release(), this, true);
     // Since TCPPort is not created using shared socket, |port| will not be
     // added to the dequeue.
   }
@@ -1436,14 +1440,14 @@ void AllocationSequence::CreateStunPorts() {
     return;
   }
 
-  StunPort* port = StunPort::Create(
+  std::unique_ptr<StunPort> port = StunPort::Create(
       session_->network_thread(), session_->socket_factory(), network_,
       session_->allocator()->min_port(), session_->allocator()->max_port(),
       session_->username(), session_->password(), config_->StunServers(),
       session_->allocator()->origin(),
       session_->allocator()->stun_candidate_keepalive_interval());
   if (port) {
-    session_->AddAllocatedPort(port, this, true);
+    session_->AddAllocatedPort(port.release(), this, true);
     // Since StunPort is not created using shared socket, |port| will not be
     // added to the dequeue.
   }
@@ -1479,11 +1483,12 @@ void AllocationSequence::CreateRelayPorts() {
 
 void AllocationSequence::CreateGturnPort(const RelayServerConfig& config) {
   // TODO(mallinath) - Rename RelayPort to GTurnPort.
-  RelayPort* port = RelayPort::Create(
+  std::unique_ptr<RelayPort> port = RelayPort::Create(
       session_->network_thread(), session_->socket_factory(), network_,
       session_->allocator()->min_port(), session_->allocator()->max_port(),
       config_->username, config_->password);
   if (port) {
+    RelayPort* port_ptr = port.release();
     // Since RelayPort is not created using shared socket, |port| will not be
     // added to the dequeue.
     // Note: We must add the allocated port before we add addresses because
@@ -1491,17 +1496,17 @@ void AllocationSequence::CreateGturnPort(const RelayServerConfig& config) {
     //       settings.  However, we also can't prepare the address (normally
     //       done by AddAllocatedPort) until we have these addresses.  So we
     //       wait to do that until below.
-    session_->AddAllocatedPort(port, this, false);
+    session_->AddAllocatedPort(port_ptr, this, false);
 
     // Add the addresses of this protocol.
     PortList::const_iterator relay_port;
     for (relay_port = config.ports.begin(); relay_port != config.ports.end();
          ++relay_port) {
-      port->AddServerAddress(*relay_port);
-      port->AddExternalAddress(*relay_port);
+      port_ptr->AddServerAddress(*relay_port);
+      port_ptr->AddExternalAddress(*relay_port);
     }
     // Start fetching an address for this port.
-    port->PrepareAddress();
+    port_ptr->PrepareAddress();
   }
 }
 
@@ -1579,7 +1584,7 @@ void AllocationSequence::OnReadPacket(rtc::AsyncPacketSocket* socket,
                                       const char* data,
                                       size_t size,
                                       const rtc::SocketAddress& remote_addr,
-                                      const rtc::PacketTime& packet_time) {
+                                      const int64_t& packet_time_us) {
   RTC_DCHECK(socket == udp_socket_.get());
 
   bool turn_port_found = false;
@@ -1593,7 +1598,7 @@ void AllocationSequence::OnReadPacket(rtc::AsyncPacketSocket* socket,
   for (auto* port : relay_ports_) {
     if (port->CanHandleIncomingPacketsFrom(remote_addr)) {
       if (port->HandleIncomingPacket(socket, data, size, remote_addr,
-                                     packet_time)) {
+                                     packet_time_us)) {
         return;
       }
       turn_port_found = true;
@@ -1609,7 +1614,7 @@ void AllocationSequence::OnReadPacket(rtc::AsyncPacketSocket* socket,
         stun_servers.find(remote_addr) != stun_servers.end()) {
       RTC_DCHECK(udp_port_->SharedSocket());
       udp_port_->HandleIncomingPacket(socket, data, size, remote_addr,
-                                      packet_time);
+                                      packet_time_us);
     }
   }
 }

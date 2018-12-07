@@ -9,8 +9,13 @@
  */
 
 #include "audio/null_audio_poller.h"
-#include "rtc_base/logging.h"
+
+#include <stddef.h>
+
+#include "rtc_base/checks.h"
+#include "rtc_base/location.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/timeutils.h"
 
 namespace webrtc {
 namespace internal {

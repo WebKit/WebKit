@@ -12,6 +12,9 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_PSFB_H_
 #define MODULES_RTP_RTCP_SOURCE_RTCP_PACKET_PSFB_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
 
 namespace webrtc {

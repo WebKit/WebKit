@@ -49,6 +49,12 @@ TEST_F(ConfigEndToEndTest, VerifyDefaultSendConfigParameters) {
       << "Enabling RTX requires rtpmap: rtx negotiation.";
   EXPECT_TRUE(default_send_config.rtp.extensions.empty())
       << "Enabling RTP extensions require negotiation.";
+  EXPECT_EQ(nullptr, default_send_config.frame_encryptor)
+      << "Enabling Frame Encryption requires a frame encryptor to be attached";
+  EXPECT_FALSE(
+      default_send_config.crypto_options.sframe.require_frame_encryption)
+      << "Enabling Require Frame Encryption means an encryptor must be "
+         "attached";
 
   VerifyEmptyNackConfig(default_send_config.rtp.nack);
   VerifyEmptyUlpfecConfig(default_send_config.rtp.ulpfec);
@@ -70,12 +76,16 @@ TEST_F(ConfigEndToEndTest, VerifyDefaultVideoReceiveConfigParameters) {
       << "Enabling RTX requires rtpmap: rtx negotiation.";
   EXPECT_TRUE(default_receive_config.rtp.extensions.empty())
       << "Enabling RTP extensions require negotiation.";
-
   VerifyEmptyNackConfig(default_receive_config.rtp.nack);
   EXPECT_EQ(-1, default_receive_config.rtp.ulpfec_payload_type)
       << "Enabling ULPFEC requires rtpmap: ulpfec negotiation.";
   EXPECT_EQ(-1, default_receive_config.rtp.red_payload_type)
       << "Enabling ULPFEC requires rtpmap: red negotiation.";
+  EXPECT_EQ(nullptr, default_receive_config.frame_decryptor)
+      << "Enabling Frame Decryption requires a frame decryptor to be attached";
+  EXPECT_FALSE(
+      default_receive_config.crypto_options.sframe.require_frame_encryption)
+      << "Enabling Require Frame Encryption means a decryptor must be attached";
 }
 
 TEST_F(ConfigEndToEndTest, VerifyDefaultFlexfecReceiveConfigParameters) {

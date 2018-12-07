@@ -63,6 +63,9 @@ class FuzzyFrameObject : public video_coding::EncodedFrame {
 }  // namespace
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
+  if (size > 10000) {
+    return;
+  }
   DataReader reader(data, size);
   Clock* clock = Clock::GetRealTimeClock();
   VCMJitterEstimator jitter_estimator(clock, 0, 0);

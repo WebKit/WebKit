@@ -10,6 +10,8 @@
 
 #include "common_video/h264/h264_common.h"
 
+#include <cstdint>
+
 namespace webrtc {
 namespace H264 {
 

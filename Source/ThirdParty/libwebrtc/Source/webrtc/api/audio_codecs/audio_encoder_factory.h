@@ -23,7 +23,6 @@
 namespace webrtc {
 
 // A factory that creates AudioEncoders.
-// NOTE: This class is still under development and may change without notice.
 class AudioEncoderFactory : public rtc::RefCountInterface {
  public:
   // Returns a prioritized list of audio codecs, to use for signaling etc.

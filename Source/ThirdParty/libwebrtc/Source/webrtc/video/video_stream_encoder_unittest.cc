@@ -8,13 +8,17 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "video/video_stream_encoder.h"
+
 #include <algorithm>
 #include <limits>
 #include <utility>
 
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/i420_buffer.h"
+#include "api/video_codecs/create_vp8_temporal_layers.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "media/base/videoadapter.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/utility/default_video_bitrate_allocator.h"
 #include "rtc_base/fakeclock.h"
@@ -30,7 +34,6 @@
 #include "test/gtest.h"
 #include "test/video_encoder_proxy_factory.h"
 #include "video/send_statistics_proxy.h"
-#include "video/video_stream_encoder.h"
 
 namespace webrtc {
 
@@ -102,7 +105,7 @@ class VideoStreamEncoderUnderTest : public VideoStreamEncoder {
                                    new CpuOveruseDetectorProxy(stats_proxy))) {}
 
   void PostTaskAndWait(bool down, AdaptReason reason) {
-    rtc::Event event(false, false);
+    rtc::Event event;
     encoder_queue()->PostTask([this, &event, reason, down] {
       down ? AdaptDown(reason) : AdaptUp(reason);
       event.Set();
@@ -113,7 +116,7 @@ class VideoStreamEncoderUnderTest : public VideoStreamEncoder {
   // This is used as a synchronisation mechanism, to make sure that the
   // encoder queue is not blocked before we start sending it frames.
   void WaitUntilTaskQueueIsIdle() {
-    rtc::Event event(false, false);
+    rtc::Event event;
     encoder_queue()->PostTask([&event] { event.Set(); });
     ASSERT_TRUE(event.Wait(5000));
   }
@@ -277,6 +280,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
         max_framerate_(kDefaultFramerate),
         fake_encoder_(),
         encoder_factory_(&fake_encoder_),
+        bitrate_allocator_factory_(CreateBuiltinVideoBitrateAllocatorFactory()),
         stats_proxy_(new MockableSendStatisticsProxy(
             Clock::GetRealTimeClock(),
             video_send_config_,
@@ -287,6 +291,8 @@ class VideoStreamEncoderTest : public ::testing::Test {
     metrics::Reset();
     video_send_config_ = VideoSendStream::Config(nullptr);
     video_send_config_.encoder_settings.encoder_factory = &encoder_factory_;
+    video_send_config_.encoder_settings.bitrate_allocator_factory =
+        bitrate_allocator_factory_.get();
     video_send_config_.rtp.payload_name = "FAKE";
     video_send_config_.rtp.payload_type = 125;
 
@@ -492,9 +498,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
 
   class TestEncoder : public test::FakeEncoder {
    public:
-    TestEncoder()
-        : FakeEncoder(Clock::GetRealTimeClock()),
-          continue_encode_event_(false, false) {}
+    TestEncoder() : FakeEncoder(Clock::GetRealTimeClock()) {}
 
     VideoCodec codec_config() const {
       rtc::CritScope lock(&crit_sect_);
@@ -506,11 +510,14 @@ class VideoStreamEncoderTest : public ::testing::Test {
       block_next_encode_ = true;
     }
 
-    VideoEncoder::ScalingSettings GetScalingSettings() const override {
+    VideoEncoder::EncoderInfo GetEncoderInfo() const override {
+      EncoderInfo info;
       rtc::CritScope lock(&local_crit_sect_);
-      if (quality_scaling_)
-        return VideoEncoder::ScalingSettings(1, 2, kMinPixelsPerFrame);
-      return VideoEncoder::ScalingSettings::kOff;
+      if (quality_scaling_) {
+        info.scaling_settings =
+            VideoEncoder::ScalingSettings(1, 2, kMinPixelsPerFrame);
+      }
+      return info;
     }
 
     void ContinueEncode() { continue_encode_event_.Set(); }
@@ -569,9 +576,8 @@ class VideoStreamEncoderTest : public ::testing::Test {
         int num_streams = std::max<int>(1, config->numberOfSimulcastStreams);
         for (int i = 0; i < num_streams; ++i) {
           allocated_temporal_layers_.emplace_back(
-              TemporalLayers::CreateTemporalLayers(
-                  TemporalLayersType::kFixedPattern,
-                  config->VP8().numberOfTemporalLayers));
+              CreateVp8TemporalLayers(Vp8TemporalLayersType::kFixedPattern,
+                                      config->VP8().numberOfTemporalLayers));
         }
       }
       if (force_init_encode_failed_)
@@ -587,7 +593,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
     int last_input_width_ RTC_GUARDED_BY(local_crit_sect_) = 0;
     int last_input_height_ RTC_GUARDED_BY(local_crit_sect_) = 0;
     bool quality_scaling_ RTC_GUARDED_BY(local_crit_sect_) = true;
-    std::vector<std::unique_ptr<TemporalLayers>> allocated_temporal_layers_
+    std::vector<std::unique_ptr<Vp8TemporalLayers>> allocated_temporal_layers_
         RTC_GUARDED_BY(local_crit_sect_);
     bool force_init_encode_failed_ RTC_GUARDED_BY(local_crit_sect_) = false;
   };
@@ -595,7 +601,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
   class TestSink : public VideoStreamEncoder::EncoderSink {
    public:
     explicit TestSink(TestEncoder* test_encoder)
-        : test_encoder_(test_encoder), encoded_frame_event_(false, false) {}
+        : test_encoder_(test_encoder) {}
 
     void WaitForEncodedFrame(int64_t expected_ntp_time) {
       EXPECT_TRUE(
@@ -694,6 +700,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
   int max_framerate_;
   TestEncoder fake_encoder_;
   test::VideoEncoderProxyFactory encoder_factory_;
+  std::unique_ptr<VideoBitrateAllocatorFactory> bitrate_allocator_factory_;
   std::unique_ptr<MockableSendStatisticsProxy> stats_proxy_;
   TestSink sink_;
   AdaptingFrameForwarder video_source_;
@@ -703,7 +710,7 @@ class VideoStreamEncoderTest : public ::testing::Test {
 
 TEST_F(VideoStreamEncoderTest, EncodeOneFrame) {
   video_stream_encoder_->OnBitrateUpdated(kTargetBitrateBps, 0, 0);
-  rtc::Event frame_destroyed_event(false, false);
+  rtc::Event frame_destroyed_event;
   video_source_.IncomingCapturedFrame(CreateFrame(1, &frame_destroyed_event));
   WaitForEncodedFrame(1);
   EXPECT_TRUE(frame_destroyed_event.Wait(kDefaultTimeoutMs));
@@ -712,7 +719,7 @@ TEST_F(VideoStreamEncoderTest, EncodeOneFrame) {
 
 TEST_F(VideoStreamEncoderTest, DropsFramesBeforeFirstOnBitrateUpdated) {
   // Dropped since no target bitrate has been set.
-  rtc::Event frame_destroyed_event(false, false);
+  rtc::Event frame_destroyed_event;
   // The encoder will cache up to one frame for a short duration. Adding two
   // frames means that the first frame will be dropped and the second frame will
   // be sent when the encoder is enabled.
@@ -770,7 +777,7 @@ TEST_F(VideoStreamEncoderTest, DropsFrameAfterStop) {
 
   video_stream_encoder_->Stop();
   sink_.SetExpectNoFrames();
-  rtc::Event frame_destroyed_event(false, false);
+  rtc::Event frame_destroyed_event;
   video_source_.IncomingCapturedFrame(CreateFrame(2, &frame_destroyed_event));
   EXPECT_TRUE(frame_destroyed_event.Wait(kDefaultTimeoutMs));
 }

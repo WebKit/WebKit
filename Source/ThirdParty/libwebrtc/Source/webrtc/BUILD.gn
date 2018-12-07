@@ -40,12 +40,14 @@ if (!build_with_chromium) {
     if (rtc_include_tests) {
       deps += [
         ":rtc_unittests",
+        ":slow_tests",
         ":video_engine_tests",
         ":webrtc_nonparallel_tests",
         ":webrtc_perf_tests",
         "call:fake_network_unittests",
         "common_audio:common_audio_unittests",
         "common_video:common_video_unittests",
+        "examples:examples_unittests",
         "media:rtc_media_unittests",
         "modules:modules_tests",
         "modules:modules_unittests",
@@ -54,10 +56,8 @@ if (!build_with_chromium) {
         "modules/remote_bitrate_estimator:bwe_simulations_tests",
         "modules/rtp_rtcp:test_packet_masks_metrics",
         "modules/video_capture:video_capture_internal_impl",
-        "ortc:ortc_unittests",
         "pc:peerconnection_unittests",
         "pc:rtc_pc_unittests",
-        "rtc_base:rtc_base_tests_utils",
         "stats:rtc_stats_unittests",
         "system_wrappers:system_wrappers_unittests",
         "test",
@@ -97,6 +97,10 @@ config("common_inherited_config") {
   defines = []
   cflags = []
   ldflags = []
+
+  if (rtc_enable_symbol_export) {
+    defines = [ "WEBRTC_ENABLE_SYMBOL_EXPORT" ]
+  }
 
   if (build_with_mozilla) {
     defines += [ "WEBRTC_MOZILLA_BUILD" ]
@@ -218,8 +222,8 @@ config("common_config") {
     defines += [ "WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE" ]
   }
 
-  if (!rtc_libvpx_build_vp9) {
-    defines += [ "RTC_DISABLE_VP9" ]
+  if (rtc_libvpx_build_vp9) {
+    defines += [ "RTC_ENABLE_VP9" ]
   }
 
   if (rtc_enable_sctp) {
@@ -374,29 +378,33 @@ if (!build_with_chromium) {
 
     deps = [
       ":webrtc_common",
+      "api:libjingle_peerconnection_api",
       "api:transport_api",
       "audio",
       "call",
       "common_audio",
       "common_video",
+      "logging:rtc_event_log_api",
+      "logging:rtc_event_log_impl_base",
       "media",
       "modules",
       "modules/video_capture:video_capture_internal_impl",
-      "ortc",
+      "p2p:rtc_p2p",
+      "pc:libjingle_peerconnection",
+      "pc:peerconnection",
+      "pc:rtc_pc",
+      "pc:rtc_pc_base",
       "rtc_base",
       "sdk",
       "video",
     ]
 
-    # Additional factory functions to be exposed.
-    # Rational: These factories are small enough (89 KiB / 32+ MiB)
-    #           to be unconditionaly included for user convenience.
-    # That begin said:
-    # TODO(yvesg) Consider making all non-core APIs optional, so that users
-    #             can build a customized library tailored to their needs.
+    # Include audio and video codecs by default.
     deps += [
       "api/audio_codecs:builtin_audio_decoder_factory",
       "api/audio_codecs:builtin_audio_encoder_factory",
+      "api/video_codecs:builtin_video_decoder_factory",
+      "api/video_codecs:builtin_video_encoder_factory",
     ]
 
     if (build_with_mozilla) {
@@ -430,9 +438,9 @@ rtc_source_set("webrtc_common") {
   deps = [
     "api:array_view",
     "api/video:video_bitrate_allocation",
+    "api/video:video_frame",
     "rtc_base:checks",
-    "rtc_base:deprecation",
-    "rtc_base:stringutils",
+    "//third_party/abseil-cpp/absl/strings",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -467,7 +475,6 @@ if (rtc_include_tests) {
       "p2p:rtc_p2p_unittests",
       "rtc_base:rtc_base_approved_unittests",
       "rtc_base:rtc_base_tests_main",
-      "rtc_base:rtc_base_tests_utils",
       "rtc_base:rtc_base_unittests",
       "rtc_base:rtc_json_unittests",
       "rtc_base:rtc_numerics_unittests",
@@ -499,6 +506,17 @@ if (rtc_include_tests) {
     }
   }
 
+  # This runs tests that must run in real time and therefore can take some
+  # time to execute. They are in a separate executable to avoid making the
+  # regular unittest suite too slow to run frequently.
+  rtc_test("slow_tests") {
+    testonly = true
+    deps = [
+      "modules/congestion_controller/goog_cc:goog_cc_slow_tests",
+      "test:test_main",
+    ]
+  }
+
   # TODO(pbos): Rename test suite, this is no longer "just" for video targets.
   video_engine_tests_resources = [
     "resources/foreman_cif_short.yuv",
@@ -524,7 +542,6 @@ if (rtc_include_tests) {
       # should move them to a more appropriate test suite.
       "call:call_tests",
       "modules/video_capture",
-      "rtc_base:rtc_base_tests_utils",
       "test:test_common",
       "test:test_main",
       "test:video_test_common",
@@ -617,6 +634,7 @@ if (rtc_include_tests) {
         "sdk/android/tests/src/org/webrtc/GlGenericDrawerTest.java",
         "sdk/android/tests/src/org/webrtc/HardwareVideoEncoderTest.java",
         "sdk/android/tests/src/org/webrtc/ScalingSettingsTest.java",
+        "sdk/android/tests/src/org/webrtc/CryptoOptionsTest.java",
       ]
 
       deps = [

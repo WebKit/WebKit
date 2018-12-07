@@ -481,7 +481,8 @@ def CheckNoStreamUsageIsAdded(input_api, output_api,
   file_filter = lambda x: (input_api.FilterSourceFile(x)
                            and source_file_filter(x))
   for f in input_api.AffectedSourceFiles(file_filter):
-    if f.LocalPath() == 'PRESUBMIT.py':
+    # Usage of stringstream is allowed under examples/.
+    if f.LocalPath() == 'PRESUBMIT.py' or f.LocalPath().startswith('examples'):
       continue
     for line_num, line in f.ChangedContents():
       if ((include_re.search(line) or usage_re.search(line))
@@ -862,8 +863,89 @@ def CommonChecks(input_api, output_api):
   results.extend(CheckNoStreamUsageIsAdded(
       input_api, output_api, non_third_party_sources))
   results.extend(CheckAddedDepsHaveTargetApprovals(input_api, output_api))
+  results.extend(CheckApiDepsFileIsUpToDate(input_api, output_api))
+  results.extend(CheckAbslMemoryInclude(
+      input_api, output_api, non_third_party_sources))
   return results
 
+
+def CheckApiDepsFileIsUpToDate(input_api, output_api):
+  """Check that 'include_rules' in api/DEPS is up to date.
+
+  The file api/DEPS must be kept up to date in order to avoid to avoid to
+  include internal header from WebRTC's api/ headers.
+
+  This check is focused on ensuring that 'include_rules' contains a deny
+  rule for each root level directory. More focused allow rules can be
+  added to 'specific_include_rules'.
+  """
+  results = []
+  api_deps = os.path.join(input_api.PresubmitLocalPath(), 'api', 'DEPS')
+  with open(api_deps) as f:
+    deps_content = _ParseDeps(f.read())
+
+  include_rules = deps_content.get('include_rules', [])
+
+  # Only check top level directories affected by the current CL.
+  dirs_to_check = set()
+  for f in input_api.AffectedFiles():
+    path_tokens = [t for t in f.LocalPath().split(os.sep) if t]
+    if len(path_tokens) > 1:
+      if (path_tokens[0] != 'api' and
+          os.path.isdir(os.path.join(input_api.PresubmitLocalPath(),
+                                     path_tokens[0]))):
+        dirs_to_check.add(path_tokens[0])
+
+  missing_include_rules = set()
+  for p in dirs_to_check:
+    rule = '-%s' % p
+    if rule not in include_rules:
+      missing_include_rules.add(rule)
+
+  if missing_include_rules:
+    error_msg = [
+      'include_rules = [\n',
+      '  ...\n',
+    ]
+
+    for r in sorted(missing_include_rules):
+      error_msg.append('  "%s",\n' % str(r))
+
+    error_msg.append('  ...\n')
+    error_msg.append(']\n')
+
+    results.append(output_api.PresubmitError(
+        'New root level directory detected! WebRTC api/ headers should '
+        'not #include headers from \n'
+        'the new directory, so please update "include_rules" in file\n'
+        '"%s". Example:\n%s\n' % (api_deps, ''.join(error_msg))))
+
+  return results
+
+def CheckAbslMemoryInclude(input_api, output_api, source_file_filter):
+  pattern = input_api.re.compile(
+      r'^#include\s*"absl/memory/memory.h"', input_api.re.MULTILINE)
+  file_filter = lambda f: (f.LocalPath().endswith(('.cc', '.h'))
+                           and source_file_filter(f))
+
+  files = []
+  for f in input_api.AffectedFiles(
+      include_deletes=False, file_filter=file_filter):
+    contents = input_api.ReadFile(f)
+    if pattern.search(contents):
+      continue
+    for _, line in f.ChangedContents():
+      if 'absl::make_unique' in line:
+        files.append(f)
+        break
+
+  if len(files):
+    return [output_api.PresubmitError(
+        'Please include "absl/memory/memory.h" header for'
+        ' absl::make_unique.\nThis header may or may not be included'
+        ' transitively depends on the C++ standard version.',
+        files)]
+  return []
 
 def CheckChangeOnUpload(input_api, output_api):
   results = []

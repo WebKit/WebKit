@@ -18,17 +18,18 @@
 #include "rtc_base/flags.h"
 #include "rtc_base/format_macros.h"
 #include "rtc_base/memory_usage.h"
-#include "rtc_base/pathutils.h"
 #include "system_wrappers/include/cpu_info.h"
 #include "test/call_test.h"
+#include "test/testsupport/fileutils.h"
 #include "test/testsupport/frame_writer.h"
 #include "test/testsupport/perf_test.h"
 #include "test/testsupport/test_artifacts.h"
 
-DEFINE_bool(save_worst_frame,
-            false,
-            "Enable saving a frame with the lowest PSNR to a jpeg file in the "
-            "test_artifacts_dir");
+WEBRTC_DEFINE_bool(
+    save_worst_frame,
+    false,
+    "Enable saving a frame with the lowest PSNR to a jpeg file in the "
+    "test_artifacts_dir");
 
 namespace webrtc {
 namespace {
@@ -70,7 +71,6 @@ VideoAnalyzer::VideoAnalyzer(test::LayerFilteringTransport* transport,
       selected_stream_(selected_stream),
       selected_sl_(selected_sl),
       selected_tl_(selected_tl),
-      pre_encode_proxy_(this),
       last_fec_bytes_(0),
       frames_to_process_(duration_frames),
       frames_recorded_(0),
@@ -91,7 +91,6 @@ VideoAnalyzer::VideoAnalyzer(test::LayerFilteringTransport* transport,
       avg_ssim_threshold_(avg_ssim_threshold),
       is_quick_test_enabled_(is_quick_test_enabled),
       stats_polling_thread_(&PollStatsThread, this, "StatsPoller"),
-      comparison_available_event_(false, false),
       done_(true, false),
       clock_(clock),
       start_ms_(clock->TimeInMilliseconds()) {
@@ -231,10 +230,10 @@ void VideoAnalyzer::PreEncodeOnFrame(const VideoFrame& video_frame) {
   }
 }
 
-void VideoAnalyzer::EncodedFrameCallback(const EncodedFrame& encoded_frame) {
+void VideoAnalyzer::PostEncodeOnFrame(size_t stream_id, uint32_t timestamp) {
   rtc::CritScope lock(&crit_);
-  if (!first_sent_timestamp_ && encoded_frame.stream_id_ == selected_stream_) {
-    first_sent_timestamp_ = encoded_frame.timestamp_;
+  if (!first_sent_timestamp_ && stream_id == selected_stream_) {
+    first_sent_timestamp_ = timestamp;
   }
 }
 
@@ -364,10 +363,6 @@ void VideoAnalyzer::Wait() {
     printf("- Farewell, sweet Concorde!\n");
 
   stats_polling_thread_.Stop();
-}
-
-rtc::VideoSinkInterface<VideoFrame>* VideoAnalyzer::pre_encode_proxy() {
-  return &pre_encode_proxy_;
 }
 
 void VideoAnalyzer::StartMeasuringCpuProcessTime() {
@@ -611,7 +606,7 @@ void VideoAnalyzer::PrintResults() {
     std::string output_dir;
     test::GetTestArtifactsDir(&output_dir);
     std::string output_path =
-        rtc::Pathname(output_dir, test_label_ + ".jpg").pathname();
+        test::JoinFilename(output_dir, test_label_ + ".jpg");
     RTC_LOG(LS_INFO) << "Saving worst frame to " << output_path;
     test::JpegFrameWriter frame_writer(output_path);
     RTC_CHECK(
@@ -840,13 +835,6 @@ VideoAnalyzer::Sample::Sample(int dropped,
       encoded_frame_size(encoded_frame_size),
       psnr(psnr),
       ssim(ssim) {}
-
-VideoAnalyzer::PreEncodeProxy::PreEncodeProxy(VideoAnalyzer* parent)
-    : parent_(parent) {}
-
-void VideoAnalyzer::PreEncodeProxy::OnFrame(const VideoFrame& video_frame) {
-  parent_->PreEncodeOnFrame(video_frame);
-}
 
 VideoAnalyzer::CapturedFrameForwarder::CapturedFrameForwarder(
     VideoAnalyzer* analyzer,

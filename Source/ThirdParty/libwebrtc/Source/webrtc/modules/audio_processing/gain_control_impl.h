@@ -11,14 +11,16 @@
 #ifndef MODULES_AUDIO_PROCESSING_GAIN_CONTROL_IMPL_H_
 #define MODULES_AUDIO_PROCESSING_GAIN_CONTROL_IMPL_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 #include <vector>
 
-#include "modules/audio_processing/include/audio_processing.h"
-#include "modules/audio_processing/render_queue_item_verifier.h"
+#include "absl/types/optional.h"
+#include "api/array_view.h"
+#include "modules/audio_processing/include/gain_control.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/criticalsection.h"
-#include "rtc_base/swap_queue.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {

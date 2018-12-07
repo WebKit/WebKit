@@ -11,18 +11,16 @@
 #ifndef RTC_BASE_OPENSSLCERTIFICATE_H_
 #define RTC_BASE_OPENSSLCERTIFICATE_H_
 
-#include <openssl/evp.h>
-#include <openssl/x509.h>
+#include <openssl/ossl_typ.h>
 
-#include <memory>
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
-#include "rtc_base/checks.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/sslcertificate.h"
 #include "rtc_base/sslidentity.h"
-
-typedef struct ssl_ctx_st SSL_CTX;
 
 namespace rtc {
 
@@ -30,19 +28,21 @@ class OpenSSLKeyPair;
 
 // OpenSSLCertificate encapsulates an OpenSSL X509* certificate object,
 // which is also reference counted inside the OpenSSL library.
-class OpenSSLCertificate : public SSLCertificate {
+class OpenSSLCertificate final : public SSLCertificate {
  public:
   // X509 object has its reference count incremented. So the caller and
   // OpenSSLCertificate share ownership.
   explicit OpenSSLCertificate(X509* x509);
 
-  static OpenSSLCertificate* Generate(OpenSSLKeyPair* key_pair,
-                                      const SSLIdentityParams& params);
-  static OpenSSLCertificate* FromPEMString(const std::string& pem_string);
+  static std::unique_ptr<OpenSSLCertificate> Generate(
+      OpenSSLKeyPair* key_pair,
+      const SSLIdentityParams& params);
+  static std::unique_ptr<OpenSSLCertificate> FromPEMString(
+      const std::string& pem_string);
 
   ~OpenSSLCertificate() override;
 
-  OpenSSLCertificate* GetReference() const override;
+  std::unique_ptr<SSLCertificate> Clone() const override;
 
   X509* x509() const { return x509_; }
 
@@ -69,8 +69,6 @@ class OpenSSLCertificate : public SSLCertificate {
   int64_t CertificateExpirationTime() const override;
 
  private:
-  void AddReference() const;
-
   X509* x509_;  // NOT OWNED
   RTC_DISALLOW_COPY_AND_ASSIGN(OpenSSLCertificate);
 };

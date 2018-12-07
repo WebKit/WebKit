@@ -15,6 +15,7 @@
 #include "absl/memory/memory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video_codecs/video_encoder_config.h"
 #include "call/fake_network_pipe.h"
 #include "call/rtp_transport_controller_send.h"
@@ -39,7 +40,8 @@ CallTest::CallTest()
       send_event_log_(RtcEventLog::CreateNull()),
       recv_event_log_(RtcEventLog::CreateNull()),
       sender_call_transport_controller_(nullptr),
-      audio_send_config_(nullptr),
+      audio_send_config_(/*send_transport=*/nullptr,
+                         /*media_transport=*/nullptr),
       audio_send_stream_(nullptr),
       bbr_network_controller_factory_(new BbrNetworkControllerFactory()),
       fake_encoder_factory_([this]() {
@@ -53,6 +55,7 @@ CallTest::CallTest()
         return fake_encoder;
       }),
       fake_decoder_factory_([]() { return absl::make_unique<FakeDecoder>(); }),
+      bitrate_allocator_factory_(CreateBuiltinVideoBitrateAllocatorFactory()),
       num_video_streams_(1),
       num_audio_streams_(0),
       num_flexfec_streams_(0),
@@ -75,7 +78,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
     num_flexfec_streams_ = test->GetNumFlexfecStreams();
     RTC_DCHECK(num_video_streams_ > 0 || num_audio_streams_ > 0);
     Call::Config send_config(send_event_log_.get());
-    test->ModifySenderCallConfig(&send_config);
+    test->ModifySenderBitrateConfig(&send_config.bitrate_config);
     if (num_audio_streams_ > 0) {
       CreateFakeAudioDevices(test->CreateCapturer(), test->CreateRenderer());
       test->OnFakeAudioDevicesCreated(fake_send_audio_device_.get(),
@@ -99,7 +102,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
     }
     if (test->ShouldCreateReceivers()) {
       Call::Config recv_config(recv_event_log_.get());
-      test->ModifyReceiverCallConfig(&recv_config);
+      test->ModifyReceiverBitrateConfig(&recv_config.bitrate_config);
       if (num_audio_streams_ > 0) {
         AudioState::Config audio_state_config;
         audio_state_config.audio_mixer = AudioMixerImpl::Create();
@@ -163,6 +166,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
       int height = kDefaultHeight;
       int frame_rate = kDefaultFramerate;
       test->ModifyVideoCaptureStartResolution(&width, &height, &frame_rate);
+      test->ModifyVideoDegradationPreference(&degradation_preference_);
       CreateFrameGeneratorCapturer(frame_rate, width, height);
       test->OnFrameGeneratorCapturerCreated(frame_generator_capturer_);
     }
@@ -232,6 +236,8 @@ void CallTest::CreateVideoSendConfig(VideoSendStream::Config* video_config,
   RTC_DCHECK_LE(num_video_streams + num_used_ssrcs, kNumSsrcs);
   *video_config = VideoSendStream::Config(send_transport);
   video_config->encoder_settings.encoder_factory = &fake_encoder_factory_;
+  video_config->encoder_settings.bitrate_allocator_factory =
+      bitrate_allocator_factory_.get();
   video_config->rtp.payload_name = "FAKE";
   video_config->rtp.payload_type = kFakeVideoSendPayloadType;
   video_config->rtp.extensions.push_back(
@@ -259,7 +265,8 @@ void CallTest::CreateAudioAndFecSendConfigs(size_t num_audio_streams,
   RTC_DCHECK_LE(num_audio_streams, 1);
   RTC_DCHECK_LE(num_flexfec_streams, 1);
   if (num_audio_streams > 0) {
-    AudioSendStream::Config audio_send_config(send_transport);
+    AudioSendStream::Config audio_send_config(send_transport,
+                                              /*media_transport=*/nullptr);
     audio_send_config.rtp.ssrc = kAudioSendSsrc;
     audio_send_config.send_codec_spec = AudioSendStream::Config::SendCodecSpec(
         kAudioSendPayloadType, {"opus", 48000, 2, {{"stereo", "1"}}});
@@ -726,9 +733,10 @@ void BaseTest::OnFakeAudioDevicesCreated(
     TestAudioDeviceModule* send_audio_device,
     TestAudioDeviceModule* recv_audio_device) {}
 
-void BaseTest::ModifySenderCallConfig(Call::Config* config) {}
+void BaseTest::ModifySenderBitrateConfig(BitrateConstraints* bitrate_config) {}
 
-void BaseTest::ModifyReceiverCallConfig(Call::Config* config) {}
+void BaseTest::ModifyReceiverBitrateConfig(BitrateConstraints* bitrate_config) {
+}
 
 void BaseTest::OnRtpTransportControllerSendCreated(
     RtpTransportControllerSend* controller) {}
@@ -742,8 +750,8 @@ test::PacketTransport* BaseTest::CreateSendTransport(
       task_queue, sender_call, this, test::PacketTransport::kSender,
       CallTest::payload_type_map_,
       absl::make_unique<FakeNetworkPipe>(
-          Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                         DefaultNetworkSimulationConfig())));
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())));
 }
 
 test::PacketTransport* BaseTest::CreateReceiveTransport(
@@ -752,8 +760,8 @@ test::PacketTransport* BaseTest::CreateReceiveTransport(
       task_queue, nullptr, this, test::PacketTransport::kReceiver,
       CallTest::payload_type_map_,
       absl::make_unique<FakeNetworkPipe>(
-          Clock::GetRealTimeClock(), absl::make_unique<SimulatedNetwork>(
-                                         DefaultNetworkSimulationConfig())));
+          Clock::GetRealTimeClock(),
+          absl::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())));
 }
 
 size_t BaseTest::GetNumVideoStreams() const {
@@ -776,6 +784,9 @@ void BaseTest::ModifyVideoConfigs(
 void BaseTest::ModifyVideoCaptureStartResolution(int* width,
                                                  int* heigt,
                                                  int* frame_rate) {}
+
+void BaseTest::ModifyVideoDegradationPreference(
+    DegradationPreference* degradation_preference) {}
 
 void BaseTest::OnVideoStreamsCreated(
     VideoSendStream* send_stream,

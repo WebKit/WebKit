@@ -10,14 +10,18 @@
 #ifndef MODULES_AUDIO_DEVICE_INCLUDE_TEST_AUDIO_DEVICE_H_
 #define MODULES_AUDIO_DEVICE_INCLUDE_TEST_AUDIO_DEVICE_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 #include <string>
-#include <vector>
 
+#include "api/array_view.h"
 #include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/audio_device_defines.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_file.h"
+#include "rtc_base/scoped_ref_ptr.h"
 
 namespace webrtc {
 

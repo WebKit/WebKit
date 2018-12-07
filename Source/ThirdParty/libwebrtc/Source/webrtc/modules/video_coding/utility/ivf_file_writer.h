@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-#include "common_video/include/video_frame.h"
+#include "api/video/encoded_image.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/file.h"

@@ -14,6 +14,8 @@
 #include <memory>
 #include <utility>
 
+#include "rtc_base/checks.h"
+
 namespace webrtc {
 
 LegacyEncodedAudioFrame::LegacyEncodedAudioFrame(AudioDecoder* decoder,

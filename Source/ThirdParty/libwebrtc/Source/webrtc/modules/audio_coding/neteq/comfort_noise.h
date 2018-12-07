@@ -11,12 +11,14 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_COMFORT_NOISE_H_
 #define MODULES_AUDIO_CODING_NETEQ_COMFORT_NOISE_H_
 
-#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include <stddef.h>
+
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
 // Forward declarations.
+class AudioMultiVector;
 class DecoderDatabase;
 class SyncBuffer;
 struct Packet;

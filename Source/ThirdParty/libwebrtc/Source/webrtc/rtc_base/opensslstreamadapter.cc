@@ -22,6 +22,7 @@
 #endif
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "rtc_base/checks.h"
@@ -31,6 +32,7 @@
 #include "rtc_base/openssladapter.h"
 #include "rtc_base/openssldigest.h"
 #include "rtc_base/opensslidentity.h"
+#include "rtc_base/sslcertificate.h"
 #include "rtc_base/stream.h"
 #include "rtc_base/stringutils.h"
 #include "rtc_base/thread.h"
@@ -180,8 +182,9 @@ static BIO_METHOD* BIO_stream_method() {
 
 static BIO* BIO_new_stream(StreamInterface* stream) {
   BIO* ret = BIO_new(BIO_stream_method());
-  if (ret == nullptr)
+  if (ret == nullptr) {
     return nullptr;
+  }
   BIO_set_data(ret, stream);
   return ret;
 }
@@ -196,14 +199,16 @@ static int stream_new(BIO* b) {
 }
 
 static int stream_free(BIO* b) {
-  if (b == nullptr)
+  if (b == nullptr) {
     return 0;
+  }
   return 1;
 }
 
 static int stream_read(BIO* b, char* out, int outl) {
-  if (!out)
+  if (!out) {
     return -1;
+  }
   StreamInterface* stream = static_cast<StreamInterface*>(BIO_get_data(b));
   BIO_clear_retry_flags(b);
   size_t read;
@@ -218,8 +223,9 @@ static int stream_read(BIO* b, char* out, int outl) {
 }
 
 static int stream_write(BIO* b, const char* in, int inl) {
-  if (!in)
+  if (!in) {
     return -1;
+  }
   StreamInterface* stream = static_cast<StreamInterface*>(BIO_get_data(b));
   BIO_clear_retry_flags(b);
   size_t written;
@@ -296,7 +302,7 @@ bool OpenSSLStreamAdapter::SetPeerCertificateDigest(
     size_t digest_len,
     SSLPeerCertificateDigestError* error) {
   RTC_DCHECK(!peer_certificate_verified_);
-  RTC_DCHECK(!has_peer_certificate_digest());
+  RTC_DCHECK(!HasPeerCertificateDigest());
   size_t expected_len;
   if (error) {
     *error = SSLPeerCertificateDigestError::NONE;
@@ -362,8 +368,9 @@ std::string OpenSSLStreamAdapter::SslCipherSuiteToName(int cipher_suite) {
 }
 
 bool OpenSSLStreamAdapter::GetSslCipherSuite(int* cipher_suite) {
-  if (state_ != SSL_CONNECTED)
+  if (state_ != SSL_CONNECTED) {
     return false;
+  }
 
   const SSL_CIPHER* current_cipher = SSL_get_current_cipher(ssl_);
   if (current_cipher == nullptr) {
@@ -380,17 +387,19 @@ int OpenSSLStreamAdapter::GetSslVersion() const {
 
   int ssl_version = SSL_version(ssl_);
   if (ssl_mode_ == SSL_MODE_DTLS) {
-    if (ssl_version == DTLS1_VERSION)
+    if (ssl_version == DTLS1_VERSION) {
       return SSL_PROTOCOL_DTLS_10;
-    else if (ssl_version == DTLS1_2_VERSION)
+    } else if (ssl_version == DTLS1_2_VERSION) {
       return SSL_PROTOCOL_DTLS_12;
+    }
   } else {
-    if (ssl_version == TLS1_VERSION)
+    if (ssl_version == TLS1_VERSION) {
       return SSL_PROTOCOL_TLS_10;
-    else if (ssl_version == TLS1_1_VERSION)
+    } else if (ssl_version == TLS1_1_VERSION) {
       return SSL_PROTOCOL_TLS_11;
-    else if (ssl_version == TLS1_2_VERSION)
+    } else if (ssl_version == TLS1_2_VERSION) {
       return SSL_PROTOCOL_TLS_12;
+    }
   }
 
   return -1;
@@ -403,15 +412,11 @@ bool OpenSSLStreamAdapter::ExportKeyingMaterial(const std::string& label,
                                                 bool use_context,
                                                 uint8_t* result,
                                                 size_t result_len) {
-  int i;
-
-  i = SSL_export_keying_material(ssl_, result, result_len, label.c_str(),
+  if (SSL_export_keying_material(ssl_, result, result_len, label.c_str(),
                                  label.length(), const_cast<uint8_t*>(context),
-                                 context_len, use_context);
-
-  if (i != 1)
+                                 context_len, use_context) != 1) {
     return false;
-
+  }
   return true;
 }
 
@@ -419,8 +424,9 @@ bool OpenSSLStreamAdapter::SetDtlsSrtpCryptoSuites(
     const std::vector<int>& ciphers) {
   std::string internal_ciphers;
 
-  if (state_ != SSL_NONE)
+  if (state_ != SSL_NONE) {
     return false;
+  }
 
   for (std::vector<int>::const_iterator cipher = ciphers.begin();
        cipher != ciphers.end(); ++cipher) {
@@ -429,8 +435,9 @@ bool OpenSSLStreamAdapter::SetDtlsSrtpCryptoSuites(
          ++entry) {
       if (*cipher == entry->id) {
         found = true;
-        if (!internal_ciphers.empty())
+        if (!internal_ciphers.empty()) {
           internal_ciphers += ":";
+        }
         internal_ciphers += entry->internal_name;
         break;
       }
@@ -442,8 +449,9 @@ bool OpenSSLStreamAdapter::SetDtlsSrtpCryptoSuites(
     }
   }
 
-  if (internal_ciphers.empty())
+  if (internal_ciphers.empty()) {
     return false;
+  }
 
   srtp_ciphers_ = internal_ciphers;
   return true;
@@ -451,14 +459,16 @@ bool OpenSSLStreamAdapter::SetDtlsSrtpCryptoSuites(
 
 bool OpenSSLStreamAdapter::GetDtlsSrtpCryptoSuite(int* crypto_suite) {
   RTC_DCHECK(state_ == SSL_CONNECTED);
-  if (state_ != SSL_CONNECTED)
+  if (state_ != SSL_CONNECTED) {
     return false;
+  }
 
   const SRTP_PROTECTION_PROFILE* srtp_profile =
       SSL_get_selected_srtp_profile(ssl_);
 
-  if (!srtp_profile)
+  if (!srtp_profile) {
     return false;
+  }
 
   *crypto_suite = srtp_profile->id;
   RTC_DCHECK(!SrtpCryptoSuiteToName(*crypto_suite).empty());
@@ -470,8 +480,8 @@ bool OpenSSLStreamAdapter::IsTlsConnected() {
 }
 
 int OpenSSLStreamAdapter::StartSSL() {
+  // Don't allow StartSSL to be called twice.
   if (state_ != SSL_NONE) {
-    // Don't allow StartSSL to be called twice.
     return -1;
   }
 
@@ -524,7 +534,7 @@ StreamResult OpenSSLStreamAdapter::Write(const void* data,
       return SR_BLOCK;
 
     case SSL_CONNECTED:
-      if (waiting_to_verify_peer_certificate()) {
+      if (WaitingToVerifyPeerCertificate()) {
         return SR_BLOCK;
       }
       break;
@@ -532,15 +542,17 @@ StreamResult OpenSSLStreamAdapter::Write(const void* data,
     case SSL_ERROR:
     case SSL_CLOSED:
     default:
-      if (error)
+      if (error) {
         *error = ssl_error_code_;
+      }
       return SR_ERROR;
   }
 
   // OpenSSL will return an error if we try to write zero bytes
   if (data_len == 0) {
-    if (written)
+    if (written) {
       *written = 0;
+    }
     return SR_SUCCESS;
   }
 
@@ -567,8 +579,9 @@ StreamResult OpenSSLStreamAdapter::Write(const void* data,
     case SSL_ERROR_ZERO_RETURN:
     default:
       Error("SSL_write", (ssl_error ? ssl_error : -1), 0, false);
-      if (error)
+      if (error) {
         *error = ssl_error_code_;
+      }
       return SR_ERROR;
   }
   // not reached
@@ -583,31 +596,29 @@ StreamResult OpenSSLStreamAdapter::Read(void* data,
     case SSL_NONE:
       // pass-through in clear text
       return StreamAdapterInterface::Read(data, data_len, read, error);
-
     case SSL_WAIT:
     case SSL_CONNECTING:
       return SR_BLOCK;
-
     case SSL_CONNECTED:
-      if (waiting_to_verify_peer_certificate()) {
+      if (WaitingToVerifyPeerCertificate()) {
         return SR_BLOCK;
       }
       break;
-
     case SSL_CLOSED:
       return SR_EOS;
-
     case SSL_ERROR:
     default:
-      if (error)
+      if (error) {
         *error = ssl_error_code_;
+      }
       return SR_ERROR;
   }
 
   // Don't trust OpenSSL with zero byte reads
   if (data_len == 0) {
-    if (read)
+    if (read) {
       *read = 0;
+    }
     return SR_SUCCESS;
   }
 
@@ -620,8 +631,9 @@ StreamResult OpenSSLStreamAdapter::Read(void* data,
       RTC_LOG(LS_VERBOSE) << " -- success";
       RTC_DCHECK_GT(code, 0);
       RTC_DCHECK_LE(code, data_len);
-      if (read)
+      if (read) {
         *read = code;
+      }
 
       if (ssl_mode_ == SSL_MODE_DTLS) {
         // Enforce atomic reads -- this is a short read
@@ -630,8 +642,9 @@ StreamResult OpenSSLStreamAdapter::Read(void* data,
         if (pending) {
           RTC_LOG(LS_INFO) << " -- short DTLS read. flushing";
           FlushInput(pending);
-          if (error)
+          if (error) {
             *error = SSE_MSG_TRUNC;
+          }
           return SR_ERROR;
         }
       }
@@ -650,8 +663,9 @@ StreamResult OpenSSLStreamAdapter::Read(void* data,
       break;
     default:
       Error("SSL_read", (ssl_error ? ssl_error : -1), 0, false);
-      if (error)
+      if (error) {
         *error = ssl_error_code_;
+      }
       return SR_ERROR;
   }
   // not reached
@@ -694,13 +708,13 @@ StreamState OpenSSLStreamAdapter::GetState() const {
     case SSL_CONNECTING:
       return SS_OPENING;
     case SSL_CONNECTED:
-      if (waiting_to_verify_peer_certificate()) {
+      if (WaitingToVerifyPeerCertificate()) {
         return SS_OPENING;
       }
       return SS_OPEN;
     default:
       return SS_CLOSED;
-  };
+  }
   // not reached
 }
 
@@ -710,6 +724,7 @@ void OpenSSLStreamAdapter::OnEvent(StreamInterface* stream,
   int events_to_signal = 0;
   int signal_error = 0;
   RTC_DCHECK(stream == this->stream());
+
   if ((events & SE_OPEN)) {
     RTC_LOG(LS_VERBOSE) << "OpenSSLStreamAdapter::OnEvent SE_OPEN";
     if (state_ != SSL_WAIT) {
@@ -723,6 +738,7 @@ void OpenSSLStreamAdapter::OnEvent(StreamInterface* stream,
       }
     }
   }
+
   if ((events & (SE_READ | SE_WRITE))) {
     RTC_LOG(LS_VERBOSE) << "OpenSSLStreamAdapter::OnEvent"
                         << ((events & SE_READ) ? " SE_READ" : "")
@@ -747,6 +763,7 @@ void OpenSSLStreamAdapter::OnEvent(StreamInterface* stream,
       }
     }
   }
+
   if ((events & SE_CLOSE)) {
     RTC_LOG(LS_VERBOSE) << "OpenSSLStreamAdapter::OnEvent(SE_CLOSE, " << err
                         << ")";
@@ -756,8 +773,10 @@ void OpenSSLStreamAdapter::OnEvent(StreamInterface* stream,
     RTC_DCHECK(signal_error == 0);
     signal_error = err;
   }
-  if (events_to_signal)
+
+  if (events_to_signal) {
     StreamAdapterInterface::OnEvent(stream, events_to_signal, signal_error);
+  }
 }
 
 int OpenSSLStreamAdapter::BeginSSL() {
@@ -770,12 +789,14 @@ int OpenSSLStreamAdapter::BeginSSL() {
   // First set up the context.
   RTC_DCHECK(ssl_ctx_ == nullptr);
   ssl_ctx_ = SetupSSLContext();
-  if (!ssl_ctx_)
+  if (!ssl_ctx_) {
     return -1;
+  }
 
   bio = BIO_new_stream(static_cast<StreamInterface*>(stream()));
-  if (!bio)
+  if (!bio) {
     return -1;
+  }
 
   ssl_ = SSL_new(ssl_ctx_);
   if (!ssl_) {
@@ -805,8 +826,9 @@ int OpenSSLStreamAdapter::BeginSSL() {
   // commonly supported. BoringSSL doesn't need explicit configuration and has
   // a reasonable default set.
   EC_KEY* ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-  if (ecdh == nullptr)
+  if (ecdh == nullptr) {
     return -1;
+  }
   SSL_set_options(ssl_, SSL_OP_SINGLE_ECDH_USE);
   SSL_set_tmp_ecdh(ssl_, ecdh);
   EC_KEY_free(ecdh);
@@ -830,10 +852,10 @@ int OpenSSLStreamAdapter::ContinueSSL() {
       RTC_LOG(LS_VERBOSE) << " -- success";
       // By this point, OpenSSL should have given us a certificate, or errored
       // out if one was missing.
-      RTC_DCHECK(peer_cert_chain_ || !client_auth_enabled());
+      RTC_DCHECK(peer_cert_chain_ || !GetClientAuthEnabled());
 
       state_ = SSL_CONNECTED;
-      if (!waiting_to_verify_peer_certificate()) {
+      if (!WaitingToVerifyPeerCertificate()) {
         // We have everything we need to start the connection, so signal
         // SE_OPEN. If we need a client certificate fingerprint and don't have
         // it yet, we'll instead signal SE_OPEN in SetPeerCertificateDigest.
@@ -886,8 +908,9 @@ void OpenSSLStreamAdapter::Error(const char* context,
   state_ = SSL_ERROR;
   ssl_error_code_ = err;
   Cleanup(alert);
-  if (signal)
+  if (signal) {
     StreamAdapterInterface::OnEvent(stream(), SE_CLOSE, err);
+  }
 }
 
 void OpenSSLStreamAdapter::Cleanup(uint8_t alert) {
@@ -990,8 +1013,9 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
   ctx = SSL_CTX_new(method);
 #endif  // OPENSSL_IS_BORINGSSL
 
-  if (ctx == nullptr)
+  if (ctx == nullptr) {
     return nullptr;
+  }
 
 #ifdef OPENSSL_IS_BORINGSSL
   SSL_CTX_set_min_proto_version(
@@ -1026,7 +1050,7 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
 #endif
 
   int mode = SSL_VERIFY_PEER;
-  if (client_auth_enabled()) {
+  if (GetClientAuthEnabled()) {
     // Require a certificate from the client.
     // Note: Normally this is always true in production, but it may be disabled
     // for testing purposes (e.g. SSLAdapter unit tests).
@@ -1058,7 +1082,7 @@ SSL_CTX* OpenSSLStreamAdapter::SetupSSLContext() {
 }
 
 bool OpenSSLStreamAdapter::VerifyPeerCertificate() {
-  if (!has_peer_certificate_digest() || !peer_cert_chain_ ||
+  if (!HasPeerCertificateDigest() || !peer_cert_chain_ ||
       !peer_cert_chain_->GetSize()) {
     RTC_LOG(LS_WARNING) << "Missing digest or peer certificate.";
     return false;
@@ -1091,7 +1115,7 @@ bool OpenSSLStreamAdapter::VerifyPeerCertificate() {
 
 std::unique_ptr<SSLCertChain> OpenSSLStreamAdapter::GetPeerSSLCertChain()
     const {
-  return peer_cert_chain_ ? peer_cert_chain_->UniqueCopy() : nullptr;
+  return peer_cert_chain_ ? peer_cert_chain_->Clone() : nullptr;
 }
 
 int OpenSSLStreamAdapter::SSLVerifyCallback(X509_STORE_CTX* store, void* arg) {
@@ -1176,15 +1200,17 @@ static const cipher_list OK_ECDSA_ciphers[] = {
 bool OpenSSLStreamAdapter::IsAcceptableCipher(int cipher, KeyType key_type) {
   if (key_type == KT_RSA) {
     for (const cipher_list& c : OK_RSA_ciphers) {
-      if (cipher == c.cipher)
+      if (cipher == c.cipher) {
         return true;
+      }
     }
   }
 
   if (key_type == KT_ECDSA) {
     for (const cipher_list& c : OK_ECDSA_ciphers) {
-      if (cipher == c.cipher)
+      if (cipher == c.cipher) {
         return true;
+      }
     }
   }
 
@@ -1195,22 +1221,24 @@ bool OpenSSLStreamAdapter::IsAcceptableCipher(const std::string& cipher,
                                               KeyType key_type) {
   if (key_type == KT_RSA) {
     for (const cipher_list& c : OK_RSA_ciphers) {
-      if (cipher == c.cipher_str)
+      if (cipher == c.cipher_str) {
         return true;
+      }
     }
   }
 
   if (key_type == KT_ECDSA) {
     for (const cipher_list& c : OK_ECDSA_ciphers) {
-      if (cipher == c.cipher_str)
+      if (cipher == c.cipher_str) {
         return true;
+      }
     }
   }
 
   return false;
 }
 
-void OpenSSLStreamAdapter::enable_time_callback_for_testing() {
+void OpenSSLStreamAdapter::EnableTimeCallbackForTesting() {
   g_use_time_callback_for_testing = true;
 }
 

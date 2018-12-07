@@ -141,7 +141,8 @@ TEST_F(HexEncodeTest, TestDecodeTooShort) {
 
 // Test that decoding non-hex data fails.
 TEST_F(HexEncodeTest, TestDecodeBogusData) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_), "xyz", 3, 0);
+  dec_res_ =
+      hex_decode_with_delimiter(decoded_, sizeof(decoded_), "axyz", 4, 0);
   ASSERT_EQ(0U, dec_res_);
 }
 

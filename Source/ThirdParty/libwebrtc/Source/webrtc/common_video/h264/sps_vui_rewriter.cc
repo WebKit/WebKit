@@ -11,17 +11,16 @@
 
 #include "common_video/h264/sps_vui_rewriter.h"
 
-#include <algorithm>
-#include <memory>
+#include <string.h>
+#include <cstdint>
 #include <vector>
 
+#include "common_video/h264/h264_common.h"
+#include "common_video/h264/sps_parser.h"
 #include "rtc_base/bitbuffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
-
-#include "common_video/h264/h264_common.h"
-#include "common_video/h264/sps_parser.h"
 
 namespace webrtc {
 

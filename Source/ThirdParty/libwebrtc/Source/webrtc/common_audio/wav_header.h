@@ -21,8 +21,11 @@ static const size_t kWavHeaderSize = 44;
 class ReadableWav {
  public:
   // Returns the number of bytes read.
-  size_t virtual Read(void* buf, size_t num_bytes) = 0;
-  virtual ~ReadableWav() {}
+  virtual size_t Read(void* buf, size_t num_bytes) = 0;
+  // Returns true if the end-of-file has been reached.
+  virtual bool Eof() const = 0;
+  virtual bool SeekForward(uint32_t num_bytes) = 0;
+  virtual ~ReadableWav() = default;
 };
 
 enum WavFormat {

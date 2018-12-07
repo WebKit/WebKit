@@ -604,11 +604,18 @@ class RTCStatsReportVerifier {
           media_stream_track.concealed_samples);
       verifier.TestMemberIsNonNegative<uint64_t>(
           media_stream_track.concealment_events);
+      verifier.TestMemberIsNonNegative<uint64_t>(
+          media_stream_track.jitter_buffer_flushes);
+      verifier.TestMemberIsNonNegative<uint64_t>(
+          media_stream_track.delayed_packet_outage_samples);
     } else {
       verifier.TestMemberIsUndefined(media_stream_track.jitter_buffer_delay);
       verifier.TestMemberIsUndefined(media_stream_track.total_samples_received);
       verifier.TestMemberIsUndefined(media_stream_track.concealed_samples);
       verifier.TestMemberIsUndefined(media_stream_track.concealment_events);
+      verifier.TestMemberIsUndefined(media_stream_track.jitter_buffer_flushes);
+      verifier.TestMemberIsUndefined(
+          media_stream_track.delayed_packet_outage_samples);
     }
     return verifier.ExpectAllMembersSuccessfullyTested();
   }
@@ -806,7 +813,11 @@ TEST_F(RTCStatsIntegrationTest, GetStatsWithInvalidReceiverSelector) {
   EXPECT_FALSE(report->size());
 }
 
-TEST_F(RTCStatsIntegrationTest, GetsStatsWhileDestroyingPeerConnections) {
+// TODO(bugs.webrtc.org/10041) For now this is equivalent to the following
+// test GetsStatsWhileClosingPeerConnection, because pc() is closed by
+// PeerConnectionTestWrapper. See: bugs.webrtc.org/9847
+TEST_F(RTCStatsIntegrationTest,
+       DISABLED_GetStatsWhileDestroyingPeerConnection) {
   StartCall();
 
   rtc::scoped_refptr<RTCStatsObtainer> stats_obtainer =

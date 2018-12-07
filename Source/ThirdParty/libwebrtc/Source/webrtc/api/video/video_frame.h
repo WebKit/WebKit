@@ -15,12 +15,15 @@
 
 #include "absl/types/optional.h"
 #include "api/video/color_space.h"
+#include "api/video/hdr_metadata.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video/video_rotation.h"
+#include "rtc_base/scoped_ref_ptr.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-class VideoFrame {
+class RTC_EXPORT VideoFrame {
  public:
   // Preferred way of building VideoFrame objects.
   class Builder {
@@ -37,6 +40,7 @@ class VideoFrame {
     Builder& set_ntp_time_ms(int64_t ntp_time_ms);
     Builder& set_rotation(VideoRotation rotation);
     Builder& set_color_space(const ColorSpace& color_space);
+    Builder& set_color_space(const ColorSpace* color_space);
 
    private:
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> video_frame_buffer_;
@@ -110,8 +114,10 @@ class VideoFrame {
   VideoRotation rotation() const { return rotation_; }
   void set_rotation(VideoRotation rotation) { rotation_ = rotation; }
 
-  // Set Color space when available.
-  absl::optional<ColorSpace> color_space() const { return color_space_; }
+  // Get color space when available.
+  const ColorSpace* color_space() const {
+    return color_space_ ? &*color_space_ : nullptr;
+  }
 
   // Get render time in milliseconds.
   // TODO(nisse): Deprecated. Migrate all users to timestamp_us().

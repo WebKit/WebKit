@@ -390,7 +390,7 @@ std::vector<int> TestFua(size_t frame_payload_size,
                                NoFragmentation(frame));
   std::vector<RtpPacketToSend> packets = FetchAllPackets(&packetizer);
 
-  RTC_CHECK_GE(packets.size(), 2);  // Single packet indicates it is not FuA.
+  EXPECT_GE(packets.size(), 2u);  // Single packet indicates it is not FuA.
   std::vector<uint16_t> fua_header;
   std::vector<int> payload_sizes;
 
@@ -422,6 +422,7 @@ TEST(RtpPacketizerH264Test, FUAWithFirstPacketReduction) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
   limits.first_packet_reduction_len = 4;
+  limits.single_packet_reduction_len = 4;
   EXPECT_THAT(TestFua(1198, limits), ElementsAre(597, 601));
 }
 
@@ -429,14 +430,14 @@ TEST(RtpPacketizerH264Test, FUAWithLastPacketReduction) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1200;
   limits.last_packet_reduction_len = 4;
+  limits.single_packet_reduction_len = 4;
   EXPECT_THAT(TestFua(1198, limits), ElementsAre(601, 597));
 }
 
-TEST(RtpPacketizerH264Test, FUAWithFirstAndLastPacketReduction) {
+TEST(RtpPacketizerH264Test, FUAWithSinglePacketReduction) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 1199;
-  limits.first_packet_reduction_len = 100;
-  limits.last_packet_reduction_len = 100;
+  limits.single_packet_reduction_len = 200;
   EXPECT_THAT(TestFua(1000, limits), ElementsAre(500, 500));
 }
 

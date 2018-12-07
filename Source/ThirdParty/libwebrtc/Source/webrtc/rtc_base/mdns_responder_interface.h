@@ -12,36 +12,35 @@
 #define RTC_BASE_MDNS_RESPONDER_INTERFACE_H_
 
 #include <functional>
-#include <map>
-#include <memory>
-#include <set>
 #include <string>
 
 #include "rtc_base/ipaddress.h"
-#include "rtc_base/socketaddress.h"
 
 namespace webrtc {
 
 // Defines an mDNS responder that can be used in ICE candidate gathering, where
-// the local IP addresses of host candidates are obfuscated by mDNS hostnames.
-class MDnsResponderInterface {
+// the local IP addresses of host candidates are replaced by mDNS hostnames.
+class MdnsResponderInterface {
  public:
   using NameCreatedCallback =
       std::function<void(const rtc::IPAddress&, const std::string&)>;
   using NameRemovedCallback = std::function<void(bool)>;
 
-  MDnsResponderInterface() = default;
-  virtual ~MDnsResponderInterface() = default;
+  MdnsResponderInterface() = default;
+  virtual ~MdnsResponderInterface() = default;
 
-  // Asynchronously creates a type-4 UUID hostname for an IP address. The
-  // created name should be given to |callback| with the address that it
-  // represents.
+  // Asynchronously creates and returns a new name via |callback| for |addr| if
+  // there is no name mapped to it by this responder, and initializes the
+  // reference count of this name to one. Otherwise the existing name mapped to
+  // |addr| is returned and its reference count is incremented by one.
   virtual void CreateNameForAddress(const rtc::IPAddress& addr,
                                     NameCreatedCallback callback) = 0;
-  // Removes the name mapped to the given address if there is such an
-  // name-address mapping previously created via CreateNameForAddress. The
-  // result of whether an associated name-address mapping is removed should be
-  // given to |callback|.
+  // Decrements the reference count of the mapped name of |addr|, if
+  // there is a map created previously via CreateNameForAddress; asynchronously
+  // removes the association between |addr| and its mapped name, and returns
+  // true via |callback| if the decremented reference count reaches zero.
+  // Otherwise no operation is done and false is returned via |callback|
+  // asynchronously.
   virtual void RemoveNameForAddress(const rtc::IPAddress& addr,
                                     NameRemovedCallback callback) = 0;
 };

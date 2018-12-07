@@ -833,6 +833,7 @@ class MetaBuildWrapper(object):
       '../../testing/test_env.py',
     ]
 
+    must_retry = False
     if test_type == 'script':
       cmdline = ['../../' + self.ToSrcRelPath(isolate_map[target]['script'])]
     elif is_android:
@@ -874,23 +875,27 @@ class MetaBuildWrapper(object):
             # so it can exit cleanly and report results, instead of being
             # interrupted by swarming and not reporting anything.
             '--timeout=%s' % timeout,
-            '--retry_failed=3',
         ]
         if test_type == 'non_parallel_console_test_launcher':
           # Still use the gtest-parallel-wrapper.py script since we need it to
           # run tests on swarming, but don't execute tests in parallel.
           cmdline.append('--workers=1')
+        must_retry = True
+
+      asan = 'is_asan=true' in vals['gn_args']
+      lsan = 'is_lsan=true' in vals['gn_args']
+      msan = 'is_msan=true' in vals['gn_args']
+      tsan = 'is_tsan=true' in vals['gn_args']
+      sanitizer = asan or lsan or msan or tsan
+      if must_retry and not sanitizer:
+        # Retry would hide most sanitizers detections.
+        cmdline.append('--retry_failed=3')
 
       executable_prefix = '.\\' if self.platform == 'win32' else './'
       executable_suffix = '.exe' if self.platform == 'win32' else ''
       executable = executable_prefix + target + executable_suffix
 
       cmdline.append(executable)
-
-      asan = 'is_asan=true' in vals['gn_args']
-      lsan = 'is_lsan=true' in vals['gn_args']
-      msan = 'is_msan=true' in vals['gn_args']
-      tsan = 'is_tsan=true' in vals['gn_args']
 
       cmdline.extend([
           '--asan=%d' % asan,

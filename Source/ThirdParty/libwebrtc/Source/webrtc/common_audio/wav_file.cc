@@ -10,34 +10,44 @@
 
 #include "common_audio/wav_file.h"
 
+#include <errno.h>
 #include <algorithm>
 #include <cstdio>
-#include <limits>
+#include <type_traits>
 
 #include "common_audio/include/audio_util.h"
 #include "common_audio/wav_header.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/system/arch.h"
 
 namespace webrtc {
+namespace {
 
 // We write 16-bit PCM WAV files.
-static const WavFormat kWavFormat = kWavFormatPcm;
-static const size_t kBytesPerSample = 2;
+constexpr WavFormat kWavFormat = kWavFormatPcm;
+static_assert(std::is_trivially_destructible<WavFormat>::value, "");
+constexpr size_t kBytesPerSample = 2;
 
 // Doesn't take ownership of the file handle and won't close it.
 class ReadableWavFile : public ReadableWav {
  public:
   explicit ReadableWavFile(FILE* file) : file_(file) {}
+  ReadableWavFile(const ReadableWavFile&) = delete;
+  ReadableWavFile& operator=(const ReadableWavFile&) = delete;
   size_t Read(void* buf, size_t num_bytes) override {
     return fread(buf, 1, num_bytes, file_);
+  }
+  bool Eof() const override { return feof(file_) != 0; }
+  bool SeekForward(uint32_t num_bytes) override {
+    return fseek(file_, num_bytes, SEEK_CUR) == 0;
   }
 
  private:
   FILE* file_;
 };
+
+}  // namespace
 
 WavReader::WavReader(const std::string& filename)
     : WavReader(rtc::OpenPlatformFileReadOnly(filename)) {}

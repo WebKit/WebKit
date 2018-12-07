@@ -15,8 +15,8 @@
 #include "p2p/base/pseudotcp.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
+#include "rtc_base/memory_stream.h"
 #include "rtc_base/messagehandler.h"
-#include "rtc_base/stream.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/timeutils.h"
 

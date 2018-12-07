@@ -12,15 +12,24 @@
 
 #include <memory>
 
+#include "api/test/mock_video_decoder.h"
+#include "api/test/mock_video_encoder.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "modules/video_coding/codecs/test/video_codec_unittest.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
+#include "modules/video_coding/codecs/vp8/libvpx_vp8_encoder.h"
+#include "modules/video_coding/codecs/vp8/test/mock_libvpx_interface.h"
 #include "modules/video_coding/utility/vp8_header_parser.h"
 #include "rtc_base/timeutils.h"
 #include "test/video_codec_settings.h"
 
 namespace webrtc {
+
+using testing::Invoke;
+using testing::NiceMock;
+using testing::Return;
+using testing::_;
 
 namespace {
 constexpr uint32_t kInitialTimestampRtp = 123;
@@ -68,7 +77,7 @@ class TestVp8Impl : public VideoCodecUnitTest {
               encoder_->Encode(input_frame, nullptr, &frame_types));
     ASSERT_TRUE(WaitForEncodedFrame(encoded_frame, codec_specific_info));
     VerifyQpParser(*encoded_frame);
-    EXPECT_STREQ("libvpx", codec_specific_info->codec_name);
+    EXPECT_EQ("libvpx", encoder_->GetEncoderInfo().implementation_name);
     EXPECT_EQ(kVideoCodecVP8, codec_specific_info->codecType);
     EXPECT_EQ(0, encoded_frame->SpatialIndex());
   }
@@ -325,7 +334,8 @@ TEST_F(TestVp8Impl, ScalingDisabledIfAutomaticResizeOff) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
 
-  VideoEncoder::ScalingSettings settings = encoder_->GetScalingSettings();
+  VideoEncoder::ScalingSettings settings =
+      encoder_->GetEncoderInfo().scaling_settings;
   EXPECT_FALSE(settings.thresholds.has_value());
 }
 
@@ -335,7 +345,8 @@ TEST_F(TestVp8Impl, ScalingEnabledIfAutomaticResizeOn) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kNumCores, kMaxPayloadSize));
 
-  VideoEncoder::ScalingSettings settings = encoder_->GetScalingSettings();
+  VideoEncoder::ScalingSettings settings =
+      encoder_->GetEncoderInfo().scaling_settings;
   EXPECT_TRUE(settings.thresholds.has_value());
   EXPECT_EQ(kDefaultMinPixelsPerFrame, settings.min_pixels_per_frame);
 }
@@ -378,6 +389,43 @@ TEST_F(TestVp8Impl, DontDropKeyframes) {
   EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
   EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
   EncodeAndExpectFrameWith(*NextInputFrame(), 0, true);
+}
+
+TEST_F(TestVp8Impl, KeepsTimestampOnReencode) {
+  auto* const vpx = new NiceMock<MockLibvpxVp8Interface>();
+  LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)));
+
+  // Settings needed to trigger ScreenshareLayers usage, which is required for
+  // overshoot-drop-reencode logic.
+  codec_settings_.targetBitrate = 200;
+  codec_settings_.maxBitrate = 1000;
+  codec_settings_.mode = VideoCodecMode::kScreensharing;
+  codec_settings_.VP8()->numberOfTemporalLayers = 2;
+
+  EXPECT_CALL(*vpx, img_wrap(_, _, _, _, _, _))
+      .WillOnce(Invoke([](vpx_image_t* img, vpx_img_fmt_t fmt, unsigned int d_w,
+                          unsigned int d_h, unsigned int stride_align,
+                          unsigned char* img_data) {
+        img->fmt = fmt;
+        img->d_w = d_w;
+        img->d_h = d_h;
+        img->img_data = img_data;
+        return img;
+      }));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder.InitEncode(&codec_settings_, 1, 1000));
+  MockEncodedImageCallback callback;
+  encoder.RegisterEncodeCompleteCallback(&callback);
+
+  // Simulate overshoot drop, re-encode: encode function will be called twice
+  // with the same parameters. codec_get_cx_data() will by default return no
+  // image data and be interpreted as drop.
+  EXPECT_CALL(*vpx, codec_encode(_, _, /* pts = */ 0, _, _, _))
+      .Times(2)
+      .WillRepeatedly(Return(vpx_codec_err_t::VPX_CODEC_OK));
+
+  auto delta_frame = std::vector<FrameType>{kVideoFrameDelta};
+  encoder.Encode(*NextInputFrame(), nullptr, &delta_frame);
 }
 
 }  // namespace webrtc

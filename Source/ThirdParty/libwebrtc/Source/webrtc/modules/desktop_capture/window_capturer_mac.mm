@@ -140,9 +140,7 @@ bool WindowCapturerMac::FocusOnSelectedSource() {
 bool WindowCapturerMac::IsOccluded(const DesktopVector& pos) {
   DesktopVector sys_pos = pos;
   if (configuration_monitor_) {
-    configuration_monitor_->Lock();
     auto configuration = configuration_monitor_->desktop_configuration();
-    configuration_monitor_->Unlock();
     sys_pos = pos.add(configuration.bounds.top_left());
   }
   return window_finder_.GetWindowUnderPoint(sys_pos) != window_id_;

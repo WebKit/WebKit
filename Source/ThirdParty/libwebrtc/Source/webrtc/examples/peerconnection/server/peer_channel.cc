@@ -19,9 +19,6 @@
 #include "examples/peerconnection/server/data_socket.h"
 #include "examples/peerconnection/server/utils.h"
 #include "rtc_base/stringencode.h"
-#include "rtc_base/stringutils.h"
-
-using rtc::sprintfn;
 
 // Set to the peer id of the originator when messages are being
 // exchanged between peers, but set to the id of the receiving peer
@@ -98,7 +95,7 @@ std::string ChannelMember::GetEntry() const {
 
   // name, 11-digit int, 1-digit bool, newline, null
   char entry[kMaxNameLength + 15];
-  sprintfn(entry, sizeof(entry), "%s,%d,%d\n",
+  snprintf(entry, sizeof(entry), "%s,%d,%d\n",
            name_.substr(0, kMaxNameLength).c_str(), id_, connected_);
   return entry;
 }

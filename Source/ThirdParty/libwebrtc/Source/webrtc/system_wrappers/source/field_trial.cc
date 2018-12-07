@@ -9,6 +9,7 @@
 
 #include "system_wrappers/include/field_trial.h"
 
+#include <stddef.h>
 #include <string>
 
 // Simple field trial implementation, which allows client to

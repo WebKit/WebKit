@@ -11,13 +11,15 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_ACCELERATE_H_
 #define MODULES_AUDIO_CODING_NETEQ_ACCELERATE_H_
 
-#include "modules/audio_coding/neteq/audio_multi_vector.h"
+#include <stddef.h>
+#include <stdint.h>
+
 #include "modules/audio_coding/neteq/time_stretch.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
 
-// Forward declarations.
+class AudioMultiVector;
 class BackgroundNoise;
 
 // This class implements the Accelerate operation. Most of the work is done

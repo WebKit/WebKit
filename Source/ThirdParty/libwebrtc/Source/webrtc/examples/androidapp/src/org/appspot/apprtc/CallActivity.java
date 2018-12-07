@@ -171,7 +171,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
   private RoomConnectionParameters roomConnectionParameters;
   @Nullable
   private PeerConnectionParameters peerConnectionParameters;
-  private boolean iceConnected;
+  private boolean connected;
   private boolean isError;
   private boolean callControlFragmentVisible = true;
   private long callStartedTimeMs;
@@ -203,7 +203,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     getWindow().getDecorView().setSystemUiVisibility(getSystemUiVisibility());
     setContentView(R.layout.activity_call);
 
-    iceConnected = false;
+    connected = false;
     signalingParameters = null;
 
     // Create UI controls.
@@ -553,7 +553,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
 
   // Helper functions.
   private void toggleCallControlFragmentVisibility() {
-    if (!iceConnected || !callFragment.isAdded()) {
+    if (!connected || !callFragment.isAdded()) {
       return;
     }
     // Show/hide call control fragment
@@ -649,7 +649,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       audioManager.stop();
       audioManager = null;
     }
-    if (iceConnected && !isError) {
+    if (connected && !isError) {
       setResult(RESULT_OK);
     } else {
       setResult(RESULT_CANCELED);
@@ -911,8 +911,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       @Override
       public void run() {
         logAndToast("ICE connected, delay=" + delta + "ms");
-        iceConnected = true;
-        callConnected();
       }
     });
   }
@@ -923,7 +921,30 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
       @Override
       public void run() {
         logAndToast("ICE disconnected");
-        iceConnected = false;
+      }
+    });
+  }
+
+  @Override
+  public void onConnected() {
+    final long delta = System.currentTimeMillis() - callStartedTimeMs;
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        logAndToast("DTLS connected, delay=" + delta + "ms");
+        connected = true;
+        callConnected();
+      }
+    });
+  }
+
+  @Override
+  public void onDisconnected() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        logAndToast("DTLS disconnected");
+        connected = false;
         disconnect();
       }
     });
@@ -937,7 +958,7 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        if (!isError && iceConnected) {
+        if (!isError && connected) {
           hudFragment.updateEncoderStatistics(reports);
         }
       }

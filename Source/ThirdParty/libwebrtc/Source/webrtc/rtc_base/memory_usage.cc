@@ -61,6 +61,9 @@ int64_t GetProcessResidentSizeBytes() {
     return -1;
   }
   return pmc.WorkingSetSize;
+#elif defined(WEBRTC_FUCHSIA)
+  RTC_LOG_ERR(LS_ERROR) << "GetProcessResidentSizeBytes() not implemented";
+  return 0;
 #else
   // Not implemented yet.
   static_assert(false,

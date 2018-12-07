@@ -11,18 +11,19 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_MATCHED_FILTER_H_
 
-#include <array>
-#include <memory>
+#include <stddef.h>
 #include <vector>
 
-#include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
-#include "modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/system/arch.h"
 
 namespace webrtc {
+
+class ApmDataDumper;
+struct DownsampledRenderBuffer;
+
 namespace aec3 {
 
 #if defined(WEBRTC_HAS_NEON)
@@ -65,7 +66,6 @@ void MatchedFilterCore(size_t x_start_index,
 
 }  // namespace aec3
 
-class ApmDataDumper;
 
 // Produces recursively updated cross-correlation estimates for several signal
 // shifts where the intra-shift spacing is uniform.

@@ -10,6 +10,8 @@
 
 #include "rtc_base/criticalsection.h"
 
+#include <time.h>
+
 #include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/platform_thread_types.h"

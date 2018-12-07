@@ -117,10 +117,8 @@ void MouseCursorMonitorMac::Capture() {
 
   DesktopVector position(gc_position.x, gc_position.y);
 
-  configuration_monitor_->Lock();
   MacDesktopConfiguration configuration =
       configuration_monitor_->desktop_configuration();
-  configuration_monitor_->Unlock();
   float scale = GetScaleFactorAtPosition(configuration, position);
 
   CaptureImage(scale);

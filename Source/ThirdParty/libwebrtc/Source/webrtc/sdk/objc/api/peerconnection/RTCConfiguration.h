@@ -11,6 +11,7 @@
 #import <Foundation/Foundation.h>
 
 #import "RTCCertificate.h"
+#import "RTCCryptoOptions.h"
 #import "RTCMacros.h"
 
 @class RTCIceServer;
@@ -91,6 +92,19 @@ RTC_OBJC_EXPORT
 @property(nonatomic, assign) RTCCandidateNetworkPolicy candidateNetworkPolicy;
 @property(nonatomic, assign) RTCContinualGatheringPolicy continualGatheringPolicy;
 
+/** If set to YES, don't gather IPv6 ICE candidates.
+ *  Default is NO.
+ */
+@property(nonatomic, assign) BOOL disableIPV6;
+
+/** If set to YES, don't gather IPv6 ICE candidates on Wi-Fi.
+ *  Only intended to be used on specific devices. Certain phones disable IPv6
+ *  when the screen is turned off and it would be better to just disable the
+ *  IPv6 ICE candidates on Wi-Fi in those cases.
+ *  Default is NO.
+ */
+@property(nonatomic, assign) BOOL disableIPV6OnWiFi;
+
 /** By default, the PeerConnection will use a limited number of IPv6 network
  *  interfaces, in order to avoid too many ICE candidate pairs being created
  *  and delaying ICE completion.
@@ -167,6 +181,35 @@ RTC_OBJC_EXPORT
  *  workaround for crbug.com/835958
  */
 @property(nonatomic, assign) BOOL activeResetSrtpParams;
+
+/**
+ * If MediaTransportFactory is provided in PeerConnectionFactory, this flag informs PeerConnection
+ * that it should use the MediaTransportInterface.
+ */
+@property(nonatomic, assign) BOOL useMediaTransport;
+
+/**
+ * If MediaTransportFactory is provided in PeerConnectionFactory, this flag informs PeerConnection
+ * that it should use the MediaTransportInterface for data channels.
+ */
+@property(nonatomic, assign) BOOL useMediaTransportForDataChannels;
+
+/**
+ * Defines advanced optional cryptographic settings related to SRTP and
+ * frame encryption for native WebRTC. Setting this will overwrite any
+ * options set through the PeerConnectionFactory (which is deprecated).
+ */
+@property(nonatomic, nullable) RTCCryptoOptions *cryptoOptions;
+
+/**
+ * Time interval between audio RTCP reports.
+ */
+@property(nonatomic, assign) int rtcpAudioReportIntervalMs;
+
+/**
+ * Time interval between video RTCP reports.
+ */
+@property(nonatomic, assign) int rtcpVideoReportIntervalMs;
 
 - (instancetype)init;
 

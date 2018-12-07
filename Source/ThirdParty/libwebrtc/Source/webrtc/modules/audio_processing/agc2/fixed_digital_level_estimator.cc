@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "api/array_view.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/checks.h"
 

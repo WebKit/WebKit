@@ -10,7 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtcp_nack_stats.h"
 
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"
 
 namespace webrtc {
 

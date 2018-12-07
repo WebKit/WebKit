@@ -14,6 +14,7 @@
 #include <jni.h>
 
 #include "api/mediastreaminterface.h"
+#include "rtc_base/thread.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
 
 namespace webrtc {
@@ -32,7 +33,8 @@ class JavaVideoTrackSourceInterface : public VideoTrackSourceInterface {
 rtc::scoped_refptr<JavaVideoTrackSourceInterface> CreateJavaVideoSource(
     JNIEnv* env,
     rtc::Thread* signaling_thread,
-    bool is_screencast);
+    bool is_screencast,
+    bool align_timestamps);
 
 }  // namespace webrtc
 

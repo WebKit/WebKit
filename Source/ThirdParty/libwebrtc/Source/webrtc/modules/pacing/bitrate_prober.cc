@@ -13,9 +13,9 @@
 #include <algorithm>
 
 #include "absl/memory/memory.h"
+#include "logging/rtc_event_log/events/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
-#include "modules/pacing/paced_sender.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -96,8 +96,9 @@ void BitrateProber::CreateProbeCluster(int bitrate_bps, int64_t now_ms) {
   ProbeCluster cluster;
   cluster.time_created_ms = now_ms;
   cluster.pace_info.probe_cluster_min_probes = kMinProbePacketsSent;
-  cluster.pace_info.probe_cluster_min_bytes =
-      bitrate_bps * kMinProbeDurationMs / 8000;
+  cluster.pace_info.probe_cluster_min_bytes = static_cast<int32_t>(
+      static_cast<int64_t>(bitrate_bps) * kMinProbeDurationMs / 8000);
+  RTC_DCHECK_GE(cluster.pace_info.probe_cluster_min_bytes, 0);
   cluster.pace_info.send_bitrate_bps = bitrate_bps;
   cluster.pace_info.probe_cluster_id = next_cluster_id_++;
   clusters_.push(cluster);
@@ -126,9 +127,9 @@ int BitrateProber::TimeUntilNextProbe(int64_t now_ms) {
   if (next_probe_time_ms_ >= 0) {
     time_until_probe_ms = next_probe_time_ms_ - now_ms;
     if (time_until_probe_ms < -kMaxProbeDelayMs) {
-      RTC_LOG(LS_WARNING) << "Probe delay too high"
-                          << " (next_ms:" << next_probe_time_ms_
-                          << ", now_ms: " << now_ms << ")";
+      RTC_DLOG(LS_WARNING) << "Probe delay too high"
+                           << " (next_ms:" << next_probe_time_ms_
+                           << ", now_ms: " << now_ms << ")";
       return -1;
     }
   }

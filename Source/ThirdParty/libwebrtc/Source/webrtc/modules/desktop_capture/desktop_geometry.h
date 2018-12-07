@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include "rtc_base/constructormagic.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -74,7 +75,7 @@ class DesktopSize {
 };
 
 // Represents a rectangle on the screen.
-class DesktopRect {
+class RTC_EXPORT DesktopRect {
  public:
   static DesktopRect MakeSize(const DesktopSize& size) {
     return DesktopRect(0, 0, size.width(), size.height());

@@ -11,12 +11,15 @@
 #ifndef RTC_BASE_ASYNCTCPSOCKET_H_
 #define RTC_BASE_ASYNCTCPSOCKET_H_
 
+#include <stddef.h>
 #include <memory>
 
 #include "rtc_base/asyncpacketsocket.h"
+#include "rtc_base/asyncsocket.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/constructormagic.h"
-#include "rtc_base/socketfactory.h"
+#include "rtc_base/socket.h"
+#include "rtc_base/socketaddress.h"
 
 namespace rtc {
 

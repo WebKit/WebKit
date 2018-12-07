@@ -31,9 +31,11 @@ class DelayManager {
 
   // Create a DelayManager object. Notify the delay manager that the packet
   // buffer can hold no more than |max_packets_in_buffer| packets (i.e., this
-  // is the number of packet slots in the buffer). Supply a PeakDetector
-  // object to the DelayManager.
+  // is the number of packet slots in the buffer) and that the target delay
+  // should be greater than or equal to |base_min_target_delay_ms|. Supply a
+  // PeakDetector object to the DelayManager.
   DelayManager(size_t max_packets_in_buffer,
+               int base_min_target_delay_ms,
                DelayPeakDetector* peak_detector,
                const TickTimer* tick_timer);
 
@@ -144,6 +146,8 @@ class DelayManager {
   IATVector iat_vector_;                // Histogram of inter-arrival times.
   int iat_factor_;  // Forgetting factor for updating the IAT histogram (Q15).
   const TickTimer* tick_timer_;
+  const int base_min_target_delay_ms_;  // Lower bound for target_level_ and
+                                        // minimum_delay_ms_.
   // Time elapsed since last packet.
   std::unique_ptr<TickTimer::Stopwatch> packet_iat_stopwatch_;
   int base_target_level_;  // Currently preferred buffer level before peak

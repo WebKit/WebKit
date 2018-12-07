@@ -19,15 +19,17 @@
 
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/rate_statistics.h"
-#include "system_wrappers/include/ntp_time.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
-class StreamStatisticianImpl : public StreamStatistician {
+class StreamStatisticianImpl : public StreamStatistician,
+                               public RtpPacketSinkInterface {
  public:
   StreamStatisticianImpl(uint32_t ssrc,
                          Clock* clock,
                          bool enable_retransmit_detection,
+                         int max_reordering_threshold,
                          RtcpStatisticsCallback* rtcp_callback,
                          StreamDataCountersCallback* rtp_callback);
   ~StreamStatisticianImpl() override;
@@ -41,24 +43,22 @@ class StreamStatisticianImpl : public StreamStatistician {
       StreamDataCounters* data_counters) const override;
   uint32_t BitrateReceived() const override;
 
-  void IncomingPacket(const RTPHeader& rtp_header, size_t packet_length);
-  void FecPacketReceived(const RTPHeader& header, size_t packet_length);
+  // Implements RtpPacketSinkInterface
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
+
+  void FecPacketReceived(const RtpPacketReceived& packet);
   void SetMaxReorderingThreshold(int max_reordering_threshold);
   void EnableRetransmitDetection(bool enable);
 
  private:
-  bool IsRetransmitOfOldPacket(const RTPHeader& header) const
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
-  bool InOrderPacketInternal(uint16_t sequence_number) const
+  bool IsRetransmitOfOldPacket(const RtpPacketReceived& packet,
+                               int64_t now_ms) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
   RtcpStatistics CalculateRtcpStatistics()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
-  void UpdateJitter(const RTPHeader& header, NtpTime receive_time)
+  void UpdateJitter(const RtpPacketReceived& packet, int64_t receive_time_ms)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
-  StreamDataCounters UpdateCounters(const RTPHeader& rtp_header,
-                                    size_t packet_length,
-                                    bool retransmitted)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(stream_lock_);
+  StreamDataCounters UpdateCounters(const RtpPacketReceived& packet);
 
   const uint32_t ssrc_;
   Clock* const clock_;
@@ -73,14 +73,12 @@ class StreamStatisticianImpl : public StreamStatistician {
   uint32_t cumulative_loss_ RTC_GUARDED_BY(&stream_lock_);
 
   int64_t last_receive_time_ms_ RTC_GUARDED_BY(&stream_lock_);
-  NtpTime last_receive_time_ntp_ RTC_GUARDED_BY(&stream_lock_);
   uint32_t last_received_timestamp_ RTC_GUARDED_BY(&stream_lock_);
   uint16_t received_seq_first_ RTC_GUARDED_BY(&stream_lock_);
   uint16_t received_seq_max_ RTC_GUARDED_BY(&stream_lock_);
   uint16_t received_seq_wraps_ RTC_GUARDED_BY(&stream_lock_);
 
   // Current counter values.
-  size_t received_packet_overhead_ RTC_GUARDED_BY(&stream_lock_);
   StreamDataCounters receive_counters_ RTC_GUARDED_BY(&stream_lock_);
 
   // Counter values when we sent the last report.
@@ -94,47 +92,36 @@ class StreamStatisticianImpl : public StreamStatistician {
   StreamDataCountersCallback* const rtp_callback_;
 };
 
-class ReceiveStatisticsImpl : public ReceiveStatistics,
-                              public RtcpStatisticsCallback,
-                              public StreamDataCountersCallback {
+class ReceiveStatisticsImpl : public ReceiveStatistics {
  public:
-  explicit ReceiveStatisticsImpl(Clock* clock);
+  ReceiveStatisticsImpl(Clock* clock,
+                        RtcpStatisticsCallback* rtcp_callback,
+                        StreamDataCountersCallback* rtp_callback);
 
   ~ReceiveStatisticsImpl() override;
 
-  // Implement ReceiveStatisticsProvider.
+  // Implements ReceiveStatisticsProvider.
   std::vector<rtcp::ReportBlock> RtcpReportBlocks(size_t max_blocks) override;
 
-  // Implement RtpPacketSinkInterface
+  // Implements RtpPacketSinkInterface
   void OnRtpPacket(const RtpPacketReceived& packet) override;
 
-  // Implement ReceiveStatistics.
-  void IncomingPacket(const RTPHeader& header, size_t packet_length) override;
+  // Implements ReceiveStatistics.
   void FecPacketReceived(const RtpPacketReceived& packet) override;
   StreamStatistician* GetStatistician(uint32_t ssrc) const override;
   void SetMaxReorderingThreshold(int max_reordering_threshold) override;
   void EnableRetransmitDetection(uint32_t ssrc, bool enable) override;
 
-  void RegisterRtcpStatisticsCallback(
-      RtcpStatisticsCallback* callback) override;
-
-  void RegisterRtpStatisticsCallback(
-      StreamDataCountersCallback* callback) override;
-
  private:
-  void StatisticsUpdated(const RtcpStatistics& statistics,
-                         uint32_t ssrc) override;
-  void CNameChanged(const char* cname, uint32_t ssrc) override;
-  void DataCountersUpdated(const StreamDataCounters& counters,
-                           uint32_t ssrc) override;
-
   Clock* const clock_;
   rtc::CriticalSection receive_statistics_lock_;
   uint32_t last_returned_ssrc_;
-  std::map<uint32_t, StreamStatisticianImpl*> statisticians_;
+  int max_reordering_threshold_ RTC_GUARDED_BY(receive_statistics_lock_);
+  std::map<uint32_t, StreamStatisticianImpl*> statisticians_
+      RTC_GUARDED_BY(receive_statistics_lock_);
 
-  RtcpStatisticsCallback* rtcp_stats_callback_;
-  StreamDataCountersCallback* rtp_stats_callback_;
+  RtcpStatisticsCallback* const rtcp_stats_callback_;
+  StreamDataCountersCallback* const rtp_stats_callback_;
 };
 }  // namespace webrtc
 #endif  // MODULES_RTP_RTCP_SOURCE_RECEIVE_STATISTICS_IMPL_H_

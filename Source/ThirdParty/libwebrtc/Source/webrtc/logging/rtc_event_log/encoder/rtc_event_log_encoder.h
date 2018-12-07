@@ -22,7 +22,8 @@ class RtcEventLogEncoder {
  public:
   virtual ~RtcEventLogEncoder() = default;
 
-  virtual std::string EncodeLogStart(int64_t timestamp_us) = 0;
+  virtual std::string EncodeLogStart(int64_t timestamp_us,
+                                     int64_t utc_time_us) = 0;
   virtual std::string EncodeLogEnd(int64_t timestamp_us) = 0;
 
   virtual std::string EncodeBatch(

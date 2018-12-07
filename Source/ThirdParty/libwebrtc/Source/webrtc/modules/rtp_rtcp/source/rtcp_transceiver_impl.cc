@@ -421,12 +421,6 @@ std::vector<rtcp::ReportBlock> RtcpTransceiverImpl::CreateReportBlocks(
     auto it = remote_senders_.find(report_block.source_ssrc());
     if (it == remote_senders_.end() ||
         !it->second.last_received_sender_report) {
-      if (config_.avoid_zero_last_sr_in_last_report_block && last_sr != 0) {
-        // Simulate behaviour of the RtcpSender to avoid hitting bug in
-        // RtcpReceiver.
-        report_block.SetLastSr(last_sr);
-        report_block.SetDelayLastSr(last_delay);
-      }
       continue;
     }
     const SenderReportTimes& last_sender_report =

@@ -11,14 +11,14 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_RTP_UTILITY_H_
 #define MODULES_RTP_RTCP_SOURCE_RTP_UTILITY_H_
 
-#include <cstring>
-#include <map>
+#include <stdint.h>
+#include <algorithm>
 
-#include "modules/rtp_rtcp/include/receive_statistics.h"
+#include "absl/strings/string_view.h"
+#include "api/rtp_headers.h"
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
-#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 
@@ -27,15 +27,14 @@ const uint8_t kRtpMarkerBitMask = 0x80;
 namespace RtpUtility {
 
 struct Payload {
-  Payload(const char* name, const PayloadUnion& pu) : typeSpecific(pu) {
-    std::strncpy(this->name, name, sizeof(this->name) - 1);
-    this->name[sizeof(this->name) - 1] = '\0';
+  Payload(absl::string_view payload_name, const PayloadUnion& pu)
+      : typeSpecific(pu) {
+    size_t clipped_size = payload_name.copy(name, sizeof(name) - 1);
+    name[clipped_size] = '\0';
   }
   char name[RTP_PAYLOAD_NAME_SIZE];
   PayloadUnion typeSpecific;
 };
-
-bool StringCompare(const char* str1, const char* str2, const uint32_t length);
 
 // Round up to the nearest size that is a multiple of 4.
 size_t Word32Align(size_t size);

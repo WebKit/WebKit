@@ -11,6 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_ECHO_REMOVER_METRICS_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_ECHO_REMOVER_METRICS_H_
 
+#include <array>
+
+#include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/aec_state.h"
 #include "rtc_base/constructormagic.h"
 

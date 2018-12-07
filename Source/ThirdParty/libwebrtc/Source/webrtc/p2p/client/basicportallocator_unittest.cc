@@ -38,7 +38,6 @@
 
 using rtc::IPAddress;
 using rtc::SocketAddress;
-using rtc::Thread;
 
 #define MAYBE_SKIP_IPV4                        \
   if (!rtc::HasIPv4Enabled()) {                \
@@ -147,15 +146,15 @@ class BasicPortAllocatorTestBase : public testing::Test,
         // must be called.
         nat_factory_(vss_.get(), kNatUdpAddr, kNatTcpAddr),
         nat_socket_factory_(new rtc::BasicPacketSocketFactory(&nat_factory_)),
-        stun_server_(TestStunServer::Create(Thread::Current(), kStunAddr)),
-        relay_server_(Thread::Current(),
+        stun_server_(TestStunServer::Create(rtc::Thread::Current(), kStunAddr)),
+        relay_server_(rtc::Thread::Current(),
                       kRelayUdpIntAddr,
                       kRelayUdpExtAddr,
                       kRelayTcpIntAddr,
                       kRelayTcpExtAddr,
                       kRelaySslTcpIntAddr,
                       kRelaySslTcpExtAddr),
-        turn_server_(Thread::Current(), kTurnUdpIntAddr, kTurnUdpExtAddr),
+        turn_server_(rtc::Thread::Current(), kTurnUdpIntAddr, kTurnUdpExtAddr),
         candidate_allocation_done_(false) {
     ServerAddresses stun_servers;
     stun_servers.insert(kStunAddr);
@@ -2247,8 +2246,8 @@ TEST_F(BasicPortAllocatorTest, IceRegatheringMetricsLoggedWhenNetworkChanges) {
 }
 
 // Test that when an mDNS responder is present, the local address of a host
-// candidate is masked by an mDNS hostname and the related address of any other
-// type of candidates is set to 0.0.0.0 or ::0.
+// candidate is concealed by an mDNS hostname and the related address of a srflx
+// candidate is set to 0.0.0.0 or ::0.
 TEST_F(BasicPortAllocatorTest, HostCandidateAddressIsReplacedByHostname) {
   // Default config uses GTURN and no NAT, so replace that with the
   // desired setup (NAT, STUN server, TURN server, UDP/TCP).
@@ -2258,7 +2257,7 @@ TEST_F(BasicPortAllocatorTest, HostCandidateAddressIsReplacedByHostname) {
   AddTurnServers(kTurnUdpIntIPv6Addr, kTurnTcpIntIPv6Addr);
 
   ASSERT_EQ(&network_manager_, allocator().network_manager());
-  network_manager_.CreateMDnsResponder();
+  network_manager_.CreateMdnsResponder();
   AddInterface(kClientAddr);
   ASSERT_TRUE(CreateSession(ICE_CANDIDATE_COMPONENT_RTP));
   session_->StartGettingPorts();
@@ -2270,23 +2269,29 @@ TEST_F(BasicPortAllocatorTest, HostCandidateAddressIsReplacedByHostname) {
   int num_srflx_candidates = 0;
   int num_relay_candidates = 0;
   for (const auto& candidate : candidates_) {
+    const auto& raddr = candidate.related_address();
+
     if (candidate.type() == LOCAL_PORT_TYPE) {
-      EXPECT_TRUE(candidate.address().IsUnresolvedIP());
+      EXPECT_FALSE(candidate.address().hostname().empty());
+      EXPECT_TRUE(raddr.IsNil());
       if (candidate.protocol() == UDP_PROTOCOL_NAME) {
         ++num_host_udp_candidates;
       } else {
         ++num_host_tcp_candidates;
       }
+    } else if (candidate.type() == STUN_PORT_TYPE) {
+      // For a srflx candidate, the related address should be set to 0.0.0.0 or
+      // ::0
+      EXPECT_TRUE(IPIsAny(raddr.ipaddr()));
+      EXPECT_EQ(raddr.port(), 0);
+      ++num_srflx_candidates;
+    } else if (candidate.type() == RELAY_PORT_TYPE) {
+      EXPECT_EQ(kNatUdpAddr.ipaddr(), raddr.ipaddr());
+      EXPECT_EQ(kNatUdpAddr.family(), raddr.family());
+      ++num_relay_candidates;
     } else {
-      EXPECT_NE(PRFLX_PORT_TYPE, candidate.type());
-      // The related address should be set to 0.0.0.0 or ::0 for srflx and
-      // relay candidates.
-      EXPECT_EQ(rtc::SocketAddress(), candidate.related_address());
-      if (candidate.type() == STUN_PORT_TYPE) {
-        ++num_srflx_candidates;
-      } else {
-        ++num_relay_candidates;
-      }
+      // prflx candidates are not expected
+      FAIL();
     }
   }
   EXPECT_EQ(1, num_host_udp_candidates);

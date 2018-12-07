@@ -11,6 +11,8 @@
 #ifndef RTC_BASE_RATE_STATISTICS_H_
 #define RTC_BASE_RATE_STATISTICS_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 
 #include "absl/types/optional.h"

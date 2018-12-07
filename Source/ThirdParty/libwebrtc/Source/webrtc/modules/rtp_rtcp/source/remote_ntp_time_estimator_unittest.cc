@@ -56,7 +56,8 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
                               int64_t networking_delay_ms) {
     uint32_t rtcp_timestamp = GetRemoteTimestamp();
     int64_t ntp_error_fractions =
-        ntp_error_ms * NtpTime::kFractionsPerSecond / 1000;
+        ntp_error_ms * static_cast<int64_t>(NtpTime::kFractionsPerSecond) /
+        1000;
     NtpTime ntp(static_cast<uint64_t>(remote_clock_.CurrentNtpTime()) +
                 ntp_error_fractions);
     AdvanceTimeMilliseconds(kTestRtt / 2 + networking_delay_ms);
@@ -110,7 +111,17 @@ TEST_F(RemoteNtpTimeEstimatorTest, Estimate) {
 }
 
 TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
-  // Remote peer sends first 5 RTCP SR without errors.
+  // Remote peer sends first 10 RTCP SR without errors.
+  AdvanceTimeMilliseconds(1000);
+  SendRtcpSr();
+  AdvanceTimeMilliseconds(1000);
+  SendRtcpSr();
+  AdvanceTimeMilliseconds(1000);
+  SendRtcpSr();
+  AdvanceTimeMilliseconds(1000);
+  SendRtcpSr();
+  AdvanceTimeMilliseconds(1000);
+  SendRtcpSr();
   AdvanceTimeMilliseconds(1000);
   SendRtcpSr();
   AdvanceTimeMilliseconds(1000);
@@ -122,18 +133,17 @@ TEST_F(RemoteNtpTimeEstimatorTest, AveragesErrorsOut) {
   AdvanceTimeMilliseconds(1000);
   SendRtcpSr();
 
-  AdvanceTimeMilliseconds(15);
+  AdvanceTimeMilliseconds(150);
   uint32_t rtp_timestamp = GetRemoteTimestamp();
   int64_t capture_ntp_time_ms = local_clock_.CurrentNtpInMilliseconds();
-
   // Local peer gets enough RTCP SR to calculate the capture time.
   EXPECT_EQ(capture_ntp_time_ms, estimator_->Estimate(rtp_timestamp));
 
   // Remote sends corrupted RTCP SRs
   AdvanceTimeMilliseconds(1000);
-  SendRtcpSrInaccurately(10, 10);
+  SendRtcpSrInaccurately(/*ntp_error_ms=*/2, /*networking_delay_ms=*/-1);
   AdvanceTimeMilliseconds(1000);
-  SendRtcpSrInaccurately(-20, 5);
+  SendRtcpSrInaccurately(/*ntp_error_ms=*/-2, /*networking_delay_ms=*/1);
 
   // New RTP packet to estimate timestamp.
   AdvanceTimeMilliseconds(150);

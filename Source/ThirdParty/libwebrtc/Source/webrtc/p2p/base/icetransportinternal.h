@@ -15,11 +15,12 @@
 #include <vector>
 
 #include "api/candidate.h"
+#include "api/transport/enums.h"
 #include "p2p/base/candidatepairinterface.h"
 #include "p2p/base/packettransportinternal.h"
 #include "p2p/base/port.h"
 #include "p2p/base/transportdescription.h"
-#include "rtc_base/stringencode.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace cricket {
 
@@ -181,14 +182,17 @@ enum IceProtocolType {
 
 // IceTransportInternal is an internal abstract class that does ICE.
 // Once the public interface is supported,
-// (https://www.w3.org/TR/webrtc/#rtcicetransport-interface)
+// (https://www.w3.org/TR/webrtc/#rtcicetransport)
 // the IceTransportInterface will be split from this class.
-class IceTransportInternal : public rtc::PacketTransportInternal {
+class RTC_EXPORT IceTransportInternal : public rtc::PacketTransportInternal {
  public:
   IceTransportInternal();
   ~IceTransportInternal() override;
 
+  // TODO(bugs.webrtc.org/9308): Remove GetState once all uses have been
+  // migrated to GetIceTransportState.
   virtual IceTransportState GetState() const = 0;
+  virtual webrtc::IceTransportState GetIceTransportState() const = 0;
 
   virtual int component() const = 0;
 
@@ -258,7 +262,12 @@ class IceTransportInternal : public rtc::PacketTransportInternal {
   sigslot::signal1<IceTransportInternal*> SignalRoleConflict;
 
   // Emitted whenever the transport state changed.
+  // TODO(bugs.webrtc.org/9308): Remove once all uses have migrated to the new
+  // IceTransportState.
   sigslot::signal1<IceTransportInternal*> SignalStateChanged;
+
+  // Emitted whenever the new standards-compliant transport state changed.
+  sigslot::signal1<IceTransportInternal*> SignalIceTransportStateChanged;
 
   // Invoked when the transport is being destroyed.
   sigslot::signal1<IceTransportInternal*> SignalDestroyed;

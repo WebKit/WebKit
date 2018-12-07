@@ -45,7 +45,6 @@ class EventLogAnalyzer {
 
   void CreateIncomingPacketLossGraph(Plot* plot);
 
-  void CreateIncomingDelayDeltaGraph(Plot* plot);
   void CreateIncomingDelayGraph(Plot* plot);
 
   void CreateFractionLossGraph(Plot* plot);

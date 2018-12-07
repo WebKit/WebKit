@@ -12,6 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_CROPPED_DESKTOP_FRAME_H_
 
 #include "modules/desktop_capture/desktop_frame.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
@@ -20,9 +21,9 @@ namespace webrtc {
 // |frame| should not be nullptr. |rect| is in |frame| coordinate, i.e.
 // |frame|->top_left() does not impact the area of |rect|.
 // Returns nullptr frame if |rect| is not contained by the bounds of |frame|.
-std::unique_ptr<DesktopFrame> CreateCroppedDesktopFrame(
-    std::unique_ptr<DesktopFrame> frame,
-    const DesktopRect& rect);
+std::unique_ptr<DesktopFrame> RTC_EXPORT
+CreateCroppedDesktopFrame(std::unique_ptr<DesktopFrame> frame,
+                          const DesktopRect& rect);
 
 }  // namespace webrtc
 

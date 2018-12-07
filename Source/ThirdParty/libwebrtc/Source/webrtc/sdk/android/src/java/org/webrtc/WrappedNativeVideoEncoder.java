@@ -33,11 +33,6 @@ abstract class WrappedNativeVideoEncoder implements VideoEncoder {
   }
 
   @Override
-  public VideoCodecStatus setChannelParameters(short packetLoss, long roundTripTimeMs) {
-    throw new UnsupportedOperationException("Not implemented.");
-  }
-
-  @Override
   public VideoCodecStatus setRateAllocation(BitrateAllocation allocation, int framerate) {
     throw new UnsupportedOperationException("Not implemented.");
   }

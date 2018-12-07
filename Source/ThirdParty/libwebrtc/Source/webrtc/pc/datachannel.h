@@ -122,6 +122,8 @@ class DataChannel : public DataChannelInterface, public sigslot::has_slots<> {
       const std::string& label,
       const InternalDataChannelInit& config);
 
+  static bool IsSctpLike(cricket::DataChannelType type);
+
   virtual void RegisterObserver(DataChannelObserver* observer);
   virtual void UnregisterObserver();
 

@@ -82,16 +82,17 @@ class FakeNetworkManager : public NetworkManagerBase, public MessageHandler {
   // MessageHandler interface.
   virtual void OnMessage(Message* msg) { DoUpdateNetworks(); }
 
-  void CreateMDnsResponder() {
+  void CreateMdnsResponder() {
     if (mdns_responder_ == nullptr) {
-      mdns_responder_ = absl::make_unique<webrtc::FakeMDnsResponder>();
+      mdns_responder_ =
+          absl::make_unique<webrtc::FakeMdnsResponder>(rtc::Thread::Current());
     }
   }
 
   using NetworkManagerBase::set_enumeration_permission;
   using NetworkManagerBase::set_default_local_addresses;
 
-  webrtc::MDnsResponderInterface* GetMDnsResponder() const override {
+  webrtc::MdnsResponderInterface* GetMdnsResponder() const override {
     return mdns_responder_.get();
   }
 
@@ -131,7 +132,7 @@ class FakeNetworkManager : public NetworkManagerBase, public MessageHandler {
   IPAddress default_local_ipv4_address_;
   IPAddress default_local_ipv6_address_;
 
-  std::unique_ptr<webrtc::FakeMDnsResponder> mdns_responder_;
+  std::unique_ptr<webrtc::FakeMdnsResponder> mdns_responder_;
 };
 
 }  // namespace rtc

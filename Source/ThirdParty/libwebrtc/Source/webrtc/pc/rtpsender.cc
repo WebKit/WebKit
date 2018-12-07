@@ -58,7 +58,8 @@ bool UnimplementedRtpEncodingParameterHasValue(
 // layer.
 bool PerSenderRtpEncodingParameterHasValue(
     const RtpEncodingParameters& encoding_params) {
-  if (encoding_params.bitrate_priority != kDefaultBitratePriority) {
+  if (encoding_params.bitrate_priority != kDefaultBitratePriority ||
+      encoding_params.network_priority != kDefaultBitratePriority) {
     return true;
   }
   return false;
@@ -68,13 +69,14 @@ bool PerSenderRtpEncodingParameterHasValue(
 // correct worker thread only if both the media channel exists and a ssrc has
 // been allocated to the stream.
 void MaybeAttachFrameEncryptorToMediaChannel(
-    const absl::optional<uint32_t> ssrc,
+    const uint32_t ssrc,
     rtc::Thread* worker_thread,
     rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor,
-    cricket::MediaChannel* media_channel) {
-  if (media_channel && ssrc.has_value()) {
-    return worker_thread->Invoke<void>(RTC_FROM_HERE, [&] {
-      media_channel->SetFrameEncryptor(*ssrc, frame_encryptor);
+    cricket::MediaChannel* media_channel,
+    bool stopped) {
+  if (media_channel && frame_encryptor && ssrc && !stopped) {
+    worker_thread->Invoke<void>(RTC_FROM_HERE, [&] {
+      media_channel->SetFrameEncryptor(ssrc, frame_encryptor);
     });
   }
 }
@@ -305,8 +307,12 @@ rtc::scoped_refptr<DtmfSenderInterface> AudioRtpSender::GetDtmfSender() const {
 void AudioRtpSender::SetFrameEncryptor(
     rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor) {
   frame_encryptor_ = std::move(frame_encryptor);
-  MaybeAttachFrameEncryptorToMediaChannel(ssrc_, worker_thread_,
-                                          frame_encryptor_, media_channel_);
+  // Special Case: Set the frame encryptor to any value on any existing channel.
+  if (media_channel_ && ssrc_ && !stopped_) {
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+      media_channel_->SetFrameEncryptor(ssrc_, frame_encryptor_);
+    });
+  }
 }
 
 rtc::scoped_refptr<FrameEncryptorInterface> AudioRtpSender::GetFrameEncryptor()
@@ -356,8 +362,8 @@ void AudioRtpSender::SetSsrc(uint32_t ssrc) {
     });
   }
   // Each time there is an ssrc update.
-  MaybeAttachFrameEncryptorToMediaChannel(ssrc_, worker_thread_,
-                                          frame_encryptor_, media_channel_);
+  MaybeAttachFrameEncryptorToMediaChannel(
+      ssrc_, worker_thread_, frame_encryptor_, media_channel_, stopped_);
 }
 
 void AudioRtpSender::Stop() {
@@ -380,9 +386,10 @@ void AudioRtpSender::Stop() {
   stopped_ = true;
 }
 
-void AudioRtpSender::SetVoiceMediaChannel(
-    cricket::VoiceMediaChannel* voice_media_channel) {
-  media_channel_ = voice_media_channel;
+void AudioRtpSender::SetMediaChannel(cricket::MediaChannel* media_channel) {
+  RTC_DCHECK(media_channel == nullptr ||
+             media_channel->media_type() == media_type());
+  media_channel_ = static_cast<cricket::VoiceMediaChannel*>(media_channel);
 }
 
 void AudioRtpSender::SetAudioSend() {
@@ -399,9 +406,7 @@ void AudioRtpSender::SetAudioSend() {
   // options since it is also applied to all streams/channels, local or remote.
   if (track_->enabled() && track_->GetSource() &&
       !track_->GetSource()->remote()) {
-    // TODO(xians): Remove this static_cast since we should be able to connect
-    // a remote audio track to a peer connection.
-    options = static_cast<LocalAudioSource*>(track_->GetSource())->options();
+    options = track_->GetSource()->options();
   }
 #endif
 
@@ -557,8 +562,12 @@ rtc::scoped_refptr<DtmfSenderInterface> VideoRtpSender::GetDtmfSender() const {
 void VideoRtpSender::SetFrameEncryptor(
     rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor) {
   frame_encryptor_ = std::move(frame_encryptor);
-  MaybeAttachFrameEncryptorToMediaChannel(ssrc_, worker_thread_,
-                                          frame_encryptor_, media_channel_);
+  // Special Case: Set the frame encryptor to any value on any existing channel.
+  if (media_channel_ && ssrc_ && !stopped_) {
+    worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+      media_channel_->SetFrameEncryptor(ssrc_, frame_encryptor_);
+    });
+  }
 }
 
 rtc::scoped_refptr<FrameEncryptorInterface> VideoRtpSender::GetFrameEncryptor()
@@ -601,8 +610,8 @@ void VideoRtpSender::SetSsrc(uint32_t ssrc) {
       init_parameters_.encodings.clear();
     });
   }
-  MaybeAttachFrameEncryptorToMediaChannel(ssrc_, worker_thread_,
-                                          frame_encryptor_, media_channel_);
+  MaybeAttachFrameEncryptorToMediaChannel(
+      ssrc_, worker_thread_, frame_encryptor_, media_channel_, stopped_);
 }
 
 void VideoRtpSender::Stop() {
@@ -621,9 +630,10 @@ void VideoRtpSender::Stop() {
   stopped_ = true;
 }
 
-void VideoRtpSender::SetVideoMediaChannel(
-    cricket::VideoMediaChannel* video_media_channel) {
-  media_channel_ = video_media_channel;
+void VideoRtpSender::SetMediaChannel(cricket::MediaChannel* media_channel) {
+  RTC_DCHECK(media_channel == nullptr ||
+             media_channel->media_type() == media_type());
+  media_channel_ = static_cast<cricket::VideoMediaChannel*>(media_channel);
 }
 
 void VideoRtpSender::SetVideoSend() {

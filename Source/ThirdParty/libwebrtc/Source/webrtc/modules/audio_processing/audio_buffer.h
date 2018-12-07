@@ -11,18 +11,21 @@
 #ifndef MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
 #define MODULES_AUDIO_PROCESSING_AUDIO_BUFFER_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <memory>
 #include <vector>
 
 #include "api/audio/audio_frame.h"
 #include "common_audio/channel_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
-#include "modules/audio_processing/splitting_filter.h"
+#include "rtc_base/gtest_prod_util.h"
 
 namespace webrtc {
 
-class PushSincResampler;
 class IFChannelBuffer;
+class PushSincResampler;
+class SplittingFilter;
 
 enum Band { kBand0To8kHz = 0, kBand8To16kHz = 1, kBand16To24kHz = 2 };
 

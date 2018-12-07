@@ -11,6 +11,7 @@
 #ifndef API_VIDEO_VIDEO_STREAM_ENCODER_OBSERVER_H_
 #define API_VIDEO_VIDEO_STREAM_ENCODER_OBSERVER_H_
 
+#include <string>
 #include <vector>
 
 #include "absl/types/optional.h"
@@ -67,6 +68,9 @@ class VideoStreamEncoderObserver : public CpuOveruseMetricsObserver {
   using CpuOveruseMetricsObserver::OnEncodedFrameTimeMeasured;
   virtual void OnSendEncodedImage(const EncodedImage& encoded_image,
                                   const CodecSpecificInfo* codec_info) = 0;
+
+  virtual void OnEncoderImplementationChanged(
+      const std::string& implementation_name) = 0;
 
   virtual void OnFrameDropped(DropReason reason) = 0;
 

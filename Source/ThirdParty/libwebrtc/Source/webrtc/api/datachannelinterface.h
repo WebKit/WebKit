@@ -14,6 +14,8 @@
 #ifndef API_DATACHANNELINTERFACE_H_
 #define API_DATACHANNELINTERFACE_H_
 
+#include <stddef.h>
+#include <stdint.h>
 #include <string>
 
 #include "rtc_base/checks.h"

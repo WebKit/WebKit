@@ -104,6 +104,7 @@ source_set("optional") {
   deps = [
     ":bad_optional_access",
     "../base:config",
+    "../base:core_headers",
     "../memory",
     "../meta:type_traits",
     "../utility",

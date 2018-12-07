@@ -11,10 +11,9 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/mock_video_decoder.h"
 #include "modules/video_coding/include/mock/mock_vcm_callbacks.h"
-#include "modules/video_coding/include/mock/mock_video_codec_interface.h"
 #include "modules/video_coding/include/video_coding.h"
-#include "modules/video_coding/test/test_util.h"
 #include "modules/video_coding/timing.h"
 #include "modules/video_coding/video_coding_impl.h"
 #include "system_wrappers/include/clock.h"
@@ -37,7 +36,7 @@ class TestVideoReceiver : public ::testing::Test {
 
   virtual void SetUp() {
     timing_.reset(new VCMTiming(&clock_));
-    receiver_.reset(new VideoReceiver(&clock_, &event_factory_, timing_.get()));
+    receiver_.reset(new VideoReceiver(&clock_, timing_.get()));
     receiver_->RegisterExternalDecoder(&decoder_, kUnusedPayloadType);
     const size_t kMaxNackListSize = 250;
     const int kMaxPacketAgeToNack = 450;
@@ -81,7 +80,6 @@ class TestVideoReceiver : public ::testing::Test {
   }
 
   SimulatedClock clock_;
-  NullEventFactory event_factory_;
   VideoCodec settings_;
   NiceMock<MockVideoDecoder> decoder_;
   NiceMock<MockPacketRequestCallback> packet_request_callback_;

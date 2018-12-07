@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "api/mediatypes.h"
-#include "common_types.h"  // NOLINT(build/include)
 #include "rtc_base/copyonwritebuffer.h"
 
 namespace webrtc {

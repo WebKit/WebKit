@@ -20,7 +20,6 @@
 #include "call/bitrate_allocator.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
-#include "common_video/libyuv/include/webrtc_libyuv.h"
 #include "rtc_base/criticalsection.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue.h"
@@ -60,7 +59,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
       rtc::TaskQueue* worker_queue,
       CallStats* call_stats,
       RtpTransportControllerSendInterface* transport,
-      BitrateAllocator* bitrate_allocator,
+      BitrateAllocatorInterface* bitrate_allocator,
       SendDelayStats* send_delay_stats,
       RtcEventLog* event_log,
       VideoSendStream::Config config,

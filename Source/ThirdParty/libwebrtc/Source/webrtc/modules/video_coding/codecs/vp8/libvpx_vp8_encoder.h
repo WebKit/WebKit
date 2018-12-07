@@ -14,15 +14,15 @@
 #include <memory>
 #include <vector>
 
+#include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_encoder.h"
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "common_types.h"  // NOLINT(build/include)
-#include "common_video/include/video_frame.h"
-#include "modules/video_coding/codecs/vp8/include/temporal_layers_checker.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
 #include "modules/video_coding/codecs/vp8/libvpx_interface.h"
 #include "modules/video_coding/include/video_codec_interface.h"
+#include "rtc_base/experiments/cpu_speed_experiment.h"
 
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_encoder.h"
@@ -47,23 +47,19 @@ class LibvpxVp8Encoder : public VideoEncoder {
 
   int RegisterEncodeCompleteCallback(EncodedImageCallback* callback) override;
 
-  int SetChannelParameters(uint32_t packet_loss, int64_t rtt) override;
-
   int SetRateAllocation(const VideoBitrateAllocation& bitrate,
                         uint32_t new_framerate) override;
 
-  ScalingSettings GetScalingSettings() const override;
-
-  const char* ImplementationName() const override;
+  EncoderInfo GetEncoderInfo() const override;
 
   static vpx_enc_frame_flags_t EncodeFlags(
-      const TemporalLayers::FrameConfig& references);
+      const Vp8TemporalLayers::FrameConfig& references);
 
  private:
   void SetupTemporalLayers(const VideoCodec& codec);
 
-  // Set the cpu_speed setting for encoder based on resolution and/or platform.
-  int SetCpuSpeed(int width, int height);
+  // Get the cpu_speed setting for encoder based on resolution and/or platform.
+  int GetCpuSpeed(int width, int height);
 
   // Determine number of encoder threads to use.
   int NumberOfThreads(int width, int height, int number_of_cores);
@@ -87,7 +83,10 @@ class LibvpxVp8Encoder : public VideoEncoder {
   uint32_t FrameDropThreshold(size_t spatial_idx) const;
 
   const std::unique_ptr<LibvpxInterface> libvpx_;
-  const bool use_gf_boost_;
+
+  const absl::optional<std::vector<CpuSpeedExperiment::Config>>
+      experimental_cpu_speed_config_arm_;
+  const bool trusted_rate_controller_;
 
   EncodedImageCallback* encoded_complete_callback_;
   VideoCodec codec_;
@@ -97,8 +96,7 @@ class LibvpxVp8Encoder : public VideoEncoder {
   int cpu_speed_default_;
   int number_of_cores_;
   uint32_t rc_max_intra_target_;
-  std::vector<std::unique_ptr<TemporalLayers>> temporal_layers_;
-  std::vector<std::unique_ptr<TemporalLayersChecker>> temporal_layers_checkers_;
+  std::vector<std::unique_ptr<Vp8TemporalLayers>> temporal_layers_;
   std::vector<bool> key_frame_request_;
   std::vector<bool> send_stream_;
   std::vector<int> cpu_speed_;

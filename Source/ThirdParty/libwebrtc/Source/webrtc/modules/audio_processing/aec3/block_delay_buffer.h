@@ -11,6 +11,7 @@
 #ifndef MODULES_AUDIO_PROCESSING_AEC3_BLOCK_DELAY_BUFFER_H_
 #define MODULES_AUDIO_PROCESSING_AEC3_BLOCK_DELAY_BUFFER_H_
 
+#include <stddef.h>
 #include <vector>
 
 #include "modules/audio_processing/audio_buffer.h"

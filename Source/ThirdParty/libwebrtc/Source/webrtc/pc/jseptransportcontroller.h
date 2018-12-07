@@ -18,6 +18,8 @@
 #include <vector>
 
 #include "api/candidate.h"
+#include "api/crypto/cryptooptions.h"
+#include "api/media_transport_interface.h"
 #include "api/peerconnectioninterface.h"
 #include "logging/rtc_event_log/rtc_event_log.h"
 #include "media/sctp/sctptransportinternal.h"
@@ -32,7 +34,6 @@
 #include "rtc_base/asyncinvoker.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/refcountedobject.h"
-#include "rtc_base/sslstreamadapter.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {
@@ -56,7 +57,8 @@ class JsepTransportController : public sigslot::has_slots<> {
     virtual bool OnTransportChanged(
         const std::string& mid,
         RtpTransportInternal* rtp_transport,
-        cricket::DtlsTransportInternal* dtls_transport) = 0;
+        cricket::DtlsTransportInternal* dtls_transport,
+        MediaTransportInterface* media_transport) = 0;
   };
 
   struct Config {
@@ -67,7 +69,7 @@ class JsepTransportController : public sigslot::has_slots<> {
     rtc::SSLProtocolVersion ssl_max_version = rtc::SSL_PROTOCOL_DTLS_12;
     // |crypto_options| is used to determine if created DTLS transports
     // negotiate GCM crypto suites or not.
-    rtc::CryptoOptions crypto_options;
+    webrtc::CryptoOptions crypto_options;
     PeerConnectionInterface::BundlePolicy bundle_policy =
         PeerConnectionInterface::kBundlePolicyBalanced;
     PeerConnectionInterface::RtcpMuxPolicy rtcp_mux_policy =
@@ -79,6 +81,13 @@ class JsepTransportController : public sigslot::has_slots<> {
     Observer* transport_observer = nullptr;
     bool active_reset_srtp_params = false;
     RtcEventLog* event_log = nullptr;
+
+    // Optional media transport factory (experimental). If provided it will be
+    // used to create media_transport and will be used to send / receive
+    // audio and video frames instead of RTP. Note that currently
+    // media_transport co-exists with RTP / RTCP transports and uses the same
+    // underlying ICE transport.
+    MediaTransportFactory* media_transport_factory = nullptr;
   };
 
   // The ICE related events are signaled on the |signaling_thread|.
@@ -107,6 +116,9 @@ class JsepTransportController : public sigslot::has_slots<> {
       const std::string& mid) const;
   cricket::DtlsTransportInternal* GetRtcpDtlsTransport(
       const std::string& mid) const;
+
+  MediaTransportInterface* GetMediaTransport(const std::string& mid) const;
+  MediaTransportState GetMediaTransportState(const std::string& mid) const;
 
   /*********************
    * ICE-related methods
@@ -157,6 +169,12 @@ class JsepTransportController : public sigslot::has_slots<> {
 
   void SetActiveResetSrtpParams(bool active_reset_srtp_params);
 
+  // Allows to overwrite the settings from config. You may set or reset the
+  // media transport factory on the jsep transport controller, as long as you
+  // did not call 'GetMediaTransport' or 'MaybeCreateJsepTransport'. Once Jsep
+  // transport is created, you can't change this setting.
+  void SetMediaTransportFactory(MediaTransportFactory* media_transport_factory);
+
   // All of these signals are fired on the signaling thread.
 
   // If any transport failed => failed,
@@ -164,6 +182,11 @@ class JsepTransportController : public sigslot::has_slots<> {
   // Else if all connected => connected,
   // Else => connecting
   sigslot::signal1<cricket::IceConnectionState> SignalIceConnectionState;
+
+  sigslot::signal1<PeerConnectionInterface::PeerConnectionState>
+      SignalConnectionState;
+  sigslot::signal1<PeerConnectionInterface::IceConnectionState>
+      SignalStandardizedIceConnectionState;
 
   // If all transports done gathering => complete,
   // Else if any are gathering => gathering,
@@ -178,6 +201,8 @@ class JsepTransportController : public sigslot::has_slots<> {
       SignalIceCandidatesRemoved;
 
   sigslot::signal1<rtc::SSLHandshakeError> SignalDtlsHandshakeError;
+
+  sigslot::signal<> SignalMediaTransportStateChanged;
 
  private:
   RTCError ApplyDescription_n(bool local,
@@ -241,7 +266,20 @@ class JsepTransportController : public sigslot::has_slots<> {
   cricket::JsepTransport* GetJsepTransportByName(
       const std::string& transport_name);
 
-  RTCError MaybeCreateJsepTransport(const cricket::ContentInfo& content_info);
+  // Creates jsep transport. Noop if transport is already created.
+  // Transport is created either during SetLocalDescription (|local| == true) or
+  // during SetRemoteDescription (|local| == false). Passing |local| helps to
+  // differentiate initiator (caller) from answerer (callee).
+  RTCError MaybeCreateJsepTransport(bool local,
+                                    const cricket::ContentInfo& content_info);
+
+  // Creates media transport if config wants to use it, and pre-shared key is
+  // provided in content info. It modifies the config to disable media transport
+  // if pre-shared key is not provided.
+  std::unique_ptr<webrtc::MediaTransportInterface> MaybeCreateMediaTransport(
+      const cricket::ContentInfo& content_info,
+      bool local,
+      cricket::IceTransportInternal* ice_transport);
   void MaybeDestroyJsepTransport(const std::string& mid);
   void DestroyAllJsepTransports_n();
 
@@ -285,6 +323,7 @@ class JsepTransportController : public sigslot::has_slots<> {
                                       const cricket::Candidates& candidates);
   void OnTransportRoleConflict_n(cricket::IceTransportInternal* transport);
   void OnTransportStateChanged_n(cricket::IceTransportInternal* transport);
+  void OnMediaTransportStateChanged_n();
 
   void UpdateAggregateStates_n();
 
@@ -301,9 +340,16 @@ class JsepTransportController : public sigslot::has_slots<> {
   // (BaseChannel/SctpTransport) and the JsepTransport underneath.
   std::map<std::string, cricket::JsepTransport*> mid_to_transport_;
 
-  // Aggregate state for Transports.
+  // Aggregate states for Transports.
+  // standardized_ice_connection_state_ is intended to replace
+  // ice_connection_state, see bugs.webrtc.org/9308
   cricket::IceConnectionState ice_connection_state_ =
       cricket::kIceConnectionConnecting;
+  PeerConnectionInterface::IceConnectionState
+      standardized_ice_connection_state_ =
+          PeerConnectionInterface::kIceConnectionNew;
+  PeerConnectionInterface::PeerConnectionState combined_connection_state_ =
+      PeerConnectionInterface::PeerConnectionState::kNew;
   cricket::IceGatheringState ice_gathering_state_ = cricket::kIceGatheringNew;
 
   Config config_;

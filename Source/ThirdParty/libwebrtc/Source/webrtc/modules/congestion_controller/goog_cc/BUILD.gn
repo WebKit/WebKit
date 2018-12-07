@@ -19,10 +19,8 @@ config("bwe_test_logging") {
 rtc_static_library("goog_cc") {
   configs += [ ":bwe_test_logging" ]
   sources = [
-    "goog_cc_factory.cc",
     "goog_cc_network_control.cc",
     "goog_cc_network_control.h",
-    "include/goog_cc_factory.h",
   ]
 
   deps = [
@@ -30,6 +28,7 @@ rtc_static_library("goog_cc") {
     ":delay_based_bwe",
     ":estimators",
     ":probe_controller",
+    ":pushback_controller",
     "../..:module_api",
     "../../..:webrtc_common",
     "../../../api/transport:network_control",
@@ -45,6 +44,20 @@ rtc_static_library("goog_cc") {
     "../../remote_bitrate_estimator",
     "../../rtp_rtcp:rtp_rtcp_format",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_source_set("pushback_controller") {
+  sources = [
+    "congestion_window_pushback_controller.cc",
+    "congestion_window_pushback_controller.h",
+  ]
+  deps = [
+    "../../../api/transport:network_control",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../../../system_wrappers:field_trial",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -84,6 +97,7 @@ rtc_source_set("estimators") {
   ]
 
   deps = [
+    "../../../api/units:data_rate",
     "../../../logging:rtc_event_bwe",
     "../../../logging:rtc_event_log_api",
     "../../../rtc_base:checks",
@@ -107,6 +121,7 @@ rtc_source_set("delay_based_bwe") {
 
   deps = [
     ":estimators",
+    "../../../api/transport:network_control",
     "../../../logging:rtc_event_bwe",
     "../../../logging:rtc_event_log_api",
     "../../../rtc_base:checks",
@@ -115,7 +130,9 @@ rtc_source_set("delay_based_bwe") {
     "../../../system_wrappers:metrics",
     "../../pacing",
     "../../remote_bitrate_estimator",
+    "../../rtp_rtcp:rtp_rtcp_format",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -149,6 +166,7 @@ if (rtc_include_tests) {
       ":estimators",
       ":goog_cc",
       "..:test_controller_printer",
+      "../../../api/transport:goog_cc",
     ]
   }
   rtc_source_set("goog_cc_unittests") {
@@ -157,6 +175,7 @@ if (rtc_include_tests) {
     sources = [
       "acknowledged_bitrate_estimator_unittest.cc",
       "alr_detector_unittest.cc",
+      "congestion_window_pushback_controller_unittest.cc",
       "delay_based_bwe_unittest.cc",
       "delay_based_bwe_unittest_helper.cc",
       "delay_based_bwe_unittest_helper.h",
@@ -175,12 +194,49 @@ if (rtc_include_tests) {
       ":estimators",
       ":goog_cc",
       ":probe_controller",
+      ":pushback_controller",
+      "../../../api/transport:goog_cc",
       "../../../api/transport:network_control",
       "../../../api/transport:network_control_test",
       "../../../logging:mocks",
       "../../../rtc_base:checks",
       "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base:rtc_base_tests_utils",
+      "../../../rtc_base/experiments:alr_experiment",
+      "../../../system_wrappers",
+      "../../../system_wrappers:field_trial",
+      "../../../test:field_trial",
+      "../../../test:test_support",
+      "../../../test/scenario",
+      "../../pacing",
+      "../../remote_bitrate_estimator",
+      "../../rtp_rtcp:rtp_rtcp_format",
+      "//testing/gmock",
+      "//third_party/abseil-cpp/absl/memory",
+    ]
+  }
+  rtc_source_set("goog_cc_slow_tests") {
+    testonly = true
+
+    sources = [
+      "goog_cc_network_control_slowtest.cc",
+    ]
+    if (!build_with_chromium && is_clang) {
+      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+    deps = [
+      ":alr_detector",
+      ":delay_based_bwe",
+      ":estimators",
+      ":goog_cc",
+      ":probe_controller",
+      ":pushback_controller",
+      "../../../api/transport:goog_cc",
+      "../../../api/transport:network_control",
+      "../../../api/transport:network_control_test",
+      "../../../logging:mocks",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:rtc_base_approved",
       "../../../rtc_base/experiments:alr_experiment",
       "../../../system_wrappers",
       "../../../system_wrappers:field_trial",

@@ -93,6 +93,7 @@ void RtpSendParametersFromMediaDescription(
     RtpSendParameters<Codec>* send_params) {
   RtpParametersFromMediaDescription(desc, extensions, send_params);
   send_params->max_bandwidth_bps = desc->bandwidth();
+  send_params->extmap_allow_mixed = desc->extmap_allow_mixed();
 }
 
 BaseChannel::BaseChannel(rtc::Thread* worker_thread,
@@ -101,7 +102,7 @@ BaseChannel::BaseChannel(rtc::Thread* worker_thread,
                          std::unique_ptr<MediaChannel> media_channel,
                          const std::string& content_name,
                          bool srtp_required,
-                         rtc::CryptoOptions crypto_options)
+                         webrtc::CryptoOptions crypto_options)
     : worker_thread_(worker_thread),
       network_thread_(network_thread),
       signaling_thread_(signaling_thread),
@@ -117,6 +118,11 @@ BaseChannel::BaseChannel(rtc::Thread* worker_thread,
 BaseChannel::~BaseChannel() {
   TRACE_EVENT0("webrtc", "BaseChannel::~BaseChannel");
   RTC_DCHECK_RUN_ON(worker_thread_);
+
+  if (media_transport_) {
+    media_transport_->SetNetworkChangeCallback(nullptr);
+  }
+
   // Eats any outstanding messages or packets.
   worker_thread_->Clear(&invoker_);
   worker_thread_->Clear(this);
@@ -136,8 +142,15 @@ bool BaseChannel::ConnectToRtpTransport() {
       this, &BaseChannel::OnTransportReadyToSend);
   rtp_transport_->SignalRtcpPacketReceived.connect(
       this, &BaseChannel::OnRtcpPacketReceived);
-  rtp_transport_->SignalNetworkRouteChanged.connect(
-      this, &BaseChannel::OnNetworkRouteChanged);
+
+  // If media transport is used, it's responsible for providing network
+  // route changed callbacks.
+  if (!media_transport_) {
+    rtp_transport_->SignalNetworkRouteChanged.connect(
+        this, &BaseChannel::OnNetworkRouteChanged);
+  }
+  // TODO(bugs.webrtc.org/9719): Media transport should also be used to provide
+  // 'writable' state here.
   rtp_transport_->SignalWritableState.connect(this,
                                               &BaseChannel::OnWritableState);
   rtp_transport_->SignalSentPacket.connect(this,
@@ -155,19 +168,29 @@ void BaseChannel::DisconnectFromRtpTransport() {
   rtp_transport_->SignalSentPacket.disconnect(this);
 }
 
-void BaseChannel::Init_w(webrtc::RtpTransportInternal* rtp_transport) {
+void BaseChannel::Init_w(webrtc::RtpTransportInternal* rtp_transport,
+                         webrtc::MediaTransportInterface* media_transport) {
   RTC_DCHECK_RUN_ON(worker_thread_);
+  media_transport_ = media_transport;
+
   network_thread_->Invoke<void>(
       RTC_FROM_HERE, [this, rtp_transport] { SetRtpTransport(rtp_transport); });
 
   // Both RTP and RTCP channels should be set, we can call SetInterface on
   // the media channel and it can set network options.
-  media_channel_->SetInterface(this);
+  media_channel_->SetInterface(this, media_transport);
+
+  RTC_LOG(LS_INFO) << "BaseChannel::Init_w, media_transport="
+                   << (media_transport_ != nullptr);
+  if (media_transport_) {
+    media_transport_->SetNetworkChangeCallback(this);
+  }
 }
 
 void BaseChannel::Deinit() {
   RTC_DCHECK(worker_thread_->IsCurrent());
-  media_channel_->SetInterface(NULL);
+  media_channel_->SetInterface(/*iface=*/nullptr,
+                               /*media_transport=*/nullptr);
   // Packets arrive on the network thread, processing packets calls virtual
   // functions, so need to stop this process in Deinit that is called in
   // derived classes destructor.
@@ -350,6 +373,8 @@ void BaseChannel::OnWritableState(bool writable) {
 
 void BaseChannel::OnNetworkRouteChanged(
     absl::optional<rtc::NetworkRoute> network_route) {
+  RTC_LOG(LS_INFO) << "Network route was changed.";
+
   RTC_DCHECK(network_thread_->IsCurrent());
   rtc::NetworkRoute new_route;
   if (network_route) {
@@ -439,13 +464,12 @@ void BaseChannel::OnRtpPacket(const webrtc::RtpPacketReceived& parsed_packet) {
   // RtpPacketReceived.arrival_time_ms = (PacketTime + 500) / 1000;
   // Note: The |not_before| field is always 0 here. This field is not currently
   // used, so it should be fine.
-  int64_t timestamp = -1;
+  int64_t timestamp_us = -1;
   if (parsed_packet.arrival_time_ms() > 0) {
-    timestamp = parsed_packet.arrival_time_ms() * 1000;
+    timestamp_us = parsed_packet.arrival_time_ms() * 1000;
   }
-  rtc::PacketTime packet_time(timestamp, /*not_before=*/0);
 
-  OnPacketReceived(/*rtcp=*/false, parsed_packet.Buffer(), packet_time);
+  OnPacketReceived(/*rtcp=*/false, parsed_packet.Buffer(), timestamp_us);
 }
 
 void BaseChannel::UpdateRtpHeaderExtensionMap(
@@ -472,13 +496,13 @@ bool BaseChannel::RegisterRtpDemuxerSink() {
 }
 
 void BaseChannel::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer* packet,
-                                       const rtc::PacketTime& packet_time) {
-  OnPacketReceived(/*rtcp=*/true, *packet, packet_time);
+                                       int64_t packet_time_us) {
+  OnPacketReceived(/*rtcp=*/true, *packet, packet_time_us);
 }
 
 void BaseChannel::OnPacketReceived(bool rtcp,
                                    const rtc::CopyOnWriteBuffer& packet,
-                                   const rtc::PacketTime& packet_time) {
+                                   int64_t packet_time_us) {
   if (!has_received_packet_ && !rtcp) {
     has_received_packet_ = true;
     signaling_thread()->Post(RTC_FROM_HERE, this, MSG_FIRSTPACKETRECEIVED);
@@ -504,21 +528,21 @@ void BaseChannel::OnPacketReceived(bool rtcp,
 
   invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, worker_thread_,
-      Bind(&BaseChannel::ProcessPacket, this, rtcp, packet, packet_time));
+      Bind(&BaseChannel::ProcessPacket, this, rtcp, packet, packet_time_us));
 }
 
 void BaseChannel::ProcessPacket(bool rtcp,
                                 const rtc::CopyOnWriteBuffer& packet,
-                                const rtc::PacketTime& packet_time) {
+                                int64_t packet_time_us) {
   RTC_DCHECK(worker_thread_->IsCurrent());
 
   // Need to copy variable because OnRtcpReceived/OnPacketReceived
   // requires non-const pointer to buffer. This doesn't memcpy the actual data.
   rtc::CopyOnWriteBuffer data(packet);
   if (rtcp) {
-    media_channel_->OnRtcpReceived(&data, packet_time);
+    media_channel_->OnRtcpReceived(&data, packet_time_us);
   } else {
-    media_channel_->OnPacketReceived(&data, packet_time);
+    media_channel_->OnPacketReceived(&data, packet_time_us);
   }
 }
 
@@ -673,7 +697,7 @@ bool BaseChannel::UpdateRemoteStreams_w(
 RtpHeaderExtensions BaseChannel::GetFilteredRtpHeaderExtensions(
     const RtpHeaderExtensions& extensions) {
   RTC_DCHECK(rtp_transport_);
-  if (crypto_options_.enable_encrypted_rtp_header_extensions) {
+  if (crypto_options_.srtp.enable_encrypted_rtp_header_extensions) {
     RtpHeaderExtensions filtered;
     auto pred = [](const webrtc::RtpExtension& extension) {
       return !extension.encrypt;
@@ -700,7 +724,7 @@ void BaseChannel::OnMessage(rtc::Message* pmsg) {
       break;
     }
     case MSG_FIRSTPACKETRECEIVED: {
-      SignalFirstPacketReceived(this);
+      SignalFirstPacketReceived_(this);
       break;
     }
   }
@@ -742,7 +766,7 @@ VoiceChannel::VoiceChannel(rtc::Thread* worker_thread,
                            std::unique_ptr<VoiceMediaChannel> media_channel,
                            const std::string& content_name,
                            bool srtp_required,
-                           rtc::CryptoOptions crypto_options)
+                           webrtc::CryptoOptions crypto_options)
     : BaseChannel(worker_thread,
                   network_thread,
                   signaling_thread,
@@ -763,6 +787,11 @@ void BaseChannel::UpdateMediaSendRecvState() {
   invoker_.AsyncInvoke<void>(
       RTC_FROM_HERE, worker_thread_,
       Bind(&BaseChannel::UpdateMediaSendRecvState_w, this));
+}
+
+void BaseChannel::OnNetworkRouteChanged(
+    const rtc::NetworkRoute& network_route) {
+  OnNetworkRouteChanged(absl::make_optional(network_route));
 }
 
 void VoiceChannel::UpdateMediaSendRecvState_w() {
@@ -797,6 +826,7 @@ bool VoiceChannel::SetLocalContent_w(const MediaContentDescription* content,
   RtpHeaderExtensions rtp_header_extensions =
       GetFilteredRtpHeaderExtensions(audio->rtp_header_extensions());
   UpdateRtpHeaderExtensionMap(rtp_header_extensions);
+  media_channel()->SetExtmapAllowMixed(audio->extmap_allow_mixed());
 
   AudioRecvParameters recv_params = last_recv_params_;
   RtpParametersFromMediaDescription(audio, rtp_header_extensions, &recv_params);
@@ -881,7 +911,7 @@ VideoChannel::VideoChannel(rtc::Thread* worker_thread,
                            std::unique_ptr<VideoMediaChannel> media_channel,
                            const std::string& content_name,
                            bool srtp_required,
-                           rtc::CryptoOptions crypto_options)
+                           webrtc::CryptoOptions crypto_options)
     : BaseChannel(worker_thread,
                   network_thread,
                   signaling_thread,
@@ -932,6 +962,7 @@ bool VideoChannel::SetLocalContent_w(const MediaContentDescription* content,
   RtpHeaderExtensions rtp_header_extensions =
       GetFilteredRtpHeaderExtensions(video->rtp_header_extensions());
   UpdateRtpHeaderExtensionMap(rtp_header_extensions);
+  media_channel()->SetExtmapAllowMixed(video->extmap_allow_mixed());
 
   VideoRecvParameters recv_params = last_recv_params_;
   RtpParametersFromMediaDescription(video, rtp_header_extensions, &recv_params);
@@ -1019,7 +1050,7 @@ RtpDataChannel::RtpDataChannel(rtc::Thread* worker_thread,
                                std::unique_ptr<DataMediaChannel> media_channel,
                                const std::string& content_name,
                                bool srtp_required,
-                               rtc::CryptoOptions crypto_options)
+                               webrtc::CryptoOptions crypto_options)
     : BaseChannel(worker_thread,
                   network_thread,
                   signaling_thread,
@@ -1036,7 +1067,7 @@ RtpDataChannel::~RtpDataChannel() {
 }
 
 void RtpDataChannel::Init_w(webrtc::RtpTransportInternal* rtp_transport) {
-  BaseChannel::Init_w(rtp_transport);
+  BaseChannel::Init_w(rtp_transport, /*media_transport=*/nullptr);
   media_channel()->SignalDataReceived.connect(this,
                                               &RtpDataChannel::OnDataReceived);
   media_channel()->SignalReadyToSend.connect(

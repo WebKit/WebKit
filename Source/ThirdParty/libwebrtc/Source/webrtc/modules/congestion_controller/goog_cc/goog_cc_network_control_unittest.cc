@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "api/transport/goog_cc_factory.h"
 #include "api/transport/test/network_control_tester.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "modules/congestion_controller/goog_cc/include/goog_cc_factory.h"
-#include "test/scenario/scenario.h"
-
+#include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/scenario/scenario.h"
 
 using testing::Field;
 using testing::Matcher;
@@ -84,9 +84,9 @@ class GoogCcNetworkControllerTest : public ::testing::Test {
                             PacedPacketInfo pacing_info) {
     PacketResult packet_result;
     packet_result.sent_packet = SentPacket();
-    packet_result.sent_packet->send_time = Timestamp::ms(send_time_ms);
-    packet_result.sent_packet->size = DataSize::bytes(payload_size);
-    packet_result.sent_packet->pacing_info = pacing_info;
+    packet_result.sent_packet.send_time = Timestamp::ms(send_time_ms);
+    packet_result.sent_packet.size = DataSize::bytes(payload_size);
+    packet_result.sent_packet.pacing_info = pacing_info;
     packet_result.receive_time = Timestamp::ms(arrival_time_ms);
     return packet_result;
   }
@@ -122,7 +122,7 @@ class GoogCcNetworkControllerTest : public ::testing::Test {
           CreateResult(current_time_.ms() + delay_buildup, current_time_.ms(),
                        kPayloadSize, PacedPacketInfo());
       delay_buildup += delay;
-      controller_->OnSentPacket(*packet.sent_packet);
+      controller_->OnSentPacket(packet.sent_packet);
       TransportPacketsFeedback feedback;
       feedback.feedback_time = packet.receive_time;
       feedback.packet_feedbacks.push_back(packet);
@@ -213,16 +213,13 @@ TEST_F(GoogCcNetworkControllerTest, LongFeedbackDelays) {
     packets.push_back(
         CreateResult(i * 100 + 40, 2 * i * 100 + 40, 1500, kPacingInfo1));
 
+    TransportPacketsFeedback feedback;
     for (PacketResult& packet : packets) {
-      controller_->OnSentPacket(*packet.sent_packet);
-      // Simulate packet timeout
-      packet.sent_packet = absl::nullopt;
+      controller_->OnSentPacket(packet.sent_packet);
+      feedback.sendless_arrival_times.push_back(packet.receive_time);
     }
 
-    TransportPacketsFeedback feedback;
     feedback.feedback_time = packets[0].receive_time;
-    feedback.packet_feedbacks = packets;
-
     AdvanceTimeMilliseconds(kFeedbackTimeoutMs);
     SentPacket later_packet;
     later_packet.send_time = Timestamp::ms(kFeedbackTimeoutMs + i * 200 + 40);
@@ -246,7 +243,7 @@ TEST_F(GoogCcNetworkControllerTest, LongFeedbackDelays) {
     packets.push_back(CreateResult(140, 240, 1500, kPacingInfo1));
 
     for (const PacketResult& packet : packets)
-      controller_->OnSentPacket(*packet.sent_packet);
+      controller_->OnSentPacket(packet.sent_packet);
 
     TransportPacketsFeedback feedback;
     feedback.feedback_time = packets[0].receive_time;
@@ -308,8 +305,51 @@ TEST_F(GoogCcNetworkControllerTest,
               20);
 }
 
-TEST_F(GoogCcNetworkControllerTest, ScenarioQuickTest) {
-  Scenario s("googcc_unit/scenario_quick", false);
+TEST_F(GoogCcNetworkControllerTest, LimitsToMinRateIfRttIsHighInTrial) {
+  // The field trial limits maximum RTT to 2 seconds, higher RTT means that the
+  // controller backs off until it reaches the minimum configured bitrate. This
+  // allows the RTT to recover faster than the regular control mechanism would
+  // achieve.
+  ScopedFieldTrials trial("WebRTC-Bwe-MaxRttLimit/limit:2s/");
+  // In the test case, we limit the capacity and add a cross traffic packet
+  // burst that blocks media from being sent. This causes the RTT to quickly
+  // increase above the threshold in the trial.
+  const DataRate kLinkCapacity = DataRate::kbps(100);
+  const DataRate kMinRate = DataRate::kbps(20);
+  const TimeDelta kBufferBloatDuration = TimeDelta::seconds(10);
+  Scenario s("googcc_unit/limit_trial", false);
+  NetworkNodeConfig net_conf;
+  auto send_net = s.CreateSimulationNode([=](NetworkNodeConfig* c) {
+    c->simulation.bandwidth = kLinkCapacity;
+    c->simulation.delay = TimeDelta::ms(100);
+    c->update_frequency = TimeDelta::ms(5);
+  });
+  auto ret_net = s.CreateSimulationNode([](NetworkNodeConfig* c) {
+    c->simulation.delay = TimeDelta::ms(100);
+    c->update_frequency = TimeDelta::ms(5);
+  });
+  SimulatedTimeClientConfig config;
+  config.transport.cc =
+      TransportControllerConfig::CongestionController::kGoogCc;
+  config.transport.rates.min_rate = kMinRate;
+  config.transport.rates.start_rate = kLinkCapacity;
+  SimulatedTimeClient* client = s.CreateSimulatedTimeClient(
+      "send", config, {PacketStreamConfig()}, {send_net}, {ret_net});
+  // Run for a few seconds to allow the controller to stabilize.
+  s.RunFor(TimeDelta::seconds(10));
+  const DataSize kBloatPacketSize = DataSize::bytes(1000);
+  const int kBloatPacketCount =
+      static_cast<int>(kBufferBloatDuration * kLinkCapacity / kBloatPacketSize);
+  // This will cause the RTT to be large for a while.
+  s.TriggerPacketBurst({send_net}, kBloatPacketCount, kBloatPacketSize.bytes());
+  // Wait to allow the high RTT to be detected and acted upon.
+  s.RunFor(TimeDelta::seconds(4));
+  // By now the target rate should have dropped to the minimum configured rate.
+  EXPECT_NEAR(client->target_rate_kbps(), kMinRate.kbps(), 1);
+}
+
+TEST_F(GoogCcNetworkControllerTest, UpdatesTargetRateBasedOnLinkCapacity) {
+  Scenario s("googcc_unit/target_capacity", false);
   SimulatedTimeClientConfig config;
   config.transport.cc =
       TransportControllerConfig::CongestionController::kGoogCcFeedback;
@@ -357,6 +397,62 @@ TEST_F(GoogCcNetworkControllerTest, ScenarioQuickTest) {
   s.RunFor(TimeDelta::seconds(30));
   truth->PrintRow();
   EXPECT_NEAR(client->target_rate_kbps(), 90, 20);
+}
+
+TEST_F(GoogCcNetworkControllerTest, DefaultEstimateVariesInSteadyState) {
+  ScopedFieldTrials trial("WebRTC-Bwe-StableBandwidthEstimate/Disabled/");
+  Scenario s("googcc_unit/no_stable_varies", false);
+  SimulatedTimeClientConfig config;
+  config.transport.cc =
+      TransportControllerConfig::CongestionController::kGoogCcFeedback;
+  NetworkNodeConfig net_conf;
+  net_conf.simulation.bandwidth = DataRate::kbps(500);
+  net_conf.simulation.delay = TimeDelta::ms(100);
+  net_conf.update_frequency = TimeDelta::ms(5);
+  auto send_net = s.CreateSimulationNode(net_conf);
+  auto ret_net = s.CreateSimulationNode(net_conf);
+  SimulatedTimeClient* client = s.CreateSimulatedTimeClient(
+      "send", config, {PacketStreamConfig()}, {send_net}, {ret_net});
+  // Run for a while to allow the estimate to stabilize.
+  s.RunFor(TimeDelta::seconds(20));
+  DataRate min_estimate = DataRate::PlusInfinity();
+  DataRate max_estimate = DataRate::MinusInfinity();
+  // Measure variation in steady state.
+  for (int i = 0; i < 20; ++i) {
+    min_estimate = std::min(min_estimate, client->link_capacity());
+    max_estimate = std::max(max_estimate, client->link_capacity());
+    s.RunFor(TimeDelta::seconds(1));
+  }
+  // We should expect drops by at least 15% (default backoff.)
+  EXPECT_LT(min_estimate / max_estimate, 0.85);
+}
+
+TEST_F(GoogCcNetworkControllerTest, StableEstimateDoesNotVaryInSteadyState) {
+  ScopedFieldTrials trial("WebRTC-Bwe-StableBandwidthEstimate/Enabled/");
+  Scenario s("googcc_unit/stable_is_stable", false);
+  SimulatedTimeClientConfig config;
+  config.transport.cc =
+      TransportControllerConfig::CongestionController::kGoogCcFeedback;
+  NetworkNodeConfig net_conf;
+  net_conf.simulation.bandwidth = DataRate::kbps(500);
+  net_conf.simulation.delay = TimeDelta::ms(100);
+  net_conf.update_frequency = TimeDelta::ms(5);
+  auto send_net = s.CreateSimulationNode(net_conf);
+  auto ret_net = s.CreateSimulationNode(net_conf);
+  SimulatedTimeClient* client = s.CreateSimulatedTimeClient(
+      "send", config, {PacketStreamConfig()}, {send_net}, {ret_net});
+  // Run for a while to allow the estimate to stabilize.
+  s.RunFor(TimeDelta::seconds(20));
+  DataRate min_estimate = DataRate::PlusInfinity();
+  DataRate max_estimate = DataRate::MinusInfinity();
+  // Measure variation in steady state.
+  for (int i = 0; i < 20; ++i) {
+    min_estimate = std::min(min_estimate, client->link_capacity());
+    max_estimate = std::max(max_estimate, client->link_capacity());
+    s.RunFor(TimeDelta::seconds(1));
+  }
+  // We expect no variation under the trial in steady state.
+  EXPECT_GT(min_estimate / max_estimate, 0.95);
 }
 
 }  // namespace test

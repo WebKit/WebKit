@@ -12,6 +12,7 @@
 #define AUDIO_UTILITY_AUDIO_FRAME_OPERATIONS_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "api/audio/audio_frame.h"
 

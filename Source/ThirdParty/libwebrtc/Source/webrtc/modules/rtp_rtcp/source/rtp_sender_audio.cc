@@ -11,16 +11,18 @@
 #include "modules/rtp_rtcp/source/rtp_sender_audio.h"
 
 #include <string.h>
-
 #include <memory>
 #include <utility>
 
+#include "absl/strings/match.h"
+#include "api/audio_codecs/audio_format.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/timeutils.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -30,14 +32,13 @@ RTPSenderAudio::RTPSenderAudio(Clock* clock, RTPSender* rtp_sender)
 
 RTPSenderAudio::~RTPSenderAudio() {}
 
-int32_t RTPSenderAudio::RegisterAudioPayload(
-    const char payloadName[RTP_PAYLOAD_NAME_SIZE],
-    const int8_t payload_type,
-    const uint32_t frequency,
-    const size_t channels,
-    const uint32_t rate,
-    RtpUtility::Payload** payload) {
-  if (RtpUtility::StringCompare(payloadName, "cn", 2)) {
+int32_t RTPSenderAudio::RegisterAudioPayload(absl::string_view payload_name,
+                                             const int8_t payload_type,
+                                             const uint32_t frequency,
+                                             const size_t channels,
+                                             const uint32_t rate,
+                                             RtpUtility::Payload** payload) {
+  if (absl::EqualsIgnoreCase(payload_name, "cn")) {
     rtc::CritScope cs(&send_audio_critsect_);
     //  we can have multiple CNG payload types
     switch (frequency) {
@@ -56,7 +57,7 @@ int32_t RTPSenderAudio::RegisterAudioPayload(
       default:
         return -1;
     }
-  } else if (RtpUtility::StringCompare(payloadName, "telephone-event", 15)) {
+  } else if (absl::EqualsIgnoreCase(payload_name, "telephone-event")) {
     rtc::CritScope cs(&send_audio_critsect_);
     // Don't add it to the list
     // we dont want to allow send with a DTMF payloadtype
@@ -65,9 +66,9 @@ int32_t RTPSenderAudio::RegisterAudioPayload(
     return 0;
   }
   *payload = new RtpUtility::Payload(
-      payloadName,
+      payload_name,
       PayloadUnion(AudioPayload{
-          SdpAudioFormat(payloadName, frequency, channels), rate}));
+          SdpAudioFormat(payload_name, frequency, channels), rate}));
   return 0;
 }
 

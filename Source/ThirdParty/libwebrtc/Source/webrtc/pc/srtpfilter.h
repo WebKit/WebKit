@@ -78,6 +78,10 @@ class SrtpFilter {
 
   bool ResetParams();
 
+  static bool ParseKeyParams(const std::string& params,
+                             uint8_t* key,
+                             size_t len);
+
   absl::optional<int> send_cipher_suite() { return send_cipher_suite_; }
   absl::optional<int> recv_cipher_suite() { return recv_cipher_suite_; }
 
@@ -103,10 +107,6 @@ class SrtpFilter {
   bool ApplySendParams(const CryptoParams& send_params);
 
   bool ApplyRecvParams(const CryptoParams& recv_params);
-
-  static bool ParseKeyParams(const std::string& params,
-                             uint8_t* key,
-                             size_t len);
 
   enum State {
     ST_INIT,                    // SRTP filter unused.

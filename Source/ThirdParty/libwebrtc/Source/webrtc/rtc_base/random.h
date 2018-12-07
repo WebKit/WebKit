@@ -11,6 +11,7 @@
 #ifndef RTC_BASE_RANDOM_H_
 #define RTC_BASE_RANDOM_H_
 
+#include <stdint.h>
 #include <limits>
 
 #include "rtc_base/checks.h"

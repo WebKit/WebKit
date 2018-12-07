@@ -16,7 +16,7 @@
 // When WebRTC is built as a static library the RTC_EXPORT macro expands to
 // nothing.
 
-#ifdef COMPONENT_BUILD
+#ifdef WEBRTC_ENABLE_SYMBOL_EXPORT
 
 #ifdef WEBRTC_WIN
 
@@ -34,7 +34,7 @@
 
 #endif  // WEBRTC_WIN
 
-#endif  // COMPONENT_BUILD
+#endif  // WEBRTC_ENABLE_SYMBOL_EXPORT
 
 #ifndef RTC_EXPORT
 #define RTC_EXPORT

@@ -74,7 +74,6 @@ int AsyncUDPSocket::SendTo(const void* pv,
   rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis(),
                               options.info_signaled_after_sent);
   CopySocketInformationToPacketInfo(cb, *this, true, &sent_packet.info);
-  sent_packet.info.remote_socket_address = addr;
   int ret = socket_->SendTo(pv, cb, addr);
   SignalSentPacket(this, sent_packet);
   return ret;
@@ -123,9 +122,8 @@ void AsyncUDPSocket::OnReadEvent(AsyncSocket* socket) {
 
   // TODO: Make sure that we got all of the packet.
   // If we did not, then we should resize our buffer to be large enough.
-  SignalReadPacket(
-      this, buf_, static_cast<size_t>(len), remote_addr,
-      (timestamp > -1 ? PacketTime(timestamp, 0) : CreatePacketTime(0)));
+  SignalReadPacket(this, buf_, static_cast<size_t>(len), remote_addr,
+                   (timestamp > -1 ? timestamp : TimeMicros()));
 }
 
 void AsyncUDPSocket::OnWriteEvent(AsyncSocket* socket) {

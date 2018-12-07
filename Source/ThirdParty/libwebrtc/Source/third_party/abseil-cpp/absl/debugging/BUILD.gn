@@ -92,10 +92,10 @@ source_set("failure_signal_handler") {
   ]
   public_configs = [ "//third_party/abseil-cpp:absl_include_config" ]
   sources = [
-    "failure_signal_handler.cc"
+    "failure_signal_handler.cc",
   ]
   public = [
-    "failure_signal_handler.h"
+    "failure_signal_handler.h",
   ]
   deps = [
     ":examine_stack",
@@ -126,6 +126,7 @@ source_set("debugging_internal") {
   ]
   deps = [
     "../base",
+    "../base:core_headers",
     "../base:dynamic_annotations",
   ]
 }

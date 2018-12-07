@@ -22,9 +22,9 @@ namespace webrtc {
 namespace {
 const size_t kMinVp9SvcBitrateKbps = 30;
 
-const size_t kMaxNumLayersForScreenSharing = 2;
-const float kMaxScreenSharingLayerFramerateFps[] = {5.0, 5.0};
-const size_t kMaxScreenSharingLayerBitrateKbps[] = {200, 500};
+const size_t kMaxNumLayersForScreenSharing = 3;
+const float kMaxScreenSharingLayerFramerateFps[] = {5.0, 5.0, 30.0};
+const size_t kMaxScreenSharingLayerBitrateKbps[] = {200, 500, 1250};
 }  // namespace
 
 std::vector<SpatialLayer> ConfigureSvcScreenSharing(size_t input_width,

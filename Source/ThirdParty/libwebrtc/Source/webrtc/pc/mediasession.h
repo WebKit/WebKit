@@ -21,6 +21,7 @@
 #include "api/mediatypes.h"
 #include "media/base/mediaconstants.h"
 #include "media/base/mediaengine.h"  // For DataChannelType
+#include "p2p/base/icecredentialsiterator.h"
 #include "p2p/base/transportdescriptionfactory.h"
 #include "pc/jseptransport.h"
 #include "pc/sessiondescription.h"
@@ -93,11 +94,13 @@ struct MediaSessionOptions {
   bool rtcp_mux_enabled = true;
   bool bundle_enabled = false;
   bool is_unified_plan = false;
+  bool offer_extmap_allow_mixed = false;
   std::string rtcp_cname = kDefaultRtcpCname;
-  rtc::CryptoOptions crypto_options;
+  webrtc::CryptoOptions crypto_options;
   // List of media description options in the same order that the media
   // descriptions will be generated.
   std::vector<MediaDescriptionOptions> media_description_options;
+  std::vector<IceParameters> pooled_ice_credentials;
 };
 
 // Creates media session descriptions according to the supplied codecs and
@@ -186,14 +189,16 @@ class MediaSessionDescriptionFactory {
   bool AddTransportOffer(const std::string& content_name,
                          const TransportOptions& transport_options,
                          const SessionDescription* current_desc,
-                         SessionDescription* offer) const;
+                         SessionDescription* offer,
+                         IceCredentialsIterator* ice_credentials) const;
 
   TransportDescription* CreateTransportAnswer(
       const std::string& content_name,
       const SessionDescription* offer_desc,
       const TransportOptions& transport_options,
       const SessionDescription* current_desc,
-      bool require_transport_attributes) const;
+      bool require_transport_attributes,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddTransportAnswer(const std::string& content_name,
                           const TransportDescription& transport_desc,
@@ -211,7 +216,8 @@ class MediaSessionDescriptionFactory {
       const RtpHeaderExtensions& audio_rtp_extensions,
       const AudioCodecs& audio_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* desc) const;
+      SessionDescription* desc,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddVideoContentForOffer(
       const MediaDescriptionOptions& media_description_options,
@@ -221,7 +227,8 @@ class MediaSessionDescriptionFactory {
       const RtpHeaderExtensions& video_rtp_extensions,
       const VideoCodecs& video_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* desc) const;
+      SessionDescription* desc,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddDataContentForOffer(
       const MediaDescriptionOptions& media_description_options,
@@ -230,7 +237,8 @@ class MediaSessionDescriptionFactory {
       const SessionDescription* current_description,
       const DataCodecs& data_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* desc) const;
+      SessionDescription* desc,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddAudioContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
@@ -242,7 +250,8 @@ class MediaSessionDescriptionFactory {
       const TransportInfo* bundle_transport,
       const AudioCodecs& audio_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+      SessionDescription* answer,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddVideoContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
@@ -254,7 +263,8 @@ class MediaSessionDescriptionFactory {
       const TransportInfo* bundle_transport,
       const VideoCodecs& video_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+      SessionDescription* answer,
+      IceCredentialsIterator* ice_credentials) const;
 
   bool AddDataContentForAnswer(
       const MediaDescriptionOptions& media_description_options,
@@ -266,7 +276,8 @@ class MediaSessionDescriptionFactory {
       const TransportInfo* bundle_transport,
       const DataCodecs& data_codecs,
       StreamParamsVec* current_streams,
-      SessionDescription* answer) const;
+      SessionDescription* answer,
+      IceCredentialsIterator* ice_credentials) const;
 
   void ComputeAudioCodecsIntersectionAndUnion();
 
@@ -327,20 +338,23 @@ DataContentDescription* GetFirstDataContentDescription(
     SessionDescription* sdesc);
 
 // Helper functions to return crypto suites used for SDES.
-void GetSupportedAudioSdesCryptoSuites(const rtc::CryptoOptions& crypto_options,
-                                       std::vector<int>* crypto_suites);
-void GetSupportedVideoSdesCryptoSuites(const rtc::CryptoOptions& crypto_options,
-                                       std::vector<int>* crypto_suites);
-void GetSupportedDataSdesCryptoSuites(const rtc::CryptoOptions& crypto_options,
-                                      std::vector<int>* crypto_suites);
+void GetSupportedAudioSdesCryptoSuites(
+    const webrtc::CryptoOptions& crypto_options,
+    std::vector<int>* crypto_suites);
+void GetSupportedVideoSdesCryptoSuites(
+    const webrtc::CryptoOptions& crypto_options,
+    std::vector<int>* crypto_suites);
+void GetSupportedDataSdesCryptoSuites(
+    const webrtc::CryptoOptions& crypto_options,
+    std::vector<int>* crypto_suites);
 void GetSupportedAudioSdesCryptoSuiteNames(
-    const rtc::CryptoOptions& crypto_options,
+    const webrtc::CryptoOptions& crypto_options,
     std::vector<std::string>* crypto_suite_names);
 void GetSupportedVideoSdesCryptoSuiteNames(
-    const rtc::CryptoOptions& crypto_options,
+    const webrtc::CryptoOptions& crypto_options,
     std::vector<std::string>* crypto_suite_names);
 void GetSupportedDataSdesCryptoSuiteNames(
-    const rtc::CryptoOptions& crypto_options,
+    const webrtc::CryptoOptions& crypto_options,
     std::vector<std::string>* crypto_suite_names);
 
 // Returns true if the given media section protocol indicates use of RTP.

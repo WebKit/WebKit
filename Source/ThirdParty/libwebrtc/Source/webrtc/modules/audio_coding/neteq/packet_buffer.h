@@ -14,7 +14,7 @@
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
-#include "modules/include/module_common_types.h"
+#include "modules/include/module_common_types_public.h"  // IsNewerTimestamp
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {
@@ -124,8 +124,6 @@ class PacketBuffer {
   // Returns true if the packet buffer contains any DTX or CNG packets.
   virtual bool ContainsDtxOrCngPacket(
       const DecoderDatabase* decoder_database) const;
-
-  virtual void BufferStat(int* num_packets, int* max_num_packets) const;
 
   // Static method returning true if |timestamp| is older than |timestamp_limit|
   // but less than |horizon_samples| behind |timestamp_limit|. For instance,

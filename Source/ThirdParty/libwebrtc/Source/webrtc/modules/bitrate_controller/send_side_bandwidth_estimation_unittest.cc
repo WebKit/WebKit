@@ -23,7 +23,7 @@ MATCHER(LossBasedBweUpdateWithBitrateOnly, "") {
     return false;
   }
   auto bwe_event = static_cast<RtcEventBweUpdateLossBased*>(arg);
-  return bwe_event->bitrate_bps_ > 0 && bwe_event->fraction_loss_ == 0;
+  return bwe_event->bitrate_bps() > 0 && bwe_event->fraction_loss() == 0;
 }
 
 MATCHER(LossBasedBweUpdateWithBitrateAndLossFraction, "") {
@@ -31,7 +31,7 @@ MATCHER(LossBasedBweUpdateWithBitrateAndLossFraction, "") {
     return false;
   }
   auto bwe_event = static_cast<RtcEventBweUpdateLossBased*>(arg);
-  return bwe_event->bitrate_bps_ > 0 && bwe_event->fraction_loss_ > 0;
+  return bwe_event->bitrate_bps() > 0 && bwe_event->fraction_loss() > 0;
 }
 
 void TestProbing(bool use_delay_based) {

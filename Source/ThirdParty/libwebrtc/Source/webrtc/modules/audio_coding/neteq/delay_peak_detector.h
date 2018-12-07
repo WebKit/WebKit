@@ -11,8 +11,8 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_DELAY_PEAK_DETECTOR_H_
 #define MODULES_AUDIO_CODING_NETEQ_DELAY_PEAK_DETECTOR_H_
 
-#include <string.h>  // size_t
-
+#include <stdint.h>
+#include <string.h>
 #include <list>
 #include <memory>
 

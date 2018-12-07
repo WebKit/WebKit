@@ -11,7 +11,7 @@
 #ifndef MODULES_RTP_RTCP_INCLUDE_REMOTE_NTP_TIME_ESTIMATOR_H_
 #define MODULES_RTP_RTCP_INCLUDE_REMOTE_NTP_TIME_ESTIMATOR_H_
 
-#include <memory>
+#include <stdint.h>
 
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/numerics/moving_median_filter.h"

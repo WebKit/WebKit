@@ -11,9 +11,12 @@
 #ifndef RTC_BASE_STRINGENCODE_H_
 #define RTC_BASE_STRINGENCODE_H_
 
+#include <stddef.h>
 #include <string>
+#include <type_traits>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_to_number.h"
 

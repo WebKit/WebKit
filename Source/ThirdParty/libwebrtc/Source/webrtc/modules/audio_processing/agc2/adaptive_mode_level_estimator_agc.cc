@@ -10,6 +10,10 @@
 
 #include "modules/audio_processing/agc2/adaptive_mode_level_estimator_agc.h"
 
+#include <cmath>
+#include <vector>
+
+#include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 
 namespace webrtc {

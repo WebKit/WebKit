@@ -10,8 +10,11 @@
 
 #include "modules/audio_coding/codecs/opus/audio_decoder_opus.h"
 
+#include <memory>
 #include <utility>
 
+#include "absl/types/optional.h"
+#include "api/array_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {

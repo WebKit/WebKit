@@ -25,7 +25,7 @@
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/pathutils.h"
+#include "test/testsupport/fileutils.h"
 
 namespace webrtc {
 namespace test {
@@ -46,21 +46,20 @@ InitSpeakerOutputFilePaths(const std::set<std::string>& speaker_names,
 
   // Add near-end and far-end output paths into the map.
   for (const auto& speaker_name : speaker_names) {
-    const rtc::Pathname near_end_path(output_path,
-                                      "s_" + speaker_name + "-near_end.wav");
+    const std::string near_end_path =
+        test::JoinFilename(output_path, "s_" + speaker_name + "-near_end.wav");
     RTC_LOG(LS_VERBOSE) << "The near-end audio track will be created in "
-                        << near_end_path.pathname() << ".";
+                        << near_end_path << ".";
 
-    const rtc::Pathname far_end_path(output_path,
-                                     "s_" + speaker_name + "-far_end.wav");
+    const std::string far_end_path =
+        test::JoinFilename(output_path, "s_" + speaker_name + "-far_end.wav");
     RTC_LOG(LS_VERBOSE) << "The far-end audio track will be created in "
-                        << far_end_path.pathname() << ".";
+                        << far_end_path << ".";
 
     // Add to map.
     speaker_output_file_paths_map->emplace(
         std::piecewise_construct, std::forward_as_tuple(speaker_name),
-        std::forward_as_tuple(near_end_path.pathname(),
-                              far_end_path.pathname()));
+        std::forward_as_tuple(near_end_path, far_end_path));
   }
 
   return speaker_output_file_paths_map;

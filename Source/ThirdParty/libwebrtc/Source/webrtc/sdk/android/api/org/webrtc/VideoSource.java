@@ -30,7 +30,20 @@ public class VideoSource extends MediaSource {
    * maintain the input orientation, so it doesn't matter if e.g. 1280x720 or 720x1280 is requested.
    */
   public void adaptOutputFormat(int width, int height, int fps) {
-    nativeAdaptOutputFormat(getNativeVideoTrackSource(), width, height, fps);
+    final int maxSide = Math.max(width, height);
+    final int minSide = Math.min(width, height);
+    adaptOutputFormat(maxSide, minSide, minSide, maxSide, fps);
+  }
+
+  /**
+   * Same as above, but allows setting two different target resolutions depending on incoming
+   * frame orientation. This gives more fine-grained control and can e.g. be used to force landscape
+   * video to be cropped to portrait video.
+   */
+  public void adaptOutputFormat(
+      int landscapeWidth, int landscapeHeight, int portraitWidth, int portraitHeight, int fps) {
+    nativeAdaptOutputFormat(getNativeVideoTrackSource(), landscapeWidth, landscapeHeight,
+        portraitWidth, portraitHeight, fps);
   }
 
   public CapturerObserver getCapturerObserver() {
@@ -44,5 +57,6 @@ public class VideoSource extends MediaSource {
 
   // Returns source->internal() from webrtc::VideoTrackSourceProxy.
   private static native long nativeGetInternalSource(long source);
-  private static native void nativeAdaptOutputFormat(long source, int width, int height, int fps);
+  private static native void nativeAdaptOutputFormat(long source, int landscapeWidth,
+      int landscapeHeight, int portraitWidth, int portraitHeight, int fps);
 }

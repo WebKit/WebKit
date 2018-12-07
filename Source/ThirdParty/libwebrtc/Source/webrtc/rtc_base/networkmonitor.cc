@@ -10,7 +10,11 @@
 
 #include "rtc_base/networkmonitor.h"
 
+#include <stdint.h>
+
 #include "rtc_base/checks.h"
+#include "rtc_base/location.h"
+#include "rtc_base/logging.h"
 
 namespace {
 const uint32_t UPDATE_NETWORKS_MESSAGE = 1;

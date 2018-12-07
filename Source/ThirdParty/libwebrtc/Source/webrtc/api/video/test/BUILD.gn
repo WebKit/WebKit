@@ -11,10 +11,12 @@ import("../../../webrtc.gni")
 rtc_source_set("rtc_api_video_unittests") {
   testonly = true
   sources = [
+    "color_space_unittest.cc",
     "video_bitrate_allocation_unittest.cc",
   ]
   deps = [
     "..:video_bitrate_allocation",
+    "..:video_frame",
     "../../../test:test_support",
   ]
 }

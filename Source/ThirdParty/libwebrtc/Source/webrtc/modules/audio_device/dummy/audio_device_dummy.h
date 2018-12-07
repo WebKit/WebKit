@@ -11,9 +11,12 @@
 #ifndef AUDIO_DEVICE_AUDIO_DEVICE_DUMMY_H_
 #define AUDIO_DEVICE_AUDIO_DEVICE_DUMMY_H_
 
-#include <stdio.h>
+#include <stdint.h>
 
+#include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/audio_device_generic.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_device/include/audio_device_defines.h"
 
 namespace webrtc {
 

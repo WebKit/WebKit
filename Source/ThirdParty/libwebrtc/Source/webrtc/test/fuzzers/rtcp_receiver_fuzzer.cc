@@ -15,6 +15,8 @@
 namespace webrtc {
 namespace {
 
+constexpr int kRtcpIntervalMs = 1000;
+
 class NullModuleRtpRtcp : public RTCPReceiver::ModuleRtpRtcp {
  public:
   void SetTmmbn(std::vector<rtcp::TmmbItem>) override {}
@@ -30,7 +32,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   SimulatedClock clock(1234);
 
   RTCPReceiver receiver(&clock, false, nullptr, nullptr, nullptr, nullptr,
-                        nullptr, &rtp_rtcp_module);
+                        nullptr, kRtcpIntervalMs, &rtp_rtcp_module);
 
   receiver.IncomingPacket(data, size);
 }

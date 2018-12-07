@@ -118,7 +118,7 @@ TEST_F(VideoReceiveStreamTest, CreateFrameFromH264FmtpSpropAndIdr) {
   rtppacket.SetPayloadType(99);
   rtppacket.SetSequenceNumber(1);
   rtppacket.SetTimestamp(0);
-  rtc::Event init_decode_event_(false, false);
+  rtc::Event init_decode_event_;
   EXPECT_CALL(mock_h264_video_decoder_, InitDecode(_, _))
       .WillOnce(Invoke([&init_decode_event_](const VideoCodec* config,
                                              int32_t number_of_cores) {

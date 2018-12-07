@@ -12,6 +12,7 @@
  * A wrapper for resampling a numerous amount of sampling combinations.
  */
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 

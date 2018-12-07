@@ -43,11 +43,8 @@ TEST(BitrateAllocationStrategyTest, SetAllBitratesToMinimum) {
       BitrateAllocationStrategy::TrackConfig(min_other_bitrate,
                                              max_other_bitrate, false, "")};
 
-  std::vector<const rtc::BitrateAllocationStrategy::TrackConfig*>
-      track_config_ptrs = MakeTrackConfigPtrsVector(track_configs);
-
   std::vector<uint32_t> allocations =
-      BitrateAllocationStrategy::SetAllBitratesToMinimum(track_config_ptrs);
+      BitrateAllocationStrategy::SetAllBitratesToMinimum(track_configs);
   EXPECT_EQ(min_audio_bitrate, allocations[0]);
   EXPECT_EQ(min_video_bitrate, allocations[1]);
   EXPECT_EQ(min_other_bitrate, allocations[2]);
@@ -76,11 +73,8 @@ TEST(BitrateAllocationStrategyTest, DistributeBitratesEvenly) {
       BitrateAllocationStrategy::TrackConfig(min_other_bitrate,
                                              max_other_bitrate, false, "")};
 
-  std::vector<const rtc::BitrateAllocationStrategy::TrackConfig*>
-      track_config_ptrs = MakeTrackConfigPtrsVector(track_configs);
-
   std::vector<uint32_t> allocations =
-      BitrateAllocationStrategy::DistributeBitratesEvenly(track_config_ptrs,
+      BitrateAllocationStrategy::DistributeBitratesEvenly(track_configs,
                                                           available_bitrate);
   EXPECT_EQ(min_audio_bitrate + even_bitrate_increase, allocations[0]);
   EXPECT_EQ(min_video_bitrate + even_bitrate_increase, allocations[1]);
@@ -108,11 +102,7 @@ std::vector<uint32_t> RunAudioPriorityAllocation(
       BitrateAllocationStrategy::TrackConfig(min_other_bitrate,
                                              max_other_bitrate, false, "")};
 
-  std::vector<const rtc::BitrateAllocationStrategy::TrackConfig*>
-      track_config_ptrs = MakeTrackConfigPtrsVector(track_configs);
-
-  return allocation_strategy.AllocateBitrates(available_bitrate,
-                                              track_config_ptrs);
+  return allocation_strategy.AllocateBitrates(available_bitrate, track_configs);
 }
 
 // Test that when the available bitrate is less than the sum of the minimum

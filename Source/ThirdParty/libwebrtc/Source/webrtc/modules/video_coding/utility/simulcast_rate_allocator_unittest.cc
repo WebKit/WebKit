@@ -15,8 +15,7 @@
 #include <utility>
 #include <vector>
 
-#include "modules/video_coding/codecs/vp8/include/vp8_temporal_layers.h"
-
+#include "api/video_codecs/vp8_temporal_layers.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -34,9 +33,9 @@ constexpr uint32_t kLegacyScreenshareMaxBitrateKbps = 1000;
 constexpr uint32_t kSimulcastScreenshareMinBitrateKbps = 600;
 constexpr uint32_t kSimulcastScreenshareMaxBitrateKbps = 1250;
 
-class MockTemporalLayers : public TemporalLayers {
+class MockTemporalLayers : public Vp8TemporalLayers {
  public:
-  MOCK_METHOD1(UpdateLayerConfig, TemporalLayers::FrameConfig(uint32_t));
+  MOCK_METHOD1(UpdateLayerConfig, Vp8TemporalLayers::FrameConfig(uint32_t));
   MOCK_METHOD2(OnRatesUpdated, void(const std::vector<uint32_t>&, int));
   MOCK_METHOD1(UpdateConfiguration, bool(Vp8EncoderConfig*));
   MOCK_METHOD5(OnEncodeDone,
@@ -44,7 +43,7 @@ class MockTemporalLayers : public TemporalLayers {
   MOCK_METHOD3(FrameEncoded, void(uint32_t, size_t, int));
   MOCK_CONST_METHOD0(Tl0PicIdx, uint8_t());
   MOCK_CONST_METHOD1(GetTemporalLayerId,
-                     int(const TemporalLayers::FrameConfig&));
+                     int(const Vp8TemporalLayers::FrameConfig&));
 };
 }  // namespace
 

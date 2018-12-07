@@ -11,10 +11,16 @@
 #include "modules/rtp_rtcp/source/rtp_format_h264.h"
 
 #include <string.h>
+#include <cstddef>
+#include <cstdint>
+#include <iterator>
 #include <memory>
 #include <utility>
 #include <vector>
 
+#include "absl/types/optional.h"
+#include "absl/types/variant.h"
+#include "common_types.h"  // NOLINT(build/include)
 #include "common_video/h264/h264_common.h"
 #include "common_video/h264/pps_parser.h"
 #include "common_video/h264/sps_parser.h"
@@ -186,9 +192,11 @@ bool RtpPacketizerH264::GeneratePackets(
       case H264PacketizationMode::NonInterleaved:
         int fragment_len = input_fragments_[i].length;
         int single_packet_capacity = limits_.max_payload_len;
-        if (i == 0)
+        if (input_fragments_.size() == 1)
+          single_packet_capacity -= limits_.single_packet_reduction_len;
+        else if (i == 0)
           single_packet_capacity -= limits_.first_packet_reduction_len;
-        if (i + 1 == input_fragments_.size())
+        else if (i + 1 == input_fragments_.size())
           single_packet_capacity -= limits_.last_packet_reduction_len;
 
         if (fragment_len > single_packet_capacity) {
@@ -211,7 +219,10 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
   PayloadSizeLimits limits = limits_;
   // Leave room for the FU-A header.
   limits.max_payload_len -= kFuAHeaderSize;
-  // Ignore first/last packet reductions unless it is first/last fragment.
+  // Ignore single/first/last packet reductions unless it is single/first/last
+  // fragment.
+  if (input_fragments_.size() != 1)
+    limits.single_packet_reduction_len = 0;
   if (fragment_index != 0)
     limits.first_packet_reduction_len = 0;
   if (fragment_index != input_fragments_.size() - 1)
@@ -243,17 +254,31 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
 size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   // Aggregate fragments into one packet (STAP-A).
   size_t payload_size_left = limits_.max_payload_len;
-  if (fragment_index == 0)
+  if (input_fragments_.size() == 1)
+    payload_size_left -= limits_.single_packet_reduction_len;
+  else if (fragment_index == 0)
     payload_size_left -= limits_.first_packet_reduction_len;
   int aggregated_fragments = 0;
   size_t fragment_headers_length = 0;
   const Fragment* fragment = &input_fragments_[fragment_index];
   RTC_CHECK_GE(payload_size_left, fragment->length);
   ++num_packets_left_;
-  while (payload_size_left >= fragment->length + fragment_headers_length &&
-         (fragment_index + 1 < input_fragments_.size() ||
-          payload_size_left >= fragment->length + fragment_headers_length +
-                                   limits_.last_packet_reduction_len)) {
+
+  auto payload_size_needed = [&] {
+    size_t fragment_size = fragment->length + fragment_headers_length;
+    if (input_fragments_.size() == 1) {
+      // Single fragment, single packet, payload_size_left already adjusted
+      // with limits_.single_packet_reduction_len.
+      return fragment_size;
+    }
+    if (fragment_index == input_fragments_.size() - 1) {
+      // Last fragment, so StrapA might be the last packet.
+      return fragment_size + limits_.last_packet_reduction_len;
+    }
+    return fragment_size;
+  };
+
+  while (payload_size_left >= payload_size_needed()) {
     RTC_CHECK_GT(fragment->length, 0);
     packets_.push(PacketUnit(*fragment, aggregated_fragments == 0, false, true,
                              fragment->buffer[0]));
@@ -282,9 +307,11 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
 bool RtpPacketizerH264::PacketizeSingleNalu(size_t fragment_index) {
   // Add a single NALU to the queue, no aggregation.
   size_t payload_size_left = limits_.max_payload_len;
-  if (fragment_index == 0)
+  if (input_fragments_.size() == 1)
+    payload_size_left -= limits_.single_packet_reduction_len;
+  else if (fragment_index == 0)
     payload_size_left -= limits_.first_packet_reduction_len;
-  if (fragment_index + 1 == input_fragments_.size())
+  else if (fragment_index + 1 == input_fragments_.size())
     payload_size_left -= limits_.last_packet_reduction_len;
   const Fragment* fragment = &input_fragments_[fragment_index];
   if (payload_size_left < fragment->length) {

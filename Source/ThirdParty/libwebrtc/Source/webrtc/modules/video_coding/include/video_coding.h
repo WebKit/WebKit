@@ -27,6 +27,7 @@
 #include "modules/include/module.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_coding_defines.h"
+#include "rtc_base/deprecation.h"
 #include "system_wrappers/include/event_wrapper.h"
 
 namespace webrtc {
@@ -36,20 +37,6 @@ class EncodedImageCallback;
 class VideoDecoder;
 class VideoEncoder;
 struct CodecSpecificInfo;
-
-class EventFactory {
- public:
-  virtual ~EventFactory() {}
-
-  virtual EventWrapper* CreateEvent() = 0;
-};
-
-class EventFactoryImpl : public EventFactory {
- public:
-  ~EventFactoryImpl() override {}
-
-  EventWrapper* CreateEvent() override;
-};
 
 // Used to indicate which decode with errors mode should be used.
 enum VCMDecodeErrorMode {
@@ -69,7 +56,7 @@ class VideoCodingModule : public Module {
   enum SenderNackMode { kNackNone, kNackAll, kNackSelective };
 
   // DEPRECATED.
-  static VideoCodingModule* Create(Clock* clock, EventFactory* event_factory);
+  static VideoCodingModule* Create(Clock* clock);
 
   /*
    *   Sender

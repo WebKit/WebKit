@@ -14,11 +14,13 @@
 #include <memory>
 
 #include "api/video_codecs/video_decoder_factory.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
 // Creates a new factory that can create the built-in types of video decoders.
-std::unique_ptr<VideoDecoderFactory> CreateBuiltinVideoDecoderFactory();
+RTC_EXPORT std::unique_ptr<VideoDecoderFactory>
+CreateBuiltinVideoDecoderFactory();
 
 }  // namespace webrtc
 

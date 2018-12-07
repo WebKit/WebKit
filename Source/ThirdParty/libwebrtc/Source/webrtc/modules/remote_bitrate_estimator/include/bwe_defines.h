@@ -11,6 +11,8 @@
 #ifndef MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_BWE_DEFINES_H_
 #define MODULES_REMOTE_BITRATE_ESTIMATOR_INCLUDE_BWE_DEFINES_H_
 
+#include <stdint.h>
+
 #include "absl/types/optional.h"
 #include "api/units/data_rate.h"
 
@@ -45,15 +47,13 @@ enum class BandwidthUsage {
 
 enum RateControlState { kRcHold, kRcIncrease, kRcDecrease };
 
-enum RateControlRegion { kRcNearMax, kRcAboveMax, kRcMaxUnknown };
-
 struct RateControlInput {
   RateControlInput(BandwidthUsage bw_state,
-                   const absl::optional<uint32_t>& estimated_throughput_bps);
+                   const absl::optional<DataRate>& estimated_throughput);
   ~RateControlInput();
 
   BandwidthUsage bw_state;
-  absl::optional<uint32_t> estimated_throughput_bps;
+  absl::optional<DataRate> estimated_throughput;
 };
 }  // namespace webrtc
 

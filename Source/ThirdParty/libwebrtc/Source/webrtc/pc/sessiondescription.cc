@@ -84,21 +84,6 @@ bool ContentGroup::RemoveContentName(const std::string& content_name) {
 }
 
 SessionDescription::SessionDescription() = default;
-
-SessionDescription::SessionDescription(const ContentInfos& contents)
-    : contents_(contents) {}
-
-SessionDescription::SessionDescription(const ContentInfos& contents,
-                                       const ContentGroups& groups)
-    : contents_(contents), content_groups_(groups) {}
-
-SessionDescription::SessionDescription(const ContentInfos& contents,
-                                       const TransportInfos& transports,
-                                       const ContentGroups& groups)
-    : contents_(contents),
-      transport_infos_(transports),
-      content_groups_(groups) {}
-
 SessionDescription::SessionDescription(const SessionDescription&) = default;
 
 SessionDescription::~SessionDescription() {
@@ -162,7 +147,7 @@ void SessionDescription::AddContent(const std::string& name,
   ContentInfo content(type);
   content.name = name;
   content.description = description;
-  contents_.push_back(std::move(content));
+  AddContent(&content);
 }
 
 void SessionDescription::AddContent(const std::string& name,
@@ -173,7 +158,7 @@ void SessionDescription::AddContent(const std::string& name,
   content.name = name;
   content.rejected = rejected;
   content.description = description;
-  contents_.push_back(std::move(content));
+  AddContent(&content);
 }
 
 void SessionDescription::AddContent(const std::string& name,
@@ -186,7 +171,16 @@ void SessionDescription::AddContent(const std::string& name,
   content.rejected = rejected;
   content.bundle_only = bundle_only;
   content.description = description;
-  contents_.push_back(std::move(content));
+  AddContent(&content);
+}
+
+void SessionDescription::AddContent(ContentInfo* content) {
+  if (extmap_allow_mixed()) {
+    // Mixed support on session level overrides setting on media level.
+    content->description->set_extmap_allow_mixed_enum(
+        MediaContentDescription::kSession);
+  }
+  contents_.push_back(std::move(*content));
 }
 
 bool SessionDescription::RemoveContentByName(const std::string& name) {

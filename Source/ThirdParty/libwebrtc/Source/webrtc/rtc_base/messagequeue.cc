@@ -8,13 +8,15 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include <algorithm>
+#include <string>
+#include <utility>
 
 #include "rtc_base/atomicops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/messagequeue.h"
-#include "rtc_base/stringencode.h"
 #include "rtc_base/thread.h"
+#include "rtc_base/timeutils.h"
 #include "rtc_base/trace_event.h"
 
 namespace rtc {
@@ -348,8 +350,10 @@ void MessageQueue::Post(const Location& posted_from,
                         uint32_t id,
                         MessageData* pdata,
                         bool time_sensitive) {
-  if (IsQuitting())
+  if (IsQuitting()) {
+    delete pdata;
     return;
+  }
 
   // Keep thread safe
   // Add the message to the end of the queue
@@ -405,6 +409,7 @@ void MessageQueue::DoDelayPost(const Location& posted_from,
                                uint32_t id,
                                MessageData* pdata) {
   if (IsQuitting()) {
+    delete pdata;
     return;
   }
 

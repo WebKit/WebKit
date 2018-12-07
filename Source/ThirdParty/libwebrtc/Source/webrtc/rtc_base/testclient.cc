@@ -97,7 +97,7 @@ bool TestClient::CheckNextPacket(const char* buf,
   std::unique_ptr<Packet> packet = NextPacket(kTimeoutMs);
   if (packet) {
     res = (packet->size == size && memcmp(packet->buf, buf, size) == 0 &&
-           CheckTimestamp(packet->packet_time.timestamp));
+           CheckTimestamp(packet->packet_time_us));
     if (addr)
       *addr = packet->addr;
   }
@@ -144,10 +144,10 @@ void TestClient::OnPacket(AsyncPacketSocket* socket,
                           const char* buf,
                           size_t size,
                           const SocketAddress& remote_addr,
-                          const PacketTime& packet_time) {
+                          const int64_t& packet_time_us) {
   CritScope cs(&crit_);
   packets_.push_back(
-      absl::make_unique<Packet>(remote_addr, buf, size, packet_time));
+      absl::make_unique<Packet>(remote_addr, buf, size, packet_time_us));
 }
 
 void TestClient::OnReadyToSend(AsyncPacketSocket* socket) {
@@ -157,14 +157,14 @@ void TestClient::OnReadyToSend(AsyncPacketSocket* socket) {
 TestClient::Packet::Packet(const SocketAddress& a,
                            const char* b,
                            size_t s,
-                           const PacketTime& packet_time)
-    : addr(a), buf(0), size(s), packet_time(packet_time) {
+                           int64_t packet_time_us)
+    : addr(a), buf(0), size(s), packet_time_us(packet_time_us) {
   buf = new char[size];
   memcpy(buf, b, size);
 }
 
 TestClient::Packet::Packet(const Packet& p)
-    : addr(p.addr), buf(0), size(p.size), packet_time(p.packet_time) {
+    : addr(p.addr), buf(0), size(p.size), packet_time_us(p.packet_time_us) {
   buf = new char[size];
   memcpy(buf, p.buf, size);
 }

@@ -11,13 +11,11 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
 #define MODULES_AUDIO_CODING_NETEQ_POST_DECODE_VAD_H_
 
-#include <string>  // size_t
+#include <stddef.h>
+#include <stdint.h>
 
 #include "api/audio_codecs/audio_decoder.h"
 #include "common_audio/vad/include/webrtc_vad.h"
-#include "common_types.h"  // NOLINT(build/include)  // NULL
-#include "modules/audio_coding/neteq/defines.h"
-#include "modules/audio_coding/neteq/packet.h"
 #include "rtc_base/constructormagic.h"
 
 namespace webrtc {

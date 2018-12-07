@@ -2167,13 +2167,9 @@ TEST_F(SendStatisticsProxyTest, FecBitrateNotReportedWhenNotEnabled) {
 }
 
 TEST_F(SendStatisticsProxyTest, GetStatsReportsEncoderImplementationName) {
-  const char* kName = "encoderName";
-  EncodedImage encoded_image;
-  CodecSpecificInfo codec_info;
-  codec_info.codec_name = kName;
-  statistics_proxy_->OnSendEncodedImage(encoded_image, &codec_info);
-  EXPECT_STREQ(
-      kName, statistics_proxy_->GetStats().encoder_implementation_name.c_str());
+  const std::string kName = "encoderName";
+  statistics_proxy_->OnEncoderImplementationChanged(kName);
+  EXPECT_EQ(kName, statistics_proxy_->GetStats().encoder_implementation_name);
 }
 
 TEST_F(SendStatisticsProxyTest, Vp9SvcLowSpatialLayerDoesNotUpdateResolution) {
@@ -2219,7 +2215,6 @@ class ForcedFallbackTest : public SendStatisticsProxyTest {
       : SendStatisticsProxyTest(field_trials) {
     codec_info_.codecType = kVideoCodecVP8;
     codec_info_.codecSpecific.VP8.temporalIdx = 0;
-    codec_info_.codec_name = "fake_codec";
     encoded_image_._encodedWidth = kWidth;
     encoded_image_._encodedHeight = kHeight;
     encoded_image_.SetSpatialIndex(0);
@@ -2229,6 +2224,8 @@ class ForcedFallbackTest : public SendStatisticsProxyTest {
 
  protected:
   void InsertEncodedFrames(int num_frames, int interval_ms) {
+    statistics_proxy_->OnEncoderImplementationChanged(codec_name_);
+
     // First frame is not updating stats, insert initial frame.
     if (statistics_proxy_->GetStats().frames_encoded == 0) {
       statistics_proxy_->OnSendEncodedImage(encoded_image_, &codec_info_);
@@ -2243,6 +2240,7 @@ class ForcedFallbackTest : public SendStatisticsProxyTest {
 
   EncodedImage encoded_image_;
   CodecSpecificInfo codec_info_;
+  std::string codec_name_;
   const std::string kPrefix = "WebRTC.Video.Encoder.ForcedSw";
   const int kFrameIntervalMs = 1000;
   const int kMinFrames = 20;  // Min run time 20 sec.
@@ -2321,7 +2319,7 @@ TEST_F(ForcedFallbackEnabled, EnteredLowResolutionNotSetIfNotLibvpx) {
 }
 
 TEST_F(ForcedFallbackEnabled, EnteredLowResolutionSetIfLibvpx) {
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(1, kFrameIntervalMs);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
 }
@@ -2333,7 +2331,7 @@ TEST_F(ForcedFallbackDisabled, EnteredLowResolutionNotSetIfAboveMaxPixels) {
 }
 
 TEST_F(ForcedFallbackDisabled, EnteredLowResolutionNotSetIfLibvpx) {
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(1, kFrameIntervalMs);
   EXPECT_FALSE(statistics_proxy_->GetStats().has_entered_low_resolution);
 }
@@ -2351,7 +2349,7 @@ TEST_F(ForcedFallbackEnabled, OneFallbackEvent) {
   EXPECT_FALSE(statistics_proxy_->GetStats().has_entered_low_resolution);
   InsertEncodedFrames(15, 1000);
   EXPECT_FALSE(statistics_proxy_->GetStats().has_entered_low_resolution);
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(5, 1000);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
 
@@ -2369,18 +2367,18 @@ TEST_F(ForcedFallbackEnabled, ThreeFallbackEvents) {
   // Three changes. Video: 60000 ms, fallback: 15000 ms (25%).
   InsertEncodedFrames(10, 1000);
   EXPECT_FALSE(statistics_proxy_->GetStats().has_entered_low_resolution);
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(15, 500);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
-  codec_info_.codec_name = "notlibvpx";
+  codec_name_ = "notlibvpx";
   InsertEncodedFrames(20, 1000);
   InsertEncodedFrames(3, kMaxFrameDiffMs);  // Should not be included.
   InsertEncodedFrames(10, 1000);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
-  codec_info_.codec_name = "notlibvpx2";
+  codec_name_ = "notlibvpx2";
   InsertEncodedFrames(10, 500);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(15, 500);
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
 
@@ -2393,7 +2391,7 @@ TEST_F(ForcedFallbackEnabled, ThreeFallbackEvents) {
 
 TEST_F(ForcedFallbackEnabled, NoFallbackIfAboveMaxPixels) {
   encoded_image_._encodedWidth = kWidth + 1;
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(kMinFrames, kFrameIntervalMs);
 
   EXPECT_FALSE(statistics_proxy_->GetStats().has_entered_low_resolution);
@@ -2404,7 +2402,7 @@ TEST_F(ForcedFallbackEnabled, NoFallbackIfAboveMaxPixels) {
 
 TEST_F(ForcedFallbackEnabled, FallbackIfAtMaxPixels) {
   encoded_image_._encodedWidth = kWidth;
-  codec_info_.codec_name = "libvpx";
+  codec_name_ = "libvpx";
   InsertEncodedFrames(kMinFrames, kFrameIntervalMs);
 
   EXPECT_TRUE(statistics_proxy_->GetStats().has_entered_low_resolution);
