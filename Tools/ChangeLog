@@ -1,3 +1,13 @@
+2018-12-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add keychain access entitlement to WebKitTestRunnerApp
+        https://bugs.webkit.org/show_bug.cgi?id=192489
+        <rdar://problem/45057952>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp-iOS.entitlements:
+
 2018-12-07  Saam Barati  <sbarati@apple.com>
 
         WKWebProcessPlugInLoadDelegate should have API for saying which rendering events it wants to listen for
