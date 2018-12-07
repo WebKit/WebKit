@@ -68,12 +68,12 @@ void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTy
     WebKit::toImpl(bundleRef)->postMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));
 }
 
-void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
+void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnRetainedDataRef)
 {
     RefPtr<API::Object> returnData;
     WebKit::toImpl(bundleRef)->postSynchronousMessage(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef), returnData);
-    if (returnDataRef)
-        *returnDataRef = WebKit::toAPI(returnData.leakRef());
+    if (returnRetainedDataRef)
+        *returnRetainedDataRef = WebKit::toAPI(returnData.leakRef());
 }
 
 WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)

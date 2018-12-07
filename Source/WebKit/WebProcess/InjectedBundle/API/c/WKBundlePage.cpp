@@ -697,15 +697,15 @@ void WKBundlePagePostMessageIgnoringFullySynchronousMode(WKBundlePageRef pageRef
     WebKit::toImpl(pageRef)->postMessageIgnoringFullySynchronousMode(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef));
 }
 
-void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
+void WKBundlePagePostSynchronousMessageForTesting(WKBundlePageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnRetainedDataRef)
 {
     WebKit::WebPage* page = WebKit::toImpl(pageRef);
     page->layoutIfNeeded();
 
     RefPtr<API::Object> returnData;
     page->postSynchronousMessageForTesting(WebKit::toWTFString(messageNameRef), WebKit::toImpl(messageBodyRef), returnData);
-    if (returnDataRef)
-        *returnDataRef = WebKit::toAPI(returnData.leakRef());
+    if (returnRetainedDataRef)
+        *returnRetainedDataRef = WebKit::toAPI(returnData.leakRef());
 }
 
 void WKBundlePageAddUserScript(WKBundlePageRef pageRef, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames)

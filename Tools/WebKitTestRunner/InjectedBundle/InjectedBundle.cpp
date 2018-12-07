@@ -119,16 +119,16 @@ void InjectedBundle::didCreatePage(WKBundlePageRef page)
         return;
 
     WKRetainPtr<WKStringRef> messsageName(AdoptWK, WKStringCreateWithUTF8CString("Initialization"));
-    WKTypeRef result = 0;
-    WKBundlePostSynchronousMessage(m_bundle, messsageName.get(), 0, &result);
+    WKTypeRef result = nullptr;
+    WKBundlePostSynchronousMessage(m_bundle, messsageName.get(), nullptr, &result);
     ASSERT(WKGetTypeID(result) == WKDictionaryGetTypeID());
-    WKDictionaryRef initializationDictionary = static_cast<WKDictionaryRef>(result);
+    WKRetainPtr<WKDictionaryRef> initializationDictionary(AdoptWK, static_cast<WKDictionaryRef>(result));
 
     WKRetainPtr<WKStringRef> resumeTestingKey(AdoptWK, WKStringCreateWithUTF8CString("ResumeTesting"));
-    WKTypeRef resumeTestingValue = WKDictionaryGetItemForKey(initializationDictionary, resumeTestingKey.get());
+    WKTypeRef resumeTestingValue = WKDictionaryGetItemForKey(initializationDictionary.get(), resumeTestingKey.get());
     ASSERT(WKGetTypeID(resumeTestingValue) == WKBooleanGetTypeID());
     if (WKBooleanGetValue(static_cast<WKBooleanRef>(resumeTestingValue)))
-        beginTesting(initializationDictionary, BegingTestingMode::Resume);
+        beginTesting(initializationDictionary.get(), BegingTestingMode::Resume);
 }
 
 void InjectedBundle::willDestroyPage(WKBundlePageRef page)

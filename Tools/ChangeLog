@@ -1,3 +1,46 @@
+2018-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        Injected bundle for WebKitTestRunner leaks WKTypeRef objects
+        <https://webkit.org/b/192481>
+        <rdar://problem/46539059>
+
+        Reviewed by Simon Fraser.
+
+        This patch:
+        - Fixes leaks in various injected bundle methods that return +1
+          retained WKTypeRef objects via pointer.
+        - Asserts the returned object is the expected WKTypeRef.
+        - Replaces 0 with nullptr in many places.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::shouldDumpPixels const):
+        (WTR::TestRunner::whatToDump const):
+        (WTR::TestRunner::shouldWaitUntilDone const):
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks):
+        (WTR::TestRunner::didReceiveServerRedirectForProvisionalNavigation const):
+        (WTR::TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation):
+        (WTR::TestRunner::secureEventInputIsEnabled const):
+        (WTR::TestRunner::isStatisticsPrevalentResource):
+        (WTR::TestRunner::isStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubresourceUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::isStatisticsGrandfathered):
+        (WTR::TestRunner::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestRunner::statisticsUpdateCookieBlocking):
+        (WTR::TestRunner::statisticsSubmitTelemetry):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestRunner::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::TestRunner::statisticsResetToConsistentState):
+        (WTR::TestRunner::getAllStorageAccessEntries):
+        (WTR::TestRunner::hasDOMCache):
+        (WTR::TestRunner::domCacheSize):
+        (WTR::TestRunner::injectUserScript):
+        (WTR::TestRunner::keyExistsInKeychain):
+
 2018-12-06  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION: run-webkit-tests may fail when using booted simulators

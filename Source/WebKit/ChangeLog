@@ -1,3 +1,22 @@
+2018-12-06  David Kilzer  <ddkilzer@apple.com>
+
+        Injected bundle for WebKitTestRunner leaks WKTypeRef objects
+        <https://webkit.org/b/192481>
+        <rdar://problem/46539059>
+
+        Reviewed by Simon Fraser.
+
+        Change function parameter name from `returnData[Ref]` to
+        `returnRetainedData[Ref]` to document that the value returned is
+        a +1 retained WKTypeRef object.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundlePostSynchronousMessage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePagePostSynchronousMessageForTesting):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2018-12-06  Frederic Wang  <fwang@igalia.com>
 
         Allow control over child order when adding nodes to the scrolling tree
