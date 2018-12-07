@@ -28,6 +28,7 @@ from twisted.internet import defer
 
 import re
 
+BUG_SERVER_URL = 'https://bugs.webkit.org/'
 EWS_URL = 'http://ews-build.webkit-uat.org/'
 WithProperties = properties.WithProperties
 Interpolate = properties.Interpolate
@@ -62,8 +63,31 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty("buildOnly", self.buildOnly, 'config.json')
         if self.additionalArguments:
             self.setProperty("additionalArguments", self.additionalArguments, 'config.json')
+
+        self.add_patch_id_url()
+        self.add_bug_id_url()
         self.finished(SUCCESS)
         return defer.succeed(None)
+
+    def add_patch_id_url(self):
+        patch_id = self.getProperty('patch_id', '')
+        if patch_id:
+            self.addURL('Patch {}'.format(patch_id), self.getPatchURL(patch_id))
+
+    def add_bug_id_url(self):
+        bug_id = self.getProperty('bug_id', '')
+        if bug_id:
+            self.addURL('Bug {}'.format(bug_id), self.getBugURL(bug_id))
+
+    def getPatchURL(self, patch_id):
+        if not patch_id:
+            return None
+        return '{}attachment.cgi?id={}'.format(BUG_SERVER_URL, patch_id)
+
+    def getBugURL(self, bug_id):
+        if not bug_id:
+            return None
+        return '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id)
 
 
 class CheckOutSource(svn.SVN):

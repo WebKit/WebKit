@@ -1,5 +1,18 @@
 2018-12-07  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Builds should have a link to patch and bug
+        https://bugs.webkit.org/show_bug.cgi?id=192492
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ConfigureBuild.add_patch_id_url): Method to add Patch URL.
+        (ConfigureBuild.add_bug_id_url): Method to add Bug URL.
+        (ConfigureBuild.getPatchURL): Method to get Patch URL.
+        (ConfigureBuild.getBugURL): Method to get Bug URL.
+
+2018-12-07  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Configure logfile for ews-app logs
         https://bugs.webkit.org/show_bug.cgi?id=192493
 
