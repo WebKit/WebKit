@@ -1,3 +1,15 @@
+2018-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Cloned attachment elements lose their unique identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=192483
+
+        Reviewed by Tim Horton.
+
+        Introduce a new API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-12-06  Jonathan Bedard  <jbedard@apple.com>
 
         Consecutive DumpRenderTree crashes are happening again on WinCairo BuildBots since r238903

@@ -1488,6 +1488,13 @@ TEST(WKAttachmentTests, CopyAndPasteBetweenWebViews)
     EXPECT_WK_STREQ("application/zip", pastedArchiveInfo.contentType);
 }
 
+TEST(WKAttachmentTests, AttachmentIdentifierOfClonedAttachment)
+{
+    auto webView = webViewForTestingAttachments();
+    auto attachment = retainPtr([webView synchronouslyInsertAttachmentWithFilename:@"attachment.pdf" contentType:@"application/pdf" data:testPDFData()]);
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.body.cloneNode(true).querySelector('attachment').uniqueIdentifier"]);
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)

@@ -1,3 +1,22 @@
+2018-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Cloned attachment elements lose their unique identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=192483
+
+        Reviewed by Tim Horton.
+
+        This patch adds logic to ensure that the unique identifier of a cloned attachment element is the same as the
+        unique identifier of the original attachment element. If the cloned attachment is inserted into the same
+        document as the original attachment, then we will exercise the same codepath for copied-and-pasted attachments,
+        and assign a new unique identifier to the attachment element, while creating a new `_WKAttachment` in the client
+        that's backed by the same `NSFileWrapper`.
+
+        Test: WKAttachmentTests.AttachmentIdentifierOfClonedAttachment
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::copyNonAttributePropertiesFromElement):
+        * html/HTMLAttachmentElement.h:
+
 2018-12-07  Rob Buis  <rbuis@igalia.com>
 
         Merge parseAccessControlExposeHeadersAllowList into parseAccessControlAllowList

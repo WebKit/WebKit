@@ -86,6 +86,12 @@ const String& HTMLAttachmentElement::getAttachmentIdentifier(HTMLImageElement& i
     return identifier;
 }
 
+void HTMLAttachmentElement::copyNonAttributePropertiesFromElement(const Element& source)
+{
+    m_uniqueIdentifier = downcast<HTMLAttachmentElement>(source).uniqueIdentifier();
+    HTMLElement::copyNonAttributePropertiesFromElement(source);
+}
+
 URL HTMLAttachmentElement::archiveResourceURL(const String& identifier)
 {
     auto resourceURL = URL({ }, "applewebdata://attachment/"_s);
