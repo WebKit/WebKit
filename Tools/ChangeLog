@@ -1,3 +1,15 @@
+2018-12-06  Jonathan Bedard  <jbedard@apple.com>
+
+        Consecutive DumpRenderTree crashes are happening again on WinCairo BuildBots since r238903
+        https://bugs.webkit.org/show_bug.cgi?id=192486
+
+        Unreviewed infrastructure fix.
+
+        WinCairo bots define WEBKIT_TEST_CHILD_PROCESSES to run less processes due to RAM restrictions.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+
 2018-12-06  David Kilzer  <ddkilzer@apple.com>
 
         Injected bundle for WebKitTestRunner leaks WKTypeRef objects

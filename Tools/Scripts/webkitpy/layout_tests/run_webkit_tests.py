@@ -370,6 +370,9 @@ def _print_expectations(port, options, args, logging_stream):
 
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
+    if not options.child_processes:
+        options.child_processes = os.environ.get('WEBKIT_TEST_CHILD_PROCESSES')
+
     if not options.configuration:
         options.configuration = port.default_configuration()
 
