@@ -29,8 +29,7 @@
 
 #include "GeneratedImage.h"
 #include "PaintWorkletGlobalScope.h"
-#include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/Weak.h>
+
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

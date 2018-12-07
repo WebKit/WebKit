@@ -31,9 +31,12 @@
 #include "CSSPaintSize.h"
 #include "CallbackResult.h"
 #include "StylePropertyMapReadOnly.h"
-#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
+
+namespace JSC {
+class JSValue;
+} // namespace JSC
 
 namespace WebCore {
 class PaintRenderingContext2D;

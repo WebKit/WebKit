@@ -972,6 +972,48 @@ void RenderStyle::addCustomPaintWatchProperty(const String& name)
         data.customPaintWatchedProperties = std::make_unique<HashSet<String>>();
     data.customPaintWatchedProperties->add(name);
 }
+
+inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const StyleRareNonInheritedData& aData, const RenderStyle& b, const StyleRareNonInheritedData& bData)
+{
+    auto* propertiesA = aData.customPaintWatchedProperties.get();
+    auto* propertiesB = bData.customPaintWatchedProperties.get();
+
+    if (UNLIKELY(propertiesA || propertiesB)) {
+        // FIXME: We should not need to use ComputedStyleExtractor here.
+        ComputedStyleExtractor extractor((Element*) nullptr);
+
+        for (auto* watchPropertiesMap : { propertiesA, propertiesB }) {
+            if (!watchPropertiesMap)
+                continue;
+
+            for (auto& name : *watchPropertiesMap) {
+                RefPtr<CSSValue> valueA;
+                RefPtr<CSSValue> valueB;
+                if (isCustomPropertyName(name) && a.getCustomProperty(name) && b.getCustomProperty(name)) {
+                    valueA = CSSCustomPropertyValue::create(*a.getCustomProperty(name));
+                    valueB = CSSCustomPropertyValue::create(*b.getCustomProperty(name));
+                } else {
+                    CSSPropertyID propertyID = cssPropertyID(name);
+                    if (!propertyID)
+                        continue;
+                    valueA = extractor.valueForPropertyinStyle(a, propertyID);
+                    valueB = extractor.valueForPropertyinStyle(b, propertyID);
+                }
+
+                if ((valueA && !valueB) || (!valueA && valueB))
+                    return true;
+
+                if (!valueA)
+                    continue;
+
+                if (!(*valueA == *valueB))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
 #endif
 
 bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
@@ -996,42 +1038,8 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
         return true;
 
 #if ENABLE(CSS_PAINTING_API)
-    auto* propertiesA = m_rareNonInheritedData.ptr()->customPaintWatchedProperties.get();
-    auto* propertiesB = other.m_rareNonInheritedData.ptr()->customPaintWatchedProperties.get();
-
-    if (UNLIKELY(propertiesA || propertiesB)) {
-        // FIXME: We should not need to use ComputedStyleExtractor here.
-        ComputedStyleExtractor extractor((Element*) nullptr);
-
-        for (auto* watchPropertiesMap : { propertiesA, propertiesB }) {
-            if (!watchPropertiesMap)
-                continue;
-
-            for (auto& name : *watchPropertiesMap) {
-                RefPtr<CSSValue> valueA;
-                RefPtr<CSSValue> valueB;
-                if (isCustomPropertyName(name) && getCustomProperty(name) && other.getCustomProperty(name)) {
-                    valueA = CSSCustomPropertyValue::create(*getCustomProperty(name));
-                    valueB = CSSCustomPropertyValue::create(*other.getCustomProperty(name));
-                } else {
-                    CSSPropertyID propertyID = cssPropertyID(name);
-                    if (!propertyID)
-                        continue;
-                    valueA = extractor.valueForPropertyinStyle(*this, propertyID);
-                    valueB = extractor.valueForPropertyinStyle(other, propertyID);
-                }
-
-                if ((valueA && !valueB) || (!valueA && valueB))
-                    return true;
-
-                if (!valueA)
-                    continue;
-
-                if (!(*valueA == *valueB))
-                    return true;
-            }
-        }
-    }
+    if (changedCustomPaintWatchedProperty(*this, *m_rareNonInheritedData, other, *other.m_rareNonInheritedData))
+        return true;
 #endif
 
     return false;

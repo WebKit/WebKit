@@ -1,3 +1,29 @@
+2018-12-07  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Painting API code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=192480
+
+        Reviewed by Dean Jackson.
+
+        No new tests, since the existing tests should cover it.
+
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::outputConstraintSubspaceFor):
+        (WebCore::globalObjectOutputConstraintSubspaceFor):
+        * bindings/js/JSWorkletGlobalScopeBase.cpp:
+        (WebCore::toJS):
+        * css/CSSPaintCallback.h:
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::doCustomPaint):
+        * platform/graphics/CustomPaintImage.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCustomPaintWatchProperty):
+        (WebCore::changedCustomPaintWatchedProperty):
+        (WebCore::RenderStyle::changeRequiresRepaint const):
+        * worklets/PaintWorkletGlobalScope.cpp:
+        (WebCore::PaintWorkletGlobalScope::registerPaint):
+        * worklets/PaintWorkletGlobalScope.h:
+
 2018-12-07  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc up to 0d007d7c4f

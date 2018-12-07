@@ -46,12 +46,12 @@ public:
     ExceptionOr<void> registerPaint(JSC::ExecState&, JSDOMGlobalObject&, const String& name, JSC::Strong<JSC::JSObject> paintConstructor);
     double devicePixelRatio() const;
 
+    // All paint definitions must be destroyed before the vm is destroyed, because otherwise they will point to freed memory.
     struct PaintDefinition : public CanMakeWeakPtr<PaintDefinition> {
         PaintDefinition(const AtomicString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&&, Vector<String>&& inputProperties, Vector<String>&& inputArguments);
 
         const AtomicString name;
-        // This map must be cleared before the vm is destroyed!
-        JSC::JSObject* paintConstructor { nullptr };
+        const JSC::JSObject* const paintConstructor;
         const Ref<CSSPaintCallback> paintCallback;
         const Vector<String> inputProperties;
         const Vector<String> inputArguments;
