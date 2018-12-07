@@ -103,6 +103,7 @@ public:
 
     // Matches a width=device-width, initial-scale=1 viewport.
     WEBCORE_EXPORT static Parameters nativeWebpageParameters();
+    static Parameters scalableNativeWebpageParameters();
     WEBCORE_EXPORT static Parameters webpageParameters();
     WEBCORE_EXPORT static Parameters textDocumentParameters();
     WEBCORE_EXPORT static Parameters imageDocumentParameters();
@@ -126,6 +127,29 @@ private:
     bool shouldIgnoreScalingConstraints() const;
     bool shouldIgnoreVerticalScalingConstraints() const;
     bool shouldIgnoreHorizontalScalingConstraints() const;
+    void updateDefaultConfiguration();
+    bool canOverrideConfigurationParameters() const;
+
+    constexpr bool shouldIgnoreMinimumEffectiveDeviceWidth() const
+    {
+        if (m_canIgnoreScalingConstraints)
+            return true;
+
+        if (m_viewportArguments == ViewportArguments())
+            return false;
+
+        if (m_viewportArguments.width == ViewportArguments::ValueDeviceWidth || m_viewportArguments.zoom == 1.)
+            return true;
+
+        return false;
+    }
+
+    constexpr double minimumEffectiveDeviceWidth() const
+    {
+        if (shouldIgnoreMinimumEffectiveDeviceWidth())
+            return 0;
+        return m_minimumEffectiveDeviceWidth;
+    }
 
     constexpr double forceAlwaysUserScalableMaximumScale() const
     {
@@ -141,9 +165,9 @@ private:
 
     constexpr double effectiveLayoutSizeScaleFactor() const
     {
-        if (!m_viewLayoutSize.width() || !m_minimumEffectiveDeviceWidth)
+        if (!m_viewLayoutSize.width() || !minimumEffectiveDeviceWidth())
             return m_layoutSizeScaleFactor;
-        return m_layoutSizeScaleFactor * m_viewLayoutSize.width() / std::max<double>(m_minimumEffectiveDeviceWidth, m_viewLayoutSize.width());
+        return m_layoutSizeScaleFactor * m_viewLayoutSize.width() / std::max<double>(minimumEffectiveDeviceWidth(), m_viewLayoutSize.width());
     }
 
     void updateMinimumLayoutSize();

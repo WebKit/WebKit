@@ -1,3 +1,16 @@
+2018-12-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We should ignore minimumEffectiveDeviceWidth if the page specifies device-width in viewport meta-tag.
+        https://bugs.webkit.org/show_bug.cgi?id=192377
+        <rdar://problem/46364206>
+
+        Reviewed by Tim Horton.
+
+        * fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width-expected.txt: Added.
+        * fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html: Added.
+        * fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta-expected.txt: Added.
+        * fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html: Added.
+
 2018-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] WKWebView should match UITextView behavior when editing text with an RTL keyboard

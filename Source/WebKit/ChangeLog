@@ -1,3 +1,19 @@
+2018-12-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We should ignore minimumEffectiveDeviceWidth if the page specifies device-width in viewport meta-tag.
+        https://bugs.webkit.org/show_bug.cgi?id=192377
+        <rdar://problem/46364206>
+
+        Reviewed by Tim Horton.
+
+        Since we are using page's viewport arguments to decide the default viewport parameters and
+        whether we can use mininum effective device width, we should always call setViewportArguments()
+        regardless of shouldIgnoreMetaViewport settings.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::viewportPropertiesDidChange): Always call setViewportArguments().
+        (WebKit::WebPage::didCommitLoad): Ditto.
+
 2018-12-06  Tim Horton  <timothy_horton@apple.com>
 
         Web Share API: share overlay does not stick to the Safari window

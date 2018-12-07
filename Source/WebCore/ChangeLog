@@ -1,3 +1,44 @@
+2018-12-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We should ignore minimumEffectiveDeviceWidth if the page specifies device-width in viewport meta-tag.
+        https://bugs.webkit.org/show_bug.cgi?id=192377
+        <rdar://problem/46364206>
+
+        Reviewed by Tim Horton.
+
+        If the page specifies width=device-width or initial-scale=1 in the viewport meta tag, we should use the
+        native device width and ignore the minimum effective device width in ViewportConfiguration. The patch
+        also introduces scalableNativeWebpageParameters() which uses the device width as default and also allows the page
+        to shrink-to-fit. If a page doesn't have viewport meta tag, or if the width argument isn't device-width
+        and the initial scale isn't 1, we will use scalableNativeWebpageParameters() as the default configuration.
+
+        Tests: fast/viewport/ios/ignore-minimum-device-width-for-page-with-viewport-device-width.html
+               fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::updateDefaultConfiguration): pick the default configuration based on
+            the page's viewport arguments. Also, we will always fall back to scalableNativeWebpageParameters() if we
+            can ignore scaling constraints.
+        (WebCore::ViewportConfiguration::setViewportArguments): When page sends us new ViewportArguments, pick
+            up the correponsding default configuration before updating the configuration.
+        (WebCore::ViewportConfiguration::setCanIgnoreScalingConstraints): When m_canIgnoreScalingConstraints is
+            changed, try to pick up the correponsding default configuration.
+        (WebCore::ViewportConfiguration::scalableNativeWebpageParameters): Add a new default set of viewport Parameters
+            this is very close to nativeWebpageParameters() excpet that it allows shrink to fit and its minimum scale
+            is 0.25. We will use this Parameters for pages that doesn't have viewport meta tag; or the width is
+            not device-width and initial scale is not 1.
+        (WebCore::ViewportConfiguration::updateConfiguration): If the page's viewport argument doesn't override
+            the default width, use the m_minimumLayoutSize.width().
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::shouldIgnoreMinimumEffectiveDeviceWidth const): A helper method to tell
+            if we should avoid using minimum effective device width.
+        (WebCore::ViewportConfiguration::canOverrideConfigurationParameters const): If we are using a default
+            configuration that is neither nativeWebpageParameters() nor scalableNativeWebpageParameters(), don't override
+            it.
+        (WebCore::ViewportConfiguration::minimumEffectiveDeviceWidth const): Add a helper method to return minimum
+            effective device width based on shouldIgnoreMinimumEffectiveDeviceWidth().
+        (WebCore::ViewportConfiguration::effectiveLayoutSizeScaleFactor const): Use minimumEffectiveDeviceWidth().
+
 2018-12-06  Adrian Perez de Castro  <aperez@igalia.com>
 
         Content Extensions: Misc fixes to debugging / perf testing code
