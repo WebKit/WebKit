@@ -1,3 +1,17 @@
+2018-12-07  Chris Dumez  <cdumez@apple.com>
+
+        ProcessSwap.UseSessionCookiesAfterProcessSwapInPrivateBrowsing API test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=192362
+        <rdar://problem/46460360>
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the call to _setCookieAcceptPolicy *after* we've constructed a WKWebView and thus
+        *after* we know for sure we have a network process to communicate the policy to.
+        This should address the failures on iOS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-12-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add keychain access entitlement to WebKitTestRunnerApp
