@@ -1,3 +1,17 @@
+2018-12-07  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r238947.
+
+        Revision caused fast/visual-viewport/tiled-drawing/zoomed-
+        fixed-scrolling-layers-state.html to constantly fail
+
+        Reverted changeset:
+
+        "Allow control over child order when adding nodes to the
+        scrolling tree"
+        https://bugs.webkit.org/show_bug.cgi?id=176914
+        https://trac.webkit.org/changeset/238947
+
 2018-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Cloned attachment elements lose their unique identifiers
