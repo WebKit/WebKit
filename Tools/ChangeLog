@@ -1,3 +1,13 @@
+2018-12-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Style queue exception on some security bugs
+        https://bugs.webkit.org/show_bug.cgi?id=190793
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/tool/steps/applywatchlist.py:
+        (ApplyWatchList.run):
+
 2018-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Cloned attachment elements lose their unique identifiers

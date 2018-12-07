@@ -51,6 +51,9 @@ class ApplyWatchList(AbstractStep):
         if bug_id:
             # Remove emails and cc's which are already in the bug or the reporter.
             bug = self._tool.bugs.fetch_bug(bug_id)
+            if not bug:
+                _log.info('Unable to fetch bug {}. Skipped applying watchlist.'.format(bug_id))
+                return
 
             messages = filter(lambda message: not bug.is_in_comments(message), messages)
             cc_emails = set(cc_emails).difference(bug.cc_emails())
