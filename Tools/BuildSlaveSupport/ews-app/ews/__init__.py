@@ -1,5 +1,5 @@
 import logging
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s')
+logging.basicConfig(filename='ews.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 default_app_config = 'ews.apps.EwsConfig'

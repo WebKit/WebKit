@@ -1,5 +1,14 @@
 2018-12-07  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Configure logfile for ews-app logs
+        https://bugs.webkit.org/show_bug.cgi?id=192493
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/__init__.py:
+
+2018-12-07  Aakash Jain  <aakash_jain@apple.com>
+
         Style queue exception on some security bugs
         https://bugs.webkit.org/show_bug.cgi?id=190793
 
