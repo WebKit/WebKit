@@ -373,7 +373,7 @@ void InlineFormattingContext::layoutFormattingContextRoot(const Box& root) const
     computeBorderAndPadding(root);
     computeWidthAndMargin(root);
     // Swich over to the new formatting context (the one that the root creates).
-    auto formattingContext = layoutState().createFormattingStateForFormattingRootIfNeeded(root).formattingContext(root);
+    auto formattingContext = layoutState().createFormattingStateForFormattingRootIfNeeded(root).createFormattingContext(root);
     formattingContext->layout();
     // Come back and finalize the root's height and margin.
     computeHeightAndMargin(root);

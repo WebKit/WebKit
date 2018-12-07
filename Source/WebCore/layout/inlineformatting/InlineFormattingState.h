@@ -43,7 +43,7 @@ public:
     InlineFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~InlineFormattingState();
 
-    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) override;
+    std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot) override;
 
     InlineContent& inlineContent() { return m_inlineContent; }
     InlineItem* lastInlineItem() const { return m_inlineContent.isEmpty() ? nullptr : m_inlineContent.last().get(); }

@@ -156,7 +156,7 @@ void FormattingContext::layoutOutOfFlowDescendants(const Box& layoutBox) const
         computeBorderAndPadding(layoutBox);
         computeOutOfFlowHorizontalGeometry(layoutBox);
 
-        layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox).formattingContext(layoutBox)->layout();
+        layoutState.createFormattingStateForFormattingRootIfNeeded(layoutBox).createFormattingContext(layoutBox)->layout();
 
         computeOutOfFlowVerticalGeometry(layoutBox);
         layoutOutOfFlowDescendants(layoutBox);

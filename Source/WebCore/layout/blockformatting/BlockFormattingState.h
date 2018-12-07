@@ -41,7 +41,7 @@ public:
     BlockFormattingState(Ref<FloatingState>&&, LayoutState&);
     virtual ~BlockFormattingState();
 
-    std::unique_ptr<FormattingContext> formattingContext(const Box& formattingContextRoot) override;
+    std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot) override;
 };
 
 }

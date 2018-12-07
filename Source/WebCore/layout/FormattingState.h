@@ -46,7 +46,7 @@ class FormattingState {
 public:
     virtual ~FormattingState();
 
-    virtual std::unique_ptr<FormattingContext>formattingContext(const Box& formattingContextRoot) = 0;
+    virtual std::unique_ptr<FormattingContext> createFormattingContext(const Box& formattingContextRoot) = 0;
 
     FloatingState& floatingState() const { return m_floatingState; }
 
