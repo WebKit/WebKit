@@ -1,3 +1,20 @@
+2018-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        All users of ArrayBuffer should agree on the same max size
+        https://bugs.webkit.org/show_bug.cgi?id=191771
+
+        Reviewed by Mark Lam.
+
+        * stress/big-wasm-memory-grow-no-max.js: Added.
+        (foo):
+        (catch):
+        * stress/big-wasm-memory-grow.js: Added.
+        (foo):
+        (catch):
+        * stress/big-wasm-memory.js: Added.
+        (foo):
+        (catch):
+
 2018-10-03  Mark Lam  <mark.lam@apple.com>
 
         Make string MaxLength for all WTF and JS strings consistently equal to INT_MAX.
