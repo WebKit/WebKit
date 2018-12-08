@@ -2918,7 +2918,8 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
             break;
         }
 
-        StructureForInContext& structureContext = context.asStructureForInContext();
+        ASSERT(context.type() == ForInContext::StructureForInContextType);
+        StructureForInContext& structureContext = static_cast<StructureForInContext&>(context);
         UnlinkedValueProfile profile = emitProfiledOpcode(op_get_direct_pname);
         instructions().append(kill(dst));
         instructions().append(base->index());
