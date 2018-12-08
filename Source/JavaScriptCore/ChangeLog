@@ -1,5 +1,21 @@
 2018-11-15  Mark Lam  <mark.lam@apple.com>
 
+        RegExpObject's collectMatches should not be using JSArray::push to fill in its match results.
+        https://bugs.webkit.org/show_bug.cgi?id=191730
+        <rdar://problem/46048517>
+
+        Reviewed by Saam Barati.
+
+        According to the spec https://www.ecma-international.org/ecma-262/9.0/index.html#sec-regexp.prototype-@@match,
+        the RegExp match results are filled in using the spec's CreateDataProperty()
+        function which does not consult the prototype for setters.  JSArray:push()
+        consults the prototype for setters.  We should be using putDirectIndex() instead.
+
+        * runtime/RegExpObjectInlines.h:
+        (JSC::collectMatches):
+
+2018-11-15  Mark Lam  <mark.lam@apple.com>
+
         RegExp operations should not take fast patch if lastIndex is not numeric.
         https://bugs.webkit.org/show_bug.cgi?id=191731
         <rdar://problem/46017305>
