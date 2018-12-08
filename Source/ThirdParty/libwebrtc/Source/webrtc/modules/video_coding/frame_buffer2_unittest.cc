@@ -126,6 +126,7 @@ class TestFrameBuffer2 : public ::testing::Test {
   static constexpr int kFps1 = 1000;
   static constexpr int kFps10 = kFps1 / 10;
   static constexpr int kFps20 = kFps1 / 20;
+  static constexpr size_t kFrameSize = 10;
 
   TestFrameBuffer2()
       : clock_(0),
@@ -152,6 +153,7 @@ class TestFrameBuffer2 : public ::testing::Test {
                   uint8_t spatial_layer,
                   int64_t ts_ms,
                   bool inter_layer_predicted,
+                  bool last_spatial_layer,
                   T... refs) {
     static_assert(sizeof...(refs) <= kMaxReferences,
                   "To many references specified for EncodedFrame.");
@@ -164,6 +166,10 @@ class TestFrameBuffer2 : public ::testing::Test {
     frame->SetTimestamp(ts_ms * 90);
     frame->num_references = references.size();
     frame->inter_layer_predicted = inter_layer_predicted;
+    frame->is_last_spatial_layer = last_spatial_layer;
+    // Add some data to buffer.
+    frame->VerifyAndAllocate(kFrameSize);
+    frame->SetSize(kFrameSize);
     for (size_t r = 0; r < references.size(); ++r)
       frame->references[r] = references[r];
 
@@ -194,6 +200,13 @@ class TestFrameBuffer2 : public ::testing::Test {
     ASSERT_TRUE(frames_[index]);
     ASSERT_EQ(picture_id, frames_[index]->id.picture_id);
     ASSERT_EQ(spatial_layer, frames_[index]->id.spatial_layer);
+  }
+
+  void CheckFrameSize(size_t index, size_t size) {
+    rtc::CritScope lock(&crit_);
+    ASSERT_LT(index, frames_.size());
+    ASSERT_TRUE(frames_[index]);
+    ASSERT_EQ(frames_[index]->size(), size);
   }
 
   void CheckNoFrame(size_t index) {
@@ -248,7 +261,7 @@ TEST_F(TestFrameBuffer2, WaitForFrame) {
   uint32_t ts = Rand();
 
   ExtractFrame(50);
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 0, ts, false, true);
   CheckFrame(0, pid, 0);
 }
 
@@ -256,13 +269,11 @@ TEST_F(TestFrameBuffer2, OneSuperFrame) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
-  ExtractFrame();
-  InsertFrame(pid, 1, ts, true);
+  InsertFrame(pid, 0, ts, false, false);
+  InsertFrame(pid, 1, ts, true, true);
   ExtractFrame();
 
   CheckFrame(0, pid, 0);
-  CheckFrame(1, pid, 1);
 }
 
 TEST_F(TestFrameBuffer2, SetPlayoutDelay) {
@@ -295,8 +306,8 @@ TEST_F(TestFrameBuffer2, DISABLED_OneUnorderedSuperFrame) {
   uint32_t ts = Rand();
 
   ExtractFrame(50);
-  InsertFrame(pid, 1, ts, true);
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 1, ts, true, true);
+  InsertFrame(pid, 0, ts, false, false);
   ExtractFrame();
 
   CheckFrame(0, pid, 0);
@@ -307,14 +318,14 @@ TEST_F(TestFrameBuffer2, DISABLED_OneLayerStreamReordered) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 0, ts, false, true);
   ExtractFrame();
   CheckFrame(0, pid, 0);
   for (int i = 1; i < 10; i += 2) {
     ExtractFrame(50);
-    InsertFrame(pid + i + 1, 0, ts + (i + 1) * kFps10, false, pid + i);
+    InsertFrame(pid + i + 1, 0, ts + (i + 1) * kFps10, false, true, pid + i);
     clock_.AdvanceTimeMilliseconds(kFps10);
-    InsertFrame(pid + i, 0, ts + i * kFps10, false, pid + i - 1);
+    InsertFrame(pid + i, 0, ts + i * kFps10, false, true, pid + i - 1);
     clock_.AdvanceTimeMilliseconds(kFps10);
     ExtractFrame();
     CheckFrame(i, pid + i, 0);
@@ -332,9 +343,9 @@ TEST_F(TestFrameBuffer2, MissingFrame) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
-  InsertFrame(pid + 2, 0, ts, false, pid);
-  InsertFrame(pid + 3, 0, ts, false, pid + 1, pid + 2);
+  InsertFrame(pid, 0, ts, false, true);
+  InsertFrame(pid + 2, 0, ts, false, true, pid);
+  InsertFrame(pid + 3, 0, ts, false, true, pid + 1, pid + 2);
   ExtractFrame();
   ExtractFrame();
   ExtractFrame();
@@ -348,11 +359,11 @@ TEST_F(TestFrameBuffer2, OneLayerStream) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 0, ts, false, true);
   ExtractFrame();
   CheckFrame(0, pid, 0);
   for (int i = 1; i < 10; ++i) {
-    InsertFrame(pid + i, 0, ts + i * kFps10, false, pid + i - 1);
+    InsertFrame(pid + i, 0, ts + i * kFps10, false, true, pid + i - 1);
     ExtractFrame();
     clock_.AdvanceTimeMilliseconds(kFps10);
     CheckFrame(i, pid + i, 0);
@@ -363,12 +374,13 @@ TEST_F(TestFrameBuffer2, DropTemporalLayerSlowDecoder) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
-  InsertFrame(pid + 1, 0, ts + kFps20, false, pid);
+  InsertFrame(pid, 0, ts, false, true);
+  InsertFrame(pid + 1, 0, ts + kFps20, false, true, pid);
   for (int i = 2; i < 10; i += 2) {
     uint32_t ts_tl0 = ts + i / 2 * kFps10;
-    InsertFrame(pid + i, 0, ts_tl0, false, pid + i - 2);
-    InsertFrame(pid + i + 1, 0, ts_tl0 + kFps20, false, pid + i, pid + i - 1);
+    InsertFrame(pid + i, 0, ts_tl0, false, true, pid + i - 2);
+    InsertFrame(pid + i + 1, 0, ts_tl0 + kFps20, false, true, pid + i,
+                pid + i - 1);
   }
 
   for (int i = 0; i < 10; ++i) {
@@ -388,49 +400,15 @@ TEST_F(TestFrameBuffer2, DropTemporalLayerSlowDecoder) {
   CheckNoFrame(9);
 }
 
-TEST_F(TestFrameBuffer2, DropSpatialLayerSlowDecoder) {
-  uint16_t pid = Rand();
-  uint32_t ts = Rand();
-
-  InsertFrame(pid, 0, ts, false);
-  InsertFrame(pid, 1, ts, false);
-  for (int i = 1; i < 6; ++i) {
-    uint32_t ts_tl0 = ts + i * kFps10;
-    InsertFrame(pid + i, 0, ts_tl0, false, pid + i - 1);
-    InsertFrame(pid + i, 1, ts_tl0, false, pid + i - 1);
-  }
-
-  ExtractFrame();
-  ExtractFrame();
-  clock_.AdvanceTimeMilliseconds(57);
-  for (int i = 2; i < 12; ++i) {
-    ExtractFrame();
-    clock_.AdvanceTimeMilliseconds(57);
-  }
-
-  CheckFrame(0, pid, 0);
-  CheckFrame(1, pid, 1);
-  CheckFrame(2, pid + 1, 0);
-  CheckFrame(3, pid + 1, 1);
-  CheckFrame(4, pid + 2, 0);
-  CheckFrame(5, pid + 2, 1);
-  CheckFrame(6, pid + 3, 0);
-  CheckFrame(7, pid + 4, 0);
-  CheckFrame(8, pid + 5, 0);
-  CheckNoFrame(9);
-  CheckNoFrame(10);
-  CheckNoFrame(11);
-}
-
 TEST_F(TestFrameBuffer2, InsertLateFrame) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 0, ts, false, true);
   ExtractFrame();
-  InsertFrame(pid + 2, 0, ts, false);
+  InsertFrame(pid + 2, 0, ts, false, true);
   ExtractFrame();
-  InsertFrame(pid + 1, 0, ts, false, pid);
+  InsertFrame(pid + 1, 0, ts, false, true, pid);
   ExtractFrame();
 
   CheckFrame(0, pid, 0);
@@ -443,12 +421,12 @@ TEST_F(TestFrameBuffer2, ProtectionMode) {
   uint32_t ts = Rand();
 
   EXPECT_CALL(jitter_estimator_, GetJitterEstimate(1.0));
-  InsertFrame(pid, 0, ts, false);
+  InsertFrame(pid, 0, ts, false, true);
   ExtractFrame();
 
   buffer_->SetProtectionMode(kProtectionNackFEC);
   EXPECT_CALL(jitter_estimator_, GetJitterEstimate(0.0));
-  InsertFrame(pid + 1, 0, ts, false);
+  InsertFrame(pid + 1, 0, ts, false, true);
   ExtractFrame();
 }
 
@@ -456,45 +434,45 @@ TEST_F(TestFrameBuffer2, NoContinuousFrame) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  EXPECT_EQ(-1, InsertFrame(pid + 1, 0, ts, false, pid));
+  EXPECT_EQ(-1, InsertFrame(pid + 1, 0, ts, false, true, pid));
 }
 
 TEST_F(TestFrameBuffer2, LastContinuousFrameSingleLayer) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false));
-  EXPECT_EQ(pid, InsertFrame(pid + 2, 0, ts, false, pid + 1));
-  EXPECT_EQ(pid + 2, InsertFrame(pid + 1, 0, ts, false, pid));
-  EXPECT_EQ(pid + 2, InsertFrame(pid + 4, 0, ts, false, pid + 3));
-  EXPECT_EQ(pid + 5, InsertFrame(pid + 5, 0, ts, false));
+  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false, true));
+  EXPECT_EQ(pid, InsertFrame(pid + 2, 0, ts, false, true, pid + 1));
+  EXPECT_EQ(pid + 2, InsertFrame(pid + 1, 0, ts, false, true, pid));
+  EXPECT_EQ(pid + 2, InsertFrame(pid + 4, 0, ts, false, true, pid + 3));
+  EXPECT_EQ(pid + 5, InsertFrame(pid + 5, 0, ts, false, true));
 }
 
 TEST_F(TestFrameBuffer2, LastContinuousFrameTwoLayers) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false));
-  EXPECT_EQ(pid, InsertFrame(pid, 1, ts, true));
-  EXPECT_EQ(pid, InsertFrame(pid + 1, 1, ts, true, pid));
-  EXPECT_EQ(pid, InsertFrame(pid + 2, 0, ts, false, pid + 1));
-  EXPECT_EQ(pid, InsertFrame(pid + 2, 1, ts, true, pid + 1));
-  EXPECT_EQ(pid, InsertFrame(pid + 3, 0, ts, false, pid + 2));
-  EXPECT_EQ(pid + 3, InsertFrame(pid + 1, 0, ts, false, pid));
-  EXPECT_EQ(pid + 3, InsertFrame(pid + 3, 1, ts, true, pid + 2));
+  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false, false));
+  EXPECT_EQ(pid, InsertFrame(pid, 1, ts, true, true));
+  EXPECT_EQ(pid, InsertFrame(pid + 1, 1, ts, true, true, pid));
+  EXPECT_EQ(pid, InsertFrame(pid + 2, 0, ts, false, false, pid + 1));
+  EXPECT_EQ(pid, InsertFrame(pid + 2, 1, ts, true, true, pid + 1));
+  EXPECT_EQ(pid, InsertFrame(pid + 3, 0, ts, false, false, pid + 2));
+  EXPECT_EQ(pid + 3, InsertFrame(pid + 1, 0, ts, false, false, pid));
+  EXPECT_EQ(pid + 3, InsertFrame(pid + 3, 1, ts, true, true, pid + 2));
 }
 
 TEST_F(TestFrameBuffer2, PictureIdJumpBack) {
   uint16_t pid = Rand();
   uint32_t ts = Rand();
 
-  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false));
-  EXPECT_EQ(pid + 1, InsertFrame(pid + 1, 0, ts + 1, false, pid));
+  EXPECT_EQ(pid, InsertFrame(pid, 0, ts, false, true));
+  EXPECT_EQ(pid + 1, InsertFrame(pid + 1, 0, ts + 1, false, true, pid));
   ExtractFrame();
   CheckFrame(0, pid, 0);
 
   // Jump back in pid but increase ts.
-  EXPECT_EQ(pid - 1, InsertFrame(pid - 1, 0, ts + 2, false));
+  EXPECT_EQ(pid - 1, InsertFrame(pid - 1, 0, ts + 2, false, true));
   ExtractFrame();
   ExtractFrame();
   CheckFrame(1, pid - 1, 0);
@@ -513,6 +491,7 @@ TEST_F(TestFrameBuffer2, StatsCallback) {
 
   {
     std::unique_ptr<FrameObjectFake> frame(new FrameObjectFake());
+    frame->VerifyAndAllocate(kFrameSize);
     frame->SetSize(kFrameSize);
     frame->id.picture_id = pid;
     frame->id.spatial_layer = 0;
@@ -528,42 +507,42 @@ TEST_F(TestFrameBuffer2, StatsCallback) {
 }
 
 TEST_F(TestFrameBuffer2, ForwardJumps) {
-  EXPECT_EQ(5453, InsertFrame(5453, 0, 1, false));
+  EXPECT_EQ(5453, InsertFrame(5453, 0, 1, false, true));
   ExtractFrame();
-  EXPECT_EQ(5454, InsertFrame(5454, 0, 1, false, 5453));
+  EXPECT_EQ(5454, InsertFrame(5454, 0, 1, false, true, 5453));
   ExtractFrame();
-  EXPECT_EQ(15670, InsertFrame(15670, 0, 1, false));
+  EXPECT_EQ(15670, InsertFrame(15670, 0, 1, false, true));
   ExtractFrame();
-  EXPECT_EQ(29804, InsertFrame(29804, 0, 1, false));
+  EXPECT_EQ(29804, InsertFrame(29804, 0, 1, false, true));
   ExtractFrame();
-  EXPECT_EQ(29805, InsertFrame(29805, 0, 1, false, 29804));
+  EXPECT_EQ(29805, InsertFrame(29805, 0, 1, false, true, 29804));
   ExtractFrame();
-  EXPECT_EQ(29806, InsertFrame(29806, 0, 1, false, 29805));
+  EXPECT_EQ(29806, InsertFrame(29806, 0, 1, false, true, 29805));
   ExtractFrame();
-  EXPECT_EQ(33819, InsertFrame(33819, 0, 1, false));
+  EXPECT_EQ(33819, InsertFrame(33819, 0, 1, false, true));
   ExtractFrame();
-  EXPECT_EQ(41248, InsertFrame(41248, 0, 1, false));
+  EXPECT_EQ(41248, InsertFrame(41248, 0, 1, false, true));
   ExtractFrame();
 }
 
 TEST_F(TestFrameBuffer2, DuplicateFrames) {
-  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false));
+  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false, true));
   ExtractFrame();
-  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false));
+  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false, true));
 }
 
 // TODO(philipel): implement more unittests related to invalid references.
 TEST_F(TestFrameBuffer2, InvalidReferences) {
-  EXPECT_EQ(-1, InsertFrame(0, 0, 1000, false, 2));
-  EXPECT_EQ(1, InsertFrame(1, 0, 2000, false));
+  EXPECT_EQ(-1, InsertFrame(0, 0, 1000, false, true, 2));
+  EXPECT_EQ(1, InsertFrame(1, 0, 2000, false, true));
   ExtractFrame();
-  EXPECT_EQ(2, InsertFrame(2, 0, 3000, false, 1));
+  EXPECT_EQ(2, InsertFrame(2, 0, 3000, false, true, 1));
 }
 
 TEST_F(TestFrameBuffer2, KeyframeRequired) {
-  EXPECT_EQ(1, InsertFrame(1, 0, 1000, false));
-  EXPECT_EQ(2, InsertFrame(2, 0, 2000, false, 1));
-  EXPECT_EQ(3, InsertFrame(3, 0, 3000, false));
+  EXPECT_EQ(1, InsertFrame(1, 0, 1000, false, true));
+  EXPECT_EQ(2, InsertFrame(2, 0, 2000, false, true, 1));
+  EXPECT_EQ(3, InsertFrame(3, 0, 3000, false, true));
   ExtractFrame();
   ExtractFrame(0, true);
   ExtractFrame();
@@ -577,41 +556,80 @@ TEST_F(TestFrameBuffer2, KeyframeClearsFullBuffer) {
   const int kMaxBufferSize = 600;
 
   for (int i = 1; i <= kMaxBufferSize; ++i)
-    EXPECT_EQ(-1, InsertFrame(i, 0, i * 1000, false, i - 1));
+    EXPECT_EQ(-1, InsertFrame(i, 0, i * 1000, false, true, i - 1));
   ExtractFrame();
   CheckNoFrame(0);
 
-  EXPECT_EQ(
-      kMaxBufferSize + 1,
-      InsertFrame(kMaxBufferSize + 1, 0, (kMaxBufferSize + 1) * 1000, false));
+  EXPECT_EQ(kMaxBufferSize + 1,
+            InsertFrame(kMaxBufferSize + 1, 0, (kMaxBufferSize + 1) * 1000,
+                        false, true));
   ExtractFrame();
   CheckFrame(1, kMaxBufferSize + 1, 0);
 }
 
 TEST_F(TestFrameBuffer2, DontUpdateOnUndecodableFrame) {
-  InsertFrame(1, 0, 0, false);
+  InsertFrame(1, 0, 0, false, true);
   ExtractFrame(0, true);
-  InsertFrame(3, 0, 0, false, 2, 0);
-  InsertFrame(3, 0, 0, false, 0);
-  InsertFrame(2, 0, 0, false);
+  InsertFrame(3, 0, 0, false, true, 2, 0);
+  InsertFrame(3, 0, 0, false, true, 0);
+  InsertFrame(2, 0, 0, false, true);
   ExtractFrame(0, true);
   ExtractFrame(0, true);
 }
 
 TEST_F(TestFrameBuffer2, DontDecodeOlderTimestamp) {
-  InsertFrame(2, 0, 1, false);
-  InsertFrame(1, 0, 2, false);  // Older picture id but newer timestamp.
+  InsertFrame(2, 0, 1, false, true);
+  InsertFrame(1, 0, 2, false, true);  // Older picture id but newer timestamp.
   ExtractFrame(0);
   ExtractFrame(0);
   CheckFrame(0, 1, 0);
   CheckNoFrame(1);
 
-  InsertFrame(3, 0, 4, false);
-  InsertFrame(4, 0, 3, false);  // Newer picture id but older timestamp.
+  InsertFrame(3, 0, 4, false, true);
+  InsertFrame(4, 0, 3, false, true);  // Newer picture id but older timestamp.
   ExtractFrame(0);
   ExtractFrame(0);
   CheckFrame(2, 3, 0);
   CheckNoFrame(3);
+}
+
+TEST_F(TestFrameBuffer2, CombineFramesToSuperframe) {
+  uint16_t pid = Rand();
+  uint32_t ts = Rand();
+
+  InsertFrame(pid, 0, ts, false, false);
+  InsertFrame(pid, 1, ts, true, true);
+  ExtractFrame(0);
+  ExtractFrame(0);
+  CheckFrame(0, pid, 0);
+  CheckNoFrame(1);
+  // Two frames should be combined and returned together.
+  CheckFrameSize(0, kFrameSize * 2);
+}
+
+TEST_F(TestFrameBuffer2, HigherSpatialLayerNonDecodable) {
+  uint16_t pid = Rand();
+  uint32_t ts = Rand();
+
+  InsertFrame(pid, 0, ts, false, false);
+  InsertFrame(pid, 1, ts, true, true);
+
+  ExtractFrame(0);
+  CheckFrame(0, pid, 0);
+
+  InsertFrame(pid + 1, 1, ts + kFps20, false, true, pid);
+  InsertFrame(pid + 2, 0, ts + kFps10, false, false, pid);
+  InsertFrame(pid + 2, 1, ts + kFps10, true, true, pid + 1);
+
+  clock_.AdvanceTimeMilliseconds(1000);
+  // Frame pid+1 is decodable but too late.
+  // In superframe pid+2 frame sid=0 is decodable, but frame sid=1 is not.
+  // Incorrect implementation might skip pid+1 frame and output undecodable
+  // pid+2 instead.
+  ExtractFrame();
+  ExtractFrame();
+  CheckFrame(1, pid + 1, 1);
+  CheckFrame(2, pid + 2, 0);
 }
 
 }  // namespace video_coding

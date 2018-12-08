@@ -15,6 +15,7 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "api/video/encoded_frame.h"
 #include "modules/video_coding/include/video_coding_defines.h"
@@ -156,6 +157,13 @@ class FrameBuffer {
   bool HasBadRenderTiming(const EncodedFrame& frame, int64_t now_ms)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
+  // The cleaner solution would be to have the NextFrame function return a
+  // vector of frames, but until the decoding pipeline can support decoding
+  // multiple frames at the same time we combine all frames to one frame and
+  // return it. See bugs.webrtc.org/10064
+  EncodedFrame* CombineAndDeleteFrames(
+      const std::vector<EncodedFrame*>& frames) const;
+
   FrameMap frames_ RTC_GUARDED_BY(crit_);
 
   rtc::CriticalSection crit_;
@@ -167,7 +175,7 @@ class FrameBuffer {
   absl::optional<uint32_t> last_decoded_frame_timestamp_ RTC_GUARDED_BY(crit_);
   FrameMap::iterator last_decoded_frame_it_ RTC_GUARDED_BY(crit_);
   FrameMap::iterator last_continuous_frame_it_ RTC_GUARDED_BY(crit_);
-  FrameMap::iterator next_frame_it_ RTC_GUARDED_BY(crit_);
+  std::vector<FrameMap::iterator> frames_to_decode_ RTC_GUARDED_BY(crit_);
   int num_frames_history_ RTC_GUARDED_BY(crit_);
   int num_frames_buffered_ RTC_GUARDED_BY(crit_);
   bool stopped_ RTC_GUARDED_BY(crit_);

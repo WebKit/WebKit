@@ -80,6 +80,9 @@ class EncodedFrame : public webrtc::VCMEncodedFrame {
   size_t num_references = 0;
   int64_t references[kMaxFrameReferences];
   bool inter_layer_predicted = false;
+  // Is this subframe the last one in the superframe (In RTP stream that would
+  // mean that the last packet has a marker bit set).
+  bool is_last_spatial_layer = true;
 };
 
 }  // namespace video_coding

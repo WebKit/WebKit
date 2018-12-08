@@ -18,7 +18,6 @@
 #include "api/array_view.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/echo_control.h"
-#include "modules/audio_processing/aec3/api_call_jitter_metrics.h"
 #include "modules/audio_processing/aec3/block_delay_buffer.h"
 #include "modules/audio_processing/aec3/block_framer.h"
 #include "modules/audio_processing/aec3/block_processor.h"
@@ -141,7 +140,6 @@ class EchoCanceller3 : public EchoControl {
   std::vector<rtc::ArrayView<float>> sub_frame_view_
       RTC_GUARDED_BY(capture_race_checker_);
   BlockDelayBuffer block_delay_buffer_ RTC_GUARDED_BY(capture_race_checker_);
-  ApiCallJitterMetrics api_call_metrics_ RTC_GUARDED_BY(capture_race_checker_);
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(EchoCanceller3);
 };

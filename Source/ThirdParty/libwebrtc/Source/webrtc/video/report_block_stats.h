@@ -14,7 +14,6 @@
 #include <map>
 #include <vector>
 
-#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
 namespace webrtc {

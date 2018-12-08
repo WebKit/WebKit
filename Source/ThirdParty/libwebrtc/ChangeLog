@@ -1,5 +1,85 @@
 2018-12-07  Youenn Fablet  <youenn@apple.com>
 
+        Update libwebrtc up to 2fb890f08c
+        https://bugs.webkit.org/show_bug.cgi?id=192517
+
+        Reviewed by Eric Carlson.
+
+        Merge changes to track libwebrtc M72.
+
+        * Source/webrtc/DEPS:
+        * Source/webrtc/api/audio/echo_canceller3_config.h:
+        * Source/webrtc/api/rtp_headers.h:
+        * Source/webrtc/api/video/encoded_frame.h:
+        * Source/webrtc/api/video/encoded_image.h:
+        * Source/webrtc/call/rtp_transport_controller_send_interface.h:
+        * Source/webrtc/call/video_receive_stream.h:
+        * Source/webrtc/call/video_send_stream.h:
+        * Source/webrtc/common_types.h:
+        (webrtc::RtcpStatistics::RtcpStatistics):
+        (webrtc::RtcpStatisticsCallback::~RtcpStatisticsCallback):
+        * Source/webrtc/logging/rtc_event_log/rtc_event_log_impl.cc:
+        * Source/webrtc/media/engine/webrtcvideoengine.cc:
+        * Source/webrtc/modules/audio_coding/BUILD.gn:
+        * Source/webrtc/modules/audio_coding/neteq/neteq_unittest.cc:
+        * Source/webrtc/modules/audio_processing/aec3/BUILD.gn:
+        * Source/webrtc/modules/audio_processing/aec3/aec_state.cc:
+        * Source/webrtc/modules/audio_processing/aec3/api_call_jitter_metrics.cc: Removed.
+        * Source/webrtc/modules/audio_processing/aec3/api_call_jitter_metrics.h: Removed.
+        * Source/webrtc/modules/audio_processing/aec3/api_call_jitter_metrics_unittest.cc: Removed.
+        * Source/webrtc/modules/audio_processing/aec3/echo_canceller3.cc:
+        * Source/webrtc/modules/audio_processing/aec3/echo_canceller3.h:
+        * Source/webrtc/modules/audio_processing/aec3/filter_analyzer.cc:
+        * Source/webrtc/modules/audio_processing/aec3/filter_analyzer.h:
+        * Source/webrtc/modules/audio_processing/aec3/suppression_gain.cc:
+        * Source/webrtc/modules/rtp_rtcp/BUILD.gn:
+        * Source/webrtc/modules/rtp_rtcp/include/receive_statistics.h:
+        * Source/webrtc/modules/rtp_rtcp/include/rtcp_statistics.h: Removed.
+        * Source/webrtc/modules/rtp_rtcp/include/rtp_rtcp.h:
+        * Source/webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h:
+        * Source/webrtc/modules/rtp_rtcp/source/rtcp_receiver.h:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_header_extension_map.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_header_extensions.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h:
+        (webrtc::HdrMetadataExtension::ValueSize):
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_packet_received.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_packet_unittest.cc:
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_utility.cc:
+        * Source/webrtc/modules/video_coding/codecs/test/videocodec_test_libvpx.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/test/vp9_impl_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.h:
+        * Source/webrtc/modules/video_coding/encoded_frame.h:
+        (webrtc::VCMEncodedFrame::video_timing_mutable):
+        (webrtc::VCMEncodedFrame::SetCodecSpecific):
+        * Source/webrtc/modules/video_coding/frame_buffer2.cc:
+        * Source/webrtc/modules/video_coding/frame_buffer2.h:
+        * Source/webrtc/modules/video_coding/frame_buffer2_unittest.cc:
+        * Source/webrtc/modules/video_coding/frame_object.cc:
+        * Source/webrtc/modules/video_coding/rtp_frame_reference_finder.cc:
+        * Source/webrtc/p2p/base/p2ptransportchannel.cc:
+        * Source/webrtc/p2p/base/p2ptransportchannel_unittest.cc:
+        * Source/webrtc/p2p/base/port.cc:
+        * Source/webrtc/p2p/base/port.h:
+        * Source/webrtc/p2p/client/basicportallocator.cc:
+        * Source/webrtc/p2p/client/basicportallocator.h:
+        * Source/webrtc/p2p/client/basicportallocator_unittest.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/pc/rtcstats_integrationtest.cc:
+        * Source/webrtc/pc/test/peerconnectiontestwrapper.cc:
+        * Source/webrtc/pc/test/peerconnectiontestwrapper.h:
+        * Source/webrtc/rtc_base/stringize_macros.h:
+        * Source/webrtc/sdk/objc/components/video_codec/nalu_rewriter_unittest.cc: Removed.
+        * Source/webrtc/test/fuzzers/rtp_packet_fuzzer.cc:
+        * Source/webrtc/tools_webrtc/ios/internal.client.webrtc/iOS64_Perf.json:
+        * Source/webrtc/tools_webrtc/ios/internal.tryserver.webrtc/ios_arm64_perf.json:
+        * Source/webrtc/tools_webrtc/whitespace.txt:
+        * Source/webrtc/video/report_block_stats.h:
+        * Source/webrtc/video/rtp_video_stream_receiver.cc:
+        * Source/webrtc/video/video_receive_stream.cc:
+
+2018-12-07  Youenn Fablet  <youenn@apple.com>
+
         Update libwebrtc up to 0d007d7c4f
         https://bugs.webkit.org/show_bug.cgi?id=192316
         <rdar://problem/46563726>

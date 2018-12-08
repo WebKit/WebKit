@@ -3317,13 +3317,9 @@ bool PeerConnection::StartRtcEventLog(rtc::PlatformFile file,
   const size_t max_size = (max_size_bytes < 0)
                               ? RtcEventLog::kUnlimitedOutput
                               : rtc::saturated_cast<size_t>(max_size_bytes);
-  int64_t output_period_ms = webrtc::RtcEventLog::kImmediateOutput;
-  if (field_trial::IsEnabled("WebRTC-RtcEventLogNewFormat")) {
-    output_period_ms = 5000;
-  }
   return StartRtcEventLog(
       absl::make_unique<RtcEventLogOutputFile>(file, max_size),
-      output_period_ms);
+      webrtc::RtcEventLog::kImmediateOutput);
 }
 
 bool PeerConnection::StartRtcEventLog(std::unique_ptr<RtcEventLogOutput> output,

@@ -489,12 +489,24 @@ RtpFrameReferenceFinder::FrameDecision RtpFrameReferenceFinder::ManageFrameVp9(
       UnwrapPictureIds(frame);
       return kHandOff;
     }
-  } else {
-    if (frame->frame_type() == kVideoFrameKey) {
+  } else if (frame->frame_type() == kVideoFrameKey) {
+    if (frame->id.spatial_layer == 0) {
       RTC_LOG(LS_WARNING) << "Received keyframe without scalability structure";
       return kDrop;
     }
+    const auto gof_info_it = gof_info_.find(unwrapped_tl0);
+    if (gof_info_it == gof_info_.end())
+      return kStash;
 
+    info = &gof_info_it->second;
+
+    if (frame->frame_type() == kVideoFrameKey) {
+      frame->num_references = 0;
+      FrameReceivedVp9(frame->id.picture_id, info);
+      UnwrapPictureIds(frame);
+      return kHandOff;
+    }
+  } else {
     auto gof_info_it = gof_info_.find(
         (codec_header.temporal_idx == 0) ? unwrapped_tl0 - 1 : unwrapped_tl0);
 

@@ -20,7 +20,6 @@
 #include "pc/test/fakeaudiocapturemodule.h"
 #include "pc/test/fakevideotrackrenderer.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/thread_checker.h"
 
 class PeerConnectionTestWrapper
     : public webrtc::PeerConnectionObserver,
@@ -107,7 +106,6 @@ class PeerConnectionTestWrapper
   std::string name_;
   rtc::Thread* const network_thread_;
   rtc::Thread* const worker_thread_;
-  rtc::ThreadChecker pc_thread_checker_;
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>
       peer_connection_factory_;

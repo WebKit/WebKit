@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-// Modified from the Chxsromium original:
+// Modified from the Chromium original:
 // src/base/strings/stringize_macros.h
 
 // This file defines preprocessor macros for stringizing preprocessor

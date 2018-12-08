@@ -383,6 +383,9 @@ WebRtcVideoChannel::WebRtcVideoSendStream::ConfigureVideoEncoderSettings(
     if (!is_screencast) {
       // Limit inter-layer prediction to key pictures.
       vp9_settings.interLayerPred = webrtc::InterLayerPredMode::kOnKeyPic;
+    } else {
+      // 3 spatial layers vp9 screenshare needs flexible mode.
+      vp9_settings.flexibleMode = vp9_settings.numberOfSpatialLayers > 2;
     }
     return new rtc::RefCountedObject<
         webrtc::VideoEncoderConfig::Vp9EncoderSpecificSettings>(vp9_settings);

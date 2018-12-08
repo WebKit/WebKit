@@ -18,9 +18,9 @@
 
 #include "absl/types/optional.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "common_types.h"  // NOLINT(build/include)
 #include "modules/include/module.h"
 #include "modules/rtp_rtcp/include/flexfec_sender.h"
-#include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/constructormagic.h"
 #include "rtc_base/deprecation.h"

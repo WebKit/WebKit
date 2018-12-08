@@ -23,7 +23,6 @@
 #include "pc/test/mockpeerconnectionobservers.h"
 #include "pc/test/peerconnectiontestwrapper.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/thread_checker.h"
 #include "rtc_base/timeutils.h"
 
 using webrtc::FakeConstraints;
@@ -66,20 +65,9 @@ PeerConnectionTestWrapper::PeerConnectionTestWrapper(
     rtc::Thread* worker_thread)
     : name_(name),
       network_thread_(network_thread),
-      worker_thread_(worker_thread) {
-  pc_thread_checker_.DetachFromThread();
-}
+      worker_thread_(worker_thread) {}
 
-PeerConnectionTestWrapper::~PeerConnectionTestWrapper() {
-  RTC_DCHECK_RUN_ON(&pc_thread_checker_);
-  // Either network_thread or worker_thread might be active at this point.
-  // Relying on ~PeerConnection to properly wait for them doesn't work,
-  // as a vptr race might occur (before we enter the destruction body).
-  // See: bugs.webrtc.org/9847
-  if (pc()) {
-    pc()->Close();
-  }
-}
+PeerConnectionTestWrapper::~PeerConnectionTestWrapper() {}
 
 bool PeerConnectionTestWrapper::CreatePc(
     const webrtc::PeerConnectionInterface::RTCConfiguration& config,
@@ -87,8 +75,6 @@ bool PeerConnectionTestWrapper::CreatePc(
     rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
   std::unique_ptr<cricket::PortAllocator> port_allocator(
       new cricket::FakePortAllocator(network_thread_, nullptr));
-
-  RTC_DCHECK_RUN_ON(&pc_thread_checker_);
 
   fake_audio_capture_module_ = FakeAudioCaptureModule::Create();
   if (fake_audio_capture_module_ == NULL) {

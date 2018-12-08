@@ -514,10 +514,6 @@ class Port : public PortInterface,
 
   rtc::WeakPtrFactory<Port> weak_factory_;
 
-  bool MaybeObfuscateAddress(Candidate* c,
-                             const std::string& type,
-                             bool is_final);
-
   friend class Connection;
 };
 

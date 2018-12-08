@@ -17,7 +17,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/video/color_space.h"
+#include "api/video/hdr_metadata.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_marking.h"
 #include "api/video/video_rotation.h"
@@ -129,7 +129,7 @@ struct RTPHeaderExtension {
   // https://tools.ietf.org/html/draft-ietf-mmusic-sdp-bundle-negotiation-38
   Mid mid;
 
-  absl::optional<ColorSpace> color_space;
+  absl::optional<HdrMetadata> hdr_metadata;
 };
 
 struct RTPHeader {

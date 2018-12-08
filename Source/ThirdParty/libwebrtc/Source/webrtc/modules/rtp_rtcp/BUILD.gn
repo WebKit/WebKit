@@ -11,7 +11,6 @@ import("../../webrtc.gni")
 rtc_source_set("rtp_rtcp_format") {
   visibility = [ "*" ]
   public = [
-    "include/rtcp_statistics.h",
     "include/rtp_cvo.h",
     "include/rtp_header_extension_map.h",
     "include/rtp_rtcp_defines.h",

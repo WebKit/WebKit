@@ -430,50 +430,42 @@ void Port::AddAddress(const rtc::SocketAddress& address,
   c.set_network_name(network_->name());
   c.set_network_type(network_->type());
   c.set_url(url);
-  c.set_related_address(related_address);
-
-  bool pending = MaybeObfuscateAddress(&c, type, is_final);
-
-  if (!pending) {
-    FinishAddingAddress(c, is_final);
-  }
-}
-
-bool Port::MaybeObfuscateAddress(Candidate* c,
-                                 const std::string& type,
-                                 bool is_final) {
   // TODO(bugs.webrtc.org/9723): Use a config to control the feature of IP
   // handling with mDNS.
-  if (network_->GetMdnsResponder() == nullptr) {
-    return false;
-  }
-  if (type != LOCAL_PORT_TYPE) {
-    return false;
-  }
-
-  auto copy = *c;
-  auto weak_ptr = weak_factory_.GetWeakPtr();
-  auto callback = [weak_ptr, copy, is_final](const rtc::IPAddress& addr,
-                                             const std::string& name) mutable {
-    RTC_DCHECK(copy.address().ipaddr() == addr);
-    rtc::SocketAddress hostname_address(name, copy.address().port());
-    // In Port and Connection, we need the IP address information to
-    // correctly handle the update of candidate type to prflx. The removal
-    // of IP address when signaling this candidate will take place in
-    // BasicPortAllocatorSession::OnCandidateReady, via SanitizeCandidate.
-    hostname_address.SetResolvedIP(addr);
-    copy.set_address(hostname_address);
-    copy.set_related_address(rtc::SocketAddress());
-    if (weak_ptr != nullptr) {
-      weak_ptr->set_mdns_name_registration_status(
-          MdnsNameRegistrationStatus::kCompleted);
-      weak_ptr->FinishAddingAddress(copy, is_final);
+  if (network_->GetMdnsResponder() != nullptr) {
+    // Obfuscate the IP address of a host candidates by an mDNS hostname.
+    if (type == LOCAL_PORT_TYPE) {
+      auto weak_ptr = weak_factory_.GetWeakPtr();
+      auto callback = [weak_ptr, c, is_final](const rtc::IPAddress& addr,
+                                              const std::string& name) mutable {
+        RTC_DCHECK(c.address().ipaddr() == addr);
+        rtc::SocketAddress hostname_address(name, c.address().port());
+        // In Port and Connection, we need the IP address information to
+        // correctly handle the update of candidate type to prflx. The removal
+        // of IP address when signaling this candidate will take place in
+        // BasicPortAllocatorSession::OnCandidateReady, via SanitizeCandidate.
+        hostname_address.SetResolvedIP(addr);
+        c.set_address(hostname_address);
+        RTC_DCHECK(c.related_address() == rtc::SocketAddress());
+        if (weak_ptr != nullptr) {
+          weak_ptr->set_mdns_name_registration_status(
+              MdnsNameRegistrationStatus::kCompleted);
+          weak_ptr->FinishAddingAddress(c, is_final);
+        }
+      };
+      set_mdns_name_registration_status(
+          MdnsNameRegistrationStatus::kInProgress);
+      network_->GetMdnsResponder()->CreateNameForAddress(c.address().ipaddr(),
+                                                         callback);
+      return;
     }
-  };
-  set_mdns_name_registration_status(MdnsNameRegistrationStatus::kInProgress);
-  network_->GetMdnsResponder()->CreateNameForAddress(copy.address().ipaddr(),
-                                                     callback);
-  return true;
+    // For other types of candidates, the related address should be set to
+    // 0.0.0.0 or ::0.
+    c.set_related_address(rtc::SocketAddress());
+  } else {
+    c.set_related_address(related_address);
+  }
+  FinishAddingAddress(c, is_final);
 }
 
 void Port::FinishAddingAddress(const Candidate& c, bool is_final) {

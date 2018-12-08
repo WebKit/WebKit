@@ -23,6 +23,12 @@
       "include": "perf_trybot_tests.json",
       "device type": "iPhone 7",
       "os": "11.0.3",
+      "dimensions": [
+        {
+          "os": "Mac",
+          "pool": "Chrome"
+        }
+      ]
     }
   ]
 }

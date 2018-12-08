@@ -80,10 +80,10 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
 
       wait_ms = max_wait_time_ms;
 
-      // Need to hold |crit_| in order to use |frames_|, therefore we
+      // Need to hold |crit_| in order to access frames_to_decode_. therefore we
       // set it here in the loop instead of outside the loop in order to not
-      // acquire the lock unnecesserily.
-      next_frame_it_ = frames_.end();
+      // acquire the lock unnecessarily.
+      frames_to_decode_.clear();
 
       // |frame_it| points to the first frame after the
       // |last_decoded_frame_it_|.
@@ -121,7 +121,53 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
           continue;
         }
 
-        next_frame_it_ = frame_it;
+        // Only ever return all parts of a superframe. Therefore skip this
+        // frame if it's not a beginning of a superframe.
+        if (frame->inter_layer_predicted) {
+          continue;
+        }
+
+        // Gather all remaining frames for the same superframe.
+        std::vector<FrameMap::iterator> current_superframe;
+        current_superframe.push_back(frame_it);
+        bool last_layer_completed =
+            frame_it->second.frame->is_last_spatial_layer;
+        FrameMap::iterator next_frame_it = frame_it;
+        while (true) {
+          ++next_frame_it;
+          if (next_frame_it == frames_.end() ||
+              next_frame_it->first.picture_id != frame->id.picture_id ||
+              !next_frame_it->second.continuous) {
+            break;
+          }
+          // Check if the next frame has some undecoded references other than
+          // the previous frame in the same superframe.
+          size_t num_allowed_undecoded_refs =
+              (next_frame_it->second.frame->inter_layer_predicted) ? 1 : 0;
+          if (next_frame_it->second.num_missing_decodable >
+              num_allowed_undecoded_refs) {
+            break;
+          }
+          // All frames in the superframe should have the same timestamp.
+          if (frame->Timestamp() != next_frame_it->second.frame->Timestamp()) {
+            RTC_LOG(LS_WARNING)
+                << "Frames in a single superframe have different"
+                   " timestamps. Skipping undecodable superframe.";
+            break;
+          }
+          current_superframe.push_back(next_frame_it);
+          last_layer_completed =
+              next_frame_it->second.frame->is_last_spatial_layer;
+        }
+        // Check if the current superframe is complete.
+        // TODO(bugs.webrtc.org/10064): consider returning all available to
+        // decode frames even if the superframe is not complete yet.
+        if (!last_layer_completed) {
+          continue;
+        }
+
+        frames_to_decode_ = std::move(current_superframe);
+
         if (frame->RenderTime() == -1) {
           frame->SetRenderTime(
               timing_->RenderTimeMs(frame->Timestamp(), now_ms));
@@ -147,9 +193,10 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
   {
     rtc::CritScope lock(&crit_);
     now_ms = clock_->TimeInMilliseconds();
-    if (next_frame_it_ != frames_.end()) {
-      std::unique_ptr<EncodedFrame> frame =
-          std::move(next_frame_it_->second.frame);
+    std::vector<EncodedFrame*> frames_out;
+    for (const FrameMap::iterator& frame_it : frames_to_decode_) {
+      RTC_DCHECK(frame_it != frames_.end());
+      EncodedFrame* frame = frame_it->second.frame.release();
 
       if (!frame->delayed_by_retransmission()) {
         int64_t frame_delay;
@@ -180,14 +227,22 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
 
       UpdateJitterDelay();
       UpdateTimingFrameInfo();
-      PropagateDecodability(next_frame_it_->second);
+      PropagateDecodability(frame_it->second);
 
-      AdvanceLastDecodedFrame(next_frame_it_);
+      AdvanceLastDecodedFrame(frame_it);
       last_decoded_frame_timestamp_ = frame->Timestamp();
-      *frame_out = std::move(frame);
+      frames_out.push_back(frame);
+    }
+
+    if (!frames_out.empty()) {
+      if (frames_out.size() == 1) {
+        frame_out->reset(frames_out[0]);
+      } else {
+        frame_out->reset(CombineAndDeleteFrames(frames_out));
+      }
       return kFrameFound;
     }
-  }
+  }  // rtc::Critscope lock(&crit_)
 
   if (latest_return_time_ms - now_ms > 0) {
     // If |next_frame_it_ == frames_.end()| and there is still time left, it
@@ -196,7 +251,6 @@ FrameBuffer::ReturnReason FrameBuffer::NextFrame(
     // remaining time and then return.
     return NextFrame(latest_return_time_ms - now_ms, frame_out);
   }
-
   return kTimeout;
 }
 
@@ -599,9 +653,36 @@ void FrameBuffer::ClearFramesAndHistory() {
   frames_.clear();
   last_decoded_frame_it_ = frames_.end();
   last_continuous_frame_it_ = frames_.end();
-  next_frame_it_ = frames_.end();
+  frames_to_decode_.clear();
   num_frames_history_ = 0;
   num_frames_buffered_ = 0;
+}
+
+EncodedFrame* FrameBuffer::CombineAndDeleteFrames(
+    const std::vector<EncodedFrame*>& frames) const {
+  RTC_DCHECK(!frames.empty());
+  EncodedFrame* frame = frames[0];
+  size_t total_length = 0;
+  for (size_t i = 0; i < frames.size(); ++i) {
+    total_length += frames[i]->size();
+  }
+  frame->VerifyAndAllocate(total_length);
+  uint8_t* buffer = frame->MutableBuffer();
+  // Append all remaining frames to the first one.
+  size_t used_buffer_bytes = frame->size();
+  for (size_t i = 1; i < frames.size(); ++i) {
+    EncodedFrame* frame_to_append = frames[i];
+    memcpy(buffer + used_buffer_bytes, frame_to_append->Buffer(),
+           frame_to_append->size());
+    used_buffer_bytes += frame_to_append->size();
+    frame->video_timing_mutable()->network2_timestamp_ms =
+        frame_to_append->video_timing().network2_timestamp_ms;
+    frame->video_timing_mutable()->receive_finish_ms =
+        frame_to_append->video_timing().receive_finish_ms;
+    delete frame_to_append;
+  }
+  frame->set_size(total_length);
+  return frame;
 }
 
 FrameBuffer::FrameInfo::FrameInfo() = default;

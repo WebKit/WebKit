@@ -96,6 +96,7 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
     timing_.receive_finish_ms = last_packet->receive_time_ms;
   }
   timing_.flags = last_packet->video_header.video_timing.flags;
+  is_last_spatial_layer = last_packet->markerBit;
 }
 
 RtpFrameObject::~RtpFrameObject() {

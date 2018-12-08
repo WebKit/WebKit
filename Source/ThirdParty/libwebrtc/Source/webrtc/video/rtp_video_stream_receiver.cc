@@ -529,6 +529,14 @@ void RtpVideoStreamReceiver::ReceivePacket(const RtpPacketReceived& packet) {
       VideoSendTiming::kInvalid;
   webrtc_rtp_header.video_header().is_last_packet_in_frame =
       webrtc_rtp_header.header.markerBit;
+  if (parsed_payload.video_header().codec == kVideoCodecVP9) {
+    const RTPVideoHeaderVP9& codec_header = absl::get<RTPVideoHeaderVP9>(
+        parsed_payload.video_header().video_type_header);
+    webrtc_rtp_header.video_header().is_last_packet_in_frame |=
+        codec_header.end_of_frame;
+    webrtc_rtp_header.video_header().is_first_packet_in_frame |=
+        codec_header.beginning_of_frame;
+  }
 
   packet.GetExtension<VideoOrientation>(
       &webrtc_rtp_header.video_header().rotation);

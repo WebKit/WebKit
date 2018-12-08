@@ -16,7 +16,7 @@
 
 #include "api/array_view.h"
 #include "api/rtp_headers.h"
-#include "api/video/color_space.h"
+#include "api/video/hdr_metadata.h"
 #include "api/video/video_content_type.h"
 #include "api/video/video_frame_marking.h"
 #include "api/video/video_rotation.h"
@@ -182,23 +182,19 @@ class FrameMarkingExtension {
   static bool IsScalable(uint8_t temporal_id, uint8_t layer_id);
 };
 
-class ColorSpaceExtension {
+class HdrMetadataExtension {
  public:
-  using value_type = ColorSpace;
-  static constexpr RTPExtensionType kId = kRtpExtensionColorSpace;
+  using value_type = HdrMetadata;
+  static constexpr RTPExtensionType kId = kRtpExtensionHdrMetadata;
   static constexpr uint8_t kValueSizeBytes = 30;
-  static constexpr uint8_t kValueSizeBytesWithoutHdrMetadata = 4;
   // TODO(webrtc:8651): Change to a valid uri.
-  static constexpr const char kUri[] = "rtp-colorspace-uri-placeholder";
+  static constexpr const char kUri[] = "rtp-hdr-metadata-uri-placeholder";
 
   static bool Parse(rtc::ArrayView<const uint8_t> data,
-                    ColorSpace* color_space);
-  static size_t ValueSize(const ColorSpace& color_space) {
-    return color_space.hdr_metadata() ? kValueSizeBytes
-                                      : kValueSizeBytesWithoutHdrMetadata;
-  }
+                    HdrMetadata* hdr_metadata);
+  static size_t ValueSize(const HdrMetadata&) { return kValueSizeBytes; }
   static bool Write(rtc::ArrayView<uint8_t> data,
-                    const ColorSpace& color_space);
+                    const HdrMetadata& hdr_metadata);
 
  private:
   static constexpr int kChromaticityDenominator = 10000;  // 0.0001 resolution.

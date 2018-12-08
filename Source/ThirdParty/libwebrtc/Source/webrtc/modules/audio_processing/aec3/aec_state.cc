@@ -151,8 +151,7 @@ void AecState::Update(
   subtractor_output_analyzer_.Update(subtractor_output);
 
   // Analyze the properties of the filter.
-  filter_analyzer_.Update(adaptive_filter_impulse_response,
-                          adaptive_filter_frequency_response, render_buffer);
+  filter_analyzer_.Update(adaptive_filter_impulse_response, render_buffer);
 
   // Estimate the direct path delay of the filter.
   delay_state_.Update(filter_analyzer_, external_delay,

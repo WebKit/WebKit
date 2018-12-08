@@ -2246,8 +2246,8 @@ TEST_F(BasicPortAllocatorTest, IceRegatheringMetricsLoggedWhenNetworkChanges) {
 }
 
 // Test that when an mDNS responder is present, the local address of a host
-// candidate is concealed by an mDNS hostname and the related address of a srflx
-// candidate is set to 0.0.0.0 or ::0.
+// candidate is masked by an mDNS hostname and the related address of any other
+// type of candidates is set to 0.0.0.0 or ::0.
 TEST_F(BasicPortAllocatorTest, HostCandidateAddressIsReplacedByHostname) {
   // Default config uses GTURN and no NAT, so replace that with the
   // desired setup (NAT, STUN server, TURN server, UDP/TCP).
@@ -2269,29 +2269,23 @@ TEST_F(BasicPortAllocatorTest, HostCandidateAddressIsReplacedByHostname) {
   int num_srflx_candidates = 0;
   int num_relay_candidates = 0;
   for (const auto& candidate : candidates_) {
-    const auto& raddr = candidate.related_address();
-
     if (candidate.type() == LOCAL_PORT_TYPE) {
-      EXPECT_FALSE(candidate.address().hostname().empty());
-      EXPECT_TRUE(raddr.IsNil());
+      EXPECT_TRUE(candidate.address().IsUnresolvedIP());
       if (candidate.protocol() == UDP_PROTOCOL_NAME) {
         ++num_host_udp_candidates;
       } else {
         ++num_host_tcp_candidates;
       }
-    } else if (candidate.type() == STUN_PORT_TYPE) {
-      // For a srflx candidate, the related address should be set to 0.0.0.0 or
-      // ::0
-      EXPECT_TRUE(IPIsAny(raddr.ipaddr()));
-      EXPECT_EQ(raddr.port(), 0);
-      ++num_srflx_candidates;
-    } else if (candidate.type() == RELAY_PORT_TYPE) {
-      EXPECT_EQ(kNatUdpAddr.ipaddr(), raddr.ipaddr());
-      EXPECT_EQ(kNatUdpAddr.family(), raddr.family());
-      ++num_relay_candidates;
     } else {
-      // prflx candidates are not expected
-      FAIL();
+      EXPECT_NE(PRFLX_PORT_TYPE, candidate.type());
+      // The related address should be set to 0.0.0.0 or ::0 for srflx and
+      // relay candidates.
+      EXPECT_EQ(rtc::SocketAddress(), candidate.related_address());
+      if (candidate.type() == STUN_PORT_TYPE) {
+        ++num_srflx_candidates;
+      } else {
+        ++num_relay_candidates;
+      }
     }
   }
   EXPECT_EQ(1, num_host_udp_candidates);

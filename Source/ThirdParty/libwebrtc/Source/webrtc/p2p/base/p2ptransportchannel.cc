@@ -1098,7 +1098,9 @@ void P2PTransportChannel::OnCandidateResolved(
   Candidate candidate = p->candidate_;
   resolvers_.erase(p);
   AddRemoteCandidateWithResolver(candidate, resolver);
-  resolver->Destroy(false);
+  invoker_.AsyncInvoke<void>(
+      RTC_FROM_HERE, thread(),
+      rtc::Bind(&rtc::AsyncResolverInterface::Destroy, resolver, false));
 }
 
 void P2PTransportChannel::AddRemoteCandidateWithResolver(

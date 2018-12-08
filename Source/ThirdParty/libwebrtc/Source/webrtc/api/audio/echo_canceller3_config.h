@@ -182,8 +182,8 @@ struct RTC_EXPORT EchoCanceller3Config {
                                    0.25f);
 
     struct DominantNearendDetection {
-      float enr_threshold = 4.f;
-      float enr_exit_threshold = .1f;
+      float enr_threshold = .25f;
+      float enr_exit_threshold = 10.f;
       float snr_threshold = 30.f;
       int hold_duration = 50;
       int trigger_threshold = 12;

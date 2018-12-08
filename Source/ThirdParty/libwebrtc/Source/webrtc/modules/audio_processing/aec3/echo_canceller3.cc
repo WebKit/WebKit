@@ -147,7 +147,7 @@ EchoCanceller3Config AdjustConfig(const EchoCanceller3Config& config) {
             EchoCanceller3Config::Suppressor::MaskingThresholds(.07f, .1f, .3f),
             2.0f, 0.25f);
 
-    adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold = 10.f;
+    adjusted_cfg.suppressor.dominant_nearend_detection.enr_threshold = 0.1f;
     adjusted_cfg.suppressor.dominant_nearend_detection.snr_threshold = 10.f;
     adjusted_cfg.suppressor.dominant_nearend_detection.hold_duration = 25;
   }
@@ -446,10 +446,6 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture, bool level_change) {
   data_dumper_->DumpRaw("aec3_call_order",
                         static_cast<int>(EchoCanceller3ApiCall::kCapture));
 
-  // Report capture call in the metrics and periodically update API call
-  // metrics.
-  api_call_metrics_.ReportCaptureCall();
-
   // Optionally delay the capture signal.
   if (config_.delay.fixed_capture_delay_samples > 0) {
     block_delay_buffer_.DelaySignal(capture);
@@ -504,9 +500,6 @@ void EchoCanceller3::EmptyRenderQueue() {
   bool frame_to_buffer =
       render_transfer_queue_.Remove(&render_queue_output_frame_);
   while (frame_to_buffer) {
-    // Report render call in the metrics.
-    api_call_metrics_.ReportRenderCall();
-
     BufferRenderFrameContent(&render_queue_output_frame_, 0, &render_blocker_,
                              block_processor_.get(), &block_, &sub_frame_view_);
 

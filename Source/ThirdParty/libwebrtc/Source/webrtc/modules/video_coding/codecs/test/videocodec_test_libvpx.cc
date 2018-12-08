@@ -124,9 +124,9 @@ TEST(VideoCodecTestLibvpx, ChangeBitrateVP9) {
       {500, 30, kNumFramesLong}};
 
   std::vector<RateControlThresholds> rc_thresholds = {
-      {5, 1, 0, 1, 0.5, 0.1, 0, 1},
-      {15, 2, 0, 1, 0.5, 0.1, 0, 0},
-      {10, 1, 0, 1, 0.5, 0.1, 0, 0}};
+      {5, 2, 0, 1, 0.5, 0.1, 0, 1},
+      {15, 3, 0, 1, 0.5, 0.1, 0, 0},
+      {10, 2, 0, 1, 0.5, 0.1, 0, 0}};
 
   std::vector<QualityThresholds> quality_thresholds = {
       {34, 33, 0.90, 0.88}, {38, 35, 0.95, 0.91}, {35, 34, 0.93, 0.90}};

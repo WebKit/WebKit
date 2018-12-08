@@ -374,10 +374,6 @@ void VideoReceiveStream::RequestKeyFrame() {
 
 void VideoReceiveStream::OnCompleteFrame(
     std::unique_ptr<video_coding::EncodedFrame> frame) {
-  // TODO(webrtc:9249): Workaround to allow decoding of VP9 SVC stream with
-  // partially enabled inter-layer prediction.
-  frame->id.spatial_layer = 0;
-
   // TODO(https://bugs.webrtc.org/9974): Consider removing this workaround.
   int64_t time_now_ms = rtc::TimeMillis();
   if (last_complete_frame_time_ms_ > 0 &&

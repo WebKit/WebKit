@@ -2103,7 +2103,6 @@ if (rtc_include_tests) {
       "../../logging:mocks",
       "../../logging:rtc_event_audio",
       "../../logging:rtc_event_log_api",
-      "../../modules/rtp_rtcp:rtp_rtcp_format",
       "../../rtc_base:checks",
       "../../rtc_base:protobuf_utils",
       "../../rtc_base:rtc_base",

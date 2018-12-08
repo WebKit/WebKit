@@ -203,34 +203,6 @@ HdrMetadata CreateTestHdrMetadata() {
   hdr_metadata.max_frame_average_light_level = 1789;
   return hdr_metadata;
 }
-
-ColorSpace CreateTestColorSpace(bool with_hdr_metadata) {
-  ColorSpace color_space(
-      ColorSpace::PrimaryID::kBT709, ColorSpace::TransferID::kGAMMA22,
-      ColorSpace::MatrixID::kSMPTE2085, ColorSpace::RangeID::kFull);
-  if (with_hdr_metadata) {
-    HdrMetadata hdr_metadata = CreateTestHdrMetadata();
-    color_space.set_hdr_metadata(&hdr_metadata);
-  }
-  return color_space;
-}
-
-void TestCreateAndParseColorSpaceExtension(bool with_hdr_metadata) {
-  // Create packet with extension.
-  RtpPacket::ExtensionManager extensions(/*extmap-allow-mixed=*/true);
-  extensions.Register<ColorSpaceExtension>(1);
-  RtpPacket packet(&extensions);
-  const ColorSpace kColorSpace = CreateTestColorSpace(with_hdr_metadata);
-  EXPECT_TRUE(packet.SetExtension<ColorSpaceExtension>(kColorSpace));
-  packet.SetPayloadSize(42);
-
-  // Read packet with the extension.
-  RtpPacketReceived parsed(&extensions);
-  EXPECT_TRUE(parsed.Parse(packet.Buffer()));
-  ColorSpace parsed_color_space;
-  EXPECT_TRUE(parsed.GetExtension<ColorSpaceExtension>(&parsed_color_space));
-  EXPECT_EQ(kColorSpace, parsed_color_space);
-}
 }  // namespace
 
 TEST(RtpPacketTest, CreateMinimum) {
@@ -847,12 +819,21 @@ TEST(RtpPacketTest, ParseLegacyTimingFrameExtension) {
   EXPECT_EQ(receivied_timing.flags, 0);
 }
 
-TEST(RtpPacketTest, CreateAndParseColorSpaceExtension) {
-  TestCreateAndParseColorSpaceExtension(/*with_hdr_metadata=*/true);
-}
+TEST(RtpPacketTest, CreateAndParseHdrMetadataExtension) {
+  // Create packet with extension.
+  RtpPacket::ExtensionManager extensions(/*extmap-allow-mixed=*/true);
+  extensions.Register<HdrMetadataExtension>(1);
+  RtpPacket packet(&extensions);
+  const HdrMetadata kHdrMetadata = CreateTestHdrMetadata();
+  EXPECT_TRUE(packet.SetExtension<HdrMetadataExtension>(kHdrMetadata));
+  packet.SetPayloadSize(42);
 
-TEST(RtpPacketTest, CreateAndParseColorSpaceExtensionWithoutHdrMetadata) {
-  TestCreateAndParseColorSpaceExtension(/*with_hdr_metadata=*/false);
+  // Read packet with the extension.
+  RtpPacketReceived parsed(&extensions);
+  EXPECT_TRUE(parsed.Parse(packet.Buffer()));
+  HdrMetadata parsed_hdr_metadata;
+  EXPECT_TRUE(parsed.GetExtension<HdrMetadataExtension>(&parsed_hdr_metadata));
+  EXPECT_EQ(kHdrMetadata, parsed_hdr_metadata);
 }
 
 }  // namespace webrtc
