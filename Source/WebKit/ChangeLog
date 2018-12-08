@@ -1,3 +1,16 @@
+2018-12-08  Frederic Wang  <fwang@igalia.com>
+
+        Allow control over child order when adding nodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=176914
+        <rdar://problem/46542237>
+
+        Reviewed by Simon Fraser.
+
+        Based on an earlier patch by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+
 2018-12-07  Rob Buis  <rbuis@igalia.com>
 
         Remove unused API in NetworkProcess

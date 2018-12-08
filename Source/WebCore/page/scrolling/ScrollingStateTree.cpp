@@ -82,25 +82,39 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
     return ScrollingStateFixedNode::create(*this, nodeID);
 }
 
-bool ScrollingStateTree::nodeTypeAndParentMatch(ScrollingStateNode& node, ScrollingNodeType nodeType, ScrollingNodeID parentID) const
+bool ScrollingStateTree::nodeTypeAndParentMatch(ScrollingStateNode& node, ScrollingNodeType nodeType, ScrollingStateNode* parentNode) const
 {
     if (node.nodeType() != nodeType)
         return false;
 
-    auto* parent = stateNodeForID(parentID);
-    if (!parent)
-        return true;
-
-    return node.parent() == parent;
+    return node.parent() == parentNode;
 }
 
-ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
+ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID, size_t childIndex)
 {
     ASSERT(newNodeID);
 
     if (auto* node = stateNodeForID(newNodeID)) {
-        if (nodeTypeAndParentMatch(*node, nodeType, parentID))
+        auto* parent = stateNodeForID(parentID);
+        if (nodeTypeAndParentMatch(*node, nodeType, parent)) {
+            if (!parentID)
+                return newNodeID;
+
+            size_t currentIndex = parent->indexOfChild(*node);
+            if (currentIndex == childIndex)
+                return newNodeID;
+
+            ASSERT(currentIndex != notFound);
+            Ref<ScrollingStateNode> protectedNode(*node);
+            parent->children()->remove(currentIndex);
+
+            if (childIndex == notFound)
+                parent->appendChild(WTFMove(protectedNode));
+            else
+                parent->insertChild(WTFMove(protectedNode), childIndex);
+
             return newNodeID;
+        }
 
 #if ENABLE(ASYNC_SCROLLING)
         // If the type has changed, we need to destroy and recreate the node with a new ID.
@@ -114,6 +128,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
 
     ScrollingStateNode* newNode = nullptr;
     if (!parentID) {
+        ASSERT(!childIndex || childIndex == notFound);
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
@@ -122,24 +137,32 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         m_hasNewRootStateNode = true;
     } else {
         auto* parent = stateNodeForID(parentID);
-        if (!parent)
+        if (!parent) {
+            ASSERT_NOT_REACHED();
             return 0;
+        }
 
         if (nodeType == SubframeScrollingNode && parentID) {
             if (auto orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
                 newNode = orphanedNode.get();
-                parent->appendChild(orphanedNode.releaseNonNull());
+                if (childIndex == notFound)
+                    parent->appendChild(orphanedNode.releaseNonNull());
+                else
+                    parent->insertChild(orphanedNode.releaseNonNull(), childIndex);
             }
         }
 
         if (!newNode) {
             auto stateNode = createNode(nodeType, newNodeID);
             newNode = stateNode.ptr();
-            parent->appendChild(WTFMove(stateNode));
+            if (childIndex == notFound)
+                parent->appendChild(WTFMove(stateNode));
+            else
+                parent->insertChild(WTFMove(stateNode), childIndex);
         }
     }
 
-    m_stateNodeMap.set(newNodeID, newNode);
+    addNode(*newNode);
     m_nodesRemovedSinceLastCommit.remove(newNodeID);
     return newNodeID;
 }

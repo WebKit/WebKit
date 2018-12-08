@@ -1,3 +1,14 @@
+2018-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow control over child order when adding nodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=176914
+        <rdar://problem/46542237>
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac-wk2/TestExpectations: Mark fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html
+        as flakey, which it will be until we attach in z-order.
+
 2018-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] 'devicechange' event should not fire in frames that can't access capture devices
