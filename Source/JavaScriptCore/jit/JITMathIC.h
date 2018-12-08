@@ -62,10 +62,10 @@ public:
     {
     }
 
-    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return m_inlineStart.labelAtOffset(m_inlineSize); }
-    CodeLocationLabel<JSInternalPtrTag> slowPathStartLocation() { return m_inlineStart.labelAtOffset(m_deltaFromStartToSlowPathStart); }
-    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return m_inlineStart.callAtOffset(m_deltaFromStartToSlowPathCallLocation); }
-    
+    CodeLocationLabel<JSInternalPtrTag> doneLocation() { return m_inlineEnd; }
+    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation() { return m_slowPathCallLocation; }
+    CodeLocationLabel<JSInternalPtrTag> slowPathStartLocation() { return m_slowPathStartLocation; }
+
     bool generateInline(CCallHelpers& jit, MathICGenerationState& state, bool shouldEmitProfiling = true)
     {
 #if CPU(ARM_TRADITIONAL)
@@ -136,7 +136,7 @@ public:
             auto jump = jit.jump();
             // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
             bool needsBranchCompaction = false;
-            RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(m_inlineSize));
+            RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(MacroAssembler::differenceBetweenCodePtr(m_inlineStart, m_inlineEnd)));
             LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), JITCompilationMustSucceed, needsBranchCompaction);
             RELEASE_ASSERT(linkBuffer.isValid());
             linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
@@ -224,14 +224,11 @@ public:
         CodeLocationLabel<JSInternalPtrTag> start = linkBuffer.locationOf<JSInternalPtrTag>(state.fastPathStart);
         m_inlineStart = start;
 
-        m_inlineSize = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf<NoPtrTag>(state.fastPathEnd));
-        ASSERT(m_inlineSize > 0);
+        m_inlineEnd = linkBuffer.locationOf<JSInternalPtrTag>(state.fastPathEnd);
+        ASSERT(m_inlineEnd.untaggedExecutableAddress() > m_inlineStart.untaggedExecutableAddress());
 
-        m_deltaFromStartToSlowPathCallLocation = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf<NoPtrTag>(state.slowPathCall));
-        m_deltaFromStartToSlowPathStart = MacroAssembler::differenceBetweenCodePtr(
-            start, linkBuffer.locationOf<NoPtrTag>(state.slowPathStart));
+        m_slowPathCallLocation = linkBuffer.locationOf<JSInternalPtrTag>(state.slowPathCall);
+        m_slowPathStartLocation = linkBuffer.locationOf<JSInternalPtrTag>(state.slowPathStart);
     }
 
     ArithProfile* arithProfile() const { return m_arithProfile; }
@@ -252,9 +249,9 @@ public:
     Instruction* m_instruction;
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
     CodeLocationLabel<JSInternalPtrTag> m_inlineStart;
-    int32_t m_inlineSize;
-    int32_t m_deltaFromStartToSlowPathCallLocation;
-    int32_t m_deltaFromStartToSlowPathStart;
+    CodeLocationLabel<JSInternalPtrTag> m_inlineEnd;
+    CodeLocationLabel<JSInternalPtrTag> m_slowPathCallLocation;
+    CodeLocationLabel<JSInternalPtrTag> m_slowPathStartLocation;
     bool m_generateFastPathOnRepatch { false };
     GeneratorType m_generator;
 };
