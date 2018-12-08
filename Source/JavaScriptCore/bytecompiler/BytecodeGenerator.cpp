@@ -1323,11 +1323,8 @@ void BytecodeGenerator::recordOpcode(OpcodeID opcodeID)
 void BytecodeGenerator::alignWideOpcode()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
-    OpcodeID lastOpcodeID = m_lastOpcodeID;
-    m_lastOpcodeID = op_end;
     while ((m_writer.position() + 1) % OpcodeSize::Wide)
         OpNop::emit<OpcodeSize::Narrow>(this);
-    recordOpcode(lastOpcodeID);
 #endif
 }
 
@@ -2784,9 +2781,9 @@ RegisterID* BytecodeGenerator::emitGetArgument(RegisterID* dst, int32_t index)
 
 RegisterID* BytecodeGenerator::emitCreateThis(RegisterID* dst)
 {
-    m_staticPropertyAnalyzer.createThis(dst, m_writer.ref());
-
     OpCreateThis::emit(this, dst, dst, 0);
+    m_staticPropertyAnalyzer.createThis(dst, m_lastInstruction);
+
     m_codeBlock->addPropertyAccessInstruction(m_lastInstruction.offset());
     return dst;
 }
@@ -2893,9 +2890,9 @@ void BytecodeGenerator::restoreTDZStack(const BytecodeGenerator::PreservedTDZSta
 
 RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
 {
-    m_staticPropertyAnalyzer.newObject(dst, m_writer.ref());
-
     OpNewObject::emit(this, dst, 0);
+    m_staticPropertyAnalyzer.newObject(dst, m_lastInstruction);
+
     return dst;
 }
 

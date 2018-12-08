@@ -35,8 +35,8 @@ namespace JSC {
 // is understood to be lossy, and it's OK if it turns out to be wrong sometimes.
 class StaticPropertyAnalyzer {
 public:
-    void createThis(RegisterID* dst, InstructionStream::MutableRef&& instructionRef);
-    void newObject(RegisterID* dst, InstructionStream::MutableRef&& instructionRef);
+    void createThis(RegisterID* dst, InstructionStream::MutableRef instructionRef);
+    void newObject(RegisterID* dst, InstructionStream::MutableRef instructionRef);
     void putById(RegisterID* dst, unsigned propertyIndex); // propertyIndex is an index into a uniqued set of strings.
     void mov(RegisterID* dst, RegisterID* src);
 
@@ -50,14 +50,14 @@ private:
     AnalysisMap m_analyses;
 };
 
-inline void StaticPropertyAnalyzer::createThis(RegisterID* dst, InstructionStream::MutableRef&& instructionRef)
+inline void StaticPropertyAnalyzer::createThis(RegisterID* dst, InstructionStream::MutableRef instructionRef)
 {
     AnalysisMap::AddResult addResult = m_analyses.add(
         dst->index(), StaticPropertyAnalysis::create(WTFMove(instructionRef)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry); // Can't have two 'this' in the same constructor.
 }
 
-inline void StaticPropertyAnalyzer::newObject(RegisterID* dst, InstructionStream::MutableRef&& instructionRef)
+inline void StaticPropertyAnalyzer::newObject(RegisterID* dst, InstructionStream::MutableRef instructionRef)
 {
     RefPtr<StaticPropertyAnalysis> analysis = StaticPropertyAnalysis::create(WTFMove(instructionRef));
     AnalysisMap::AddResult addResult = m_analyses.add(dst->index(), analysis);

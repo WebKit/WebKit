@@ -1,3 +1,23 @@
+2018-12-08  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Record right offset with aligned wide instructions
+        https://bugs.webkit.org/show_bug.cgi?id=192006
+
+        Reviewed by Yusuke Suzuki.
+
+        Aligning bytecode instructions inserts nops into the instruction stream.
+        Emitting an instruction did not record the actual start of the instruction with
+        aligned instructions, but the nop just before the actual instruction. This was
+        problematic with the StaticPropertyAnalyzer that used the wrong instruction offset.
+
+        * bytecode/InstructionStream.h:
+        (JSC::InstructionStream::MutableRef::clone):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::alignWideOpcode):
+        (JSC::BytecodeGenerator::emitCreateThis):
+        (JSC::BytecodeGenerator::emitNewObject):
+        * generator/Opcode.rb:
+
 2018-12-07  Tadeu Zagallo  <tzagallo@apple.com>
 
         Align the metadata table on all platforms

@@ -114,9 +114,9 @@ EOF
         <<-EOF.chomp
     static void emit(BytecodeGenerator* gen#{typed_args})
     {
-        gen->recordOpcode(opcodeID);#{@metadata.create_emitter_local}
-        emit<OpcodeSize::Narrow, NoAssert, false>(gen#{untyped_args}#{metadata_arg})
-            || emit<OpcodeSize::Wide, Assert, false>(gen#{untyped_args}#{metadata_arg});
+        #{@metadata.create_emitter_local}
+        emit<OpcodeSize::Narrow, NoAssert, true>(gen#{untyped_args}#{metadata_arg})
+            || emit<OpcodeSize::Wide, Assert, true>(gen#{untyped_args}#{metadata_arg});
     }
 #{%{
     template<OpcodeSize size, FitsAssertion shouldAssert = Assert>
@@ -128,22 +128,22 @@ EOF
     template<OpcodeSize size, FitsAssertion shouldAssert = Assert, bool recordOpcode = true>
     static bool emit(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
-        if (recordOpcode)
-            gen->recordOpcode(opcodeID);
-        bool didEmit = emitImpl<size>(gen#{untyped_args}#{metadata_arg});
+        bool didEmit = emitImpl<size, recordOpcode>(gen#{untyped_args}#{metadata_arg});
         if (shouldAssert == Assert)
             ASSERT(didEmit);
         return didEmit;
     }
 
 private:
-    template<OpcodeSize size>
+    template<OpcodeSize size, bool recordOpcode>
     static bool emitImpl(BytecodeGenerator* gen#{typed_args}#{metadata_param})
     {
         if (size == OpcodeSize::Wide)
             gen->alignWideOpcode();
         if (#{map_fields_with_size("", "size", &:fits_check).join "\n            && "}
             && (size == OpcodeSize::Wide ? #{op_wide.fits_check(Size::Narrow)} : true)) {
+            if (recordOpcode)
+                gen->recordOpcode(opcodeID);
             if (size == OpcodeSize::Wide)
                 #{op_wide.fits_write Size::Narrow}
 #{map_fields_with_size("            ", "size", &:fits_write).join "\n"}
