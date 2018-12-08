@@ -681,7 +681,7 @@ class WebCoreDocumentProvider:
         self.valobj = valobj
 
     def url(self):
-        return WebCoreURLProvider(self.valobj.GetChildMemberWithName('m_url'), dict()).to_string()
+        return WTFURLProvider(self.valobj.GetChildMemberWithName('m_url'), dict()).to_string()
 
     def origin(self):
         security_origin_ptr = self.valobj.GetChildMemberWithName('m_securityOriginPolicy').GetChildMemberWithName('m_ptr').GetChildMemberWithName('m_securityOrigin').GetChildMemberWithName('m_ptr')

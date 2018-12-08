@@ -1,3 +1,14 @@
+2018-12-08  Daniel Bates  <dabates@apple.com>
+
+        Fix lldb_webkit.py following r238771
+        (https://bugs.webkit.org/show_bug.cgi?id=190234)
+
+        Substitute WTFURLProvider for WebCoreURLProvider in one call site that was inadvertently
+        missed in r238771.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreDocumentProvider.url):
+
 2018-12-07  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] check-patch-relevance failure should not mark the overall build as failure
