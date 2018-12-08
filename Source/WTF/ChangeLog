@@ -1,3 +1,14 @@
+2018-12-08  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WTF] Debug build fails due conflicting abort() method
+        https://bugs.webkit.org/show_bug.cgi?id=192491
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Assertions.h: Use namespaced std::abort() insted of plain abort() to avoid clashes
+        inside classes which have an ::abort() method, but only when __cplusplus is defined to
+        allow inclusion of the header in plain C sources.
+
 2018-12-07  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Add optional variants of SOFT_LINK_CLASS_FOR_SOURCE

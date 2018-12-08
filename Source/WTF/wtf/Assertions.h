@@ -241,8 +241,13 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
     __builtin_unreachable(); \
 } while (0)
 #elif !ENABLE(DEVELOPER_MODE) && !OS(DARWIN)
+#ifdef __cplusplus
+#define CRASH() std::abort()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() std::abort()
+#else
 #define CRASH() abort()
 #define CRASH_UNDER_CONSTEXPR_CONTEXT() abort()
+#endif // __cplusplus
 #else
 #define CRASH() WTFCrash()
 #define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFCrash()
