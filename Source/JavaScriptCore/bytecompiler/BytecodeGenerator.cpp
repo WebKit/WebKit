@@ -2912,14 +2912,14 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
 
         unsigned instIndex = instructions().size();
 
-        if (context.type() == ForInContext::IndexedForInContextType) {
-            static_cast<IndexedForInContext&>(context).addGetInst(instIndex, property->index());
-            property = static_cast<IndexedForInContext&>(context).index();
+        if (context.isIndexedForInContext()) {
+            auto& indexedContext = context.asIndexedForInContext();
+            indexedContext.addGetInst(instIndex, property->index());
+            property = indexedContext.index();
             break;
         }
 
-        ASSERT(context.type() == ForInContext::StructureForInContextType);
-        StructureForInContext& structureContext = static_cast<StructureForInContext&>(context);
+        StructureForInContext& structureContext = context.asStructureForInContext();
         UnlinkedValueProfile profile = emitProfiledOpcode(op_get_direct_pname);
         instructions().append(kill(dst));
         instructions().append(base->index());
@@ -4631,9 +4631,7 @@ void BytecodeGenerator::popIndexedForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
-
-    ASSERT(m_forInContextStack.last()->type() == ForInContext::IndexedForInContextType);
-    static_cast<IndexedForInContext&>(m_forInContextStack.last().get()).finalize(*this);
+    m_forInContextStack.last()->asIndexedForInContext().finalize(*this);
     m_forInContextStack.removeLast();
 }
 
@@ -4743,8 +4741,7 @@ void BytecodeGenerator::popStructureForInScope(RegisterID* localRegister)
 {
     if (!localRegister)
         return;
-    ASSERT(m_forInContextStack.last()->type() == ForInContext::StructureForInContextType);
-    static_cast<StructureForInContext&>(m_forInContextStack.last().get()).finalize(*this);
+    m_forInContextStack.last()->asStructureForInContext().finalize(*this);
     m_forInContextStack.removeLast();
 }
 
