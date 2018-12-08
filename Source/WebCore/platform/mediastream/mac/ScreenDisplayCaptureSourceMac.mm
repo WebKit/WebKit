@@ -141,10 +141,10 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         if (!m_captureQueue)
             m_captureQueue = adoptOSObject(dispatch_queue_create("ScreenDisplayCaptureSourceMac Capture Queue", DISPATCH_QUEUE_SERIAL));
 
-        CFDictionaryRef streamOptions = (__bridge CFDictionaryRef) @{
-            (__bridge NSString *)kCGDisplayStreamMinimumFrameTime :@(1 / frameRate()),
-            (__bridge NSString *)kCGDisplayStreamQueueDepth:@(screenQueueMaximumLength),
-            (__bridge NSString *)kCGDisplayStreamColorSpace:(__bridge id)sRGBColorSpaceRef(),
+        NSDictionary* streamOptions = @{
+            (__bridge NSString *)kCGDisplayStreamMinimumFrameTime : @(1 / frameRate()),
+            (__bridge NSString *)kCGDisplayStreamQueueDepth : @(screenQueueMaximumLength),
+            (__bridge NSString *)kCGDisplayStreamColorSpace : (__bridge id)sRGBColorSpaceRef(),
             (__bridge NSString *)kCGDisplayStreamShowCursor : @(YES),
         };
 
@@ -156,7 +156,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
             weakThis->frameAvailable(status, displayTime, frameSurface, updateRef);
         };
 
-        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), streamOptions, m_captureQueue.get(), frameAvailableBlock));
+        m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, m_captureQueue.get(), frameAvailableBlock));
         if (!m_displayStream) {
             RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream: CGDisplayStreamCreate failed");
             captureFailed();

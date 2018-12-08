@@ -85,20 +85,20 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
     if (m_size == size && m_outputBufferPool)
         return true;
 
-    CFDictionaryRef pixelBufferOptions = (__bridge CFDictionaryRef) @{
-        (__bridge NSString *)kCVPixelBufferWidthKey :@(size.width()),
-        (__bridge NSString *)kCVPixelBufferHeightKey:@(size.height()),
-        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey:@(m_pixelFormat),
+    NSDictionary* pixelBufferOptions = @{
+        (__bridge NSString *)kCVPixelBufferWidthKey : @(size.width()),
+        (__bridge NSString *)kCVPixelBufferHeightKey : @(size.height()),
+        (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey : @(m_pixelFormat),
         (__bridge NSString *)cvPixelFormatOpenGLKey() : @(YES),
         (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ /*empty dictionary*/ },
     };
 
-    CFDictionaryRef pixelBufferPoolOptions = (__bridge CFDictionaryRef) @{
-        (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey : @(6)
+    NSDictionary* pixelBufferPoolOptions = @{
+        (__bridge NSString *)kCVPixelBufferPoolMinimumBufferCountKey: @(6)
     };
 
     CVPixelBufferPoolRef bufferPool;
-    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, pixelBufferPoolOptions, pixelBufferOptions, &bufferPool);
+    auto status = CVPixelBufferPoolCreate(kCFAllocatorDefault, (__bridge CFDictionaryRef)pixelBufferPoolOptions, (__bridge CFDictionaryRef)pixelBufferOptions, &bufferPool);
     ASSERT(!status);
     if (status != kCVReturnSuccess)
         return false;
