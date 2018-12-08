@@ -325,6 +325,10 @@ static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoor
     case ATK_XY_WINDOW:
         // No-op
         break;
+#if ATK_CHECK_VERSION(2, 30, 0)
+    case ATK_XY_PARENT:
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
     }
 
     return extents;
