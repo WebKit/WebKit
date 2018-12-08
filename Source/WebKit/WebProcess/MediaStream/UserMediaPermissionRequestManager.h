@@ -23,7 +23,6 @@
 
 #include "MediaDeviceSandboxExtensions.h"
 #include "SandboxExtension.h"
-#include <WebCore/ActivityStateChangeObserver.h>
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MediaDevicesEnumerationRequest.h>
@@ -37,9 +36,7 @@ namespace WebKit {
 
 class WebPage;
 
-enum class DeviceAccessState : uint8_t { NoAccess, SessionAccess, PersistentAccess };
-
-class UserMediaPermissionRequestManager : public CanMakeWeakPtr<UserMediaPermissionRequestManager>, private WebCore::MediaCanStartListener, private WebCore::ActivityStateChangeObserver {
+class UserMediaPermissionRequestManager : public CanMakeWeakPtr<UserMediaPermissionRequestManager>, private WebCore::MediaCanStartListener {
 public:
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager();
@@ -59,16 +56,13 @@ public:
     WebCore::UserMediaClient::DeviceChangeObserverToken addDeviceChangeObserver(WTF::Function<void()>&&);
     void removeDeviceChangeObserver(WebCore::UserMediaClient::DeviceChangeObserverToken);
 
-    void captureDevicesChanged(DeviceAccessState);
+    void captureDevicesChanged();
 
 private:
     void sendUserMediaRequest(WebCore::UserMediaRequest&);
 
     // WebCore::MediaCanStartListener
     void mediaCanStart(WebCore::Document&) final;
-
-    // WebCore::ActivityStateChangeObserver
-    void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> oldActivityState, OptionSet<WebCore::ActivityState::Flag> newActivityState) final;
 
     void removeMediaRequestFromMaps(WebCore::UserMediaRequest&);
 
@@ -84,24 +78,12 @@ private:
     HashMap<String, RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
 
     HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, WTF::Function<void()>> m_deviceChangeObserverMap;
-    DeviceAccessState m_accessStateWhenDevicesChanged { DeviceAccessState::NoAccess };
     bool m_monitoringDeviceChange { false };
-    bool m_pendingDeviceChangeEvent { false };
-    bool m_monitoringActivityStateChange { false };
 };
 
 } // namespace WebKit
 
 namespace WTF {
-
-template<> struct EnumTraits<WebKit::DeviceAccessState> {
-    using values = EnumValues<
-        WebKit::DeviceAccessState,
-        WebKit::DeviceAccessState::NoAccess,
-        WebKit::DeviceAccessState::SessionAccess,
-        WebKit::DeviceAccessState::PersistentAccess
-    >;
-};
 
 } // namespace WTF
 

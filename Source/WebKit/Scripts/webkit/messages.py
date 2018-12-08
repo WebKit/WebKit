@@ -440,7 +440,6 @@ def headers_for_type(type):
         'WebCore::SelectionRect': ['"EditorState.h"'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
-        'WebKit::DeviceAccessState': ['"UserMediaPermissionRequestManager.h"'],
         'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
         'WebKit::PageState': ['"SessionState.h"'],
         'WebKit::WebGestureEvent': ['"WebEvent.h"'],

@@ -1,0 +1,12 @@
+<script>
+    let myID;
+    navigator.mediaDevices.ondevicechange = (event) => {
+        parent.postMessage(myID, '*');
+        result.innerHTML = `${myID} got 'devicechange' event`;
+    };
+    window.addEventListener("message", (event) => { myID = event.data; });
+</script>
+
+<div id='result'></div>
+
+

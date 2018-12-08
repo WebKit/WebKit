@@ -53,8 +53,6 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 
 UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
 {
-    if (m_monitoringActivityStateChange)
-        m_page.corePage()->removeActivityStateChangeObserver(*this);
     for (auto& sandboxExtension : m_userMediaDeviceSandboxExtensions)
         sandboxExtension.value->revoke();
 }
@@ -245,7 +243,7 @@ void UserMediaPermissionRequestManager::removeDeviceChangeObserver(UserMediaClie
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
 
-void UserMediaPermissionRequestManager::captureDevicesChanged(DeviceAccessState accessState)
+void UserMediaPermissionRequestManager::captureDevicesChanged()
 {
     // When new media input and/or output devices are made available, or any available input and/or
     // output device becomes unavailable, the User Agent MUST run the following steps in browsing
@@ -255,47 +253,12 @@ void UserMediaPermissionRequestManager::captureDevicesChanged(DeviceAccessState 
     // * any of the input devices are attached to an active MediaStream in the browsing context, or
     // * the active document is fully active and has focus.
 
-    bool isActive = m_page.corePage()->activityState().containsAll(focusedActiveWindow);
-    if (!isActive && accessState == DeviceAccessState::NoAccess) {
-        if (!isActive) {
-            if (!m_monitoringActivityStateChange) {
-                m_monitoringActivityStateChange = true;
-                m_page.corePage()->addActivityStateChangeObserver(*this);
-            }
-            m_pendingDeviceChangeEvent = true;
-            m_accessStateWhenDevicesChanged = accessState;
-        }
-        return;
-    }
-
     auto identifiers = m_deviceChangeObserverMap.keys();
     for (auto& identifier : identifiers) {
         auto iterator = m_deviceChangeObserverMap.find(identifier);
         if (iterator != m_deviceChangeObserverMap.end())
             (iterator->value)();
     }
-}
-
-void UserMediaPermissionRequestManager::activityStateDidChange(OptionSet<WebCore::ActivityState::Flag> oldActivityState, OptionSet<WebCore::ActivityState::Flag> newActivityState)
-{
-    if (!newActivityState.containsAll(focusedActiveWindow))
-        return;
-
-    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(*this)]() mutable {
-        if (!weakThis || !m_monitoringActivityStateChange)
-            return;
-
-        m_monitoringActivityStateChange = false;
-        m_page.corePage()->removeActivityStateChangeObserver(*this);
-    });
-
-    if (!m_pendingDeviceChangeEvent)
-        return;
-
-    m_pendingDeviceChangeEvent = false;
-    auto accessState = m_accessStateWhenDevicesChanged;
-    m_accessStateWhenDevicesChanged = DeviceAccessState::NoAccess;
-    captureDevicesChanged(accessState);
 }
 
 } // namespace WebKit

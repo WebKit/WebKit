@@ -39,11 +39,11 @@ namespace WebKit {
 class UserMediaPermissionCheckProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionCheck> {
 public:
 
-    using CompletionHandler = WTF::Function<void(uint64_t, bool allowed)>;
+    using CompletionHandler = WTF::Function<void(bool allowed)>;
 
-    static Ref<UserMediaPermissionCheckProxy> create(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
+    static Ref<UserMediaPermissionCheckProxy> create(uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
     {
-        return adoptRef(*new UserMediaPermissionCheckProxy(userMediaID, frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
+        return adoptRef(*new UserMediaPermissionCheckProxy(frameID, WTFMove(handler), WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin)));
     }
 
     void setUserMediaAccessInfo(bool);
@@ -53,12 +53,9 @@ public:
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
     
-    CompletionHandler& completionHandler() { return m_completionHandler; }
-    
 private:
-    UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
+    UserMediaPermissionCheckProxy(uint64_t frameID, CompletionHandler&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin);
 
-    uint64_t m_userMediaID;
     uint64_t m_frameID;
     CompletionHandler m_completionHandler;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;

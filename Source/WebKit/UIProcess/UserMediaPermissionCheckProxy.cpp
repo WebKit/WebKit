@@ -33,9 +33,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t userMediaID, uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
-    : m_userMediaID(userMediaID)
-    , m_frameID(frameID)
+UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy(uint64_t frameID, CompletionHandler&& handler, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin)
+    : m_frameID(frameID)
     , m_completionHandler(WTFMove(handler))
     , m_userMediaDocumentSecurityOrigin(WTFMove(userMediaDocumentOrigin))
     , m_topLevelDocumentSecurityOrigin(WTFMove(topLevelDocumentOrigin))
@@ -48,7 +47,7 @@ void UserMediaPermissionCheckProxy::setUserMediaAccessInfo(bool allowed)
     if (!m_completionHandler)
         return;
 
-    m_completionHandler(m_userMediaID, allowed);
+    m_completionHandler(allowed);
     m_completionHandler = nullptr;
 }
 

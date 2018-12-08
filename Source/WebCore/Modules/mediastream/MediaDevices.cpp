@@ -190,6 +190,16 @@ bool MediaDevices::addEventListener(const AtomicString& eventType, Ref<EventList
                 if (!weakThis || m_scheduledEventTimer.isActive())
                     return;
 
+                auto* document = this->document();
+                auto* controller = document ? UserMediaController::from(document->page()) : nullptr;
+                if (!controller)
+                    return;
+
+                bool canAccessMicrophone = controller->canCallGetUserMedia(*document, { UserMediaController::CaptureType::Microphone }) == UserMediaController::GetUserMediaAccess::CanCall;
+                bool canAccessCamera = controller->canCallGetUserMedia(*document, { UserMediaController::CaptureType::Camera }) == UserMediaController::GetUserMediaAccess::CanCall;
+                if (!canAccessMicrophone && !canAccessCamera)
+                    return;
+
                 m_scheduledEventTimer.startOneShot(Seconds(randomNumber() / 2));
             });
         }

@@ -177,7 +177,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     Vector<Observer*> m_observers;
-    
+
 
     MediaTrackConstraints m_constraints;
     std::optional<DOMPromiseDeferred<void>> m_promise;

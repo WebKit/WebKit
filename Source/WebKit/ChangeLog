@@ -1,3 +1,27 @@
+2018-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] 'devicechange' event should not fire in frames that can't access capture devices
+        https://bugs.webkit.org/show_bug.cgi?id=192511
+        <rdar://problem/46562063>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/UserMediaPermissionCheckProxy.cpp:
+        (WebKit::UserMediaPermissionCheckProxy::UserMediaPermissionCheckProxy): Remove userMediaID parameter.
+        (WebKit::UserMediaPermissionCheckProxy::setUserMediaAccessInfo): ID not passed to callback.
+        * UIProcess/UserMediaPermissionCheckProxy.h:
+        (WebKit::UserMediaPermissionCheckProxy::create):
+        (WebKit::UserMediaPermissionCheckProxy::completionHandler): Deleted.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::generateRequestID): New.
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureDevicesChanged): Don't notify if
+        the page does not have a granted request and does not have persistent access.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Use generateRequestID.
+        (WebKit::UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo): Change variable name.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): Use generateRequestID.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
 2018-12-07  Saam Barati  <sbarati@apple.com>
 
         WKWebProcessPlugInLoadDelegate should have API for saying which rendering events it wants to listen for

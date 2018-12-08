@@ -1,5 +1,19 @@
 2018-12-07  Eric Carlson  <eric.carlson@apple.com>
 
+        [MediaStream] 'devicechange' event should not fire in frames that can't access capture devices
+        https://bugs.webkit.org/show_bug.cgi?id=192511
+        <rdar://problem/46562063>
+
+        Reviewed by Youenn Fablet.
+
+        Test: http/tests/media/media-stream/device-change-event-in-iframe.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::addEventListener): Don't fire the event unless the document can
+        access a camera or microphone.
+
+2018-12-07  Eric Carlson  <eric.carlson@apple.com>
+
         [MediaStream] Address post-review comments after r238904
         https://bugs.webkit.org/show_bug.cgi?id=192514
         <rdar://problem/46564302>
