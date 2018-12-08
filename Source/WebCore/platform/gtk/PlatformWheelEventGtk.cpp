@@ -87,6 +87,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;
 
+#if ENABLE(ASYNC_SCROLLING)
 #ifndef GTK_API_VERSION_2
 #if GTK_CHECK_VERSION(3, 20, 0)
     m_phase = event->is_stop ?
@@ -100,6 +101,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 #else
     m_phase = PlatformWheelEventPhaseChanged;
 #endif // GTK_API_VERSION_2
+#endif // ENABLE(ASYNC_SCROLLING)
 
     m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
     m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));
