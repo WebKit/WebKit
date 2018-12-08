@@ -1,3 +1,13 @@
+2018-12-07  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] check-patch-relevance failure should not mark the overall build as failure
+        https://bugs.webkit.org/show_bug.cgi?id=192510
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance.start):
+
 2018-12-07  Chris Dumez  <cdumez@apple.com>
 
         ProcessSwap.UseSessionCookiesAfterProcessSwapInPrivateBrowsing API test is failing
