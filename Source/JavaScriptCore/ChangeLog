@@ -1,3 +1,19 @@
+2018-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Reduce size of PropertySlot and PutPropertySlot.
+        https://bugs.webkit.org/show_bug.cgi?id=192526
+
+        Reviewed by Keith Miller.
+
+        With some minor adjustments, we can reduce the size of PropertySlot from 80 bytes
+        (19 padding bytes) to 64 bytes (3 padding bytes), and PutPropertySlot from 40
+        bytes (4 padding bytes) to 32 bytes (0 padding bytes but with 6 unused bits).
+        These measurements are for a 64-bit build.
+
+        * runtime/PropertySlot.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+
 2018-12-08  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Record right offset with aligned wide instructions

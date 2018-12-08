@@ -36,17 +36,17 @@ class JSFunction;
     
 class PutPropertySlot {
 public:
-    enum Type { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
+    enum Type : uint8_t { Uncachable, ExistingProperty, NewProperty, SetterProperty, CustomValue, CustomAccessor };
     enum Context { UnknownContext, PutById, PutByIdEval };
     typedef bool (*PutValueFunc)(ExecState*, EncodedJSValue thisObject, EncodedJSValue value);
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
-        : m_type(Uncachable)
-        , m_base(0)
+        : m_base(0)
         , m_thisValue(thisValue)
         , m_offset(invalidOffset)
         , m_isStrictMode(isStrictMode)
         , m_isInitialization(isInitialization)
+        , m_type(Uncachable)
         , m_context(context)
         , m_cacheability(CachingAllowed)
     {
@@ -129,12 +129,12 @@ public:
 private:
     bool isCacheable() const { return m_cacheability == CachingAllowed; }
 
-    Type m_type;
     JSObject* m_base;
     JSValue m_thisValue;
     PropertyOffset m_offset;
-    bool m_isStrictMode;
-    bool m_isInitialization;
+    bool m_isStrictMode : 1;
+    bool m_isInitialization : 1;
+    Type m_type;
     uint8_t m_context;
     CacheabilityType m_cacheability;
     FunctionPtr<OperationPtrTag> m_putFunction;
