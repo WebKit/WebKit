@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define StringConcatenate_h
 
 #include <string.h>
+#include <wtf/CheckedArithmetic.h>
 
 #ifndef AtomicString_h
 #include <wtf/text/AtomicString.h>
@@ -141,9 +142,7 @@ public:
         while (m_characters[length])
             ++length;
 
-        if (length > std::numeric_limits<unsigned>::max()) // FIXME this is silly https://bugs.webkit.org/show_bug.cgi?id=165790
-            CRASH();
-
+        RELEASE_ASSERT(length <= String::MaxLength);
         m_length = length;
     }
 
@@ -259,24 +258,6 @@ public:
     }
 };
 
-inline void sumWithOverflow(bool& overflow, unsigned& total, unsigned addend)
-{
-    unsigned oldTotal = total;
-    total = oldTotal + addend;
-    if (total < oldTotal)
-        overflow = true;
-}
-
-template<typename... Unsigned>
-inline void sumWithOverflow(bool& overflow, unsigned& total, unsigned addend, Unsigned ...addends)
-{
-    unsigned oldTotal = total;
-    total = oldTotal + addend;
-    if (total < oldTotal)
-        overflow = true;
-    sumWithOverflow(overflow, total, addends...);
-}
-
 template<typename Adapter>
 inline bool are8Bit(Adapter adapter)
 {
@@ -305,12 +286,13 @@ inline void makeStringAccumulator(ResultType* result, Adapter adapter, Adapters 
 template<typename StringTypeAdapter, typename... StringTypeAdapters>
 String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
-    bool overflow = false;
-    unsigned length = adapter.length();
-    sumWithOverflow(overflow, length, adapters.length()...);
-    if (overflow)
+    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max(), "");
+    auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
+    if (sum.hasOverflowed())
         return String();
 
+    unsigned length = sum.unsafeGet();
+    ASSERT(length <= String::MaxLength);
     if (are8Bit(adapter, adapters...)) {
         LChar* buffer;
         RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
