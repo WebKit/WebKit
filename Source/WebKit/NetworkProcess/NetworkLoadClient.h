@@ -28,11 +28,9 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 class NetworkLoadMetrics;
-class ProtectionSpace;
 class SharedBuffer;
 enum class PolicyAction : uint8_t;
 }

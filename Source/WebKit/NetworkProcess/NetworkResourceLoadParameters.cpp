@@ -26,10 +26,7 @@
 #include "config.h"
 #include "NetworkResourceLoadParameters.h"
 
-#include "ArgumentCoders.h"
-#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/SecurityOriginData.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,7 +74,6 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(storedCredentialsPolicy);
     encoder.encodeEnum(clientCredentialPolicy);
     encoder.encodeEnum(shouldPreconnectOnly);
-    encoder << shouldFollowRedirects;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << defersLoading;
     encoder << needsCertificateInfo;
@@ -159,8 +155,6 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decodeEnum(result.clientCredentialPolicy))
         return false;
     if (!decoder.decodeEnum(result.shouldPreconnectOnly))
-        return false;
-    if (!decoder.decode(result.shouldFollowRedirects))
         return false;
     if (!decoder.decode(result.shouldClearReferrerOnHTTPSToHTTPRedirect))
         return false;

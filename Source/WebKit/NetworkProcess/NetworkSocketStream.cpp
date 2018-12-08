@@ -30,7 +30,6 @@
 #include "WebSocketStreamMessages.h"
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
 #include <WebCore/SocketStreamError.h>
-#include <WebCore/SocketStreamHandleImpl.h>
 
 namespace WebKit {
 using namespace WebCore;

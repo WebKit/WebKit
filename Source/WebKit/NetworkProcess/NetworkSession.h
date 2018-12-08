@@ -32,7 +32,6 @@
 #include <wtf/Seconds.h>
 
 namespace WebCore {
-class AuthenticationChallenge;
 class NetworkStorageSession;
 }
 

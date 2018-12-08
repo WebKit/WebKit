@@ -39,11 +39,8 @@ class NetworkLoadParameters;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:
-    explicit PreconnectTask(NetworkLoadParameters&&, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
+    explicit PreconnectTask(NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
-
-    uint64_t frameID() const;
-    uint64_t pageID() const;
 
 private:
     // NetworkLoadClient.
@@ -59,7 +56,7 @@ private:
     void didFinish(const WebCore::ResourceError&);
 
     std::unique_ptr<NetworkLoad> m_networkLoad;
-    WTF::CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
+    CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
     WebCore::Timer m_timeoutTimer;
 };
 

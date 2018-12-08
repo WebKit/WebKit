@@ -29,9 +29,7 @@
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkSession.h"
-#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
-#include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)

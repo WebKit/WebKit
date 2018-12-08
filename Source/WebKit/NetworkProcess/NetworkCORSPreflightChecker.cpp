@@ -33,7 +33,6 @@
 #include "NetworkProcess.h"
 #include "SessionTracker.h"
 #include <WebCore/CrossOriginAccessControl.h>
-#include <WebCore/SecurityOrigin.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
 
@@ -66,7 +65,6 @@ void NetworkCORSPreflightChecker::startPreflight()
     NetworkLoadParameters loadParameters;
     loadParameters.sessionID = m_parameters.sessionID;
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
-    loadParameters.shouldFollowRedirects = false;
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
 

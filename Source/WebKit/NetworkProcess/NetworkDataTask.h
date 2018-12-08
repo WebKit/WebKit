@@ -46,7 +46,6 @@ class SharedBuffer;
 
 namespace WebKit {
 
-class Download;
 class NetworkLoadParameters;
 class NetworkSession;
 class PendingDownload;

@@ -28,26 +28,21 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
-#include "MessageReceiverMap.h"
 #include "NetworkContentRuleListManager.h"
 #include "SandboxExtension.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
-#include <WebCore/IDBBackingStore.h>
 #include <WebCore/IDBKeyData.h>
 #include <WebCore/IDBServer.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
-#include <WebCore/UniqueIDBDatabase.h>
 #include <memory>
-#include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class FormDataReference;
@@ -62,10 +57,8 @@ class CertificateInfo;
 class CurlProxySettings;
 class DownloadID;
 class NetworkStorageSession;
-class ProtectionSpace;
 class ResourceError;
 class SWServer;
-class SecurityOrigin;
 enum class StoredCredentialsPolicy : bool;
 struct MessageWithMessagePorts;
 struct SecurityOriginData;
@@ -79,8 +72,6 @@ class AuthenticationManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
-class NetworkResourceLoader;
-class PreconnectTask;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 enum class WebsiteDataFetchOption;

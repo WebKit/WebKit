@@ -26,10 +26,7 @@
 #include "config.h"
 #include "NetworkSession.h"
 
-#include "NetworkDataTask.h"
 #include <WebCore/NetworkStorageSession.h>
-#include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
 #include "NetworkSessionCocoa.h"

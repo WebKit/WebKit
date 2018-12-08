@@ -52,7 +52,6 @@
 #include "SessionTracker.h"
 #include "StatisticsData.h"
 #include "WebCookieManager.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebSWOriginStore.h"
@@ -74,17 +73,12 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/SecurityOriginHash.h>
-#include <WebCore/Settings.h>
-#include <pal/SessionID.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
-#include <wtf/URLParser.h>
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/CString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"

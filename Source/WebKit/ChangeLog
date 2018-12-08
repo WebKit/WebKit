@@ -1,3 +1,50 @@
+2018-12-07  Rob Buis  <rbuis@igalia.com>
+
+        Remove unused API in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=192415
+
+        Reviewed by Alex Christensen.
+
+        This patch removed some unused API and headers in NetworkProcess.
+
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        (WebKit::NetworkCORSPreflightChecker::startPreflight):
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkContentRuleListManager.h:
+        * NetworkProcess/NetworkDataTask.cpp:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkLoadClient.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode const):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketStream.cpp:
+        * NetworkProcess/NetworkSocketStream.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::PreconnectTask):
+        (WebKit::PreconnectTask::frameID const): Deleted.
+        (WebKit::PreconnectTask::pageID const): Deleted.
+        * NetworkProcess/PreconnectTask.h:
+
 2018-12-07  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] 'devicechange' event should not fire in frames that can't access capture devices

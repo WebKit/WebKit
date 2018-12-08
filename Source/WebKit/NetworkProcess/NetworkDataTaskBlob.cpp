@@ -39,18 +39,13 @@
 #include "NetworkSession.h"
 #include "WebErrors.h"
 #include <WebCore/AsyncFileStream.h>
-#include <WebCore/BlobData.h>
 #include <WebCore/BlobRegistryImpl.h>
-#include <WebCore/FileStream.h>
-#include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/ParsedContentRange.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
-#include <wtf/URL.h>
 
 namespace WebKit {
 using namespace WebCore;

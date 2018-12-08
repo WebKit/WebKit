@@ -40,7 +40,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PreconnectTask::PreconnectTask(NetworkLoadParameters&& parameters, WTF::CompletionHandler<void(const ResourceError&)>&& completionHandler)
+PreconnectTask::PreconnectTask(NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }); })
 {
@@ -101,16 +101,6 @@ void PreconnectTask::didFinish(const ResourceError& error)
     if (m_completionHandler)
         m_completionHandler(error);
     delete this;
-}
-
-uint64_t PreconnectTask::frameID() const
-{
-    return m_networkLoad->parameters().webFrameID;
-}
-
-uint64_t PreconnectTask::pageID() const
-{
-    return m_networkLoad->parameters().webPageID;
 }
 
 } // namespace WebKit

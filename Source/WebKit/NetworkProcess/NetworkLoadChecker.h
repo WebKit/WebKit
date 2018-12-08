@@ -25,15 +25,11 @@
 
 #pragma once
 
-#include "NetworkContentRuleListManager.h"
-#include "NetworkResourceLoadParameters.h"
-#include <WebCore/ContentSecurityPolicyClient.h>
+#include <WebCore/ContentExtensionActions.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceError.h>
-#include <WebCore/SecurityPolicyViolationEvent.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ContentSecurityPolicy;
@@ -42,7 +38,6 @@ struct ContentSecurityPolicyClient;
 
 namespace WebKit {
 
-class NetworkConnectionToWebProcess;
 class NetworkCORSPreflightChecker;
 
 class NetworkLoadChecker : public CanMakeWeakPtr<NetworkLoadChecker> {

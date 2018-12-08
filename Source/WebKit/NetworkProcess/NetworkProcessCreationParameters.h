@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CacheModel.h"
-#include "NetworkSessionCreationParameters.h"
 #include "SandboxExtension.h"
 #include <WebCore/Cookie.h>
 #include <wtf/ProcessID.h>

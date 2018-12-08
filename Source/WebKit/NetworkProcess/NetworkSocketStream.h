@@ -37,10 +37,6 @@ class Decoder;
 class DataReference;
 }
 
-namespace WebCore {
-class SocketStreamHandleImpl;
-}
-
 namespace WebKit {
 
 class NetworkSocketStream : public RefCounted<NetworkSocketStream>, public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::SocketStreamHandleClient {

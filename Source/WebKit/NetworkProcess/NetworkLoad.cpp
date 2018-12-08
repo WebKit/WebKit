@@ -27,24 +27,11 @@
 #include "NetworkLoad.h"
 
 #include "AuthenticationChallengeDisposition.h"
-#include "AuthenticationManager.h"
-#include "DownloadProxyMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
-#include "SessionTracker.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebErrors.h"
-#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
-#include <pal/SessionID.h>
-#include <wtf/MainThread.h>
 #include <wtf/Seconds.h>
-
-#if PLATFORM(COCOA)
-#include "NetworkDataTaskCocoa.h"
-#include "NetworkSessionCocoa.h"
-#endif
 
 namespace WebKit {
 

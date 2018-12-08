@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "BlockingResponseMap.h"
 #include "CacheStorageEngineConnection.h"
 #include "Connection.h"
 #include "DownloadID.h"
@@ -34,7 +33,6 @@
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
 #include <WebCore/NetworkLoadInformation.h>
-#include <WebCore/ResourceLoadPriority.h>
 #include <wtf/RefCounted.h>
 
 namespace PAL {
@@ -43,7 +41,6 @@ class SessionID;
 
 namespace WebCore {
 class BlobDataFileReference;
-class HTTPHeaderMap;
 class ResourceError;
 class ResourceRequest;
 struct SameSiteInfo;
@@ -53,14 +50,10 @@ enum class IncludeSecureCookies : bool;
 
 namespace WebKit {
 
-class NetworkConnectionToWebProcess;
-class NetworkLoadParameters;
 class NetworkResourceLoader;
 class NetworkSocketStream;
-class SyncNetworkResourceLoader;
 class WebIDBConnectionToClient;
 class WebSWServerConnection;
-class WebSWServerToContextConnection;
 typedef uint64_t ResourceLoadIdentifier;
 
 namespace NetworkCache {

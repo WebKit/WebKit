@@ -33,14 +33,8 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-class ContentSecurityPolicy;
-class HTTPHeaderMap;
-}
-
 namespace WebKit {
 
-class NetworkConnectionToWebProcess;
 class NetworkLoadChecker;
 
 class PingLoad final : public CanMakeWeakPtr<PingLoad>, private NetworkDataTaskClient {
@@ -51,7 +45,6 @@ private:
     ~PingLoad();
 
     const URL& currentURL() const;
-    WebCore::ContentSecurityPolicy* contentSecurityPolicy() const;
 
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
     void didReceiveChallenge(WebCore::AuthenticationChallenge&&, ChallengeCompletionHandler&&) final;
@@ -68,11 +61,10 @@ private:
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
     
     NetworkResourceLoadParameters m_parameters;
-    WTF::CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;
+    CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)> m_completionHandler;
     RefPtr<NetworkDataTask> m_task;
     WebCore::Timer m_timeoutTimer;
     UniqueRef<NetworkLoadChecker> m_networkLoadChecker;
-    std::optional<WebCore::ResourceRequest> m_lastRedirectionRequest;
 };
 
 }

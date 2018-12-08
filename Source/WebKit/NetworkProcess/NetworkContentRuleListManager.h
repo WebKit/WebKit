@@ -30,7 +30,6 @@
 #include "UserContentControllerIdentifier.h"
 #include "WebCompiledContentRuleListData.h"
 #include <WebCore/ContentExtensionsBackend.h>
-#include <WebCore/UserContentProvider.h>
 
 namespace IPC {
 class Connection;

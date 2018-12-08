@@ -31,13 +31,11 @@
 #include "NetworkLoadParameters.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class NetworkLoad final : private NetworkDataTaskClient
-{
+class NetworkLoad final : private NetworkDataTaskClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
@@ -49,7 +47,6 @@ public:
     bool isAllowedToAskUserForCredentials() const;
 
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
-    void clearCurrentRequest() { m_currentRequest = WebCore::ResourceRequest(); }
 
     const NetworkLoadParameters& parameters() const { return m_parameters; }
 
