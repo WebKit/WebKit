@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -954,6 +954,8 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
 
 void HTMLMediaElement::didFinishInsertingNode()
 {
+    Ref<HTMLMediaElement> protectedThis(*this); // prepareForLoad may result in a 'beforeload' event, which can make arbitrary DOM mutations.
+
     if (m_inActiveDocument && m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
         prepareForLoad();
 
@@ -5968,6 +5970,7 @@ void HTMLMediaElement::exitFullscreen()
     VideoFullscreenMode oldVideoFullscreenMode = m_videoFullscreenMode;
     fullscreenModeChanged(VideoFullscreenModeNone);
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    Ref<HTMLMediaElement> protectedThis(*this); // updateMediaControlsAfterPresentationModeChange calls methods that can trigger arbitrary DOM mutations.
     updateMediaControlsAfterPresentationModeChange();
 #endif
     if (hasMediaControls())
@@ -6523,9 +6526,10 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
 
     m_processingPreferenceChange = true;
     clearFlags(m_pendingActionFlags, ConfigureTextTracks);
-    if (mode == Immediately)
+    if (mode == Immediately) {
+        Ref<HTMLMediaElement> protectedThis(*this); // configureTextTracks calls methods that can trigger arbitrary DOM mutations.
         configureTextTracks();
-    else
+    } else
         scheduleDelayedAction(ConfigureTextTracks);
 }
 
