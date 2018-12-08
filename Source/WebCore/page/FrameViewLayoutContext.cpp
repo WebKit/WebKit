@@ -43,7 +43,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 #include "FormattingState.h"
 #include "LayoutContainer.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
 #endif
 

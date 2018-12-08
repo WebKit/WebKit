@@ -1264,7 +1264,7 @@ layout/FormattingContext.cpp
 layout/FormattingContextGeometry.cpp
 layout/FormattingContextQuirks.cpp
 layout/FormattingState.cpp
-layout/LayoutFormattingState.cpp
+layout/LayoutState.cpp
 layout/Verification.cpp
 layout/blockformatting/BlockFormattingContext.cpp
 layout/blockformatting/BlockFormattingContextGeometry.cpp

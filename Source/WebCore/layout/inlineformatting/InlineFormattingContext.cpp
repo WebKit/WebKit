@@ -35,9 +35,9 @@
 #include "InlineRunProvider.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutFormattingState.h"
 #include "LayoutInlineBox.h"
 #include "LayoutInlineContainer.h"
+#include "LayoutState.h"
 #include "Logging.h"
 #include "Textutil.h"
 #include <wtf/IsoMallocInlines.h>

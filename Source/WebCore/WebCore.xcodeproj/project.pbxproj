@@ -2028,7 +2028,7 @@
 		6F222B761AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F222B751AB52D8A0094651A /* WebGLVertexArrayObjectBase.cpp */; };
 		6F3E1F622136142000A65A08 /* FloatBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F3E1F612136141700A65A08 /* FloatBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F5217C72177F5A7006583BB /* InlineRunProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F5217C42177F5A6006583BB /* InlineRunProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6F7CA3C6208C2957002F29AB /* LayoutFormattingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutFormattingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C4208C2956002F29AB /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F7CA3CA208C2B2E002F29AB /* InlineFormattingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A131A70756200A735F4 /* WebGLSync.cpp */; };
 		6F995A161A70756200A735F4 /* WebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A141A70756200A735F4 /* WebGLSync.h */; };
@@ -9108,8 +9108,8 @@
 		6F5217C42177F5A6006583BB /* InlineRunProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineRunProvider.h; sourceTree = "<group>"; };
 		6F5217C62177F5A6006583BB /* InlineRunProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineRunProvider.cpp; sourceTree = "<group>"; };
 		6F73918C2106CEDD006AF262 /* LayoutUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutUnits.h; sourceTree = "<group>"; };
-		6F7CA3C4208C2956002F29AB /* LayoutFormattingState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutFormattingState.h; sourceTree = "<group>"; };
-		6F7CA3C5208C2956002F29AB /* LayoutFormattingState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutFormattingState.cpp; sourceTree = "<group>"; };
+		6F7CA3C4208C2956002F29AB /* LayoutState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
+		6F7CA3C5208C2956002F29AB /* LayoutState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		6F7CA3C8208C2B2E002F29AB /* InlineFormattingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineFormattingContext.h; sourceTree = "<group>"; };
 		6F7CA3C9208C2B2E002F29AB /* InlineFormattingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InlineFormattingContext.cpp; sourceTree = "<group>"; };
 		6F8F460121B03BB40041AC3A /* FormattingContextQuirks.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextQuirks.cpp; sourceTree = "<group>"; };
@@ -16102,8 +16102,8 @@
 				115CFA75208AFE30001E6991 /* FormattingState.cpp */,
 				115CFA74208AFE30001E6991 /* FormattingState.h */,
 				115F7805209CBCBD00739C13 /* Invalidation.h */,
-				6F7CA3C5208C2956002F29AB /* LayoutFormattingState.cpp */,
-				6F7CA3C4208C2956002F29AB /* LayoutFormattingState.h */,
+				6F7CA3C5208C2956002F29AB /* LayoutState.cpp */,
+				6F7CA3C4208C2956002F29AB /* LayoutState.h */,
 				6F73918C2106CEDD006AF262 /* LayoutUnits.h */,
 				11FF02D520BA3C810083F25B /* Verification.cpp */,
 			);
@@ -29989,7 +29989,7 @@
 				11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */,
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
-				6F7CA3C6208C2957002F29AB /* LayoutFormattingState.h in Headers */,
+				6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */,
 				1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */,
 				1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */,
 				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,

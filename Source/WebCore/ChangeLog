@@ -1,3 +1,32 @@
+2018-12-07  Antti Koivisto  <antti@apple.com>
+
+        [LFC] Rename LayoutFormattingState files to LayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=192520
+
+        Reviewed by Zalan Bujtas.
+
+        Match the class name.
+
+        * layout/FormattingContext.cpp:
+        * layout/FormattingContextQuirks.cpp:
+        * layout/FormattingState.h:
+        * layout/LayoutFormattingState.cpp: Removed.
+        * layout/LayoutFormattingState.h: Removed.
+        * layout/LayoutState.cpp: Copied from Source/WebCore/layout/LayoutFormattingState.cpp.
+        * layout/LayoutState.h: Copied from Source/WebCore/layout/LayoutFormattingState.h.
+        * layout/Verification.cpp:
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        * layout/blockformatting/BlockInvalidation.cpp:
+        * layout/floats/FloatAvoider.cpp:
+        * layout/floats/FloatingContext.cpp:
+        * layout/floats/FloatingState.cpp:
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        * layout/inlineformatting/InlineInvalidation.cpp:
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        * page/FrameViewLayoutContext.cpp:
+
 2018-12-07  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Painting API code cleanup

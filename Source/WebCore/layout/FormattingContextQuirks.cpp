@@ -30,7 +30,7 @@
 
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 
 namespace WebCore {
 namespace Layout {

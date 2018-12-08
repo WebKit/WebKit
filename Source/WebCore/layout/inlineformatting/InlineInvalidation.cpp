@@ -31,7 +31,7 @@
 #include "InlineFormattingState.h"
 #include "Invalidation.h"
 #include "LayoutBox.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

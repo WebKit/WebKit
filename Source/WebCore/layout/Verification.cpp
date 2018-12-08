@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 

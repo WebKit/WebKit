@@ -32,7 +32,7 @@
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 #include "TextUtil.h"
 
 namespace WebCore {

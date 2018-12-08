@@ -30,7 +30,7 @@
 #include "FloatingState.h"
 #include "FormattingContext.h"
 #include "LayoutBox.h"
-#include "LayoutFormattingState.h"
+#include "LayoutState.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
 
