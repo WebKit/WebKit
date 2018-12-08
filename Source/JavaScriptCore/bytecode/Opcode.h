@@ -251,9 +251,7 @@ inline bool isThrow(OpcodeID opcodeID)
 }
 
 unsigned metadataSize(OpcodeID);
-#if CPU(NEEDS_ALIGNED_ACCESS)
 unsigned metadataAlignment(OpcodeID);
-#endif
 
 } // namespace JSC
 

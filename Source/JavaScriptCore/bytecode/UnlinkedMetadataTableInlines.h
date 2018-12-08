@@ -90,9 +90,7 @@ ALWAYS_INLINE void UnlinkedMetadataTable::finalize()
         unsigned numberOfEntries = buffer()[i];
 
         if (numberOfEntries > 0) {
-#if CPU(NEEDS_ALIGNED_ACCESS)
             offset = roundUpToMultipleOf(metadataAlignment(static_cast<OpcodeID>(i)), offset);
-#endif
             buffer()[i] = offset;
             offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
         } else

@@ -193,7 +193,6 @@ static unsigned metadataSizes[] = {
 
 };
 
-#if CPU(NEEDS_ALIGNED_ACCESS)
 static unsigned metadataAlignments[] = {
 
 #define METADATA_ALIGNMENT(size) size,
@@ -201,19 +200,16 @@ static unsigned metadataAlignments[] = {
 #undef METADATA_ALIGNMENT
 
 };
-#endif
 
 unsigned metadataSize(OpcodeID opcodeID)
 {
     return metadataSizes[opcodeID];
 }
 
-#if CPU(NEEDS_ALIGNED_ACCESS)
 unsigned metadataAlignment(OpcodeID opcodeID)
 {
     return metadataAlignments[opcodeID];
 }
-#endif
 
 } // namespace JSC
 
