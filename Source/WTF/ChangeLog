@@ -1,5 +1,17 @@
 2018-12-09  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        Unreviewed, fix build failure on GCC 8.2, part 2
+
+        Add RefCountedArray::assign, and use it instead of operator= internally.
+        We should have operator=(const RefCountedArray&) since it will be automatically generated
+        if we do not have correct implementation here.
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::assign):
+
+2018-12-09  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         Unreviewed, fix build failure on GCC 8.2
 
         We remove operator=<PtrTraits> call since it is not necessary.

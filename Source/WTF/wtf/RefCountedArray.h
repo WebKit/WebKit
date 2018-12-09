@@ -105,19 +105,12 @@ public:
     template<typename OtherTraits = PtrTraits>
     RefCountedArray& operator=(const RefCountedArray<T, OtherTraits>& other)
     {
-        T* oldData = data();
-        T* otherData = const_cast<T*>(other.data());
-        if (otherData)
-            Header::fromPayload(otherData)->refCount++;
-        m_data = otherData;
+        return assign<OtherTraits>(other);
+    }
 
-        if (!oldData)
-            return *this;
-        if (--Header::fromPayload(oldData)->refCount)
-            return *this;
-        VectorTypeOperations<T>::destruct(oldData, oldData + Header::fromPayload(oldData)->length);
-        fastFree(Header::fromPayload(oldData));
-        return *this;
+    RefCountedArray& operator=(const RefCountedArray& other)
+    {
+        return assign<PtrTraits>(other);
     }
 
     ~RefCountedArray()
@@ -198,6 +191,24 @@ public:
     bool operator==(const RefCountedArray& other) const { return this->operator==<PtrTraits>(other); }
     
 private:
+    template<typename OtherTraits = PtrTraits>
+    RefCountedArray& assign(const RefCountedArray<T, OtherTraits>& other)
+    {
+        T* oldData = data();
+        T* otherData = const_cast<T*>(other.data());
+        if (otherData)
+            Header::fromPayload(otherData)->refCount++;
+        m_data = otherData;
+
+        if (!oldData)
+            return *this;
+        if (--Header::fromPayload(oldData)->refCount)
+            return *this;
+        VectorTypeOperations<T>::destruct(oldData, oldData + Header::fromPayload(oldData)->length);
+        fastFree(Header::fromPayload(oldData));
+        return *this;
+    }
+
     struct Header {
         unsigned refCount;
         unsigned length;
