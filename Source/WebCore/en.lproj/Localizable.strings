@@ -317,7 +317,7 @@
 "Go" = "Go";
 
 /* Action from safe browsing warning */
-"Go back" = "Go back";
+"Go Back" = "Go Back";
 
 /* Google Safe Browsing */
 "Google Safe Browsing" = "Google Safe Browsing";
@@ -656,7 +656,7 @@
 "Show Substitutions" = "Show Substitutions";
 
 /* Action from safe browsing warning */
-"Show details" = "Show details";
+"Show Details" = "Show Details";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";

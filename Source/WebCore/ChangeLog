@@ -1,3 +1,16 @@
+2018-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Don't programmatically capitalize safe browsing warning buttons
+        https://bugs.webkit.org/show_bug.cgi?id=192531
+        <rdar://problem/46417791>
+
+        Reviewed by Darin Adler.
+
+        This doesn't work so well in other languages.
+        Capitalize the source strings in English instead.
+
+        * en.lproj/Localizable.strings:
+
 2018-12-08  Frederic Wang  <fwang@igalia.com>
 
         Allow control over child order when adding nodes to the scrolling tree

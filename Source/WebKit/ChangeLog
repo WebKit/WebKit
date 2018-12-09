@@ -1,5 +1,16 @@
 2018-12-08  Alex Christensen  <achristensen@webkit.org>
 
+        Don't programmatically capitalize safe browsing warning buttons
+        https://bugs.webkit.org/show_bug.cgi?id=192531
+        <rdar://problem/46417791>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (makeButton):
+
+2018-12-08  Alex Christensen  <achristensen@webkit.org>
+
         Safe browsing warning should respect text size from settings
         https://bugs.webkit.org/show_bug.cgi?id=192205
 

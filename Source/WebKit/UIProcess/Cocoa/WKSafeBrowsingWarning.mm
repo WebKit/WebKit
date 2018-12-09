@@ -198,10 +198,9 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
 {
     NSString *title = nil;
     if (item == WarningItem::ShowDetailsButton)
-        title = WEB_UI_NSSTRING(@"Show details", "Action from safe browsing warning");
+        title = WEB_UI_NSSTRING(@"Show Details", "Action from safe browsing warning");
     else
-        title = WEB_UI_NSSTRING(@"Go back", "Action from safe browsing warning");
-    title = [title capitalizedString];
+        title = WEB_UI_NSSTRING(@"Go Back", "Action from safe browsing warning");
 #if PLATFORM(MAC)
     return [NSButton buttonWithTitle:title target:warning action:action];
 #else
