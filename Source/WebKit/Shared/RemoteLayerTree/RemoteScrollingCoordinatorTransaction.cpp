@@ -413,7 +413,7 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
         if (!decoder.decode(parentNodeID))
             return false;
 
-        m_scrollingStateTree->attachNode(nodeType, nodeID, parentNodeID, notFound); // Append new node.
+        m_scrollingStateTree->attachNode(nodeType, nodeID, parentNodeID);
         ScrollingStateNode* newNode = m_scrollingStateTree->stateNodeForID(nodeID);
         ASSERT(newNode);
         ASSERT(!parentNodeID || newNode->parent());

@@ -321,8 +321,6 @@ webkit.org/b/167321 tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-ma
 
 webkit.org/b/148408 tiled-drawing/scrolling/root-overflow-with-mousewheel.html [ Pass Failure Timeout ]
 
-webkit.org/b/192529 fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html [ Pass Failure ]
-
 webkit.org/b/139820 fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Pass Timeout ]
 

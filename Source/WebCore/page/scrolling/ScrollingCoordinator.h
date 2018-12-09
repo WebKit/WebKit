@@ -164,8 +164,7 @@ public:
     virtual void commitTreeStateIfNeeded() { }
     virtual bool requestScrollPositionUpdate(FrameView&, const IntPoint&) { return false; }
     virtual bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) { return true; }
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/, size_t /*childIndex*/ = notFound) { return newNodeID; }
-
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
 
