@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 struct LockInspector;
-};
+}
 
 namespace WTF {
 
