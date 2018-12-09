@@ -120,7 +120,7 @@ static UIImage *emptyImage()
     // an NSFileWrapper to be available synchronously.
     dispatch_sync(_renderQueue.get(), ^{ });
 
-    return resultImage.get();
+    return resultImage.autorelease();
 #endif
 }
 
