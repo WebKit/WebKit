@@ -120,8 +120,6 @@ public:
         return *this;
     }
 
-    RefCountedArray& operator=(const RefCountedArray& other) { return this->operator=<PtrTraits>(other); }
-
     ~RefCountedArray()
     {
         if (!m_data)

@@ -1,3 +1,12 @@
+2018-12-09  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, fix build failure on GCC 8.2
+
+        We remove operator=<PtrTraits> call since it is not necessary.
+        This is a workaround. It seems that GCC 8.2 fails to parse this specialization.
+
+        * wtf/RefCountedArray.h:
+
 2018-12-08  Darin Adler  <darin@apple.com>
 
         Fix stray-semicolon warning seen with a new version of clang in Xcode
