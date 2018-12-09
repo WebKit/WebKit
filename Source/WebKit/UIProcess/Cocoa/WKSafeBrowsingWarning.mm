@@ -34,7 +34,6 @@
 #import <wtf/Language.h>
 
 constexpr CGFloat exclamationPointSize = 30;
-constexpr CGFloat titleSize = 26;
 constexpr CGFloat boxCornerRadius = 6;
 #if HAVE(SAFE_BROWSING)
 constexpr CGFloat marginSize = 20;
@@ -42,7 +41,6 @@ constexpr CGFloat maxWidth = 675;
 #endif
 
 #if PLATFORM(MAC)
-constexpr CGFloat textSize = 14;
 using ColorType = NSColor;
 using FontType = NSFont;
 using TextViewType = NSTextView;
@@ -51,7 +49,6 @@ using AlignmentType = NSLayoutAttribute;
 using ViewType = NSView;
 using SizeType = NSSize;
 #else
-constexpr CGFloat textSize = 20;
 using ColorType = UIColor;
 using FontType = UIFont;
 using TextViewType = UITextView;
@@ -70,6 +67,30 @@ enum class WarningItem : uint8_t {
     ShowDetailsButton,
     GoBackButton
 };
+
+enum class WarningTextSize : uint8_t {
+    Title,
+    Body
+};
+
+static FontType *fontOfSize(WarningTextSize size)
+{
+#if PLATFORM(MAC)
+    switch (size) {
+    case WarningTextSize::Title:
+        return [NSFont boldSystemFontOfSize:26];
+    case WarningTextSize::Body:
+        return [NSFont systemFontOfSize:14];
+    }
+#else
+    switch (size) {
+    case WarningTextSize::Title:
+        return [UIFont preferredFontForTextStyle:UIFontTextStyleLargeTitle];
+    case WarningTextSize::Body:
+        return [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+    }
+#endif
+}
 
 static ColorType *colorForItem(WarningItem item, ViewType *warning)
 {
@@ -189,7 +210,7 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
         NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle),
         NSUnderlineColorAttributeName:[UIColor whiteColor],
         NSForegroundColorAttributeName:colorForItem(item, warning),
-        NSFontAttributeName:[FontType systemFontOfSize:textSize]
+        NSFontAttributeName:fontOfSize(WarningTextSize::Body)
     }] autorelease];
     [button setAttributedTitle:attributedTitle forState:UIControlStateNormal];
     [button addTarget:warning action:action forControlEvents:UIControlEventTouchUpInside];
@@ -248,11 +269,11 @@ static void setBackground(ViewType *view, ColorType *color)
 {
     auto exclamationPoint = [[WKSafeBrowsingExclamationPoint new] autorelease];
     auto title = makeLabel([[[NSAttributedString alloc] initWithString:_warning->title() attributes:@{
-        NSFontAttributeName:[FontType boldSystemFontOfSize:titleSize],
+        NSFontAttributeName:fontOfSize(WarningTextSize::Title),
         NSForegroundColorAttributeName:colorForItem(WarningItem::TitleText, self)
     }] autorelease]);
     auto warning = makeLabel([[[NSAttributedString alloc] initWithString:_warning->warning() attributes:@{
-        NSFontAttributeName:[FontType systemFontOfSize:textSize],
+        NSFontAttributeName:fontOfSize(WarningTextSize::Body),
         NSForegroundColorAttributeName:colorForItem(WarningItem::MessageText, self)
     }] autorelease]);
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
@@ -304,7 +325,7 @@ static void setBackground(ViewType *view, ColorType *color)
     [showDetails removeFromSuperview];
 
     NSMutableAttributedString *text = [[_warning->details() mutableCopy] autorelease];
-    [text addAttributes:@{ NSFontAttributeName:[FontType systemFontOfSize:textSize] } range:NSMakeRange(0, text.length)];
+    [text addAttributes:@{ NSFontAttributeName:fontOfSize(WarningTextSize::Body) } range:NSMakeRange(0, text.length)];
     WKSafeBrowsingTextView *details = [[[WKSafeBrowsingTextView alloc] initWithAttributedString:text forWarning:self] autorelease];
     _details = details;
     ViewType *bottom = [[ViewType new] autorelease];

@@ -1,3 +1,16 @@
+2018-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Safe browsing warning should respect text size from settings
+        https://bugs.webkit.org/show_bug.cgi?id=192205
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (fontWithSize):
+        (makeButton):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+
 2018-12-08  Frederic Wang  <fwang@igalia.com>
 
         Allow control over child order when adding nodes to the scrolling tree
