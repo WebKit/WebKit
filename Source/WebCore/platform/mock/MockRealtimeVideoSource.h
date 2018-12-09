@@ -70,6 +70,8 @@ private:
     bool isCaptureSource() const final { return true; }
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
     void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
+    void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset> preset) final { m_preset = preset; }
+    IntSize captureSize() const;
 
     void generatePresets() final;
 
@@ -108,6 +110,7 @@ private:
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     Color m_fillColor { Color::black };
     MockMediaDevice m_device;
+    RefPtr<VideoPreset> m_preset;
 };
 
 } // namespace WebCore

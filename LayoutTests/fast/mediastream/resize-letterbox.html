@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <video id="video" autoplay width=480px height=480px controls ></video>
+        <canvas id="canvas" width=480px height=480px></canvas>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script>
+
+const canvas = document.getElementById("canvas");
+const video = document.getElementById("video");
+
+function isPixelBlack(pixel)
+{
+    return pixel[0] === 0 && pixel[1] === 0 && pixel[2] === 0 && pixel[3] === 255;
+}
+
+function isPixelGray(pixel)
+{
+    return pixel[0] === 128 && pixel[1] === 128 && pixel[2] === 128 && pixel[3] === 255;
+}
+
+function logPixel(name, pixel)
+{
+    console.log(`${name}: ${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}`);
+}
+
+function checkCanvas(canvas, stream)
+{
+    return new Promise((resolve, reject) => {
+        video.srcObject = stream;
+        video.onplay = () => {
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0 ,0);
+
+            try {
+                setTimeout(() => {
+                    assert_true(isPixelBlack(ctx.getImageData(5, 5, 1, 1).data), "Pixel at 5x5 is NOT from camera.");
+                    assert_true(isPixelGray(ctx.getImageData(50, 200, 1, 1).data), "Pixel at 50x200 is from camera.");
+                    resolve();
+                }, 500);
+            } catch(err) {
+                reject(err);
+                return;
+            }
+        }
+    });
+}
+
+promise_test(async () => {
+    let stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    stream = null;
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    let cameraID = undefined;
+    devices.forEach(device => { if (device.label == "Mock video device 2") cameraID = device.deviceId; });
+    assert_true(cameraID !== undefined, "Found camera2");
+    
+    stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: cameraID }, width: 480, height: 480 } });
+    
+    return checkCanvas(canvas, stream);
+
+}, "Video frames are resized in letterbox-mode when captured at non-native size.");
+
+        </script>
+    </head>
+</html>

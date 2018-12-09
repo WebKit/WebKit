@@ -1,3 +1,14 @@
+2018-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Scaled video frames should be resized in letterbox mode
+        https://bugs.webkit.org/show_bug.cgi?id=192528
+        <rdar://problem/46576638>
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/resize-letterbox-expected.txt: Added.
+        * fast/mediastream/resize-letterbox.html: Added.
+
 2018-12-08  Simon Fraser  <simon.fraser@apple.com>
 
         Allow control over child order when adding nodes to the scrolling tree

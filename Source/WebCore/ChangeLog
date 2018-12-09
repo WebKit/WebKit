@@ -1,3 +1,27 @@
+2018-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Scaled video frames should be resized in letterbox mode
+        https://bugs.webkit.org/show_bug.cgi?id=192528
+        <rdar://problem/46576638>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/mediastream/resize-letterbox.html
+
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::ImageTransferSessionVT::ImageTransferSessionVT): Use letterbox resize mode, not trim.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::captureSize const): "Capture" at the preset size, not 
+        necessarily at the requested size to be more like a physical camera.
+        (WebCore::MockRealtimeVideoSource::settingsDidChange):
+        (WebCore::MockRealtimeVideoSource::drawAnimation):
+        (WebCore::MockRealtimeVideoSource::drawBoxes):
+        (WebCore::MockRealtimeVideoSource::drawText):
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        (WebCore::MockRealtimeVideoSource::imageBuffer const):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2018-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Don't programmatically capitalize safe browsing warning buttons

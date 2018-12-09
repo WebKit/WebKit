@@ -59,7 +59,7 @@ ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat)
     ASSERT(transferSession);
     m_transferSession = adoptCF(transferSession);
 
-    auto status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_ScalingMode, kVTScalingMode_Trim);
+    auto status = VTSessionSetProperty(transferSession, kVTPixelTransferPropertyKey_ScalingMode, kVTScalingMode_Letterbox);
     if (status != kCVReturnSuccess)
         RELEASE_LOG(Media, "ImageTransferSessionVT::ImageTransferSessionVT: VTSessionSetProperty(kVTPixelTransferPropertyKey_ScalingMode) failed with error %d", static_cast<int>(status));
 

@@ -178,11 +178,16 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     return m_currentSettings.value();
 }
 
+IntSize MockRealtimeVideoSource::captureSize() const
+{
+    return m_preset ? m_preset->size : this->size();
+}
+
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
-        m_baseFontSize = size().height() * .08;
+        m_baseFontSize = captureSize().height() * .08;
         m_bipBopFontSize = m_baseFontSize * 2.5;
         m_statsFontSize = m_baseFontSize * .5;
         m_imageBuffer = nullptr;
@@ -218,8 +223,9 @@ Seconds MockRealtimeVideoSource::elapsedTime()
 
 void MockRealtimeVideoSource::drawAnimation(GraphicsContext& context)
 {
-    float radius = size().width() * .09;
-    FloatPoint location(size().width() * .8, size().height() * .3);
+    auto size = captureSize();
+    float radius = size.width() * .09;
+    FloatPoint location(size.width() * .8, size.height() * .3);
 
     m_path.clear();
     m_path.moveTo(location);
@@ -248,7 +254,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
     static const RGBA32 green = 0xff008000;
     static const RGBA32 cyan = 0xFF00FFFF;
 
-    IntSize size = this->size();
+    IntSize size = captureSize();
     float boxSize = size.width() * .035;
     float boxTop = size.height() * .6;
 
@@ -330,8 +336,8 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     FontCascade statsFont { WTFMove(fontDescription), 0, 0 };
     statsFont.update(nullptr);
 
-    IntSize size = this->size();
-    FloatPoint timeLocation(size.width() * .05, size.height() * .15);
+    IntSize captureSize = this->captureSize();
+    FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextModeFill);
     String string = String::format("%02u:%02u:%02u.%03u", hours, minutes, seconds, milliseconds % 1000);
@@ -341,7 +347,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     timeLocation.move(0, m_baseFontSize);
     context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
 
-    FloatPoint statsLocation(size.width() * .45, size.height() * .75);
+    FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
     string = String::format("Requested frame rate: %.1f fps", frameRate());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
@@ -349,8 +355,13 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     string = String::format("Observed frame rate: %.1f fps", observedFrameRate());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
+    auto size = this->size();
     statsLocation.move(0, m_statsFontSize);
     string = String::format("Size: %u x %u", size.width(), size.height());
+    context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+
+    statsLocation.move(0, m_statsFontSize);
+    string = String::format("Preset size: %u x %u", captureSize.width(), captureSize.height());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
     if (mockCamera()) {
@@ -380,7 +391,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
         context.drawText(statsFont, TextRun { name() }, statsLocation);
     }
 
-    FloatPoint bipBopLocation(size.width() * .6, size.height() * .6);
+    FloatPoint bipBopLocation(captureSize.width() * .6, captureSize.height() * .6);
     unsigned frameMod = m_frameNumber % 60;
     if (frameMod <= 15) {
         context.setFillColor(Color::cyan);
@@ -413,7 +424,7 @@ void MockRealtimeVideoSource::generateFrame()
     GraphicsContext& context = buffer->context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto& size = this->size();
+    auto size = captureSize();
     FloatRect frameRect(FloatPoint(), size);
 
     context.fillRect(FloatRect(FloatPoint(), size), m_fillColor);
@@ -432,7 +443,7 @@ ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create(size(), Unaccelerated);
+    m_imageBuffer = ImageBuffer::create(captureSize(), Unaccelerated);
     if (!m_imageBuffer)
         return nullptr;
 
