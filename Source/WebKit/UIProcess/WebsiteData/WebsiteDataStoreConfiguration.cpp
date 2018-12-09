@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebsiteDataStoreConfiguration.h"
 
+#include "APIWebsiteDataStore.h"
+
 namespace WebKit {
 
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration()

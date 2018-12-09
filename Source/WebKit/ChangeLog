@@ -1,3 +1,13 @@
+2018-12-09  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Build failure due to missing include of APIWebsiteDataStore.h
+        https://bugs.webkit.org/show_bug.cgi?id=192541
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp: Add missing
+        include of APIWebsiteDataStore.h
+
 2018-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS device] Crash when attempting to call -[_WKAttachment info] for an editable image
