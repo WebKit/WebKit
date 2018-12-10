@@ -214,6 +214,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         config->setSourceApplicationBundleIdentifier(configuration.sourceApplicationBundleIdentifier);
     if (configuration.sourceApplicationSecondaryIdentifier)
         config->setSourceApplicationSecondaryIdentifier(configuration.sourceApplicationSecondaryIdentifier);
+    if (configuration.httpProxy)
+        config->setHTTPProxy(configuration.httpProxy);
+    if (configuration.httpsProxy)
+        config->setHTTPSProxy(configuration.httpsProxy);
 
     API::Object::constructInWrapper<API::WebsiteDataStore>(self, WTFMove(config), PAL::SessionID::generatePersistentSessionID());
 

@@ -299,7 +299,12 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
-    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(NetworkSessionCreationParameters()));
+    NetworkSessionCreationParameters sessionCreationParameters { };
+#if PLATFORM(COCOA)
+    sessionCreationParameters.httpProxy = URL(URL(), parameters.httpProxy);
+    sessionCreationParameters.httpsProxy = URL(URL(), parameters.httpsProxy);
+#endif
+    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create(WTFMove(sessionCreationParameters)));
 
 #if ENABLE(INDEXED_DATABASE)
     addIndexedDatabaseSession(PAL::SessionID::defaultSessionID(), parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);

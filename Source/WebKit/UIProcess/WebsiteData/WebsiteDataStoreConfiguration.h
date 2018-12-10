@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -87,6 +88,12 @@ public:
     const String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
     void setSourceApplicationSecondaryIdentifier(String&& identifier) { m_sourceApplicationSecondaryIdentifier = WTFMove(identifier); }
 
+    const URL& httpProxy() const { return m_httpProxy; }
+    void setHTTPProxy(URL&& proxy) { m_httpProxy = WTFMove(proxy); }
+
+    const URL& httpsProxy() const { return m_httpsProxy; }
+    void setHTTPSProxy(URL&& proxy) { m_httpsProxy = WTFMove(proxy); }
+
     constexpr static uint64_t defaultCacheStoragePerOriginQuota = 50 * 1024 * 1024;
 
 private:
@@ -110,6 +117,8 @@ private:
     String m_cookieStorageFile;
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
+    URL m_httpProxy;
+    URL m_httpsProxy;
 };
 
 }

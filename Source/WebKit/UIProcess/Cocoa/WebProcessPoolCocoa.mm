@@ -69,9 +69,6 @@ NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKe
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 #endif
 
-static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
-static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
-
 static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
@@ -259,8 +256,19 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    parameters.httpProxy = [defaults stringForKey:WebKit2HTTPProxyDefaultsKey];
-    parameters.httpsProxy = [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey];
+    {
+        bool isSafari = false;
+#if PLATFORM(IOS_FAMILY)
+        isSafari = WebCore::IOSApplication::isMobileSafari();
+#elif PLATFORM(MAC)
+        isSafari = WebCore::MacApplication::isSafari();
+#endif
+        if (isSafari) {
+            parameters.httpProxy = [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey];
+            parameters.httpsProxy = [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey];
+        }
+    }
+
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
     parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];

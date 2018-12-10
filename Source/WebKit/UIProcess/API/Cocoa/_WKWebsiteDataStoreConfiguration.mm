@@ -71,6 +71,26 @@ static void checkURLArgument(NSURL *url)
     _configuration->setWebSQLDatabaseDirectory(url.path);
 }
 
+- (NSURL *)httpProxy
+{
+    return _configuration->httpProxy();
+}
+
+- (void)setHTTPProxy:(NSURL *)proxy
+{
+    _configuration->setHTTPProxy(proxy);
+}
+
+- (NSURL *)httpsProxy
+{
+    return _configuration->httpsProxy();
+}
+
+- (void)setHTTPSProxy:(NSURL *)proxy
+{
+    _configuration->setHTTPSProxy(proxy);
+}
+
 - (NSURL *)_cookieStorageFile
 {
     return [NSURL fileURLWithPath:_configuration->cookieStorageFile() isDirectory:NO];

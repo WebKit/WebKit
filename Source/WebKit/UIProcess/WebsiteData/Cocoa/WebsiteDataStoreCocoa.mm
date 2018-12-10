@@ -31,6 +31,7 @@
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/NeverDestroyed.h>
@@ -67,6 +68,21 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     bool shouldLogCookieInformation = false;
 #endif
 
+    URL httpProxy = m_configuration->httpProxy();
+    URL httpsProxy = m_configuration->httpsProxy();
+    
+    bool isSafari = false;
+#if PLATFORM(IOS_FAMILY)
+    isSafari = WebCore::IOSApplication::isMobileSafari();
+#elif PLATFORM(MAC)
+    isSafari = WebCore::MacApplication::isSafari();
+#endif
+    // FIXME: Remove these once Safari adopts _WKWebsiteDataStoreConfiguration.httpProxy and .httpsProxy.
+    if (!httpProxy.isValid() && isSafari)
+        httpProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPProxyDefaultsKey]);
+    if (!httpsProxy.isValid() && isSafari)
+        httpsProxy = URL(URL(), [defaults stringForKey:(NSString *)WebKit2HTTPSProxyDefaultsKey]);
+
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
@@ -76,7 +92,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_configuration->sourceApplicationBundleIdentifier(),
         m_configuration->sourceApplicationSecondaryIdentifier(),
         shouldLogCookieInformation,
-        Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. }
+        Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
+        WTFMove(httpProxy),
+        WTFMove(httpsProxy),
     };
 
     auto cookieFile = resolvedCookieStorageFile();

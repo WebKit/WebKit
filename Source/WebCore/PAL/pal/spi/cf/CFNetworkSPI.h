@@ -33,6 +33,7 @@
 #if PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <CFNetwork/CFHTTPStream.h>
 #include <CFNetwork/CFProxySupportPriv.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLConnectionPriv.h>
@@ -265,7 +266,6 @@ typedef void (*CFHTTPCookieStorageChangedProcPtr)(CFHTTPCookieStorageRef, void*)
 void CFHTTPCookieStorageAddObserver(CFHTTPCookieStorageRef, CFRunLoopRef, CFStringRef, CFHTTPCookieStorageChangedProcPtr, void*);
 void CFHTTPCookieStorageRemoveObserver(CFHTTPCookieStorageRef, CFRunLoopRef, CFStringRef, CFHTTPCookieStorageChangedProcPtr, void*);
 
-void _CFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 CFURLCredentialStorageRef CFURLCredentialStorageCreate(CFAllocatorRef);
 CFURLCredentialRef CFURLCredentialStorageCopyDefaultCredentialForProtectionSpace(CFURLCredentialStorageRef, CFURLProtectionSpaceRef);
 CFURLRequestPriority CFURLRequestGetRequestPriority(CFURLRequestRef);
