@@ -32,7 +32,6 @@
 #import "GPUTexture.h"
 #import "GPUTextureFormatEnum.h"
 #import "Logging.h"
-#import "WebGPULayer.h"
 
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
@@ -46,7 +45,7 @@ RefPtr<GPUSwapChain> GPUSwapChain::create()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    platformLayer = adoptNS([[WebGPULayer alloc] init]);
+    platformLayer = adoptNS([[CAMetalLayer alloc] init]);
 
     [platformLayer setOpaque:0];
     [platformLayer setName:@"WebGPU Layer"];
@@ -67,7 +66,6 @@ RefPtr<GPUSwapChain> GPUSwapChain::create()
 GPUSwapChain::GPUSwapChain(PlatformSwapLayerSmartPtr&& platformLayer)
     : m_platformSwapLayer(WTFMove(platformLayer))
 {
-    platformLayer.get().swapChain = this;
 }
 
 void GPUSwapChain::setDevice(const GPUDevice& device)

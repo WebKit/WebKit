@@ -309,7 +309,6 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
-platform/graphics/cocoa/WebGPULayer.mm
 platform/graphics/cocoa/WebMetalLayer.mm
 platform/graphics/cocoa/TextTrackRepresentationCocoa.mm
 

@@ -1,3 +1,15 @@
+2018-12-10  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r238965.
+
+        Caused internal iOS build failures
+
+        Reverted changeset:
+
+        "[iOS] Make WebGPU work with remote layer hosting"
+        https://bugs.webkit.org/show_bug.cgi?id=192508
+        https://trac.webkit.org/changeset/238965
+
 2018-12-10  Youenn Fablet  <youenn@apple.com>
 
         MockLibWebRTCPeerConnectionFactory should isolate copy its test case
