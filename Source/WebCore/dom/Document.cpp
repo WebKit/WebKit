@@ -1806,8 +1806,6 @@ void Document::scheduleStyleRecalc()
     invalidateAccessKeyMap();
 
     auto shouldThrottleStyleRecalc = [&] {
-        if (m_pendingStyleRecalcShouldForce)
-            return false;
         if (!view() || !view()->isVisuallyNonEmpty())
             return false;
         if (!page() || !page()->chrome().client().layerFlushThrottlingIsActive())
@@ -1833,12 +1831,12 @@ void Document::unscheduleStyleRecalc()
 
 bool Document::hasPendingStyleRecalc() const
 {
-    return m_styleRecalcTimer.isActive() && !m_inStyleRecalc;
+    return needsStyleRecalc() && !m_inStyleRecalc;
 }
 
 bool Document::hasPendingForcedStyleRecalc() const
 {
-    return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
+    return hasPendingStyleRecalc() && m_pendingStyleRecalcShouldForce;
 }
 
 void Document::resolveStyle(ResolveStyleType type)

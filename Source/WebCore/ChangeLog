@@ -1,3 +1,21 @@
+2018-12-10  Antti Koivisto  <antti@apple.com>
+
+        Document should throttle style recalc even when m_pendingStyleRecalcShouldForce is true.
+        https://bugs.webkit.org/show_bug.cgi?id=191695
+
+        Reviewed by Zalan Bujtas.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+
+        Don't test for m_pendingStyleRecalcShouldForce.
+
+        (WebCore::Document::hasPendingStyleRecalc const):
+        (WebCore::Document::hasPendingForcedStyleRecalc const):
+
+        Don't base the pending status of these function on whether the timer is running.
+        Instead check if the style is invalid.
+
 2018-12-10  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest removes spaces from content-types before processing
