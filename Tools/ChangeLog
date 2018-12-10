@@ -1,3 +1,14 @@
+2018-12-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Don't use the slice allocator
+        https://bugs.webkit.org/show_bug.cgi?id=192360
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/main.c:
+        (aboutDataRequestFree):
+        (aboutDataRequestNew):
+
 2018-12-10  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView should support custom tintColor

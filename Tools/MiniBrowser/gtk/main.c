@@ -268,7 +268,7 @@ static void aboutDataRequestFree(AboutDataRequest *request)
     if (request->dataMap)
         g_hash_table_destroy(request->dataMap);
 
-    g_slice_free(AboutDataRequest, request);
+    g_free(request);
 }
 
 static AboutDataRequest* aboutDataRequestNew(WebKitURISchemeRequest *uriRequest)
@@ -276,7 +276,7 @@ static AboutDataRequest* aboutDataRequestNew(WebKitURISchemeRequest *uriRequest)
     if (!aboutDataRequestMap)
         aboutDataRequestMap = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify)aboutDataRequestFree);
 
-    AboutDataRequest *request = g_slice_new0(AboutDataRequest);
+    AboutDataRequest *request = g_new0(AboutDataRequest, 1);
     request->request = g_object_ref(uriRequest);
     g_hash_table_insert(aboutDataRequestMap, GUINT_TO_POINTER(webkit_web_view_get_page_id(webkit_uri_scheme_request_get_web_view(request->request))), request);
 
