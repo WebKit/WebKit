@@ -1,3 +1,33 @@
+2018-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to allow the client to set the user-agent at main frame level, from the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=192509
+        <rdar://problem/46500832>
+
+        Reviewed by Alex Christensen.
+
+        Add SPI to allow the client to set the user-agent at main frame level, from the UIProcess instead of doing
+        it at resource-level from the injected bundle.
+
+        The custom user-agent string can now be set on _WKWebsitePolicies during the
+        decidePolicyForNavigationAction for the main feame, and will impact this main resource load as well as its
+        future subresource loads.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setCustomUserAgent:]):
+        (-[_WKWebsitePolicies customUserAgent]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2018-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Safe browsing warning should layout buttons vertically in narrow WKWebViews

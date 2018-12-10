@@ -547,6 +547,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 if (subframeNavigation)
                     [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil for subframe navigations."];
             }
+            if (!apiWebsitePolicies->customUserAgent().isNull() && subframeNavigation)
+                [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.customUserAgent must be nil for subframe navigations."];
         }
 
         switch (actionPolicy) {

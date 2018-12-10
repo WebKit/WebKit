@@ -1,3 +1,20 @@
+2018-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Add SPI to allow the client to set the user-agent at main frame level, from the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=192509
+        <rdar://problem/46500832>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[DataMappingSchemeHandler addMappingFromURLString:toData:]):
+        (-[DataMappingSchemeHandler webView:startURLSchemeTask:]):
+        (-[DataMappingSchemeHandler webView:stopURLSchemeTask:]):
+        (-[CustomUserAgentDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomUserAgentDelegate webView:didFinishNavigation:]):
+
 2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Caret is obscured by finger when dragging over an editable element

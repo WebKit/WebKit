@@ -38,8 +38,10 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
+#import <wtf/HashMap.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -54,6 +56,7 @@
 
 static bool doneCompiling;
 static bool receivedAlert;
+static bool finishedNavigation;
 
 #if PLATFORM(MAC)
 static std::optional<_WKAutoplayEvent> receivedAutoplayEvent;
@@ -857,6 +860,118 @@ TEST(WebKit, CustomHeaderFields)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://toporigin/nestedtop"]]];
     TestWebKitAPI::Util::run(&thirdTestDone);
+}
+
+static unsigned loadCount;
+
+@interface DataMappingSchemeHandler : NSObject <WKURLSchemeHandler> {
+    HashMap<String, RetainPtr<NSData *>> _dataMappings;
+}
+- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data;
+@end
+
+@implementation DataMappingSchemeHandler
+
+- (void)addMappingFromURLString:(NSString *)urlString toData:(const char*)data
+{
+    _dataMappings.set(urlString, [NSData dataWithBytesNoCopy:(void*)data length:strlen(data) freeWhenDone:NO]);
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    NSURL *finalURL = task.request.URL;
+
+    ++loadCount;
+    EXPECT_STREQ("Foo Custom UserAgent", [[task.request valueForHTTPHeaderField:@"User-Agent"] UTF8String]);
+
+    auto response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
+    [task didReceiveResponse:response.get()];
+
+    if (auto data = _dataMappings.get([finalURL absoluteString]))
+        [task didReceiveData:data.get()];
+    else
+        [task didReceiveData:[@"Hello" dataUsingEncoding:NSUTF8StringEncoding]];
+    [task didFinish];
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+}
+
+@end
+
+@interface CustomUserAgentDelegate : NSObject <WKNavigationDelegate> {
+}
+@end
+
+@implementation CustomUserAgentDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    if (navigationAction.targetFrame.mainFrame)
+        [websitePolicies setCustomUserAgent:@"Foo Custom UserAgent"];
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+@end
+
+static const char* customUserAgentMainFrameTestBytes = R"TESTRESOURCE(
+<script src="test://www.webkit.org/script.js"></script>
+<img src="test://www.webkit.org/image.png"></img>
+<iframe src="test://www.apple.com/subframe.html"></iframe>
+<script>
+onload = () => {
+    setTimeout(() => {
+        fetch("test://www.webkit.org/fetchResource.html");
+    }, 0);
+}
+</script>
+)TESTRESOURCE";
+
+static const char* customUserAgentSubFrameTestBytes = R"TESTRESOURCE(
+<script src="test://www.apple.com/script.js"></script>
+<img src="test://www.apple.com/image.png"></img>
+<iframe src="test://www.apple.com/subframe2.html"></iframe>
+<script>
+onload = () => {
+    setTimeout(() => {
+        fetch("test://www.apple.com/fetchResource.html");
+    }, 0);
+}
+</script>
+)TESTRESOURCE";
+
+TEST(WebKit, WebsitePoliciesCustomUserAgent)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto schemeHandler = adoptNS([[DataMappingSchemeHandler alloc] init]);
+    [schemeHandler addMappingFromURLString:@"test://www.webkit.org/main.html" toData:customUserAgentMainFrameTestBytes];
+    [schemeHandler addMappingFromURLString:@"test://www.apple.com/subframe.html" toData:customUserAgentSubFrameTestBytes];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[CustomUserAgentDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    loadCount = 0;
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    while (loadCount != 9U)
+        TestWebKitAPI::Util::spinRunLoop();
+    loadCount = 0;
 }
 
 @interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>

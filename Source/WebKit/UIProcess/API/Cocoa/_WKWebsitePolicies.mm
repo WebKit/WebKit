@@ -183,6 +183,16 @@
     _websitePolicies->setWebsiteDataStore(websiteDataStore->_websiteDataStore.get());
 }
 
+- (void)setCustomUserAgent:(NSString *)customUserAgent
+{
+    _websitePolicies->setCustomUserAgent(customUserAgent);
+}
+
+- (NSString *)customUserAgent
+{
+    return _websitePolicies->customUserAgent();
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];

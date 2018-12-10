@@ -2664,6 +2664,12 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 
 String FrameLoader::userAgent(const URL& url) const
 {
+    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
+        auto& customUserAgent = documentLoader->customUserAgent();
+        if (!customUserAgent.isEmpty())
+            return customUserAgent;
+    }
+
     return m_client.userAgent(url);
 }
 

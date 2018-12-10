@@ -69,6 +69,9 @@ public:
 
     WebKit::WebsitePoliciesData data();
 
+    void setCustomUserAgent(const WTF::String& customUserAgent) { m_customUserAgent = customUserAgent; }
+    const WTF::String& customUserAgent() const { return m_customUserAgent; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -78,6 +81,7 @@ private:
     Vector<WebCore::HTTPHeaderField> m_customHeaderFields;
     WebKit::WebsitePopUpPolicy m_popUpPolicy { WebKit::WebsitePopUpPolicy::Default };
     RefPtr<WebsiteDataStore> m_websiteDataStore;
+    WTF::String m_customUserAgent;
 };
 
 } // namespace API

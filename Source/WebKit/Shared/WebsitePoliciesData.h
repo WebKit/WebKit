@@ -52,6 +52,7 @@ struct WebsitePoliciesData {
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     std::optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
+    String customUserAgent;
     
     void encode(IPC::Encoder&) const;
     static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);

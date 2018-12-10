@@ -42,6 +42,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << customHeaderFields;
     encoder << popUpPolicy;
     encoder << websiteDataStoreParameters;
+    encoder << customUserAgent;
 }
 
 std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -75,6 +76,11 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     decoder >> websiteDataStoreParameters;
     if (!websiteDataStoreParameters)
         return std::nullopt;
+
+    std::optional<String> customUserAgent;
+    decoder >> customUserAgent;
+    if (!customUserAgent)
+        return std::nullopt;
     
     return { {
         WTFMove(*contentBlockersEnabled),
@@ -83,12 +89,14 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*customHeaderFields),
         WTFMove(*popUpPolicy),
         WTFMove(*websiteDataStoreParameters),
+        WTFMove(*customUserAgent),
     } };
 }
 
 void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
 {
     documentLoader.setCustomHeaderFields(WTFMove(websitePolicies.customHeaderFields));
+    documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
     
     // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
     if (documentLoader.userContentExtensionsEnabled())
