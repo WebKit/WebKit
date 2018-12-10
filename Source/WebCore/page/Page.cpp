@@ -548,7 +548,7 @@ void Page::updateStyleAfterChangeInEnvironment()
 
         if (StyleResolver* styleResolver = document->styleScope().resolverIfExists())
             styleResolver->invalidateMatchedPropertiesCache();
-        document->scheduleForcedStyleRecalc();
+        document->scheduleFullStyleRebuild();
         document->styleScope().didChangeStyleSheetEnvironment();
     }
 }

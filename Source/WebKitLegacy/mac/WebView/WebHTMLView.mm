@@ -3881,7 +3881,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     if (Frame* frame = core([self _frame])) {
         if (frame->document() && frame->document()->pageCacheState() != Document::NotInPageCache)
             return;
-        frame->document()->scheduleForcedStyleRecalc();
+        frame->document()->scheduleFullStyleRebuild();
     }
 }
 

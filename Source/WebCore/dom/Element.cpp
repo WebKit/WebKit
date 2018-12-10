@@ -2999,7 +2999,7 @@ bool Element::needsStyleInvalidation() const
         return false;
     if (styleValidity() >= Style::Validity::SubtreeInvalid)
         return false;
-    if (document().hasPendingForcedStyleRecalc())
+    if (document().hasPendingFullStyleRebuild())
         return false;
 
     return true;

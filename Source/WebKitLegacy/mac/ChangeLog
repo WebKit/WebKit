@@ -1,3 +1,13 @@
+2018-12-10  Antti Koivisto  <antti@apple.com>
+
+        Rename "forced style recalc" to "full style rebuild"
+        https://bugs.webkit.org/show_bug.cgi?id=192572
+
+        Reviewed by Zalan Bujtas.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setNeedsToApplyStyles:]):
+
 2018-12-10  Darin Adler  <darin@apple.com>
 
         [macOS] MSHCreateMIGServerSource invocation does not handle send/receive rights correctly

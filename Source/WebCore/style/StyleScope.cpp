@@ -478,7 +478,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         // Crash stacks indicate we can get here when a resource load fails synchronously (for example due to content blocking).
         // FIXME: These kind of cases should be eliminated and this path replaced by an assert.
         m_pendingUpdate = UpdateType::ContentsOrInterpretation;
-        m_document.scheduleForcedStyleRecalc();
+        m_document.scheduleFullStyleRebuild();
         return;
     }
 
@@ -515,7 +515,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
                 shadowChild.invalidateStyleForSubtree();
             invalidateHostAndSlottedStyleIfNeeded(*m_shadowRoot, resolver());
         } else
-            m_document.scheduleForcedStyleRecalc();
+            m_document.scheduleFullStyleRebuild();
     }
 }
 
