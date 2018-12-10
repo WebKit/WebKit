@@ -30,9 +30,8 @@
 
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
 {

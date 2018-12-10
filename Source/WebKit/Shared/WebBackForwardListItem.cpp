@@ -32,9 +32,8 @@
 #include <wtf/DebugUtilities.h>
 #include <wtf/URL.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 Ref<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState&& backForwardListItemState, uint64_t pageID)
 {

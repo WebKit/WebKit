@@ -30,9 +30,8 @@
 #include <WebCore/LengthBox.h>
 #include <wtf/text/TextStream.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
 {

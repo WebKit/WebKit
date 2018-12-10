@@ -38,11 +38,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 
-using namespace WebCore;
-
 #if ENABLE(ASYNC_SCROLLING)
 
 namespace IPC {
+using namespace WebCore;
 
 template<> struct ArgumentCoder<ScrollingStateNode> {
     static void encode(Encoder&, const ScrollingStateNode&);

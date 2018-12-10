@@ -28,9 +28,8 @@
 
 #include "WebCoreArgumentCoders.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebMouseEvent::WebMouseEvent()
     : WebEvent()

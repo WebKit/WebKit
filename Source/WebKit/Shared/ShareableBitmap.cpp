@@ -30,10 +30,9 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
 
-using namespace WebCore;
-
 namespace WebKit {
-
+using namespace WebCore;
+    
 ShareableBitmap::Handle::Handle()
 {
 }

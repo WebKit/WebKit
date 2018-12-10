@@ -41,9 +41,8 @@
 
 #define ENABLE_MANUAL_NETWORK_SANDBOXING 0
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {

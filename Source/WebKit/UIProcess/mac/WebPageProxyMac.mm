@@ -67,8 +67,6 @@
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
-using namespace WebCore;
-
 @interface NSApplication ()
 - (BOOL)isSpeaking;
 - (void)speakString:(NSString *)string;
@@ -107,7 +105,8 @@ using namespace WebCore;
 #endif
 
 namespace WebKit {
-
+using namespace WebCore;
+    
 static inline bool expectsLegacyImplicitRubberBandControl()
 {
     if (MacApplication::isSafari()) {
