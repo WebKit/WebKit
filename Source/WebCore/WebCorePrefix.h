@@ -86,6 +86,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 #if OS(WINDOWS)
 #ifndef CF_IMPLICIT_BRIDGING_ENABLED
 #define CF_IMPLICIT_BRIDGING_ENABLED
