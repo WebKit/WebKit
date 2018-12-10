@@ -37,6 +37,7 @@
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -218,6 +219,10 @@ const char* UserMediaCaptureManager::supplementName()
 
 void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& parameters)
 {
+    MockRealtimeMediaSourceCenter::singleton().setMockAudioCaptureEnabled(!parameters.shouldCaptureAudioInUIProcess);
+    MockRealtimeMediaSourceCenter::singleton().setMockVideoCaptureEnabled(!parameters.shouldCaptureVideoInUIProcess);
+    MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!parameters.shouldCaptureDisplayInUIProcess);
+
     if (parameters.shouldCaptureAudioInUIProcess)
         RealtimeMediaSourceCenter::setAudioFactory(*this);
     if (parameters.shouldCaptureVideoInUIProcess)

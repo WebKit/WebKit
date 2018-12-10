@@ -193,15 +193,21 @@ void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool
     MockRealtimeMediaSourceCenter& mock = singleton();
 
     if (active) {
-        center.setAudioFactory(mock.audioFactory());
-        center.setVideoFactory(mock.videoFactory());
-        center.setDisplayCaptureFactory(mock.displayCaptureFactory());
+        if (mock.m_isMockAudioCaptureEnabled)
+            center.setAudioFactory(mock.audioFactory());
+        if (mock.m_isMockVideoCaptureEnabled)
+            center.setVideoFactory(mock.videoFactory());
+        if (mock.m_isMockDisplayCaptureEnabled)
+            center.setDisplayCaptureFactory(mock.displayCaptureFactory());
         return;
     }
 
-    center.unsetAudioFactory(mock.audioFactory());
-    center.unsetVideoFactory(mock.videoFactory());
-    center.unsetDisplayCaptureFactory(mock.displayCaptureFactory());
+    if (mock.m_isMockAudioCaptureEnabled)
+        center.unsetAudioFactory(mock.audioFactory());
+    if (mock.m_isMockVideoCaptureEnabled)
+        center.unsetVideoFactory(mock.videoFactory());
+    if (mock.m_isMockDisplayCaptureEnabled)
+        center.unsetDisplayCaptureFactory(mock.displayCaptureFactory());
 }
 
 static void createCaptureDevice(const MockMediaDevice& device)

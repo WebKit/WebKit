@@ -1,3 +1,17 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        Make mock capture happen in the process used for real capture
+        https://bugs.webkit.org/show_bug.cgi?id=192544
+
+        Reviewed by Eric Carlson.
+
+        Make mock capture happen in the right process by only overriding
+        factories by mock factories for source types that UserMediaCaptureManager will not override.
+        That way, UserMediaCaptureManager will be used to go to UIProcess, where mock will be used as if it was the real capture.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::initialize):
+
 2018-12-10  Alexey Proskuryakov  <ap@apple.com>
 
         Move ENABLE_SEC_ITEM_SHIM out of WebKit's config.h

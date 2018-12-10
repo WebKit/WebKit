@@ -1,3 +1,22 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        Make mock capture happen in the process used for real capture
+        https://bugs.webkit.org/show_bug.cgi?id=192544
+
+        Reviewed by Eric Carlson.
+
+        MockRealtimeMediaSourceCenter previously was setting its factories whenever mock capture is on.
+        Add booleans to choose which source (audio, video, display) will actually be toggled on.
+
+        Covered by existing tests.
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockAudioCaptureEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::setMockVideoCaptureEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::setMockDisplayCaptureEnabled):
+
 2018-12-10  Dean Jackson  <dino@apple.com>
 
         Use text/javascript as recommended by the HTML specification

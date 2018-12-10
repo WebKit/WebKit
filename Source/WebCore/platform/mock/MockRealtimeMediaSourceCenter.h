@@ -38,7 +38,7 @@ namespace WebCore {
 
 class MockRealtimeMediaSourceCenter {
 public:
-    static MockRealtimeMediaSourceCenter& singleton();
+    WEBCORE_EXPORT static MockRealtimeMediaSourceCenter& singleton();
 
     WEBCORE_EXPORT static void setMockRealtimeMediaSourceCenterEnabled(bool);
 
@@ -46,6 +46,10 @@ public:
     WEBCORE_EXPORT static void addDevice(const MockMediaDevice&);
     WEBCORE_EXPORT static void removeDevice(const String& persistentId);
     WEBCORE_EXPORT static void resetDevices();
+
+    void setMockAudioCaptureEnabled(bool isEnabled) { m_isMockAudioCaptureEnabled = isEnabled; }
+    void setMockVideoCaptureEnabled(bool isEnabled) { m_isMockVideoCaptureEnabled = isEnabled; }
+    void setMockDisplayCaptureEnabled(bool isEnabled) { m_isMockDisplayCaptureEnabled = isEnabled; }
 
     static Vector<CaptureDevice>& audioDevices();
     static Vector<CaptureDevice>& videoDevices();
@@ -85,6 +89,10 @@ private:
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;
     MockVideoCaptureDeviceManager m_videoCaptureDeviceManager;
     MockDisplayCaptureDeviceManager m_displayCaptureDeviceManager;
+
+    bool m_isMockAudioCaptureEnabled { true };
+    bool m_isMockVideoCaptureEnabled { true };
+    bool m_isMockDisplayCaptureEnabled { true };
 };
 
 }
