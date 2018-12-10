@@ -85,7 +85,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     mach_port_t pluginHostPort = MACH_PORT_NULL;
     ProcessSerialNumber pluginHostPSN;
     if (!spawnPluginHost(pluginPath, pluginArchitecture, clientPort, pluginHostPort, pluginHostPSN)) {
-        mach_port_destroy(mach_task_self(), clientPort);
+        mach_port_mod_refs(mach_task_self(), clientPort, MACH_PORT_RIGHT_RECEIVE, -1);
         m_pluginHosts.remove(result.iterator);
         return nullptr;
     }

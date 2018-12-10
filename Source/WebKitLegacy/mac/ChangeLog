@@ -1,3 +1,16 @@
+2018-12-10  Darin Adler  <darin@apple.com>
+
+        [macOS] Use mach_port_mod_refs instead of mach_port_destroy
+        https://bugs.webkit.org/show_bug.cgi?id=192532
+        rdar://problem/45731047
+
+        Reviewed by Chris Dumez.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin): Use mach_port_mod_refs.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::~NetscapePluginHostProxy): Ditto.
+
 2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn WritingDirection into an enum class
