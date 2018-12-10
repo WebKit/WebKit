@@ -400,7 +400,10 @@ bool moveFile(const String& oldPath, const String& newPath)
     if (!newFilename)
         return false;
 
-    return g_rename(oldFilename.get(), newFilename.get()) != -1;
+    GRefPtr<GFile> oldFile = adoptGRef(g_file_new_for_path(oldFilename.get()));
+    GRefPtr<GFile> newFile = adoptGRef(g_file_new_for_path(newFilename.get()));
+
+    return g_file_move(oldFile.get(), newFile.get(), G_FILE_COPY_OVERWRITE, nullptr, nullptr, nullptr, nullptr);
 }
 
 bool hardLinkOrCopyFile(const String& source, const String& destination)

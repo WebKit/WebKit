@@ -1,3 +1,16 @@
+2018-12-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLib] FileSystem::moveFile() should fall back to copying
+        https://bugs.webkit.org/show_bug.cgi?id=192562
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests needed.
+
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::FileSystem::moveFile): Use g_file_move() instead of a plain g_rename(), which
+        provides a fall-back which does copy+delete when a direct move or rename cannot be done.
+
 2018-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Allow control over child order when adding nodes to the scrolling tree
