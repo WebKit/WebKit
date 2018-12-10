@@ -1,3 +1,11 @@
+2018-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WatchOS build.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionNameForFocusedFormControlView:]):
+
 2018-12-10  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r239029.

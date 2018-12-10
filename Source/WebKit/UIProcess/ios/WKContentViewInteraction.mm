@@ -4780,9 +4780,9 @@ static bool isAssistableInputType(InputType type)
 #endif
         return nil;
     case InputType::Search:
-        return formControlSearchButtonTitle();
+        return WebCore::formControlSearchButtonTitle();
     default:
-        return formControlGoButtonTitle();
+        return WebCore::formControlGoButtonTitle();
     }
 }
 
