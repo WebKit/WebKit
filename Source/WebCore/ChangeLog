@@ -1,3 +1,26 @@
+2018-12-10  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest removes spaces from content-types before processing
+        https://bugs.webkit.org/show_bug.cgi?id=8644
+
+        Reviewed by Chris Dumez.
+
+        Stop trimming white space characters from the middle of
+        type/subtype value. Also make sure whitespace being parsed
+        adheres to OWS definition from RFC 7230 Section 3.2.3
+        (referenced by RFC 7231), i.e. space or HT.
+
+        Based on http://crrev.com/416586.
+
+        Behavior matches Firefox and Chrome.
+
+        Tests: http/tests/xmlhttprequest/supported-xml-content-types.html
+               web-platform-tests/mimesniff/mime-types/parsing.any.html
+               web-platform-tests/mimesniff/mime-types/parsing.any.worker.html
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::extractMIMETypeFromMediaType):
+
 2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Caret is obscured by finger when dragging over an editable element

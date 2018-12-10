@@ -65,8 +65,6 @@ testXMLType("image/png", false);
 // invalid types
 testXMLType("invalid", false);
 
-// FIXME: our code intentionally skips spaces, that seems wrong to me.
-// https://bugs.webkit.org/show_bug.cgi?id=8644
 testXMLType("foo bar/baz+xml", false);
 
 testXMLType("foo[bar/baz+xml", false);

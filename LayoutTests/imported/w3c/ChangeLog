@@ -1,3 +1,15 @@
+2018-12-10  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest removes spaces from content-types before processing
+        https://bugs.webkit.org/show_bug.cgi?id=8644
+
+        Reviewed by Chris Dumez.
+
+        Update improved test expectations.
+
+        * web-platform-tests/mimesniff/mime-types/parsing.any-expected.txt:
+        * web-platform-tests/mimesniff/mime-types/parsing.any.worker-expected.txt:
+
 2018-12-05  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html is a flaky failure

@@ -46,7 +46,7 @@ PASS -- testing: image/png -- responseXML: null
 
 PASS -- testing: invalid -- responseXML: null
 
-FAIL (got document -- response type: foo bar/baz+xml) -- testing: foo bar/baz+xml -- responseXML: [object XMLDocument]
+PASS -- testing: foo bar/baz+xml -- responseXML: null
 
 PASS -- testing: foo[bar/baz+xml -- responseXML: null
 
