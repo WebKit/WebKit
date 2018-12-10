@@ -1,3 +1,12 @@
+2018-12-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Move more macros out of WebKit's config.h
+        https://bugs.webkit.org/show_bug.cgi?id=192430
+
+        Reviewed by Tim Horton.
+
+        * config.h:
+
 2018-12-10  Chris Fleizach  <cfleizach@apple.com>
 
         [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds

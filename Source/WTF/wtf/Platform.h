@@ -1427,3 +1427,24 @@
 /* FIXME: This really needs a descriptive name, this "new theme" was added in 2008. */
 #define USE_NEW_THEME 1
 #endif
+
+#if PLATFORM(MAC)
+#define HAVE_WINDOW_SERVER_OCCLUSION_NOTIFICATIONS 1
+#endif
+
+#if PLATFORM(COCOA)
+#define HAVE_SEC_ACCESS_CONTROL 1
+#endif
+
+#if PLATFORM(IOS)
+/* FIXME: SafariServices.framework exists on macOS. It is only used by WebKit on iOS, so the behavior is correct, but the name is misleading. */
+#define HAVE_SAFARI_SERVICES_FRAMEWORK 1
+#endif
+
+#if ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || PLATFORM(IOS)) && !defined(__i386__)
+#define HAVE_SAFE_BROWSING 1
+#endif
+
+#if PLATFORM(IOS)
+#define HAVE_LINK_PREVIEW 1
+#endif
