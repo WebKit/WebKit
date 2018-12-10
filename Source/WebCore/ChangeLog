@@ -1,3 +1,26 @@
+2018-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow control over child order when adding nodes to the scrolling tree
+        https://bugs.webkit.org/show_bug.cgi?id=176914
+        <rdar://problem/46542237>
+        
+        Re-land r239010 after over-zealous rollout.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::attachToStateTree):
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::attachToStateTree):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::insertChild):
+        (WebCore::ScrollingStateNode::indexOfChild const):
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::nodeTypeAndParentMatch const):
+        (WebCore::ScrollingStateTree::attachNode):
+        * page/scrolling/ScrollingStateTree.h:
+
 2018-12-10  Antti Koivisto  <antti@apple.com>
 
         Document should throttle style recalc even when m_pendingStyleRecalcShouldForce is true.

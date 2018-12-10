@@ -10,21 +10,15 @@
         * http/tests/xmlhttprequest/supported-xml-content-types-expected.txt:
         * http/tests/xmlhttprequest/supported-xml-content-types.html:
 
-2018-12-09  Commit Queue  <commit-queue@webkit.org>
+2018-12-10  Simon Fraser  <simon.fraser@apple.com>
 
-        Unreviewed, rolling out r239010.
-        https://bugs.webkit.org/show_bug.cgi?id=192537
-
-        Breaks fast/visual-viewport/tiled-drawing/zoomed-fixed-
-        scrolling-layers-state.html again (Requested by ap on
-        #webkit).
-
-        Reverted changeset:
-
-        "Allow control over child order when adding nodes to the
-        scrolling tree"
+        Allow control over child order when adding nodes to the scrolling tree
         https://bugs.webkit.org/show_bug.cgi?id=176914
-        https://trac.webkit.org/changeset/239010
+        <rdar://problem/46542237>
+        
+        Re-land r239010 after over-zealous rollout.
+
+        * platform/mac-wk2/TestExpectations:
 
 2018-12-08  Eric Carlson  <eric.carlson@apple.com>
 
