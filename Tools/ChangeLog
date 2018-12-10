@@ -1,3 +1,28 @@
+2018-12-10  David Kilzer  <ddkilzer@apple.com>
+
+        Injected bundle for WebKitTestRunner leaks WKTypeRef objects
+        <https://webkit.org/b/192481>
+        <rdar://problem/46539059>
+
+        Follow-up to address Darin's feedback.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::shouldDumpPixels const):
+        (WTR::TestRunner::whatToDump const):
+        (WTR::TestRunner::shouldWaitUntilDone const):
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks):
+        (WTR::TestRunner::didReceiveServerRedirectForProvisionalNavigation const):
+        (WTR::TestRunner::secureEventInputIsEnabled const):
+        (WTR::TestRunner::isStatisticsPrevalentResource):
+        (WTR::TestRunner::isStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubresourceUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::isStatisticsGrandfathered):
+        (WTR::TestRunner::hasDOMCache):
+        (WTR::TestRunner::keyExistsInKeychain):
+
 2018-12-10  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ref tests don't respect platform specific expectations

@@ -131,8 +131,7 @@ bool TestRunner::shouldDumpPixels() const
     WKTypeRef returnData = nullptr;
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::setDumpPixels(bool dumpPixels)
@@ -155,8 +154,7 @@ WhatToDump TestRunner::whatToDump() const
     WKTypeRef returnData = nullptr;
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKUInt64GetTypeID());
-    WKRetainPtr<WKUInt64Ref> result(AdoptWK, static_cast<WKUInt64Ref>(returnData));
-    return static_cast<WhatToDump>(WKUInt64GetValue(result.get()));
+    return static_cast<WhatToDump>(WKUInt64GetValue(adoptWK(static_cast<WKUInt64Ref>(returnData)).get()));
 }
 
 void TestRunner::setWhatToDump(WhatToDump whatToDump)
@@ -210,8 +208,7 @@ bool TestRunner::shouldWaitUntilDone() const
     WKTypeRef returnData = nullptr;
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::waitToDumpWatchdogTimerFired()
@@ -268,8 +265,7 @@ bool TestRunner::shouldDumpFrameLoadCallbacks()
     WKTypeRef returnData = nullptr;
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messsageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 unsigned TestRunner::imageCountInGeneralPasteboard() const
@@ -755,8 +751,7 @@ bool TestRunner::didReceiveServerRedirectForProvisionalNavigation() const
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation()
@@ -1210,8 +1205,7 @@ bool TestRunner::secureEventInputIsEnabled() const
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::setBlockAllPlugins(bool shouldBlock)
@@ -1516,8 +1510,7 @@ bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 bool TestRunner::isStatisticsVeryPrevalentResource(JSStringRef hostName)
@@ -1527,8 +1520,7 @@ bool TestRunner::isStatisticsVeryPrevalentResource(JSStringRef hostName)
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 bool TestRunner::isStatisticsRegisteredAsSubresourceUnder(JSStringRef subresourceHost, JSStringRef topFrameHost)
@@ -1555,8 +1547,7 @@ bool TestRunner::isStatisticsRegisteredAsSubresourceUnder(JSStringRef subresourc
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 bool TestRunner::isStatisticsRegisteredAsSubFrameUnder(JSStringRef subFrameHost, JSStringRef topFrameHost)
@@ -1583,8 +1574,7 @@ bool TestRunner::isStatisticsRegisteredAsSubFrameUnder(JSStringRef subFrameHost,
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 bool TestRunner::isStatisticsRegisteredAsRedirectingTo(JSStringRef hostRedirectedFrom, JSStringRef hostRedirectedTo)
@@ -1611,8 +1601,7 @@ bool TestRunner::isStatisticsRegisteredAsRedirectingTo(JSStringRef hostRedirecte
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value, JSValueRef completionHandler)
@@ -1656,8 +1645,7 @@ bool TestRunner::isStatisticsHasHadUserInteraction(JSStringRef hostName)
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::setStatisticsGrandfathered(JSStringRef hostName, bool value)
@@ -1694,8 +1682,7 @@ bool TestRunner::isStatisticsGrandfathered(JSStringRef hostName)
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 void TestRunner::setStatisticsSubframeUnderTopFrameOrigin(JSStringRef hostName, JSStringRef topFrameHostName)
@@ -2359,8 +2346,7 @@ bool TestRunner::hasDOMCache(JSStringRef origin)
     WKTypeRef returnData = nullptr;
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 uint64_t TestRunner::domCacheSize(JSStringRef origin)
@@ -2652,8 +2638,7 @@ bool TestRunner::keyExistsInKeychain(JSStringRef attrLabel, JSStringRef applicat
     WKTypeRef returnData = nullptr;
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), &returnData);
     ASSERT(WKGetTypeID(returnData) == WKBooleanGetTypeID());
-    WKRetainPtr<WKBooleanRef> result(AdoptWK, static_cast<WKBooleanRef>(returnData));
-    return WKBooleanGetValue(result.get());
+    return WKBooleanGetValue(adoptWK(static_cast<WKBooleanRef>(returnData)).get());
 }
 
 } // namespace WTR
