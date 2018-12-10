@@ -5895,7 +5895,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     auto proposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:static_cast<UIDropOperation>(operation)]);
     auto dragHandlingMethod = _page->currentDragHandlingMethod();
-    [proposal setPrecise:dragHandlingMethod == DragHandlingMethod::EditPlainText || dragHandlingMethod == DragHandlingMethod::EditRichText];
+    [proposal setPrecise:dragHandlingMethod == WebCore::DragHandlingMethod::EditPlainText || dragHandlingMethod == WebCore::DragHandlingMethod::EditRichText];
     if ([delegate respondsToSelector:@selector(_webView:willUpdateDropProposalToProposal:forSession:)])
         proposal = [delegate _webView:_webView willUpdateDropProposalToProposal:proposal.get() forSession:session];
 

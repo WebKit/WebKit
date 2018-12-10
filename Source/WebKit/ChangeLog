@@ -1,3 +1,11 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOS build after r239039.
+        https://bugs.webkit.org/show_bug.cgi?id=192568
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+
 2018-12-10  Alex Christensen  <achristensen@webkit.org>
 
         Fix WatchOS build.
