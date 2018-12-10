@@ -100,6 +100,10 @@ struct CoreDragImageSpec {
     const UInt8* data[5];
 };
 
+enum {
+    kMSHDoNotCreateSendRightOption = 0x4,
+};
+
 #endif
 
 typedef UInt32 MSHCreateOptions;

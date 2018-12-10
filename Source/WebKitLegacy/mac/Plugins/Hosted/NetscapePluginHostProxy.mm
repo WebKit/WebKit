@@ -125,7 +125,7 @@ NetscapePluginHostProxy::NetscapePluginHostProxy(mach_port_t clientPort, mach_po
     
     CFRunLoopAddSource(CFRunLoopGetCurrent(), deathPortSource.get(), kCFRunLoopDefaultMode);
     
-    m_clientPortSource = adoptCF(MSHCreateMIGServerSource(nullptr, 0, reinterpret_cast<mig_subsystem_t>(const_cast<struct WKWebKitPluginClient_subsystem*>(&WKWebKitPluginClient_subsystem)), 0, m_clientPort, nullptr));
+    m_clientPortSource = adoptCF(MSHCreateMIGServerSource(nullptr, 0, reinterpret_cast<mig_subsystem_t>(const_cast<struct WKWebKitPluginClient_subsystem*>(&WKWebKitPluginClient_subsystem)), kMSHDoNotCreateSendRightOption, m_clientPort, nullptr));
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), kCFRunLoopDefaultMode);
     CFRunLoopAddSource(CFRunLoopGetCurrent(), m_clientPortSource.get(), (CFStringRef)NSEventTrackingRunLoopMode);
 }
