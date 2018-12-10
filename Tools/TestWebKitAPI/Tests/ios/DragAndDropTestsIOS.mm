@@ -710,6 +710,21 @@ TEST(DragAndDropTests, ExternalSourceMoveOperationNotAllowed)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
+TEST(DragAndDropTests, ExternalSourcePKCS12ToSingleFileInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    [item registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePKCS12 withData:[@"Not a real p12 file." dataUsingEncoding:NSUTF8StringEncoding]];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ item.get() ]];
+    [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("application/x-pkcs12", [webView stringByEvaluatingJavaScript:@"output.value"]);
+}
+
 TEST(DragAndDropTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

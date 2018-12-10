@@ -1,3 +1,38 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to upload data that conforms to "public.item" but not "public.content"
+        https://bugs.webkit.org/show_bug.cgi?id=192555
+        <rdar://problem/35204990>
+
+        Reviewed by Tim Horton.
+
+        Add support for uploading content that conforms to "public.item" via drag and drop. Currently, iOS WebKit only
+        supports data that conforms to "public.content", but there exist several types of files that conform to
+        "public.item" but not "public.content". See below for more detail.
+
+        Test: DragAndDropTests.ExternalSourcePKCS12ToSingleFileInput
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::supportedFileUploadPasteboardTypes):
+
+        Update this to include "public.item", and remove "public.folder", which is now redundant because "public.folder"
+        conforms to "public.item".
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[NSItemProvider web_containsFileURLAndFileUploadContent]):
+
+        Pull out the "contains content that is supported for file uploads" part of this helper method into a separate
+        method, and use it within `-web_containsFileURLAndFileUploadContent`. Note that this prevents "public.url"-
+        conformant data from being uploaded as files (i.e., we never want to upload a URL string *itself* as a file).
+        Drawing this distinction ensures that we don't confuse item providers that contain just a URL as files when
+        dropping into a file upload area or file input (see API test: ExternalSourceZIPArchiveAndURLToSingleFileInput
+        for an example of this corner case).
+
+        (-[NSItemProvider web_containsFileUploadContent]):
+        (-[WebItemProviderPasteboard numberOfFiles]):
+
+        Refactor this to use `-web_containsFileUploadContent`.
+
 2018-12-10  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to allow the client to set the user-agent at main frame level, from the UIProcess

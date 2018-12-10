@@ -1,3 +1,19 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Unable to upload data that conforms to "public.item" but not "public.content"
+        https://bugs.webkit.org/show_bug.cgi?id=192555
+        <rdar://problem/35204990>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that `.p12` files may be uploaded as files via drag and drop. "com.rsa.pkcs-12" is an
+        example of a data type that conforms to "public.item", but not "public.content"; before this patch, we would
+        only support uploading "public.content", so files such as these would not be accepted when dropping into file
+        inputs, or be exposed as files on DataTransfer.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2018-12-10  David Kilzer  <ddkilzer@apple.com>
 
         Injected bundle for WebKitTestRunner leaks WKTypeRef objects

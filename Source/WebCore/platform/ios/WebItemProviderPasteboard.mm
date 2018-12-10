@@ -66,19 +66,20 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 
 - (BOOL)web_containsFileURLAndFileUploadContent
 {
-    BOOL containsFileURL = NO;
-    BOOL containsContentForFileUpload = NO;
     for (NSString *identifier in self.registeredTypeIdentifiers) {
-        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL)) {
-            containsFileURL = YES;
-            continue;
-        }
+        if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL))
+            return self.web_containsFileUploadContent;
+    }
+    return NO;
+}
 
+- (BOOL)web_containsFileUploadContent
+{
+    for (NSString *identifier in self.registeredTypeIdentifiers) {
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
             continue;
 
-        containsContentForFileUpload |= typeConformsToTypes(identifier, Pasteboard::supportedFileUploadPasteboardTypes());
-        if (containsContentForFileUpload && containsFileURL)
+        if (typeConformsToTypes(identifier, Pasteboard::supportedFileUploadPasteboardTypes()))
             return YES;
     }
     return NO;
@@ -670,20 +671,21 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
 
 - (NSInteger)numberOfFiles
 {
-    NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
     NSInteger numberOfFiles = 0;
     for (NSItemProvider *itemProvider in _itemProviders.get()) {
 #if !PLATFORM(IOSMAC)
+        // First, check if the source has explicitly indicated that this item should or should not be treated as an attachment.
         if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleInline)
             continue;
-#endif
 
-        for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
-            if (!typeConformsToTypes(identifier, supportedFileTypes))
-                continue;
+        if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleAttachment) {
             ++numberOfFiles;
-            break;
+            continue;
         }
+#endif
+        // Otherwise, fall back to examining the item's registered type identifiers.
+        if (itemProvider.web_containsFileUploadContent)
+            ++numberOfFiles;
     }
     return numberOfFiles;
 }
