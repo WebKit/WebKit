@@ -1,3 +1,23 @@
+2018-12-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] DragAndDropTests.RespectsExternalSourceFidelityRankings is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192524
+
+        Reviewed by Ryosuke Niwa.
+
+        This test started failing on certain builds of iOS where UIKit now attempts to reveal the selection by scrolling
+        (see <rdar://problem/28300343>). This API test simulates two drops from external sources, both from the point
+        (300, 400) to (100, 300) in window coordinates. On these aforementioned builds of iOS, what happens is that the
+        first drop inserts text that overflows the editable region by an enormous amount, which creates an extremely
+        wide selection rect and increases the width of the document; revealing this selection causes the web view to
+        scroll horizontally, such that the second attempt to simulate a drag from (300, 400) to (100, 300) fails, since
+        these window coordinates no longer correspond to the drop destination element in the document.
+
+        To fix this test, we simply mark the drop destination as `overflow: hidden` to ensure that we don't try and
+        scroll horizontally after the first drop.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/autofocus-contenteditable.html:
+
 2018-12-08  Daniel Bates  <dabates@apple.com>
 
         Fix lldb_webkit.py following r238771
