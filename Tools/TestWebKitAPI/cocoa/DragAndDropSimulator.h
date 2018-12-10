@@ -95,12 +95,14 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
 @property (nonatomic) BOOL shouldAllowMoveOperation;
-@property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
-@property (nonatomic) BlockPtr<NSArray *(NSItemProvider *, NSArray *, NSDictionary *)> convertItemProvidersBlock;
-@property (nonatomic) BlockPtr<NSArray *(id <UIDropSession>)> overridePerformDropBlock;
 @property (nonatomic, strong) NSArray *externalItemProviders;
-@property (nonatomic) BlockPtr<NSUInteger(NSUInteger, id)> overrideDragUpdateBlock;
-@property (nonatomic) BlockPtr<void(BOOL, NSArray *)> dropCompletionBlock;
+@property (nonatomic, readonly) UIDropProposal *lastKnownDropProposal;
+
+@property (nonatomic, copy) BOOL(^showCustomActionSheetBlock)(_WKActivatedElementInfo *);
+@property (nonatomic, copy) NSArray *(^convertItemProvidersBlock)(NSItemProvider *, NSArray *, NSDictionary *);
+@property (nonatomic, copy) NSArray *(^overridePerformDropBlock)(id <UIDropSession>);
+@property (nonatomic, copy) void(^dropCompletionBlock)(BOOL, NSArray *);
+@property (nonatomic, copy) UIDropOperation(^overrideDragUpdateBlock)(UIDropOperation, id <UIDropSession>);
 
 @property (nonatomic, readonly) NSArray *sourceItemProviders;
 @property (nonatomic, readonly) NSArray *observedEventNames;

@@ -1,3 +1,42 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret is obscured by finger when dragging over an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192499
+        <rdar://problem/46570101>
+
+        Reviewed by Tim Horton.
+
+        Augment some existing API tests to check that the `precise` flag is either on or off on `UIDropProposal`.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _resetSimulatedState]):
+        (-[DragAndDropSimulator lastKnownDropProposal]):
+
+        Rename `currentDropProposal` to `lastKnownDropProposal`, and expose it as a readonly property.
+
+        (-[DragAndDropSimulator _concludeDropAndPerformOperationIfNecessary]):
+        (-[DragAndDropSimulator _advanceProgress]):
+        (-[DragAndDropSimulator setShowCustomActionSheetBlock:]):
+        (-[DragAndDropSimulator showCustomActionSheetBlock]):
+        (-[DragAndDropSimulator setConvertItemProvidersBlock:]):
+        (-[DragAndDropSimulator convertItemProvidersBlock]):
+        (-[DragAndDropSimulator setOverridePerformDropBlock:]):
+        (-[DragAndDropSimulator overridePerformDropBlock]):
+        (-[DragAndDropSimulator setOverrideDragUpdateBlock:]):
+        (-[DragAndDropSimulator overrideDragUpdateBlock]):
+        (-[DragAndDropSimulator setDropCompletionBlock:]):
+        (-[DragAndDropSimulator dropCompletionBlock]):
+
+        Refactor these properties to return and take normal Objective-C blocks, rather than `BlockPtr`s. However, use
+        `BlockPtr` instance variables to manage the lifetimes of these blocks.
+
+        (-[DragAndDropSimulator _webView:willUpdateDropProposalToProposal:forSession:]):
+        (-[DragAndDropSimulator _webView:willUpdateDataInteractionOperationToOperation:forSession:]): Deleted.
+
+        Update this to use the new WebKit delegate hook for overriding the drop proposal.
+
 2018-12-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] run-minibrowser improperly creates webkit-flatpak environment

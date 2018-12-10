@@ -272,6 +272,7 @@ TEST(DragAndDropTests, ImageToContentEditable)
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [simulator finalSelectionRects]);
     checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypePNG, kUTTypeFileURL);
     checkEstimatedSize(simulator.get(), { 215, 174 });
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, CanStartDragOnEnormousImage)
@@ -316,6 +317,7 @@ TEST(DragAndDropTests, ImageInLinkToInput)
     checkSelectionRectsWithLogging(@[ makeCGRectValue(101, 241, 2057, 232) ], [simulator finalSelectionRects]);
     checkSuggestedNameAndEstimatedSize(simulator.get(), @"icon.png", { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(simulator.get(), (__bridge NSString *)kUTTypePNG, 0);
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ImageInLinkWithoutHREFToInput)
@@ -363,6 +365,7 @@ TEST(DragAndDropTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [simulator finalSelectionRects]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ContentEditableToTextarea)
@@ -383,6 +386,7 @@ TEST(DragAndDropTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:@"drop"]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [simulator finalSelectionRects]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, NonEditableTextSelectionToTextarea)
@@ -413,6 +417,7 @@ TEST(DragAndDropTests, ContentEditableMoveParagraphs)
     EXPECT_FALSE(secondParagraphOffset == NSNotFound);
     EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(190, 100, 130, 20), makeCGRectValue(0, 120, 320, 100), makeCGRectValue(0, 220, 252, 20) ], [simulator finalSelectionRects]);
+    EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, DragImageFromContentEditable)
@@ -629,6 +634,7 @@ TEST(DragAndDropTests, ExternalSourceInlineTextToFileInput)
     [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceJSONToFileInput)
@@ -645,6 +651,7 @@ TEST(DragAndDropTests, ExternalSourceJSONToFileInput)
     [simulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
 
     EXPECT_WK_STREQ("application/json", [webView stringByEvaluatingJavaScript:@"output.value"]);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceImageToFileInput)
@@ -662,6 +669,7 @@ TEST(DragAndDropTests, ExternalSourceImageToFileInput)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceHTMLToUploadArea)
@@ -681,6 +689,7 @@ TEST(DragAndDropTests, ExternalSourceHTMLToUploadArea)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceMoveOperationNotAllowed)
@@ -718,6 +727,7 @@ TEST(DragAndDropTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceZIPArchiveToUploadArea)
@@ -734,6 +744,7 @@ TEST(DragAndDropTests, ExternalSourceZIPArchiveToUploadArea)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceImageAndHTMLToSingleFileInput)
@@ -755,6 +766,7 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToSingleFileInput)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceImageAndHTMLToMultipleFileInput)
@@ -777,6 +789,7 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToMultipleFileInput)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg, text/html", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceImageAndHTMLToUploadArea)
@@ -803,6 +816,7 @@ TEST(DragAndDropTests, ExternalSourceImageAndHTMLToUploadArea)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("image/jpeg, text/html, text/html", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 TEST(DragAndDropTests, ExternalSourceHTMLToContentEditable)
@@ -1029,6 +1043,7 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+    EXPECT_FALSE([simulator lastKnownDropProposal].precise);
 }
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
@@ -1154,9 +1169,8 @@ TEST(DragAndDropTests, OverrideDrop)
     __block bool finishedLoadingData = false;
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
-    [simulator setOverrideDragUpdateBlock:^NSUInteger(NSUInteger operation, id session)
-    {
-        EXPECT_EQ(0U, operation);
+    [simulator setOverrideDragUpdateBlock:[] (UIDropOperation operation, id <UIDropSession> session) {
+        EXPECT_EQ(UIDropOperationCancel, operation);
         return UIDropOperationCopy;
     }];
     [simulator setDropCompletionBlock:^(BOOL handled, NSArray *itemProviders) {

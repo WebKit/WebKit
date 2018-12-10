@@ -1,3 +1,44 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret is obscured by finger when dragging over an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192499
+        <rdar://problem/46570101>
+
+        Reviewed by Tim Horton.
+
+        Add support for setting the `precise` property of `UIDropProposal` to YES when dragging over an editable area.
+        When enabled, this property shifts the drop location up by a small amount, allowing the user to see the drop
+        caret (currently, this is not the case, and it's difficult to drop text at a precise location on iOS). Changes
+        are covered by adding to existing API tests.
+
+        * Scripts/webkit/messages.py:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Add a new version of `-_webView:willUpdateDataInteractionOperationToOperation:forSession:` that receives and
+        returns a UIDropProposal, so that Mail can more easily port over existing logic in its legacy-WebKit-based
+        compose implementation. iOS Safari is currently the only client of this private delegate, so the old version can
+        be easily removed once Safari adopts this new version.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+
+        Add plumbing to send the latest drag handling method from WebPage to WebPageProxy.
+
+        (WebKit::WebPageProxy::resetCurrentDragInformation):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::currentDragHandlingMethod const):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+
+        Call the new UI delegate hook when determining the drop proposal to return to UIKit. Additionally set the
+        `precise` bit on the drop proposal in the case where the drop handling method is either "editing rich text" or
+        "editing plain text".
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-12-10  Youenn Fablet  <youenn@apple.com>
 
         Make mock capture happen in the process used for real capture

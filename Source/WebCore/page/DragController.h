@@ -78,8 +78,8 @@ struct PromisedAttachmentInfo;
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
         const IntPoint& dragOffset() const { return m_dragOffset; }
         DragSourceAction dragSourceAction() const { return m_dragSourceAction; }
+        DragHandlingMethod dragHandlingMethod() const { return m_dragHandlingMethod; }
 
-        enum class DragHandlingMethod { None, EditPlainText, EditRichText, UploadFile, PageLoad, SetColor, NonDefault };
         Document* documentUnderMouse() const { return m_documentUnderMouse.get(); }
         DragDestinationAction dragDestinationAction() const { return m_dragDestinationAction; }
         DragSourceAction delegateDragSourceAction(const IntPoint& rootViewPoint);
@@ -143,7 +143,7 @@ struct PromisedAttachmentInfo;
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
         unsigned m_numberOfItemsToBeAccepted;
-        DragHandlingMethod m_dragHandlingMethod;
+        DragHandlingMethod m_dragHandlingMethod { DragHandlingMethod::None };
 
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;

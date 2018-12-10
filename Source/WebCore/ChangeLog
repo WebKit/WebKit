@@ -1,3 +1,29 @@
+2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Caret is obscured by finger when dragging over an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=192499
+        <rdar://problem/46570101>
+
+        Reviewed by Tim Horton.
+
+        * page/DragActions.h:
+
+        Move DragHandlingMethod to DragActions.h, and drive-by fix some minor issues (i.e. make a couple of enum classes
+        use 8 bits, fix the indentation levels, and update the copyright year). Also add `EnumTraits` for
+        DragHandlingMethod so that it may be encoded over IPC.
+
+        * page/DragController.cpp:
+        (WebCore::dragIsHandledByDocument):
+
+        Simplify this helper function.
+
+        (WebCore::DragController::tryDocumentDrag):
+        * page/DragController.h:
+
+        Expose the current DragHandlingMethod via a const getter method.
+
+        (WebCore::DragController::dragHandlingMethod const):
+
 2018-12-10  Youenn Fablet  <youenn@apple.com>
 
         Make mock capture happen in the process used for real capture

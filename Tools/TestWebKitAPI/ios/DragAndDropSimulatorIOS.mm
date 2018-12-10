@@ -316,7 +316,13 @@ static NSArray *dragAndDropEventNames()
     DragAndDropPhase _phase;
 
     BOOL _suppressedSelectionCommandsDuringDrop;
-    RetainPtr<UIDropProposal> _currentDropProposal;
+    RetainPtr<UIDropProposal> _lastKnownDropProposal;
+
+    BlockPtr<BOOL(_WKActivatedElementInfo *)> _showCustomActionSheetBlock;
+    BlockPtr<NSArray *(NSItemProvider *, NSArray *, NSDictionary *)> _convertItemProvidersBlock;
+    BlockPtr<NSArray *(id <UIDropSession>)> _overridePerformDropBlock;
+    BlockPtr<UIDropOperation(UIDropOperation, id)> _overrideDragUpdateBlock;
+    BlockPtr<void(BOOL, NSArray *)> _dropCompletionBlock;
 }
 
 - (instancetype)initWithWebViewFrame:(CGRect)frame
@@ -367,7 +373,7 @@ static NSArray *dragAndDropEventNames()
     _finalSelectionRects = @[ ];
     _dragSession = nil;
     _dropSession = nil;
-    _currentDropProposal = nil;
+    _lastKnownDropProposal = nil;
     _lastKnownDragCaretRect = CGRectZero;
     _remainingAdditionalItemRequestLocationsByProgress = nil;
     _queuedAdditionalItemRequestLocations = adoptNS([[NSMutableArray alloc] init]);
@@ -378,6 +384,11 @@ static NSArray *dragAndDropEventNames()
 - (NSArray *)observedEventNames
 {
     return _observedEventNames.get();
+}
+
+- (UIDropProposal *)lastKnownDropProposal
+{
+    return _lastKnownDropProposal.get();
 }
 
 - (void)simulateAllTouchesCanceled:(NSNotification *)notification
@@ -448,7 +459,7 @@ static NSArray *dragAndDropEventNames()
 - (void)_concludeDropAndPerformOperationIfNecessary
 {
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
-    auto operation = [_currentDropProposal operation];
+    auto operation = [_lastKnownDropProposal operation];
     if (operation != UIDropOperationCancel && operation != UIDropOperationForbidden) {
         [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] performDrop:_dropSession.get()];
         _phase = DragAndDropPhasePerformingDrop;
@@ -569,9 +580,9 @@ static NSArray *dragAndDropEventNames()
         _phase = DragAndDropPhaseEntered;
         break;
     case DragAndDropPhaseEntered: {
-        _currentDropProposal = [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidUpdate:_dropSession.get()];
-        if (![self shouldAllowMoveOperation] && [_currentDropProposal operation] == UIDropOperationMove)
-            _currentDropProposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:UIDropOperationCancel]);
+        _lastKnownDropProposal = [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidUpdate:_dropSession.get()];
+        if (![self shouldAllowMoveOperation] && [_lastKnownDropProposal operation] == UIDropOperationMove)
+            _lastKnownDropProposal = adoptNS([[UIDropProposal alloc] initWithDropOperation:UIDropOperationCancel]);
         break;
     }
     default:
@@ -654,6 +665,56 @@ static NSArray *dragAndDropEventNames()
     return _webView.get();
 }
 
+- (void)setShowCustomActionSheetBlock:(BOOL(^)(_WKActivatedElementInfo *))showCustomActionSheetBlock
+{
+    _showCustomActionSheetBlock = showCustomActionSheetBlock;
+}
+
+- (BOOL(^)(_WKActivatedElementInfo *))showCustomActionSheetBlock
+{
+    return _showCustomActionSheetBlock.get();
+}
+
+- (void)setConvertItemProvidersBlock:(NSArray *(^)(NSItemProvider *, NSArray *, NSDictionary *))convertItemProvidersBlock
+{
+    _convertItemProvidersBlock = convertItemProvidersBlock;
+}
+
+- (NSArray *(^)(NSItemProvider *, NSArray *, NSDictionary *))convertItemProvidersBlock
+{
+    return _convertItemProvidersBlock.get();
+}
+
+- (void)setOverridePerformDropBlock:(NSArray *(^)(id <UIDropSession>))overridePerformDropBlock
+{
+    _overridePerformDropBlock = overridePerformDropBlock;
+}
+
+- (NSArray *(^)(id <UIDropSession>))overridePerformDropBlock
+{
+    return _overridePerformDropBlock.get();
+}
+
+- (void)setOverrideDragUpdateBlock:(UIDropOperation(^)(UIDropOperation, id <UIDropSession>))overrideDragUpdateBlock
+{
+    _overrideDragUpdateBlock = overrideDragUpdateBlock;
+}
+
+- (UIDropOperation(^)(UIDropOperation, id <UIDropSession>))overrideDragUpdateBlock
+{
+    return _overrideDragUpdateBlock.get();
+}
+
+- (void)setDropCompletionBlock:(void(^)(BOOL, NSArray *))dropCompletionBlock
+{
+    _dropCompletionBlock = dropCompletionBlock;
+}
+
+- (void(^)(BOOL, NSArray *))dropCompletionBlock
+{
+    return _dropCompletionBlock.get();
+}
+
 #pragma mark - WKUIDelegatePrivate
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<NSItemProvider *> *)itemProviders
@@ -665,9 +726,12 @@ static NSArray *dragAndDropEventNames()
         self.dropCompletionBlock(handled, itemProviders);
 }
 
-- (NSUInteger)_webView:(WKWebView *)webView willUpdateDataInteractionOperationToOperation:(NSUInteger)operation forSession:(id)session
+- (UIDropProposal *)_webView:(WKWebView *)webView willUpdateDropProposalToProposal:(UIDropProposal *)proposal forSession:(id <UIDropSession>)session
 {
-    return self.overrideDragUpdateBlock ? self.overrideDragUpdateBlock(operation, session) : operation;
+    if (!self.overrideDragUpdateBlock)
+        return proposal;
+
+    return [[[UIDropProposal alloc] initWithDropOperation:self.overrideDragUpdateBlock(proposal.operation, session)] autorelease];
 }
 
 - (NSArray *)_webView:(WKWebView *)webView adjustedDataInteractionItemProvidersForItemProvider:(NSItemProvider *)itemProvider representingObjects:(NSArray *)representingObjects additionalData:(NSDictionary *)additionalData

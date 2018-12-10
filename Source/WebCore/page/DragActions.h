@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,47 +26,66 @@
 #pragma once
 
 #include <limits.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-    // WebCoreDragDestinationAction should be kept in sync with WebDragDestinationAction
-    typedef enum {
-        DragDestinationActionNone    = 0,
-        DragDestinationActionDHTML   = 1,
-        DragDestinationActionEdit    = 2,
-        DragDestinationActionLoad    = 4,
-        DragDestinationActionAny     = UINT_MAX
-    } DragDestinationAction;
-    
-    // WebCoreDragSourceAction should be kept in sync with WebDragSourceAction
-    typedef enum {
-        DragSourceActionNone         = 0,
-        DragSourceActionDHTML        = 1,
-        DragSourceActionImage        = 2,
-        DragSourceActionLink         = 4,
-        DragSourceActionSelection    = 8,
+// WebCoreDragDestinationAction should be kept in sync with WebDragDestinationAction.
+typedef enum {
+    DragDestinationActionNone    = 0,
+    DragDestinationActionDHTML   = 1,
+    DragDestinationActionEdit    = 2,
+    DragDestinationActionLoad    = 4,
+    DragDestinationActionAny     = UINT_MAX
+} DragDestinationAction;
+
+// WebCoreDragSourceAction should be kept in sync with WebDragSourceAction.
+typedef enum {
+    DragSourceActionNone         = 0,
+    DragSourceActionDHTML        = 1,
+    DragSourceActionImage        = 2,
+    DragSourceActionLink         = 4,
+    DragSourceActionSelection    = 8,
 #if ENABLE(ATTACHMENT_ELEMENT)
-        DragSourceActionAttachment   = 16,
+    DragSourceActionAttachment   = 16,
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-        DragSourceActionColor        = 32,
+    DragSourceActionColor        = 32,
 #endif
-        DragSourceActionAny          = UINT_MAX
-    } DragSourceAction;
-    
-    //matches NSDragOperation
-    typedef enum {
-        DragOperationNone    = 0,
-        DragOperationCopy    = 1,
-        DragOperationLink    = 2,
-        DragOperationGeneric = 4,
-        DragOperationPrivate = 8,
-        DragOperationMove    = 16,
-        DragOperationDelete  = 32,
-        DragOperationEvery   = UINT_MAX
-    } DragOperation;
+    DragSourceActionAny          = UINT_MAX
+} DragSourceAction;
 
-    enum class MayExtendDragSession { No, Yes };
-    enum class HasNonDefaultPasteboardData { No, Yes };
-    
+// Matches NSDragOperation.
+typedef enum {
+    DragOperationNone    = 0,
+    DragOperationCopy    = 1,
+    DragOperationLink    = 2,
+    DragOperationGeneric = 4,
+    DragOperationPrivate = 8,
+    DragOperationMove    = 16,
+    DragOperationDelete  = 32,
+    DragOperationEvery   = UINT_MAX
+} DragOperation;
+
+enum class MayExtendDragSession : bool { No, Yes };
+enum class HasNonDefaultPasteboardData : bool { No, Yes };
+enum class DragHandlingMethod : uint8_t { None, EditPlainText, EditRichText, UploadFile, PageLoad, SetColor, NonDefault };
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::DragHandlingMethod> {
+    using values = EnumValues<
+        WebCore::DragHandlingMethod,
+        WebCore::DragHandlingMethod::None,
+        WebCore::DragHandlingMethod::EditPlainText,
+        WebCore::DragHandlingMethod::EditRichText,
+        WebCore::DragHandlingMethod::UploadFile,
+        WebCore::DragHandlingMethod::PageLoad,
+        WebCore::DragHandlingMethod::SetColor,
+        WebCore::DragHandlingMethod::NonDefault
+    >;
+};
+
+} // namespace WTF
