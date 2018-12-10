@@ -1,5 +1,14 @@
 2018-12-10  Alexey Proskuryakov  <ap@apple.com>
 
+        Move ENABLE_SEC_ITEM_SHIM out of WebKit's config.h
+        https://bugs.webkit.org/show_bug.cgi?id=192428
+
+        Reviewed by Tim Horton.
+
+        * config.h:
+
+2018-12-10  Alexey Proskuryakov  <ap@apple.com>
+
         Move more macros out of WebKit's config.h
         https://bugs.webkit.org/show_bug.cgi?id=192430
 

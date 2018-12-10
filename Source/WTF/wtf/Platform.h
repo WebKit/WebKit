@@ -1448,3 +1448,9 @@
 #if PLATFORM(IOS)
 #define HAVE_LINK_PREVIEW 1
 #endif
+
+#if PLATFORM(COCOA)
+/* FIXME: This is a USE style macro, as it triggers the use of CFURLConnection framework stubs. */
+/* FIXME: Is this still necessary? CFURLConnection isn't used on Cocoa platforms any more. */
+#define ENABLE_SEC_ITEM_SHIM 1
+#endif

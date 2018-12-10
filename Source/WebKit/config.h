@@ -60,12 +60,6 @@
 
 #define PLUGIN_ARCHITECTURE(ARCH) (defined PLUGIN_ARCHITECTURE_##ARCH && PLUGIN_ARCHITECTURE_##ARCH)
 
-#ifndef ENABLE_SEC_ITEM_SHIM
-#if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-#define ENABLE_SEC_ITEM_SHIM 1
-#endif
-#endif
-
 // FIXME: We should work towards not using CredentialStorage in WebKit to not have problems with digest authentication.
 #ifndef USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION
 #define USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION 1
