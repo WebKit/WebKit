@@ -217,6 +217,17 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
 #endif
 }
 
+#if HAVE(SAFE_BROWSING)
+static CGFloat buttonWidth(ButtonType *button)
+{
+#if PLATFORM(MAC)
+    return button.frame.size.width;
+#else
+    return button.titleLabel.intrinsicContentSize.width;
+#endif
+}
+#endif
+
 static ViewType *makeLabel(NSAttributedString *attributedString)
 {
 #if PLATFORM(MAC)
@@ -306,14 +317,25 @@ static void setBackground(ViewType *view, ColorType *color)
 
         [[title.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToAnchor:[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.bottomAnchor]],
 
-        [goBack.topAnchor constraintEqualToAnchor:showDetails.topAnchor],
-        [[showDetails.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
-
         [[box.topAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
         [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
         [[warning.bottomAnchor anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
-        [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize]
     ]];
+    
+    bool needsVerticalButtonLayout = buttonWidth(showDetails) + buttonWidth(goBack) + 3 * marginSize > self.frame.size.width;
+    if (needsVerticalButtonLayout) {
+        [NSLayoutConstraint activateConstraints:@[
+            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:showDetails.topAnchor] constraintEqualToConstant:marginSize],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize * 2 + showDetails.frame.size.height],
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+            [[showDetails.trailingAnchor anchorWithOffsetToAnchor:goBack.leadingAnchor] constraintEqualToConstant:marginSize],
+            [goBack.topAnchor constraintEqualToAnchor:showDetails.topAnchor],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize],
+        ]];
+    }
 #endif
 }
 

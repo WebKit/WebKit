@@ -1,3 +1,20 @@
+2018-12-10  Alex Christensen  <achristensen@webkit.org>
+
+        Safe browsing warning should layout buttons vertically in narrow WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=192535
+        <rdar://problem/46308364>
+
+        Reviewed by Tim Horton.
+
+        They're usually next to each other, but in narrow WKWebViews they currently get clipped.
+        In order to make it more likely that both buttons are completely visible, put one above
+        the other if the WKWebView is too narrow to completely show both.  This also helps with
+        languages where the translations of "Go Back" or "Show Details" are rendered wider than English.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (buttonWidth):
+        (-[WKSafeBrowsingWarning addContent]):
+
 2018-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Allow control over child order when adding nodes to the scrolling tree
