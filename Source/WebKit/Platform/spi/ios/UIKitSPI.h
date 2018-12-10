@@ -374,6 +374,9 @@ typedef enum {
 - (void)takeTraitsFrom:(id <UITextInputTraits>)traits;
 @optional
 @property (nonatomic) UITextShortcutConversionType shortcutConversionType;
+@property (nonatomic, retain) UIColor *insertionPointColor;
+@property (nonatomic, retain) UIColor *selectionBarColor;
+@property (nonatomic, retain) UIColor *selectionHighlightColor;
 @end
 
 @class UITextInputArrowKeyHistory;
@@ -397,6 +400,7 @@ typedef enum {
 @end
 
 @interface UITextInputTraits : NSObject <UITextInputTraits, UITextInputTraits_Private, NSCopying>
+- (void)_setColorsToMatchTintColor:(UIColor *)tintColor;
 @end
 
 @interface UITextInteractionAssistant : NSObject
@@ -502,6 +506,7 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (void)viewWillMoveToSuperview:(UIView *)newSuperview;
 - (CGSize)convertSize:(CGSize)size toView:(UIView *)view;
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
+- (UIColor *)_inheritedInteractionTintColor;
 @end
 
 @interface UIWebSelectionView : UIView

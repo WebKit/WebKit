@@ -36,6 +36,11 @@
 #import <pal/spi/cocoa/NSColorSPI.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#import <UIKit/UIKit.h>
+#endif
+
 namespace TestWebKitAPI {
 
 TEST(WebKit, LinkColor)
@@ -66,6 +71,19 @@ TEST(WebKit, LinkColorWithSystemAppearance)
 
     NSString *cssLinkColor = [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.links[0]).color"];
     EXPECT_WK_STREQ(expectedString.UTF8String, cssLinkColor);
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+TEST(WebKit, TintColorAffectsInteractionColor)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView setTintColor:[UIColor greenColor]];
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable></body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    UIView<UITextInputTraits_Private> *textInput = (UIView<UITextInputTraits_Private> *) [webView textInputContentView];
+    EXPECT_TRUE([textInput.insertionPointColor isEqual:[UIColor greenColor]]);
+    EXPECT_TRUE([textInput.selectionBarColor isEqual:[UIColor greenColor]]);
 }
 #endif
 

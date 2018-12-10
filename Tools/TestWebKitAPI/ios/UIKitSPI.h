@@ -68,6 +68,7 @@ WTF_EXTERN_C_END
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
 @property (nonatomic, readonly) UIColor *insertionPointColor;
+@property (nonatomic, readonly) UIColor *selectionBarColor;
 @end
 
 @class WebEvent;

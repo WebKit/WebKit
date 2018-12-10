@@ -2489,15 +2489,41 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (UIColor *)insertionPointColor
 {
-    if (!_webView.configuration._textInteractionGesturesEnabled)
-        return [UIColor clearColor];
+    return [self.textInputTraits insertionPointColor];
+}
 
-    if (!_page->editorState().isMissingPostLayoutData) {
-        WebCore::Color caretColor = _page->editorState().postLayoutData().caretColor;
-        if (caretColor.isValid())
-            return [UIColor colorWithCGColor:cachedCGColor(caretColor)];
-    }
-    return [UIColor insertionPointColor];
+- (UIColor *)selectionBarColor
+{
+    return [self.textInputTraits selectionBarColor];
+}
+
+- (UIColor *)selectionHighlightColor
+{
+    return [self.textInputTraits selectionHighlightColor];
+}
+
+- (void)_updateInteractionTintColor
+{
+    UIColor *tintColor = ^{
+        if (!_webView.configuration._textInteractionGesturesEnabled)
+            return [UIColor clearColor];
+
+        if (!_page->editorState().isMissingPostLayoutData) {
+            WebCore::Color caretColor = _page->editorState().postLayoutData().caretColor;
+            if (caretColor.isValid())
+                return [UIColor colorWithCGColor:cachedCGColor(caretColor)];
+        }
+        
+        return [self _inheritedInteractionTintColor];    
+    }();
+
+    [_traits _setColorsToMatchTintColor:tintColor];
+}
+
+- (void)tintColorDidChange
+{
+    [super tintColorDidChange];
+    [self _updateInteractionTintColor];
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
@@ -3845,6 +3871,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     }
 
     [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];
+
+    [self _updateInteractionTintColor];
 
     return _traits.get();
 }
