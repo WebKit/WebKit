@@ -42,7 +42,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 {
     return { sessionID, { }, AllowsCellularAccess::Yes
 #if PLATFORM(COCOA)
-        , { }, { }, { }, false, { }, { }, { }
+        , { }, { }, { }, false, { }
 #endif
 #if USE(CURL)
         , { }
@@ -61,8 +61,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << sourceApplicationSecondaryIdentifier;
     encoder << shouldLogCookieInformation;
     encoder << loadThrottleLatency;
-    encoder << httpProxy;
-    encoder << httpsProxy;
 #endif
 #if USE(CURL)
     encoder << proxySettings;
@@ -109,16 +107,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     decoder >> loadThrottleLatency;
     if (!loadThrottleLatency)
         return std::nullopt;
-    
-    std::optional<URL> httpProxy;
-    decoder >> httpProxy;
-    if (!httpProxy)
-        return std::nullopt;
-
-    std::optional<URL> httpsProxy;
-    decoder >> httpsProxy;
-    if (!httpsProxy)
-        return std::nullopt;
 #endif
     
 #if USE(CURL)
@@ -138,8 +126,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*sourceApplicationSecondaryIdentifier)
         , WTFMove(*shouldLogCookieInformation)
         , WTFMove(*loadThrottleLatency)
-        , WTFMove(*httpProxy)
-        , WTFMove(*httpsProxy)
 #endif
 #if USE(CURL)
         , WTFMove(*proxySettings)

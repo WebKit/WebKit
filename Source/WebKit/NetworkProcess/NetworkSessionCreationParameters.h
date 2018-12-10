@@ -27,7 +27,6 @@
 
 #include <pal/SessionID.h>
 #include <wtf/Seconds.h>
-#include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CURL)
@@ -39,11 +38,6 @@ class Encoder;
 class Decoder;
 }
 
-#if PLATFORM(COCOA)
-extern "C" CFStringRef const WebKit2HTTPProxyDefaultsKey;
-extern "C" CFStringRef const WebKit2HTTPSProxyDefaultsKey;
-#endif
-    
 namespace WebKit {
 
 enum class AllowsCellularAccess : bool { No, Yes };
@@ -62,8 +56,6 @@ struct NetworkSessionCreationParameters {
     String sourceApplicationSecondaryIdentifier;
     bool shouldLogCookieInformation { false };
     Seconds loadThrottleLatency;
-    URL httpProxy;
-    URL httpsProxy;
 #endif
 #if USE(CURL)
     WebCore::CurlProxySettings proxySettings;

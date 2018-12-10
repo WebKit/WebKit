@@ -57,8 +57,6 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     copy->m_cookieStorageFile = this->m_cookieStorageFile;
     copy->m_sourceApplicationBundleIdentifier = this->m_sourceApplicationBundleIdentifier;
     copy->m_sourceApplicationSecondaryIdentifier = this->m_sourceApplicationSecondaryIdentifier;
-    copy->m_httpProxy = this->m_httpProxy;
-    copy->m_httpsProxy = this->m_httpsProxy;
 
     return copy;
 }

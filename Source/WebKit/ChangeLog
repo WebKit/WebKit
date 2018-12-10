@@ -1,3 +1,18 @@
+2018-12-10  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r239023.
+        https://bugs.webkit.org/show_bug.cgi?id=192571
+
+        Speculative rollout due to broken perf test (Requested by
+        deanj on #webkit).
+
+        Reverted changeset:
+
+        "Enable HTTP and HTTPS proxies on iOS and make it a property
+        of the NSURLSession"
+        https://bugs.webkit.org/show_bug.cgi?id=192374
+        https://trac.webkit.org/changeset/239023
+
 2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the iOS build after r239039.
