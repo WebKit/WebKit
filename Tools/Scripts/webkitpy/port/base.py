@@ -408,6 +408,26 @@ class Port(object):
         """Returns a tuple of all of the non-reftest baseline extensions we use. The extensions include the leading '.'."""
         return ('.wav', '.webarchive', '.txt', '.png')
 
+    def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False):
+        baseline_search_path = self.baseline_search_path() + [self.layout_tests_dir()]
+
+        baselines = []
+        for platform_dir in baseline_search_path:
+            for suffix in suffixes:
+                baseline_filename = self._filesystem.splitext(test_name)[0] + '-expected' + suffix
+                if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
+                    baselines.append((platform_dir, baseline_filename))
+
+            if not all_baselines and baselines:
+                return baselines
+
+        if baselines:
+            return baselines
+
+        for suffix in suffixes:
+            baselines.append((None, self._filesystem.splitext(test_name)[0] + '-expected' + suffix))
+        return baselines
+
     def expected_baselines(self, test_name, suffix, all_baselines=False):
         """Given a test name, finds where the baseline results are located.
 
@@ -435,27 +455,7 @@ class Port(object):
         conjunction with the other baseline and filename routines that are
         platform specific.
         """
-        baseline_filename = self._filesystem.splitext(test_name)[0] + '-expected' + suffix
-        baseline_search_path = self.baseline_search_path()
-
-        baselines = []
-        for platform_dir in baseline_search_path:
-            if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
-                baselines.append((platform_dir, baseline_filename))
-
-            if not all_baselines and baselines:
-                return baselines
-
-        # If it wasn't found in a platform directory, return the expected
-        # result in the test directory, even if no such file actually exists.
-        platform_dir = self.layout_tests_dir()
-        if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
-            baselines.append((platform_dir, baseline_filename))
-
-        if baselines:
-            return baselines
-
-        return [(None, baseline_filename)]
+        return self._expected_baselines_for_suffixes(test_name, [suffix], all_baselines=all_baselines)
 
     def expected_filename(self, test_name, suffix, return_default=True):
         """Given a test name, returns an absolute path to its expected results.
@@ -477,13 +477,9 @@ class Port(object):
         This routine is generic but is implemented here to live alongside
         the other baseline and filename manipulation routines.
         """
-        # FIXME: The [0] here is very mysterious, as is the destructured return.
         platform_dir, baseline_filename = self.expected_baselines(test_name, suffix)[0]
-        if platform_dir:
-            return self._filesystem.join(platform_dir, baseline_filename)
-
-        if return_default:
-            return self._filesystem.join(self.layout_tests_dir(), baseline_filename)
+        if platform_dir or return_default:
+            return self._filesystem.join(platform_dir or self.layout_tests_dir(), baseline_filename)
         return None
 
     def expected_checksum(self, test_name):
@@ -553,17 +549,23 @@ class Port(object):
         if self.get_option('treat_ref_tests_as_pixel_tests'):
             return []
 
-        reftest_list = self._get_reftest_list(test_name)
-        if not reftest_list:
-            reftest_list = []
-            for expectation, prefix in (('==', ''), ('!=', '-mismatch')):
-                for extention in Port._supported_reference_extensions:
-                    path = self.expected_filename(test_name, prefix + extention)
-                    if self._filesystem.exists(path):
-                        reftest_list.append((expectation, path))
-            return reftest_list
+        result = self._get_reftest_list(test_name)
+        if result:
+            return result.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])
 
-        return reftest_list.get(self._filesystem.join(self.layout_tests_dir(), test_name), [])  # pylint: disable=E1103
+        result = []
+        suffixes = []
+        for part1 in ['', '-mismatch']:
+            for part2 in self._supported_reference_extensions:
+                suffixes.append(part1 + part2)
+        for platform_dir, baseline_filename in self._expected_baselines_for_suffixes(test_name, suffixes):
+            if not platform_dir:
+                continue
+            result.append((
+                '!=' if '-mismatch.' in baseline_filename else '==',
+                self._filesystem.join(platform_dir, baseline_filename),
+            ))
+        return result
 
     def potential_test_names_from_expected_file(self, path):
         """Return potential test names if any from a potential expected file path, relative to LayoutTests directory."""

@@ -411,6 +411,23 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port._filesystem.isdir(jhbuild_path))
         self.assertTrue(port._should_use_jhbuild())
 
+    def test_ref_tests_platform_directory(self):
+        port = self.make_port(port_name='foo')
+        port.default_baseline_search_path = lambda: ['/mock-checkout/LayoutTests/platform/foo']
+        port._filesystem.write_text_file('/mock-checkout/LayoutTests/fast/ref-expected.html', 'foo')
+
+        # No platform directory
+        self.assertEqual(
+            [('==', '/mock-checkout/LayoutTests/fast/ref-expected.html')],
+            port.reference_files('fast/ref.html'),
+        )
+
+        port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/foo/fast/ref-expected-mismatch.html', 'foo-plat')
+        self.assertEqual(
+            [('!=', '/mock-checkout/LayoutTests/platform/foo/fast/ref-expected-mismatch.html')],
+            port.reference_files('fast/ref.html'),
+        )
+
 
 class NaturalCompareTest(unittest.TestCase):
     def setUp(self):

@@ -1,3 +1,20 @@
+2018-12-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Ref tests don't respect platform specific expectations
+        https://bugs.webkit.org/show_bug.cgi?id=192515
+        <rdar://problem/46564839>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._expected_baselines_for_suffixes): Accept multiple suffixes so ref tests can use this function.
+        (Port.expected_baselines): Move implementation to _expected_baselines_for_suffixes.
+        (Port.expected_filename): Remove irrelevant FIXME, code clean-up.
+        (Port.reference_files): Instead of just searching a single directory, use _expected_baselines_for_suffixes to
+        search all platform expectations as well.
+        * Scripts/webkitpy/port/base_unittest.py:
+        (test_ref_tests_platform_directory):
+
 2018-12-10  Chris Dumez  <cdumez@apple.com>
 
         Add SPI to allow the client to set the user-agent at main frame level, from the UIProcess
