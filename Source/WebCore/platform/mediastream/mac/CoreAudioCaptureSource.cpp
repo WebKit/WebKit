@@ -774,6 +774,15 @@ AudioCaptureFactory& CoreAudioCaptureSource::factory()
     return CoreAudioCaptureSourceFactory::singleton();
 }
 
+CaptureDeviceManager& CoreAudioCaptureSourceFactory::audioCaptureDeviceManager()
+{
+#if PLATFORM(MAC)
+    return CoreAudioCaptureDeviceManager::singleton();
+#else
+    return AVAudioSessionCaptureDeviceManager::singleton();
+#endif
+}
+
 CoreAudioCaptureSource::CoreAudioCaptureSource(String&& deviceID, String&& label, String&& hashSalt, uint32_t persistentID)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(label), WTFMove(deviceID), WTFMove(hashSalt))
     , m_captureDeviceID(persistentID)

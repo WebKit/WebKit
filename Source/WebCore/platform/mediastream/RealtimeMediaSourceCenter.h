@@ -55,10 +55,10 @@ struct MediaConstraints;
     
 class RealtimeMediaSourceCenter {
 public:
+    static RealtimeMediaSourceCenter& platformCenter();
     virtual ~RealtimeMediaSourceCenter();
 
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
-    static void setSharedStreamCenterOverride(RealtimeMediaSourceCenter*);
 
     using ValidConstraintsHandler = WTF::Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
@@ -67,7 +67,7 @@ public:
     using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
     virtual void createMediaStream(NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
-    WEBCORE_EXPORT virtual Vector<CaptureDevice> getMediaStreamDevices();
+    WEBCORE_EXPORT Vector<CaptureDevice> getMediaStreamDevices();
     WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
@@ -84,13 +84,7 @@ public:
     WEBCORE_EXPORT static void setDisplayCaptureFactory(DisplayCaptureFactory&);
     WEBCORE_EXPORT static void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
-    virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
-    virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
-    virtual CaptureDeviceManager& displayCaptureDeviceManager() = 0;
-
     WEBCORE_EXPORT String hashStringWithSalt(const String& id, const String& hashSalt);
-    WEBCORE_EXPORT CaptureDevice captureDeviceWithUniqueID(const String& id, const String& hashSalt);
-    WEBCORE_EXPORT ExceptionOr<void> setDeviceEnabled(const String&, bool);
 
     WEBCORE_EXPORT void setDevicesChangedObserver(std::function<void()>&&);
 
@@ -101,7 +95,6 @@ public:
 protected:
     RealtimeMediaSourceCenter();
 
-    static RealtimeMediaSourceCenter& platformCenter();
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
     WEBCORE_EXPORT virtual AudioCaptureFactory& audioFactoryPrivate() = 0;

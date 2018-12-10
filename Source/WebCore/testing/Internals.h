@@ -677,7 +677,6 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setCameraMediaStreamTrackOrientation(MediaStreamTrack&, int orientation);
-    ExceptionOr<void> setMediaDeviceState(const String& id, const String& property, bool value);
     unsigned long trackAudioSampleCount() const { return m_trackAudioSampleCount; }
     unsigned long trackVideoSampleCount() const { return m_trackVideoSampleCount; }
     void observeMediaStreamTrack(MediaStreamTrack&);

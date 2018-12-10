@@ -207,6 +207,7 @@ UserMediaCaptureManager::~UserMediaCaptureManager()
 {
     RealtimeMediaSourceCenter::unsetAudioFactory(*this);
     RealtimeMediaSourceCenter::unsetDisplayCaptureFactory(*this);
+    RealtimeMediaSourceCenter::unsetVideoFactory(*this);
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
 }
 

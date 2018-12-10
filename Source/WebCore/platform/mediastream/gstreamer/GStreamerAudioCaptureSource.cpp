@@ -57,6 +57,8 @@ public:
     {
         return GStreamerAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
+private:
+    CaptureDeviceManager& audioCaptureDeviceManager() final { return GStreamerAudioCaptureDeviceManager::singleton(); }
 };
 
 static GStreamerAudioCaptureSourceFactory& libWebRTCAudioCaptureSourceFactory()

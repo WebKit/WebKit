@@ -26,7 +26,6 @@
 
 #include "GStreamerAudioCaptureSource.h"
 #include "GStreamerCaptureDevice.h"
-#include "GStreamerCaptureDeviceManager.h"
 #include "GStreamerVideoCaptureSource.h"
 #include <wtf/MainThread.h>
 
@@ -65,21 +64,6 @@ VideoCaptureFactory& RealtimeMediaSourceCenterLibWebRTC::videoFactoryPrivate()
 DisplayCaptureFactory& RealtimeMediaSourceCenterLibWebRTC::displayCaptureFactoryPrivate()
 {
     return GStreamerVideoCaptureSource::displayFactory();
-}
-
-CaptureDeviceManager& RealtimeMediaSourceCenterLibWebRTC::audioCaptureDeviceManager()
-{
-    return GStreamerAudioCaptureDeviceManager::singleton();
-}
-
-CaptureDeviceManager& RealtimeMediaSourceCenterLibWebRTC::videoCaptureDeviceManager()
-{
-    return GStreamerVideoCaptureDeviceManager::singleton();
-}
-
-CaptureDeviceManager& RealtimeMediaSourceCenterLibWebRTC::displayCaptureDeviceManager()
-{
-    return GStreamerDisplayCaptureDeviceManager::singleton();
 }
 
 } // namespace WebCore

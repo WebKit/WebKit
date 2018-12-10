@@ -664,7 +664,6 @@ enum CompositingPolicy {
     [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
-    [Conditional=MEDIA_STREAM, MayThrowException] void setMediaDeviceState(DOMString deviceID, DOMString property, boolean value);
     [Conditional=MEDIA_STREAM] void delayMediaStreamTrackSamples(MediaStreamTrack track, float delay);
     [Conditional=MEDIA_STREAM] void setMediaStreamTrackMuted(MediaStreamTrack track, boolean muted);
     [Conditional=MEDIA_STREAM] void removeMediaStreamTrack(MediaStream stream, MediaStreamTrack track);

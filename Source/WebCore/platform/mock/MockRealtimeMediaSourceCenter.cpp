@@ -94,14 +94,15 @@ public:
         return MockRealtimeVideoSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }
 
-#if PLATFORM(IOS_FAMILY)
 private:
+#if PLATFORM(IOS_FAMILY)
     void setVideoCapturePageState(bool interrupted, bool pageMuted)
     {
         if (activeSource())
             activeSource()->setInterrupted(interrupted, pageMuted);
     }
 #endif
+    CaptureDeviceManager& videoCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().videoCaptureDeviceManager(); }
 };
 
 class MockRealtimeDisplaySourceFactory : public DisplayCaptureFactory {
@@ -126,6 +127,8 @@ public:
 
         return { };
     }
+private:
+    CaptureDeviceManager& displayCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().displayCaptureDeviceManager(); }
 };
 
 class MockRealtimeAudioSourceFactory : public AudioCaptureFactory {
@@ -137,6 +140,8 @@ public:
 
         return MockRealtimeAudioSource::create(String { device.persistentId() }, String { device.label() }, WTFMove(hashSalt), constraints);
     }
+private:
+    CaptureDeviceManager& audioCaptureDeviceManager() final { return MockRealtimeMediaSourceCenter::singleton().audioCaptureDeviceManager(); }
 };
 
 static Vector<MockMediaDevice>& devices()
@@ -179,10 +184,24 @@ MockRealtimeMediaSourceCenter& MockRealtimeMediaSourceCenter::singleton()
 void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
 {
     static bool active = false;
-    if (active != enabled) {
-        active = enabled;
-        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &singleton() : nullptr);
+    if (active == enabled)
+        return;
+
+    active = enabled;
+
+    RealtimeMediaSourceCenter& center = RealtimeMediaSourceCenter::singleton();
+    MockRealtimeMediaSourceCenter& mock = singleton();
+
+    if (active) {
+        center.setAudioFactory(mock.audioFactory());
+        center.setVideoFactory(mock.videoFactory());
+        center.setDisplayCaptureFactory(mock.displayCaptureFactory());
+        return;
     }
+
+    center.unsetAudioFactory(mock.audioFactory());
+    center.unsetVideoFactory(mock.videoFactory());
+    center.unsetDisplayCaptureFactory(mock.displayCaptureFactory());
 }
 
 static void createCaptureDevice(const MockMediaDevice& device)
@@ -310,19 +329,19 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
     return displayDevices;
 }
 
-AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactoryPrivate()
+AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactory()
 {
     static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
     return factory.get();
 }
 
-VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactoryPrivate()
+VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactory()
 {
     static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();
 }
 
-DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactoryPrivate()
+DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
 {
     static NeverDestroyed<MockRealtimeDisplaySourceFactory> factory;
     return factory.get();

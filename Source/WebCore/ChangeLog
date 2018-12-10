@@ -1,3 +1,58 @@
+2018-12-09  Youenn Fablet  <youenn@apple.com>
+
+        Move capture manager from RealtimeMediaSourceCenter to capture factory
+        https://bugs.webkit.org/show_bug.cgi?id=192542
+
+        Reviewed by Eric Carlson.
+
+        We should be able to run mock captures in wither UIProcess or WebProcess.
+        Currently, mock capture is only done in WebProcess.
+        This patch is a first step towards that goal.
+
+        It also simplifies RealtimeMediaSourceCenter implementation by starting to remove virtual methods.
+        Further refactoring will remove the need to subclass RealtimeMediaSourceCenter.
+        Instead, remaining virtual methods will become non virtual and their
+        implementation will become port specific.
+
+        Removed a JS internal method that is not longer used to further simplify RealtimeMediaSourceCenter.
+
+        No visible change of behavior.
+        Covered by existing tests.
+
+        * platform/mediastream/CaptureDeviceManager.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::singleton):
+        (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices):
+        (WebCore::RealtimeMediaSourceCenter::getDisplayMediaDevices):
+        (WebCore::RealtimeMediaSourceCenter::getUserMediaDevices):
+        (WebCore::RealtimeMediaSourceCenter::captureDeviceWithPersistentID):
+        (WebCore::RealtimeMediaSourceCenter::unsetAudioFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetVideoFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetDisplayCaptureFactory):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSourceFactory::audioCaptureDeviceManager):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::audioFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::videoFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::displayCaptureFactory):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+        (WebCore::MockRealtimeMediaSourceCenter::audioCaptureDeviceManager):
+        (WebCore::MockRealtimeMediaSourceCenter::videoCaptureDeviceManager):
+        (WebCore::MockRealtimeMediaSourceCenter::displayCaptureDeviceManager):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-12-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239010.

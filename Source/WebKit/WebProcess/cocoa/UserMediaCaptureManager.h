@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
 #include "WebProcessSupplement.h"
+#include <WebCore/CaptureDeviceManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceFactory.h>
 #include <wtf/HashMap.h>
@@ -61,6 +62,23 @@ private:
     WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice& device, const WebCore::MediaConstraints* constraints) final  { return createCaptureSource(device, { }, constraints); }
     WebCore::CaptureSourceOrError createCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*);
 
+    class NoOpCaptureDeviceManager : public WebCore::CaptureDeviceManager {
+    public:
+        NoOpCaptureDeviceManager() = default;
+
+    private:
+        const Vector<WebCore::CaptureDevice>& captureDevices() final
+        {
+            ASSERT_NOT_REACHED();
+            return m_emptyDevices;
+        }
+        Vector<WebCore::CaptureDevice> m_emptyDevices;
+    };
+
+    WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_noOpCaptureDeviceManager; }
+    WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_noOpCaptureDeviceManager; }
+    WebCore::CaptureDeviceManager& displayCaptureDeviceManager() final { return m_noOpCaptureDeviceManager; }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -86,6 +104,7 @@ private:
     friend class Source;
     HashMap<uint64_t, RefPtr<Source>> m_sources;
     WebProcess& m_process;
+    NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;
 };
 
 } // namespace WebKit

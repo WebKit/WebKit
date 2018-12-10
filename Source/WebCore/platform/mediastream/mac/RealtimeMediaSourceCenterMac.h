@@ -52,12 +52,6 @@ private:
     AudioCaptureFactory& audioFactoryPrivate() final;
     VideoCaptureFactory& videoFactoryPrivate() final;
     DisplayCaptureFactory& displayCaptureFactoryPrivate() final;
-
-    CaptureDeviceManager& audioCaptureDeviceManager() final;
-    CaptureDeviceManager& videoCaptureDeviceManager() final;
-    CaptureDeviceManager& displayCaptureDeviceManager() final;
-
-    AudioCaptureFactory* m_audioFactoryOverride { nullptr };
 };
 
 } // namespace WebCore

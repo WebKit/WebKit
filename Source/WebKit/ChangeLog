@@ -1,3 +1,23 @@
+2018-12-09  Youenn Fablet  <youenn@apple.com>
+
+        Move capture manager from RealtimeMediaSourceCenter to capture factory
+        https://bugs.webkit.org/show_bug.cgi?id=192542
+
+        Reviewed by Eric Carlson.
+
+        Make sure to unregister for video capture as done for other capture types.
+        Implement manager which should be doing nothing as the manager is used for enumeration of devices
+        which should only happen in UIProcess.
+
+        Given that mock capture is interfering with UserMediaCaptureManager,
+        switching on/off mock capture will require creating a new process.
+        This shortcoming should be fixed once mock capture will be fully happening in
+        the same process as regular capture.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2018-12-09  Saam barati  <sbarati@apple.com>
 
         Enable HTTP and HTTPS proxies on iOS and make it a property of the NSURLSession

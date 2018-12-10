@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CaptureDevice;
+class CaptureDeviceManager;
 class RealtimeMediaSource;
 
 struct CaptureSourceOrError;
@@ -55,6 +56,7 @@ class AudioCaptureFactory
 public:
     virtual ~AudioCaptureFactory() = default;
     virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
 
 protected:
     AudioCaptureFactory() = default;
@@ -68,6 +70,7 @@ class VideoCaptureFactory
 public:
     virtual ~VideoCaptureFactory() = default;
     virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
     virtual void setVideoCapturePageState(bool, bool) { }
 
 protected:
@@ -78,6 +81,7 @@ class DisplayCaptureFactory {
 public:
     virtual ~DisplayCaptureFactory() = default;
     virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, const MediaConstraints*) = 0;
+    virtual CaptureDeviceManager& displayCaptureDeviceManager() = 0;
     virtual void setDisplayCapturePageState(bool , bool) { }
 
 protected:

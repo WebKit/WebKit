@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class CaptureDeviceManager : public CanMakeWeakPtr<CaptureDeviceManager> {
+class WEBCORE_EXPORT CaptureDeviceManager : public CanMakeWeakPtr<CaptureDeviceManager> {
 public:
     virtual const Vector<CaptureDevice>& captureDevices() = 0;
     virtual std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) { return std::nullopt; }

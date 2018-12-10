@@ -130,6 +130,8 @@ private:
     {
         return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
     }
+
+    CaptureDeviceManager& audioCaptureDeviceManager() final;
 };
 
 } // namespace WebCore
