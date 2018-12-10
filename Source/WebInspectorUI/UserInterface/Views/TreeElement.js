@@ -516,12 +516,6 @@ WI.TreeElement = class TreeElement extends WI.Object
 
         this.selected = true;
         treeOutline.selectTreeElementInternal(this, suppressNotification, selectedByUser);
-
-        let treeOutlineGroup = WI.TreeOutlineGroup.groupForTreeOutline(treeOutline);
-        if (!treeOutlineGroup)
-            return;
-
-        treeOutlineGroup.didSelectTreeElement(this);
     }
 
     revealAndSelect(omitFocus, selectedByUser, suppressNotification)
@@ -534,8 +528,6 @@ WI.TreeElement = class TreeElement extends WI.Object
     {
         if (!this.treeOutline || !this.selected)
             return false;
-
-        console.assert(this.treeOutline.selectedTreeElements.includes(this));
 
         this.selected = false;
         this.treeOutline.selectTreeElementInternal(null, suppressNotification);

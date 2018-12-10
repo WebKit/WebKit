@@ -1,3 +1,26 @@
+2018-12-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Move TreeOutlineGroup coordination out of TreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=192487
+        <rdar://problem/46543431>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.select):
+        (WI.TreeElement.prototype.deselect):
+
+        * UserInterface/Views/TreeOutlineGroup.js:
+        (WI.TreeOutlineGroup):
+        (WI.TreeOutlineGroup.prototype.itemAdded):
+        (WI.TreeOutlineGroup.prototype.itemRemoved):
+        (WI.TreeOutlineGroup.prototype._removeConflictingTreeSelections):
+        (WI.TreeOutlineGroup.prototype._treeOutlineSelectionDidChange):
+        (WI.TreeOutlineGroup.groupForTreeOutline): Deleted.
+        (WI.TreeOutlineGroup.prototype.didSelectTreeElement): Deleted.
+        make the group responsible for listening to selection changes from the
+        TreeOutlines it manages, and synchronizing the selection between them.
+
 2018-12-10  Dean Jackson  <dino@apple.com>
 
         Use text/javascript as recommended by the HTML specification
