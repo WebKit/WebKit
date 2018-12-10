@@ -48,8 +48,8 @@ WI.mimeTypeForFileExtension = function(extension)
         "xml": "text/xml",
 
         // Script types.
-        "js": "application/javascript",
-        "mjs": "application/javascript",
+        "js": "text/javascript",
+        "mjs": "text/javascript",
         "json": "application/json",
         "clj": "text/x-clojure",
         "coffee": "text/x-coffeescript",

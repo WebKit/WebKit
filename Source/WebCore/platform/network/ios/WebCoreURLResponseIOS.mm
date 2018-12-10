@@ -47,7 +47,7 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
     };
 
     CFStringRef values[] = {
-        CFSTR("application/javascript")
+        CFSTR("text/javascript")
     };
 
     ASSERT(sizeof(keys) == sizeof(values));

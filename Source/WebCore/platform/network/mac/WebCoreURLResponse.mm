@@ -212,7 +212,7 @@ static CFDictionaryRef createExtensionToMIMETypeMap()
         CFSTR("application/x-troff-me"),
         CFSTR("model/mesh"),
         CFSTR("application/vnd.mif"),
-        CFSTR("application/javascript"),
+        CFSTR("text/javascript"),
         CFSTR("video/x-sgi-movie"),
         CFSTR("audio/mpeg"),
         CFSTR("audio/mpeg"),

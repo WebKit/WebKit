@@ -909,7 +909,7 @@ WI.TextEditor = class TextEditor extends WI.View
             if (!formattedText)
                 return;
 
-            this.mimeType = "application/javascript";
+            this.mimeType = "text/javascript";
 
             if (Date.now() - startTime < 100)
                 this.updateFormattedState(true);

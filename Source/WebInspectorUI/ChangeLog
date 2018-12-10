@@ -1,3 +1,20 @@
+2018-12-10  Dean Jackson  <dino@apple.com>
+
+        Use text/javascript as recommended by the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=192525
+        <rdar://problem/46569636>
+
+        Reviewed by Jon Lee.
+
+        The HTML specification says we should use text/javascript for
+        JavaScript files:
+        https://html.spec.whatwg.org/multipage/scripting.html#scriptingLanguages:javascript-mime-type
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.mimeTypeForFileExtension):
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype._attemptToDetermineMIMEType):
+
 2018-12-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION(r238602): Elements: collapsing a DOM node with the left arrow doesn't work

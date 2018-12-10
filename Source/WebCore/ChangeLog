@@ -1,5 +1,24 @@
 2018-12-10  Dean Jackson  <dino@apple.com>
 
+        Use text/javascript as recommended by the HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=192525
+        <rdar://problem/46569636>
+
+        Reviewed by Jon Lee.
+
+        The HTML specification says we should use text/javascript for
+        JavaScript files:
+        https://html.spec.whatwg.org/multipage/scripting.html#scriptingLanguages:javascript-mime-type
+
+        * loader/cache/CachedScript.cpp: Replace application/javascript with text/javascript.
+        (WebCore::CachedScript::CachedScript):
+        * platform/network/ios/WebCoreURLResponseIOS.mm: Ditto.
+        (WebCore::createExtensionToMIMETypeMap):
+        * platform/network/mac/WebCoreURLResponse.mm: Ditto.
+        (WebCore::createExtensionToMIMETypeMap):
+
+2018-12-10  Dean Jackson  <dino@apple.com>
+
         [iOS] Make WebGPU work with remote layer hosting
         https://bugs.webkit.org/show_bug.cgi?id=192508
         <rdar://problem/46560649>
