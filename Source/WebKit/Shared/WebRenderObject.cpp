@@ -37,8 +37,9 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderWidget.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 RefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
 {

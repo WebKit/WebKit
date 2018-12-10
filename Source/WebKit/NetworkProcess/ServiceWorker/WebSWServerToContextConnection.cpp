@@ -33,8 +33,9 @@
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/ServiceWorkerContextData.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebSWServerToContextConnection::WebSWServerToContextConnection(const SecurityOriginData& securityOrigin, Ref<IPC::Connection>&& connection)
     : SWServerToContextConnection(securityOrigin)

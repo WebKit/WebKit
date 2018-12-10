@@ -38,9 +38,10 @@
 #include "APIApplicationManifest.h"
 #endif
 
-namespace API {
 using namespace WebCore;
 using namespace WebKit;
+
+namespace API {
 
 Ref<PageConfiguration> PageConfiguration::create()
 {

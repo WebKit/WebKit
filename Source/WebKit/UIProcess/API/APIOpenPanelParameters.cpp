@@ -31,8 +31,9 @@
 #include "APIString.h"
 #include <wtf/Vector.h>
 
-namespace API {
 using namespace WebCore;
+
+namespace API {
 
 Ref<OpenPanelParameters> OpenPanelParameters::create(const FileChooserSettings& settings)
 {

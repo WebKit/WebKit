@@ -38,8 +38,9 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static RetainPtr<UIView> createRemoteView(pid_t pid, uint32_t contextID)
 {

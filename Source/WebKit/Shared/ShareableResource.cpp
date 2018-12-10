@@ -31,8 +31,9 @@
 #include "ArgumentCoders.h"
 #include <WebCore/SharedBuffer.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 ShareableResource::Handle::Handle()
 {

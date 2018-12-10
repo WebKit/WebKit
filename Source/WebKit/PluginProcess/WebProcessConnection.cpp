@@ -44,8 +44,9 @@
 #include <unistd.h>
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static IPC::Connection* currentConnection;
 

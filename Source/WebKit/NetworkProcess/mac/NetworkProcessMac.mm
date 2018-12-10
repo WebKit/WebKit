@@ -47,8 +47,9 @@
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void NetworkProcess::initializeProcess(const ChildProcessInitializationParameters&)
 {

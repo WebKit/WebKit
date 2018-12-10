@@ -30,9 +30,10 @@
 #include "WebNavigationState.h"
 #include <wtf/DebugUtilities.h>
 
-namespace API {
 using namespace WebCore;
 using namespace WebKit;
+
+namespace API {
 
 Navigation::Navigation(WebNavigationState& state)
     : m_navigationID(state.generateNavigationID())

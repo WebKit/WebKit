@@ -20,8 +20,9 @@
 #include "config.h"
 #include "APIHitTestResult.h"
 
-namespace API {
 using namespace WebCore;
+
+namespace API {
 
 Ref<HitTestResult> HitTestResult::create(const WebKit::WebHitTestResultData& hitTestResultData)
 {

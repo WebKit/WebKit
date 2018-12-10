@@ -28,8 +28,9 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<WebMediaSessionMetadata> WebMediaSessionMetadata::create(const MediaSessionMetadata& metadata)
 {

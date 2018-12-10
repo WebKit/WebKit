@@ -40,9 +40,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/TextStream.h>
 
+using namespace WTF;
+using namespace WebCore;
+
 static MonotonicTime mediaTimeToCurrentTime(CFTimeInterval t)
 {
-    return WTF::MonotonicTime::now() + Seconds(t - CACurrentMediaTime());
+    return MonotonicTime::now() + Seconds(t - CACurrentMediaTime());
 }
 
 static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplicitBeginTimeFlag";
@@ -52,7 +55,7 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
 @implementation WKAnimationDelegate
 
-- (instancetype)initWithLayerID:(WebCore::GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
+- (instancetype)initWithLayerID:(GraphicsLayer::PlatformLayerID)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
 {
     if ((self = [super init])) {
         _layerID = layerID;
@@ -95,7 +98,6 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 @end
 
 namespace WebKit {
-using namespace WebCore;
 
 void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) const
 {

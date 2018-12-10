@@ -40,6 +40,9 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 
+using namespace WebCore;
+using namespace WebKit;
+
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
@@ -53,7 +56,7 @@ static const double requiredScore = 0.1;
 - (void)failedToEnterPictureInPicture;
 @end
 
-class WKFullScreenViewControllerPlaybackSessionModelClient : WebCore::PlaybackSessionModelClient {
+class WKFullScreenViewControllerPlaybackSessionModelClient : PlaybackSessionModelClient {
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
@@ -71,7 +74,7 @@ public:
         m_parent.pictureInPictureActive = active;
     }
 
-    void setInterface(WebCore::PlaybackSessionInterfaceAVKit* interface)
+    void setInterface(PlaybackSessionInterfaceAVKit* interface)
     {
         if (m_interface == interface)
             return;
@@ -85,14 +88,14 @@ public:
 
 private:
     WKFullScreenViewController *m_parent { nullptr };
-    RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
+    RefPtr<PlaybackSessionInterfaceAVKit> m_interface;
 };
 
-class WKFullScreenViewControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
+class WKFullScreenViewControllerVideoFullscreenModelClient : VideoFullscreenModelClient {
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
 
-    void setInterface(WebCore::VideoFullscreenInterfaceAVKit* interface)
+    void setInterface(VideoFullscreenInterfaceAVKit* interface)
     {
         if (m_interface == interface)
             return;
@@ -104,7 +107,7 @@ public:
             m_interface->videoFullscreenModel()->addClient(*this);
     }
 
-    WebCore::VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
+    VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
 
     void willEnterPictureInPicture() final
     {
@@ -123,7 +126,7 @@ public:
 
 private:
     WKFullScreenViewController *m_parent { nullptr };
-    RefPtr<WebCore::VideoFullscreenInterfaceAVKit> m_interface;
+    RefPtr<VideoFullscreenInterfaceAVKit> m_interface;
 };
 
 #pragma mark - _WKExtrinsicButton
@@ -149,7 +152,7 @@ private:
 
 @interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
-@property (readonly, nonatomic) WebKit::WebFullScreenManagerProxy* _manager;
+@property (readonly, nonatomic) WebFullScreenManagerProxy* _manager;
 @property (readonly, nonatomic) WebCore::FloatBoxExtent _effectiveFullscreenInsets;
 @end
 
@@ -257,7 +260,7 @@ private:
 
 - (void)videoControlsManagerDidChange
 {
-    WebKit::WebPageProxy* page = [self._webView _page];
+    WebPageProxy* page = [self._webView _page];
     auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
     auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
     auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
@@ -265,7 +268,7 @@ private:
     _playbackClient.setInterface(playbackSessionInterface);
     _videoFullscreenClient.setInterface(videoFullscreenInterface);
 
-    WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
+    PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
     [_pipButton setHidden:!playbackSessionModel];
 }
@@ -478,7 +481,7 @@ private:
 #pragma mark - Internal Interface
 
 @dynamic _manager;
-- (WebKit::WebFullScreenManagerProxy*)_manager
+- (WebFullScreenManagerProxy*)_manager
 {
     if (auto* page = [self._webView _page])
         return page->fullScreenManager();
@@ -504,11 +507,11 @@ private:
 
 - (void)_togglePiPAction:(id)sender
 {
-    WebKit::WebPageProxy* page = [self._webView _page];
+    WebPageProxy* page = [self._webView _page];
     if (!page)
         return;
 
-    WebKit::PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
+    PlaybackSessionManagerProxy* playbackSessionManager = page->playbackSessionManager();
     if (!playbackSessionManager)
         return;
 
@@ -516,7 +519,7 @@ private:
     if (!playbackSessionInterface)
         return;
 
-    WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface->playbackSessionModel();
+    PlaybackSessionModel* playbackSessionModel = playbackSessionInterface->playbackSessionModel();
     if (!playbackSessionModel)
         return;
 

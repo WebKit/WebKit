@@ -33,8 +33,9 @@
 #include <WebCore/SQLiteDatabaseTracker.h>
 #include <wtf/MainThread.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(NetworkProcess& process)
     : m_process(process)

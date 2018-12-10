@@ -49,9 +49,9 @@
 #include <crt_externs.h>
 #endif
 
-namespace WebKit {
-
 using namespace WebCore;
+
+namespace WebKit {
 
 NO_RETURN static void callExit(IPC::Connection*)
 {

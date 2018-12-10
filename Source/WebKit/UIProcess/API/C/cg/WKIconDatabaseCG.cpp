@@ -31,6 +31,7 @@
 #include <WebCore/Image.h>
 
 using namespace WebKit;
+using namespace WebCore;
 
 CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef, WKURLRef, WKSize)
 {
@@ -41,4 +42,3 @@ CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef, WKURLRef)
 {
     return nullptr;
 }
-
