@@ -66,7 +66,7 @@ void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& 
         auto& factory = getRealPeerConnectionFactory();
         factory = provider->factory();
     }
-    provider->setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(String(testCase)));
+    provider->setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(testCase));
 }
 
 MockLibWebRTCPeerConnection::~MockLibWebRTCPeerConnection()
@@ -167,8 +167,8 @@ private:
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver* observer, webrtc::SessionDescriptionInterface*) final { releaseInNetworkThread(*this, *observer); }
 };
 
-MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(String&& testCase)
-    : m_testCase(WTFMove(testCase))
+MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(const String& testCase)
+    : m_testCase(testCase.isolatedCopy())
 {
 }
 

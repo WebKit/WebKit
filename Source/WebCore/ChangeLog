@@ -1,3 +1,19 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        MockLibWebRTCPeerConnectionFactory should isolate copy its test case
+        https://bugs.webkit.org/show_bug.cgi?id=192545
+
+        Reviewed by Eric Carlson.
+
+        Isolate copy the test case member so that it can be destroyed on another thread.
+        Covered by existing test that should no longer crash.
+
+        * testing/MockLibWebRTCPeerConnection.cpp:
+        (WebCore::useMockRTCPeerConnectionFactory):
+        (WebCore::MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory):
+        * testing/MockLibWebRTCPeerConnection.h:
+        (WebCore::MockLibWebRTCPeerConnectionFactory::create):
+
 2018-12-09  Youenn Fablet  <youenn@apple.com>
 
         Move capture manager from RealtimeMediaSourceCenter to capture factory

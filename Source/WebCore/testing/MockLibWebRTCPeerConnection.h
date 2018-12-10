@@ -235,10 +235,10 @@ private:
     
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
 public:
-    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(String&& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(WTFMove(testCase)); }
+    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(const String& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(testCase); }
 
 protected:
-    MockLibWebRTCPeerConnectionFactory(String&&);
+    explicit MockLibWebRTCPeerConnectionFactory(const String&);
 
 private:
     rtc::scoped_refptr<webrtc::PeerConnectionInterface> CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, webrtc::PeerConnectionDependencies) final;
