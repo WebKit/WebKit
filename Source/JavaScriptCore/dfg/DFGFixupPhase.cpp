@@ -76,6 +76,35 @@ public:
     }
 
 private:
+    void fixupArithMul(Node* node, Edge& leftChild, Edge& rightChild)
+    {
+        if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
+            fixIntOrBooleanEdge(leftChild);
+            fixIntOrBooleanEdge(rightChild);
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
+            else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            return;
+        }
+        if (m_graph.binaryArithShouldSpeculateAnyInt(node, FixupPass)) {
+            fixEdge<Int52RepUse>(leftChild);
+            fixEdge<Int52RepUse>(rightChild);
+            if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()) || leftChild.node() == rightChild.node())
+                node->setArithMode(Arith::CheckOverflow);
+            else
+                node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+            node->setResult(NodeResultInt52);
+            return;
+        }
+
+        fixDoubleOrBooleanEdge(leftChild);
+        fixDoubleOrBooleanEdge(rightChild);
+        node->setResult(NodeResultDouble);
+    }
+
     void fixupBlock(BasicBlock* block)
     {
         if (!block)
@@ -383,42 +412,45 @@ private:
             node->clearFlags(NodeMustGenerate);
             break;
         }
-            
-        case ArithMul: {
+
+        case ValueMul: {
             Edge& leftChild = node->child1();
             Edge& rightChild = node->child2();
+
+            if (Node::shouldSpeculateBigInt(leftChild.node(), rightChild.node())) {
+                fixEdge<BigIntUse>(node->child1());
+                fixEdge<BigIntUse>(node->child2());
+                break;
+            }
+
+            // There are cases where we can have BigInt + Int32 operands reaching ValueMul.
+            // Imagine the scenario where ValueMul was never executed, but we can predict types
+            // reaching the node:
+            //
+            // 63: GetLocal(Check:Untyped:@72, JS|MustGen, NonBoolInt32, ...)  predicting NonBoolInt32
+            // 64: GetLocal(Check:Untyped:@71, JS|MustGen, BigInt, ...)  predicting BigInt
+            // 65: ValueMul(Check:Untyped:@63, Check:Untyped:@64, BigInt|BoolInt32|NonBoolInt32, ...)
+            // 
+            // In such scenario, we need to emit ValueMul(Untyped, Untyped), so the runtime can throw 
+            // an exception whenever it gets excuted.
             if (Node::shouldSpeculateUntypedForArithmetic(leftChild.node(), rightChild.node())) {
                 fixEdge<UntypedUse>(leftChild);
                 fixEdge<UntypedUse>(rightChild);
-                node->setResult(NodeResultJS);
                 break;
             }
-            if (m_graph.binaryArithShouldSpeculateInt32(node, FixupPass)) {
-                fixIntOrBooleanEdge(leftChild);
-                fixIntOrBooleanEdge(rightChild);
-                if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                    node->setArithMode(Arith::Unchecked);
-                else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())
-                    || leftChild.node() == rightChild.node())
-                    node->setArithMode(Arith::CheckOverflow);
-                else
-                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
-                break;
-            }
-            if (m_graph.binaryArithShouldSpeculateAnyInt(node, FixupPass)) {
-                fixEdge<Int52RepUse>(leftChild);
-                fixEdge<Int52RepUse>(rightChild);
-                if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags())
-                    || leftChild.node() == rightChild.node())
-                    node->setArithMode(Arith::CheckOverflow);
-                else
-                    node->setArithMode(Arith::CheckOverflowAndNegativeZero);
-                node->setResult(NodeResultInt52);
-                break;
-            }
-            fixDoubleOrBooleanEdge(leftChild);
-            fixDoubleOrBooleanEdge(rightChild);
-            node->setResult(NodeResultDouble);
+
+            // At this point, all other possible specializations are only handled by ArithMul.
+            node->setOp(ArithMul);
+            node->setResult(NodeResultNumber);
+            fixupArithMul(node, leftChild, rightChild);
+            break;
+        }
+
+        case ArithMul: {
+            Edge& leftChild = node->child1();
+            Edge& rightChild = node->child2();
+
+            fixupArithMul(node, leftChild, rightChild);
             break;
         }
 

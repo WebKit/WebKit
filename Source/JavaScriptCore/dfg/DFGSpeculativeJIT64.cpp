@@ -2209,6 +2209,10 @@ void SpeculativeJIT::compile(Node* node)
         compileArithMul(node);
         break;
 
+    case ValueMul:
+        compileValueMul(node);
+        break;
+
     case ArithDiv: {
         compileArithDiv(node);
         break;

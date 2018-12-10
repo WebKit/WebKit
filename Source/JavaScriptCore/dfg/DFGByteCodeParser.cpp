@@ -947,6 +947,7 @@ private:
                         node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
                 
+                case ValueMul:
                 case ArithMul: {
                     if (arithProfile->didObserveInt52Overflow())
                         node->mergeFlags(NodeMayOverflowInt52);
@@ -958,6 +959,8 @@ private:
                         node->mergeFlags(NodeMayHaveDoubleResult);
                     if (arithProfile->didObserveNonNumeric())
                         node->mergeFlags(NodeMayHaveNonNumericResult);
+                    if (arithProfile->didObserveBigInt())
+                        node->mergeFlags(NodeMayHaveBigIntResult);
                     break;
                 }
                 case ValueNegate:
@@ -5017,7 +5020,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpMul>();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, makeSafe(addToGraph(ArithMul, op1, op2)));
+            if (op1->hasNumberResult() && op2->hasNumberResult())
+                set(bytecode.dst, makeSafe(addToGraph(ArithMul, op1, op2)));
+            else
+                set(bytecode.dst, makeSafe(addToGraph(ValueMul, op1, op2)));
             NEXT_OPCODE(op_mul);
         }
 

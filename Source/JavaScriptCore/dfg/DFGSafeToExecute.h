@@ -233,6 +233,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ValueNegate:
     case ValueAdd:
     case ValueSub:
+    case ValueMul:
     case TryGetById:
     case DeleteById:
     case DeleteByVal:

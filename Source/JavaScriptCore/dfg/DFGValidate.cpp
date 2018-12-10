@@ -255,6 +255,7 @@ public:
                 case MakeRope:
                 case ValueAdd:
                 case ValueSub:
+                case ValueMul:
                 case ArithAdd:
                 case ArithSub:
                 case ArithMul:

@@ -102,6 +102,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValueBitXor:
     case ValueAdd:
     case ValueSub:
+    case ValueMul:
     case ValueNegate:
     case TryGetById:
     case GetById:

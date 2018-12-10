@@ -93,6 +93,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ValueNegate:
     case ValueAdd:
     case ValueSub:
+    case ValueMul:
     case StrCat:
     case ArithAdd:
     case ArithClz32:

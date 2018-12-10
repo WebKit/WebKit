@@ -1354,6 +1354,7 @@ public:
     void compileArithSub(Node*);
     void compileValueNegate(Node*);
     void compileArithNegate(Node*);
+    void compileValueMul(Node*);
     void compileArithMul(Node*);
     void compileArithDiv(Node*);
     void compileArithFRound(Node*);
