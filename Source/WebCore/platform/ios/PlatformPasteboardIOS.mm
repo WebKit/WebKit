@@ -144,10 +144,18 @@ PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
         return { };
 
     PasteboardItemInfo info;
-    if ([m_pasteboard respondsToSelector:@selector(preferredFileUploadURLAtIndex:fileType:)]) {
-        NSString *fileType = nil;
-        info.pathForFileUpload = [m_pasteboard preferredFileUploadURLAtIndex:index fileType:&fileType].path;
-        info.contentTypeForFileUpload = fileType;
+    if ([m_pasteboard respondsToSelector:@selector(fileUploadURLsAtIndex:fileTypes:)]) {
+        NSArray<NSString *> *fileTypes = nil;
+        NSArray *urls = [m_pasteboard fileUploadURLsAtIndex:index fileTypes:&fileTypes];
+        ASSERT(fileTypes.count == urls.count);
+
+        info.pathsForFileUpload.reserveInitialCapacity(urls.count);
+        for (NSURL *url in urls)
+            info.pathsForFileUpload.uncheckedAppend(url.path);
+
+        info.contentTypesForFileUpload.reserveInitialCapacity(fileTypes.count);
+        for (NSString *fileType : fileTypes)
+            info.contentTypesForFileUpload.uncheckedAppend(fileType);
     }
 
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];

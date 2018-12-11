@@ -97,9 +97,6 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 // This will only be non-empty when an operation is being performed.
 @property (readonly, nonatomic) NSArray<NSURL *> *allDroppedFileURLs;
 
-// The preferred file URL corresponds to the highest fidelity non-private UTI that was loaded.
-- (nullable NSURL *)preferredFileUploadURLAtIndex:(NSUInteger)index fileType:(NSString *_Nullable *_Nullable)outFileType;
-
 @property (readonly, nonatomic) BOOL hasPendingOperation;
 - (void)incrementPendingOperationCount;
 - (void)decrementPendingOperationCount;

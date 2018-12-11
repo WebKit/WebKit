@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Optional.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -37,12 +38,22 @@ enum class PasteboardItemPresentationStyle {
 };
 
 struct PasteboardItemInfo {
-    String pathForFileUpload;
-    String contentTypeForFileUpload;
+    Vector<String> pathsForFileUpload;
+    Vector<String> contentTypesForFileUpload;
     String suggestedFileName;
     bool isNonTextType { false };
     bool containsFileURLAndFileUploadContent { false };
     PasteboardItemPresentationStyle preferredPresentationStyle { PasteboardItemPresentationStyle::Unspecified };
+
+    String pathForContentType(const String& type) const
+    {
+        ASSERT(pathsForFileUpload.size() == contentTypesForFileUpload.size());
+        auto index = contentTypesForFileUpload.find(type);
+        if (index == notFound)
+            return { };
+
+        return pathsForFileUpload[index];
+    }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
@@ -51,7 +62,7 @@ struct PasteboardItemInfo {
 template<class Encoder>
 void PasteboardItemInfo::encode(Encoder& encoder) const
 {
-    encoder << pathForFileUpload << contentTypeForFileUpload << suggestedFileName << isNonTextType << containsFileURLAndFileUploadContent;
+    encoder << pathsForFileUpload << contentTypesForFileUpload << suggestedFileName << isNonTextType << containsFileURLAndFileUploadContent;
     encoder.encodeEnum(preferredPresentationStyle);
 }
 
@@ -59,10 +70,10 @@ template<class Decoder>
 std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 {
     PasteboardItemInfo result;
-    if (!decoder.decode(result.pathForFileUpload))
+    if (!decoder.decode(result.pathsForFileUpload))
         return std::nullopt;
 
-    if (!decoder.decode(result.contentTypeForFileUpload))
+    if (!decoder.decode(result.contentTypesForFileUpload))
         return std::nullopt;
 
     if (!decoder.decode(result.suggestedFileName))

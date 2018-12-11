@@ -68,21 +68,23 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
 {
     for (NSString *identifier in self.registeredTypeIdentifiers) {
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeFileURL))
-            return self.web_containsFileUploadContent;
+            return self.web_fileUploadContentTypes.count;
     }
     return NO;
 }
 
-- (BOOL)web_containsFileUploadContent
+- (NSArray<NSString *> *)web_fileUploadContentTypes
 {
+    auto types = adoptNS([NSMutableArray new]);
     for (NSString *identifier in self.registeredTypeIdentifiers) {
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
             continue;
 
         if (typeConformsToTypes(identifier, Pasteboard::supportedFileUploadPasteboardTypes()))
-            return YES;
+            [types addObject:identifier];
     }
-    return NO;
+
+    return types.autorelease();
 }
 
 @end
@@ -628,35 +630,27 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     return _changeCount;
 }
 
-- (NSURL *)preferredFileUploadURLAtIndex:(NSUInteger)index fileType:(NSString **)outFileType
+- (NSArray<NSURL *> *)fileUploadURLsAtIndex:(NSUInteger)index fileTypes:(NSArray<NSString *> **)outFileTypes
 {
-    if (outFileType)
-        *outFileType = nil;
+    auto fileTypes = adoptNS([NSMutableArray new]);
+    auto fileURLs = adoptNS([NSMutableArray new]);
 
     if (index >= _loadResults.size())
-        return nil;
+        return @[ ];
 
     auto result = _loadResults[index];
     if (![result canBeRepresentedAsFileUpload])
-        return nil;
+        return @[ ];
 
-    NSItemProvider *itemProvider = [result itemProvider];
-    for (NSString *registeredTypeIdentifier in itemProvider.registeredTypeIdentifiers) {
-        // Search for the highest fidelity non-private type identifier we loaded from the item provider.
-        if (!UTTypeIsDeclared((__bridge CFStringRef)registeredTypeIdentifier) && !UTTypeIsDynamic((__bridge CFStringRef)registeredTypeIdentifier))
-            continue;
-
-        for (NSString *loadedTypeIdentifier in [result loadedTypeIdentifiers]) {
-            if (!UTTypeConformsTo((__bridge CFStringRef)registeredTypeIdentifier, (__bridge CFStringRef)loadedTypeIdentifier))
-                continue;
-
-            if (outFileType)
-                *outFileType = loadedTypeIdentifier;
-            return [result fileURLForType:loadedTypeIdentifier];
+    for (NSString *contentType in [result itemProvider].web_fileUploadContentTypes) {
+        if (NSURL *url = [result fileURLForType:contentType]) {
+            [fileTypes addObject:contentType];
+            [fileURLs addObject:url];
         }
     }
 
-    return nil;
+    *outFileTypes = fileTypes.autorelease();
+    return fileURLs.autorelease();
 }
 
 - (NSArray<NSURL *> *)allDroppedFileURLs
@@ -684,7 +678,7 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
         }
 #endif
         // Otherwise, fall back to examining the item's registered type identifiers.
-        if (itemProvider.web_containsFileUploadContent)
+        if (itemProvider.web_fileUploadContentTypes.count)
             ++numberOfFiles;
     }
     return numberOfFiles;

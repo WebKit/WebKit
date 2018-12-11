@@ -57,7 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index;
 @property (readonly, nonatomic) NSInteger numberOfFiles;
 @property (readonly, nonatomic) NSArray<NSURL *> *allDroppedFileURLs;
-- (nullable NSURL *)preferredFileUploadURLAtIndex:(NSUInteger)index fileType:(NSString *_Nullable *_Nullable)outFileType;
+
+// Computes lists of file URLs and types. Each file URL and type corresponds to a representation of the item provider at the given index.
+// In order from highest fidelity to lowest fidelity.
+- (NSArray<NSURL *> *)fileUploadURLsAtIndex:(NSUInteger)index fileTypes:(NSArray<NSString *> *_Nullable *_Nonnull)outFileTypes;
 - (void)updateSupportedTypeIdentifiers:(NSArray<NSString *> *)types;
 
 @end

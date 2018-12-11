@@ -1,3 +1,54 @@
+2018-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Send the full list of file upload URLs and types in PasteboardItemInfo
+        https://bugs.webkit.org/show_bug.cgi?id=192598
+        Work towards <rdar://problem/35626913>
+
+        Reviewed by Tim Horton.
+
+        Refactors PasteboardItemInfo to contain lists of file URLs and corresponding pasteboard types, instead of just
+        a "preferred" file upload URL and type. See below for more details.
+
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::pathForContentType const):
+
+        Add a helper method to find a file upload URL corresponding to a given type.
+
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Change `pathForFileUpload` to `pathsForFileUpload`, and `contentTypeForFileUpload` to `contentTypesForFileUpload`.
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
+        Adjust this to take the file path for the highest fidelity representation in `pathsForContentType`.
+
+        (WebCore::Pasteboard::readFilePaths):
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[NSItemProvider web_containsFileURLAndFileUploadContent]):
+        (-[NSItemProvider web_fileUploadContentTypes]):
+
+        Replace `web_containsFileUploadContent` with `web_fileUploadContentTypes`, which returns the full list of file
+        upload content types (rather than just a `BOOL` indicating whether one or more of these types exist).
+
+        (-[WebItemProviderPasteboard fileUploadURLsAtIndex:fileTypes:]):
+        (-[WebItemProviderPasteboard numberOfFiles]):
+        (-[NSItemProvider web_containsFileUploadContent]): Deleted.
+        (-[WebItemProviderPasteboard preferredFileUploadURLAtIndex:fileType:]): Deleted.
+
+        Replaced with `-fileUploadURLsAtIndex:fileTypes:`. This implementation currently just returns the highest
+        fidelity loaded type identifier, but this is wrong because it doesn't take into account inline data types that
+        shouldn't be represented as data for file uploads (for instance, it never makes sense to upload the internal
+        data serialization for an `NSURL` as a file on the web).
+
+        Instead, use existing logic in `web_fileUploadContentTypes` to determine which file types can be treated as file
+        uploads, and return all of these file types that we've loaded.
+
 2018-12-11  Don Olmstead  <don.olmstead@sony.com>
 
         Resource Load Statistics: Use common implementation within NetworkStorageSession

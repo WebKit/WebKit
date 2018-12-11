@@ -294,9 +294,9 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
     for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
 #if ENABLE(ATTACHMENT_ELEMENT)
         auto info = strategy.informationForItemAtIndex(index, m_pasteboardName);
-        bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && !info.pathForFileUpload.isEmpty();
+        bool canReadAttachment = policy == WebContentReadingPolicy::AnyType && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && !info.pathsForFileUpload.isEmpty();
         if (canReadAttachment && info.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment) {
-            reader.readFilePaths({ info.pathForFileUpload });
+            reader.readFilePaths({ info.pathsForFileUpload.first() });
             continue;
         }
 #endif
@@ -317,7 +317,7 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader,
         }
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (canReadAttachment && result == ReaderResult::DidNotReadType)
-            reader.readFilePaths({ info.pathForFileUpload });
+            reader.readFilePaths({ info.pathsForFileUpload.first() });
 #endif
     }
 }
@@ -459,7 +459,7 @@ Vector<String> Pasteboard::readFilePaths()
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
         // Currently, drag and drop is the only case on iOS where the "pasteboard" may contain file paths.
-        auto filePath = strategy.informationForItemAtIndex(index, m_pasteboardName).pathForFileUpload;
+        auto filePath = strategy.informationForItemAtIndex(index, m_pasteboardName).pathsForFileUpload.first();
         if (!filePath.isEmpty())
             filePaths.append(WTFMove(filePath));
     }
