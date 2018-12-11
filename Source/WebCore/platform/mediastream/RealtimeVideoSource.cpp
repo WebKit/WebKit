@@ -47,7 +47,7 @@ RealtimeVideoSource::RealtimeVideoSource(String&& name, String&& id, String&& ha
 RealtimeVideoSource::~RealtimeVideoSource()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoFactory().unsetActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -56,7 +56,7 @@ void RealtimeVideoSource::prepareToProduceData()
     ASSERT(frameRate());
 
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoFactory().setActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
 #endif
 
     if (size().isEmpty() && !m_defaultSize.isEmpty())

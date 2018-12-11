@@ -1,5 +1,67 @@
 2018-12-10  Youenn Fablet  <youenn@apple.com>
 
+        Remove derived classes of RealtimeMediaSourceCenter
+        https://bugs.webkit.org/show_bug.cgi?id=192546
+
+        Reviewed by Eric Carlson.
+
+        Remove virtual methods of RealtimeMediaSourceCenter and remove derived classes of it.
+        Instead port specific implementation directly implement the needed default factory methods.
+
+        Renamed some methods for improved consistency.
+        Moved some static variables as RealtimeMediaSourceCenter members.
+
+        No change of behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DeprecatedGlobalSettings.cpp:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::createMediaStream):
+        (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices):
+        (WebCore::RealtimeMediaSourceCenter::getUserMediaDevices):
+        (WebCore::RealtimeMediaSourceCenter::setVideoCapturePageState):
+        (WebCore::RealtimeMediaSourceCenter::setAudioFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetAudioFactory):
+        (WebCore::RealtimeMediaSourceCenter::audioCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::setVideoFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetVideoFactory):
+        (WebCore::RealtimeMediaSourceCenter::videoCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::setDisplayCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::unsetDisplayCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::displayCaptureFactory):
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::~RealtimeVideoSource):
+        (WebCore::RealtimeVideoSource::prepareToProduceData):
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.cpp:
+        (WebCore::RealtimeMediaSourceCenter::singleton):
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultDisplayCaptureFactory):
+        * platform/mediastream/gstreamer/RealtimeMediaSourceCenterLibWebRTC.h: Removed.
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::~AVVideoCaptureSource):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenter::singleton):
+        (WebCore::RealtimeMediaSourceCenter::defaultAudioCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultVideoCaptureFactory):
+        (WebCore::RealtimeMediaSourceCenter::defaultDisplayCaptureFactory):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h: Removed.
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::~MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled):
+        (WebCore::MockRealtimeMediaSourceCenter::audioCaptureFactory):
+        (WebCore::MockRealtimeMediaSourceCenter::videoCaptureFactory):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
         DataChannels created asynchronously never open and are unusable
         https://bugs.webkit.org/show_bug.cgi?id=192566
 

@@ -66,8 +66,8 @@ private:
     MockRealtimeMediaSourceCenter() = default;
     friend NeverDestroyed<MockRealtimeMediaSourceCenter>;
 
-    AudioCaptureFactory& audioFactory();
-    VideoCaptureFactory& videoFactory();
+    AudioCaptureFactory& audioCaptureFactory();
+    VideoCaptureFactory& videoCaptureFactory();
     DisplayCaptureFactory& displayCaptureFactory();
 
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {

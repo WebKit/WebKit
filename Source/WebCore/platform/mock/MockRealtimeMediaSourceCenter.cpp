@@ -194,18 +194,18 @@ void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool
 
     if (active) {
         if (mock.m_isMockAudioCaptureEnabled)
-            center.setAudioFactory(mock.audioFactory());
+            center.setAudioCaptureFactory(mock.audioCaptureFactory());
         if (mock.m_isMockVideoCaptureEnabled)
-            center.setVideoFactory(mock.videoFactory());
+            center.setVideoCaptureFactory(mock.videoCaptureFactory());
         if (mock.m_isMockDisplayCaptureEnabled)
             center.setDisplayCaptureFactory(mock.displayCaptureFactory());
         return;
     }
 
     if (mock.m_isMockAudioCaptureEnabled)
-        center.unsetAudioFactory(mock.audioFactory());
+        center.unsetAudioCaptureFactory(mock.audioCaptureFactory());
     if (mock.m_isMockVideoCaptureEnabled)
-        center.unsetVideoFactory(mock.videoFactory());
+        center.unsetVideoCaptureFactory(mock.videoCaptureFactory());
     if (mock.m_isMockDisplayCaptureEnabled)
         center.unsetDisplayCaptureFactory(mock.displayCaptureFactory());
 }
@@ -335,13 +335,13 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
     return displayDevices;
 }
 
-AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioFactory()
+AudioCaptureFactory& MockRealtimeMediaSourceCenter::audioCaptureFactory()
 {
     static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
     return factory.get();
 }
 
-VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoFactory()
+VideoCaptureFactory& MockRealtimeMediaSourceCenter::videoCaptureFactory()
 {
     static NeverDestroyed<MockRealtimeVideoSourceFactory> factory;
     return factory.get();

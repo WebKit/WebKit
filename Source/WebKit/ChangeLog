@@ -1,3 +1,18 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        Remove derived classes of RealtimeMediaSourceCenter
+        https://bugs.webkit.org/show_bug.cgi?id=192546
+
+        Reviewed by Eric Carlson.
+
+        pdate code according WebCore changes.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints):
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::~UserMediaCaptureManager):
+        (WebKit::UserMediaCaptureManager::initialize):
+
 2018-12-10  Tim Horton  <timothy_horton@apple.com>
 
         Animated scrolling on Google Maps scrolls the page in addition to moving the map

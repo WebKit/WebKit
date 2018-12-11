@@ -62,7 +62,7 @@ DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa(String&& name)
 DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoFactory().unsetActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -122,7 +122,7 @@ void DisplayCaptureSourceCocoa::settingsDidChange(OptionSet<RealtimeMediaSourceS
 void DisplayCaptureSourceCocoa::startProducingData()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().videoFactory().setActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
 #endif
 
     m_startTime = MonotonicTime::now();

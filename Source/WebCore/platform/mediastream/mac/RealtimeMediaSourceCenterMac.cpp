@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
+#include "RealtimeMediaSourceCenter.h"
 
 #if ENABLE(MEDIA_STREAM)
-#include "RealtimeMediaSourceCenterMac.h"
-
 #include "AVCaptureDeviceManager.h"
 #include "AVVideoCaptureSource.h"
 #include "CoreAudioCaptureSource.h"
@@ -97,35 +96,18 @@ private:
     CaptureDeviceManager& displayCaptureDeviceManager() { return DisplayCaptureManagerCocoa::singleton(); }
 };
 
-RealtimeMediaSourceCenterMac& RealtimeMediaSourceCenterMac::singleton()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<RealtimeMediaSourceCenterMac> center;
-    return center;
-}
-
-RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::platformCenter()
-{
-    return RealtimeMediaSourceCenterMac::singleton();
-}
-
-RealtimeMediaSourceCenterMac::RealtimeMediaSourceCenterMac() = default;
-
-RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac() = default;
-
-
-AudioCaptureFactory& RealtimeMediaSourceCenterMac::audioFactoryPrivate()
+AudioCaptureFactory& RealtimeMediaSourceCenter::defaultAudioCaptureFactory()
 {
     return CoreAudioCaptureSource::factory();
 }
 
-VideoCaptureFactory& RealtimeMediaSourceCenterMac::videoFactoryPrivate()
+VideoCaptureFactory& RealtimeMediaSourceCenter::defaultVideoCaptureFactory()
 {
     static NeverDestroyed<VideoCaptureSourceFactoryMac> factory;
     return factory.get();
 }
 
-DisplayCaptureFactory& RealtimeMediaSourceCenterMac::displayCaptureFactoryPrivate()
+DisplayCaptureFactory& RealtimeMediaSourceCenter::defaultDisplayCaptureFactory()
 {
     static NeverDestroyed<DisplayCaptureSourceFactoryMac> factory;
     return factory.get();

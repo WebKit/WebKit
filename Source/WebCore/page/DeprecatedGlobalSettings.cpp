@@ -34,9 +34,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MockRealtimeMediaSourceCenter.h"
 
-#if USE(AVFOUNDATION)
-#include "RealtimeMediaSourceCenterMac.h"
-#endif
 #endif
 
 namespace WebCore {

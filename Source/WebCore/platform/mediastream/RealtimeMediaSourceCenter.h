@@ -55,34 +55,32 @@ struct MediaConstraints;
     
 class RealtimeMediaSourceCenter {
 public:
-    static RealtimeMediaSourceCenter& platformCenter();
-    virtual ~RealtimeMediaSourceCenter();
+    ~RealtimeMediaSourceCenter();
 
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
 
     using ValidConstraintsHandler = WTF::Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
-    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
+    WEBCORE_EXPORT void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
 
     using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
-    virtual void createMediaStream(NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
+    void createMediaStream(NewMediaStreamHandler&&, String&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT Vector<CaptureDevice> getMediaStreamDevices();
-    WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
-    
+
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 
-    WEBCORE_EXPORT static AudioCaptureFactory& audioFactory();
-    WEBCORE_EXPORT static void setAudioFactory(AudioCaptureFactory&);
-    WEBCORE_EXPORT static void unsetAudioFactory(AudioCaptureFactory&);
+    WEBCORE_EXPORT AudioCaptureFactory& audioCaptureFactory();
+    WEBCORE_EXPORT void setAudioCaptureFactory(AudioCaptureFactory&);
+    WEBCORE_EXPORT void unsetAudioCaptureFactory(AudioCaptureFactory&);
 
-    WEBCORE_EXPORT static VideoCaptureFactory& videoFactory();
-    WEBCORE_EXPORT static void setVideoFactory(VideoCaptureFactory&);
-    WEBCORE_EXPORT static void unsetVideoFactory(VideoCaptureFactory&);
+    WEBCORE_EXPORT VideoCaptureFactory& videoCaptureFactory();
+    WEBCORE_EXPORT void setVideoCaptureFactory(VideoCaptureFactory&);
+    WEBCORE_EXPORT void unsetVideoCaptureFactory(VideoCaptureFactory&);
 
-    WEBCORE_EXPORT static DisplayCaptureFactory& displayCaptureFactory();
-    WEBCORE_EXPORT static void setDisplayCaptureFactory(DisplayCaptureFactory&);
-    WEBCORE_EXPORT static void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
+    WEBCORE_EXPORT DisplayCaptureFactory& displayCaptureFactory();
+    WEBCORE_EXPORT void setDisplayCaptureFactory(DisplayCaptureFactory&);
+    WEBCORE_EXPORT void unsetDisplayCaptureFactory(DisplayCaptureFactory&);
 
     WEBCORE_EXPORT String hashStringWithSalt(const String& id, const String& hashSalt);
 
@@ -92,16 +90,14 @@ public:
 
     void captureDevicesChanged();
 
-protected:
-    RealtimeMediaSourceCenter();
-
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-
-    WEBCORE_EXPORT virtual AudioCaptureFactory& audioFactoryPrivate() = 0;
-    WEBCORE_EXPORT virtual VideoCaptureFactory& videoFactoryPrivate() = 0;
-    WEBCORE_EXPORT virtual DisplayCaptureFactory& displayCaptureFactoryPrivate() = 0;
-
 private:
+    RealtimeMediaSourceCenter();
+    friend class NeverDestroyed<RealtimeMediaSourceCenter>;
+
+    AudioCaptureFactory& defaultAudioCaptureFactory();
+    VideoCaptureFactory& defaultVideoCaptureFactory();
+    DisplayCaptureFactory& defaultDisplayCaptureFactory();
+
     struct DeviceInfo {
         unsigned fitnessScore;
         CaptureDevice device;
@@ -110,7 +106,13 @@ private:
     void getDisplayMediaDevices(const MediaStreamRequest&, Vector<DeviceInfo>&, String&);
     void getUserMediaDevices(const MediaStreamRequest&, String&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
 
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
+
     WTF::Function<void()> m_deviceChangedObserver;
+
+    AudioCaptureFactory* m_audioCaptureFactoryOverride { nullptr };
+    VideoCaptureFactory* m_videoCaptureFactoryOverride { nullptr };
+    DisplayCaptureFactory* m_displayCaptureFactoryOverride { nullptr };
 };
 
 } // namespace WebCore

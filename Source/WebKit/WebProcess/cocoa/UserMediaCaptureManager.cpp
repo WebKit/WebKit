@@ -206,9 +206,9 @@ UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
 
 UserMediaCaptureManager::~UserMediaCaptureManager()
 {
-    RealtimeMediaSourceCenter::unsetAudioFactory(*this);
-    RealtimeMediaSourceCenter::unsetDisplayCaptureFactory(*this);
-    RealtimeMediaSourceCenter::unsetVideoFactory(*this);
+    RealtimeMediaSourceCenter::singleton().unsetAudioCaptureFactory(*this);
+    RealtimeMediaSourceCenter::singleton().unsetDisplayCaptureFactory(*this);
+    RealtimeMediaSourceCenter::singleton().unsetVideoCaptureFactory(*this);
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
 }
 
@@ -224,11 +224,11 @@ void UserMediaCaptureManager::initialize(const WebProcessCreationParameters& par
     MockRealtimeMediaSourceCenter::singleton().setMockDisplayCaptureEnabled(!parameters.shouldCaptureDisplayInUIProcess);
 
     if (parameters.shouldCaptureAudioInUIProcess)
-        RealtimeMediaSourceCenter::setAudioFactory(*this);
+        RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(*this);
     if (parameters.shouldCaptureVideoInUIProcess)
-        RealtimeMediaSourceCenter::setVideoFactory(*this);
+        RealtimeMediaSourceCenter::singleton().setVideoCaptureFactory(*this);
     if (parameters.shouldCaptureDisplayInUIProcess)
-        RealtimeMediaSourceCenter::setDisplayCaptureFactory(*this);
+        RealtimeMediaSourceCenter::singleton().setDisplayCaptureFactory(*this);
 }
 
 WebCore::CaptureSourceOrError UserMediaCaptureManager::createCaptureSource(const CaptureDevice& device, String&& hashSalt, const WebCore::MediaConstraints* constraints)

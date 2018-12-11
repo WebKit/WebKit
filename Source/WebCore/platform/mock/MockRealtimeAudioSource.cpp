@@ -72,7 +72,7 @@ MockRealtimeAudioSource::MockRealtimeAudioSource(String&& deviceID, String&& nam
 MockRealtimeAudioSource::~MockRealtimeAudioSource()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().audioFactory().unsetActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().unsetActiveSource(*this);
 #endif
 }
 
@@ -120,7 +120,7 @@ void MockRealtimeAudioSource::settingsDidChange(OptionSet<RealtimeMediaSourceSet
 void MockRealtimeAudioSource::startProducingData()
 {
 #if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().audioFactory().setActiveSource(*this);
+    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
 #endif
 
     if (!sampleRate())

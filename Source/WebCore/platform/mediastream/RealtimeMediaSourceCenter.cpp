@@ -42,10 +42,11 @@
 
 namespace WebCore {
 
-
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
 {
-    return RealtimeMediaSourceCenter::platformCenter();
+    ASSERT(isMainThread());
+    static NeverDestroyed<RealtimeMediaSourceCenter> center;
+    return center;
 }
 
 RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
@@ -68,7 +69,7 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
     String invalidConstraint;
 
     if (audioDevice) {
-        auto audioSource = audioFactory().createAudioCaptureSource(WTFMove(audioDevice), String { hashSalt }, &request.audioConstraints);
+        auto audioSource = audioCaptureFactory().createAudioCaptureSource(WTFMove(audioDevice), String { hashSalt }, &request.audioConstraints);
         if (audioSource)
             audioSources.append(audioSource.source());
         else {
@@ -84,7 +85,7 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
     if (videoDevice) {
         CaptureSourceOrError videoSource;
         if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
-            videoSource = videoFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
+            videoSource = videoCaptureFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
         else
             videoSource = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), &request.videoConstraints);
 
@@ -106,11 +107,11 @@ void RealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler&& comple
 Vector<CaptureDevice> RealtimeMediaSourceCenter::getMediaStreamDevices()
 {
     Vector<CaptureDevice> result;
-    for (auto& device : audioFactory().audioCaptureDeviceManager().captureDevices()) {
+    for (auto& device : audioCaptureFactory().audioCaptureDeviceManager().captureDevices()) {
         if (device.enabled())
             result.append(device);
     }
-    for (auto& device : videoFactory().videoCaptureDeviceManager().captureDevices()) {
+    for (auto& device : videoCaptureFactory().videoCaptureDeviceManager().captureDevices()) {
         if (device.enabled())
             result.append(device);
     }
@@ -191,11 +192,11 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
 {
     String invalidConstraint;
     if (request.audioConstraints.isValid) {
-        for (auto& device : audioFactory().audioCaptureDeviceManager().captureDevices()) {
+        for (auto& device : audioCaptureFactory().audioCaptureDeviceManager().captureDevices()) {
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = audioFactory().createAudioCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = audioCaptureFactory().createAudioCaptureSource(device, String { hashSalt }, { });
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.audioConstraints, invalidConstraint))
                 audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
@@ -205,11 +206,11 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
     }
 
     if (request.videoConstraints.isValid) {
-        for (auto& device : videoFactory().videoCaptureDeviceManager().captureDevices()) {
+        for (auto& device : videoCaptureFactory().videoCaptureDeviceManager().captureDevices()) {
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = videoFactory().createVideoCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = videoCaptureFactory().createVideoCaptureSource(device, String { hashSalt }, { });
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
                 videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
@@ -263,81 +264,57 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
 
 void RealtimeMediaSourceCenter::setVideoCapturePageState(bool interrupted, bool pageMuted)
 {
-    videoFactory().setVideoCapturePageState(interrupted, pageMuted);
+    videoCaptureFactory().setVideoCapturePageState(interrupted, pageMuted);
 }
 
-std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+void RealtimeMediaSourceCenter::setAudioCaptureFactory(AudioCaptureFactory& factory)
 {
-    switch (type) {
-    case CaptureDevice::DeviceType::Camera:
-        return videoFactory().videoCaptureDeviceManager().captureDeviceWithPersistentID(type, id);
-        break;
-    case CaptureDevice::DeviceType::Microphone:
-        return audioFactory().audioCaptureDeviceManager().captureDeviceWithPersistentID(type, id);
-        break;
-    case CaptureDevice::DeviceType::Screen:
-    case CaptureDevice::DeviceType::Application:
-    case CaptureDevice::DeviceType::Window:
-    case CaptureDevice::DeviceType::Browser:
-        return displayCaptureFactory().displayCaptureDeviceManager().captureDeviceWithPersistentID(type, id);
-        break;
-    case CaptureDevice::DeviceType::Unknown:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return std::nullopt;
+    m_audioCaptureFactoryOverride = &factory;
 }
 
-static AudioCaptureFactory* audioFactoryOverride;
-void RealtimeMediaSourceCenter::setAudioFactory(AudioCaptureFactory& factory)
+void RealtimeMediaSourceCenter::unsetAudioCaptureFactory(AudioCaptureFactory& oldOverride)
 {
-    audioFactoryOverride = &factory;
-}
-void RealtimeMediaSourceCenter::unsetAudioFactory(AudioCaptureFactory& oldOverride)
-{
-    ASSERT_UNUSED(oldOverride, audioFactoryOverride == &oldOverride);
-    if (&oldOverride == audioFactoryOverride)
-        audioFactoryOverride = nullptr;
+    ASSERT_UNUSED(oldOverride, m_audioCaptureFactoryOverride == &oldOverride);
+    if (&oldOverride == m_audioCaptureFactoryOverride)
+        m_audioCaptureFactoryOverride = nullptr;
 }
 
-AudioCaptureFactory& RealtimeMediaSourceCenter::audioFactory()
+AudioCaptureFactory& RealtimeMediaSourceCenter::audioCaptureFactory()
 {
-    return audioFactoryOverride ? *audioFactoryOverride : RealtimeMediaSourceCenter::singleton().audioFactoryPrivate();
+    return m_audioCaptureFactoryOverride ? *m_audioCaptureFactoryOverride : defaultAudioCaptureFactory();
 }
 
-static VideoCaptureFactory* videoFactoryOverride;
-void RealtimeMediaSourceCenter::setVideoFactory(VideoCaptureFactory& factory)
+void RealtimeMediaSourceCenter::setVideoCaptureFactory(VideoCaptureFactory& factory)
 {
-    videoFactoryOverride = &factory;
+    m_videoCaptureFactoryOverride = &factory;
 }
-void RealtimeMediaSourceCenter::unsetVideoFactory(VideoCaptureFactory& oldOverride)
+void RealtimeMediaSourceCenter::unsetVideoCaptureFactory(VideoCaptureFactory& oldOverride)
 {
-    ASSERT_UNUSED(oldOverride, videoFactoryOverride == &oldOverride);
-    if (&oldOverride == videoFactoryOverride)
-        videoFactoryOverride = nullptr;
-}
-
-VideoCaptureFactory& RealtimeMediaSourceCenter::videoFactory()
-{
-    return videoFactoryOverride ? *videoFactoryOverride : RealtimeMediaSourceCenter::singleton().videoFactoryPrivate();
+    ASSERT_UNUSED(oldOverride, m_videoCaptureFactoryOverride == &oldOverride);
+    if (&oldOverride == m_videoCaptureFactoryOverride)
+        m_videoCaptureFactoryOverride = nullptr;
 }
 
-static DisplayCaptureFactory* displayCaptureFactoryOverride;
+VideoCaptureFactory& RealtimeMediaSourceCenter::videoCaptureFactory()
+{
+    return m_videoCaptureFactoryOverride ? *m_videoCaptureFactoryOverride : defaultVideoCaptureFactory();
+}
+
 void RealtimeMediaSourceCenter::setDisplayCaptureFactory(DisplayCaptureFactory& factory)
 {
-    displayCaptureFactoryOverride = &factory;
+    m_displayCaptureFactoryOverride = &factory;
 }
+
 void RealtimeMediaSourceCenter::unsetDisplayCaptureFactory(DisplayCaptureFactory& oldOverride)
 {
-    ASSERT_UNUSED(oldOverride, displayCaptureFactoryOverride == &oldOverride);
-    if (&oldOverride == displayCaptureFactoryOverride)
-        displayCaptureFactoryOverride = nullptr;
+    ASSERT_UNUSED(oldOverride, m_displayCaptureFactoryOverride == &oldOverride);
+    if (&oldOverride == m_displayCaptureFactoryOverride)
+        m_displayCaptureFactoryOverride = nullptr;
 }
 
 DisplayCaptureFactory& RealtimeMediaSourceCenter::displayCaptureFactory()
 {
-    return displayCaptureFactoryOverride ? *displayCaptureFactoryOverride : RealtimeMediaSourceCenter::singleton().displayCaptureFactoryPrivate();
+    return m_displayCaptureFactoryOverride ? *m_displayCaptureFactoryOverride : defaultDisplayCaptureFactory();
 }
 
 } // namespace WebCore
