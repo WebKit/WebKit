@@ -43,7 +43,7 @@ GPULegacyCommandBuffer::GPULegacyCommandBuffer(const GPULegacyCommandQueue& queu
 
     m_metal = [queue.metal() commandBuffer];
 
-    [m_metal addCompletedHandler:BlockPtr<void (id<MTLCommandBuffer>)>::fromCallable([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
+    [m_metal addCompletedHandler:makeBlockPtr([completedCallback = WTFMove(completedCallback)] (id<MTLCommandBuffer>) mutable {
         callOnMainThread(WTFMove(completedCallback));
     }).get()];
 }

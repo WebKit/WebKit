@@ -47,6 +47,20 @@ TEST(BlockPtr, FromLambda)
     });
 
     EXPECT_EQ(10u, block());
+
+    moveOnly = 20;
+    block = makeBlockPtr([moveOnly = WTFMove(moveOnly)] {
+        return moveOnly.value();
+    });
+
+    EXPECT_EQ(20u, block());
+
+    moveOnly = 30;
+    block = makeBlockPtr([moveOnly = WTFMove(moveOnly)]() mutable {
+        return moveOnly.value();
+    });
+
+    EXPECT_EQ(30u, block());
 }
 
 }

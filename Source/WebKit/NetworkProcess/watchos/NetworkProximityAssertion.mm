@@ -184,7 +184,7 @@ void BluetoothProximityAssertion::suspend(SuspensionReason reason, CompletionHan
         // completion handler. If we suspend before IDS finishes setting link preferences, the
         // Bluetooth radio might stay in a high power mode, harming battery life. Delay suspension
         // by 30 seconds to ensure -setLinkPreferences: always finishes its work.
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC), dispatch_get_main_queue(), BlockPtr<void()>::fromCallable(WTFMove(completionHandler)).get());
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC), dispatch_get_main_queue(), makeBlockPtr(WTFMove(completionHandler)).get());
         break;
     }
 }

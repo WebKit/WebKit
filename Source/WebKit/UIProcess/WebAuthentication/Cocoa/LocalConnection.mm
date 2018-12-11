@@ -42,7 +42,7 @@ void LocalConnection::getUserConsent(const String& reason, UserConsentCallback&&
     // FIXME(182772)
 #if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
-    auto reply = BlockPtr<void(BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
+    auto reply = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
 
         UserConsent consent = UserConsent::Yes;
@@ -63,7 +63,7 @@ void LocalConnection::getUserConsent(const String& reason, SecAccessControlRef a
     // FIXME(182772)
 #if PLATFORM(IOS_FAMILY)
     auto context = adoptNS([allocLAContextInstance() init]);
-    auto reply = BlockPtr<void(BOOL, NSError *)>::fromCallable([context, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
+    auto reply = makeBlockPtr([context, completionHandler = WTFMove(completionHandler)] (BOOL success, NSError *error) mutable {
         ASSERT(!RunLoop::isMain());
 
         UserConsent consent = UserConsent::Yes;
@@ -113,7 +113,7 @@ void LocalConnection::getAttestation(const String& rpId, const String& username,
     };
 
     // FIXME(183652): Reduce prompt for biometrics
-    DeviceIdentityIssueClientCertificateWithCompletion(dispatch_get_main_queue(), options, BlockPtr<void(SecKeyRef, NSArray *, NSError *)>::fromCallable(WTFMove(completionHandler)).get());
+    DeviceIdentityIssueClientCertificateWithCompletion(dispatch_get_main_queue(), options, makeBlockPtr(WTFMove(completionHandler)).get());
 #endif
 }
 

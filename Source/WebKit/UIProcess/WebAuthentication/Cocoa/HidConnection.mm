@@ -86,7 +86,7 @@ void HidConnection::terminate()
 void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
 {
     ASSERT(m_initialized);
-    auto task = BlockPtr<void()>::fromCallable([device = m_device, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
+    auto task = makeBlockPtr([device = m_device, data = WTFMove(data), callback = WTFMove(callback)]() mutable {
         ASSERT(!RunLoop::isMain());
 
         DataSent sent = DataSent::Yes;

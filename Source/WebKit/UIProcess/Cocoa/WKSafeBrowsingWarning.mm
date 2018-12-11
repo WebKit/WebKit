@@ -464,7 +464,7 @@ static void setBackground(ViewType *view, ColorType *color)
         [alert setInformativeText:WEB_UI_NSSTRING(@"Merely visiting a site is sufficient for malware to install itself and harm your computer.", "Malware confirmation dialog")];
         [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Cancel", "Cancel")];
         [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Continue", "Continue")];
-        [alert beginSheetModalForWindow:self.window completionHandler:BlockPtr<void(NSModalResponse)>::fromCallable([weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), alert](NSModalResponse returnCode) {
+        [alert beginSheetModalForWindow:self.window completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKSafeBrowsingWarning>(self), alert](NSModalResponse returnCode) {
             if (auto strongSelf = weakSelf.get()) {
                 if (returnCode == NSAlertSecondButtonReturn && strongSelf->_completionHandler)
                     strongSelf->_completionHandler(WebKit::ContinueUnsafeLoad::Yes);

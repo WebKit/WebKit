@@ -68,7 +68,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
         return callOnMainThread(WTFMove(function));
 
     // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
-    auto block = BlockPtr<void()>::fromCallable([alreadyCalled = false, function = WTFMove(function)] () mutable {
+    auto block = makeBlockPtr([alreadyCalled = false, function = WTFMove(function)] () mutable {
         if (alreadyCalled)
             return;
         alreadyCalled = true;

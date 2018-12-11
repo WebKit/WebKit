@@ -2467,7 +2467,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
     });
 #else
     WebThreadRun(
-        BlockPtr<void()>::fromCallable([protectedThis = makeRef(*this), callbackID, protectedResult] {
+        makeBlockPtr([protectedThis = makeRef(*this), callbackID, protectedResult] {
             JSContextRef context = protectedThis->mainFrameJSContext();
             JSValueRef resultValue = JSValueMakeString(context, protectedResult.get());
             protectedThis->callTestRunnerCallback(callbackID, 1, &resultValue);

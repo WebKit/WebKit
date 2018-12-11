@@ -67,7 +67,7 @@ static NSString * const countOfBytesReceivedKeyPath = @"countOfBytesReceived";
     m_sandboxExtension = sandboxExtension;
 
     self.cancellable = YES;
-    self.cancellationHandler = BlockPtr<void()>::fromCallable([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] {
+    self.cancellationHandler = makeBlockPtr([weakSelf = WeakObjCPtr<WKDownloadProgress> { self }] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;

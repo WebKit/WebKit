@@ -191,6 +191,24 @@ inline BlockPtr<R (Args...)> makeBlockPtr(R (^block)(Args...))
     return BlockPtr<R (Args...)>(block);
 }
 
+template<typename F, typename Class, typename R, typename... Args>
+inline auto makeBlockPtr(F&& function, R (Class::*)(Args...) const)
+{
+    return BlockPtr<R (Args...)>::fromCallable(std::forward<F>(function));
+}
+
+template<typename F, typename Class, typename R, typename... Args>
+inline auto makeBlockPtr(F&& function, R (Class::*)(Args...))
+{
+    return BlockPtr<R (Args...)>::fromCallable(std::forward<F>(function));
+}
+
+template<typename F>
+inline auto makeBlockPtr(F&& function)
+{
+    return makeBlockPtr(std::forward<F>(function), &F::operator());
+}
+
 }
 
 using WTF::BlockPtr;

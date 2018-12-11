@@ -132,7 +132,7 @@ NS_ASSUME_NONNULL_END
 - (void)addDelegateOperation:(Function<void()>&&)function
 {
     RetainPtr<WebCoreNSURLSession> strongSelf { self };
-    RetainPtr<NSBlockOperation> operation = [NSBlockOperation blockOperationWithBlock:BlockPtr<void()>::fromCallable(WTFMove(function)).get()];
+    RetainPtr<NSBlockOperation> operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr(WTFMove(function)).get()];
     dispatch_async(_internalQueue.get(), [strongSelf, operation] {
         [strongSelf.get().delegateQueue addOperation:operation.get()];
         [operation waitUntilFinished];
@@ -707,7 +707,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]) {
-            auto completionHandlerBlock = BlockPtr<void(NSURLRequest *)>::fromCallable([completionHandler = WTFMove(completionHandler)](NSURLRequest *newRequest) mutable {
+            auto completionHandlerBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSURLRequest *newRequest) mutable {
                 if (!isMainThread()) {
                     callOnMainThread([request = ResourceRequest { newRequest }, completionHandler = WTFMove(completionHandler)] () mutable {
                         completionHandler(WTFMove(request));

@@ -141,7 +141,7 @@ static void* progressObservingContext = &progressObservingContext;
 
     currentTestRunner = self;
 
-    m_unpublishingBlock = BlockPtr<void(void)>::fromCallable([self] {
+    m_unpublishingBlock = makeBlockPtr([self] {
         [self _didLoseProgress];
     }).get();
 
@@ -210,7 +210,7 @@ static void* progressObservingContext = &progressObservingContext;
 - (void)subscribeAndWaitForProgress
 {
     if (!m_progressSubscriber) {
-        auto publishingHandler = BlockPtr<NSProgressUnpublishingHandler(NSProgress *)>::fromCallable([weakSelf = WeakObjCPtr<DownloadProgressTestRunner> { self }](NSProgress *progress) {
+        auto publishingHandler = makeBlockPtr([weakSelf = WeakObjCPtr<DownloadProgressTestRunner> { self }](NSProgress *progress) {
             if (auto strongSelf = weakSelf.get()) {
                 [strongSelf.get() _didGetProgress:progress];
                 return strongSelf->m_unpublishingBlock.get();

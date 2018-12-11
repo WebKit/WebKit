@@ -39,7 +39,7 @@ void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& call
 {
 #if PLATFORM(COCOA)
     int token;
-    notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), BlockPtr<void(int)>::fromCallable([callback = WTFMove(callback)](int) {
+    notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), makeBlockPtr([callback = WTFMove(callback)](int) {
         callback();
     }).get());
 #else

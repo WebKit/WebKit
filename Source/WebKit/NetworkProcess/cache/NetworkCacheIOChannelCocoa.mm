@@ -91,7 +91,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
     RefPtr<IOChannel> channel(this);
     bool didCallCompletionHandler = false;
     auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
-    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
+    dispatch_io_read(m_dispatchIO.get(), offset, size, dispatchQueue, makeBlockPtr([channel, completionHandler = WTFMove(completionHandler), didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done || !didCallCompletionHandler);
         if (didCallCompletionHandler)
             return;
@@ -107,7 +107,7 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, Functio
     RefPtr<IOChannel> channel(this);
     auto dispatchData = data.dispatchData();
     auto dispatchQueue = queue ? queue->dispatchQueue() : dispatch_get_main_queue();
-    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, BlockPtr<void(bool, dispatch_data_t, int)>::fromCallable([channel, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t fileData, int error) mutable {
+    dispatch_io_write(m_dispatchIO.get(), offset, dispatchData, dispatchQueue, makeBlockPtr([channel, completionHandler = WTFMove(completionHandler)](bool done, dispatch_data_t fileData, int error) mutable {
         ASSERT_UNUSED(done, done);
         auto callback = WTFMove(completionHandler);
         callback(error);

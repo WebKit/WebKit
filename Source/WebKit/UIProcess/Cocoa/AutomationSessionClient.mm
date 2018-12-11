@@ -90,11 +90,11 @@ static inline _WKAutomationSessionBrowsingContextOptions toAPI(API::AutomationSe
 void AutomationSessionClient::requestNewPageWithOptions(WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
 {
     if (m_delegateMethods.requestNewWebViewWithOptions) {
-        [m_delegate.get() _automationSession:wrapper(session) requestNewWebViewWithOptions:toAPI(options) completionHandler:BlockPtr<void(WKWebView *)>::fromCallable([completionHandler = WTFMove(completionHandler)](WKWebView *webView) mutable {
+        [m_delegate.get() _automationSession:wrapper(session) requestNewWebViewWithOptions:toAPI(options) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](WKWebView *webView) mutable {
             completionHandler(webView->_page.get());
         }).get()];
     } else if (m_delegateMethods.requestNewPageWithOptions) {
-        [m_delegate.get() _automationSession:wrapper(session) requestNewPageWithOptions:toAPI(options) completionHandler:BlockPtr<void(WKPageRef)>::fromCallable([completionHandler = WTFMove(completionHandler)](WKPageRef page) mutable {
+        [m_delegate.get() _automationSession:wrapper(session) requestNewPageWithOptions:toAPI(options) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](WKPageRef page) mutable {
             completionHandler(toImpl(page));
         }).get()];
     }
@@ -107,7 +107,7 @@ void AutomationSessionClient::requestSwitchToPage(WebAutomationSession& session,
         return;
     }
 
-    auto completionBlock = BlockPtr<void()>::fromCallable(WTFMove(completionHandler));
+    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
     if (m_delegateMethods.requestSwitchToWebView)
         [m_delegate.get() _automationSession:wrapper(session) requestSwitchToWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
     else if (m_delegateMethods.requestSwitchToPage)
@@ -121,7 +121,7 @@ void AutomationSessionClient::requestHideWindowOfPage(WebAutomationSession& sess
         return;
     }
 
-    auto completionBlock = BlockPtr<void()>::fromCallable(WTFMove(completionHandler));
+    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
     if (m_delegateMethods.requestHideWindowOfWebView)
         [m_delegate.get() _automationSession:wrapper(session) requestHideWindowOfWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
     else if (m_delegateMethods.requestHideWindowOfPage)
@@ -135,7 +135,7 @@ void AutomationSessionClient::requestRestoreWindowOfPage(WebAutomationSession& s
         return;
     }
 
-    auto completionBlock = BlockPtr<void()>::fromCallable(WTFMove(completionHandler));
+    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
     if (m_delegateMethods.requestRestoreWindowOfWebView)
         [m_delegate.get() _automationSession:wrapper(session) requestRestoreWindowOfWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
     else if (m_delegateMethods.requestRestoreWindowOfPage)
@@ -149,7 +149,7 @@ void AutomationSessionClient::requestMaximizeWindowOfPage(WebAutomationSession& 
         return;
     }
 
-    auto completionBlock = BlockPtr<void()>::fromCallable(WTFMove(completionHandler));
+    auto completionBlock = makeBlockPtr(WTFMove(completionHandler));
     if (m_delegateMethods.requestMaximizeWindowOfWebView)
         [m_delegate.get() _automationSession:wrapper(session) requestMaximizeWindowOfWebView:fromWebPageProxy(page) completionHandler:completionBlock.get()];
     else if (m_delegateMethods.requestMaximizeWindowOfPage)

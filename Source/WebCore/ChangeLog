@@ -1,3 +1,24 @@
+2018-12-11  Andy Estes  <aestes@apple.com>
+
+        Introduce makeBlockPtr for lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=192594
+
+        Reviewed by Alex Christensen.
+
+        Adopted makeBlockPtr.
+
+        * platform/cocoa/FileMonitorCocoa.mm:
+        (WebCore::FileMonitor::FileMonitor):
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManagerObjC.mm:
+        (WebCore::VideoFullscreenLayerManagerObjC::setVideoFullscreenLayer):
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyCommandBufferMetal.mm:
+        (WebCore::GPULegacyCommandBuffer::GPULegacyCommandBuffer):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession addDelegateOperation:]):
+        (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:completionHandler:]):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate callFunctionOnMainThread:]):
+
 2018-12-10  Brent Fulgham  <bfulgham@apple.com>
 
         SVGViewSpec objects should mark relevant SVG elements

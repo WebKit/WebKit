@@ -73,7 +73,7 @@ static void hasCompatibleServicesForItems(dispatch_group_t group, NSArray *items
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     if ([NSSharingService respondsToSelector:@selector(getSharingServicesForItems:mask:completion:)]) {
         dispatch_group_enter(group);
-        [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:BlockPtr<void(NSArray *)>::fromCallable([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
+        [NSSharingService getSharingServicesForItems:items mask:servicesMask completion:makeBlockPtr([completionHandler = WTFMove(completionHandler), group](NSArray *services) {
             completionHandler(services.count);
             dispatch_group_leave(group);
         }).get()];
@@ -123,7 +123,7 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             m_hasRichContentServices = hasServices;
         });
 
-        dispatch_group_notify(serviceLookupGroup.get(), dispatch_get_main_queue(), BlockPtr<void(void)>::fromCallable([this] {
+        dispatch_group_notify(serviceLookupGroup.get(), dispatch_get_main_queue(), makeBlockPtr([this] {
             bool availableServicesChanged = (m_lastSentHasImageServices != m_hasImageServices) || (m_lastSentHasSelectionServices != m_hasSelectionServices) || (m_lastSentHasRichContentServices != m_hasRichContentServices);
 
             m_lastSentHasSelectionServices = m_hasSelectionServices;

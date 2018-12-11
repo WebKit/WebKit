@@ -1,3 +1,15 @@
+2018-12-11  Andy Estes  <aestes@apple.com>
+
+        Introduce makeBlockPtr for lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=192594
+
+        Reviewed by Alex Christensen.
+
+        Adopted makeBlockPtr.
+
+        * pal/Logging.cpp:
+        (PAL::registerNotifyCallback):
+
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig

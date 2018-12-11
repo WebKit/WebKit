@@ -1,3 +1,20 @@
+2018-12-11  Andy Estes  <aestes@apple.com>
+
+        Introduce makeBlockPtr for lambdas
+        https://bugs.webkit.org/show_bug.cgi?id=192594
+
+        Reviewed by Alex Christensen.
+
+        Adopted makeBlockPtr and added API tests.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::callUIScriptCallback):
+        * TestWebKitAPI/Tests/WTF/BlockPtr.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/DownloadProgress.mm:
+        (-[DownloadProgressTestRunner init]):
+        (-[DownloadProgressTestRunner subscribeAndWaitForProgress]):
+
 2018-12-11  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r238764-238783): TestWTF.WTF.StringOperators is failing

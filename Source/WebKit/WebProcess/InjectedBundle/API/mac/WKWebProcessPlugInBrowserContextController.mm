@@ -145,7 +145,7 @@ void PageLoaderClient::didStartProvisionalLoadForFrame(WebKit::WebPage&, WebKit:
     SEL selector = @selector(webProcessPlugInBrowserContextController:willStartProvisionalLoadForFrame:completionHandler:);
     if ([loadDelegate() respondsToSelector:selector]) {
         auto checker = WebKit::CompletionHandlerCallChecker::create(loadDelegate(), selector);
-        [loadDelegate() webProcessPlugInBrowserContextController:pluginContextController() willStartProvisionalLoadForFrame:wrapper(frame) completionHandler:BlockPtr<void()>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] () mutable {
+        [loadDelegate() webProcessPlugInBrowserContextController:pluginContextController() willStartProvisionalLoadForFrame:wrapper(frame) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] () mutable {
             if (checker->completionHandlerHasBeenCalled())
                 return;
             checker->didCallCompletionHandler();
