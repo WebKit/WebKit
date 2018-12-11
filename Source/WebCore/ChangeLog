@@ -1,3 +1,24 @@
+2018-12-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: overlay bounds rulers don't match element when page is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=192577
+
+        Reviewed by Joseph Pecoraro.
+
+        When drawing the highlight for a node, the canvas is translated based on the scroll position
+        of the node. This translation was not applied to the bounds calculations, which meant that
+        the bounds always drew where the node would have been if it wasn't scrolled.
+
+        * inspector/InspectorOverlayPage.js:
+        (Bounds.prototype.get minX):
+        (Bounds.prototype.get minY):
+        (Bounds.prototype.get maxX):
+        (Bounds.prototype.get maxY):
+        (Bounds.prototype.offset): Added.
+        (drawNodeHighlight):
+        Drive-by: draw bounds for every node being highlighted instead of just the first one.
+        Drive-by: switch the bounds color to be a semi-transparent red for more visibility/contrast.
+
 2018-12-11  Andy Estes  <aestes@apple.com>
 
         Introduce makeBlockPtr for lambdas

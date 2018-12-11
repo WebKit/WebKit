@@ -1,4 +1,4 @@
-const boundsColor = "rgba(0,0,0,0.4)";
+const boundsColor = "rgba(255,0,0,0.6)";
 const lightGridColor = "rgba(0,0,0,0.2)";
 const darkGridColor = "rgba(0,0,0,0.5)";
 const transparentColor = "rgba(0, 0, 0, 0)";
@@ -22,14 +22,17 @@ class Bounds {
         this._minY = Number.MAX_VALUE;
         this._maxX = Number.MIN_VALUE;
         this._maxY = Number.MIN_VALUE;
+
+        this._offsetX = 0;
+        this._offsetY = 0;
     }
 
     // Public
 
-    get minX() { return this._minX; }
-    get minY() { return this._minY; }
-    get maxX() { return this._maxX; }
-    get maxY() { return this._maxY; }
+    get minX() { return this._minX + this._offsetX; }
+    get minY() { return this._minY + this._offsetY; }
+    get maxX() { return this._maxX + this._offsetX; }
+    get maxY() { return this._maxY + this._offsetY; }
 
     update(x, y)
     {
@@ -37,6 +40,12 @@ class Bounds {
         this._minY = Math.min(this._minY, y);
         this._maxX = Math.max(this._maxX, x);
         this._maxY = Math.max(this._maxY, y);
+    }
+
+    offset(x, y)
+    {
+        this._offsetX = x || 0;
+        this._offsetY = y || 0;
     }
 }
 
@@ -50,9 +59,10 @@ function drawPausedInDebuggerMessage(message)
 
 function drawNodeHighlight(allHighlights)
 {
-    let bounds = new Bounds;
-
     for (let highlight of allHighlights) {
+        let bounds = new Bounds;
+        bounds.offset(-highlight.scrollOffset.x, -highlight.scrollOffset.y);
+
         _isolateActions(() => {
             context.translate(-highlight.scrollOffset.x, -highlight.scrollOffset.y);
 
@@ -62,10 +72,10 @@ function drawNodeHighlight(allHighlights)
             if (highlight.elementData && highlight.elementData.shapeOutsideData)
                 _drawShapeHighlight(highlight.elementData.shapeOutsideData, bounds);
         });
-    }
 
-    if (DATA.showRulers)
-        _drawBounds(bounds);
+        if (DATA.showRulers)
+            _drawBounds(bounds);
+    }
 
     if (allHighlights.length === 1) {
         for (let fragment of allHighlights[0].fragments)
