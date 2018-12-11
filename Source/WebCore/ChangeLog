@@ -1,3 +1,10 @@
+2018-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix typos in console log from r239087.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+
 2018-12-11  Tim Horton  <timothy_horton@apple.com>
 
         WebCore shouldn't have a Objective-C class named NSCursor
