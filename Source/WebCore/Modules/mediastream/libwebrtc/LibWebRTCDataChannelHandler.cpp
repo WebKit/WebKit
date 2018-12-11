@@ -69,18 +69,8 @@ Ref<RTCDataChannelEvent> LibWebRTCDataChannelHandler::channelEvent(ScriptExecuti
     init.negotiated = dataChannel->negotiated();
     init.id = dataChannel->id();
 
-    bool isOpened = dataChannel->state() == webrtc::DataChannelInterface::kOpen;
-
     auto handler =  std::make_unique<LibWebRTCDataChannelHandler>(WTFMove(dataChannel));
     auto channel = RTCDataChannel::create(context, WTFMove(handler), fromStdString(label), WTFMove(init));
-
-    if (isOpened) {
-        callOnMainThread([channel = channel.copyRef()] {
-            // FIXME: We should be able to write channel->didChangeReadyState(...)
-            RTCDataChannelHandlerClient& client = channel.get();
-            client.didChangeReadyState(RTCDataChannelState::Open);
-        });
-    }
 
     return RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(channel));
 }
@@ -96,6 +86,7 @@ void LibWebRTCDataChannelHandler::setClient(RTCDataChannelHandlerClient& client)
     ASSERT(!m_client);
     m_client = &client;
     m_channel->RegisterObserver(this);
+    checkState();
 }
 
 bool LibWebRTCDataChannelHandler::sendStringData(const String& text)
@@ -122,7 +113,11 @@ void LibWebRTCDataChannelHandler::OnStateChange()
 {
     if (!m_client)
         return;
+    checkState();
+}
 
+void LibWebRTCDataChannelHandler::checkState()
+{
     RTCDataChannelState state;
     switch (m_channel->state()) {
     case webrtc::DataChannelInterface::kConnecting:

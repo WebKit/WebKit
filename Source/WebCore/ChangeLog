@@ -1,3 +1,24 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        DataChannels created asynchronously never open and are unusable
+        https://bugs.webkit.org/show_bug.cgi?id=192566
+
+        Reviewed by Eric Carlson.
+
+        For every new data channel (remote or local), we should check the underlying backend state.
+        This allows firing events if needed.
+        We were not always doing that which was prohibiting sending some open
+        events for data channels created after the SCTP connection is set up.
+
+        Covered by updated test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::channelEvent):
+        (WebCore::LibWebRTCDataChannelHandler::setClient):
+        (WebCore::LibWebRTCDataChannelHandler::OnStateChange):
+        (WebCore::LibWebRTCDataChannelHandler::checkState):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+
 2018-12-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use WeakPtr to refer to VTTCue in VTTCueBox

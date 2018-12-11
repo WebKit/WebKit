@@ -126,6 +126,40 @@ promise_test((test) => {
     });
 }, "Basic data channel exchange from offerer to receiver");
 
+promise_test(async (test) => {
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = resolve;
+        });
+        setTimeout(() => { reject("Test step 1 timed out"); }, 5000);
+    });
+    await waitFor(50);
+    let waitForLocalChannelOpening = new Promise((resolve) => {
+        localChannel = localConnection.createDataChannel('sendDataChannel2');
+        localChannel.onopen = resolve;
+    });
+
+    let waitForRemoteChannel = new Promise((resolve) => {
+        remoteConnection.ondatachannel = (event) => {
+            remoteChannel = event.channel;
+            resolve();
+        };
+    });
+
+    await Promise.all([waitForLocalChannelOpening, waitForRemoteChannel]);
+
+    counter = 0;
+    await new Promise((resolve, reject) => {
+        finishTest = resolve;
+        remoteChannel.onmessage = receiveMessages;
+        sendMessages(localChannel);
+        setTimeout(() => { reject("Test step 2 timed out"); }, 5000);
+    });
+}, "Create a second channel asynchronously and send messages");
+
     </script>
   </body>
 </html>

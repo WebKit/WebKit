@@ -1,3 +1,13 @@
+2018-12-10  Youenn Fablet  <youenn@apple.com>
+
+        DataChannels created asynchronously never open and are unusable
+        https://bugs.webkit.org/show_bug.cgi?id=192566
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/basic-expected.txt:
+        * webrtc/datachannel/basic.html:
+
 2018-12-10  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest removes spaces from content-types before processing
