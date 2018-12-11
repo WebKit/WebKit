@@ -1,3 +1,19 @@
+2018-12-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't attempt to compute animated values when there is no relevant animation
+        https://bugs.webkit.org/show_bug.cgi?id=192591
+        <rdar://problem/34336946>
+
+        Reviewed by Dean Jackson.
+
+        Check if the property is supposed to be animated, or has animatable features, before
+        attempting to calculate the current animated value.
+
+        Test: svg/animations/avoid-calculating-for-non-animating-elements.html
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue):
+
 2018-12-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typos in console log from r239087.

@@ -91,6 +91,12 @@ void SVGAnimateElementBase::calculateAnimatedValue(float percentage, unsigned re
     if (!targetElement)
         return;
 
+    const QualifiedName& attributeName = this->attributeName();
+    ShouldApplyAnimation shouldApply = shouldApplyAnimation(targetElement.get(), attributeName);
+    
+    if (shouldApply == DontApplyAnimation)
+        return;
+
     ASSERT(m_animatedPropertyType == determineAnimatedPropertyType(*targetElement));
 
     ASSERT(percentage >= 0 && percentage <= 1);
@@ -101,6 +107,12 @@ void SVGAnimateElementBase::calculateAnimatedValue(float percentage, unsigned re
     ASSERT(m_fromType);
     ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
+
+    if (shouldApply == ApplyXMLAnimation || shouldApply == ApplyXMLandCSSAnimation) {
+        // SVG DOM animVal animation code-path.
+        if (m_animator->findAnimatedPropertiesForAttributeName(*targetElement, attributeName).isEmpty())
+            return;
+    }
 
     SVGAnimateElementBase& resultAnimationElement = downcast<SVGAnimateElementBase>(*resultElement);
     ASSERT(resultAnimationElement.m_animatedType);
