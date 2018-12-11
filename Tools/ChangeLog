@@ -1,3 +1,12 @@
+2018-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Sync FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=192565
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2018-12-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Unable to upload data that conforms to "public.item" but not "public.content"
