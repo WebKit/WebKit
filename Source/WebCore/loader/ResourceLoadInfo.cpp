@@ -55,8 +55,10 @@ ResourceType toResourceType(CachedResource::Type type)
 #endif
         return ResourceType::Font;
 
-    case CachedResource::Type::Beacon:
     case CachedResource::Type::MediaResource:
+        return ResourceType::Media;
+
+    case CachedResource::Type::Beacon:
     case CachedResource::Type::Icon:
     case CachedResource::Type::RawResource:
         return ResourceType::Raw;

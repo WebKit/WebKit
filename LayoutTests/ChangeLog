@@ -1,3 +1,14 @@
+2018-12-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        <rdar://problem/45296285> Content blocker rule "raw" blocks media elements from loading
+        https://bugs.webkit.org/show_bug.cgi?id=192439
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/contentextensions/video-element-resource-type-expected.txt: Added.
+        * http/tests/contentextensions/video-element-resource-type.html: Added.
+        * http/tests/contentextensions/video-element-resource-type.html.json: Added.
+
 2018-12-10  Justin Michaud  <justin_michaud@apple.com>
 
         CS Painting API should support multiple worklets.

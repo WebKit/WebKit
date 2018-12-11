@@ -1,3 +1,18 @@
+2018-12-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        <rdar://problem/45296285> Content blocker rule "raw" blocks media elements from loading
+        https://bugs.webkit.org/show_bug.cgi?id=192439
+
+        Reviewed by Dean Jackson.
+
+        This broken when WebKit switched to NSURLSession.
+        In CachedResourceLoader::requestResource(), toResourceType() was turning media load into RAW.
+
+        Test: http/tests/contentextensions/video-element-resource-type.html
+
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig
