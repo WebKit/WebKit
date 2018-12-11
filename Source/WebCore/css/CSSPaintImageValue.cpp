@@ -51,7 +51,7 @@ RefPtr<Image> CSSPaintImageValue::image(RenderElement& renderElement, const Floa
 {
     if (size.isEmpty())
         return nullptr;
-    auto* selectedGlobalScope = renderElement.document().paintWorkletGlobalScope();
+    auto* selectedGlobalScope = renderElement.document().paintWorkletGlobalScopeForName(m_name);
     if (!selectedGlobalScope)
         return nullptr;
     auto locker = holdLock(selectedGlobalScope->paintDefinitionLock());

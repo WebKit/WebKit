@@ -49,9 +49,10 @@ void Worklet::addModule(Document& document, const String& moduleURL)
     // https://bugs.webkit.org/show_bug.cgi?id=191136
     auto context = PaintWorkletGlobalScope::create(document, ScriptSourceCode(moduleURL));
     context->evaluate();
-    // FIXME: We should store multiple global scopes and choose between them
-    // This will not function correctly if multiple modules are added.
-    document.setPaintWorkletGlobalScope(WTFMove(context));
+
+    auto locker = holdLock(context->paintDefinitionLock());
+    for (auto& name : context->paintDefinitionMap().keys())
+        document.setPaintWorkletGlobalScopeForName(name, makeRef(context.get()));
 }
 
 } // namespace WebCore

@@ -1522,8 +1522,8 @@ public:
 
 #if ENABLE(CSS_PAINTING_API)
     Worklet& ensurePaintWorklet();
-    PaintWorkletGlobalScope* paintWorkletGlobalScope() { return m_paintWorkletGlobalScope.get(); }
-    void setPaintWorkletGlobalScope(Ref<PaintWorkletGlobalScope>&&);
+    PaintWorkletGlobalScope* paintWorkletGlobalScopeForName(const String& name);
+    void setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&&);
 #endif
 
     void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
@@ -2072,7 +2072,7 @@ private:
 
 #if ENABLE(CSS_PAINTING_API)
     RefPtr<Worklet> m_paintWorklet;
-    RefPtr<PaintWorkletGlobalScope> m_paintWorkletGlobalScope;
+    HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 #endif
 
     bool m_isRunningUserScripts { false };

@@ -989,9 +989,11 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
             for (auto& name : *watchPropertiesMap) {
                 RefPtr<CSSValue> valueA;
                 RefPtr<CSSValue> valueB;
-                if (isCustomPropertyName(name) && a.getCustomProperty(name) && b.getCustomProperty(name)) {
-                    valueA = CSSCustomPropertyValue::create(*a.getCustomProperty(name));
-                    valueB = CSSCustomPropertyValue::create(*b.getCustomProperty(name));
+                if (isCustomPropertyName(name)) {
+                    if (a.getCustomProperty(name))
+                        valueA = CSSCustomPropertyValue::create(*a.getCustomProperty(name));
+                    if (b.getCustomProperty(name))
+                        valueB = CSSCustomPropertyValue::create(*b.getCustomProperty(name));
                 } else {
                     CSSPropertyID propertyID = cssPropertyID(name);
                     if (!propertyID)

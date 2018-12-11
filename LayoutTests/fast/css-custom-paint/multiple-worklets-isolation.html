@@ -1,0 +1,47 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSPaintingAPIEnabled=true ] -->
+<script src="resources/testharness.js"></script>
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="test multiple modules being added to the paintWorklet are isolated">
+<link rel="help" content="https://drafts.css-houdini.org/css-paint-api-1/">
+
+<style>
+  #paint {
+    background-image: paint(my-paint);
+    width: 150px;
+    height: 150px;
+  }
+
+  #paint2 {
+    background-image: paint(my-paint2);
+    width: 150px;
+    height: 150px;
+  }
+</style>
+
+<div id="paint"></div>
+<div id="paint2"></div>
+
+<script id="code1" type="text/worklet">
+function shouldOnlyBeInCode1() {}
+
+registerPaint('my-paint', class {
+  paint(ctx, geom, properties) {
+    ctx.fillStyle = typeof(shouldOnlyBeInCode1) == 'function' ? 'green' : 'red';
+    ctx.fillRect(0, 0, geom.width, geom.height);
+  }
+});
+</script>
+
+<script id="code2" type="text/worklet">
+registerPaint('my-paint2', class {
+  paint(ctx, geom, properties) {
+    ctx.fillStyle = typeof(shouldOnlyBeInCode1) == 'undefined' ? 'green' : 'red';
+    ctx.fillRect(0, 0, geom.width, geom.height);
+  }
+});
+</script>
+
+<script>
+importWorklet(CSS.paintWorklet, document.getElementById('code1').textContent);
+importWorklet(CSS.paintWorklet, document.getElementById('code2').textContent);
+</script>

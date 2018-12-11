@@ -1,3 +1,33 @@
+2018-12-10  Justin Michaud  <justin_michaud@apple.com>
+
+        CS Painting API should support multiple worklets.
+        https://bugs.webkit.org/show_bug.cgi?id=192335
+
+        Reviewed by Dean Jackson.
+
+        Adds a new map to support separate paint worklet global scopes (one for each worklet). Also
+        adds some tests and a fix for a repaint bug that this oncovered, where changing a custom property required
+        for paint would not trigger a repaint if there had not been a valid value set before.
+
+        Test: fast/css-custom-paint/multiple-worklets.html
+
+        * css/CSSPaintImageValue.cpp:
+        (WebCore::CSSPaintImageValue::image):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::paintWorkletGlobalScope):
+        (WebCore::Document::setPaintWorkletGlobalScope):
+        * dom/Document.h:
+        (WebCore::Document::paintWorkletGlobalScope): Deleted.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::changedCustomPaintWatchedProperty):
+        * worklets/Worklet.cpp:
+        (WebCore::Worklet::addModule):
+        * worklets/WorkletGlobalScope.cpp:
+        (WebCore::WorkletGlobalScope::prepareForDestruction):
+
 2018-12-10  Youenn Fablet  <youenn@apple.com>
 
         Remove derived classes of RealtimeMediaSourceCenter

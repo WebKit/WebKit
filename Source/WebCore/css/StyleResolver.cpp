@@ -1720,13 +1720,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, ApplyCascad
         state.style()->setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(*valueToApply) && document().paintWorkletGlobalScope()) {
-        // FIXME: This should use the "document paint registration map" from the spec, once it is implemented.
-        auto& paintWorklet = *document().paintWorkletGlobalScope();
-        auto locker = holdLock(paintWorklet.paintDefinitionLock());
-        if (auto* registration = paintWorklet.paintDefinitionMap().get(downcast<CSSPaintImageValue>(*valueToApply).name())) {
-            for (auto& property : registration->inputProperties)
-                state.style()->addCustomPaintWatchProperty(property);
+    if (is<CSSPaintImageValue>(*valueToApply)) {
+        auto& name = downcast<CSSPaintImageValue>(*valueToApply).name();
+        if (auto* paintWorklet = document().paintWorkletGlobalScopeForName(name)) {
+            auto locker = holdLock(paintWorklet->paintDefinitionLock());
+            if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
+                for (auto& property : registration->inputProperties)
+                    state.style()->addCustomPaintWatchProperty(property);
+            }
         }
     }
 #endif

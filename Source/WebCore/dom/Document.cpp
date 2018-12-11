@@ -2562,10 +2562,9 @@ void Document::prepareForDestruction()
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
-    if (m_paintWorkletGlobalScope) {
-        m_paintWorkletGlobalScope->prepareForDestruction();
-        m_paintWorkletGlobalScope = nullptr;
-    }
+    for (auto& scope : m_paintWorkletGlobalScopes.values())
+        scope->prepareForDestruction();
+    m_paintWorkletGlobalScopes.clear();
 #endif
 
     m_hasPreparedForDestruction = true;
@@ -8517,9 +8516,15 @@ Worklet& Document::ensurePaintWorklet()
     return *m_paintWorklet;
 }
 
-void Document::setPaintWorkletGlobalScope(Ref<PaintWorkletGlobalScope>&& scope)
+PaintWorkletGlobalScope* Document::paintWorkletGlobalScopeForName(const String& name)
 {
-    m_paintWorkletGlobalScope = WTFMove(scope);
+    return m_paintWorkletGlobalScopes.get(name);
+}
+
+void Document::setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&& scope)
+{
+    auto addResult = m_paintWorkletGlobalScopes.add(name, WTFMove(scope));
+    ASSERT_UNUSED(addResult, addResult);
 }
 #endif
 

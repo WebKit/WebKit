@@ -74,7 +74,8 @@ WorkletGlobalScope::~WorkletGlobalScope()
 
 void WorkletGlobalScope::prepareForDestruction()
 {
-    ASSERT(m_script);
+    if (!m_script)
+        return;
     stopActiveDOMObjects();
     removeRejectedPromiseTracker();
     removeAllEventListeners();
