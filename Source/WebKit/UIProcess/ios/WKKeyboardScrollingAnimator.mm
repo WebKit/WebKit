@@ -678,9 +678,9 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
     WebCore::RectEdges<bool> edges;
 
-    edges.setTop(scrollView._canScrollY);
+    edges.setTop(scrollView._canScrollWithoutBouncingY);
     edges.setBottom(edges.top());
-    edges.setLeft(scrollView._canScrollX);
+    edges.setLeft(scrollView._canScrollWithoutBouncingX);
     edges.setRight(edges.left());
 
     return edges;

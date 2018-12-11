@@ -1,3 +1,18 @@
+2018-12-10  Tim Horton  <timothy_horton@apple.com>
+
+        Animated scrolling on Google Maps scrolls the page in addition to moving the map
+        https://bugs.webkit.org/show_bug.cgi?id=192521
+        <rdar://problem/46382007>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollViewAnimator rubberbandableDirections]):
+        Only do keyboard-based rubber-banding in directions that we can actually
+        scroll, not directions we can only finger-rubber-band in. This effectively
+        means keyboard scrolling will ignore "alwaysBounce{Vertical, Horizontal}".
+
 2018-12-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239023.
