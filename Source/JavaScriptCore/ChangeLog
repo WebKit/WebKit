@@ -1,5 +1,78 @@
 2018-12-10  Mark Lam  <mark.lam@apple.com>
 
+        PropertyAttribute needs a CustomValue bit.
+        https://bugs.webkit.org/show_bug.cgi?id=191993
+        <rdar://problem/46264467>
+
+        Reviewed by Saam Barati.
+
+        This is because GetByIdStatus needs to distinguish CustomValue properties from
+        other types, and its only means of doing so is via the property's attributes.
+        Previously, there's nothing in the property's attributes that can indicate that
+        the property is a CustomValue.
+
+        We fix this by doing the following:
+
+        1. Added a PropertyAttribute::CustomValue bit.
+        2. Added a PropertyAttribute::CustomAccessorOrValue convenience bit mask that is
+           CustomAccessor | CustomValue.
+
+        3. Since CustomGetterSetter properties are only set via JSObject::putDirectCustomAccessor(),
+           we added a check in JSObject::putDirectCustomAccessor() to see if the attributes
+           bits include PropertyAttribute::CustomAccessor.  If not, then the property
+           must be a CustomValue, and we'll add the PropertyAttribute::CustomValue bit
+           to the attributes bits.
+
+           This ensures that the property attributes is sufficient to tell us if the
+           property contains a CustomGetterSetter.
+
+        4. Updated all checks for PropertyAttribute::CustomAccessor to check for
+           PropertyAttribute::CustomAccessorOrValue instead if their intent is to check
+           for the presence of a CustomGetterSetter as opposed to checking specifically
+           for one that is used as a CustomAccessor.
+
+           This includes all the Structure transition code that needs to capture the
+           attributes change when a CustomValue has been added.
+
+        5. Filtered out the PropertyAttribute::CustomValue bit in PropertyDescriptor.
+           The fact that we're using a CustomGetterSetter as a CustomValue should remain
+           invisible to the descriptor.  This is because the descriptor should describe
+           a CustomValue no differently from a plain value.
+
+        6. Added some asserts to ensure that property attributes are as expected, and to
+           document some invariants.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * runtime/JSFunction.cpp:
+        (JSC::getCalculatedDisplayName):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectIndex):
+        (JSC::JSObject::fillCustomGetterPropertySlot):
+        (JSC::JSObject::putDirect):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setCustomDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setCustomGetterSetter):
+
+2018-12-10  Mark Lam  <mark.lam@apple.com>
+
         LinkBuffer::copyCompactAndLinkCode() needs to be aware of ENABLE(SEPARATED_WX_HEAP).
         https://bugs.webkit.org/show_bug.cgi?id=192569
         <rdar://problem/45615617>

@@ -298,7 +298,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
         unsigned attributes;
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (isValidOffset(offset)) {
-            if (attributes & PropertyAttribute::CustomAccessor)
+            if (attributes & PropertyAttribute::CustomAccessorOrValue)
                 return PutByIdStatus(MakesCalls);
 
             if (attributes & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))

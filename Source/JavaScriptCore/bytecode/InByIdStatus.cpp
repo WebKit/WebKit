@@ -141,7 +141,7 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
             return InByIdStatus(TakesSlowPath);
-        if (attributes & PropertyAttribute::CustomAccessor)
+        if (attributes & PropertyAttribute::CustomAccessorOrValue)
             return InByIdStatus(TakesSlowPath);
 
         variant.m_structureSet.add(structure);

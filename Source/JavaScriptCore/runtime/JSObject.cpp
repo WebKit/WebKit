@@ -1860,9 +1860,15 @@ bool JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, Get
     return putDirectNonIndexAccessor(exec->vm(), propertyName, accessor, attributes);
 }
 
+// FIXME: Introduce a JSObject::putDirectCustomValue() method instead of using
+// JSObject::putDirectCustomAccessor() to put CustomValues.
+// https://bugs.webkit.org/show_bug.cgi?id=192576
 bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
     ASSERT(!parseIndex(propertyName));
+    ASSERT(value.isCustomGetterSetter());
+    if (!(attributes & PropertyAttribute::CustomAccessor))
+        attributes |= PropertyAttribute::CustomValue;
 
     PutPropertySlot slot(this);
     bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
@@ -1878,6 +1884,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
 
 bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, GetterSetter* accessor, unsigned attributes)
 {
+    ASSERT(attributes & PropertyAttribute::Accessor);
     PutPropertySlot slot(this);
     bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, accessor, attributes, slot);
 
@@ -2982,7 +2989,8 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
 bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
 {
     VM& vm = exec->vm();
-    
+    ASSERT(!value.isCustomGetterSetter());
+
     if (!canDoFastPutDirectIndex(vm, this)) {
         PropertyDescriptor descriptor;
         descriptor.setDescriptor(value, attributes);

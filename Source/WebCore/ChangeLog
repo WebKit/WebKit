@@ -1,3 +1,23 @@
+2018-12-10  Mark Lam  <mark.lam@apple.com>
+
+        PropertyAttribute needs a CustomValue bit.
+        https://bugs.webkit.org/show_bug.cgi?id=191993
+        <rdar://problem/46264467>
+
+        Reviewed by Saam Barati.
+
+        This patch revealed a bug in the CodeGenerator where a constructor property is
+        set with a ReadOnly attribute.  This conflicts with the WebIDL link (see clause
+        12 in https://heycam.github.io/webidl/#interface-prototype-object) which states
+        that it should be [Writable].  The ReadOnly attribute is now removed.
+
+        On the WebCore side, this change is covered by existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+
 2018-12-10  Antti Koivisto  <antti@apple.com>
 
         Rename "forced style recalc" to "full style rebuild"
