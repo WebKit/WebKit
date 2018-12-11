@@ -1,3 +1,17 @@
+2018-12-11  Brian Burg  <bburg@apple.com>
+
+        SimulatedInputDispatcher::transitionInputSourceToState() can reuse a moved-from completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=191155
+        <rdar://problem/45745569>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Automation/SimulatedInputDispatcher.cpp:
+        (WebKit::SimulatedInputDispatcher::transitionInputSourceToState):
+        Add an ASSERT to guard against unexpected inputs where >1 VirtualKey changes per state.
+        webkitdriver needs to be updated to not produce such states in this scenario, but this will
+        avoid a runtime crash caused by trying to call a moved-out completion handler a second time.
+
 2018-12-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239071.

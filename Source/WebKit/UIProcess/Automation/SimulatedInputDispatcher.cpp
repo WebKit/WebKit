@@ -297,8 +297,13 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
             LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, a.pressedCharKey.value(), m_keyframeIndex, m_inputSourceStateIndex);
             m_client.simulateKeyboardInteraction(m_page, KeyboardInteraction::KeyRelease, a.pressedCharKey.value(), WTFMove(eventDispatchFinished));
         } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
+            bool simulatedAnInteraction = false;
             for (VirtualKey key : b.pressedVirtualKeys) {
                 if (!a.pressedVirtualKeys.contains(key)) {
+                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
+                    if (simulatedAnInteraction)
+                        continue;
+                    simulatedAnInteraction = true;
 #if !LOG_DISABLED
                     String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
@@ -309,6 +314,10 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 
             for (VirtualKey key : a.pressedVirtualKeys) {
                 if (!b.pressedVirtualKeys.contains(key)) {
+                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
+                    if (simulatedAnInteraction)
+                        continue;
+                    simulatedAnInteraction = true;
 #if !LOG_DISABLED
                     String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(key);
                     LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
