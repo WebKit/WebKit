@@ -141,6 +141,7 @@ my (
     $registerProtocolHandlerSupport,
     $remoteInspectorSupport,
     $resolutionMediaQuerySupport,
+    $resourceLoadStatisticsSupport,
     $resourceUsageSupport,
     $rubberBandingSupport,
     $samplingProfilerSupport,
@@ -457,6 +458,9 @@ my @features = (
 
     { option => "resolution-media-query", desc => "Toggle resolution media query support",
       define => "ENABLE_RESOLUTION_MEDIA_QUERY", value => \$resolutionMediaQuerySupport },
+
+    { option => "resource-load-statistics", desc => "Toggle resource load statistics support",
+      define => "ENABLE_RESOURCE_LOAD_STATISTICS", value => \$resourceLoadStatisticsSupport },
 
     { option => "resource-usage", desc => "Toggle resource usage support",
       define => "ENABLE_RESOURCE_USAGE", value => \$resourceUsageSupport },
