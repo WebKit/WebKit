@@ -1,3 +1,25 @@
+2018-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WeakPtr to refer to VTTCue in VTTCueBox
+        https://bugs.webkit.org/show_bug.cgi?id=192575
+
+        Reviewed by Eric Carlson.
+
+        Address the FIXME in VTTCue::~VTTCue by clearing VTTCueBox::m_cue when VTTCue goes away.
+        This is implemented by simply using WeakPtr.
+
+        No new tests since there shoul be no behaivoral change.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::VTTCueBox):
+        (WebCore::VTTCueBox::getCue const):
+        (WebCore::VTTCueBox::applyCSSProperties):
+        (WebCore::VTTCue::~VTTCue):
+        * html/track/VTTCue.h:
+        (WebCore::VTTCueBox::fontSizeFromCaptionUserPrefs const):
+
 2018-12-10  Mark Lam  <mark.lam@apple.com>
 
         PropertyAttribute needs a CustomValue bit.

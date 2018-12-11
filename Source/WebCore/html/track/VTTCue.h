@@ -64,13 +64,16 @@ protected:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    VTTCue& m_cue;
+    int fontSizeFromCaptionUserPrefs() const { return m_fontSizeFromCaptionUserPrefs; }
+
+private:
+    WeakPtr<VTTCue> m_cue;
     int m_fontSizeFromCaptionUserPrefs;
 };
 
 // ----------------------------
 
-class VTTCue : public TextTrackCue {
+class VTTCue : public TextTrackCue, public CanMakeWeakPtr<VTTCue> {
 public:
     static Ref<VTTCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
     {

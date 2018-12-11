@@ -133,20 +133,25 @@ Ref<VTTCueBox> VTTCueBox::create(Document& document, VTTCue& cue)
 
 VTTCueBox::VTTCueBox(Document& document, VTTCue& cue)
     : HTMLElement(divTag, document)
-    , m_cue(cue)
+    , m_cue(makeWeakPtr(cue))
 {
     setPseudo(vttCueBoxShadowPseudoId());
 }
 
 VTTCue* VTTCueBox::getCue() const
 {
-    return &m_cue;
+    return m_cue.get();
 }
 
 void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 {
+    if (!m_cue)
+        return;
+
+    auto cue = makeRef(*m_cue);
+
     // FIXME: Apply all the initial CSS positioning properties. http://wkb.ug/79916
-    if (!m_cue.regionId().isEmpty()) {
+    if (!cue->regionId().isEmpty()) {
         setInlineStyleProperty(CSSPropertyPosition, CSSValueRelative);
         return;
     }
@@ -160,12 +165,12 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValuePlaintext);
 
     // the 'direction' property must be set to direction
-    setInlineStyleProperty(CSSPropertyDirection, m_cue.getCSSWritingDirection());
+    setInlineStyleProperty(CSSPropertyDirection, cue->getCSSWritingDirection());
 
     // the 'writing-mode' property must be set to writing-mode
-    setInlineStyleProperty(CSSPropertyWritingMode, m_cue.getCSSWritingMode(), false);
+    setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
 
-    auto position = m_cue.getCSSPosition();
+    auto position = cue->getCSSPosition();
 
     // the 'top' property must be set to top,
     setInlineStyleProperty(CSSPropertyTop, position.second, CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -178,39 +183,39 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (authorFontSize)
         multiplier = m_fontSizeFromCaptionUserPrefs / authorFontSize;
 
-    double textPosition = m_cue.calculateComputedTextPosition();
+    double textPosition = cue->calculateComputedTextPosition();
     double maxSize = 100.0;
-    CSSValueID alignment = m_cue.getCSSAlignment();
+    CSSValueID alignment = cue->getCSSAlignment();
     if (alignment == CSSValueEnd || alignment == CSSValueRight)
         maxSize = textPosition;
     else if (alignment == CSSValueStart || alignment == CSSValueLeft)
         maxSize = 100.0 - textPosition;
 
-    double newCueSize = std::min(m_cue.getCSSSize() * multiplier, 100.0);
+    double newCueSize = std::min(cue->getCSSSize() * multiplier, 100.0);
     // the 'width' property must be set to width, and the 'height' property  must be set to height
-    if (m_cue.vertical() == horizontalKeyword()) {
+    if (cue->vertical() == horizontalKeyword()) {
         setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
         setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(position.first - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
         setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSPrimitiveValue::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+            setInlineStyleProperty(CSSPropertyTop, static_cast<double>(position.second - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
     // The 'text-align' property on the (root) List of WebVTT Node Objects must
     // be set to the value in the second cell of the row of the table below
     // whose first cell is the value of the corresponding cue's text track cue
     // alignment:
-    setInlineStyleProperty(CSSPropertyTextAlign, m_cue.getCSSAlignment());
+    setInlineStyleProperty(CSSPropertyTextAlign, cue->getCSSAlignment());
     
-    if (!m_cue.snapToLines()) {
+    if (!cue->snapToLines()) {
         // 10.13.1 Set up x and y:
         // Note: x and y are set through the CSS left and top above.
 
@@ -229,7 +234,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
 
     // Make sure shadow or stroke is not clipped.
     setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
-    m_cue.element().setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
+    cue->element().setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);
 }
 
 const AtomicString& VTTCueBox::vttCueBoxShadowPseudoId()
@@ -277,9 +282,6 @@ VTTCue::VTTCue(ScriptExecutionContext& context, const WebVTTCueData& cueData)
 
 VTTCue::~VTTCue()
 {
-    // FIXME: We should set m_cue in VTTCueBox to nullptr instead.
-    if (m_displayTree && m_displayTree->document().refCount())
-        m_displayTree->remove();
 }
 
 void VTTCue::initialize(ScriptExecutionContext& context)

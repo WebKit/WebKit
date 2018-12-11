@@ -68,10 +68,13 @@ TextTrackCueGenericBoxElement::TextTrackCueGenericBoxElement(Document& document,
 
 void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 {
+    RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
+    if (!cue)
+        return;
+
     setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValuePlaintext);
-    
-    RefPtr<TextTrackCueGeneric> cue = static_cast<TextTrackCueGeneric*>(getCue());
+
     Ref<HTMLSpanElement> cueElement = cue->element();
 
     double textPosition = cue->calculateComputedTextPosition();
@@ -92,16 +95,16 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         if (cue->fontSizeMultiplier())
             authorFontSize *= cue->fontSizeMultiplier() / 100;
 
-        double multiplier = m_fontSizeFromCaptionUserPrefs / authorFontSize;
+        double multiplier = fontSizeFromCaptionUserPrefs() / authorFontSize;
         double newCueSize = std::min(size * multiplier, 100.0);
         if (cue->getWritingDirection() == VTTCue::Horizontal) {
             setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSPrimitiveValue::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(textPosition - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+                setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(textPosition - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
         } else {
             setInlineStyleProperty(CSSPropertyHeight, newCueSize,  CSSPrimitiveValue::CSS_PERCENTAGE);
             if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0)
-                setInlineStyleProperty(CSSPropertyTop, static_cast<double>(cue->line() - (newCueSize - m_cue.getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
+                setInlineStyleProperty(CSSPropertyTop, static_cast<double>(cue->line() - (newCueSize - cue->getCSSSize()) / 2), CSSPrimitiveValue::CSS_PERCENTAGE);
         }
     }
 
