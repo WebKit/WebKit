@@ -255,17 +255,11 @@ void WebFrame::invalidatePolicyListener()
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, std::optional<WebsitePoliciesData>&& websitePolicies)
 {
-    if (!m_coreFrame)
+    if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction) {
+        if (action == PolicyAction::Suspend)
+            page()->send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
         return;
-
-    if (!m_policyListenerID)
-        return;
-
-    if (listenerID != m_policyListenerID)
-        return;
-
-    if (!m_policyFunction)
-        return;
+    }
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
     bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;

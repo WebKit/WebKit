@@ -1,3 +1,106 @@
+2018-12-11  Chris Dumez  <cdumez@apple.com>
+
+        PSON logic gets confused by concurrent decidePolicyForNavigationAction requests
+        https://bugs.webkit.org/show_bug.cgi?id=192482
+        <rdar://problem/46470145>
+
+        Reviewed by Antti Koivisto.
+
+        It is possible to get 2 parallel decidePolicyForNavigationAction() requests from the
+        WebProcess when a new load is started before responding to the existing policy
+        decision. This would lead to several issues with regards to PSON:
+        - We would decide to swap for the first policy decision and tell the WebProcess to
+          suspend. However, because the WebProcess issued a new decidePolicyForNavigationAction
+          since for the same frame, the previous one is invalidated and the WebProcess would
+          ignore our request to suspend.
+        - We would hit assertions later on because the navigation has been destroyed and yet
+          we're getting a didStartProvisionalLoad for it.
+        - swapToWebProcess() was asynchronous so that it would wait for the destination
+          SuspendedPage to finish suspending before asking it to unsuspend. This led to various
+          problems because anything can happen in the UIProcess while we're waiting for the
+          suspension (e.g. another load). Also, we may create the SuspendedPageProxy for
+          the current page too late and start getting IPC from the previous process about
+          the suspension load to about:blank.
+
+        To address these issues, the following design is now implemented:
+        - swapToWebProcess() is no longer asynchronous
+        - instead, WebProcessPool::processForNavigation() is now asynchronous. This is better
+          because at this point we have not yet told the WebProcess about the policy decision.
+          We already properly deal with the policy decision being made asynchronously. This
+          also allows us to choose another process if the SuspendedPage we'd like to use
+          failed to suspend.
+        - If the WebProcess receives a PolicyAction::Suspend but ignores it, have it send an
+          IPC to the UIProcess so that the SuspendedPageProxy knows about it. We then destroy
+          the SuspendedPageProxy and make sure it is not used.
+        - After the asynchronous process selection, if the navigation has been destroy, abort
+          the process-swap to avoid hitting assertions later on due to doing a load for a
+          destroyed navigation.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        Make sure m_whenReadyToConsume completion handler gets called if necessary if the
+        SuspendedPageProxy gets destroyed. We pass null so that the SuspendedPage is not
+        used.
+
+        (WebKit::SuspendedPageProxy::whenReadyToConsume):
+        Add whenReadyToConsume() utility method to get a completion handler called when
+        the SuspendedPageProxy is ready to be used. This basically means we have to wait
+        for the page to finish its about:blank suspension load. If the suspension fails
+        then we call the completion handler with null to indicate that the suspended
+        page is not usable.
+
+        (WebKit::SuspendedPageProxy::unsuspendAndConsume):
+        Rename unsuspend() to unsuspendAndConsume() and make it synchronous. This only gets
+        called after whenReadyToConsume()'s completion handler has been called and if we
+        do decide to use the SuspendedPageProxy. It tells the WebProcess to unsuspend and
+        removes the SuspendedPageProxy from the WebProcessPool.
+
+        (WebKit::SuspendedPageProxy::didFinishLoad):
+        rename m_finishedSuspendingHandler to m_whenReadyToConsume.
+
+        (WebKit::SuspendedPageProxy::didFailToSuspend):
+        Add new didFailToSuspend() that gets called when the WebProcess sends us an IPC telling
+        us it ignored our request to suspend. We then call m_whenReadyToConsume completion
+        handler with null and destroy the SuspendedPageProxy.
+
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        * UIProcess/SuspendedPageProxy.h:
+
+        * UIProcess/WebNavigationState.h:
+        (WebKit::WebNavigationState::hasNavigation const):
+        Add utility function to query if a navigation is still valid.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        Update method so that it is no longer asynchronous. Some of its code was also moved to
+        continueNavigationInNewProcess() for clarity.
+
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        Deal with WebProcessPool::processForNavigation() now being asynchronous.
+
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        Update code now that swapToWebProcess() is no longer asynchronous. Some of the swapToWebProcess()
+        code was also moved here for clarity.
+
+        (WebKit::WebPageProxy::didFailToSuspendAfterProcessSwap):
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Add new DidFailToSuspendAfterProcessSwap IPC message.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigation):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        * UIProcess/WebProcessPool.h:
+        Make asynchronous. If we decide to use a SuspendedPageProxy's process, then call
+        whenReadyToConsume() on it to wait for it to suspend. If the SuspendedPageProxy
+        fails to suspend use a new process instead.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        If we ignore the policy decision and the decision was "Suspend", send the DidFailToSuspendAfterProcessSwap
+        IPC to the UIProcess so that the SuspendedPageProxy knows about it.
+
 2018-12-11  Andy Estes  <aestes@apple.com>
 
         Introduce makeBlockPtr for lambdas

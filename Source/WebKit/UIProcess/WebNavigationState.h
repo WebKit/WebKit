@@ -54,6 +54,7 @@ public:
     Ref<API::Navigation> createReloadNavigation();
     Ref<API::Navigation> createLoadDataNavigation(std::unique_ptr<API::SubstituteData>&&);
 
+    bool hasNavigation(uint64_t navigationID) const { return m_navigations.contains(navigationID); }
     API::Navigation* navigation(uint64_t navigationID);
     RefPtr<API::Navigation> takeNavigation(uint64_t navigationID);
     void didDestroyNavigation(uint64_t navigationID);

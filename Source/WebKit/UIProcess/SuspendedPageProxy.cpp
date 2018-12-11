@@ -91,6 +91,9 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 
 SuspendedPageProxy::~SuspendedPageProxy()
 {
+    if (m_readyToUnsuspendHandler)
+        m_readyToUnsuspendHandler(nullptr);
+
     if (!m_isSuspended)
         return;
 
@@ -106,22 +109,25 @@ SuspendedPageProxy::~SuspendedPageProxy()
     });
 }
 
-void SuspendedPageProxy::unsuspend(CompletionHandler<void()>&& completionHandler)
+void SuspendedPageProxy::waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&& completionHandler)
+{
+    if (m_readyToUnsuspendHandler)
+        m_readyToUnsuspendHandler(nullptr);
+
+    if (!m_finishedSuspending)
+        m_readyToUnsuspendHandler = WTFMove(completionHandler);
+    else
+        completionHandler(this);
+}
+
+void SuspendedPageProxy::unsuspend()
 {
     ASSERT(m_isSuspended);
+    ASSERT(m_finishedSuspending);
 
-    auto doUnsuspend = [this, completionHandler = WTFMove(completionHandler)]() mutable {
-        m_isSuspended = false;
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
-        m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
-        completionHandler();
-    };
-
-    if (!m_finishedSuspending) {
-        ASSERT(!m_finishedSuspendingHandler);
-        m_finishedSuspendingHandler = WTFMove(doUnsuspend);
-    } else
-        doUnsuspend();
+    m_isSuspended = false;
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
+    m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
 }
 
 void SuspendedPageProxy::didFinishLoad()
@@ -136,8 +142,17 @@ void SuspendedPageProxy::didFinishLoad()
     m_suspensionToken = nullptr;
 #endif
 
-    if (auto finishedSuspendingHandler = WTFMove(m_finishedSuspendingHandler))
-        finishedSuspendingHandler();
+    if (m_readyToUnsuspendHandler)
+        m_readyToUnsuspendHandler(this);
+}
+
+void SuspendedPageProxy::didFailToSuspend()
+{
+    // We are unusable due to failure to suspend so remove ourselves from the WebProcessPool.
+    auto protectedThis = m_process->processPool().takeSuspendedPage(*this);
+
+    if (m_readyToUnsuspendHandler)
+        m_readyToUnsuspendHandler(nullptr);
 }
 
 void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder)
@@ -148,6 +163,12 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
         didFinishLoad();
         return;
     }
+
+    if (decoder.messageName() == Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap::name()) {
+        didFailToSuspend();
+        return;
+    }
+
 #if !LOG_DISABLED
     if (!messageNamesToIgnoreWhileSuspended().contains(decoder.messageName()))
         LOG(ProcessSwapping, "SuspendedPageProxy received unexpected WebPageProxy message '%s'", decoder.messageName().toString().data());
