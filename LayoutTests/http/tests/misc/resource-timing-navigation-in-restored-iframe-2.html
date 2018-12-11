@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+    description('Tests that an iframe restored from history does not report resource timing.');
+    window.jsTestIsAsync = true;
+    if (window.internals)
+        internals.clearMemoryCache();
+
+    function runTest() {
+        if (!sessionStorage.didNav) {
+            sessionStorage.didNav = true;
+            window.addEventListener('message', (event) => {
+                location.href = 'resources/alert-then-back.html';
+            });
+            document.getElementById('target-iframe').contentWindow.postMessage('navigate', '*');
+        } else {
+            delete sessionStorage.didNav;
+
+            resources = performance.getEntriesByType('resource');
+            shouldBe('resources.length', '1');
+            shouldBeEqualToString('resources[0].name', 'http://127.0.0.1:8000/js-test-resources/js-test.js');
+            if (window.testRunner)
+                finishJSTest();
+        }
+    }
+    window.onload = runTest;
+</script>
+<iframe id="target-iframe" src="http://localhost:8080/misc/resources/navigate-on-message.html"></iframe>
