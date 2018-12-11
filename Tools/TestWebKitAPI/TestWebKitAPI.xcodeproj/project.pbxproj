@@ -394,7 +394,7 @@
 		7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81B50192140F232300D9EB58 /* StringBuilder.cpp */; };
 		7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABA80816DDAB91002DB2FA /* StringHasher.cpp */; };
 		7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
-		7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01363C713C3997300EF3964 /* StringOperators.cpp */; };
+		7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C01363C713C3997300EF3964 /* StringOperators.cpp */; settings = {COMPILER_FLAGS = "-O1"; }; };
 		7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
 		7C83DF3D1D0A590C00FEBCF3 /* SetForScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* SetForScope.cpp */; };
 		7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };

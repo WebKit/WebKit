@@ -1,3 +1,16 @@
+2018-12-11  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r238764-238783): TestWTF.WTF.StringOperators is failing
+        https://bugs.webkit.org/show_bug.cgi?id=192361
+        <rdar://problem/46524903>
+
+        Reviewed by Alex Christensen.
+
+        Compile StringOperators.cpp with -O1 optimization level instead of -Os. This
+        fixes the failures for me locally.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2018-12-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE build fix after r239028
