@@ -1,5 +1,20 @@
 2018-12-10  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r238599): unable to select specific timeline
+        https://bugs.webkit.org/show_bug.cgi?id=192443
+        <rdar://problem/46608087>
+
+        Reviewed by Joseph Pecoraro.
+
+        When determining the trailing horizontal edge for TreeElement mouse
+        events, TreeOutline should not assume that its containing DOM element
+        is only as wide as its <ol> element.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.treeElementFromEvent):
+
+2018-12-10  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Move TreeOutlineGroup coordination out of TreeElement
         https://bugs.webkit.org/show_bug.cgi?id=192487
         <rdar://problem/46543431>

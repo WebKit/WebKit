@@ -888,12 +888,18 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     treeElementFromEvent(event)
     {
-        let scrollContainer = this.element.parentElement;
-
+        // We can't take event.pageX to be our X coordinate, since the TreeElement
+        // could be indented, in which case we can't rely on its DOM element to be
+        // under the mouse.
         // We choose this X coordinate based on the knowledge that our list
         // items extend at least to the trailing edge of the outer <ol> container.
         // In the no-word-wrap mode the outer <ol> may be wider than the tree container
-        // (and partially hidden), in which case we are left to use only its trailing boundary.
+        // (and partially hidden), in which case we use the edge of its container.
+
+        let scrollContainer = this.element.parentElement;
+        if (scrollContainer.offsetWidth > this.element.offsetWidth)
+            scrollContainer = this.element;
+
         // This adjustment is useful in order to find the inner-most tree element that
         // lines up horizontally with the location of the event. If the mouse event
         // happened in the space preceding a nested tree element (in the leading indentated
