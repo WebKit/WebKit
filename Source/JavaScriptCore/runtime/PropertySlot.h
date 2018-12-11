@@ -43,6 +43,8 @@ enum class PropertyAttribute : unsigned {
     DontDelete        = 1 << 3,  // property can't be deleted
     Accessor          = 1 << 4,  // property is a getter/setter
     CustomAccessor    = 1 << 5,
+    CustomValue       = 1 << 6,
+    CustomAccessorOrValue = CustomAccessor | CustomValue,
 
     // Things that are used by static hashtables are not in the attributes byte in PropertyMapEntry.
     Function          = 1 << 8,  // property is a function - only used by static hashtables
@@ -299,6 +301,7 @@ public:
     void setCustomGetterSetter(JSObject* slotBase, unsigned attributes, CustomGetterSetter* getterSetter)
     {
         ASSERT(attributes == attributesForStructure(attributes));
+        ASSERT(attributes & PropertyAttribute::CustomAccessor);
 
         disableCaching();
 

@@ -109,7 +109,13 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 {
     ASSERT(value);
 
-    m_attributes = attributes;
+    // We need to mask off the PropertyAttribute::CustomValue bit because
+    // PropertyDescriptor::attributesEqual() does an equivalent test on
+    // m_attributes, and a property that has a CustomValue should be indistinguishable
+    // from a property that has a normal value as far as JS code is concerned.
+    // PropertyAttribute does not need knowledge of the underlying implementation
+    // actually being a CustomValue. So, we'll just mask it off up front here.
+    m_attributes = attributes & ~PropertyAttribute::CustomValue;
     if (value.isGetterSetter()) {
         m_attributes &= ~PropertyAttribute::ReadOnly; // FIXME: we should be able to ASSERT this!
 
@@ -125,6 +131,7 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 
 void PropertyDescriptor::setCustomDescriptor(unsigned attributes)
 {
+    ASSERT(!(attributes & PropertyAttribute::CustomValue));
     m_attributes = attributes | PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor;
     m_attributes &= ~PropertyAttribute::ReadOnly;
     m_seenAttributes = EnumerablePresent | ConfigurablePresent;
@@ -136,6 +143,7 @@ void PropertyDescriptor::setCustomDescriptor(unsigned attributes)
 void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned attributes)
 {
     ASSERT(attributes & PropertyAttribute::Accessor);
+    ASSERT(!(attributes & PropertyAttribute::CustomValue));
     attributes &= ~PropertyAttribute::ReadOnly; // FIXME: we should be able to ASSERT this!
 
     m_attributes = attributes;

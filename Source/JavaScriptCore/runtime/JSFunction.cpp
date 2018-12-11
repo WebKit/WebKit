@@ -635,7 +635,7 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     unsigned attributes;
     // This function may be called when the mutator isn't running and we are lazily generating a stack trace.
     PropertyOffset offset = structure->getConcurrently(vm.propertyNames->displayName.impl(), attributes);
-    if (offset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor))) {
+    if (offset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessorOrValue))) {
         JSValue displayName = object->getDirect(offset);
         if (displayName && displayName.isString())
             return asString(displayName)->tryGetValue();
