@@ -82,13 +82,15 @@ static FontType *fontOfSize(WarningTextSize size)
     case WarningTextSize::Body:
         return [NSFont systemFontOfSize:14];
     }
-#else
+#elif HAVE(SAFE_BROWSING)
     switch (size) {
     case WarningTextSize::Title:
         return [UIFont preferredFontForTextStyle:UIFontTextStyleLargeTitle];
     case WarningTextSize::Body:
         return [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     }
+#else
+    return nil;
 #endif
 }
 
