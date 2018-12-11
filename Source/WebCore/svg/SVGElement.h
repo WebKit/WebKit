@@ -31,6 +31,7 @@
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ class SVGUseElement;
 
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
-class SVGElement : public StyledElement, public SVGLangSpace {
+class SVGElement : public StyledElement, public SVGLangSpace, public CanMakeWeakPtr<SVGElement> {
     WTF_MAKE_ISO_ALLOCATED(SVGElement);
 public:
     bool isOutermostSVGSVGElement() const;

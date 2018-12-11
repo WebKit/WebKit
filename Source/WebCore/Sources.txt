@@ -468,6 +468,7 @@ bindings/js/JSReadableStreamSourceCustom.cpp
 bindings/js/JSRemoteDOMWindowBase.cpp
 bindings/js/JSRemoteDOMWindowCustom.cpp
 bindings/js/JSSVGPathSegCustom.cpp
+bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSServiceWorkerClientCustom.cpp
 bindings/js/JSServiceWorkerGlobalScopeCustom.cpp
@@ -2342,6 +2343,7 @@ svg/graphics/filters/SVGFilterBuilder.cpp
 
 svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
 svg/properties/SVGAnimatedProperty.cpp
+svg/properties/SVGAttributeOwnerProxy.cpp
 
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp

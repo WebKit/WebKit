@@ -9444,6 +9444,8 @@
 		7A29BA67187B732200F29CEB /* TemporaryOpenGLSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryOpenGLSetting.h; sourceTree = "<group>"; };
 		7A29BA69187B781C00F29CEB /* TemporaryOpenGLSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporaryOpenGLSetting.cpp; sourceTree = "<group>"; };
 		7A29F57118C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutOfBandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
+		7A3EBEAA21BF054C000D043D /* JSSVGViewSpecCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpecCustom.cpp; sourceTree = "<group>"; };
+		7A3EBEAC21BF0921000D043D /* SVGAttributeOwnerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAttributeOwnerProxy.cpp; sourceTree = "<group>"; };
 		7A45032D18DB717200377B34 /* BufferedLineReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferedLineReader.cpp; sourceTree = "<group>"; };
 		7A45032E18DB717200377B34 /* BufferedLineReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferedLineReader.h; sourceTree = "<group>"; };
 		7A54857D14E02D51006AE05A /* InspectorHistory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorHistory.cpp; sourceTree = "<group>"; };
@@ -15829,6 +15831,7 @@
 				085A15921289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h */,
 				55FA7FEF210FA386005AEFE7 /* SVGAttribute.h */,
 				55FA7FF4210FB688005AEFE7 /* SVGAttributeAccessor.h */,
+				7A3EBEAC21BF0921000D043D /* SVGAttributeOwnerProxy.cpp */,
 				55346AF021150FAF0059BCDD /* SVGAttributeOwnerProxy.h */,
 				55346AFA2117FFAF0059BCDD /* SVGAttributeOwnerProxyImpl.h */,
 				55FA7FF6210FBE3E005AEFE7 /* SVGAttributeRegistry.h */,
@@ -24570,6 +24573,7 @@
 				4B6B5CBE216434FB00603817 /* JSPaintWorkletGlobalScopeCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				46BCBBBE2085005B00710638 /* JSRemoteDOMWindowCustom.cpp */,
+				7A3EBEAA21BF054C000D043D /* JSSVGViewSpecCustom.cpp */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -29986,7 +29990,6 @@
 				11310CF620BA4A560065A8D0 /* LayoutChildIterator.h in Headers */,
 				1199FA46208E35A3002358CC /* LayoutContainer.h in Headers */,
 				11310CF520BA4A4C0065A8D0 /* LayoutDescendantIterator.h in Headers */,
-				6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */,
 				1199FA53208E38D3002358CC /* LayoutInlineBox.h in Headers */,
 				1199FA4F208E3899002358CC /* LayoutInlineContainer.h in Headers */,
 				11310CF420BA4A3D0065A8D0 /* LayoutIterator.h in Headers */,
@@ -29997,7 +30000,7 @@
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				11310CF320BA4A370065A8D0 /* LayoutReplaced.h in Headers */,
 				141DC054164834B900371E5A /* LayoutSize.h in Headers */,
-				2D9066070BE141D400956998 /* RenderLayoutState.h in Headers */,
+				6F7CA3C6208C2957002F29AB /* LayoutState.h in Headers */,
 				11310CF220BA4A320065A8D0 /* LayoutTreeBuilder.h in Headers */,
 				141DC0481648348F00371E5A /* LayoutUnit.h in Headers */,
 				CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */,
@@ -30598,6 +30601,7 @@
 				0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */,
 				0F580CFD0F12DE9B0051D689 /* RenderLayerCompositor.h in Headers */,
 				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
+				2D9066070BE141D400956998 /* RenderLayoutState.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,

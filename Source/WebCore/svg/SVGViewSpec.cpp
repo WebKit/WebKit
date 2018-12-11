@@ -34,7 +34,7 @@ namespace WebCore {
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
     : SVGFitToViewBox(&contextElement, PropertyIsReadOnly)
-    , m_contextElement(&contextElement)
+    , m_contextElement(makeWeakPtr(contextElement))
     , m_attributeOwnerProxy(*this, contextElement)
 {
     registerAttributes();

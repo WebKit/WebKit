@@ -1,3 +1,38 @@
+2018-12-10  Brent Fulgham  <bfulgham@apple.com>
+
+        SVGViewSpec objects should mark relevant SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=192567
+        <rdar://problem/46491325>
+
+        Reviewed by Ryosuke Niwa.
+
+        SVGViewSpec elements reflect the state of an underlying SVGElement. Teach the mark algorithm to
+        recognize the relevant SVGElement as active as long as the SVGViewSpec is active.
+
+        Update SVGElement so that it can vend WeakPtrs. I also noticed that SVGAttributeOwner used a bare
+        pointer to the SVGElement, so switched to a WeakPtr.
+
+        Test: svg/animations/view-dependency-crash.html
+
+        * Sources.txt: Add new files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSSVGViewSpecCustom.cpp: Added.
+        (WebCore::JSSVGViewSpec::visitAdditionalChildren):
+        * svg/SVGElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec): Hold a weak pointer (rather than a bare pointer) to the underlying element.
+        * svg/SVGViewSpec.h:
+        * svg/SVGViewSpec.idl:
+        * svg/properties/SVGAttributeOwnerProxy.cpp: Added.
+        (WebCore::SVGAttributeOwnerProxy::SVGAttributeOwnerProxy): Hold a weak pointer (rather than a bare pointer) to
+        the underling SVGElement.
+        (WebCore::SVGAttributeOwnerProxy::element const): Ditto.
+        * svg/properties/SVGAttributeOwnerProxy.h:
+        (WebCore::SVGAttributeOwnerProxy::SVGAttributeOwnerProxy): Move implementation to cpp file.
+        (WebCore::SVGAttributeOwnerProxy::element const): Ditto.
+        * svg/properties/SVGAttributeOwnerProxyImpl.h: Update for WeakPtr use.
+
 2018-12-10  Benjamin Poulain  <benjamin@webkit.org>
 
         <rdar://problem/45296285> Content blocker rule "raw" blocks media elements from loading

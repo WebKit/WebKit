@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SVGAnimatedPropertyType.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -35,14 +36,11 @@ class SVGElement;
 
 class SVGAttributeOwnerProxy {
 public:
-    SVGAttributeOwnerProxy(SVGElement& element)
-        : m_element(element)
-    {
-    }
+    SVGAttributeOwnerProxy(SVGElement&);
 
     virtual ~SVGAttributeOwnerProxy() = default;
 
-    SVGElement& element() const { return m_element; }
+    SVGElement& element() const;
 
     virtual void synchronizeAttributes() const = 0;
     virtual void synchronizeAttribute(const QualifiedName&) const = 0;
@@ -54,7 +52,7 @@ public:
     virtual Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
 
 protected:
-    SVGElement& m_element;
+    WeakPtr<SVGElement> m_element;
 };
 
 }

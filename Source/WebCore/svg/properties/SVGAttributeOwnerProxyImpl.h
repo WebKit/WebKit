@@ -68,12 +68,12 @@ public:
 private:
     void synchronizeAttributes() const override
     {
-        attributeRegistry().synchronizeAttributes(m_owner, m_element);
+        attributeRegistry().synchronizeAttributes(m_owner, *m_element);
     }
 
     void synchronizeAttribute(const QualifiedName& attributeName) const override
     {
-        attributeRegistry().synchronizeAttribute(m_owner, m_element, attributeName);
+        attributeRegistry().synchronizeAttribute(m_owner, *m_element, attributeName);
     }
 
     Vector<AnimatedPropertyType> animatedTypes(const QualifiedName& attributeName) const override
@@ -83,17 +83,17 @@ private:
 
     RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) const override
     {
-        return attributeRegistry().lookupOrCreateAnimatedProperty(m_owner, m_element, attribute, m_animatedState);
+        return attributeRegistry().lookupOrCreateAnimatedProperty(m_owner, *m_element, attribute, m_animatedState);
     }
 
     RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGAttribute& attribute) const override
     {
-        return attributeRegistry().lookupAnimatedProperty(m_owner, m_element, attribute);
+        return attributeRegistry().lookupAnimatedProperty(m_owner, *m_element, attribute);
     }
 
     Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& attributeName) const override
     {
-        return attributeRegistry().lookupOrCreateAnimatedProperties(m_owner, m_element, attributeName, m_animatedState);
+        return attributeRegistry().lookupOrCreateAnimatedProperties(m_owner, *m_element, attributeName, m_animatedState);
     }
 
     OwnerType& m_owner;
