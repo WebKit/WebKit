@@ -1,3 +1,37 @@
+2018-12-11  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r238232. rdar://problem/46085281
+
+    Modernize RTCPeerConnection handling of pendingActivity
+    https://bugs.webkit.org/show_bug.cgi?id=191661
+    
+    Reviewed by Eric Carlson.
+    
+    makePendingActivity is the modern way to handle set/unset of pending activity.
+    No change of behavior.
+    
+    * Modules/mediastream/RTCPeerConnection.cpp:
+    (WebCore::RTCPeerConnection::create):
+    (WebCore::RTCPeerConnection::doStop):
+    * Modules/mediastream/RTCPeerConnection.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@238232 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2018-11-15  Youenn Fablet  <youenn@apple.com>
+
+            Modernize RTCPeerConnection handling of pendingActivity
+            https://bugs.webkit.org/show_bug.cgi?id=191661
+
+            Reviewed by Eric Carlson.
+
+            makePendingActivity is the modern way to handle set/unset of pending activity.
+            No change of behavior.
+
+            * Modules/mediastream/RTCPeerConnection.cpp:
+            (WebCore::RTCPeerConnection::create):
+            (WebCore::RTCPeerConnection::doStop):
+            * Modules/mediastream/RTCPeerConnection.h:
+
 2018-12-10  Mark Lam  <mark.lam@apple.com>
 
         Cherry-pick r239062. rdar://problem/46603464
