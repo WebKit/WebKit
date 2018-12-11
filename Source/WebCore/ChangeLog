@@ -1,3 +1,49 @@
+2018-12-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Resource Load Statistics: Use common implementation within NetworkStorageSession
+        https://bugs.webkit.org/show_bug.cgi?id=192592
+
+        Reviewed by Alex Christensen.
+
+        There's nothing within the resource load statistics implementation contained
+        in NetworkStorageSessionCFNet that was CF specific. All of the resource load
+        statistics methods are moved from that file to the root NetworkStorageSession
+        implementation.
+
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::getPartitioningDomain):
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::maxAgeCacheCap):
+        (WebCore::NetworkStorageSession::setAgeCapForClientSideCookies):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor):
+        (WebCore::NetworkStorageSession::removePrevalentDomains):
+        (WebCore::NetworkStorageSession::hasStorageAccess const):
+        (WebCore::NetworkStorageSession::getAllStorageAccessEntries const):
+        (WebCore::NetworkStorageSession::grantStorageAccess):
+        (WebCore::NetworkStorageSession::removeStorageAccessForFrame):
+        (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage):
+        (WebCore::NetworkStorageSession::removeAllStorageAccess):
+        (WebCore::NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources):
+        (WebCore::NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources):
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::getPartitioningDomain): Deleted.
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const): Deleted.
+        (WebCore::NetworkStorageSession::shouldBlockCookies const): Deleted.
+        (WebCore::NetworkStorageSession::maxAgeCacheCap): Deleted.
+        (WebCore::NetworkStorageSession::setAgeCapForClientSideCookies): Deleted.
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor): Deleted.
+        (WebCore::NetworkStorageSession::removePrevalentDomains): Deleted.
+        (WebCore::NetworkStorageSession::hasStorageAccess const): Deleted.
+        (WebCore::NetworkStorageSession::getAllStorageAccessEntries const): Deleted.
+        (WebCore::NetworkStorageSession::grantStorageAccess): Deleted.
+        (WebCore::NetworkStorageSession::removeStorageAccessForFrame): Deleted.
+        (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage): Deleted.
+        (WebCore::NetworkStorageSession::removeAllStorageAccess): Deleted.
+        (WebCore::NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources): Deleted.
+        (WebCore::NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources): Deleted.
+
 2018-12-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: overlay bounds rulers don't match element when page is scrolled

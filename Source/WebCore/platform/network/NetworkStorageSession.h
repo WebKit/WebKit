@@ -100,22 +100,6 @@ public:
     CFURLStorageSessionRef platformSession() { return m_platformSession.get(); }
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setStorageAccessAPIEnabled(bool);
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
-    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
-    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<String>&);
-    WEBCORE_EXPORT void setAgeCapForClientSideCookies(std::optional<Seconds>);
-    WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
-    WEBCORE_EXPORT bool hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const;
-    WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
-    WEBCORE_EXPORT void grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID);
-    WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
-    WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
-    WEBCORE_EXPORT void removeAllStorageAccess();
-    WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
-    WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
-    WEBCORE_EXPORT std::optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
-#endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
     ~NetworkStorageSession();
@@ -164,6 +148,22 @@ public:
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
+    WEBCORE_EXPORT void setPrevalentDomainsToBlockCookiesFor(const Vector<String>&);
+    WEBCORE_EXPORT void setAgeCapForClientSideCookies(std::optional<Seconds>);
+    WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
+    WEBCORE_EXPORT bool hasStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID) const;
+    WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
+    WEBCORE_EXPORT void grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID);
+    WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
+    WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
+    WEBCORE_EXPORT void removeAllStorageAccess();
+    WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
+    WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
+    WEBCORE_EXPORT std::optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
+#endif
 
 private:
     static HashMap<PAL::SessionID, std::unique_ptr<NetworkStorageSession>>& globalSessionMap();
