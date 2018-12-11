@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 37: Device Orientation API is not supported
+CONSOLE MESSAGE: line 19: Device Motion API is not supported
+Tests that trying to set an event listener for deviceorientation and deviceorientation does not log an error in secure contexts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that trying to set an event listener for deviceorientation and deviceorientation does not log an error in secure contexts.");
+jsTestIsAsync = true;
+
+// localhost is secure by default.
+
+let lastConsoleMessage = null;
+internals.setConsoleMessageListener((message) => {
+    lastConsoleMessage = message;
+});
+
+function runDeviceMotionTest()
+{
+    if (!window.DeviceMotionEvent) {
+        console.log("Device Motion API is not supported");
+        finishJSTest();
+        return;
+    }
+
+    lastConsoleMessage = null;
+    debug("");
+    debug("* Registering device motion listener");
+    addEventListener("devicemotion", function() { });
+    internals.postTask(() => {
+        shouldBeNull("lastConsoleMessage");
+        finishJSTest();
+    });
+}
+
+function runDeviceOrientationTest()
+{
+    if (!window.DeviceOrientationEvent) {
+        console.log("Device Orientation API is not supported");
+        runDeviceMotionTest();
+        return;
+    }
+
+    lastConsoleMessage = null;
+    debug("* Registering device orientation listener");
+    addEventListener("deviceorientation", function() { });
+    internals.postTask(() => {
+        shouldBeNull("lastConsoleMessage");
+        runDeviceMotionTest();
+    });
+}
+
+onload = runDeviceOrientationTest;
+</script>
+</body>
+</html>

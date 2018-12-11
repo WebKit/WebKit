@@ -699,6 +699,9 @@ enum CompositingPolicy {
 
     boolean usingAppleInternalSDK();
 
+    void postTask(VoidCallback callback);
+    void markContextAsInsecure();
+
     [Conditional=VIDEO, MayThrowException] readonly attribute NowPlayingState nowPlayingState;
 
     [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);

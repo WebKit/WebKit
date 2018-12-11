@@ -199,6 +199,7 @@ public:
     WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin&) const;
 
     bool isPotentiallyTrustworthy() const { return m_isPotentiallyTrustworthy; }
+    void setIsPotentiallyTrustworthy(bool value) { m_isPotentiallyTrustworthy = value; }
 
     static bool isLocalHostOrLoopbackIPAddress(StringView);
 

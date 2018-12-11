@@ -4380,6 +4380,28 @@ bool Internals::pageHasPointerLock() const
 }
 #endif
 
+void Internals::markContextAsInsecure()
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+
+    document->securityOrigin().setIsPotentiallyTrustworthy(false);
+}
+
+void Internals::postTask(RefPtr<VoidCallback>&& callback)
+{
+    auto* document = contextDocument();
+    if (!document) {
+        callback->handleEvent();
+        return;
+    }
+
+    document->postTask([callback = WTFMove(callback)](ScriptExecutionContext&) {
+        callback->handleEvent();
+    });
+}
+
 Vector<String> Internals::accessKeyModifiers() const
 {
     Vector<String> accessKeyModifierStrings;

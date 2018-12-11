@@ -1,0 +1,14 @@
+Tests that trying to set an event listener for deviceorientation and deviceorientation does not log an error in secure contexts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Registering device orientation listener
+PASS lastConsoleMessage is null
+
+* Registering device motion listener
+PASS lastConsoleMessage is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

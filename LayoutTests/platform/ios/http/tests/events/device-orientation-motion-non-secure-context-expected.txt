@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 45: Blocked attempt add device motion or orientation listener because the browsing context is not secure.
+CONSOLE MESSAGE: line 28: Blocked attempt add device motion or orientation listener because the browsing context is not secure.
+Tests that trying to set an event listener for deviceorientation and deviceorientation logs an error in non-secure contexts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Registering device orientation listener
+PASS lastConsoleMessage is "Blocked attempt add device motion or orientation listener because the browsing context is not secure."
+
+* Registering device motion listener
+PASS lastConsoleMessage is "Blocked attempt add device motion or orientation listener because the browsing context is not secure."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

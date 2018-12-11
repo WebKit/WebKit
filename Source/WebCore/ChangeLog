@@ -1,3 +1,24 @@
+2018-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Restrict DeviceMotion / DeviceOrientation APIs to secure contexts
+        https://bugs.webkit.org/show_bug.cgi?id=192595
+        <rdar://problem/46382603>
+
+        Reviewed by Dean Jackson.
+
+        Tests: http/tests/events/device-orientation-motion-non-secure-context.html
+               http/tests/events/device-orientation-motion-secure-context.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::setIsPotentiallyTrustworthy):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markContextAsInsecure):
+        (WebCore::Internals::postTask):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-12-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Send the full list of file upload URLs and types in PasteboardItemInfo

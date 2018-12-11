@@ -714,6 +714,9 @@ public:
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;
 
+    void postTask(RefPtr<VoidCallback>&&);
+    void markContextAsInsecure();
+
     bool usingAppleInternalSDK() const;
 
     struct NowPlayingState {
