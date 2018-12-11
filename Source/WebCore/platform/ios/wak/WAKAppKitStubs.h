@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Unicodes we reserve for function keys on the keyboard,  OpenStep reserves the range 0xF700-0xF8FF for this purpose.  The availability of various keys will be system dependent. */
-
 #ifndef WAKAppKitStubs_h
 #define WAKAppKitStubs_h
 
@@ -204,10 +202,6 @@ typedef enum _NSSelectionDirection {
     NSSelectingNext,
     NSSelectingPrevious
 } NSSelectionDirection;
-
-WEBCORE_EXPORT @interface NSCursor : NSObject
-+ (void)setHiddenUntilMouseMoves:(BOOL)flag;
-@end
 
 #endif // TARGET_OS_IPHONE
 

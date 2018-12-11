@@ -30,11 +30,4 @@
 
 id NSApp = nil;
 
-@implementation NSCursor
-+ (void)setHiddenUntilMouseMoves:(BOOL)flag
-{
-    UNUSED_PARAM(flag);
-}
-@end
-
 #endif // PLATFORM(IOS_FAMILY)

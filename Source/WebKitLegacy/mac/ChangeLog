@@ -1,3 +1,18 @@
+2018-12-11  Tim Horton  <timothy_horton@apple.com>
+
+        WebCore shouldn't have a Objective-C class named NSCursor
+        https://bugs.webkit.org/show_bug.cgi?id=192602
+        <rdar://problem/46615532>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:keyDown:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView performKeyEquivalent:]):
+        Only use NSCursor on macOS.
+
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig

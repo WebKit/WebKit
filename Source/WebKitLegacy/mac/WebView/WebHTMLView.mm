@@ -4976,8 +4976,11 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     if (callSuper)
         [super keyDown:event];
-    else
+    else {
+#if PLATFORM(MAC)
         [NSCursor setHiddenUntilMouseMoves:YES];
+#endif
+    }
 }
 
 - (void)keyUp:(WebEvent *)event
@@ -5281,9 +5284,11 @@ IGNORE_WARNINGS_END
         if (Frame* frame = core([self _frame]))
             ret = frame->eventHandler().keyEvent(event);
 
-    if (ret)
+    if (ret) {
+#if PLATFORM(MAC)
         [NSCursor setHiddenUntilMouseMoves:YES];
-    else
+#endif
+    } else
         ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
 
     [self release];

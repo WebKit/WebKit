@@ -1087,8 +1087,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     if (callSuper) {
         [super keyDown:event];
     } else {
-        // if we did something useful, get the cursor out of the way
+#if PLATFORM(MAC)
+        // If we did something useful, get the cursor out of the way.
         [NSCursor setHiddenUntilMouseMoves:YES];
+#endif
     }
 }
 
