@@ -1,3 +1,23 @@
+2018-12-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after r239028
+
+        The FLATPAK_USER_DIR env var is not set early enough, leading to:
+
+        Traceback (most recent call last):
+        File "/home/phil/WebKit/Tools/Scripts/webkit-flatpak", line 28, in <module>
+          sys.exit(WebkitFlatpak.load_from_args().run())
+        File "/home/phil/WebKit/Tools/flatpak/flatpakutils.py", line 761, in run
+          if not self.clean_args():
+        File "/home/phil/WebKit/Tools/flatpak/flatpakutils.py", line 574, in clean_args
+          _log.debug("Using flatpak user dir: %s" % os.environ["FLATPAK_USER_DIR"])
+        File "/usr/lib/python2.7/UserDict.py", line 40, in __getitem__
+          raise KeyError(key)
+        KeyError: 'FLATPAK_USER_DIR'
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.clean_args):
+
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig

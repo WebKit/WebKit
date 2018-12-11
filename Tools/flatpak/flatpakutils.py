@@ -570,6 +570,12 @@ class WebkitFlatpak:
         self.icc_version = None
 
     def clean_args(self):
+        os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak")))
+        try:
+            os.makedirs(os.environ["FLATPAK_USER_DIR"])
+        except OSError as e:
+            pass
+
         configure_logging(logging.DEBUG if self.verbose else logging.INFO)
         _log.debug("Using flatpak user dir: %s" % os.environ["FLATPAK_USER_DIR"])
 
@@ -592,12 +598,6 @@ class WebkitFlatpak:
         self.name = "org.webkit.%s" % self.platform
         self.manifest_path = os.path.abspath(os.path.join(scriptdir, '../flatpak/org.webkit.WebKit.yaml'))
         self.build_name = self.name + "-generated"
-
-        os.environ["FLATPAK_USER_DIR"] = os.environ.get("WEBKIT_FLATPAK_USER_DIR", os.path.realpath(os.path.join(scriptdir, "../../WebKitBuild", "UserFlatpak")))
-        try:
-            os.makedirs(os.environ["FLATPAK_USER_DIR"])
-        except OSError as e:
-            pass
 
         build_root = os.path.join(self.source_root, 'WebKitBuild')
         self.flatpak_build_path = os.path.join(build_root, self.platform, "FlatpakTree" + self.build_type)
