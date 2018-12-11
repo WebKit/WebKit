@@ -1,3 +1,217 @@
+2018-12-10  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        * Platform/spi/ios/AccessibilitySupportSPI.h:
+        * PlatformMac.cmake:
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/WebProcessConnection.cpp:
+        * Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb:
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        (WKErrorCopyCFError):
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        (WKImageCreateFromCGImage):
+        * Shared/ChildProcess.cpp:
+        * Shared/ContextMenuContextData.cpp:
+        * Shared/EditorState.cpp:
+        * Shared/Plugins/NPIdentifierData.cpp:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        * Shared/SessionState.cpp:
+        * Shared/SessionTracker.cpp:
+        * Shared/ShareableBitmap.cpp:
+        * Shared/ShareableResource.cpp:
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        * Shared/WebBackForwardListItem.cpp:
+        * Shared/WebContextMenuItemData.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebHitTestResultData.cpp:
+        * Shared/WebImage.cpp:
+        * Shared/WebMediaSessionMetadata.cpp:
+        * Shared/WebMemorySampler.cpp:
+        * Shared/WebMouseEvent.cpp:
+        * Shared/WebRenderObject.cpp:
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        * Shared/WebWheelEvent.cpp:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/API/APIHitTestResult.cpp:
+        * UIProcess/API/APINavigation.cpp:
+        * UIProcess/API/APIOpenPanelParameters.cpp:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLWithShouldOpenExternalURLsPolicy):
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadURLRequestWithUserData):
+        (WKPageSetPaginationMode):
+        (WKPageGetPaginationMode):
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPagePolicyClient):
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView initWithFrame:processPool:configuration:webView:]):
+        (-[WKContentView dealloc]):
+        (-[WKContentView page]):
+        (-[WKContentView updateFixedClippingView:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInsets:unobscuredSafeAreaInsets:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView _updateForScreen:]):
+        (-[WKContentView _accessibilityRegisterUIProcessTokens]):
+        (-[WKContentView _createDrawingAreaProxy]):
+        (-[WKContentView _didCommitLayerTree:]):
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFocusedElementInfo initWithAssistedNodeInformation:isUserInitiated:userObject:]):
+        (hasAssistedNode):
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView positionInformation]):
+        (-[WKContentView _webTouchEventsRecognized:]):
+        (inflateQuad):
+        (-[WKContentView _updateTapHighlight]):
+        (-[WKContentView _showTapHighlight]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView inputView]):
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView currentPositionInformation]):
+        (-[WKContentView doAfterPositionInformationUpdate:forRequest:]):
+        (-[WKContentView _currentPositionInformationIsValidForRequest:]):
+        (-[WKContentView _hasValidOutstandingPositionInformationRequest:]):
+        (-[WKContentView _currentPositionInformationIsApproximatelyValidForRequest:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView webSelectionRectsForSelectionRects:]):
+        (-[WKContentView _twoFingerSingleTapGestureRecognized:]):
+        (-[WKContentView _stylusSingleTapRecognized:]):
+        (-[WKContentView _singleTapCommited:]):
+        (-[WKContentView _attemptClickAtLocation:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView supportedPasteboardTypesForCurrentSelection]):
+        (-[WKContentView _lookupForWebView:]):
+        (-[WKContentView _shareForWebView:]):
+        (-[WKContentView textStylingAtPosition:inDirection:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView selectForWebView:]):
+        (-[WKContentView _accessibilityRetrieveRectsEnclosingSelectionOffset:withGranularity:]):
+        (-[WKContentView _accessibilityRetrieveRectsAtSelectionOffset:withText:completionHandler:]):
+        (toGestureType):
+        (toUIWKGestureType):
+        (toSelectionTouch):
+        (toUIWKSelectionTouch):
+        (toGestureRecognizerState):
+        (toUIGestureRecognizerState):
+        (toUIWKSelectionFlags):
+        (toWKTextGranularity):
+        (toWKSelectionDirection):
+        (selectionChangedWithGesture):
+        (selectionChangedWithTouch):
+        (-[WKContentView changeSelectionWithGestureAt:withGesture:withState:withFlags:]):
+        (-[WKContentView autocorrectionData]):
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]):
+        (-[WKContentView _becomeFirstResponderWithSelectionMovingForward:completionHandler:]):
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView selectedTextRange]):
+        (-[WKContentView setMarkedText:selectedRange:]):
+        (coreWritingDirection):
+        (-[WKContentView closestPositionToPoint:]):
+        (-[WKContentView insertText:]):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView handleKeyWebEvent:]):
+        (-[WKContentView handleKeyWebEvent:withCompletionHandler:]):
+        (-[WKContentView isScrollableForKeyboardScrollViewAnimator:]):
+        (-[WKContentView keyboardScrollViewAnimator:distanceForIncrement:]):
+        (-[WKContentView assistedNodeInformation]):
+        (-[WKContentView assistedNodeSelectOptions]):
+        (isAssistableInputType):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView updateCurrentAssistedNodeInformation:]):
+        (-[WKContentView presentViewControllerForCurrentAssistedNode]):
+        (-[WKContentView actionNameForFocusedFormControlView:]):
+        (-[WKContentView selectWordForReplacement]):
+        (-[WKContentView _updateChangedSelection:]):
+        (-[WKContentView _beginSuppressingSelectionAssistantForReason:]):
+        (-[WKContentView _stopSuppressingSelectionAssistantForReason:]):
+        (-[WKContentView _showPlaybackTargetPicker:fromRect:routeSharingPolicy:routingContextUID:]):
+        (-[WKContentView _showRunOpenPanel:resultListener:]):
+        (-[WKContentView _showShareSheet:completionHandler:]):
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView _didHandleAdditionalDragItemsRequest:]):
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (dropOperationForWebCoreDragOperation):
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        (-[WKContentView _didConcludeEditDataInteraction:]):
+        (-[WKContentView _didPerformDragOperation:]):
+        (-[WKContentView _prepareToDragPromisedAttachment:]):
+        (-[WKContentView _itemsForBeginningOrAddingToSessionWithRegistrationList:stagedDragSource:]):
+        (-[WKContentView _autofillContext]):
+        (-[WKContentView _dragInteraction:itemsForAddingToSession:withTouchAtPoint:completion:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+        (-[WKContentView allowsLanguageSelectionMenuForListViewController:]):
+        (-[WKContentView shouldDisplayInputContextViewForListViewController:]):
+        (-[WKContentView numericInputModeForListViewController:]):
+        (-[WKContentView textContentTypeForListViewController:]):
+        (-[WKContentView allowsDictationInputForListViewController:]):
+        (-[WKContentView _simulateLongPressActionAtLocation:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _presentationRectsForPreviewItemController:]):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (WKFullScreenViewControllerPlaybackSessionModelClient::setInterface):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setInterface):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::interface const):
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController _manager]):
+        (-[WKFullScreenViewController _togglePiPAction:]):
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullscreenAnimationController configureInitialAndFinalStatesForTransition:]):
+        (-[WKFullScreenWindowController isFullScreen]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController webViewDidRemoveFromSuperviewWhileInFullscreen]):
+        (-[WKFullScreenWindowController _exitFullscreenImmediately]):
+        (-[WKFullScreenWindowController _manager]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (mediaTimeToCurrentTime):
+        (-[WKAnimationDelegate initWithLayerID:layerTreeHost:]):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase accessibilityRootObjectWrapper]):
+
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
         Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig

@@ -29,9 +29,8 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/BackForwardItemIdentifier.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy policy)
 {

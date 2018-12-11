@@ -26,9 +26,8 @@
 #include "config.h"
 #include "WebImage.h"
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {

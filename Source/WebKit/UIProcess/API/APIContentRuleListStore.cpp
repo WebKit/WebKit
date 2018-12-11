@@ -45,11 +45,11 @@
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
+
+namespace API {
 using namespace WebKit::NetworkCache;
 using namespace WebCore::FileSystem;
 
-namespace API {
-    
 ContentRuleListStore& ContentRuleListStore::legacyDefaultStore()
 {
     const bool legacyFilename = true;

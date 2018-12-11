@@ -39,9 +39,8 @@
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 ChildProcess::ChildProcess()
     : m_terminationCounter(0)

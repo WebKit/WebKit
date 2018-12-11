@@ -60,9 +60,6 @@ template<> struct ClientTraits<WKContextHistoryClientBase> {
 };
 }
 
-using namespace WebCore;
-using namespace WebKit;
-
 WKTypeID WKContextGetTypeID()
 {
     return toAPI(WebProcessPool::APIType);
@@ -190,7 +187,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didReceiveAuthenticationChallenge(toAPI(&processPool), toAPI(&downloadProxy), toAPI(&authenticationChallengeProxy), m_client.base.clientInfo);
         }
 
-        void didReceiveResponse(WebProcessPool& processPool, DownloadProxy& downloadProxy, const ResourceResponse& response) final
+        void didReceiveResponse(WebProcessPool& processPool, DownloadProxy& downloadProxy, const WebCore::ResourceResponse& response) final
         {
             if (!m_client.didReceiveResponse)
                 return;
@@ -232,7 +229,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.didFinish(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
 
-        void didFail(WebProcessPool& processPool, DownloadProxy& downloadProxy, const ResourceError& error) final
+        void didFail(WebProcessPool& processPool, DownloadProxy& downloadProxy, const WebCore::ResourceError& error) final
         {
             if (!m_client.didFail)
                 return;
@@ -256,7 +253,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             m_client.processDidCrash(toAPI(&processPool), toAPI(&downloadProxy), m_client.base.clientInfo);
         }
 
-        void willSendRequest(WebProcessPool& processPool, DownloadProxy& downloadProxy, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final
+        void willSendRequest(WebProcessPool& processPool, DownloadProxy& downloadProxy, WebCore::ResourceRequest&& request, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler) final
         {
             if (m_client.didReceiveServerRedirect)
                 m_client.didReceiveServerRedirect(toAPI(&processPool), toAPI(&downloadProxy), toURLRef(request.url().string().impl()), m_client.base.clientInfo);
@@ -310,7 +307,7 @@ void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
     if (visitedURLString.isEmpty())
         return;
 
-    toImpl(contextRef)->visitedLinkStore().addVisitedLinkHash(computeSharedStringHash(visitedURLString));
+    toImpl(contextRef)->visitedLinkStore().addVisitedLinkHash(WebCore::computeSharedStringHash(visitedURLString));
 }
 
 void WKContextClearVisitedLinks(WKContextRef contextRef)
