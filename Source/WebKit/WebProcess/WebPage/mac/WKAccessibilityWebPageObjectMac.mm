@@ -48,6 +48,8 @@
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <wtf/ObjCRuntimeExtras.h>
 
+using namespace WebCore;
+using namespace WebKit;
 
 @implementation WKAccessibilityWebPageObject
 
@@ -216,7 +218,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     
     // Some plugins may be able to figure out the scroll position and inset on their own.
     bool applyContentOffset = true;
-    if (auto pluginView = WebKit::WebPage::pluginViewForFrame(m_page->mainFrame()))
+    if (auto pluginView = WebPage::pluginViewForFrame(m_page->mainFrame()))
         applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();
 
     if (applyContentOffset) {

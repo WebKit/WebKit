@@ -31,8 +31,9 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/ProcessPrivilege.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {

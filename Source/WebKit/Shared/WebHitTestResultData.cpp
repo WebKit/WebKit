@@ -31,8 +31,9 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 WebHitTestResultData::WebHitTestResultData()
 {

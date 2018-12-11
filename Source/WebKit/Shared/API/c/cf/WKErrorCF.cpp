@@ -29,14 +29,16 @@
 #include "APIError.h"
 #include "WKAPICast.h"
 
+using namespace WebCore;
+using namespace WebKit;
+
 WKErrorRef WKErrorCreateWithCFError(CFErrorRef cfError)
 {
-    return WebKit::toAPI(&API::Error::create(WebCore::ResourceError(cfError)).leakRef());
+    return toAPI(&API::Error::create(ResourceError(cfError)).leakRef());
 }
 
 CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error)
 {
-    WTF::RetainPtr<CFErrorRef> cfError = WebKit::toImpl(error)->platformError().cfError();
+    RetainPtr<CFErrorRef> cfError = toImpl(error)->platformError().cfError();
     return cfError.leakRef();
 }
-

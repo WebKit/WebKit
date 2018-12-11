@@ -33,8 +33,9 @@
 #include <WebCore/ContextMenuContext.h>
 #include <WebCore/GraphicsContext.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 ContextMenuContextData::ContextMenuContextData()
     : m_type(Type::ContextMenu)

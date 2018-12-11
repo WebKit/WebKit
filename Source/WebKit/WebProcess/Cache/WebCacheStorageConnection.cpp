@@ -35,9 +35,10 @@
 #include "WebProcess.h"
 #include <wtf/MainThread.h>
 
-namespace WebKit {
 using namespace WebCore::DOMCacheEngine;
-using namespace CacheStorage;
+using namespace WebKit::CacheStorage;
+
+namespace WebKit {
 
 WebCacheStorageConnection::WebCacheStorageConnection(WebCacheStorageProvider& provider, PAL::SessionID sessionID)
     : m_provider(provider)

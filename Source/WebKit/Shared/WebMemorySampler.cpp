@@ -33,8 +33,9 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static const char separator = '\t';
 

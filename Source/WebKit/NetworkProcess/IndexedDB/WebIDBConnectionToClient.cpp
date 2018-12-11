@@ -41,8 +41,9 @@
 #include <WebCore/ThreadSafeDataBuffer.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 Ref<WebIDBConnectionToClient> WebIDBConnectionToClient::create(NetworkConnectionToWebProcess& connection, uint64_t serverConnectionIdentifier, PAL::SessionID sessionID)
 {

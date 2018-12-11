@@ -51,8 +51,9 @@
 #include "LayerHostingContext.h"
 #endif
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, const PluginCreationParameters& creationParameters)
     : m_connection(connection)

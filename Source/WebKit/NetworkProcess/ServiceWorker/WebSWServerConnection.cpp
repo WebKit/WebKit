@@ -53,9 +53,10 @@
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
 #include <wtf/MainThread.h>
 
-namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
+
+namespace WebKit {
 
 #define SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
 #define SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)

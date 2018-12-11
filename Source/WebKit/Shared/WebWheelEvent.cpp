@@ -28,8 +28,9 @@
 
 #include "WebCoreArgumentCoders.h"
 
-namespace WebKit {    
 using namespace WebCore;
+
+namespace WebKit {    
 
 WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Modifiers modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)

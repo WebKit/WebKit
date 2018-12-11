@@ -31,8 +31,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
-namespace WebKit {
 using namespace WebCore;
+
+namespace WebKit {
 
 static String& identifierBase()
 {
