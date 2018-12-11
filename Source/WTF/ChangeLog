@@ -1,3 +1,15 @@
+2018-12-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=192573
+
+        Reviewed by Simon Fraser.
+
+        Remove ENABLE_RESOURCE_LOAD_STATISTICS from Platform.h and instead rely
+        on it being set in FeatureDefines.xcconfig.
+
+        * wtf/Platform.h:
+
 2018-12-10  Alexey Proskuryakov  <ap@apple.com>
 
         Move ENABLE_SEC_ITEM_SHIM out of WebKit's config.h

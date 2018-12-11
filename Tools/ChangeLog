@@ -1,5 +1,14 @@
 2018-12-10  Don Olmstead  <don.olmstead@sony.com>
 
+        Move ENABLE_RESOURCE_LOAD_STATISTICS to FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=192573
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
+2018-12-10  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Add ENABLE_RESOURCE_LOAD_STATISTICS to WebKitFeatures.cmake
         https://bugs.webkit.org/show_bug.cgi?id=192574
 
