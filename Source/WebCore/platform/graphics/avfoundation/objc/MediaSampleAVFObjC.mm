@@ -119,7 +119,7 @@ uint32_t MediaSampleAVFObjC::videoPixelFormat() const
     return CVPixelBufferGetPixelFormatType(pixelBuffer);
 }
 
-static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
+static bool isCMSampleBufferRandomAccess(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)
@@ -133,7 +133,7 @@ static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
     return true;
 }
 
-static bool CMSampleBufferIsNonDisplaying(CMSampleBufferRef sample)
+static bool isCMSampleBufferNonDisplaying(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)
@@ -152,10 +152,10 @@ MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 {
     int returnValue = MediaSample::None;
     
-    if (CMSampleBufferIsRandomAccess(m_sample.get()))
+    if (isCMSampleBufferRandomAccess(m_sample.get()))
         returnValue |= MediaSample::IsSync;
 
-    if (CMSampleBufferIsNonDisplaying(m_sample.get()))
+    if (isCMSampleBufferNonDisplaying(m_sample.get()))
         returnValue |= MediaSample::IsNonDisplaying;
     
     return SampleFlags(returnValue);

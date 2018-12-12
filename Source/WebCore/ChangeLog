@@ -1,3 +1,19 @@
+2018-12-11  Jer Noble  <jer.noble@apple.com>
+
+        Globally namespaced objects shouldn't use framework-prefixed names
+        https://bugs.webkit.org/show_bug.cgi?id=192600
+
+        Reviewed by Eric Carlson.
+
+        Rename CMSampleBufferIs... -> isCMSampleBuffer...
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::isCMSampleBufferRandomAccess):
+        (WebCore::isCMSampleBufferNonDisplaying):
+        (WebCore::MediaSampleAVFObjC::flags const):
+        (WebCore::CMSampleBufferIsRandomAccess): Deleted.
+        (WebCore::CMSampleBufferIsNonDisplaying): Deleted.
+
 2018-12-11  Brent Fulgham  <bfulgham@apple.com>
 
         Don't attempt to compute animated values when there is no relevant animation
