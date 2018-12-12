@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 
 #include "CSSImageValue.h"
 #include "ImageBitmap.h"

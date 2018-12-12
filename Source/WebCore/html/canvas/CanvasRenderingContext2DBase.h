@@ -69,7 +69,7 @@ class TextMetrics;
 
 struct DOMMatrix2DInit;
 
-#if ENABLE(VIDEO) && ENABLE(CSS_PAINTING_API)
+#if ENABLE(VIDEO) && ENABLE(CSS_TYPED_OM)
 using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>, RefPtr<TypedOMCSSImageValue>>;
 #elif ENABLE(VIDEO)
 using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLVideoElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>>;
@@ -326,7 +326,7 @@ protected:
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, bool repeatX, bool repeatY);
 #endif
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(ImageBitmap&, bool repeatX, bool repeatY);
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(TypedOMCSSImageValue&, bool repeatX, bool repeatY);
 #endif
 
@@ -337,7 +337,7 @@ protected:
 #if ENABLE(VIDEO)
     ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
     ExceptionOr<void> drawImage(TypedOMCSSImageValue&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
     ExceptionOr<void> drawImage(ImageBitmap&, const FloatRect& srcRect, const FloatRect& dstRect);

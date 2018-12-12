@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JSTypedOMCSSStyleValue.h"
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 
 #include "JSTypedOMCSSImageValue.h"
 #include "JSTypedOMCSSUnitValue.h"

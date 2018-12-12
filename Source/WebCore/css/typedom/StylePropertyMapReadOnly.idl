@@ -23,12 +23,9 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// FIXME: Implement this properly, according to the Typed OM spec.
-// This is just a stub for the CSS painting API for now. Once the Typed OM
-// is going to be implemented, please change the runtime flag.
 [
-    EnabledAtRuntime=CSSPaintingAPI,
-    Conditional=CSS_PAINTING_API,
+    EnabledAtRuntime=CSSTypedOM,
+    Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     ImplementationLacksVTable
 ] interface StylePropertyMapReadOnly {

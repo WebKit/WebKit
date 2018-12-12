@@ -1439,7 +1439,7 @@ static inline FloatSize size(HTMLVideoElement& video)
 
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 static inline FloatSize size(TypedOMCSSImageValue& image)
 {
     LayoutSize size;
@@ -1509,7 +1509,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     return result;
 }
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(TypedOMCSSImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
 {
     auto* renderer = image.renderer();
@@ -2018,7 +2018,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(I
     return Exception { TypeError };
 }
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(TypedOMCSSImageValue&, bool, bool)
 {
     // FIXME: Implement.

@@ -188,6 +188,11 @@ public:
     bool cssPaintingAPIEnabled() const { return m_CSSPaintingAPIEnabled; }
 #endif
 
+#if ENABLE(CSS_TYPED_OM)
+    void setCSSTypedOMEnabled(bool isEnabled) { m_CSSTypedOMEnabled = isEnabled; }
+    bool cssTypedOMEnabled() const { return m_CSSTypedOMEnabled; }
+#endif
+
     void setWebSQLDisabled(bool isDisabled) { m_webSQLEnabled = !isDisabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
 
@@ -383,6 +388,10 @@ private:
 
 #if ENABLE(CSS_PAINTING_API)
     bool m_CSSPaintingAPIEnabled { false };
+#endif
+
+#if ENABLE(CSS_TYPED_OM)
+    bool m_CSSTypedOMEnabled { false };
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

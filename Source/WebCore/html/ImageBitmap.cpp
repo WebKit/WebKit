@@ -449,7 +449,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 }
 #endif
 
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<TypedOMCSSImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
 {
     promise.reject(InvalidStateError, "Not implemented");

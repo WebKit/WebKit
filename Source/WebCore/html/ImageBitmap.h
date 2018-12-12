@@ -56,7 +56,7 @@ public:
 #endif
         RefPtr<HTMLCanvasElement>,
         RefPtr<ImageBitmap>,
-#if ENABLE(CSS_PAINTING_API)
+#if ENABLE(CSS_TYPED_OM)
         RefPtr<TypedOMCSSImageValue>,
 #endif
         RefPtr<Blob>,

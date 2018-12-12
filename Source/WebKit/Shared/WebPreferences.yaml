@@ -1335,6 +1335,15 @@ CSSPaintingAPIEnabled:
   category: experimental
   condition: ENABLE(CSS_PAINTING_API)
 
+CSSTypedOMEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "CSS Typed OM"
+  humanReadableDescription: "Enable the CSS Typed OM"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: ENABLE(CSS_TYPED_OM)
+
 WebSQLDisabled:
   type: bool
   defaultValue: false

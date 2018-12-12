@@ -24,7 +24,7 @@
  */
 
 // FIXME: This should include SVGImageElement and ImageBitmap.
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO && defined(ENABLE_CSS_PAINTING_API) && ENABLE_CSS_PAINTING_API
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO && defined(ENABLE_CSS_TYPED_OM) && ENABLE_CSS_TYPED_OM
 typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap or TypedOMCSSImageValue) CanvasImageSource;
 #elif defined(ENABLE_VIDEO) && ENABLE_VIDEO
 typedef (HTMLImageElement or HTMLVideoElement or HTMLCanvasElement or ImageBitmap) CanvasImageSource;
