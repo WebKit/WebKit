@@ -277,6 +277,10 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     endif ()
 endif ()
 
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitLegacy -Wno-overloaded-virtual)
+endif ()
+
 list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_INCLUDES} ${WebKitLegacy_SOURCES_Classes} ${WebKitLegacy_SOURCES_WebCoreSupport})
 
 source_group(Includes FILES ${WebKitLegacy_INCLUDES})

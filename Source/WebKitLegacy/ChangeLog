@@ -1,3 +1,20 @@
+2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKitLegacy][Clang] WebKit.h warning: 'IWebEditingDelegate2::shouldInsertNode' hides overloaded virtual function [-Woverloaded-virtual]
+        https://bugs.webkit.org/show_bug.cgi?id=192581
+
+        Reviewed by Alex Christensen.
+
+        Conventionally, WebKit COM interface adds a new interface with
+        same name methods with the old interface. For example, both
+        IWebEditingDelegate and IWebEditingDelegate2 interfaces has
+        shouldInsertNode method.
+
+        This is a part of public API, can't be renamed.
+
+        * PlatformWin.cmake: Added -Wno-overloaded-virtual compiler option
+        for WebKitLegacy
+
 2018-12-06  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused LoaderStrategy::storeDerivedDataToCache and associated dead code
