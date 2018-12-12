@@ -40,7 +40,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
         RemoveFontMemResourceEx(m_fontReference);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities)
 {
     int size = fontDescription.computedPixelSize();
     FontRenderingMode renderingMode = fontDescription.renderingMode();
