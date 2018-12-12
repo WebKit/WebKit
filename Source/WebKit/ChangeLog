@@ -1,3 +1,27 @@
+2018-12-12  Vivek Seth  <v_seth@apple.com>
+
+        HTTPS Upgrade: Figure out if/how to tell clients that the HTTPS upgrade happened
+        https://bugs.webkit.org/show_bug.cgi?id=192375
+        <rdar://problem/45851159>
+
+        Reviewed by Chris Dumez.
+
+        Use simulated redirect to tell clients that HTTPS Upgrade happened.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+        (WebKit::NetworkLoadChecker::checkRedirection):
+        (WebKit::NetworkLoadChecker::accessControlErrorForValidationHandler):
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded const):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect):
+        (WebKit::NetworkLoadChecker::checkCORSRequestWithPreflight):
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded): Deleted.
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        * NetworkProcess/PingLoad.cpp:
+
 2018-12-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for Cocoa Debug test instability following r239129.

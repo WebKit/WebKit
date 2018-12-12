@@ -120,6 +120,18 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     return response;
 }
 
+ResourceResponse ResourceResponseBase::syntheticRedirectResponse(const URL& fromURL, const URL& toURL)
+{
+    ResourceResponse redirectResponse;
+    redirectResponse.setURL(fromURL);
+    redirectResponse.setHTTPStatusCode(302);
+    redirectResponse.setHTTPVersion("HTTP/1.1"_s);
+    redirectResponse.setHTTPHeaderField(HTTPHeaderName::Location, toURL.string());
+    redirectResponse.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-store"_s);
+
+    return redirectResponse;
+}
+
 ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response)
 {
     if (response.tainting() == Tainting::Opaque) {

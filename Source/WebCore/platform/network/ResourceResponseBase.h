@@ -173,6 +173,8 @@ public:
 
     static ResourceResponse filter(const ResourceResponse&);
 
+    WEBCORE_EXPORT static ResourceResponse syntheticRedirectResponse(const URL& fromURL, const URL& toURL);
+
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 
     template<class Encoder> void encode(Encoder&) const;

@@ -111,7 +111,8 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
     }
 
     if (synchronousReply || parameters.shouldRestrictHTTPResponseAccess) {
-        m_networkLoadChecker = std::make_unique<NetworkLoadChecker>(FetchOptions { m_parameters.options }, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), shouldCaptureExtraNetworkLoadMetrics());
+        NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
+        m_networkLoadChecker = std::make_unique<NetworkLoadChecker>(FetchOptions { m_parameters.options }, m_parameters.sessionID, m_parameters.webPageID, m_parameters.webFrameID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, m_parameters.sourceOrigin.copyRef(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -179,20 +180,26 @@ void NetworkResourceLoader::start()
 
     if (m_networkLoadChecker) {
         m_networkLoadChecker->check(ResourceRequest { originalRequest() }, this, [this] (auto&& result) {
-            if (!result.has_value()) {
-                if (!result.error().isCancellation())
-                    this->didFailLoading(result.error());
-                return;
-            }
+            WTF::switchOn(result,
+                [this] (ResourceError& error) {
+                    if (!error.isCancellation())
+                        this->didFailLoading(error);
+                },
+                [this] (NetworkLoadChecker::RedirectionTriplet& triplet) {
+                    this->m_isWaitingContinueWillSendRequestForCachedRedirect = true;
+                    this->willSendRedirectedRequest(WTFMove(triplet.request), WTFMove(triplet.redirectRequest), WTFMove(triplet.redirectResponse));
+                    RELEASE_LOG_IF_ALLOWED("NetworkResourceLoader: synthetic redirect sent because request URL was modified.");
+                },
+                [this] (ResourceRequest& request) {
+                    if (this->canUseCache(request)) {
+                        RELEASE_LOG_IF_ALLOWED("start: Checking cache for resource (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, this->isMainResource(), this->isSynchronous());
+                        this->retrieveCacheEntry(request);
+                        return;
+                    }
 
-            auto currentRequest = result.value();
-            if (this->canUseCache(currentRequest)) {
-                RELEASE_LOG_IF_ALLOWED("start: Checking cache for resource (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ", isMainResource = %d, isSynchronous = %d)", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier, this->isMainResource(), this->isSynchronous());
-                this->retrieveCacheEntry(currentRequest);
-                return;
-            }
-
-            this->startNetworkLoad(WTFMove(result.value()), FirstLoad::Yes);
+                    this->startNetworkLoad(WTFMove(request), FirstLoad::Yes);
+                }
+            );
         });
         return;
     }

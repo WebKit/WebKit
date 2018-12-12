@@ -1,3 +1,19 @@
+2018-12-12  Vivek Seth  <v_seth@apple.com>
+
+        HTTPS Upgrade: Figure out if/how to tell clients that the HTTPS upgrade happened
+        https://bugs.webkit.org/show_bug.cgi?id=192375
+        <rdar://problem/45851159>
+
+        Reviewed by Chris Dumez.
+
+        Use simulated redirect to tell clients that HTTPS Upgrade happened.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::syntheticRedirectResponse):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::synthesizeRedirectResponseIfNecessary):
+
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
         Add a preference to enable / disable devicemotion and deviceorientation events
