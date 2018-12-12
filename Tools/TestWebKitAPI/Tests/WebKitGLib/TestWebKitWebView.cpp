@@ -1219,100 +1219,6 @@ static void testWebViewTitleChange(WebViewTitleTest* test, gconstpointer)
     g_assert_cmpstr(test->m_webViewTitles[6].data(), ==, "three");
 }
 
-#if PLATFORM(WPE)
-class FrameDisplayedTest: public WebViewTest {
-public:
-    MAKE_GLIB_TEST_FIXTURE(FrameDisplayedTest);
-
-    static void titleChangedCallback(WebKitWebView* view, GParamSpec*, WebViewTitleTest* test)
-    {
-        test->m_webViewTitles.append(webkit_web_view_get_title(view));
-    }
-
-    FrameDisplayedTest()
-        : m_id(webkit_web_view_add_frame_displayed_callback(m_webView, [](WebKitWebView*, gpointer userData) {
-            auto* test = static_cast<FrameDisplayedTest*>(userData);
-            if (!test->m_maxFrames)
-                return;
-
-            if (++test->m_frameCounter == test->m_maxFrames)
-                RunLoop::main().dispatch([test] { test->quitMainLoop(); });
-        }, this, nullptr))
-    {
-        g_assert_cmpuint(m_id, >, 0);
-    }
-
-    ~FrameDisplayedTest()
-    {
-        webkit_web_view_remove_frame_displayed_callback(m_webView, m_id);
-    }
-
-    void waitUntilFramesDisplayed(unsigned framesCount = 1)
-    {
-        m_maxFrames = framesCount;
-        m_frameCounter = 0;
-        g_main_loop_run(m_mainLoop);
-    }
-
-    unsigned m_id { 0 };
-    unsigned m_frameCounter { 0 };
-    unsigned m_maxFrames { 0 };
-};
-
-static void testWebViewFrameDisplayed(FrameDisplayedTest* test, gconstpointer)
-{
-    test->showInWindow();
-
-    test->loadHtml("<html></html>", nullptr);
-    test->waitUntilFramesDisplayed();
-
-    test->loadHtml("<html><head><style>@keyframes fadeIn { from { opacity: 0; } }</style></head><p style='animation: fadeIn 1s infinite alternate;'>Foo</p></html>", nullptr);
-    test->waitUntilFramesDisplayed(10);
-
-    bool secondCallbackCalled = false;
-    auto id = webkit_web_view_add_frame_displayed_callback(test->m_webView, [](WebKitWebView*, gpointer userData) {
-        auto* secondCallbackCalled = static_cast<bool*>(userData);
-        *secondCallbackCalled = true;
-    }, &secondCallbackCalled, nullptr);
-    test->waitUntilFramesDisplayed();
-    g_assert_true(secondCallbackCalled);
-
-    secondCallbackCalled = false;
-    webkit_web_view_remove_frame_displayed_callback(test->m_webView, id);
-    test->waitUntilFramesDisplayed();
-    g_assert_false(secondCallbackCalled);
-
-    id = webkit_web_view_add_frame_displayed_callback(test->m_webView, [](WebKitWebView* webView, gpointer userData) {
-        auto* id = static_cast<unsigned*>(userData);
-        webkit_web_view_remove_frame_displayed_callback(webView, *id);
-    }, &id, [](gpointer userData) {
-        auto* id = static_cast<unsigned*>(userData);
-        *id = 0;
-    });
-    test->waitUntilFramesDisplayed();
-    g_assert_cmpuint(id, ==, 0);
-
-    auto id2 = webkit_web_view_add_frame_displayed_callback(test->m_webView, [](WebKitWebView* webView, gpointer userData) {
-        auto* id = static_cast<unsigned*>(userData);
-        if (*id) {
-            webkit_web_view_remove_frame_displayed_callback(webView, *id);
-            *id = 0;
-        }
-    }, &id, nullptr);
-
-    secondCallbackCalled = false;
-    id = webkit_web_view_add_frame_displayed_callback(test->m_webView, [](WebKitWebView* webView, gpointer userData) {
-        auto* secondCallbackCalled = static_cast<bool*>(userData);
-        *secondCallbackCalled = true;
-    }, &secondCallbackCalled, nullptr);
-    test->waitUntilFramesDisplayed();
-    g_assert_cmpuint(id, ==, 0);
-    g_assert_false(secondCallbackCalled);
-
-    webkit_web_view_remove_frame_displayed_callback(test->m_webView, id2);
-}
-#endif
-
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -1368,9 +1274,6 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
 #endif
     WebViewTitleTest::add("WebKitWebView", "title-change", testWebViewTitleChange);
-#if PLATFORM(WPE)
-    FrameDisplayedTest::add("WebKitWebView", "frame-displayed", testWebViewFrameDisplayed);
-#endif
 }
 
 void afterAll()
