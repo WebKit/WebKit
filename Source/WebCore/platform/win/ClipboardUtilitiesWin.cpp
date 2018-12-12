@@ -424,7 +424,7 @@ void setFileDescriptorData(IDataObject* dataObject, int size, const String& pass
 {
     String pathname = passedPathname;
 
-    STGMEDIUM medium = { 0 };
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     medium.hGlobal = ::GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
@@ -446,7 +446,7 @@ void setFileDescriptorData(IDataObject* dataObject, int size, const String& pass
 
 void setFileContentData(IDataObject* dataObject, int size, void* dataBlob)
 {
-    STGMEDIUM medium = { 0 };
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     medium.hGlobal = ::GlobalAlloc(GPTR, size);
@@ -754,7 +754,7 @@ void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings
 
 void setUCharData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     medium.hGlobal = createGlobalData(dataStrings.first());
@@ -766,7 +766,7 @@ void setUCharData(IDataObject* data, FORMATETC* format, const Vector<String>& da
 
 void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     CString charString = dataStrings.first().utf8();
@@ -785,7 +785,7 @@ void setUtf8Data(IDataObject* data, FORMATETC* format, const Vector<String>& dat
 #if USE(CF)
 void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataStrings)
 {
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (dataStrings.first().length() + 2));

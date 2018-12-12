@@ -50,9 +50,9 @@ HostWindow::~HostWindow()
 
 RECT HostWindow::clientRect() const
 {
-    RECT rect = {0};
+    RECT rect { };
     if (!::GetClientRect(m_window, &rect)) {
-        RECT emptyRect = {0};
+        RECT emptyRect { };
         return emptyRect;
     }
     return rect;
@@ -65,7 +65,7 @@ void HostWindow::registerWindowClass()
         return;
     initialized = true;
 
-    WNDCLASSEXW wndClass = {0};
+    WNDCLASSEXW wndClass { };
     wndClass.cbSize = sizeof(wndClass);
     wndClass.style = CS_HREDRAW | CS_VREDRAW;
     wndClass.lpfnWndProc = wndProc;

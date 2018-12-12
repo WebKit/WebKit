@@ -653,7 +653,7 @@ void WebView::initializeToolTipWindow()
     if (!m_toolTipWindow)
         return;
 
-    TOOLINFO info = { 0 };
+    TOOLINFO info { };
     info.cbSize = sizeof(info);
     info.uFlags = TTF_IDISHWND | TTF_SUBCLASS;
     info.uId = reinterpret_cast<UINT_PTR>(m_window);
@@ -871,7 +871,7 @@ void WebView::setToolTip(const String& toolTip)
         return;
 
     if (!toolTip.isEmpty()) {
-        TOOLINFO info = { 0 };
+        TOOLINFO info { };
         info.cbSize = sizeof(info);
         info.uFlags = TTF_IDISHWND;
         info.uId = reinterpret_cast<UINT_PTR>(nativeWindow());

@@ -111,7 +111,7 @@ static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
         SelectObject(andMaskDC.get(), oldAndMask);
         SelectObject(xorMaskDC.get(), oldXorMask);
 
-        ICONINFO icon = {0};
+        ICONINFO icon { };
         icon.fIcon = FALSE;
         icon.xHotspot = effectiveHotSpot.x();
         icon.yHotspot = effectiveHotSpot.y();

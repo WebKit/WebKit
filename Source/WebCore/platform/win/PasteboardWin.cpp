@@ -373,7 +373,7 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
             title = url.host().toString();
     }
 
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     medium.hGlobal = createGlobalData(url, title);
@@ -417,7 +417,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     }
 
     if (winType == ClipboardDataTypeText) {
-        STGMEDIUM medium = {0};
+        STGMEDIUM medium { };
         medium.tymed = TYMED_HGLOBAL;
         medium.hGlobal = createGlobalData(data);
         if (!medium.hGlobal)
@@ -440,7 +440,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
     if (!m_writableDataObject)
         return;
 
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     Vector<char> data;
@@ -505,7 +505,7 @@ void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOpti
     if (!m_writableDataObject)
         return;
 
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     String str = text;
@@ -606,7 +606,7 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
 {
     HRESULT hr = S_OK;
     FORMATETC* fe;
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     if (!fileDescriptor || !fileContent)
@@ -1063,7 +1063,7 @@ void Pasteboard::writeMarkup(const String& markup)
     Vector<char> data;
     markupToCFHTML(markup, "", data);
 
-    STGMEDIUM medium = {0};
+    STGMEDIUM medium { };
     medium.tymed = TYMED_HGLOBAL;
 
     medium.hGlobal = createGlobalData(data);

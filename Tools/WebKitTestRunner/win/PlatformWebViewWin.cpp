@@ -49,7 +49,7 @@ static void registerWindowClass()
         return;
     initialized = true;
 
-    WNDCLASSEXW wndClass = {0};
+    WNDCLASSEXW wndClass { };
     wndClass.cbSize = sizeof(wndClass);
     wndClass.style = CS_HREDRAW | CS_VREDRAW;
     wndClass.lpfnWndProc = DefWindowProc;
@@ -117,7 +117,7 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    WKRect wkFrame = {0};
+    WKRect wkFrame { };
     RECT r;
 
     if (::GetWindowRect(m_window, &r)) {
@@ -203,7 +203,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
     WebCore::HWndDC windowDC(m_window);
     auto memoryDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
 
-    BITMAPINFO bitmapInfo = {0};
+    BITMAPINFO bitmapInfo { };
     WKRect wkFrame = windowFrame();
     bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bitmapInfo.bmiHeader.biWidth = width;
@@ -230,7 +230,7 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
         0,
         SRCCOPY);
 
-    BITMAP bitmapTag = {0};
+    BITMAP bitmapTag { };
     GetObject(bitmap.get(), sizeof(bitmapTag), &bitmapTag);
     ASSERT(bitmapTag.bmBitsPixel == 32);
 

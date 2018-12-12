@@ -374,7 +374,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     // Fall back to Non-client metrics fonts.
-    NONCLIENTMETRICS nonClientMetrics = {0};
+    NONCLIENTMETRICS nonClientMetrics { };
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
         if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))

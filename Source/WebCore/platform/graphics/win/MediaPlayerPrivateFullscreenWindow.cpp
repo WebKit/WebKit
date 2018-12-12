@@ -61,7 +61,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
     static ATOM windowAtom;
     static LPCWSTR windowClassName = L"MediaPlayerPrivateFullscreenWindowClass";
     if (!windowAtom) {
-        WNDCLASSEX wcex = {0};
+        WNDCLASSEX wcex { };
         wcex.cbSize = sizeof(wcex);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.lpfnWndProc = staticWndProc;
@@ -72,7 +72,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
 
     ASSERT(!m_hwnd);
 
-    MONITORINFO mi = {0};
+    MONITORINFO mi { };
     mi.cbSize = sizeof(MONITORINFO);
     if (!GetMonitorInfo(MonitorFromWindow(parentHwnd, MONITOR_DEFAULTTONEAREST), &mi))
         return;

@@ -161,7 +161,7 @@ void PopupMenuWin::show(const IntRect& r, FrameView* view, int index)
         shouldAnimate = FALSE;
 
     if (shouldAnimate) {
-        RECT viewRect = {0};
+        RECT viewRect { };
         ::GetWindowRect(hostWindow, &viewRect);
         if (!::IsRectEmpty(&viewRect))
             ::AnimateWindow(m_popup, defaultAnimationDuration, AW_BLEND);

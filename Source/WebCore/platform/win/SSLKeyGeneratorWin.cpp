@@ -60,7 +60,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
         if (!CryptExportPublicKeyInfo(hContext, AT_KEYEXCHANGE, X509_ASN_ENCODING, pPubInfo, &dwPubInfoLength))
             break;
 
-        CERT_KEYGEN_REQUEST_INFO requestInfo = { 0 };
+        CERT_KEYGEN_REQUEST_INFO requestInfo { };
         requestInfo.dwVersion = CERT_KEYGEN_REQUEST_V1;
         requestInfo.pwszChallengeString = L"";
         requestInfo.SubjectPublicKeyInfo = *pPubInfo;
@@ -71,7 +71,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
         auto localChallengeWide = stringToNullTerminatedWChar(localChallenge);
         requestInfo.pwszChallengeString = const_cast<wchar_t*>(localChallengeWide.data());
 
-        CRYPT_ALGORITHM_IDENTIFIER signAlgo = { 0 };
+        CRYPT_ALGORITHM_IDENTIFIER signAlgo { };
         signAlgo.pszObjId = szOID_RSA_SHA1RSA;
 
         DWORD dwEncodedLength;

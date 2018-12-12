@@ -47,7 +47,7 @@ void PlatformWebView::registerWindowClass()
         return;
     initialized = true;
 
-    WNDCLASSEXW wndClass = {0};
+    WNDCLASSEXW wndClass { };
     wndClass.cbSize = sizeof(wndClass);
     wndClass.style = CS_HREDRAW | CS_VREDRAW;
     wndClass.lpfnWndProc = wndProc;

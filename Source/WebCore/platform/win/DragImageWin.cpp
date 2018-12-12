@@ -73,7 +73,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
         
 DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
 {
-    SHFILEINFO shfi = {0};
+    SHFILEINFO shfi { };
     String fname = filename;
     if (FAILED(SHGetFileInfo(stringToNullTerminatedWChar(fname).data(), FILE_ATTRIBUTE_NORMAL, &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
         return 0;

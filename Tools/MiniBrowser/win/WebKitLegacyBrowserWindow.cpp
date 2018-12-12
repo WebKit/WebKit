@@ -329,7 +329,7 @@ static void updateMenuItemForHistoryItem(HMENU menu, IWebHistoryItem& historyIte
 {
     UINT menuID = IDM_HISTORY_LINK0 + currentHistoryItem;
 
-    MENUITEMINFO menuItemInfo = { 0 };
+    MENUITEMINFO menuItemInfo { };
     menuItemInfo.cbSize = sizeof(MENUITEMINFO);
     menuItemInfo.fMask = MIIM_TYPE;
     menuItemInfo.fType = MFT_STRING;

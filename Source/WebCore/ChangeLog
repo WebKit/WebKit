@@ -1,3 +1,42 @@
+2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix warning -Wmissing-field-initializers
+        https://bugs.webkit.org/show_bug.cgi?id=192584
+
+        Reviewed by Yusuke Suzuki.
+
+        Initialize a struct with '{ }' instead of '= {0}'.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::setFileDescriptorData):
+        (WebCore::setFileContentData):
+        (WebCore::setUCharData):
+        (WebCore::setUtf8Data):
+        (WebCore::setCFData):
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor):
+        * platform/win/DefWndProcWindowClass.cpp:
+        (WebCore::registerClass):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageIconForCachedImageFilename):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::writeURL):
+        (WebCore::Pasteboard::writeString):
+        (WebCore::Pasteboard::writeRangeToDataObject):
+        (WebCore::Pasteboard::writePlainTextToDataObject):
+        (WebCore::writeFileToDataObject):
+        (WebCore::Pasteboard::writeMarkup):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::show):
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::WebCore::signedPublicKeyAndChallengeString):
+
 2018-12-11  Jer Noble  <jer.noble@apple.com>
 
         Globally namespaced objects shouldn't use framework-prefixed names

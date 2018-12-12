@@ -1231,7 +1231,7 @@ static void runTest(const string& inputLine)
     workQueue.clear();
     workQueue.setFrozen(false);
 
-    MSG msg = { 0 };
+    MSG msg { };
     HWND hostWindow;
     webView->hostWindow(&hostWindow);
 

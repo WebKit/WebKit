@@ -1,3 +1,34 @@
+2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix warning -Wmissing-field-initializers
+        https://bugs.webkit.org/show_bug.cgi?id=192584
+
+        Reviewed by Yusuke Suzuki.
+
+        Initialize a struct with '{ }' instead of '= {0}'.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/win/EventSender.cpp:
+        (makeMsg):
+        (replaySavedEvents):
+        (beginDragWithFilesCallback):
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView):
+        * MiniBrowser/win/WebKitLegacyBrowserWindow.cpp:
+        (updateMenuItemForHistoryItem):
+        * MiniBrowser/win/WinMain.cpp:
+        (wWinMain):
+        * TestWebKitAPI/win/HostWindow.cpp:
+        (TestWebKitAPI::HostWindow::clientRect const):
+        (TestWebKitAPI::HostWindow::registerWindowClass):
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::registerWindowClass):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::registerWindowClass):
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2018-12-11  Chris Dumez  <cdumez@apple.com>
 
         PSON logic gets confused by concurrent decidePolicyForNavigationAction requests

@@ -62,7 +62,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     if (!GetWindowRect(webViewWindow, &frame))
         return nullptr;
 
-    BITMAPINFO bmp = {0};
+    BITMAPINFO bmp { };
     bmp.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmp.bmiHeader.biWidth = frame.right - frame.left;
     bmp.bmiHeader.biHeight = -(frame.bottom - frame.top);
@@ -79,7 +79,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     ::SelectObject(memoryDC.get(), bitmap);
     SendMessage(webViewWindow, WM_PRINT, reinterpret_cast<WPARAM>(memoryDC.get()), PRF_CLIENT | PRF_CHILDREN | PRF_OWNED);
 
-    BITMAP info = {0};
+    BITMAP info { };
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 

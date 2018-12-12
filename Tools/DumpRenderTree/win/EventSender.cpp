@@ -120,7 +120,7 @@ static DWORD currentEventTime()
 
 static MSG makeMsg(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    MSG result = {0};
+    MSG result { };
     result.hwnd = hwnd;
     result.message = message;
     result.wParam = wParam;
@@ -362,7 +362,7 @@ void replaySavedEvents(HRESULT* oleDragAndDropReturnValue)
 {
     replayingSavedEvents = true;
   
-    MSG msg = { 0 };
+    MSG msg { };
 
     while (startOfQueue < endOfQueue && !msgQueue[startOfQueue].delay) {
         msg = msgQueue[startOfQueue++].msg;
@@ -696,7 +696,7 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     // We should append "0" in the end of |files| so that |DragQueryFileW| retrieved the number of files correctly from Ole Clipboard.
     files.append(0);
 
-    STGMEDIUM hDropMedium = {0};
+    STGMEDIUM hDropMedium { };
     hDropMedium.tymed = TYMED_HGLOBAL;
     SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * files.size());
     hDropMedium.hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, dropFilesSize);
@@ -713,7 +713,7 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
         data[i] = files[i];
     GlobalUnlock(hDropMedium.hGlobal); 
 
-    STGMEDIUM hFileNameMedium = {0};
+    STGMEDIUM hFileNameMedium { };
     hFileNameMedium.tymed = TYMED_HGLOBAL;
     SIZE_T hFileNameSize = sizeof(WCHAR) * files.size();
     hFileNameMedium.hGlobal = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, hFileNameSize);
@@ -925,7 +925,7 @@ static JSClassRef getClass(JSContextRef context)
     static JSClassRef eventSenderClass = 0;
 
     if (!eventSenderClass) {
-        JSClassDefinition classDefinition = {0};
+        JSClassDefinition classDefinition { };
         classDefinition.staticFunctions = staticFunctions;
         classDefinition.staticValues = staticValues;
 

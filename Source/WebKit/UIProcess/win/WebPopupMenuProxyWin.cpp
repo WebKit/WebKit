@@ -218,7 +218,7 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, dou
         shouldAnimate = FALSE;
 
     if (shouldAnimate) {
-        RECT viewRect = {0};
+        RECT viewRect { };
         ::GetWindowRect(hostWindow, &viewRect);
 
         if (!::IsRectEmpty(&viewRect)) {
