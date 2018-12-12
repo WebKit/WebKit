@@ -1,3 +1,16 @@
+2018-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        connectedCallback is invoked during the removal of the element inside another element's connectedCallback
+        https://bugs.webkit.org/show_bug.cgi?id=183586
+        <rdar://problem/38403504>
+
+        Reviewed by Frédéric Wang.
+
+        Added a W3C style testharness test.
+
+        * fast/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback-expected.txt: Added.
+        * fast/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html: Added.
+
 2018-12-11  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement WebGPUBuffer

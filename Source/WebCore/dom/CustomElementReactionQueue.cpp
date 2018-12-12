@@ -120,12 +120,15 @@ void CustomElementReactionQueue::clear()
 void CustomElementReactionQueue::enqueueElementUpgrade(Element& element, bool alreadyScheduledToUpgrade)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
-    auto& queue = ensureCurrentQueue(element);
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
     if (alreadyScheduledToUpgrade) {
         ASSERT(queue.m_items.size() == 1);
         ASSERT(queue.m_items[0].type() == CustomElementReactionQueueItem::Type::ElementUpgrade);
-    } else
+    } else {
         queue.m_items.append({CustomElementReactionQueueItem::Type::ElementUpgrade});
+        enqueueElementOnAppropriateElementQueue(element);
+    }
 }
 
 void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element)
@@ -152,9 +155,12 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = ensureCurrentQueue(element);
-    if (queue.m_interface->hasConnectedCallback())
-        queue.m_items.append({CustomElementReactionQueueItem::Type::Connected});
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
+    if (!queue.m_interface->hasConnectedCallback())
+        return;
+    queue.m_items.append({CustomElementReactionQueueItem::Type::Connected});
+    enqueueElementOnAppropriateElementQueue(element);
 }
 
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
@@ -163,9 +169,12 @@ void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& el
     ASSERT(element.isDefinedCustomElement());
     if (element.document().refCount() <= 0)
         return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
-    auto& queue = ensureCurrentQueue(element);
-    if (queue.m_interface->hasDisconnectedCallback())
-        queue.m_items.append({CustomElementReactionQueueItem::Type::Disconnected});
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
+    if (!queue.m_interface->hasDisconnectedCallback())
+        return;
+    queue.m_items.append({CustomElementReactionQueueItem::Type::Disconnected});
+    enqueueElementOnAppropriateElementQueue(element);
 }
 
 void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element, Document& oldDocument, Document& newDocument)
@@ -173,9 +182,12 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = ensureCurrentQueue(element);
-    if (queue.m_interface->hasAdoptedCallback())
-        queue.m_items.append({oldDocument, newDocument});
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
+    if (!queue.m_interface->hasAdoptedCallback())
+        return;
+    queue.m_items.append({oldDocument, newDocument});
+    enqueueElementOnAppropriateElementQueue(element);
 }
 
 void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
@@ -183,9 +195,12 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isDefinedCustomElement());
     ASSERT(element.document().refCount() > 0);
-    auto& queue = ensureCurrentQueue(element);
-    if (queue.m_interface->observesAttribute(attributeName.localName()))
-        queue.m_items.append({attributeName, oldValue, newValue});
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
+    if (!queue.m_interface->observesAttribute(attributeName.localName()))
+        return;
+    queue.m_items.append({attributeName, oldValue, newValue});
+    enqueueElementOnAppropriateElementQueue(element);
 }
 
 void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
@@ -195,18 +210,18 @@ void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
     if (!element.hasAttributes() && !element.isConnected())
         return;
 
-    auto* queue = element.reactionQueue();
-    ASSERT(queue);
+    ASSERT(element.reactionQueue());
+    auto& queue = *element.reactionQueue();
 
     if (element.hasAttributes()) {
         for (auto& attribute : element.attributesIterator()) {
-            if (queue->m_interface->observesAttribute(attribute.localName()))
-                queue->m_items.append({attribute.name(), nullAtom(), attribute.value()});
+            if (queue.m_interface->observesAttribute(attribute.localName()))
+                queue.m_items.append({attribute.name(), nullAtom(), attribute.value()});
         }
     }
 
-    if (element.isConnected() && queue->m_interface->hasConnectedCallback())
-        queue->m_items.append({CustomElementReactionQueueItem::Type::Connected});
+    if (element.isConnected() && queue.m_interface->hasConnectedCallback())
+        queue.m_items.append({CustomElementReactionQueueItem::Type::Connected});
 }
 
 bool CustomElementReactionQueue::observesStyleAttribute() const
@@ -273,20 +288,20 @@ inline void CustomElementReactionQueue::ElementQueue::processQueue(JSC::ExecStat
     }
 }
 
-CustomElementReactionQueue& CustomElementReactionQueue::ensureCurrentQueue(Element& element)
+// https://html.spec.whatwg.org/multipage/custom-elements.html#enqueue-an-element-on-the-appropriate-element-queue
+void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element& element)
 {
     ASSERT(element.reactionQueue());
     if (!CustomElementReactionStack::s_currentProcessingStack) {
         auto& queue = ensureBackupQueue();
         queue.add(element);
-        return *element.reactionQueue();
+        return;
     }
 
     auto*& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
     if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementReactionStack.
         queue = new ElementQueue;
     queue->add(element);
-    return *element.reactionQueue();
 }
 
 #if !ASSERT_DISABLED

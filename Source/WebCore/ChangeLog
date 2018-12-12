@@ -1,3 +1,42 @@
+2018-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        connectedCallback is invoked during the removal of the element inside another element's connectedCallback
+        https://bugs.webkit.org/show_bug.cgi?id=183586
+        <rdar://problem/38403504>
+
+        Reviewed by Frédéric Wang.
+
+        Align WebKit's behavior with Chrome/Firefox with regards to https://github.com/w3c/webcomponents/issues/760
+
+        After much discussion, it's unclear that there is a clear path forward to fixing the oddness that
+        the presence of a custom element reaction changes the timing at which another reaction callback gets invoked.
+        So matching Chrome/Firefox behaviors in this case seems the path of the least resistance to interoperability.
+
+        Namely, this patch makes WebKit not insert a custom element to the appropriate element queue when the element
+        does not have a matching reaction callback. Put it another way, steps 3-5 in would be done before step 6 in:
+        https://html.spec.whatwg.org/multipage/custom-elements.html#enqueue-a-custom-element-callback-reaction
+            1. Let definition be element's custom element definition.
+            2. Let callback be the value of the entry in definition's lifecycle callbacks with key callbackName.
+            3. If callback is null, then return
+            4. If callbackName is "attributeChangedCallback", then:
+                1. Let attributeName be the first element of args.
+                2. If definition's observed attributes does not contain attributeName, then return.
+            5. Add a new callback reaction to element's custom element reaction queue, with callback function callback
+               and arguments args.
+            6. Enqueue an element on the appropriate element queue given element.
+
+        Test: fast/custom-elements/enqueue-custom-element-callback-reactions-inside-another-callback.html
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade):
+        (WebCore::CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueuePostUpgradeReactions):
+        (WebCore::CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue): Renamed from ensureCurrentQueue.
+        * dom/CustomElementReactionQueue.h:
+
 2018-12-11  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement WebGPUBuffer, and some nullibility consistency in WebGPU

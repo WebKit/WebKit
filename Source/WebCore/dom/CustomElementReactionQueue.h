@@ -77,7 +77,7 @@ public:
     };
 
 private:
-    static CustomElementReactionQueue& ensureCurrentQueue(Element&);
+    static void enqueueElementOnAppropriateElementQueue(Element&);
     static ElementQueue& ensureBackupQueue();
     static ElementQueue& backupElementQueue();
 
