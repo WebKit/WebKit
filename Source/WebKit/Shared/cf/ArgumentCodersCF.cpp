@@ -63,9 +63,8 @@ extern "C" SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef all
 extern "C" CFDataRef SecAccessControlCopyData(SecAccessControlRef access_control);
 #endif
 
-using namespace WebCore;
-
 namespace IPC {
+using namespace WebCore;
 
 CFTypeRef tokenNullTypeRef()
 {

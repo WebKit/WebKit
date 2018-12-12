@@ -29,9 +29,8 @@
 #include "WebCoreArgumentCoders.h"
 #include <wtf/text/TextStream.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void EditorState::encode(IPC::Encoder& encoder) const
 {

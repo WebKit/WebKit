@@ -77,9 +77,8 @@
 @end
 #endif
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 static CGColorRef cgColorFromColor(const Color& color)
 {

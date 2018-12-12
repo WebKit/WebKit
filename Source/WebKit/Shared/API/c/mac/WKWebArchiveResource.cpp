@@ -30,35 +30,33 @@
 #include "APIWebArchiveResource.h"
 #include "WKSharedAPICast.h"
 
-using namespace WebKit;
-
 WKTypeID WKWebArchiveResourceGetTypeID()
 {
-    return toAPI(API::WebArchiveResource::APIType);
+    return WebKit::toAPI(API::WebArchiveResource::APIType);
 }
 
 WKWebArchiveResourceRef WKWebArchiveResourceCreate(WKDataRef dataRef, WKURLRef URLRef, WKStringRef MIMETypeRef, WKStringRef textEncodingRef)
 {
-    auto webArchiveResource = API::WebArchiveResource::create(toImpl(dataRef), toWTFString(URLRef), toWTFString(MIMETypeRef), toWTFString(textEncodingRef));
-    return toAPI(&webArchiveResource.leakRef());
+    auto webArchiveResource = API::WebArchiveResource::create(WebKit::toImpl(dataRef), WebKit::toWTFString(URLRef), WebKit::toWTFString(MIMETypeRef), WebKit::toWTFString(textEncodingRef));
+    return WebKit::toAPI(&webArchiveResource.leakRef());
 }
 
 WKDataRef WKWebArchiveResourceCopyData(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return toAPI(&toImpl(webArchiveResourceRef)->data().leakRef());
+    return WebKit::toAPI(&WebKit::toImpl(webArchiveResourceRef)->data().leakRef());
 }
 
 WKURLRef WKWebArchiveResourceCopyURL(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return toCopiedURLAPI(toImpl(webArchiveResourceRef)->URL());
+    return WebKit::toCopiedURLAPI(WebKit::toImpl(webArchiveResourceRef)->URL());
 }
 
 WKStringRef WKWebArchiveResourceCopyMIMEType(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return toCopiedAPI(toImpl(webArchiveResourceRef)->MIMEType());
+    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->MIMEType());
 }
 
 WKStringRef WKWebArchiveResourceCopyTextEncoding(WKWebArchiveResourceRef webArchiveResourceRef)
 {
-    return toCopiedAPI(toImpl(webArchiveResourceRef)->textEncoding());
+    return WebKit::toCopiedAPI(WebKit::toImpl(webArchiveResourceRef)->textEncoding());
 }

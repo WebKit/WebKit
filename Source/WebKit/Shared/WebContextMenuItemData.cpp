@@ -34,9 +34,8 @@
 #include <wtf/text/CString.h>
 #include <WebCore/ContextMenu.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 WebContextMenuItemData::WebContextMenuItemData()
     : m_type(WebCore::ActionType)

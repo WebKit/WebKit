@@ -32,12 +32,9 @@
 #include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>
 
-using namespace WebKit;
-using namespace WebCore;
-
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
-    WebImage* webImage = toImpl(imageRef);
+    WebKit::WebImage* webImage = WebKit::toImpl(imageRef);
     if (!webImage)
         return nullptr;
 
@@ -49,12 +46,13 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     if (!imageRef)
         return nullptr;
     
-    IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
-    auto webImage = WebImage::create(imageSize, toImageOptions(options));
+    WebCore::IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options));
 
     auto graphicsContext = webImage->bitmap().createGraphicsContext();
-    FloatRect rect(FloatPoint(0, 0), imageSize);
+    WebCore::FloatRect rect(WebCore::FloatPoint(0, 0), imageSize);
     graphicsContext->clearRect(rect);
     graphicsContext->drawNativeImage(imageRef, imageSize, rect, rect);
     return toAPI(webImage.leakRef());
 }
+

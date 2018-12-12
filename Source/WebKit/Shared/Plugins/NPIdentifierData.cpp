@@ -33,9 +33,8 @@
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IdentifierRep.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 NPIdentifierData::NPIdentifierData()
     : m_isString(false)

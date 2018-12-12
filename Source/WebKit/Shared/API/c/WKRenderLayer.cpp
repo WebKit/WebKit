@@ -130,5 +130,5 @@ WKArrayRef WKRenderLayerGetPositiveZOrderList(WKRenderLayerRef renderLayerRef)
 
 WKRenderLayerRef WKRenderLayerGetFrameContentsLayer(WKRenderLayerRef renderLayerRef)
 {
-    return toAPI(WebKit::toImpl(renderLayerRef)->frameContentsLayer());
+    return WebKit::toAPI(WebKit::toImpl(renderLayerRef)->frameContentsLayer());
 }

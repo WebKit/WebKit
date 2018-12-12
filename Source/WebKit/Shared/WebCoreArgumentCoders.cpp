@@ -112,10 +112,9 @@
 #include <WebCore/MediaConstraints.h>
 #endif
 
+namespace IPC {
 using namespace WebCore;
 using namespace WebKit;
-
-namespace IPC {
 
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 {

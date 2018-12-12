@@ -1,3 +1,80 @@
+2018-12-12  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+        <rdar://problem/46595508>
+
+        Reviewed by Darin Adler.
+
+        Part 1: Files in Shared folder.
+
+        * Shared/API/c/WKRenderLayer.cpp:
+        (WKRenderLayerGetFrameContentsLayer):
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCreateWithCFError):
+        (WKErrorCopyCFError):
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        (WKImageCreateFromCGImage):
+        * Shared/API/c/mac/WKWebArchive.cpp:
+        (WKWebArchiveGetTypeID):
+        (WKWebArchiveCreate):
+        (WKWebArchiveCreateWithData):
+        (WKWebArchiveCreateFromRange):
+        (WKWebArchiveCopyMainResource):
+        (WKWebArchiveCopySubresources):
+        (WKWebArchiveCopySubframeArchives):
+        (WKWebArchiveCopyData):
+        * Shared/API/c/mac/WKWebArchiveResource.cpp:
+        (WKWebArchiveResourceGetTypeID):
+        (WKWebArchiveResourceCreate):
+        (WKWebArchiveResourceCopyData):
+        (WKWebArchiveResourceCopyURL):
+        (WKWebArchiveResourceCopyMIMEType):
+        (WKWebArchiveResourceCopyTextEncoding):
+        * Shared/ChildProcess.cpp:
+        * Shared/ContextMenuContextData.cpp:
+        * Shared/EditorState.cpp:
+        * Shared/Plugins/NPIdentifierData.cpp:
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        * Shared/SessionState.cpp:
+        * Shared/SessionTracker.cpp:
+        * Shared/ShareableBitmap.cpp:
+        * Shared/ShareableResource.cpp:
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        * Shared/WebBackForwardListItem.cpp:
+        * Shared/WebContextMenuItemData.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebHitTestResultData.cpp:
+        * Shared/WebImage.cpp:
+        * Shared/WebMediaSessionMetadata.cpp:
+        * Shared/WebMemorySampler.cpp:
+        * Shared/WebMouseEvent.cpp:
+        * Shared/WebRenderObject.cpp:
+        * Shared/WebSQLiteDatabaseTracker.cpp:
+        * Shared/WebWheelEvent.cpp:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+
+2018-12-12  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+        <rdar://problem/46595508>
+
+        Reviewed by Darin Adler.
+
+        Part 1: Files in NetworkProcess.
+
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build with with recent macOS SDKs.
