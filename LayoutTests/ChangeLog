@@ -1,5 +1,17 @@
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [FreeType] Remove HarfBuzzFace
+        https://bugs.webkit.org/show_bug.cgi?id=192589
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline test that now matches the firefox output.
+
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt:
+
+2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [FreeType] Add initial implementation of variation fonts
         https://bugs.webkit.org/show_bug.cgi?id=192151
 

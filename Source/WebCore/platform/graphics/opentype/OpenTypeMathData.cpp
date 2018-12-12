@@ -34,7 +34,6 @@
 #endif
 #include "SharedBuffer.h"
 
-
 namespace WebCore {
 using namespace std;
 
@@ -257,10 +256,8 @@ OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
 }
 #elif USE(HARFBUZZ)
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
-    : m_mathFont(font.harfBuzzFace().createFont())
+    : m_mathFont(font.createOpenTypeMathHarfBuzzFont())
 {
-    if (!hb_ot_math_has_data(hb_font_get_face(m_mathFont.get())))
-        m_mathFont = nullptr;
 }
 #elif USE(DIRECT2D)
 OpenTypeMathData::OpenTypeMathData(const FontPlatformData& font)
@@ -296,13 +293,13 @@ float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant)
 
     return value * font.sizePerUnit();
 #elif USE(HARFBUZZ)
-float OpenTypeMathData::getMathConstant(const Font&, MathConstant constant) const
+float OpenTypeMathData::getMathConstant(const Font& font, MathConstant constant) const
 {
     hb_position_t value = hb_ot_math_get_constant(m_mathFont.get(), static_cast<hb_ot_math_constant_t>(constant));
     if (constant == ScriptPercentScaleDown || constant == ScriptScriptPercentScaleDown || constant == RadicalDegreeBottomRaisePercent)
         return value / 100.0;
 
-    return value / 65536.0;
+    return value * font.sizePerUnit();
 #else
 float OpenTypeMathData::getMathConstant(const Font&, MathConstant) const
 {
@@ -326,9 +323,9 @@ float OpenTypeMathData::getItalicCorrection(const Font& font, Glyph glyph) const
 
     return mathItalicsCorrectionInfo->getItalicCorrection(*m_mathBuffer, glyph) * font.sizePerUnit();
 #elif USE(HARFBUZZ)
-float OpenTypeMathData::getItalicCorrection(const Font&, Glyph glyph) const
+float OpenTypeMathData::getItalicCorrection(const Font& font, Glyph glyph) const
 {
-    return hb_ot_math_get_glyph_italics_correction(m_mathFont.get(), glyph) / 65536.0;
+    return hb_ot_math_get_glyph_italics_correction(m_mathFont.get(), glyph) * font.sizePerUnit();
 #else
 float OpenTypeMathData::getItalicCorrection(const Font&, Glyph) const
 {

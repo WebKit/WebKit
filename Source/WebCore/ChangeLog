@@ -1,5 +1,39 @@
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [FreeType] Remove HarfBuzzFace
+        https://bugs.webkit.org/show_bug.cgi?id=192589
+
+        Reviewed by Michael Catanzaro.
+
+        This was used to share the common implementation with the chromium port, but now that only freetype based ports
+        use it, it can be removed and use hb_ft_face_create_cached() instead. We don't need the glyph cache either,
+        since we are already caching glyphs in Font.
+
+        * platform/FreeType.cmake: Remove HarfBuzzFaceCairo.cpp and HarfBuzzFace.cpp.
+        * platform/graphics/FontPlatformData.h: Remove HarfBuzzFace member.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp: Add missing include.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::operator=): Remove m_harfBuzzFace handling.
+        (WebCore::FontPlatformData::createOpenTypeMathHarfBuzzFont const): New funtction to create a hb_font_t for
+        OpenType math.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::floatToHarfBuzzPosition): Moved from HarfBuzzFaceCairo.cpp.
+        (WebCore::doubleToHarfBuzzPosition): Ditto.
+        (WebCore::harfBuzzFontFunctions): Also moved from HarfBuzzFaceCairo.cpp, but implement get_nominal/variation
+        functions when using HarfBuzz >= 1.2.3 and use Font::glyphForCharacter() to make it simpler.
+        (WebCore::fontFeatures): Moved from HarfBuzzFaceCairo.cpp.
+        (WebCore::findScriptForVerticalGlyphSubstitution): Moved from HarfBuzzFace.cpp.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters): Create the HarfBuzz face and font here.
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp: Removed.
+        * platform/graphics/harfbuzz/HarfBuzzFace.h: Removed.
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp: Removed.
+        * platform/graphics/harfbuzz/HbUniquePtr.h:
+        (WebCore::HbPtrDeleter<hb_face_t>::operator() const): Add deleter for hb_face_t.
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        (WebCore::OpenTypeMathData::OpenTypeMathData): Use FontPlatformData::createOpenTypeMathHarfBuzzFont().
+
+2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [FreeType] Add initial implementation of variation fonts
         https://bugs.webkit.org/show_bug.cgi?id=192151
 

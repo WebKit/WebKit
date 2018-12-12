@@ -26,16 +26,106 @@
 #include "config.h"
 #include "ComplexTextController.h"
 
+#include "CairoUtilities.h"
 #include "FontCascade.h"
 #include "HbUniquePtr.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <hb-ft.h>
 #include <hb-icu.h>
+
+#if ENABLE(VARIATION_FONTS)
+#include FT_MULTIPLE_MASTERS_H
+#endif
 
 namespace WebCore {
 
 static inline float harfBuzzPositionToFloat(hb_position_t value)
 {
     return static_cast<float>(value) / (1 << 16);
+}
+
+static inline hb_position_t floatToHarfBuzzPosition(float value)
+{
+    return static_cast<hb_position_t>(value * (1 << 16));
+}
+
+static inline hb_position_t doubleToHarfBuzzPosition(double value)
+{
+    return static_cast<hb_position_t>(value * (1 << 16));
+}
+
+static hb_font_funcs_t* harfBuzzFontFunctions()
+{
+    static hb_font_funcs_t* fontFunctions = nullptr;
+
+    // We don't set callback functions which we can't support.
+    // Harfbuzz will use the fallback implementation if they aren't set.
+    if (!fontFunctions) {
+        fontFunctions = hb_font_funcs_create();
+#if HB_VERSION_ATLEAST(1, 2, 3)
+        hb_font_funcs_set_nominal_glyph_func(fontFunctions, [](hb_font_t*, void* context, hb_codepoint_t unicode, hb_codepoint_t* glyph, void*) -> hb_bool_t {
+            auto& font = *static_cast<Font*>(context);
+            *glyph = font.glyphForCharacter(unicode);
+            return !!*glyph;
+        }, nullptr, nullptr);
+
+        hb_font_funcs_set_variation_glyph_func(fontFunctions, [](hb_font_t*, void* context, hb_codepoint_t unicode, hb_codepoint_t variation, hb_codepoint_t* glyph, void*) -> hb_bool_t {
+            auto& font = *static_cast<Font*>(context);
+            auto* scaledFont = font.platformData().scaledFont();
+            ASSERT(scaledFont);
+
+            CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
+            if (FT_Face ftFace = cairoFtFaceLocker.ftFace()) {
+                *glyph = FT_Face_GetCharVariantIndex(ftFace, unicode, variation);
+                return true;
+            }
+            return false;
+            }, nullptr, nullptr);
+#else
+        hb_font_funcs_set_glyph_func(fontFunctions, [](hb_font_t*, void* context, hb_codepoint_t unicode, hb_codepoint_t, hb_codepoint_t* glyph, void*) -> hb_bool_t {
+            auto& font = *static_cast<Font*>(context);
+            *glyph = font.glyphForCharacter(unicode);
+            return !!*glyph;
+        }, nullptr, nullptr);
+#endif
+        hb_font_funcs_set_glyph_h_advance_func(fontFunctions, [](hb_font_t*, void* context, hb_codepoint_t point, void*) -> hb_bool_t {
+            auto& font = *static_cast<Font*>(context);
+            auto* scaledFont = font.platformData().scaledFont();
+            ASSERT(scaledFont);
+
+            cairo_text_extents_t glyphExtents;
+            cairo_glyph_t glyph = { point, 0, 0 };
+            cairo_scaled_font_glyph_extents(scaledFont, &glyph, 1, &glyphExtents);
+
+            bool hasVerticalGlyphs = glyphExtents.y_advance;
+            return doubleToHarfBuzzPosition(hasVerticalGlyphs ? -glyphExtents.y_advance : glyphExtents.x_advance);
+        }, nullptr, nullptr);
+
+        hb_font_funcs_set_glyph_h_origin_func(fontFunctions, [](hb_font_t*, void*, hb_codepoint_t, hb_position_t*, hb_position_t*, void*) -> hb_bool_t {
+            // Just return true, following the way that Harfbuzz-FreeType implementation does.
+            return true;
+        }, nullptr, nullptr);
+
+        hb_font_funcs_set_glyph_extents_func(fontFunctions, [](hb_font_t*, void* context, hb_codepoint_t point, hb_glyph_extents_t* extents, void*) -> hb_bool_t {
+            auto& font = *static_cast<Font*>(context);
+            auto* scaledFont = font.platformData().scaledFont();
+            ASSERT(scaledFont);
+
+            cairo_text_extents_t glyphExtents;
+            cairo_glyph_t glyph = { point, 0, 0 };
+            cairo_scaled_font_glyph_extents(scaledFont, &glyph, 1, &glyphExtents);
+
+            bool hasVerticalGlyphs = glyphExtents.y_advance;
+            extents->x_bearing = doubleToHarfBuzzPosition(glyphExtents.x_bearing);
+            extents->y_bearing = doubleToHarfBuzzPosition(hasVerticalGlyphs ? -glyphExtents.y_bearing : glyphExtents.y_bearing);
+            extents->width = doubleToHarfBuzzPosition(hasVerticalGlyphs ? -glyphExtents.height : glyphExtents.width);
+            extents->height = doubleToHarfBuzzPosition(hasVerticalGlyphs ? glyphExtents.width : glyphExtents.height);
+            return true;
+        }, nullptr, nullptr);
+
+        hb_font_funcs_make_immutable(fontFunctions);
+    }
+    return fontFunctions;
 }
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const Font& font, const UChar* characters, unsigned stringLocation, unsigned stringLength, unsigned indexBegin, unsigned indexEnd)
@@ -83,25 +173,28 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     }
 }
 
-static const unsigned hbEnd = static_cast<unsigned>(-1);
+static const hb_tag_t s_vertTag = HB_TAG('v', 'e', 'r', 't');
+static const hb_tag_t s_vrt2Tag = HB_TAG('v', 'r', 't', '2');
+static const hb_tag_t s_kernTag = HB_TAG('k', 'e', 'r', 'n');
+static const unsigned s_hbEnd = static_cast<unsigned>(-1);
 
 static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, FontOrientation orientation)
 {
     Vector<hb_feature_t, 4> features;
 
     if (orientation == FontOrientation::Vertical) {
-        features.append({ HarfBuzzFace::vertTag, 1, 0, hbEnd });
-        features.append({ HarfBuzzFace::vrt2Tag, 1, 0, hbEnd });
+        features.append({ s_vertTag, 1, 0, s_hbEnd });
+        features.append({ s_vrt2Tag, 1, 0, s_hbEnd });
     }
 
-    hb_feature_t kerning = { HarfBuzzFace::kernTag, 0, 0, hbEnd };
+    hb_feature_t kerning = { s_kernTag, 0, 0, s_hbEnd };
     if (font.enableKerning())
         kerning.value = 1;
     features.append(WTFMove(kerning));
 
     for (auto& feature : font.fontDescription().featureSettings()) {
         auto& tag = feature.tag();
-        features.append({ HB_TAG(tag[0], tag[1], tag[2], tag[3]), static_cast<uint32_t>(feature.value()), 0, hbEnd });
+        features.append({ HB_TAG(tag[0], tag[1], tag[2], tag[3]), static_cast<uint32_t>(feature.value()), 0, s_hbEnd });
     }
 
     return features;
@@ -168,6 +261,27 @@ static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length
     return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
 }
 
+static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
+{
+    static const unsigned maxCount = 32;
+
+    unsigned scriptCount = maxCount;
+    hb_tag_t scriptTags[maxCount];
+    hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB, 0, &scriptCount, scriptTags);
+    for (unsigned scriptIndex = 0; scriptIndex < scriptCount; ++scriptIndex) {
+        unsigned languageCount = maxCount;
+        hb_tag_t languageTags[maxCount];
+        hb_ot_layout_script_get_language_tags(face, HB_OT_TAG_GSUB, scriptIndex, 0, &languageCount, languageTags);
+        for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
+            unsigned featureIndex;
+            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, s_vertTag, &featureIndex)
+                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, s_vrt2Tag, &featureIndex))
+                return hb_ot_tag_to_script(scriptTags[scriptIndex]);
+        }
+    }
+    return HB_SCRIPT_INVALID;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* characters, unsigned length, unsigned stringLocation, const Font* font)
 {
     if (!font) {
@@ -191,13 +305,50 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
         return;
 
     const auto& fontPlatformData = font->platformData();
+    auto* scaledFont = fontPlatformData.scaledFont();
+    CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
+    FT_Face ftFace = cairoFtFaceLocker.ftFace();
+    if (!ftFace)
+        return;
+
+    HbUniquePtr<hb_face_t> face(hb_ft_face_create_cached(ftFace));
+    HbUniquePtr<hb_font_t> harfBuzzFont(hb_font_create(face.get()));
+    hb_font_set_funcs(harfBuzzFont.get(), harfBuzzFontFunctions(), const_cast<Font*>(font), nullptr);
+    const float size = fontPlatformData.size();
+    if (floorf(size) == size)
+        hb_font_set_ppem(harfBuzzFont.get(), size, size);
+    int scale = floatToHarfBuzzPosition(size);
+    hb_font_set_scale(harfBuzzFont.get(), scale, scale);
+
+#if ENABLE(VARIATION_FONTS)
+    FT_MM_Var* ftMMVar;
+    if (!FT_Get_MM_Var(ftFace, &ftMMVar)) {
+        Vector<FT_Fixed, 4> coords;
+        coords.resize(ftMMVar->num_axis);
+        if (!FT_Get_Var_Design_Coordinates(ftFace, coords.size(), coords.data())) {
+            Vector<hb_variation_t, 4> variations(coords.size());
+            for (FT_UInt i = 0; i < ftMMVar->num_axis; ++i) {
+                variations[i].tag = ftMMVar->axis[i].tag;
+                variations[i].value = coords[i] / 65536.0;
+            }
+            hb_font_set_variations(harfBuzzFont.get(), variations.data(), variations.size());
+        }
+        FT_Done_MM_Var(ftFace->glyph->library, ftMMVar);
+    }
+#endif
+
+    hb_font_make_immutable(harfBuzzFont.get());
+
     auto features = fontFeatures(m_font, fontPlatformData.orientation());
     HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
+    if (fontPlatformData.orientation() == FontOrientation::Vertical)
+        hb_buffer_set_script(buffer.get(), findScriptForVerticalGlyphSubstitution(face.get()));
 
     for (unsigned i = 0; i < runCount; ++i) {
         auto& run = runList[m_run.rtl() ? runCount - i - 1 : i];
 
-        hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+        if (fontPlatformData.orientation() != FontOrientation::Vertical)
+            hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
         if (!m_mayUseNaturalWritingDirection || m_run.directionalOverride())
             hb_buffer_set_direction(buffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
         else {
@@ -206,11 +357,6 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cha
         }
         hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters), length, run.startIndex, run.endIndex - run.startIndex);
 
-        auto& face = fontPlatformData.harfBuzzFace();
-        if (fontPlatformData.orientation() == FontOrientation::Vertical)
-            face.setScriptForVerticalGlyphSubstitution(buffer.get());
-
-        HbUniquePtr<hb_font_t> harfBuzzFont(face.createFont());
         hb_shape(harfBuzzFont.get(), buffer.get(), features.isEmpty() ? nullptr : features.data(), features.size());
         m_complexTextRuns.append(ComplexTextRun::create(buffer.get(), *font, characters, stringLocation, length, run.startIndex, run.endIndex));
         hb_buffer_reset(buffer.get());
