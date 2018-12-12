@@ -1,3 +1,9 @@
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix build with recent SDKs.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+
 2018-12-09  Darin Adler  <darin@apple.com>
 
         [iOS] Zero memory containing the password for PDF documents when a WKPDFView is deallocated
