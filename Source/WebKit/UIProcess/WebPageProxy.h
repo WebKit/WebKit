@@ -362,6 +362,8 @@ public:
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
     void changeWebsiteDataStore(WebsiteDataStore&);
 
+    void addPreviouslyVisitedPath(const String&);
+
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }
     void detectDataInAllFrames(WebCore::DataDetectorTypes, CompletionHandler<void(const DataDetectionResult&)>&&);
@@ -1849,6 +1851,10 @@ private:
     void stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier);
     void loadSynchronousURLSchemeTask(URLSchemeTaskParameters&&, Messages::WebPageProxy::LoadSynchronousURLSchemeTask::DelayedReply&&);
 
+    bool checkURLReceivedFromCurrentOrPreviousWebProcess(const String&);
+    bool checkURLReceivedFromCurrentOrPreviousWebProcess(const URL&);
+    void willAcquireUniversalFileReadSandboxExtension();
+
     void handleAutoFillButtonClick(const UserData&);
 
     void didResignInputElementStrongPasswordAppearance(const UserData&);
@@ -2292,11 +2298,13 @@ private:
     std::optional<SpellDocumentTag> m_spellDocumentTag;
 
     std::optional<MonotonicTime> m_pageLoadStart;
+    HashSet<String> m_previouslyVisitedPaths;
 
     RunLoop::Timer<WebPageProxy> m_resetRecentCrashCountTimer;
     unsigned m_recentCrashCount { 0 };
 
     bool m_needsFontAttributes { false };
+    bool m_mayHaveUniversalFileReadSandboxExtension { false };
 
 #if HAVE(PENCILKIT)
     std::unique_ptr<EditableImageController> m_editableImageController;

@@ -385,7 +385,7 @@ void WebInspectorProxy::createFrontendPage()
     trackInspectorPage(m_inspectorPage);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
-    m_inspectorPage->process().assumeReadAccessToBaseURL(WebInspectorProxy::inspectorBaseURL());
+    m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
 }
 
 void WebInspectorProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)

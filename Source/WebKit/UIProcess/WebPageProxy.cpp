@@ -241,7 +241,7 @@
 #define MERGE_WHEEL_EVENTS 1
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
-#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
+#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(url), m_process->connection())
 
 #define RELEASE_LOG_IF_ALLOWED(channel, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, __VA_ARGS__)
 
@@ -1066,7 +1066,7 @@ void WebPageProxy::loadRequestWithNavigation(API::Navigation& navigation, Resour
     loadParameters.clientRedirectSourceForHistory = navigation.clientRedirectSourceForHistory();
     bool createdExtension = maybeInitializeSandboxExtensionHandle(url, loadParameters.sandboxExtensionHandle);
     if (createdExtension)
-        m_process->willAcquireUniversalFileReadSandboxExtension();
+        willAcquireUniversalFileReadSandboxExtension();
     addPlatformLoadParameters(loadParameters);
 
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
@@ -1110,7 +1110,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::Type::ReadOnly, loadParameters.sandboxExtensionHandle);
     addPlatformLoadParameters(loadParameters);
 
-    m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
+    m_process->assumeReadAccessToBaseURL(*this, resourceDirectoryURL);
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
 
@@ -1147,7 +1147,7 @@ void WebPageProxy::loadDataWithNavigation(API::Navigation& navigation, const IPC
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
 
-    m_process->assumeReadAccessToBaseURL(baseURL);
+    m_process->assumeReadAccessToBaseURL(*this, baseURL);
     m_process->send(Messages::WebPage::LoadData(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
 }
@@ -1185,8 +1185,8 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     addPlatformLoadParameters(loadParameters);
 
-    m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->assumeReadAccessToBaseURL(unreachableURL);
+    m_process->assumeReadAccessToBaseURL(*this, baseURL);
+    m_process->assumeReadAccessToBaseURL(*this, unreachableURL);
     m_process->send(Messages::WebPage::LoadAlternateHTML(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
 }
@@ -1250,7 +1250,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
         bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), url), sandboxExtensionHandle);
         if (createdExtension)
-            m_process->willAcquireUniversalFileReadSandboxExtension();
+            willAcquireUniversalFileReadSandboxExtension();
     }
 
     if (!isValid())
@@ -4498,6 +4498,7 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == this);
+    MESSAGE_CHECK_URL(sourceURLString);
     MESSAGE_CHECK_URL(destinationURLString);
 
     if (frame->isMainFrame()) {
@@ -5182,7 +5183,7 @@ void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, 
 
     bool createdExtension = maybeInitializeSandboxExtensionHandle(URL(URL(), item->url()), sandboxExtensionHandle);
     if (createdExtension)
-        m_process->willAcquireUniversalFileReadSandboxExtension();
+        willAcquireUniversalFileReadSandboxExtension();
     m_backForwardList->goToItem(*item);
 }
 
@@ -8310,6 +8311,42 @@ void WebPageProxy::updateCurrentModifierState()
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
     m_process->send(Messages::WebPage::UpdateCurrentModifierState(modifiers), m_pageID);
 #endif
+}
+
+bool WebPageProxy::checkURLReceivedFromCurrentOrPreviousWebProcess(const String& urlString)
+{
+    return checkURLReceivedFromCurrentOrPreviousWebProcess(URL(URL(), urlString));
+}
+
+bool WebPageProxy::checkURLReceivedFromCurrentOrPreviousWebProcess(const URL& url)
+{
+    if (!url.isLocalFile())
+        return true;
+
+    if (m_mayHaveUniversalFileReadSandboxExtension)
+        return true;
+
+    String path = url.fileSystemPath();
+    auto startsWithURLPath = [&path](const String& visitedPath) {
+        return path.startsWith(visitedPath);
+    };
+
+    auto localPathsEnd = m_previouslyVisitedPaths.end();
+    if (std::find_if(m_previouslyVisitedPaths.begin(), localPathsEnd, startsWithURLPath) != localPathsEnd)
+        return true;
+
+    return m_process->checkURLReceivedFromWebProcess(url);
+}
+
+void WebPageProxy::addPreviouslyVisitedPath(const String& path)
+{
+    m_previouslyVisitedPaths.add(path);
+}
+
+void WebPageProxy::willAcquireUniversalFileReadSandboxExtension()
+{
+    m_mayHaveUniversalFileReadSandboxExtension = true;
+    process().willAcquireUniversalFileReadSandboxExtension();
 }
 
 #if ENABLE(DATA_DETECTION)

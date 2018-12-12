@@ -1,3 +1,39 @@
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Restore MESSAGE_CHECK_URL() security check on sourceURL in didPerformClientRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=191982
+        <rdar://problem/46258054>
+
+        Reviewed by Alex Christensen.
+
+        Have the WebPageProxy remember the local paths it previously visited so that the
+        MESSAGE_CHECK_URL() checks still work when process-swap on navigation is enabled.
+
+        Add back MESSAGE_CHECK_URL() on sourceURL in didPerformClientRedirect().
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createSandboxExtensionsIfNeeded):
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        (WebKit::RemoteWebInspectorProxy::createFrontendPageAndWindow):
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createFrontendPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadRequestWithNavigation):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadDataWithNavigation):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        (WebKit::WebPageProxy::checkURLReceivedFromCurrentOrPreviousWebProcess):
+        (WebKit::WebPageProxy::addPreviouslyVisitedPath):
+        (WebKit::WebPageProxy::willAcquireUniversalFileReadSandboxExtension):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::assumeReadAccessToBaseURL):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+
 2018-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add API to notify about frame displayed view backend callback

@@ -497,7 +497,7 @@ void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentCont
     m_webUserContentControllerProxies.remove(&proxy);
 }
 
-void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
+void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString)
 {
     URL url(URL(), urlString);
     if (!url.isLocalFile())
@@ -513,6 +513,7 @@ void WebProcessProxy::assumeReadAccessToBaseURL(const String& urlString)
     // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
     // to have read access to this directory already.
     m_localPathsWithAssumedReadAccess.add(path);
+    page.addPreviouslyVisitedPath(path);
 }
 
 bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
