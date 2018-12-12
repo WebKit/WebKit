@@ -1346,6 +1346,22 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->webAnimationsCSSIntegrationEnabled();
 }
 
+- (void)_setDeviceOrientationEventEnabled:(BOOL)enabled
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    _preferences->setDeviceOrientationEventEnabled(enabled);
+#endif
+}
+
+- (BOOL)_deviceOrientationEventEnabled
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    return _preferences->deviceOrientationEventEnabled();
+#else
+    return false;
+#endif
+}
+
 @end
 
 #endif // WK_API_ENABLED

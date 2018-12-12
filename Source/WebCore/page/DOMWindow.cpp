@@ -1821,41 +1821,6 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
         addUnloadEventListener(this);
     else if (eventType == eventNames().beforeunloadEvent && allowsBeforeUnloadListeners(this))
         addBeforeUnloadEventListener(this);
-#if ENABLE(DEVICE_ORIENTATION)
-#if PLATFORM(IOS_FAMILY)
-    else if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent) && document()) {
-        if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-            if (eventType == eventNames().deviceorientationEvent)
-                document()->deviceOrientationController()->addDeviceEventListener(this);
-            else
-                document()->deviceMotionController()->addDeviceEventListener(this);
-        } else if (document()) {
-            if (isSecureContext())
-                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener from child frame that wasn't the same security origin as the main page."_s);
-            else
-                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
-        }
-    }
-#else
-    else if (eventType == eventNames().devicemotionEvent) {
-        if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-            if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-                controller->addDeviceEventListener(this);
-        } else if (document())
-            document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion listener from child frame that wasn't the same security origin as the main page."_s);
-    } else if (eventType == eventNames().deviceorientationEvent) {
-        if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
-            if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-                controller->addDeviceEventListener(this);
-        } else if (document()) {
-            if (isSecureContext())
-                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device orientation listener from child frame that wasn't the same security origin as the main page."_s);
-            else
-                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
-        }
-    }
-#endif // PLATFORM(IOS_FAMILY)
-#endif // ENABLE(DEVICE_ORIENTATION)
 #if PLATFORM(IOS_FAMILY)
     else if (eventType == eventNames().scrollEvent)
         incrementScrollEventListenersCount();
@@ -1872,6 +1837,44 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
     else if (eventNames().isGamepadEventType(eventType))
         incrementGamepadEventListenerCount();
 #endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+    if (frame() && frame()->settings().deviceOrientationEventEnabled()) {
+#if PLATFORM(IOS_FAMILY)
+        if ((eventType == eventNames().devicemotionEvent || eventType == eventNames().deviceorientationEvent) && document()) {
+            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
+                if (eventType == eventNames().deviceorientationEvent)
+                    document()->deviceOrientationController()->addDeviceEventListener(this);
+                else
+                    document()->deviceMotionController()->addDeviceEventListener(this);
+            } else if (document()) {
+                if (isSecureContext())
+                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener from child frame that wasn't the same security origin as the main page."_s);
+                else
+                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
+            }
+        }
+#else
+        if (eventType == eventNames().devicemotionEvent) {
+            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
+                if (DeviceMotionController* controller = DeviceMotionController::from(page()))
+                    controller->addDeviceEventListener(this);
+            } else if (document())
+                document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion listener from child frame that wasn't the same security origin as the main page."_s);
+        } else if (eventType == eventNames().deviceorientationEvent) {
+            if (isSameSecurityOriginAsMainFrame() && isSecureContext()) {
+                if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
+                    controller->addDeviceEventListener(this);
+            } else if (document()) {
+                if (isSecureContext())
+                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device orientation listener from child frame that wasn't the same security origin as the main page."_s);
+                else
+                    document()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Blocked attempt to add a device motion or orientation listener because the browsing context is not secure."_s);
+            }
+        }
+#endif // PLATFORM(IOS_FAMILY)
+    }
+#endif // ENABLE(DEVICE_ORIENTATION)
 
     return true;
 }

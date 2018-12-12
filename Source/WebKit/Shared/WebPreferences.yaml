@@ -6,6 +6,12 @@ BlankAnchorTargetImpliesNoOpenerEnabled:
    humanReadableDescription: "target=_blank on anchor elements implies rel=noopener"
    category: experimental
 
+DeviceOrientationEventEnabled:
+  type: bool
+  defaultValue: true
+  condition: ENABLE(DEVICE_ORIENTATION)
+  webcoreName: deviceOrientationEventEnabled
+
 JavaScriptEnabled:
   type: bool
   defaultValue: true

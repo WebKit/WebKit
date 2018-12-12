@@ -1,3 +1,18 @@
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Add a preference to enable / disable devicemotion and deviceorientation events
+        https://bugs.webkit.org/show_bug.cgi?id=192631
+        <rdar://problem/46646244>
+
+        Reviewed by Geoffrey Garen.
+
+        Add setting to toggle support for the deviceorientation / devicemotion events:
+        - https://w3c.github.io/deviceorientation/
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        * page/Settings.yaml:
+
 2018-12-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make HTMLConverter take two Positions in preparation to make it work with shadow DOM

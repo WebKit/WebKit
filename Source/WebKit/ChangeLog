@@ -1,3 +1,20 @@
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Add a preference to enable / disable devicemotion and deviceorientation events
+        https://bugs.webkit.org/show_bug.cgi?id=192631
+        <rdar://problem/46646244>
+
+        Reviewed by Geoffrey Garen.
+
+        Add setting to toggle support for the deviceorientation / devicemotion events:
+        - https://w3c.github.io/deviceorientation/
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setDeviceOrientationEventEnabled:]):
+        (-[WKPreferences _deviceOrientationEventEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2018-12-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed build fix for WinCairo Debug after r239080(?).

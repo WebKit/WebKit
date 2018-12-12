@@ -745,6 +745,11 @@ touchEventEmulationEnabled:
   getter: isTouchEventEmulationEnabled
   conditional: TOUCH_EVENTS
 
+deviceOrientationEventEnabled:
+  type: bool
+  initial: true
+  conditional: DEVICE_ORIENTATION
+
 shouldEnableTextAutosizingBoost:
   type: bool
   initial: false
