@@ -1,5 +1,12 @@
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix GTK build after r239104.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction):
+
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix build with older SDKs after r239110.
 
         * Platform/cocoa/WKCrashReporter.mm:
