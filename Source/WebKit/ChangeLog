@@ -1,3 +1,13 @@
+2018-12-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for Cocoa Debug test instability following r239129.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToSuspendAfterProcessSwap): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::didFailToSuspendAfterProcessSwap):
+        Move the whole assertion to the declaration site.
+
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
         Add a preference to enable / disable devicemotion and deviceorientation events

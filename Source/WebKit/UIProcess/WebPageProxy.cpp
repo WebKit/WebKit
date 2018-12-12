@@ -2759,12 +2759,6 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     };
 }
 
-void WebPageProxy::didFailToSuspendAfterProcessSwap()
-{
-    // Only the SuspendedPageProxy should be getting this call.
-    ASSERT_NOT_REACHED();
-}
-
 void WebPageProxy::setUserAgent(String&& userAgent)
 {
     if (m_userAgent == userAgent)
