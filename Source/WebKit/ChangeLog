@@ -1,3 +1,14 @@
+2018-12-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed build fix for WinCairo Debug after r239080(?).
+
+        MSVC gives a redefinition error if noreturn is specified on the definition instead of the declaration.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToSuspendAfterProcessSwap):
+        * UIProcess/WebPageProxy.h:
+        Move NO_RETURN_DUE_TO_ASSERT to the declaration site.
+
 2018-12-12  Chris Fleizach  <cfleizach@apple.com>
 
         [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds

@@ -1566,7 +1566,7 @@ private:
 
     void reattachToWebProcess();
     void swapToWebProcess(Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>&&, ShouldDelayAttachingDrawingArea);
-    void didFailToSuspendAfterProcessSwap();
+    NO_RETURN_DUE_TO_ASSERT void didFailToSuspendAfterProcessSwap();
 
     void finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea = ShouldDelayAttachingDrawingArea::No);
 
