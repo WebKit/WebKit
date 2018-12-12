@@ -1,3 +1,9 @@
+2018-12-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix bad check in API test added in r239080.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix warning -Wmissing-field-initializers

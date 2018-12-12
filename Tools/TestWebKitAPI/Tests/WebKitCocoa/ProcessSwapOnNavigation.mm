@@ -2534,7 +2534,7 @@ TEST(ProcessSwap, ConcurrentHistoryNavigations)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+    EXPECT_NE(applePID, [webView _webProcessIdentifier]);
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
 
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [backForwardList.currentItem.URL absoluteString]);
