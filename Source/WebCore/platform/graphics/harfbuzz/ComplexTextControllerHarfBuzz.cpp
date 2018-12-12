@@ -32,6 +32,7 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include <hb-ft.h>
 #include <hb-icu.h>
+#include <hb-ot.h>
 
 #if ENABLE(VARIATION_FONTS)
 #include FT_MULTIPLE_MASTERS_H

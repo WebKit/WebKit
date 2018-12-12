@@ -1,5 +1,11 @@
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix WPE build after r239101.
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp: Include <hb-ot.h>
+
+2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [FreeType] Remove HarfBuzzFace
         https://bugs.webkit.org/show_bug.cgi?id=192589
 
