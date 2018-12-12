@@ -23,24 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUTextureView.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
-{
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
-}
+using GPUBufferUsageFlags = unsigned long;
 
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
-{
-}
+struct GPUBufferDescriptor {
+    unsigned long size;
+    GPUBufferUsageFlags usage;
+};
+
+class GPUBufferUsage : public RefCounted<GPUBufferUsage> {
+public:
+    enum Flags : GPUBufferUsageFlags {
+        None = 0,
+        MapRead = 1,
+        MapWrite = 2,
+        TransferSrc = 4,
+        TransferDst = 8,
+        Index = 16,
+        Vertex = 32,
+        Uniform = 64,
+        Storage = 128
+    };
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

@@ -33,6 +33,7 @@
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "Logging.h"
+#include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPUPipelineStageDescriptor.h"
 #include "WebGPUQueue.h"
@@ -47,22 +48,28 @@ namespace WebCore {
 RefPtr<WebGPUDevice> WebGPUDevice::create(Ref<WebGPUAdapter>&& adapter)
 {
     auto device = GPUDevice::create(); // FIXME: Take adapter into account when creating m_device.
-    if (!device)
-        return nullptr;
-
-    return adoptRef(new WebGPUDevice(WTFMove(adapter), WTFMove(device)));
+    return device ? adoptRef(new WebGPUDevice(WTFMove(adapter), device.releaseNonNull())) : nullptr;
 }
 
-WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, RefPtr<GPUDevice>&& device)
+WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
     : m_adapter(WTFMove(adapter))
-    , m_device(device)
+    , m_device(WTFMove(device))
 {
     UNUSED_PARAM(m_adapter);
 }
 
+RefPtr<WebGPUBuffer> WebGPUDevice::createBuffer(WebGPUBufferDescriptor&& descriptor) const
+{
+    // FIXME: Validation on descriptor needed?
+    auto buffer = m_device->createBuffer(GPUBufferDescriptor { descriptor.size, descriptor.usage });
+    return buffer ? WebGPUBuffer::create(buffer.releaseNonNull()) : nullptr;
+}
+
 RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const
 {
-    return WebGPUShaderModule::create(m_device->createShaderModule(GPUShaderModuleDescriptor { descriptor.code }));
+    // FIXME: What can be validated here?
+    auto module = m_device->createShaderModule(GPUShaderModuleDescriptor { descriptor.code });
+    return module ? WebGPUShaderModule::create(module.releaseNonNull()) : nullptr;
 }
 
 RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipelineDescriptor&& descriptor) const
@@ -118,16 +125,13 @@ RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipe
     }
 
     auto pipeline = m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(vertexStage), WTFMove(fragmentStage), descriptor.primitiveTopology });
-
-    if (!pipeline)
-        return nullptr;
-
-    return WebGPURenderPipeline::create(pipeline.releaseNonNull());
+    return pipeline ? WebGPURenderPipeline::create(pipeline.releaseNonNull()) : nullptr;
 }
 
 RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const
 {
-    return WebGPUCommandBuffer::create(m_device->createCommandBuffer());
+    auto commandBuffer = m_device->createCommandBuffer();
+    return commandBuffer ? WebGPUCommandBuffer::create(commandBuffer.releaseNonNull()) : nullptr;
 }
 
 RefPtr<WebGPUQueue> WebGPUDevice::getQueue()

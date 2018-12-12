@@ -1,3 +1,15 @@
+2018-12-11  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPUBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=192516
+
+        Reviewed by Dean Jackson.
+
+        Basic test to create a WebGPUBuffer and ensure that its memory is valid.
+
+        * webgpu/buffers-expected.txt: Added.
+        * webgpu/buffers.html: Added.
+
 2018-12-11  Brent Fulgham  <bfulgham@apple.com>
 
         Don't attempt to compute animated values when there is no relevant animation

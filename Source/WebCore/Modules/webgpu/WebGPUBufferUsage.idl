@@ -22,25 +22,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#include "config.h"
-#include "WebGPUTextureView.h"
-
-#if ENABLE(WEBGPU)
-
-namespace WebCore {
-
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
-{
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
-}
-
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
-{
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)
-
+[
+    Conditional=WEBGPU,
+    DoNotCheckConstants,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUBufferUsage {
+    const u32 NONE = 0;
+    const u32 MAP_READ = 1;
+    const u32 MAP_WRITE = 2;
+    const u32 TRANSFER_SRC = 4;
+    const u32 TRANSFER_DST = 8;
+    const u32 INDEX = 16;
+    const u32 VERTEX = 32;
+    const u32 UNIFORM = 64;
+    const u32 STORAGE = 128;
+};

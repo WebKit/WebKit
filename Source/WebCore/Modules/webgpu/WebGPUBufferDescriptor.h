@@ -23,24 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUTextureView.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBufferDescriptor.h"
+
 namespace WebCore {
 
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
-{
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
-}
-
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
-{
-}
+using WebGPUBufferDescriptor = GPUBufferDescriptor;
+using WebGPUBufferUsageFlags = GPUBufferUsageFlags;
+using WebGPUBufferUsage = GPUBufferUsage;
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

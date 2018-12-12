@@ -303,6 +303,7 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
+Modules/webgpu/WebGPUBuffer.cpp
 Modules/webgpu/WebGPUCommandBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUQueue.cpp
@@ -3221,6 +3222,9 @@ JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
+JSWebGPUBuffer.cpp
+JSWebGPUBufferDescriptor.cpp
+JSWebGPUBufferUsage.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUColor.cpp
 JSWebGPUDevice.cpp

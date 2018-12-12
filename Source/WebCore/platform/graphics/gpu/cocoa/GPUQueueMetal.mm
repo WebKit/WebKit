@@ -44,7 +44,7 @@ static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
 RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
 {
     if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice.");
+        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice!");
         return nullptr;
     }
 
@@ -58,7 +58,7 @@ RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!queue) {
-        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue.");
+        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue!");
         return nullptr;
     }
 

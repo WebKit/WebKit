@@ -73,7 +73,7 @@ GPUSwapChain::GPUSwapChain(PlatformSwapLayerSmartPtr&& platformLayer)
 void GPUSwapChain::setDevice(const GPUDevice& device)
 {
     if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUSwapChain::setDevice(): MTLDevice does not exist!");
+        LOG(WebGPU, "GPUSwapChain::setDevice(): Invalid GPUDevice!");
         return;
     }
 

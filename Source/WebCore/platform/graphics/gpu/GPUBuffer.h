@@ -23,24 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUTextureView.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_PROTOCOL(MTLBuffer);
+
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
-{
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
-}
+class GPUDevice;
 
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
-{
-}
+struct GPUBufferDescriptor;
+
+using PlatformBuffer = MTLBuffer;
+using PlatformBufferSmartPtr = RetainPtr<MTLBuffer>;
+
+class GPUBuffer : public RefCounted<GPUBuffer> {
+public:
+    ~GPUBuffer();
+
+    static RefPtr<GPUBuffer> create(const GPUDevice&, GPUBufferDescriptor&&);
+
+    PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
+
+    JSC::ArrayBuffer* mapping() const { return m_mapping.get(); }
+
+private:
+    explicit GPUBuffer(PlatformBufferSmartPtr&&, RefPtr<JSC::ArrayBuffer>&&);
+
+    PlatformBufferSmartPtr m_platformBuffer;
+    RefPtr<JSC::ArrayBuffer> m_mapping;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

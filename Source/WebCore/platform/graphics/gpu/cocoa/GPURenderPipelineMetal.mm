@@ -87,7 +87,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
     const char* const functionName = "GPURenderPipeline::create()";
 
     if (!device.platformDevice()) {
-        LOG(WebGPU, "%s: MTLDevice does not exist!", functionName);
+        LOG(WebGPU, "%s: Invalid GPUDevice!", functionName);
         return nullptr;
     }
 

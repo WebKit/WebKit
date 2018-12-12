@@ -189,8 +189,10 @@ namespace WebCore {
     macro(WebGLVertexArrayObject) \
     macro(WebGPU) \
     macro(WebGPUAdapter) \
-    macro(WebGPUDevice) \
+    macro(WebGPUBuffer) \
+    macro(WebGPUBufferUsage) \
     macro(WebGPUCommandBuffer) \
+    macro(WebGPUDevice) \
     macro(WebGPUQueue) \
     macro(WebGPUProgrammablePassEncoder) \
     macro(WebGPURenderingContext) \

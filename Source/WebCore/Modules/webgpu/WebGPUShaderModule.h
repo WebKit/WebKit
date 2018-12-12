@@ -29,21 +29,21 @@
 
 #include "GPUShaderModule.h"
 
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class WebGPUShaderModule : public RefCounted<WebGPUShaderModule> {
 public:
-    static RefPtr<WebGPUShaderModule> create(RefPtr<GPUShaderModule>&&);
+    static RefPtr<WebGPUShaderModule> create(Ref<GPUShaderModule>&&);
 
-    const GPUShaderModule* module() const { return m_module.get(); }
+    const GPUShaderModule* module() const { return m_module.ptr(); }
 
 private:
-    WebGPUShaderModule(RefPtr<GPUShaderModule>&&);
+    WebGPUShaderModule(Ref<GPUShaderModule>&&);
 
-    RefPtr<GPUShaderModule> m_module;
+    Ref<GPUShaderModule> m_module;
 };
 
 } // namespace WebCore

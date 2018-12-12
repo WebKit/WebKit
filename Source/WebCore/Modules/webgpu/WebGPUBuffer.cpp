@@ -24,23 +24,23 @@
  */
 
 #include "config.h"
-#include "WebGPUTextureView.h"
+#include "WebGPUBuffer.h"
 
 #if ENABLE(WEBGPU)
 
 namespace WebCore {
 
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
+RefPtr<WebGPUBuffer> WebGPUBuffer::create(Ref<GPUBuffer>&& buffer)
 {
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
+    return adoptRef(new WebGPUBuffer(WTFMove(buffer)));
 }
 
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
+WebGPUBuffer::WebGPUBuffer(Ref<GPUBuffer>&& buffer)
+    : m_buffer(WTFMove(buffer))
 {
+    UNUSED_PARAM(m_buffer);
 }
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

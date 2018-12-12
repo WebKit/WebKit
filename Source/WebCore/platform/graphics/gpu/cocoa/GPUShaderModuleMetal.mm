@@ -55,10 +55,7 @@ RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShad
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!module)
-        return nullptr;
-
-    return adoptRef(new GPUShaderModule(WTFMove(module)));
+    return module ? adoptRef(new GPUShaderModule(WTFMove(module))) : nullptr;
 }
 
 GPUShaderModule::GPUShaderModule(PlatformShaderModuleSmartPtr&& module)

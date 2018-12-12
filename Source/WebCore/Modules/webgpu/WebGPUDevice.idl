@@ -33,6 +33,8 @@
     // readonly attribute WebGPULimits limits;
     readonly attribute WebGPUAdapter adapter;
 
+    WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
+
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
 
@@ -42,7 +44,6 @@
     WebGPUQueue getQueue();
 
     // FIXME: Unimplemented.
-    // WebGPUBuffer createBuffer(WebGPUBufferDescriptor descriptor);
     // WebGPUTexture createTexture(WebGPUTextureDescriptor descriptor);
     // WebGPUSampler createSampler(WebGPUSamplerDescriptor descriptor);
     //

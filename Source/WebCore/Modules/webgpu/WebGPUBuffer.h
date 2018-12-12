@@ -23,24 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUTextureView.h"
+#pragma once
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBuffer.h"
+
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-RefPtr<WebGPUTextureView> WebGPUTextureView::create(Ref<GPUTexture>&& view)
-{
-    return adoptRef(new WebGPUTextureView(WTFMove(view)));
-}
+class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
+public:
+    static RefPtr<WebGPUBuffer> create(Ref<GPUBuffer>&&);
 
-WebGPUTextureView::WebGPUTextureView(Ref<GPUTexture>&& view)
-    : m_texture(WTFMove(view))
-{
-}
+    JSC::ArrayBuffer* mapping() const { return m_buffer->mapping(); }
+    void unmap() { /* FIXME: Unimplemented stub. */ }
+    void destroy() { /* FIXME: Unimplemented stub. */ }
+
+private:
+    explicit WebGPUBuffer(Ref<GPUBuffer>&&);
+
+    Ref<GPUBuffer> m_buffer;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(WEBGPU)
-

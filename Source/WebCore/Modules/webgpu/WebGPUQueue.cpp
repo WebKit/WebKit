@@ -36,10 +36,7 @@ namespace WebCore {
 
 RefPtr<WebGPUQueue> WebGPUQueue::create(RefPtr<GPUQueue>&& queue)
 {
-    if (!queue)
-        return nullptr;
-
-    return adoptRef(new WebGPUQueue(queue.releaseNonNull()));
+    return queue ? adoptRef(new WebGPUQueue(queue.releaseNonNull())) : nullptr;
 }
 
 WebGPUQueue::WebGPUQueue(Ref<GPUQueue>&& queue)

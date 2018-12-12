@@ -28,12 +28,19 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBuffer.h"
+#include "GPUBufferDescriptor.h"
 #include "GPURenderPipeline.h"
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
 
 namespace WebCore {
+
+RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
+{
+    return GPUBuffer::create(*this, WTFMove(descriptor));
+}
 
 RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
 {

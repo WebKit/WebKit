@@ -37,12 +37,9 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUCommandBuffer> WebGPUCommandBuffer::create(RefPtr<GPUCommandBuffer>&& buffer)
+RefPtr<WebGPUCommandBuffer> WebGPUCommandBuffer::create(Ref<GPUCommandBuffer>&& buffer)
 {
-    if (!buffer)
-        return nullptr;
-
-    return adoptRef(new WebGPUCommandBuffer(buffer.releaseNonNull()));
+    return adoptRef(new WebGPUCommandBuffer(WTFMove(buffer)));
 }
 
 WebGPUCommandBuffer::WebGPUCommandBuffer(Ref<GPUCommandBuffer>&& buffer)
@@ -69,11 +66,7 @@ RefPtr<WebGPURenderPassEncoder> WebGPUCommandBuffer::beginRenderPass(WebGPURende
     }
 
     auto encoder = GPURenderPassEncoder::create(m_commandBuffer.get(), WTFMove(gpuRenderPassDescriptor));
-
-    if (!encoder)
-        return nullptr;
-
-    return WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull());
+    return encoder ? WebGPURenderPassEncoder::create(*this, encoder.releaseNonNull()) : nullptr;
 }
 
 } // namespace WebCore

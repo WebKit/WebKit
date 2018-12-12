@@ -38,7 +38,7 @@ class GPURenderPassEncoder;
 
 class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
 public:
-    static Ref<WebGPURenderPassEncoder> create(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
+    static RefPtr<WebGPURenderPassEncoder> create(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
 
     void draw(unsigned long, unsigned long, unsigned long, unsigned long);
 

@@ -1,3 +1,88 @@
+2018-12-11  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPUBuffer, and some nullibility consistency in WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=192516
+
+        Reviewed by Dean Jackson.
+
+        Test: webgpu/buffers.html
+
+        Enable basic creation of WebGPUBuffers, and fix nullability inconsitencies in WebGPU implementation.
+
+        Add necessary symbols and files for Web/GPUBuffer, Web/GPUBufferUsage, and Web/GPUBufferDescriptor:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        * Modules/webgpu/WebGPUBuffer.cpp: Added.
+        (WebCore::WebGPUBuffer::create):
+        (WebCore::WebGPUBuffer::WebGPUBuffer):
+        * Modules/webgpu/WebGPUBuffer.h: Added.
+        (WebCore::WebGPUBuffer::mapping const):
+        (WebCore::WebGPUBuffer::unmap): Unimplemented stub, for now, as Metal equivalent is unclear.
+        (WebCore::WebGPUBuffer::destroy): Unimplemented stub.
+        * Modules/webgpu/WebGPUBuffer.idl: Added.
+        * Modules/webgpu/WebGPUBufferDescriptor.h: Added.
+        * Modules/webgpu/WebGPUBufferDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const): Added.
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::platformBuffer const):
+        (WebCore::GPUBuffer::mapping const):
+        * platform/graphics/gpu/GPUBufferDescriptor.h: Added.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::createBuffer const): Added.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm: Added.
+        (WebCore::GPUBuffer::create): Attempt to create a page-aligned Gigacage to back the GPUBuffer's ArrayBuffer. 
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::~GPUBuffer): Dereference mapped ArrayBuffer first.
+
+        Small benign edits, most to make nullability more consistent in WebGPU classes:
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::create):
+        (WebCore::WebGPUCommandBuffer::beginRenderPass):
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::create):
+        (WebCore::WebGPUDevice::WebGPUDevice):
+        (WebCore::WebGPUDevice::createShaderModule const):
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        (WebCore::WebGPUDevice::createCommandBuffer const):
+        * Modules/webgpu/WebGPUDevice.h:
+        (WebCore::WebGPUDevice::device const):
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUQueue.cpp:
+        (WebCore::WebGPUQueue::create):
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::create):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPUShaderModule.cpp:
+        (WebCore::WebGPUShaderModule::create):
+        (WebCore::WebGPUShaderModule::WebGPUShaderModule):
+        * Modules/webgpu/WebGPUShaderModule.h:
+        (WebCore::WebGPUShaderModule::module const):
+        * Modules/webgpu/WebGPUSwapChain.idl: Sync with IDL changes.
+        * Modules/webgpu/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::create):
+        (WebCore::WebGPUTexture::createDefaultTextureView):
+        * Modules/webgpu/WebGPUTextureView.cpp:
+        (WebCore::WebGPUTextureView::create):
+        * Modules/webgpu/WebGPUTextureView.h:
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::create):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::create):
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::create):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::GPUSwapChain::setDevice):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::GPUTexture::GPUTexture):
+
 2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix warning -Wmissing-field-initializers

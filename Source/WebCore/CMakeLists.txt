@@ -458,6 +458,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUBuffer.idl
+    Modules/webgpu/WebGPUBufferDescriptor.idl
+    Modules/webgpu/WebGPUBufferUsage.idl
     Modules/webgpu/WebGPUColor.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl

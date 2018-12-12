@@ -4227,6 +4227,7 @@
 		D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = D0B0556609C6700100307E43 /* CreateLinkCommand.h */; };
 		D0BC54491443AC4A00E105DA /* CachedStyleSheetClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */; };
+		D0D8648421B61727003C983C /* WebGPUBufferDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = D0D8648221B61727003C983C /* WebGPUBufferDescriptor.h */; };
 		D0EDA775143E303C0028E383 /* CachedRawResource.h in Headers */ = {isa = PBXBuildFile; fileRef = D0EDA773143E303C0028E383 /* CachedRawResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D0FF2A5E11F8C45A007E74E0 /* PingLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754612A5FE84004BD828 /* RenderDetailsMarker.h */; };
@@ -13797,6 +13798,8 @@
 		D0615FCC217FE5C6008A48A8 /* WebGPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModule.h; sourceTree = "<group>"; };
 		D0615FCD217FE5C6008A48A8 /* WebGPUShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModule.cpp; sourceTree = "<group>"; };
 		D0615FCE217FE5C6008A48A8 /* WebGPUShaderModule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModule.idl; sourceTree = "<group>"; };
+		D063AE4C21C07AB5000E6A35 /* WebGPUBufferUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBufferUsage.idl; sourceTree = "<group>"; };
+		D063AE4E21C0810A000E6A35 /* WebGPUBufferUsage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBufferUsage.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
 		D07DEAB70A36554A00CA30F8 /* InsertListCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InsertListCommand.cpp; sourceTree = "<group>"; };
@@ -13842,6 +13845,14 @@
 		D0CAAE9C216824A7001C91C7 /* WebMetalComputeCommandEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalComputeCommandEncoder.cpp; sourceTree = "<group>"; };
 		D0CAAE9D216824A7001C91C7 /* WebMetalBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMetalBuffer.h; sourceTree = "<group>"; };
 		D0CAAE9E216824A8001C91C7 /* WebMetalCommandBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMetalCommandBuffer.cpp; sourceTree = "<group>"; };
+		D0D8648221B61727003C983C /* WebGPUBufferDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBufferDescriptor.h; sourceTree = "<group>"; };
+		D0D8648321B61727003C983C /* WebGPUBufferDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBufferDescriptor.idl; sourceTree = "<group>"; };
+		D0D8648721B64CAA003C983C /* GPUBufferDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBufferDescriptor.h; sourceTree = "<group>"; };
+		D0D8648C21B70676003C983C /* WebGPUBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBuffer.h; sourceTree = "<group>"; };
+		D0D8648D21B70676003C983C /* WebGPUBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBuffer.cpp; sourceTree = "<group>"; };
+		D0D8648E21B70676003C983C /* WebGPUBuffer.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBuffer.idl; sourceTree = "<group>"; };
+		D0D8649121B760C4003C983C /* GPUBufferMetal.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUBufferMetal.mm; sourceTree = "<group>"; };
+		D0D8649221B760F2003C983C /* GPUBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBuffer.h; sourceTree = "<group>"; };
 		D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChain.h; sourceTree = "<group>"; };
 		D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChain.cpp; sourceTree = "<group>"; };
 		D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSwapChain.idl; sourceTree = "<group>"; };
@@ -18007,6 +18018,8 @@
 			children = (
 				D087CE3721ACA94200BDE174 /* cocoa */,
 				312FF8CE21A4C33F00EB199D /* legacy */,
+				D0D8649221B760F2003C983C /* GPUBuffer.h */,
+				D0D8648721B64CAA003C983C /* GPUBufferDescriptor.h */,
 				D001D9AB21B0C7BF0023B9BC /* GPUColor.h */,
 				312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */,
 				312FF8BF21A4C2F100EB199D /* GPUDevice.cpp */,
@@ -25497,6 +25510,11 @@
 				D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */,
 				D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */,
 				D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */,
+				D0D8648D21B70676003C983C /* WebGPUBuffer.cpp */,
+				D0D8648C21B70676003C983C /* WebGPUBuffer.h */,
+				D0D8648E21B70676003C983C /* WebGPUBuffer.idl */,
+				D0D8648221B61727003C983C /* WebGPUBufferDescriptor.h */,
+				D0D8648321B61727003C983C /* WebGPUBufferDescriptor.idl */,
 				D001D9AC21B0C81A0023B9BC /* WebGPUColor.h */,
 				D001D9AD21B0C81A0023B9BC /* WebGPUColor.idl */,
 				D0EACF7721937228000FA75C /* WebGPUCommandBuffer.cpp */,
@@ -25548,6 +25566,8 @@
 				D0EACF882193EE4E000FA75C /* WebGPUTextureView.cpp */,
 				D0EACF872193EE4E000FA75C /* WebGPUTextureView.h */,
 				D0EACF892193EE4E000FA75C /* WebGPUTextureView.idl */,
+				D063AE4C21C07AB5000E6A35 /* WebGPUBufferUsage.idl */,
+				D063AE4E21C0810A000E6A35 /* WebGPUBufferUsage.h */,
 			);
 			path = webgpu;
 			sourceTree = "<group>";
@@ -25555,6 +25575,7 @@
 		D087CE3721ACA94200BDE174 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				D0D8649121B760C4003C983C /* GPUBufferMetal.mm */,
 				D087CE3821ACA94200BDE174 /* GPUCommandBufferMetal.mm */,
 				D087CE3C21ACA94200BDE174 /* GPUDeviceMetal.mm */,
 				D087CE3B21ACA94200BDE174 /* GPUProgrammablePassEncoderMetal.mm */,
@@ -31664,6 +31685,7 @@
 				0C3F1F5B10C8871200D72CE1 /* WebGLUniformLocation.h in Headers */,
 				6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */,
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
+				D0D8648421B61727003C983C /* WebGPUBufferDescriptor.h in Headers */,
 				318436DE21B9DAAF00ED383E /* WebGPULayer.h in Headers */,
 				A5B81CB71FAA44620037D1E6 /* WebHeapAgent.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,

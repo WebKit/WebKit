@@ -40,7 +40,7 @@ Ref<GPUTexture> GPUTexture::create(PlatformTextureSmartPtr&& texture)
     return adoptRef(*new GPUTexture(WTFMove(texture)));
 }
 
-GPUTexture::GPUTexture(RetainPtr<MTLTexture>&& texture)
+GPUTexture::GPUTexture(PlatformTextureSmartPtr&& texture)
     : m_platformTexture(WTFMove(texture))
 {
 }
