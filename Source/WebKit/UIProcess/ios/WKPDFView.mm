@@ -64,7 +64,7 @@
     RetainPtr<PDFHostViewController> _hostViewController;
     CGSize _overlaidAccessoryViewsInset;
     RetainPtr<UIView> _pageNumberIndicator;
-    RetainPtr<NSString> _password;
+    CString _passwordForPrinting;
     WebKit::InteractionInformationAtPosition _positionInformation;
     RetainPtr<NSString> _suggestedFilename;
     WeakObjCPtr<WKWebView> _webView;
@@ -77,6 +77,7 @@
     [[_hostViewController view] removeFromSuperview];
     [_pageNumberIndicator removeFromSuperview];
     [_keyboardScrollingAnimator invalidate];
+    std::memset(_passwordForPrinting.mutableData(), 0, _passwordForPrinting.length());
     [super dealloc];
 }
 
@@ -404,7 +405,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller documentDidUnlockWithPassword:(NSString *)password
 {
-    _password = adoptNS([password copy]);
+    _passwordForPrinting = [password UTF8String];
 }
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done
@@ -559,8 +560,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 #pragma mark _WKWebViewPrintProvider
 
-#if !PLATFORM(IOSMAC)
-
 @interface WKPDFView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
 @end
 
@@ -574,7 +573,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     auto dataProvider = adoptCF(CGDataProviderCreateWithCFData((CFDataRef)_data.get()));
     auto pdfDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
     if (!CGPDFDocumentIsUnlocked(pdfDocument.get()))
-        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), [_password UTF8String]);
+        CGPDFDocumentUnlockWithPassword(pdfDocument.get(), _passwordForPrinting.data());
 
     _documentForPrinting = WTFMove(pdfDocument);
     return _documentForPrinting.get();
@@ -598,7 +597,5 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 }
 
 @end
-
-#endif // !PLATFORM(IOSMAC)
 
 #endif // ENABLE(WKPDFVIEW)

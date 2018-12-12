@@ -1,3 +1,20 @@
+2018-12-09  Darin Adler  <darin@apple.com>
+
+        [iOS] Zero memory containing the password for PDF documents when a WKPDFView is deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=192536
+        rdar://problem/41174451
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKPDFView.mm: Took out PLATFORM(IOSMAC) since
+        this class is not compiled on that platform at this time. Can always
+        add it back later.
+        (-[WKPDFView dealloc]): Zero out characters of _passwordForPrinting.
+        (-[WKPDFView pdfHostViewController:documentDidUnlockWithPassword:]):
+        Initialize _passwordForPrinting; use a CString instead of retaining
+        an NSString since we can zero that out easily.
+        (-[WKPDFView _ensureDocumentForPrinting]): Use _passwordForPrinting.
+
 2018-12-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239103.
