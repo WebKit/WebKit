@@ -127,6 +127,7 @@ WebKitPolicyDecisionType
 WebKitSaveMode
 WebKitInsecureContentEvent
 WebKitWebProcessTerminationReason
+WebKitFrameDisplayedCallback
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -203,6 +204,8 @@ webkit_web_view_get_editor_state
 webkit_web_view_get_session_state
 webkit_web_view_restore_session_state
 webkit_web_view_get_main_resource
+webkit_web_view_add_frame_displayed_callback
+webkit_web_view_remove_frame_displayed_callback
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult
