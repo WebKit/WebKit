@@ -36,6 +36,7 @@
 #import "ColorMac.h"
 #import "Document.h"
 #import "DocumentLoader.h"
+#import "Editing.h"
 #import "Element.h"
 #import "ElementTraversal.h"
 #import "File.h"
@@ -61,6 +62,7 @@
 #import "StyleProperties.h"
 #import "StyledElement.h"
 #import "TextIterator.h"
+#import "VisibleSelection.h"
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/ASCIICType.h>
@@ -336,7 +338,7 @@ public:
     RefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
     RefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
-    Node* cacheAncestorsOfStartToBeConverted(const Range&);
+    Node* cacheAncestorsOfStartToBeConverted(const Position&, const Position&);
     bool isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
@@ -359,13 +361,14 @@ private:
 
 class HTMLConverter {
 public:
-    HTMLConverter(Range&);
+    HTMLConverter(const Position&, const Position&);
     ~HTMLConverter();
     
     NSAttributedString* convert();
     
 private:
-    Ref<Range> m_range;
+    Position m_start;
+    Position m_end;
     DocumentLoader* m_dataSource;
     
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_attributesForElements;
@@ -434,8 +437,9 @@ private:
     void _adjustTrailingNewline();
 };
 
-HTMLConverter::HTMLConverter(Range& range)
-    : m_range(range)
+HTMLConverter::HTMLConverter(const Position& start, const Position& end)
+    : m_start(start)
+    , m_end(end)
     , m_dataSource(nullptr)
 {
     _attrStr = [[NSMutableAttributedString alloc] init];
@@ -481,7 +485,10 @@ HTMLConverter::~HTMLConverter()
 
 NSAttributedString *HTMLConverter::convert()
 {
-    Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_range);
+    if (comparePositions(m_start, m_end) > 0)
+        return nil;
+
+    Node* commonAncestorContainer = _caches->cacheAncestorsOfStartToBeConverted(m_start, m_end);
     ASSERT(commonAncestorContainer);
 
     m_dataSource = commonAncestorContainer->document().frame()->loader().documentLoader();
@@ -2197,13 +2204,13 @@ void HTMLConverter::_processText(CharacterData& characterData)
     String originalString = characterData.data();
     unsigned startOffset = 0;
     unsigned endOffset = originalString.length();
-    if (&characterData == &m_range->startContainer()) {
-        startOffset = m_range->startOffset();
+    if (&characterData == m_start.containerNode()) {
+        startOffset = m_start.offsetInContainerNode();
         _domRangeStartIndex = [_attrStr length];
         _flags.reachedStart = YES;
     }
-    if (&characterData == &m_range->endContainer()) {
-        endOffset = m_range->endOffset();
+    if (&characterData == m_end.containerNode()) {
+        endOffset = m_end.offsetInContainerNode();
         _flags.reachedEnd = YES;
     }
     if ((startOffset > 0 || endOffset < originalString.length()) && endOffset >= startOffset)
@@ -2277,13 +2284,13 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (&node == &m_range->startContainer()) {
-        startOffset = m_range->startOffset();
+    if (&node == m_start.containerNode()) {
+        startOffset = m_start.offsetInContainerNode();
         isStart = true;
         _flags.reachedStart = YES;
     }
-    if (&node == &m_range->endContainer()) {
-        endOffset = m_range->endOffset();
+    if (&node == m_end.containerNode()) {
+        endOffset = m_end.offsetInContainerNode();
         isEnd = true;
     }
     
@@ -2338,13 +2345,13 @@ void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
     unsigned endOffset = UINT_MAX;
     bool isStart = false;
     bool isEnd = false;
-    if (&element == &m_range->startContainer()) {
-        startOffset = m_range->startOffset();
+    if (&element == m_start.containerNode()) {
+        startOffset = m_start.offsetInContainerNode();
         isStart = true;
         _flags.reachedStart = YES;
     }
-    if (&element == &m_range->endContainer()) {
-        endOffset = m_range->endOffset();
+    if (&element == m_end.containerNode()) {
+        endOffset = m_end.offsetInContainerNode();
         isEnd = true;
     }
     
@@ -2379,10 +2386,10 @@ void HTMLConverter::_adjustTrailingNewline()
         [_attrStr replaceCharactersInRange:NSMakeRange(textLength, 0) withString:@"\n"];
 }
 
-Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Range& range)
+Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
 {
-    Node* commonAncestor = range.commonAncestorContainer();
-    Node* ancestor = &range.startContainer();
+    Node* commonAncestor = Range::commonAncestorContainer(start.containerNode(), end.containerNode());
+    Node* ancestor = start.containerNode();
 
     while (ancestor) {
         m_ancestorsUnderCommonAncestor.add(ancestor);
@@ -2453,8 +2460,14 @@ namespace WebCore {
 // This function supports more HTML features than the editing variant below, such as tables.
 NSAttributedString *attributedStringFromRange(Range& range)
 {
-    HTMLConverter converter(range);
-    return converter.convert();
+    return HTMLConverter { range.startPosition(), range.endPosition() }.convert();
+}
+
+NSAttributedString *attributedStringFromSelection(const VisibleSelection& selection)
+{
+    auto range = selection.toNormalizedRange();
+    ASSERT(range);
+    return HTMLConverter { range->startPosition(), range->endPosition() }.convert();
 }
     
 #if !PLATFORM(IOS_FAMILY)

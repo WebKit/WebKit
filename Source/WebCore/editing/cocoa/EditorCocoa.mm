@@ -103,7 +103,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
-    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
+    NSAttributedString *attributedString = attributedStringFromSelection(m_frame.selection().selection());
 
     PasteboardWebContent content;
     content.contentOrigin = m_frame.document()->originIdentifierForPasteboard();
@@ -121,7 +121,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 
 void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 {
-    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
+    NSAttributedString *attributedString = attributedStringFromSelection(m_frame.selection().selection());
 
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = m_frame.document()->originIdentifierForPasteboard();

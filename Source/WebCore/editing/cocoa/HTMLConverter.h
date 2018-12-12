@@ -30,9 +30,11 @@ OBJC_CLASS NSAttributedString;
 namespace WebCore {
     
 class Range;
+class VisibleSelection;
 
 enum class IncludeImagesInAttributedString { Yes, No };
-    
+
+NSAttributedString *attributedStringFromSelection(const VisibleSelection&);
 WEBCORE_EXPORT NSAttributedString *attributedStringFromRange(Range&);
 #if !PLATFORM(IOS_FAMILY)
 WEBCORE_EXPORT NSAttributedString *editingAttributedStringFromRange(Range&, IncludeImagesInAttributedString = IncludeImagesInAttributedString::Yes);

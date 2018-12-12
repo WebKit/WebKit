@@ -1,3 +1,30 @@
+2018-12-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTMLConverter take two Positions in preparation to make it work with shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=192613
+
+        Reviewed by Darin Adler.
+
+        This patch makes HTMLConverter store two Position's instead of a Range so that HTMLConverter can work with
+        a selection which spans across shadow boundaries in the future.
+
+        No new tests since there should be no observable behavioral change.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::writeSelectionToPasteboard): Uses the newly introduced writeSelectionToPasteboard.
+        (WebCore::Editor::writeSelection): Ditto.
+        * editing/cocoa/HTMLConverter.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::HTMLConverter): Now takes two Position's.
+        (HTMLConverter::convert): Updated to work with Position's.
+        (HTMLConverter::_processText): Ditto.
+        (HTMLConverter::_traverseNode): Ditto.
+        (HTMLConverter::_traverseFooterNode): Ditto.
+        (HTMLConverterCaches::cacheAncestorsOfStartToBeConverted): Ditto.
+        (WebCore::attributedStringFromRange): Ditto.
+        (WebCore::attributedStringFromSelection): Added. For now, we first create a Range via toNormalizedRange
+        in order to preserve the exact behavior.
+
 2018-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed manual rollout of r239100-r239102 and r239116
