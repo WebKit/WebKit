@@ -52,13 +52,6 @@ template<> struct HbPtrDeleter<hb_buffer_t> {
     }
 };
 
-template<> struct HbPtrDeleter<hb_face_t> {
-    void operator()(hb_face_t* ptr) const
-    {
-        hb_face_destroy(ptr);
-    }
-};
-
 } // namespace WebCore
 
 using WebCore::HbUniquePtr;

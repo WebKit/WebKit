@@ -141,7 +141,14 @@ FontPlatformData CachedFont::platformDataFromCustomData(const FontDescription& f
 
 FontPlatformData CachedFont::platformDataFromCustomData(FontCustomPlatformData& fontCustomPlatformData, const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
+#if PLATFORM(COCOA)
     return fontCustomPlatformData.fontPlatformData(fontDescription, bold, italic, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities);
+#else
+    UNUSED_PARAM(fontFaceFeatures);
+    UNUSED_PARAM(fontFaceVariantSettings);
+    UNUSED_PARAM(fontFaceCapabilities);
+    return fontCustomPlatformData.fontPlatformData(fontDescription, bold, italic);
+#endif
 }
 
 void CachedFont::allClientsRemoved()

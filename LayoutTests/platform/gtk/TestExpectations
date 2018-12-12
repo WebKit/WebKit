@@ -1046,6 +1046,11 @@ webkit.org/b/161586 css3/font-feature-settings-font-face-rendering.html [ ImageO
 
 webkit.org/b/161962 fast/forms/implicit-submission.html [ Failure ]
 
+# Font variations build flag is turned off
+webkit.org/b/162815 fast/text/variations/ [ Skip ]
+webkit.org/b/162815 animations/font-variations/ [ Skip ]
+webkit.org/b/162815 legacy-animation-engine/animations/font-variations/ [ Skip ]
+
 webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 
 # CSS image-orientation is not yet enabled.
@@ -3636,10 +3641,6 @@ webkit.org/b/192433 compositing/iframes/remove-reinsert-webview-with-iframe.html
 webkit.org/b/192434 fast/inline/inline-content-with-float-and-margin.html [ Failure ]
 webkit.org/b/166536 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/192435 fast/css-custom-paint/leaks.html [ Failure ]
-
-webkit.org/b/162815 fast/text/variations/font-face-clamp.html [ ImageOnlyFailure ]
-webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageOnlyFailure ]
-webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

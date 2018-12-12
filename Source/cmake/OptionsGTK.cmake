@@ -125,14 +125,6 @@ else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BUBBLEWRAP_SANDBOX PRIVATE OFF)
 endif ()
 
-# Enable variation fonts when cairo >= 1.16, fontconfig >= 2.13.0, freetype >= 2.9.0 and harfbuzz >= 1.4.2.
-if ("${PC_CAIRO_VERSION}" VERSION_GREATER_EQUAL "1.16.0"
-    AND "${PC_FONTCONFIG_VERSION}" VERSION_GREATER_EQUAL "2.13.0"
-    AND "${FREETYPE_VERSION_STRING}" VERSION_GREATER_EQUAL "2.9.0"
-    AND "${PC_HARFBUZZ_VERSION}" VERSION_GREATER_EQUAL "1.4.2")
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VARIATION_FONTS PRIVATE ON)
-endif ()
-
 # Public options shared with other WebKit ports. Do not add any options here
 # without approval from a GTK+ reviewer. There must be strong reason to support
 # changing the value of the option.

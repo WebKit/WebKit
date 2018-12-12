@@ -1,3 +1,83 @@
+2018-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed manual rollout of r239100-r239102 and r239114
+        https://bugs.webkit.org/show_bug.cgi?id=192151
+        <rdar://problem/46655586>
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::font):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::platformDataFromCustomData):
+        * platform/FreeType.cmake:
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isFixedWidth const): Deleted.
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::getFontPropertiesFromPattern): Deleted.
+        (WebCore::defaultVariationValues): Deleted.
+        (WebCore::buildVariationSettings): Deleted.
+        * platform/graphics/freetype/FontCacheFreeType.h: Removed.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        (WebCore::FontCustomPlatformData::supportsFormat):
+        (WebCore::defaultFontconfigOptions): Deleted.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::setCairoFontOptionsFromFontConfigPattern):
+        (WebCore::getDefaultFontconfigOptions):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::harfBuzzFace const):
+        (WebCore::FontPlatformData::platformIsEqual const):
+        (WebCore::FontPlatformData::buildScaledFont):
+        (WebCore::FontPlatformData::fcPattern const): Deleted.
+        (WebCore::FontPlatformData::createOpenTypeMathHarfBuzzFont const): Deleted.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformCreateScaledFont const):
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::fontFeatures):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        (WebCore::floatToHarfBuzzPosition): Deleted.
+        (WebCore::doubleToHarfBuzzPosition): Deleted.
+        (WebCore::harfBuzzFontFunctions): Deleted.
+        (WebCore::findScriptForVerticalGlyphSubstitution): Deleted.
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp: Added.
+        (WebCore::HarfBuzzFace::CacheEntry::CacheEntry):
+        (WebCore::HarfBuzzFace::CacheEntry::~CacheEntry):
+        (WebCore::HarfBuzzFace::cache):
+        (WebCore::HarfBuzzFace::HarfBuzzFace):
+        (WebCore::HarfBuzzFace::~HarfBuzzFace):
+        (WebCore::findScriptForVerticalGlyphSubstitution):
+        (WebCore::HarfBuzzFace::setScriptForVerticalGlyphSubstitution):
+        * platform/graphics/harfbuzz/HarfBuzzFace.h: Added.
+        (WebCore::HarfBuzzFace::CacheEntry::create):
+        (WebCore::HarfBuzzFace::CacheEntry::face):
+        (WebCore::HarfBuzzFace::CacheEntry::glyphCache):
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp: Added.
+        (WebCore::floatToHarfBuzzPosition):
+        (WebCore::doubleToHarfBuzzPosition):
+        (WebCore::CairoGetGlyphWidthAndExtents):
+        (WebCore::harfBuzzGetGlyph):
+        (WebCore::harfBuzzGetGlyphHorizontalAdvance):
+        (WebCore::harfBuzzGetGlyphHorizontalOrigin):
+        (WebCore::harfBuzzGetGlyphExtents):
+        (WebCore::harfBuzzCairoTextGetFontFuncs):
+        (WebCore::harfBuzzCairoGetTable):
+        (WebCore::HarfBuzzFace::createFace):
+        (WebCore::HarfBuzzFace::createFont):
+        * platform/graphics/harfbuzz/HbUniquePtr.h:
+        (WebCore::HbPtrDeleter<hb_face_t>::operator() const): Deleted.
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        (WebCore::OpenTypeMathData::OpenTypeMathData):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix Windows Cairo build after r239100.

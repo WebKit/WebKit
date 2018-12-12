@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x350
-  RenderBlock {HTML} at (0,0) size 800x350
-    RenderBody {BODY} at (8,16) size 784x318
+layer at (0,0) size 800x339
+  RenderBlock {HTML} at (0,0) size 800x339
+    RenderBody {BODY} at (8,16) size 784x307
       RenderBlock {P} at (0,0) size 784x35
         RenderMathMLMath {math} at (0,20) size 26x11
           RenderMathMLRow {mrow} at (0,0) size 26x11
@@ -35,10 +35,10 @@ layer at (0,0) size 800x350
                 RenderText {#text} at (0,-3) size 2x0
                   text run at (0,-3) width 2: "\x{219F}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,221) size 784x97
-        RenderMathMLMath {math} at (0,0) size 94x93
-          RenderMathMLRow {mrow} at (0,0) size 94x93
-            RenderMathMLOperator {mo} at (0,0) size 94x93
+      RenderBlock {P} at (0,221) size 784x86
+        RenderMathMLMath {math} at (0,0) size 84x82
+          RenderMathMLRow {mrow} at (0,0) size 84x82
+            RenderMathMLOperator {mo} at (0,0) size 84x82
               RenderBlock (anonymous) at (0,0) size 10x12
                 RenderText {#text} at (0,6) size 10x0
                   text run at (0,6) width 10: "\x{2A1B}"

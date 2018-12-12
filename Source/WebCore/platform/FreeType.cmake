@@ -11,6 +11,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
+    platform/graphics/harfbuzz/HarfBuzzFace.cpp
 )
 
 if (PORT STREQUAL "GTK")
@@ -26,6 +27,8 @@ endif ()
 if (USE_CAIRO)
     list(APPEND WebCore_SOURCES
         platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
+
+        platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     )
 endif ()
 

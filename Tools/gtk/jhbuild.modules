@@ -107,10 +107,7 @@
     </dependencies>
     <branch module="releases/cairo-1.16.0.tar.xz" version="1.16.0"
             repo="cairographics.org"
-	    hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14">
-      <!-- See https://gitlab.freedesktop.org/cairo/cairo/merge_requests/5 -->
-      <patch file="cairo-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch" strip="1"/>
-    </branch>
+	    hash="sha1:00e81842ae5e81bb0343108884eb5205be0eac14"/>
   </autotools>
 
   <!-- FIXME: Pixman 0.32.6 ARM iwMMXt fast path isn't buildable with GCC 4.9 and
