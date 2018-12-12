@@ -1,5 +1,11 @@
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix build with older SDKs after r239110.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix build with recent SDKs.
 
         * Platform/cocoa/WKCrashReporter.mm:
