@@ -30,7 +30,7 @@
 #import "CrashReporterClientSPI.h"
 
 // Avoid having to link with libCrashReporterClient.a
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000)
+#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
 CRASH_REPORTER_CLIENT_HIDDEN
 struct crashreporter_annotations_t gCRAnnotations
 __attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))

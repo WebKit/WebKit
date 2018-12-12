@@ -1,5 +1,11 @@
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed build with with recent macOS SDKs.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix GTK build after r239104.
 
         * UIProcess/WebPageProxy.cpp:
