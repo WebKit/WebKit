@@ -55,6 +55,15 @@ struct PasteboardItemInfo {
         return pathsForFileUpload[index];
     }
 
+    String pathForHighestFidelityItem() const
+    {
+        if (pathsForFileUpload.isEmpty())
+            return { };
+
+        ASSERT(!pathsForFileUpload.first().isEmpty());
+        return pathsForFileUpload.first();
+    }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
 };

@@ -1,3 +1,24 @@
+2018-12-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] A few API tests are failing after r239086
+        https://bugs.webkit.org/show_bug.cgi?id=192608
+
+        Reviewed by Zalan Bujtas.
+
+        These test failures were caused by a missing Vector size check in `Pasteboard::readFilePaths` before accessing
+        the first item. Fix this by adding a helper method on PasteboardItemInfo to grab the file path for the highest
+        fidelity pasteboard item (returning the null string if there are none), and use this in a few places that grab
+        the highest fidelity path using Vector::first().
+
+        While `Pasteboard::readRespectingUTIFidelities` does have a bounds check before accessing the list of paths,
+        this patch still replaces it with a call to `pathForHighestFidelityItem()`, so that the intent is more clear.
+
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::pathForHighestFidelityItem const):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        (WebCore::Pasteboard::readFilePaths):
+
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WPE build after r239101.
