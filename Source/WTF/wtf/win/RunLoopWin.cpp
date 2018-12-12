@@ -31,7 +31,7 @@
 namespace WTF {
 
 static const UINT PerformWorkMessage = WM_USER + 1;
-static const LPWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
+static const LPCWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
 
 LRESULT CALLBACK RunLoop::RunLoopWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -83,7 +83,7 @@ bool RunLoop::registerRunLoopMessageWindowClass()
 {
     // FIXME: This really only needs to be called once.
 
-    WNDCLASS windowClass = { 0 };
+    WNDCLASS windowClass { };
     windowClass.lpfnWndProc     = RunLoop::RunLoopWndProc;
     windowClass.cbWndExtra      = sizeof(RunLoop*);
     windowClass.lpszClassName   = kRunLoopMessageWindowClassName;

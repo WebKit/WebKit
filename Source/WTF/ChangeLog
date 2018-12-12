@@ -1,3 +1,38 @@
+2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix compilation warnings of WTF
+        https://bugs.webkit.org/show_bug.cgi?id=192583
+
+        Reviewed by Alex Christensen.
+
+        clang-cl reports the following warnings.
+
+        > [92/206] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\StackBounds.cpp.obj
+        > ..\..\Source\WTF\wtf\StackBounds.cpp(163,48):  warning: missing field 'AllocationBase' initializer [-Wmissing-field-initializers]
+        >     MEMORY_BASIC_INFORMATION stackOrigin = { 0 };
+        >                                                ^
+        > 1 warning generated.
+        > [160/206] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\win\RunLoopWin.cpp.obj
+        > ..\..\Source\WTF\wtf\win\RunLoopWin.cpp(34,54):  warning: ISO C++11 does not allow conversion from string literal to 'const LPWSTR' (aka 'wchar_t *const') [-Wwritable-strings]
+        > static const LPWSTR kRunLoopMessageWindowClassName = L"RunLoopMessageWindow";
+        >                                                      ^
+        > ..\..\Source\WTF\wtf\win\RunLoopWin.cpp(86,32):  warning: missing field 'lpfnWndProc' initializer [-Wmissing-field-initializers]
+        >     WNDCLASS windowClass = { 0 };
+        >                                ^
+        > 2 warnings generated.
+        > [175/206] Building CXX object Source\WTF\wtf\CMakeFiles\WTF.dir\DateMath.cpp.obj
+        > ..\..\Source\WTF\wtf\DateMath.cpp(125,20):  warning: unused function 'getLocalTime' [-Wunused-function]
+        > static inline void getLocalTime(const time_t* localTime, struct tm* localTM)
+        >                    ^
+        > 1 warning generated.
+
+        * wtf/DateMath.cpp:
+        (WTF::getLocalTime): Defined only if used.
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::currentThreadStackBoundsInternal): Initialize stackOrigin with '{ }'.
+        * wtf/win/RunLoopWin.cpp: Change the type of kRunLoopMessageWindowClassName to LPCWSTR.
+        (WTF::RunLoop::registerRunLoopMessageWindowClass): Initialize windowClass with '{ }'.
+
 2018-12-11  Andy Estes  <aestes@apple.com>
 
         Introduce makeBlockPtr for lambdas

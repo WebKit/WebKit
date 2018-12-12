@@ -122,16 +122,16 @@ static const int firstDayOfMonth[2][12] = {
     {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}
 };
 
+#if !OS(WINDOWS) || HAVE(TM_GMTOFF)
 static inline void getLocalTime(const time_t* localTime, struct tm* localTM)
 {
-#if COMPILER(MSVC)
-    localtime_s(localTM, localTime);
-#elif HAVE(LOCALTIME_R)
+#if HAVE(LOCALTIME_R)
     localtime_r(localTime, localTM);
 #else
     localtime_s(localTime, localTM);
 #endif
 }
+#endif
 
 bool isLeapYear(int year)
 {

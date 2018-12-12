@@ -160,7 +160,7 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
 StackBounds StackBounds::currentThreadStackBoundsInternal()
 {
     ASSERT(stackDirection() == StackDirection::Downward);
-    MEMORY_BASIC_INFORMATION stackOrigin = { 0 };
+    MEMORY_BASIC_INFORMATION stackOrigin { };
     VirtualQuery(&stackOrigin, &stackOrigin, sizeof(stackOrigin));
     // stackOrigin.AllocationBase points to the reserved stack memory base address.
 
