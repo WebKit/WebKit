@@ -58,7 +58,10 @@ public:
     static JSBigInt* createFrom(VM&, int64_t value);
     static JSBigInt* createFrom(VM&, bool value);
 
-    static size_t offsetOfLength();
+    static size_t offsetOfLength()
+    {
+        return OBJECT_OFFSETOF(JSBigInt, m_length);
+    }
 
     DECLARE_EXPORT_INFO;
 
@@ -232,7 +235,7 @@ private:
     void setDigit(unsigned, Digit);
         
     unsigned m_length;
-    bool m_sign;
+    bool m_sign { false };
 };
 
 inline JSBigInt* asBigInt(JSValue value)

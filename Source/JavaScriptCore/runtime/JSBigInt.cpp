@@ -65,7 +65,6 @@ const ClassInfo JSBigInt::s_info =
 JSBigInt::JSBigInt(VM& vm, Structure* structure, unsigned length)
     : Base(vm, structure)
     , m_length(length)
-    , m_sign(false)
 { }
 
 void JSBigInt::initialize(InitializationType initType)
@@ -1692,11 +1691,6 @@ bool JSBigInt::getPrimitiveNumber(ExecState* exec, double& number, JSValue& resu
 inline size_t JSBigInt::offsetOfData()
 {
     return WTF::roundUpToMultipleOf<sizeof(Digit)>(sizeof(JSBigInt));
-}
-
-size_t JSBigInt::offsetOfLength()
-{
-    return OBJECT_OFFSETOF(JSBigInt, m_length);
 }
 
 template <typename CharType>

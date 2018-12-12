@@ -13605,10 +13605,9 @@ private:
             // }
             
             LBasicBlock cellCase = m_out.newBlock();
-            LBasicBlock stringCase = m_out.newBlock();
             LBasicBlock notStringCase = m_out.newBlock();
-            LBasicBlock bigIntCase = m_out.newBlock();
-            LBasicBlock notBigIntCase = m_out.newBlock();
+            LBasicBlock stringOrBigIntCase = m_out.newBlock();
+            LBasicBlock notStringOrBigIntCase = m_out.newBlock();
             LBasicBlock notCellCase = m_out.newBlock();
             LBasicBlock int32Case = m_out.newBlock();
             LBasicBlock notInt32Case = m_out.newBlock();
@@ -13620,29 +13619,23 @@ private:
             
             m_out.branch(isCell(value, provenType(edge)), unsure(cellCase), unsure(notCellCase));
             
-            LBasicBlock lastNext = m_out.appendTo(cellCase, stringCase);
+            LBasicBlock lastNext = m_out.appendTo(cellCase, notStringCase);
             m_out.branch(
                 isString(value, provenType(edge) & SpecCell),
-                unsure(stringCase), unsure(notStringCase));
+                unsure(stringOrBigIntCase), unsure(notStringCase));
             
-            m_out.appendTo(stringCase, notStringCase);
-            LValue nonEmptyString = m_out.notZero32(
-                m_out.load32NonNegative(value, m_heaps.JSString_length));
-            results.append(m_out.anchor(nonEmptyString));
-            m_out.jump(continuation);
-
-            m_out.appendTo(notStringCase, bigIntCase);
+            m_out.appendTo(notStringCase, stringOrBigIntCase);
             m_out.branch(
                 isBigInt(value, provenType(edge) & SpecCell),
-                unsure(bigIntCase), unsure(notBigIntCase));
+                unsure(stringOrBigIntCase), unsure(notStringOrBigIntCase));
 
-            m_out.appendTo(bigIntCase, notBigIntCase);
-            LValue nonZeroBigInt = m_out.notZero32(
-                m_out.load32NonNegative(value, m_heaps.JSBigInt_length));
-            results.append(m_out.anchor(nonZeroBigInt));
+            m_out.appendTo(stringOrBigIntCase, notStringOrBigIntCase);
+            LValue nonZeroCell = m_out.notZero32(
+                m_out.load32NonNegative(value, m_heaps.JSBigIntOrString_length));
+            results.append(m_out.anchor(nonZeroCell));
             m_out.jump(continuation);
             
-            m_out.appendTo(notBigIntCase, notCellCase);
+            m_out.appendTo(notStringOrBigIntCase, notCellCase);
             LValue isTruthyObject;
             if (masqueradesAsUndefinedWatchpointIsStillValid())
                 isTruthyObject = m_out.booleanTrue;

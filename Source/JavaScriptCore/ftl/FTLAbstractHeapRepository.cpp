@@ -61,6 +61,8 @@ AbstractHeapRepository::AbstractHeapRepository()
     , JSCell_freeListNext(JSCell_header)
     , ArrayStorage_publicLength(Butterfly_publicLength)
     , ArrayStorage_vectorLength(Butterfly_vectorLength)
+    , JSBigInt_length(JSBigIntOrString_length)
+    , JSString_length(JSBigIntOrString_length)
     
 #define INDEXED_ABSTRACT_HEAP_INITIALIZATION(name, offset, size) , name(&root, #name, offset, size)
     FOR_EACH_INDEXED_ABSTRACT_HEAP(INDEXED_ABSTRACT_HEAP_INITIALIZATION)
@@ -77,6 +79,8 @@ AbstractHeapRepository::AbstractHeapRepository()
     RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 1 == JSCell_typeInfoType.offset());
     RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 2 == JSCell_typeInfoFlags.offset());
     RELEASE_ASSERT(JSCell_indexingTypeAndMisc.offset() + 3 == JSCell_cellState.offset());
+
+    RELEASE_ASSERT(JSBigInt::offsetOfLength() == JSString::offsetOfLength());
 
     JSCell_structureID.changeParent(&JSCell_header);
     JSCell_usefulBytes.changeParent(&JSCell_header);
