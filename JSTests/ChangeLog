@@ -1,5 +1,26 @@
 2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [DFG][FTL] Add NewSymbol
+        https://bugs.webkit.org/show_bug.cgi?id=192620
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/symbol-creation.js: Added.
+        (test):
+        * stress/symbol-description-identity.js: Added.
+        (shouldBe):
+        (test):
+        * stress/symbol-identity.js: Added.
+        (shouldBe):
+        (test):
+        * stress/symbol-with-description-throw-error.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (test):
+        (object.toString):
+
+2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [BigInt] Implement DFG/FTL typeof for BigInt
         https://bugs.webkit.org/show_bug.cgi?id=192619
 

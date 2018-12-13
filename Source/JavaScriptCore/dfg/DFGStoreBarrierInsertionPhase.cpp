@@ -325,9 +325,10 @@ private:
             case NewArrayBuffer:
             case NewTypedArray:
             case NewRegexp:
+            case NewStringObject:
+            case NewSymbol:
             case MaterializeNewObject:
             case MaterializeCreateActivation:
-            case NewStringObject:
             case MakeRope:
             case CreateActivation:
             case CreateDirectArguments:

@@ -869,6 +869,9 @@ private:
         case NewStringObject:
             compileNewStringObject();
             break;
+        case NewSymbol:
+            compileNewSymbol();
+            break;
         case NewArray:
             compileNewArray();
             break;
@@ -5535,7 +5538,17 @@ private:
         m_out.appendTo(continuation, lastNext);
         setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
-    
+
+    void compileNewSymbol()
+    {
+        if (!m_node->child1()) {
+            setJSValue(vmCall(pointerType(), m_out.operation(operationNewSymbol), m_callFrame));
+            return;
+        }
+        ASSERT(m_node->child1().useKind() == KnownStringUse);
+        setJSValue(vmCall(pointerType(), m_out.operation(operationNewSymbolWithDescription), m_callFrame, lowString(m_node->child1())));
+    }
+
     void compileNewArray()
     {
         // First speculate appropriately on all of the children. Do this unconditionally up here

@@ -1274,6 +1274,12 @@ private:
             break;
         }
 
+        case NewSymbol: {
+            if (node->child1())
+                fixEdge<KnownStringUse>(node->child1());
+            break;
+        }
+
         case NewArrayWithSpread: {
             watchHavingABadTime(node);
             

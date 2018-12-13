@@ -1019,6 +1019,10 @@ private:
             setPrediction(SpecStringObject);
             break;
         }
+        case NewSymbol: {
+            setPrediction(SpecSymbol);
+            break;
+        }
             
         case CreateDirectArguments: {
             setPrediction(SpecDirectArguments);

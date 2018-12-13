@@ -315,6 +315,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case NewArrayWithSpread:
     case Spread:
     case NewRegexp:
+    case NewSymbol:
     case ProfileType:
     case ProfileControlFlow:
     case CheckTypeInfoFlags:

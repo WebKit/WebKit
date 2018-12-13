@@ -124,6 +124,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewAsyncFunction:
     case NewAsyncGeneratorFunction:
     case NewStringObject:
+    case NewSymbol:
     case NewRegexp:
     case ToNumber:
     case RegExpExecNonGlobalOrSticky:

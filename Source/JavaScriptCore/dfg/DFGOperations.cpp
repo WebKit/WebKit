@@ -2230,6 +2230,22 @@ JSString* JIT_OPERATION operationSingleCharacterString(ExecState* exec, int32_t 
     return jsSingleCharacterString(exec, static_cast<UChar>(character));
 }
 
+Symbol* JIT_OPERATION operationNewSymbol(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return Symbol::create(vm);
+}
+
+Symbol* JIT_OPERATION operationNewSymbolWithDescription(ExecState* exec, JSString* description)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return Symbol::create(exec, description);
+}
+
 JSCell* JIT_OPERATION operationNewStringObject(ExecState* exec, JSString* string, Structure* structure)
 {
     VM& vm = exec->vm();

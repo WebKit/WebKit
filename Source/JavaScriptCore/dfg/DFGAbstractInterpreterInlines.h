@@ -2424,6 +2424,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setForNode(node, node->structure());
         break;
     }
+
+    case NewSymbol: {
+        setForNode(node, m_vm.symbolStructure.get());
+        break;
+    }
             
     case NewArray:
         ASSERT(node->indexingMode() == node->indexingType()); // Copy on write arrays should only be created by NewArrayBuffer.

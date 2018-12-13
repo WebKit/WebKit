@@ -219,6 +219,8 @@ EncodedJSValue JIT_OPERATION operationParseIntStringNoRadix(ExecState*, JSString
 EncodedJSValue JIT_OPERATION operationParseIntString(ExecState*, JSString*, int32_t);
 EncodedJSValue JIT_OPERATION operationParseIntGeneric(ExecState*, EncodedJSValue, int32_t);
 
+Symbol* JIT_OPERATION operationNewSymbol(ExecState*);
+Symbol* JIT_OPERATION operationNewSymbolWithDescription(ExecState*, JSString*);
 JSCell* JIT_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSString* JIT_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSString* JIT_OPERATION operationToString(ExecState*, EncodedJSValue);

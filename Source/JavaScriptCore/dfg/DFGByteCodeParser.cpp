@@ -65,6 +65,7 @@
 #include "StackAlignment.h"
 #include "StringConstructor.h"
 #include "StructureStubInfo.h"
+#include "SymbolConstructor.h"
 #include "Watchdog.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
@@ -3708,6 +3709,20 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (kind == CodeForConstruct)
             resultNode = addToGraph(NewStringObject, OpInfo(m_graph.registerStructure(function->globalObject(*m_vm)->stringObjectStructure())), resultNode);
         
+        set(result, resultNode);
+        return true;
+    }
+
+    if (function->classInfo() == SymbolConstructor::info() && kind == CodeForCall) {
+        insertChecks();
+
+        Node* resultNode;
+
+        if (argumentCountIncludingThis <= 1)
+            resultNode = addToGraph(NewSymbol);
+        else
+            resultNode = addToGraph(NewSymbol, addToGraph(ToString, get(virtualRegisterForArgument(1, registerOffset))));
+
         set(result, resultNode);
         return true;
     }

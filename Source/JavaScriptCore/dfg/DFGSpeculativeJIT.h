@@ -1253,6 +1253,7 @@ public:
     void compileNumberToStringWithValidRadixConstant(Node*);
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
     void compileNewStringObject(Node*);
+    void compileNewSymbol(Node*);
     
     void compileNewTypedArrayWithSize(Node*);
     

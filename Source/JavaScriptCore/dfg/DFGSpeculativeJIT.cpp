@@ -9647,6 +9647,32 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewSymbol(Node* node)
+{
+    if (!node->child1()) {
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationNewSymbol, resultGPR);
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+
+    ASSERT(node->child1().useKind() == KnownStringUse);
+    SpeculateCellOperand operand(this, node->child1());
+
+    GPRReg stringGPR = operand.gpr();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationNewSymbolWithDescription, resultGPR, stringGPR);
+    m_jit.exceptionCheck();
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);

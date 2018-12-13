@@ -1,5 +1,54 @@
 2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
+        [DFG][FTL] Add NewSymbol
+        https://bugs.webkit.org/show_bug.cgi?id=192620
+
+        Reviewed by Saam Barati.
+
+        This patch introduces NewSymbol DFG node into DFG and FTL tiers. The main goal of this patch is not optimize
+        NewSymbol code faster. Rather than that, this patch intends to offer SpecSymbol type information into DFG's
+        data flow to optimize generated code in FTL backend.
+
+        We add NewSymbol DFG node, which may take an argument. If an argument is not given, NewSymbol is for `Symbol()`.
+        If an argument is given, ToString is emitted to this argument before passing it to NewSymbol. So NewSymbol node
+        itself does not perform any type checks. ToString performs effects, but NewSymbol doesn't have any side observable
+        effects. So we can decouple Symbol(description) call into NewSymbol(ToString(description)).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewSymbol):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewSymbol):
+
+2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
         [BigInt] Implement DFG/FTL typeof for BigInt
         https://bugs.webkit.org/show_bug.cgi?id=192619
 

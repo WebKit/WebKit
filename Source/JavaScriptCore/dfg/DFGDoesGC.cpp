@@ -350,6 +350,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewArrayBuffer:
     case NewRegexp:
     case NewStringObject:
+    case NewSymbol:
     case MakeRope:
     case NewFunction:
     case NewGeneratorFunction:

@@ -74,6 +74,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetButterfly:
     case NewObject:
     case NewStringObject:
+    case NewSymbol:
     case NewArray:
     case NewArrayWithSpread:
     case Spread:
