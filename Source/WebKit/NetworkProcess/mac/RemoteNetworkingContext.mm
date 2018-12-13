@@ -39,9 +39,8 @@
 #import <pal/SessionID.h>
 #import <wtf/MainThread.h>
 
-using namespace WebCore;
-
 namespace WebKit {
+using namespace WebCore;
 
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {

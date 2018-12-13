@@ -4,6 +4,24 @@
         https://bugs.webkit.org/show_bug.cgi?id=192449
         <rdar://problem/46595508>
 
+        Reviewed by Darin Adler.
+
+        Part 4: Handling NetworkProcess folder.
+
+        * NetworkProcess/Cookies/mac/WebCookieManagerMac.mm:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+
+2018-12-12  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+        <rdar://problem/46595508>
+
         Reviewed by Tim Horton.
 
         Fix iosmac build.
