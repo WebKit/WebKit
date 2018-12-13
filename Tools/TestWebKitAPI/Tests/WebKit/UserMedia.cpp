@@ -35,6 +35,7 @@
 
 namespace TestWebKitAPI {
 
+static bool didCrash;
 static bool wasPrompted;
 
 static void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* /* clientInfo */)
@@ -93,6 +94,67 @@ TEST(WebKit, UserMediaBasic)
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&wasPrompted);
+}
+
+static void didCrashCallback(WKPageRef, const void*)
+{
+    didCrash = true;
+    // Set wasPrompted to true to speed things up, we know the test failed.
+    wasPrompted = true;
+}
+
+TEST(WebKit, OnDeviceChangeCrash)
+{
+    auto context = adoptWK(WKContextCreate());
+
+    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetMediaDevicesEnabled(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
+    WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
+    WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
+
+    WKPageUIClientV6 uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.base.version = 6;
+    uiClient.decidePolicyForUserMediaPermissionRequest = decidePolicyForUserMediaPermissionRequestCallBack;
+    uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
+
+    PlatformWebView webView(context.get(), pageGroup.get());
+    WKPageSetPageUIClient(webView.page(), &uiClient.base);
+
+    // Load a page registering ondevicechange handler.
+    auto url = adoptWK(Util::createURLForResource("ondevicechange", "html"));
+    ASSERT(url.get());
+
+    WKPageLoadURL(webView.page(), url.get());
+
+    // Load a second page in same process.
+    PlatformWebView webView2(context.get(), pageGroup.get());
+    WKPageSetPageUIClient(webView2.page(), &uiClient.base);
+    WKPageLoaderClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+    loaderClient.base.version = 0;
+    loaderClient.processDidCrash = didCrashCallback;
+    WKPageSetPageLoaderClient(webView2.page(), &loaderClient.base);
+
+    wasPrompted = false;
+    url = adoptWK(Util::createURLForResource("getUserMedia", "html"));
+    WKPageLoadURL(webView2.page(), url.get());
+    Util::run(&wasPrompted);
+    EXPECT_EQ(WKPageGetProcessIdentifier(webView.page()), WKPageGetProcessIdentifier(webView2.page()));
+
+    didCrash = false;
+
+    // Close first page.
+    WKPageClose(webView.page());
+
+    wasPrompted = false;
+    url = adoptWK(Util::createURLForResource("getUserMedia", "html"));
+    WKPageLoadURL(webView2.page(), url.get());
+    Util::run(&wasPrompted);
+    // Verify pages process did not crash.
+    EXPECT_TRUE(!didCrash);
 }
 
 } // namespace TestWebKitAPI

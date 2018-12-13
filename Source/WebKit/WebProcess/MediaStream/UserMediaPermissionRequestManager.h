@@ -57,6 +57,7 @@ public:
     void removeDeviceChangeObserver(WebCore::UserMediaClient::DeviceChangeObserverToken);
 
     void captureDevicesChanged();
+    void clear();
 
 private:
     void sendUserMediaRequest(WebCore::UserMediaRequest&);

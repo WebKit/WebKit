@@ -53,6 +53,11 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 
 UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
 {
+    clear();
+}
+
+void UserMediaPermissionRequestManager::clear()
+{
     for (auto& sandboxExtension : m_userMediaDeviceSandboxExtensions)
         sandboxExtension.value->revoke();
 }
