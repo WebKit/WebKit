@@ -6,13 +6,8 @@
 var testMatrix =
 [
  [
-  {},
-  { responseHeaders: {'Cache-control': 'max-age=0' } },
-  { responseHeaders: {'Cache-control': 'max-age=100' } },
-  ],
- [
-  {},
-  { responseHeaders: {'Content-Disposition': 'attachment; filename="f.txt"' } },
+  { responseHeaders: {'Cache-control': 'max-age=0', 'Content-Disposition': 'attachment; filename="f.txt"' } },
+  { responseHeaders: {'Cache-control': 'max-age=100', 'Content-Disposition': 'attachment; filename="f.txt"' } },
   ],
  ];
 

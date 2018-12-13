@@ -111,7 +111,7 @@ function printResults(tests)
     }
 }
 
-function runTests(tests, completionHandler)
+function runTestsNow(tests, completionHandler)
 {
     loadResources(tests, function () {
         // Wait a bit so things settle down in the disk cache.
@@ -133,6 +133,20 @@ function runTests(tests, completionHandler)
                 });
             });
         }, 100);
+    });
+}
+
+function runTests(tests, completionHandler)
+{
+    if (document.readyState == 'complete') {
+        runTestsNow(tests, completionHandler);
+        return;
+    }
+
+    // We need to wait for the load event to have fired because CachedResourceLoader::determineRevalidationPolicy()
+    // agressively reuses resources until the load event has fired.
+    addEventListener("load", () => {
+        runTestsNow(tests, completionHandler);
     });
 }
 

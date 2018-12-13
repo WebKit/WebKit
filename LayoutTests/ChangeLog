@@ -1,3 +1,27 @@
+2018-12-12  Chris Dumez  <cdumez@apple.com>
+
+        [Mojave Release Wk2] Layout Test http/tests/cache/disk-cache/disk-cache-validation-attachment.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190323
+        <rdar://problem/45056253>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/cache/disk-cache/disk-cache-validation-attachment-expected.txt:
+        * http/tests/cache/disk-cache/disk-cache-validation-attachment.html:
+        Simplify test a bit to only test the header combinations it cares about.
+
+        * http/tests/cache/disk-cache/resources/cache-test.js:
+        (runTestsNow):
+        (runTests):
+        The flakiness was due to logic in CachedResourceLoader::determineRevalidationPolicy() which more aggressively
+        reuses cached resources (bypassing freshness checks) until the load event has fired. This means that the
+        test would give different results depending on whether or not the load event had a chance to fire before
+        we do the checks. To address the issue, update runTests() to wait for the load event if it has not yet
+        fired. This will likely address flakiness in other disk-cache tests as well.
+
+        * platform/mac-wk2/TestExpectations:
+        Unskip test that is no longer flaky.
+
 2018-12-12  Youenn Fablet  <youenn@apple.com>
 
         Recycling the m section should work if it was rejected remotely

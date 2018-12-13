@@ -896,8 +896,6 @@ webkit.org/b/189094 [ HighSierra+ ] accessibility/mac/focus-setting-selection-sy
 
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
-webkit.org/b/190323 http/tests/cache/disk-cache/disk-cache-validation-attachment.html [ Pass Failure ]
-
 # Skip local authenticator tests for mac now.
 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Skip ]
 http/wpt/webauthn/public-key-credential-create-success-local.https.html [ Skip ]
