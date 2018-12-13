@@ -173,19 +173,22 @@ class MediaSessionDescriptionFactory {
   const AudioCodecs& GetAudioCodecsForAnswer(
       const webrtc::RtpTransceiverDirection& offer,
       const webrtc::RtpTransceiverDirection& answer) const;
-  void GetCodecsForOffer(const SessionDescription* current_description,
-                         AudioCodecs* audio_codecs,
-                         VideoCodecs* video_codecs,
-                         DataCodecs* data_codecs) const;
-  void GetCodecsForAnswer(const SessionDescription* current_description,
-                          const SessionDescription* remote_offer,
-                          AudioCodecs* audio_codecs,
-                          VideoCodecs* video_codecs,
-                          DataCodecs* data_codecs) const;
-  void GetRtpHdrExtsToOffer(const MediaSessionOptions& session_options,
-                            const SessionDescription* current_description,
-                            RtpHeaderExtensions* audio_extensions,
-                            RtpHeaderExtensions* video_extensions) const;
+  void GetCodecsForOffer(
+      const std::vector<const ContentInfo*>& current_active_contents,
+      AudioCodecs* audio_codecs,
+      VideoCodecs* video_codecs,
+      DataCodecs* data_codecs) const;
+  void GetCodecsForAnswer(
+      const std::vector<const ContentInfo*>& current_active_contents,
+      const SessionDescription& remote_offer,
+      AudioCodecs* audio_codecs,
+      VideoCodecs* video_codecs,
+      DataCodecs* data_codecs) const;
+  void GetRtpHdrExtsToOffer(
+      const std::vector<const ContentInfo*>& current_active_contents,
+      bool is_unified_plan,
+      RtpHeaderExtensions* audio_extensions,
+      RtpHeaderExtensions* video_extensions) const;
   bool AddTransportOffer(const std::string& content_name,
                          const TransportOptions& transport_options,
                          const SessionDescription* current_desc,

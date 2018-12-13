@@ -1,3 +1,18 @@
+2018-12-12  Youenn Fablet  <youenn@apple.com>
+
+        Recycling the m section should work if it was rejected remotely
+        https://bugs.webkit.org/show_bug.cgi?id=192636
+
+        Reviewed by Eric Carlson.
+
+        Changes merged from https://webrtc.googlesource.com/src.git/+/5c72e71e14cfa76a2d1b0979d6b918abe187c208
+
+        * Source/webrtc/pc/mediasession.cc:
+        * Source/webrtc/pc/mediasession.h:
+        * Source/webrtc/pc/mediasession_unittest.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/pc/peerconnection_jsep_unittest.cc:
+
 2018-12-07  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc up to 2fb890f08c

@@ -700,6 +700,12 @@ TEST_F(PeerConnectionJsepTest, CreateOfferRecyclesWhenOfferingTwice) {
 // Test that the offer/answer and transceivers for both the caller and callee
 // side are generated/updated correctly when recycling an audio/video media
 // section as a media section of either the same or opposite type.
+// Correct recycling works as follows:
+// - The m= section is re-offered with a new MID value and the new media type.
+// - The previously-associated transceiver is dissociated when the new offer is
+//   set as a local description on the offerer or as a remote description on
+//   the answerer.
+// - The new transceiver is associated with the new MID value.
 class RecycleMediaSectionTest
     : public PeerConnectionJsepTest,
       public testing::WithParamInterface<
@@ -714,7 +720,9 @@ class RecycleMediaSectionTest
   cricket::MediaType second_type_;
 };
 
-TEST_P(RecycleMediaSectionTest, VerifyOfferAnswerAndTransceivers) {
+// Test that recycling works properly when a new transceiver recycles an m=
+// section that was rejected in both the current local and remote descriptions.
+TEST_P(RecycleMediaSectionTest, CurrentLocalAndCurrentRemoteRejected) {
   auto caller = CreatePeerConnection();
   auto first_transceiver = caller->AddTransceiver(first_type_);
   auto callee = CreatePeerConnection();
@@ -772,6 +780,285 @@ TEST_P(RecycleMediaSectionTest, VerifyOfferAnswerAndTransceivers) {
   ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
   ASSERT_EQ(2u, caller->pc()->GetTransceivers().size());
   ASSERT_EQ(2u, callee->pc()->GetTransceivers().size());
+}
+
+// Test that recycling works properly when a new transceiver recycles an m=
+// section that was rejected in only the current remote description.
+TEST_P(RecycleMediaSectionTest, CurrentRemoteOnlyRejected) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+  auto callee = CreatePeerConnection();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  std::string first_mid = *caller_first_transceiver->mid();
+  ASSERT_EQ(1u, callee->pc()->GetTransceivers().size());
+  auto callee_first_transceiver = callee->pc()->GetTransceivers()[0];
+  callee_first_transceiver->Stop();
+
+  // The answer will have a rejected m= section.
+  ASSERT_TRUE(
+      caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
+
+  // The offer should reuse the previous media section but allocate a new MID
+  // and change the media type.
+  auto caller_second_transceiver = caller->AddTransceiver(second_type_);
+  auto offer = caller->CreateOffer();
+  const auto& offer_contents = offer->description()->contents();
+  ASSERT_EQ(1u, offer_contents.size());
+  EXPECT_FALSE(offer_contents[0].rejected);
+  EXPECT_EQ(second_type_, offer_contents[0].media_description()->type());
+  std::string second_mid = offer_contents[0].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  // Setting the local offer will dissociate the previous transceiver and set
+  // the MID for the new transceiver.
+  ASSERT_TRUE(
+      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
+  EXPECT_EQ(absl::nullopt, caller_first_transceiver->mid());
+  EXPECT_EQ(second_mid, caller_second_transceiver->mid());
+
+  // Setting the remote offer will dissociate the previous transceiver and
+  // create a new transceiver for the media section.
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+  auto callee_transceivers = callee->pc()->GetTransceivers();
+  ASSERT_EQ(2u, callee_transceivers.size());
+  EXPECT_EQ(absl::nullopt, callee_transceivers[0]->mid());
+  EXPECT_EQ(first_type_, callee_transceivers[0]->media_type());
+  EXPECT_EQ(second_mid, callee_transceivers[1]->mid());
+  EXPECT_EQ(second_type_, callee_transceivers[1]->media_type());
+
+  // The answer should have only one media section for the new transceiver.
+  auto answer = callee->CreateAnswer();
+  auto answer_contents = answer->description()->contents();
+  ASSERT_EQ(1u, answer_contents.size());
+  EXPECT_FALSE(answer_contents[0].rejected);
+  EXPECT_EQ(second_mid, answer_contents[0].name);
+  EXPECT_EQ(second_type_, answer_contents[0].media_description()->type());
+
+  // Setting the local answer should succeed.
+  ASSERT_TRUE(
+      callee->SetLocalDescription(CloneSessionDescription(answer.get())));
+
+  // Setting the remote answer should succeed and not create any new
+  // transceivers.
+  ASSERT_TRUE(caller->SetRemoteDescription(std::move(answer)));
+  ASSERT_EQ(2u, caller->pc()->GetTransceivers().size());
+  ASSERT_EQ(2u, callee->pc()->GetTransceivers().size());
+}
+
+// Test that recycling works properly when a new transceiver recycles an m=
+// section that was rejected only in the current local description.
+TEST_P(RecycleMediaSectionTest, CurrentLocalOnlyRejected) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+  auto callee = CreatePeerConnection();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  std::string first_mid = *caller_first_transceiver->mid();
+  ASSERT_EQ(1u, callee->pc()->GetTransceivers().size());
+  auto callee_first_transceiver = callee->pc()->GetTransceivers()[0];
+  callee_first_transceiver->Stop();
+
+  // The answer will have a rejected m= section.
+  ASSERT_TRUE(
+      caller->SetRemoteDescription(callee->CreateAnswerAndSetAsLocal()));
+
+  // The offer should reuse the previous media section but allocate a new MID
+  // and change the media type.
+  auto callee_second_transceiver = callee->AddTransceiver(second_type_);
+  auto offer = callee->CreateOffer();
+  const auto& offer_contents = offer->description()->contents();
+  ASSERT_EQ(1u, offer_contents.size());
+  EXPECT_FALSE(offer_contents[0].rejected);
+  EXPECT_EQ(second_type_, offer_contents[0].media_description()->type());
+  std::string second_mid = offer_contents[0].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  // Setting the local offer will dissociate the previous transceiver and set
+  // the MID for the new transceiver.
+  ASSERT_TRUE(
+      callee->SetLocalDescription(CloneSessionDescription(offer.get())));
+  EXPECT_EQ(absl::nullopt, callee_first_transceiver->mid());
+  EXPECT_EQ(second_mid, callee_second_transceiver->mid());
+
+  // Setting the remote offer will dissociate the previous transceiver and
+  // create a new transceiver for the media section.
+  ASSERT_TRUE(caller->SetRemoteDescription(std::move(offer)));
+  auto caller_transceivers = caller->pc()->GetTransceivers();
+  ASSERT_EQ(2u, caller_transceivers.size());
+  EXPECT_EQ(absl::nullopt, caller_transceivers[0]->mid());
+  EXPECT_EQ(first_type_, caller_transceivers[0]->media_type());
+  EXPECT_EQ(second_mid, caller_transceivers[1]->mid());
+  EXPECT_EQ(second_type_, caller_transceivers[1]->media_type());
+
+  // The answer should have only one media section for the new transceiver.
+  auto answer = caller->CreateAnswer();
+  auto answer_contents = answer->description()->contents();
+  ASSERT_EQ(1u, answer_contents.size());
+  EXPECT_FALSE(answer_contents[0].rejected);
+  EXPECT_EQ(second_mid, answer_contents[0].name);
+  EXPECT_EQ(second_type_, answer_contents[0].media_description()->type());
+
+  // Setting the local answer should succeed.
+  ASSERT_TRUE(
+      caller->SetLocalDescription(CloneSessionDescription(answer.get())));
+
+  // Setting the remote answer should succeed and not create any new
+  // transceivers.
+  ASSERT_TRUE(callee->SetRemoteDescription(std::move(answer)));
+  ASSERT_EQ(2u, callee->pc()->GetTransceivers().size());
+  ASSERT_EQ(2u, caller->pc()->GetTransceivers().size());
+}
+
+// Test that a m= section is *not* recycled if the media section is only
+// rejected in the pending local description and there is no current remote
+// description.
+TEST_P(RecycleMediaSectionTest, PendingLocalRejectedAndNoRemote) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+
+  std::string first_mid = *caller_first_transceiver->mid();
+  caller_first_transceiver->Stop();
+
+  // The reoffer will have a rejected m= section.
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+
+  auto caller_second_transceiver = caller->AddTransceiver(second_type_);
+
+  // The reoffer should not recycle the existing m= section since it is not
+  // rejected in either the *current* local or *current* remote description.
+  auto reoffer = caller->CreateOffer();
+  auto reoffer_contents = reoffer->description()->contents();
+  ASSERT_EQ(2u, reoffer_contents.size());
+  EXPECT_TRUE(reoffer_contents[0].rejected);
+  EXPECT_EQ(first_type_, reoffer_contents[0].media_description()->type());
+  EXPECT_EQ(first_mid, reoffer_contents[0].name);
+  EXPECT_FALSE(reoffer_contents[1].rejected);
+  EXPECT_EQ(second_type_, reoffer_contents[1].media_description()->type());
+  std::string second_mid = reoffer_contents[1].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  ASSERT_TRUE(caller->SetLocalDescription(std::move(reoffer)));
+
+  // Both RtpTransceivers are associated.
+  EXPECT_EQ(first_mid, caller_first_transceiver->mid());
+  EXPECT_EQ(second_mid, caller_second_transceiver->mid());
+}
+
+// Test that a m= section is *not* recycled if the media section is only
+// rejected in the pending local description and not rejected in the current
+// remote description.
+TEST_P(RecycleMediaSectionTest, PendingLocalRejectedAndNotRejectedRemote) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+  auto callee = CreatePeerConnection();
+
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
+
+  std::string first_mid = *caller_first_transceiver->mid();
+  caller_first_transceiver->Stop();
+
+  // The reoffer will have a rejected m= section.
+  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
+
+  auto caller_second_transceiver = caller->AddTransceiver(second_type_);
+
+  // The reoffer should not recycle the existing m= section since it is not
+  // rejected in either the *current* local or *current* remote description.
+  auto reoffer = caller->CreateOffer();
+  auto reoffer_contents = reoffer->description()->contents();
+  ASSERT_EQ(2u, reoffer_contents.size());
+  EXPECT_TRUE(reoffer_contents[0].rejected);
+  EXPECT_EQ(first_type_, reoffer_contents[0].media_description()->type());
+  EXPECT_EQ(first_mid, reoffer_contents[0].name);
+  EXPECT_FALSE(reoffer_contents[1].rejected);
+  EXPECT_EQ(second_type_, reoffer_contents[1].media_description()->type());
+  std::string second_mid = reoffer_contents[1].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  ASSERT_TRUE(caller->SetLocalDescription(std::move(reoffer)));
+
+  // Both RtpTransceivers are associated.
+  EXPECT_EQ(first_mid, caller_first_transceiver->mid());
+  EXPECT_EQ(second_mid, caller_second_transceiver->mid());
+}
+
+// Test that an m= section is *not* recycled if the media section is only
+// rejected in the pending remote description and there is no current local
+// description.
+TEST_P(RecycleMediaSectionTest, PendingRemoteRejectedAndNoLocal) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+  auto callee = CreatePeerConnection();
+
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  ASSERT_EQ(1u, callee->pc()->GetTransceivers().size());
+  auto callee_first_transceiver = callee->pc()->GetTransceivers()[0];
+  std::string first_mid = *callee_first_transceiver->mid();
+  caller_first_transceiver->Stop();
+
+  // The reoffer will have a rejected m= section.
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto callee_second_transceiver = callee->AddTransceiver(second_type_);
+
+  // The reoffer should not recycle the existing m= section since it is not
+  // rejected in either the *current* local or *current* remote description.
+  auto reoffer = callee->CreateOffer();
+  auto reoffer_contents = reoffer->description()->contents();
+  ASSERT_EQ(2u, reoffer_contents.size());
+  EXPECT_TRUE(reoffer_contents[0].rejected);
+  EXPECT_EQ(first_type_, reoffer_contents[0].media_description()->type());
+  EXPECT_EQ(first_mid, reoffer_contents[0].name);
+  EXPECT_FALSE(reoffer_contents[1].rejected);
+  EXPECT_EQ(second_type_, reoffer_contents[1].media_description()->type());
+  std::string second_mid = reoffer_contents[1].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  // Note: Cannot actually set the reoffer since the callee is in the signaling
+  // state 'have-remote-offer'.
+}
+
+// Test that an m= section is *not* recycled if the media section is only
+// rejected in the pending remote description and not rejected in the current
+// local description.
+TEST_P(RecycleMediaSectionTest, PendingRemoteRejectedAndNotRejectedLocal) {
+  auto caller = CreatePeerConnection();
+  auto caller_first_transceiver = caller->AddTransceiver(first_type_);
+  auto callee = CreatePeerConnection();
+
+  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
+
+  ASSERT_EQ(1u, callee->pc()->GetTransceivers().size());
+  auto callee_first_transceiver = callee->pc()->GetTransceivers()[0];
+  std::string first_mid = *callee_first_transceiver->mid();
+  caller_first_transceiver->Stop();
+
+  // The reoffer will have a rejected m= section.
+  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
+
+  auto callee_second_transceiver = callee->AddTransceiver(second_type_);
+
+  // The reoffer should not recycle the existing m= section since it is not
+  // rejected in either the *current* local or *current* remote description.
+  auto reoffer = callee->CreateOffer();
+  auto reoffer_contents = reoffer->description()->contents();
+  ASSERT_EQ(2u, reoffer_contents.size());
+  EXPECT_TRUE(reoffer_contents[0].rejected);
+  EXPECT_EQ(first_type_, reoffer_contents[0].media_description()->type());
+  EXPECT_EQ(first_mid, reoffer_contents[0].name);
+  EXPECT_FALSE(reoffer_contents[1].rejected);
+  EXPECT_EQ(second_type_, reoffer_contents[1].media_description()->type());
+  std::string second_mid = reoffer_contents[1].name;
+  EXPECT_NE(first_mid, second_mid);
+
+  // Note: Cannot actually set the reoffer since the callee is in the signaling
+  // state 'have-remote-offer'.
 }
 
 // Test all combinations of audio and video as the first and second media type

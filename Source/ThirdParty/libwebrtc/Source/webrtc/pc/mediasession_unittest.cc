@@ -2020,6 +2020,110 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   EXPECT_THAT(updated_vcd->codecs(), ElementsAreArray(kUpdatedVideoCodecOffer));
 }
 
+// Test that a reoffer does not reuse audio codecs from a previous media section
+// that is being recycled.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       ReOfferDoesNotReUseRecycledAudioCodecs) {
+  f1_.set_video_codecs({});
+  f2_.set_video_codecs({});
+
+  MediaSessionOptions opts;
+  AddMediaSection(MEDIA_TYPE_AUDIO, "a0", RtpTransceiverDirection::kSendRecv,
+                  kActive, &opts);
+  auto offer = absl::WrapUnique(f1_.CreateOffer(opts, nullptr));
+  auto answer = absl::WrapUnique(f2_.CreateAnswer(offer.get(), opts, nullptr));
+
+  // Recycle the media section by changing its mid.
+  opts.media_description_options[0].mid = "a1";
+  auto reoffer = absl::WrapUnique(f2_.CreateOffer(opts, answer.get()));
+
+  // Expect that the results of the first negotiation are ignored. If the m=
+  // section was not recycled the payload types would match the initial offerer.
+  const AudioContentDescription* acd =
+      GetFirstAudioContentDescription(reoffer.get());
+  EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecs2));
+}
+
+// Test that a reoffer does not reuse video codecs from a previous media section
+// that is being recycled.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       ReOfferDoesNotReUseRecycledVideoCodecs) {
+  f1_.set_audio_codecs({}, {});
+  f2_.set_audio_codecs({}, {});
+
+  MediaSessionOptions opts;
+  AddMediaSection(MEDIA_TYPE_VIDEO, "v0", RtpTransceiverDirection::kSendRecv,
+                  kActive, &opts);
+  auto offer = absl::WrapUnique(f1_.CreateOffer(opts, nullptr));
+  auto answer = absl::WrapUnique(f2_.CreateAnswer(offer.get(), opts, nullptr));
+
+  // Recycle the media section by changing its mid.
+  opts.media_description_options[0].mid = "v1";
+  auto reoffer = absl::WrapUnique(f2_.CreateOffer(opts, answer.get()));
+
+  // Expect that the results of the first negotiation are ignored. If the m=
+  // section was not recycled the payload types would match the initial offerer.
+  const VideoContentDescription* vcd =
+      GetFirstVideoContentDescription(reoffer.get());
+  EXPECT_THAT(vcd->codecs(), ElementsAreArray(kVideoCodecs2));
+}
+
+// Test that a reanswer does not reuse audio codecs from a previous media
+// section that is being recycled.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       ReAnswerDoesNotReUseRecycledAudioCodecs) {
+  f1_.set_video_codecs({});
+  f2_.set_video_codecs({});
+
+  // Perform initial offer/answer in reverse (|f2_| as offerer) so that the
+  // second offer/answer is forward (|f1_| as offerer).
+  MediaSessionOptions opts;
+  AddMediaSection(MEDIA_TYPE_AUDIO, "a0", RtpTransceiverDirection::kSendRecv,
+                  kActive, &opts);
+  auto offer = absl::WrapUnique(f2_.CreateOffer(opts, nullptr));
+  auto answer = absl::WrapUnique(f1_.CreateAnswer(offer.get(), opts, nullptr));
+
+  // Recycle the media section by changing its mid.
+  opts.media_description_options[0].mid = "a1";
+  auto reoffer = absl::WrapUnique(f1_.CreateOffer(opts, answer.get()));
+  auto reanswer =
+      absl::WrapUnique(f2_.CreateAnswer(reoffer.get(), opts, offer.get()));
+
+  // Expect that the results of the first negotiation are ignored. If the m=
+  // section was not recycled the payload types would match the initial offerer.
+  const AudioContentDescription* acd =
+      GetFirstAudioContentDescription(reanswer.get());
+  EXPECT_THAT(acd->codecs(), ElementsAreArray(kAudioCodecsAnswer));
+}
+
+// Test that a reanswer does not reuse video codecs from a previous media
+// section that is being recycled.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       ReAnswerDoesNotReUseRecycledVideoCodecs) {
+  f1_.set_audio_codecs({}, {});
+  f2_.set_audio_codecs({}, {});
+
+  // Perform initial offer/answer in reverse (|f2_| as offerer) so that the
+  // second offer/answer is forward (|f1_| as offerer).
+  MediaSessionOptions opts;
+  AddMediaSection(MEDIA_TYPE_VIDEO, "v0", RtpTransceiverDirection::kSendRecv,
+                  kActive, &opts);
+  auto offer = absl::WrapUnique(f2_.CreateOffer(opts, nullptr));
+  auto answer = absl::WrapUnique(f1_.CreateAnswer(offer.get(), opts, nullptr));
+
+  // Recycle the media section by changing its mid.
+  opts.media_description_options[0].mid = "v1";
+  auto reoffer = absl::WrapUnique(f1_.CreateOffer(opts, answer.get()));
+  auto reanswer =
+      absl::WrapUnique(f2_.CreateAnswer(reoffer.get(), opts, offer.get()));
+
+  // Expect that the results of the first negotiation are ignored. If the m=
+  // section was not recycled the payload types would match the initial offerer.
+  const VideoContentDescription* vcd =
+      GetFirstVideoContentDescription(reanswer.get());
+  EXPECT_THAT(vcd->codecs(), ElementsAreArray(kVideoCodecsAnswer));
+}
+
 // Create an updated offer after creating an answer to the original offer and
 // verify that the codecs that were part of the original answer are not changed
 // in the updated offer. In this test Rtx is enabled.

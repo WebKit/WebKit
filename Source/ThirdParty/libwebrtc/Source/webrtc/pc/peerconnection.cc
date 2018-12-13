@@ -3954,6 +3954,17 @@ GetMediaDescriptionOptionsForTransceiver(
   return media_description_options;
 }
 
+// Returns the ContentInfo at mline index |i|, or null if none exists.
+static const ContentInfo* GetContentByIndex(
+    const SessionDescriptionInterface* sdesc,
+    size_t i) {
+  if (!sdesc) {
+    return nullptr;
+  }
+  const ContentInfos& contents = sdesc->description()->contents();
+  return (i < contents.size() ? &contents[i] : nullptr);
+}
+
 void PeerConnection::GetOptionsForUnifiedPlanOffer(
     const RTCOfferAnswerOptions& offer_answer_options,
     cricket::MediaSessionOptions* session_options) {
@@ -3981,10 +3992,15 @@ void PeerConnection::GetOptionsForUnifiedPlanOffer(
     // Either |local_content| or |remote_content| is non-null.
     const ContentInfo* local_content =
         (i < local_contents.size() ? &local_contents[i] : nullptr);
+    const ContentInfo* current_local_content =
+        GetContentByIndex(current_local_description(), i);
     const ContentInfo* remote_content =
         (i < remote_contents.size() ? &remote_contents[i] : nullptr);
-    bool had_been_rejected = (local_content && local_content->rejected) ||
-                             (remote_content && remote_content->rejected);
+    const ContentInfo* current_remote_content =
+        GetContentByIndex(current_remote_description(), i);
+    bool had_been_rejected =
+        (current_local_content && current_local_content->rejected) ||
+        (current_remote_content && current_remote_content->rejected);
     const std::string& mid =
         (local_content ? local_content->name : remote_content->name);
     cricket::MediaType media_type =
@@ -3995,7 +4011,7 @@ void PeerConnection::GetOptionsForUnifiedPlanOffer(
       auto transceiver = GetAssociatedTransceiver(mid);
       RTC_CHECK(transceiver);
       // A media section is considered eligible for recycling if it is marked as
-      // rejected in either the local or remote description.
+      // rejected in either the current local or current remote description.
       if (had_been_rejected && transceiver->stopped()) {
         session_options->media_description_options.push_back(
             cricket::MediaDescriptionOptions(transceiver->media_type(), mid,
@@ -4187,12 +4203,13 @@ void PeerConnection::GenerateMediaDescriptionOptions(
         session_options->media_description_options.push_back(
             cricket::MediaDescriptionOptions(
                 cricket::MEDIA_TYPE_AUDIO, content.name,
-                RtpTransceiverDirection::kInactive, true));
+                RtpTransceiverDirection::kInactive, /*stopped=*/true));
       } else {
+        bool stopped = (audio_direction == RtpTransceiverDirection::kInactive);
         session_options->media_description_options.push_back(
-            cricket::MediaDescriptionOptions(
-                cricket::MEDIA_TYPE_AUDIO, content.name, audio_direction,
-                audio_direction == RtpTransceiverDirection::kInactive));
+            cricket::MediaDescriptionOptions(cricket::MEDIA_TYPE_AUDIO,
+                                             content.name, audio_direction,
+                                             stopped));
         *audio_index = session_options->media_description_options.size() - 1;
       }
     } else if (IsVideoContent(&content)) {
@@ -4201,12 +4218,13 @@ void PeerConnection::GenerateMediaDescriptionOptions(
         session_options->media_description_options.push_back(
             cricket::MediaDescriptionOptions(
                 cricket::MEDIA_TYPE_VIDEO, content.name,
-                RtpTransceiverDirection::kInactive, true));
+                RtpTransceiverDirection::kInactive, /*stopped=*/true));
       } else {
+        bool stopped = (video_direction == RtpTransceiverDirection::kInactive);
         session_options->media_description_options.push_back(
-            cricket::MediaDescriptionOptions(
-                cricket::MEDIA_TYPE_VIDEO, content.name, video_direction,
-                video_direction == RtpTransceiverDirection::kInactive));
+            cricket::MediaDescriptionOptions(cricket::MEDIA_TYPE_VIDEO,
+                                             content.name, video_direction,
+                                             stopped));
         *video_index = session_options->media_description_options.size() - 1;
       }
     } else {
