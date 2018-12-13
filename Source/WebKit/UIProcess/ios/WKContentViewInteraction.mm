@@ -6201,7 +6201,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }
 
     auto event = adoptNS([[::WebEvent alloc] initWithMouseEventType:WebEventMouseMoved timeStamp:timestamp location:point]);
-    _page->handleMouseEvent(NativeWebMouseEvent(event.get()));
+    _page->handleMouseEvent(WebKit::NativeWebMouseEvent(event.get()));
 }
 #endif
 
