@@ -1,3 +1,16 @@
+2018-12-13  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/46603452
+
+    Check red packet length
+
+    2018-12-11  Youenn Fablet  <youenn@apple.com>
+
+            Merging https://webrtc.googlesource.com/src.git/+/a715f28968956c4bb995fa2a75ed279944988f64.
+            <rdar://problem/46603452>
+
+            * Source/webrtc/video/rtp_video_stream_receiver.cc:
+
 2018-07-20  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r234008. rdar://problem/42417141

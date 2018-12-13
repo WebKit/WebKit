@@ -461,7 +461,8 @@ void RtpVideoStreamReceiver::ReceivePacket(const uint8_t* packet,
 void RtpVideoStreamReceiver::ParseAndHandleEncapsulatingHeader(
     const uint8_t* packet, size_t packet_length, const RTPHeader& header) {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&worker_task_checker_);
-  if (rtp_payload_registry_.IsRed(header)) {
+  if (rtp_payload_registry_.IsRed(header) &&
+      packet_length > header.headerLength + header.paddingLength) {
     int8_t ulpfec_pt = rtp_payload_registry_.ulpfec_payload_type();
     if (packet[header.headerLength] == ulpfec_pt) {
       rtp_receive_statistics_->FecPacketReceived(header, packet_length);
