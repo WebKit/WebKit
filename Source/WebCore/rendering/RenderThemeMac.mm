@@ -489,7 +489,9 @@ Color RenderThemeMac::platformFocusRingColor(OptionSet<StyleColor::Options> opti
 {
     if (usesTestModeFocusRingColor())
         return oldAquaFocusRingColor();
-    return systemColor(CSSValueWebkitFocusRingColor, options);
+    LocalDefaultSystemAppearance localAppearance(options.contains(StyleColor::Options::UseDarkAppearance));
+    // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
+    return colorWithOverrideAlpha(colorFromNSColor([NSColor keyboardFocusIndicatorColor]).rgb(), 1);
 }
 
 Color RenderThemeMac::platformActiveTextSearchHighlightColor(OptionSet<StyleColor::Options> options) const
@@ -654,7 +656,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         // These should only be available when the web view is wanting the system appearance.
         case CSSValueWebkitFocusRingColor:
         case CSSValueActiveborder:
-            return systemAppearanceColor(cache.systemFocusRingColor, @selector(keyboardFocusIndicatorColor));
+            return focusRingColor(options);
 
         case CSSValueAppleSystemControlAccent:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
@@ -841,8 +843,8 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         case CSSValueActiveborder:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
             if (localAppearance.usingDarkAppearance())
-                return Color(0x4C1AA9FF, Color::Semantic);
-            return Color(0x3F0067F4, Color::Semantic);
+                return Color(0xFF1AA9FF, Color::Semantic);
+            return Color(0xFF0067F4, Color::Semantic);
 
         case CSSValueAppleSystemControlAccent:
             // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.

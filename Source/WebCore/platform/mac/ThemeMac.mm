@@ -29,8 +29,10 @@
 #if PLATFORM(MAC)
 
 #import "AXObjectCache.h"
+#import "ColorMac.h"
 #import "ControlStates.h"
 #import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
 #import "LengthSize.h"
 #import "LocalCurrentGraphicsContext.h"
@@ -361,7 +363,8 @@ static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSV
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    CGContextSaveGState(cgContext);
+
+    CGContextStateSaver stateSaver(cgContext);
 
     CGFocusRingStyle focusRingStyle;
     bool needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
@@ -373,13 +376,14 @@ static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSV
     focusRingStyle.accumulate = -1;
 
     // FIXME: This color should be shared with RenderThemeMac. For now just use the same NSColor color.
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, [NSColor keyboardFocusIndicatorColor].CGColor));
+    // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
+    auto color = colorWithOverrideAlpha(colorFromNSColor([NSColor keyboardFocusIndicatorColor]).rgb(), 1);
+    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color)));
     CGContextSetStyle(cgContext, style.get());
 
     CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), nullptr);
     [cell drawFocusRingMaskWithFrame:cellFrame inView:controlView];
     CGContextEndTransparencyLayer(cgContext);
-    CGContextRestoreGState(cgContext);
 
     return needsRepaint;
 }

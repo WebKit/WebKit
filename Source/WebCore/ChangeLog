@@ -1,3 +1,36 @@
+2018-12-13  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r230064): Focus rings on webpages are fainter than in native UI.
+        https://bugs.webkit.org/show_bug.cgi?id=192639
+        rdar://problem/42669297
+
+        Reviewed by Tim Horton.
+
+        The focus ring color passed to CoreGraphics is expected to be opaque, since they
+        will apply opacity when drawing (because opacity is normally animated).
+        We were getting this by accident before when the old `RenderThemeMac::systemColor()`
+        used the old `convertNSColorToColor()`, which ignored alpha on NSColor.
+        Existing tests use fixed test focus ring color.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValue const): Use RenderTheme singleton for `focusRingColor()`.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal): Ditto.
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::drawFocusRingAtTime): Use `CGContextStateSaver`.
+        * platform/mac/ThemeMac.mm:
+        (WebCore::drawCellFocusRingWithFrameAtTime): Force alpha to 1 on the focus ring color. Use `CGContextStateSaver`.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing): Use RenderTheme singleton for `focusRingColor()`.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing): Ditto.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::focusRingColor const): Made const. Cache the result of `platformFocusRingColor()`.
+        * rendering/RenderTheme.h: Made `focusRingColor()` a member function instead of static.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::platformFocusRingColor const): Force alpha to 1 on the focus ring color.
+        (WebCore::RenderThemeMac::systemColor const): Use `focusRingColor()`, instead of caching color here.
+
 2018-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Calculate width or height when constraints contain only the other

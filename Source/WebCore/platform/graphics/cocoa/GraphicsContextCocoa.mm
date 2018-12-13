@@ -73,10 +73,10 @@ static bool drawFocusRingAtTime(CGContextRef context, NSTimeInterval timeOffset,
     focusRingStyle.accumulate = -1;
     auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color)));
 
-    CGContextSaveGState(context);
+    CGContextStateSaver stateSaver(context);
+
     CGContextSetStyle(context, style.get());
     CGContextFillPath(context);
-    CGContextRestoreGState(context);
 
     return needsRepaint;
 }

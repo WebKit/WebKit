@@ -1832,9 +1832,9 @@ void RenderElement::paintFocusRing(PaintInfo& paintInfo, const RenderStyle& styl
             for (auto rect : pixelSnappedFocusRingRects)
                 path.addRect(rect);
         }
-        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(styleColorOptions()));
+        paintInfo.context().drawFocusRing(path, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::singleton().focusRingColor(styleColorOptions()));
     } else
-        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::focusRingColor(styleColorOptions()));
+        paintInfo.context().drawFocusRing(pixelSnappedFocusRingRects, page().focusController().timeSinceFocusWasSet().seconds(), needsRepaint, RenderTheme::singleton().focusRingColor(styleColorOptions()));
     if (needsRepaint)
         page().focusController().setFocusedElementNeedsRepaint();
 #else
