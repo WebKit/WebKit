@@ -27,25 +27,31 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaRecorderPrivate.h"
-#include <wtf/Lock.h>
-#include <wtf/text/StringBuilder.h>
+#include "MediaRecorderPrivateWriterCocoa.h"
 
 namespace WebCore {
 
-class MediaStreamTrackPrivate;
+class MediaStreamPrivate;
 
-class WEBCORE_EXPORT MediaRecorderPrivateMock final : public MediaRecorderPrivate {
+class MediaRecorderPrivateAVFImpl final : public MediaRecorderPrivate {
+public:
+    static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(const MediaStreamPrivate&);
+
 private:
+    explicit MediaRecorderPrivateAVFImpl(const MediaStreamPrivate&);
+
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
     void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     RefPtr<SharedBuffer> fetchData() final;
     const String& mimeType() final;
+    void stopRecording();
     
-    void generateMockString(MediaStreamTrackPrivate&);
+    String m_recordedVideoTrackID;
+    String m_recordedAudioTrackID;
 
-    mutable Lock m_bufferLock;
-    StringBuilder m_buffer;
-    unsigned m_counter { 0 };
+    MediaRecorderPrivateWriter m_writer;
+    
+    bool m_isWriterReady { false };
 };
 
 } // namespace WebCore

@@ -507,6 +507,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void setMockMediaCaptureDevicesEnabled(bool);
+    void setCustomPrivateRecorderCreator();
 #endif
 
 #if ENABLE(WEB_RTC)

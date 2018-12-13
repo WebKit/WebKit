@@ -1,3 +1,61 @@
+2018-12-12  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement non-timeslice mode encoding for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=192069
+        <rdar://problem/46443290>
+
+        Reviewed by Eric Carlson.
+
+        Implement the encoding for non-timeslice mode of MediaRecorder.
+        It only supports to record MP4 file through H264 and AAC encoding, we will need to support more MIME types and encoding methods.
+        Add a API in internals to allow testings to turn on the mock source.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::setCustomPrivateRecorderCreator):
+        (WebCore::MediaRecorder::getPrivateImpl):
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::stopRecordingInternal):
+        (WebCore::MediaRecorder::createRecordingDataBlob):
+        (WebCore::MediaRecorder::scheduleDeferredTask):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorder.idl:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        (WebCore::MediaRecorderPrivate::stopRecording):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp: Added.
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        (WebCore::MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl):
+        (WebCore::MediaRecorderPrivateAVFImpl::sampleBufferUpdated):
+        (WebCore::MediaRecorderPrivateAVFImpl::audioSamplesAvailable):
+        (WebCore::MediaRecorderPrivateAVFImpl::stopRecording):
+        (WebCore::MediaRecorderPrivateAVFImpl::fetchData):
+        (WebCore::MediaRecorderPrivateAVFImpl::mimeType):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h: Added.
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        (WebCore::MediaRecorderPrivateMock::fetchData):
+        (WebCore::MediaRecorderPrivateMock::mimeType):
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h: added.
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm: Added.
+        (WebCore::MediaRecorderPrivateWriter::clear):
+        (WebCore::MediaRecorderPrivateWriter::setupWriter):
+        (WebCore::MediaRecorderPrivateWriter::setVideoInput):
+        (WebCore::MediaRecorderPrivateWriter::setAudioInput):
+        (WebCore::copySampleBufferWithCurrentTimeStamp):
+        (WebCore::MediaRecorderPrivateWriter::appendVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        * testing/Internals.cpp:
+        (WebCore::createRecorderMockSource):
+        (WebCore::Internals::setCustomPrivateRecorderCreator):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-12-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Vertex buffers and WebGPUInputState

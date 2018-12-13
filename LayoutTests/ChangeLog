@@ -1,3 +1,19 @@
+2018-12-12  YUHAN WU  <yuhan_wu@apple.com>
+
+        Implement non-timeslice mode encoding for MediaRecorder
+        https://bugs.webkit.org/show_bug.cgi?id=192069
+        <rdar://problem/46443290>
+
+        Reviewed by Eric Carlson.
+
+        Create new tests for encoding of MediaRecorder. Check if the produced video and audio are correct.
+        Add code to turn on the mock source of MediaRecorder for the two old tests because the real source is enabled by default.
+
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html: Added.
+        * http/wpt/mediarecorder/MediaRecorder-dataavailable.html:
+        * http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html:
+
 2018-12-12  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Vertex buffers and WebGPUInputState

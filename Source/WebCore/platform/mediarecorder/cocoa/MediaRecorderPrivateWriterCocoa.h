@@ -24,9 +24,19 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 #if ENABLE(MEDIA_STREAM)
+
+#include "SharedBuffer.h"
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/threads/BinarySemaphore.h>
+
+typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+
+OBJC_CLASS AVAssetWriter;
+OBJC_CLASS AVAssetWriterInput;
 
 namespace WTF {
 class MediaTime;
@@ -35,22 +45,43 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
-class MediaSample;
-class MediaStreamTrackPrivate;
 class PlatformAudioData;
-class SharedBuffer;
 
-class MediaRecorderPrivate {
+class MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
 public:
-    virtual void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) = 0;
-    virtual void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) = 0;
+    MediaRecorderPrivateWriter() = default;
+    ~MediaRecorderPrivateWriter();
     
-    virtual RefPtr<SharedBuffer> fetchData() = 0;
-    virtual const String& mimeType() = 0;
-    virtual ~MediaRecorderPrivate() = default;
-    virtual void stopRecording() { }
+    bool setupWriter();
+    bool setVideoInput(int width, int height);
+    bool setAudioInput();
+    void appendVideoSampleBuffer(CMSampleBufferRef);
+    void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
+    void stopRecording();
+    RefPtr<SharedBuffer> fetchData();
+    
+private:
+    void clear();
+
+    RetainPtr<AVAssetWriter> m_writer;
+    RetainPtr<AVAssetWriterInput> m_videoInput;
+    RetainPtr<AVAssetWriterInput> m_audioInput;
+
+    String m_path;
+    Lock m_videoLock;
+    Lock m_audioLock;
+    BinarySemaphore m_finishWritingSemaphore;
+    BinarySemaphore m_finishWritingAudioSemaphore;
+    BinarySemaphore m_finishWritingVideoSemaphore;
+    bool m_hasStartedWriting { false };
+    bool m_isStopped { false };
+    bool m_isFirstAudioSample { true };
+    dispatch_queue_t m_audioPullQueue;
+    dispatch_queue_t m_videoPullQueue;
+    Deque<RetainPtr<CMSampleBufferRef>> m_videoBufferPool;
+    Deque<RetainPtr<CMSampleBufferRef>> m_audioBufferPool;
 };
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
