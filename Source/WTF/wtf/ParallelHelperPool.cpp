@@ -32,8 +32,8 @@
 
 namespace WTF {
 
-ParallelHelperClient::ParallelHelperClient(RefPtr<ParallelHelperPool> pool)
-    : m_pool(pool)
+ParallelHelperClient::ParallelHelperClient(RefPtr<ParallelHelperPool>&& pool)
+    : m_pool(WTFMove(pool))
 {
     LockHolder locker(*m_pool->m_lock);
     RELEASE_ASSERT(!m_pool->m_isDying);
@@ -54,11 +54,11 @@ ParallelHelperClient::~ParallelHelperClient()
     }
 }
 
-void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>> task)
+void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>>&& task)
 {
     LockHolder locker(*m_pool->m_lock);
     RELEASE_ASSERT(!m_task);
-    m_task = task;
+    m_task = WTFMove(task);
     m_pool->didMakeWorkAvailable(locker);
 }
 
@@ -81,9 +81,9 @@ void ParallelHelperClient::doSomeHelping()
     runTask(task);
 }
 
-void ParallelHelperClient::runTaskInParallel(RefPtr<SharedTask<void ()>> task)
+void ParallelHelperClient::runTaskInParallel(RefPtr<SharedTask<void ()>>&& task)
 {
-    setTask(task);
+    setTask(WTFMove(task));
     doSomeHelping();
     finish();
 }
@@ -104,7 +104,7 @@ RefPtr<SharedTask<void ()>> ParallelHelperClient::claimTask(const AbstractLocker
     return m_task;
 }
 
-void ParallelHelperClient::runTask(RefPtr<SharedTask<void ()>> task)
+void ParallelHelperClient::runTask(const RefPtr<SharedTask<void ()>>& task)
 {
     RELEASE_ASSERT(m_numActive);
     RELEASE_ASSERT(task);

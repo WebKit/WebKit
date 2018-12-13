@@ -131,10 +131,10 @@ class ParallelHelperClient {
     WTF_MAKE_NONCOPYABLE(ParallelHelperClient);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WTF_EXPORT_PRIVATE ParallelHelperClient(RefPtr<ParallelHelperPool>);
+    WTF_EXPORT_PRIVATE ParallelHelperClient(RefPtr<ParallelHelperPool>&&);
     WTF_EXPORT_PRIVATE ~ParallelHelperClient();
 
-    WTF_EXPORT_PRIVATE void setTask(RefPtr<SharedTask<void ()>>);
+    WTF_EXPORT_PRIVATE void setTask(RefPtr<SharedTask<void ()>>&&);
 
     template<typename Functor>
     void setFunction(const Functor& functor)
@@ -150,7 +150,7 @@ public:
     // client->setTask(task);
     // client->doSomeHelping();
     // client->finish();
-    WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask<void ()>>);
+    WTF_EXPORT_PRIVATE void runTaskInParallel(RefPtr<SharedTask<void ()>>&&);
 
     // Equivalent to:
     // client->setFunction(functor);
@@ -170,7 +170,7 @@ private:
 
     void finish(const AbstractLocker&);
     RefPtr<SharedTask<void ()>> claimTask(const AbstractLocker&);
-    void runTask(RefPtr<SharedTask<void ()>>);
+    void runTask(const RefPtr<SharedTask<void ()>>&);
     
     RefPtr<ParallelHelperPool> m_pool;
     RefPtr<SharedTask<void ()>> m_task;

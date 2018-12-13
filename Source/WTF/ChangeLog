@@ -1,3 +1,20 @@
+2018-12-13  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary parameter copies in ParallelHelperPool.cpp
+        <https://webkit.org/b/192666>
+        <rdar://problem/46697952>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::ParallelHelperClient): Use rvalue
+        reference and WTFMove().
+        (WTF::ParallelHelperClient::setTask): Ditto.
+        (WTF::ParallelHelperClient::runTaskInParallel): Ditto.
+        (WTF::ParallelHelperClient::runTask): Use const reference.
+        * wtf/ParallelHelperPool.h: Update declarations to match
+        implementations.
+
 2018-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Implement safe browsing in WebKit on WatchOS
