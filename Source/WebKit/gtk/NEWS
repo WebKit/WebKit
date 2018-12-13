@@ -1,4 +1,15 @@
 =================
+WebKitGTK+ 2.22.5
+=================
+
+What's new in WebKitGTK+ 2.22.5?
+
+  - Improved the logic to determine for which architectures to enable
+    the JIT compiler support and USE_SYSTEM_MALLOC at build time.
+  - Fix the build with ENABLE_VIDEO=OFF and ENABLE_OPENGL=OFF.
+  - Fix several crashes.
+
+=================
 WebKitGTK+ 2.22.4
 =================
 

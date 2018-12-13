@@ -1,3 +1,9 @@
+2018-12-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake for the 2.22.5 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-08-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Have checks are not getting set inside CMake properly
