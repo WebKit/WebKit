@@ -1,3 +1,14 @@
+2018-12-13  Zach Li  <zachli@apple.com>
+
+        Update Credit Card AutoFill button icon
+        https://bugs.webkit.org/show_bug.cgi?id=192637
+        rdar://problem/46545006
+
+        Reviewed by Chris Dumez.
+
+        * css/html.css:
+        (input::-webkit-credit-card-auto-fill-button):
+
 2018-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Calculate width or height when constraints contain only the other
