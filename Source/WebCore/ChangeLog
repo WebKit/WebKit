@@ -1,3 +1,9 @@
+2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix macOS builds after r239145.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+
 2018-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238357): Pins on Yelp map disappear
