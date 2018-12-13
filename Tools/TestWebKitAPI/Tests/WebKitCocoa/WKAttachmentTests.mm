@@ -25,25 +25,35 @@
 
 #import "config.h"
 
+#if (PLATFORM(MAC) || PLATFORM(IOS)) && WK_API_ENABLED
+
 #import "DragAndDropSimulator.h"
 #import "PencilKitTestSPI.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <Contacts/Contacts.h>
+#import <MapKit/MapKit.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebKitPrivate.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
+SOFT_LINK_FRAMEWORK(Contacts)
+SOFT_LINK_CLASS(Contacts, CNMutableContact)
 
-#if WK_API_ENABLED && !PLATFORM(WATCHOS) && !PLATFORM(TVOS)
+SOFT_LINK_FRAMEWORK(MapKit)
+SOFT_LINK_CLASS(MapKit, MKMapItem)
+SOFT_LINK_CLASS(MapKit, MKPlacemark)
+
+#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
@@ -1808,6 +1818,56 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     [dragAndDropSimulator endDataTransfer];
 }
 
+TEST(WKAttachmentTestsIOS, InsertDroppedMapItemAsAttachment)
+{
+    auto placemark = adoptNS([allocMKPlacemarkInstance() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
+    auto mapItem = adoptNS([allocMKMapItemInstance() initWithPlacemark:placemark.get()]);
+    [mapItem setName:@"Apple Park"];
+
+    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:mapItem.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider setSuggestedName:[mapItem name]];
+
+    auto webView = webViewForTestingAttachments();
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(25, 25) to:CGPointMake(100, 100)];
+
+    NSURL *droppedLinkURL = [NSURL URLWithString:[webView valueOfAttribute:@"href" forQuerySelector:@"a"]];
+    [webView expectElementTag:@"A" toComeBefore:@"ATTACHMENT"];
+    EXPECT_WK_STREQ("maps.apple.com", droppedLinkURL.host);
+    EXPECT_WK_STREQ("Apple Park.vcf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("text/vcard", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_EQ(1U, [simulator insertedAttachments].count);
+    _WKAttachmentInfo *info = [simulator insertedAttachments].firstObject.info;
+    EXPECT_WK_STREQ("Apple Park.vcf", info.name);
+    EXPECT_WK_STREQ("text/vcard", info.contentType);
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
+{
+    auto contact = adoptNS([allocCNMutableContactInstance() init]);
+    [contact setGivenName:@"Foo"];
+    [contact setFamilyName:@"Bar"];
+
+    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:contact.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider setSuggestedName:@"Foo Bar"];
+
+    auto webView = webViewForTestingAttachments();
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [simulator runFrom:CGPointMake(25, 25) to:CGPointMake(100, 100)];
+
+    [webView expectElementCount:0 querySelector:@"a"];
+    EXPECT_WK_STREQ("Foo Bar.vcf", [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').title"]);
+    EXPECT_WK_STREQ("text/vcard", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_EQ(1U, [simulator insertedAttachments].count);
+    _WKAttachmentInfo *info = [simulator insertedAttachments].firstObject.info;
+    EXPECT_WK_STREQ("Foo Bar.vcf", info.name);
+    EXPECT_WK_STREQ("text/vcard", info.contentType);
+}
+
 #if HAVE(PENCILKIT)
 static BOOL forEachViewInHierarchy(UIView *view, void(^mapFunction)(UIView *subview, BOOL *stop))
 {
@@ -1882,4 +1942,4 @@ TEST(WKAttachmentTestsIOS, EditableImageAttachmentDataInvalidation)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && !PLATFORM(WATCHOS) && !PLATFORM(TVOS)
+#endif // (PLATFORM(MAC) || PLATFORM(IOS)) && WK_API_ENABLED

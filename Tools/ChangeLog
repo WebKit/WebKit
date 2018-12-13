@@ -1,3 +1,27 @@
+2018-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Support dropping contact card data (public.vcard) in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=192570
+        <rdar://problem/35626913>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
+        Add API tests to verify that registering `MKMapItem`s and `CNContact`s to item providers and dropping them in
+        attachment-enabled rich text editable areas inserts attachment elements (and in the case of `MKMapItem`,
+        additionally inserts a link).
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::createMapItemForTesting):
+        (TestWebKitAPI::createContactItemForTesting):
+
+        Add API tests to verify that dropping map items and contact items into rich and plain editable areas behaves as
+        expected (in the case where a URL is present, e.g. dropping a map item, we insert the URL as an anchor, and when
+        there is no other suitable representation in the item provider, we do nothing at all, which is the case for the
+        dropped `CNContact`). Also, add a test to verify that drag and drop can be used to upload these items as .vcf
+        files.
+
 2018-12-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed -- update my status to "reviewer".

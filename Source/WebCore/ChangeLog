@@ -1,3 +1,53 @@
+2018-12-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Support dropping contact card data (public.vcard) in editable content
+        https://bugs.webkit.org/show_bug.cgi?id=192570
+        <rdar://problem/35626913>
+
+        Reviewed by Tim Horton.
+
+        Adds support for accepting vCard (.vcf) data via drop on iOS. See below for more details.
+
+        Tests:  DragAndDropTests.ExternalSourceContactIntoEditableAreas
+                DragAndDropTests.ExternalSourceMapItemAndContactToUploadArea
+                DragAndDropTests.ExternalSourceMapItemIntoEditableAreas
+                WKAttachmentTestsIOS.InsertDroppedContactAsAttachment
+                WKAttachmentTestsIOS.InsertDroppedMapItemAsAttachment
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForFilePath):
+
+        Pull out logic to create an attachment from a file path out into a static helper. Use this in `readFilePaths`
+        as well as `readVirtualContactFile`.
+
+        (WebCore::WebContentReader::readFilePaths):
+        (WebCore::WebContentReader::readVirtualContactFile):
+
+        Add a pasteboard reading method that reads a vCard file (with an optional URL) as web content. The resulting
+        fragment consists of either an anchor and an attachment element, or just an attachment element if the URL is
+        empty. In the case of an `MKMapItem`, the URL is populated, so we generate both elements; when dragging a
+        contact, there is no associated URL, so we only have an attachment.
+
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+
+        Augment this to take the current `PasteboardItemInfo` as well; use this item information to get a file path for
+        "public.vcard" data, which is then passed on to the web content reader. Additionally, by returning
+        `ReaderResult::DidNotReadType` here, we prevent the web content reader from extracting the plain text contents
+        of the vCard and dumping it as plain text in the editable element (this would otherwise happen, since
+        "public.vcard" conforms to "public.text").
+
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[NSItemProvider web_fileUploadContentTypes]):
+
+        Prevent the "com.apple.mapkit.map-item" UTI from being considered as file upload content. This special case is
+        tricky, since "com.apple.mapkit.map-item" conforms to "public.content", yet its corresponding data is only
+        suitable for deserialization into an `MKMapItem`.
+
 2018-12-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove DOM.BackendNodeId and associated commands/events

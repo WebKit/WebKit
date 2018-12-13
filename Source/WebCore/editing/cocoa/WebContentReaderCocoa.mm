@@ -45,6 +45,7 @@
 #import "HTMLAttachmentElement.h"
 #import "HTMLBRElement.h"
 #import "HTMLBodyElement.h"
+#import "HTMLDivElement.h"
 #import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
@@ -714,6 +715,45 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
     return fragment;
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+static Ref<HTMLElement> attachmentForFilePath(Frame& frame, const String& path)
+{
+    auto document = makeRef(*frame.document());
+    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    if (!supportsClientSideAttachmentData(frame)) {
+        attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        return attachment.get();
+    }
+
+    String contentType;
+    std::optional<uint64_t> fileSizeForDisplay;
+    if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes))
+        contentType = kUTTypeDirectory;
+    else {
+        long long fileSize;
+        FileSystem::getFileSize(path, fileSize);
+        fileSizeForDisplay = fileSize;
+        contentType = File::contentTypeForFile(path);
+        if (contentType.isEmpty())
+            contentType = kUTTypeData;
+    }
+
+    frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
+
+    if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
+        auto image = HTMLImageElement::create(document);
+        image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
+        image->setAttachmentElement(WTFMove(attachment));
+        return image.get();
+    }
+
+    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathGetFileName(path));
+    return attachment.get();
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
+
 bool WebContentReader::readFilePaths(const Vector<String>& paths)
 {
     if (paths.isEmpty() || !frame.document())
@@ -725,37 +765,31 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
-        for (auto& path : paths) {
-            auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-            if (supportsClientSideAttachmentData(frame)) {
-                String contentType;
-                std::optional<uint64_t> fileSizeForDisplay;
-                if (FileSystem::fileIsDirectory(path, FileSystem::ShouldFollowSymbolicLinks::Yes))
-                    contentType = kUTTypeDirectory;
-                else {
-                    long long fileSize;
-                    FileSystem::getFileSize(path, fileSize);
-                    fileSizeForDisplay = fileSize;
-                    contentType = File::contentTypeForFile(path);
-                    if (contentType.isEmpty())
-                        contentType = kUTTypeData;
-                }
-                frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
-                if (contentTypeIsSuitableForInlineImageRepresentation(contentType)) {
-                    auto image = HTMLImageElement::create(document);
-                    image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document, File::create(path)));
-                    image->setAttachmentElement(WTFMove(attachment));
-                    fragment->appendChild(image);
-                } else {
-                    attachment->updateAttributes(WTFMove(fileSizeForDisplay), contentType, FileSystem::pathGetFileName(path));
-                    fragment->appendChild(attachment);
-                }
-            } else {
-                attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-                fragment->appendChild(attachment);
-            }
-        }
+        for (auto& path : paths)
+            fragment->appendChild(attachmentForFilePath(frame, path));
     }
+#endif
+
+    return true;
+}
+
+bool WebContentReader::readVirtualContactFile(const String& filePath, const URL& url, const String& urlTitle)
+{
+    if (filePath.isEmpty() || !frame.document())
+        return false;
+
+    auto& document = *frame.document();
+    if (!fragment)
+        fragment = document.createDocumentFragment();
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (!url.isEmpty())
+        readURL(url, urlTitle);
+
+    auto attachmentContainer = HTMLDivElement::create(*frame.document());
+    attachmentContainer->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock, true);
+    attachmentContainer->appendChild(attachmentForFilePath(frame, filePath));
+    fragment->appendChild(WTFMove(attachmentContainer));
 #endif
 
     return true;

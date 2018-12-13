@@ -80,6 +80,12 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
         if (UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeURL))
             continue;
 
+        if ([identifier isEqualToString:@"com.apple.mapkit.map-item"]) {
+            // This type conforms to "public.content", yet the corresponding data is only a serialization of MKMapItem and isn't suitable for file uploads.
+            // Ignore over this type representation for the purposes of file uploads, in favor of "public.vcard" data.
+            continue;
+        }
+
         if (typeConformsToTypes(identifier, Pasteboard::supportedFileUploadPasteboardTypes()))
             [types addObject:identifier];
     }
