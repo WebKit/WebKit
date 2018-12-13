@@ -146,6 +146,7 @@ private:
         void hasVideoInPictureInPictureDidChange(WebPageProxy*, bool) final;
 
         void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) final;
+        void didShowSafeBrowsingWarning() final;
 
         UIDelegate& m_uiDelegate;
     };
@@ -222,6 +223,7 @@ private:
         bool webViewGetContextMenuFromProposedMenuForElementUserInfoCompletionHandler : 1;
 #endif
         bool webViewHasVideoInPictureInPictureDidChange : 1;
+        bool webViewDidShowSafeBrowsingWarning : 1;
     } m_delegateMethods;
 };
 

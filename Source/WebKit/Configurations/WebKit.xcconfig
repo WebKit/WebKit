@@ -111,6 +111,8 @@ WK_PROXIMITY_NETWORKING_LDFLAGS_watchos = -framework IDS -framework MobileWiFi -
 WK_SAFE_BROWSING_LDFLAGS = $(WK_SAFE_BROWSING_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SAFE_BROWSING_LDFLAGS_iphoneos = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS_iphonesimulator = -framework SafariSafeBrowsing;
+WK_SAFE_BROWSING_LDFLAGS_watchos = -framework SafariSafeBrowsing;
+WK_SAFE_BROWSING_LDFLAGS_watchsimulator = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS_iphoneos[sdk=iphone*10.*] = ;
 WK_SAFE_BROWSING_LDFLAGS_iphonesimulator[sdk=iphone*10.*] = ;
 WK_SAFE_BROWSING_LDFLAGS_macosx = $(WK_SAFE_BROWSING_LDFLAGS$(WK_MACOS_1013));

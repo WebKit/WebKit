@@ -36,7 +36,11 @@
 constexpr CGFloat exclamationPointSize = 30;
 constexpr CGFloat boxCornerRadius = 6;
 #if HAVE(SAFE_BROWSING)
+#if PLATFORM(WATCHOS)
+constexpr CGFloat marginSize = 10;
+#else
 constexpr CGFloat marginSize = 20;
+#endif
 constexpr CGFloat maxWidth = 675;
 #endif
 
@@ -85,7 +89,11 @@ static FontType *fontOfSize(WarningTextSize size)
 #elif HAVE(SAFE_BROWSING)
     switch (size) {
     case WarningTextSize::Title:
+#if PLATFORM(WATCHOS)
+        return [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+#else
         return [UIFont preferredFontForTextStyle:UIFontTextStyleLargeTitle];
+#endif
     case WarningTextSize::Body:
         return [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     }
@@ -220,12 +228,12 @@ static ButtonType *makeButton(WarningItem item, WKSafeBrowsingWarning *warning, 
 }
 
 #if HAVE(SAFE_BROWSING)
-static CGFloat buttonWidth(ButtonType *button)
+static CGSize buttonSize(ButtonType *button)
 {
 #if PLATFORM(MAC)
-    return button.frame.size.width;
+    return button.frame.size;
 #else
-    return button.titleLabel.intrinsicContentSize.width;
+    return button.titleLabel.intrinsicContentSize;
 #endif
 }
 #endif
@@ -301,35 +309,48 @@ static void setBackground(ViewType *view, ColorType *color)
     box.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:box];
 
+#if PLATFORM(WATCHOS)
+    [NSLayoutConstraint activateConstraints:@[
+        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToAnchor:[exclamationPoint.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor]],
+        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize],
+        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
+        [[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
+        [[box.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToConstant:marginSize + self.frame.size.height / 2],
+        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.2],
+    ]];
+#elif HAVE(SAFE_BROWSING)
+    [NSLayoutConstraint activateConstraints:@[
+        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToConstant:marginSize],
+        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
+        [[title.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToAnchor:[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.bottomAnchor]],
+        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
+        [[box.topAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
+        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.5],
+    ]];
+#endif
+
 #if HAVE(SAFE_BROWSING)
     [NSLayoutConstraint activateConstraints:@[
-        [[self.topAnchor anchorWithOffsetToAnchor:box.topAnchor] constraintEqualToAnchor:[box.bottomAnchor anchorWithOffsetToAnchor:self.bottomAnchor] multiplier:0.5],
         [[self.leftAnchor anchorWithOffsetToAnchor:box.leftAnchor] constraintEqualToAnchor:[box.rightAnchor anchorWithOffsetToAnchor:self.rightAnchor]],
 
         [box.widthAnchor constraintLessThanOrEqualToConstant:maxWidth],
         [box.widthAnchor constraintLessThanOrEqualToAnchor:self.widthAnchor],
 
-        [[box.leadingAnchor anchorWithOffsetToAnchor:exclamationPoint.leadingAnchor] constraintEqualToConstant:marginSize],
-        [[box.leadingAnchor anchorWithOffsetToAnchor:title.leadingAnchor] constraintEqualToConstant:marginSize * 1.5 + exclamationPointSize],
         [[box.leadingAnchor anchorWithOffsetToAnchor:warning.leadingAnchor] constraintEqualToConstant:marginSize],
 
         [[title.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
         [[warning.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintGreaterThanOrEqualToConstant:marginSize],
         [[goBack.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
 
-        [[title.topAnchor anchorWithOffsetToAnchor:exclamationPoint.topAnchor] constraintEqualToAnchor:[exclamationPoint.bottomAnchor anchorWithOffsetToAnchor:title.bottomAnchor]],
-
-        [[box.topAnchor anchorWithOffsetToAnchor:title.topAnchor] constraintEqualToConstant:marginSize],
-        [[title.bottomAnchor anchorWithOffsetToAnchor:warning.topAnchor] constraintEqualToConstant:marginSize],
         [[warning.bottomAnchor anchorWithOffsetToAnchor:goBack.topAnchor] constraintEqualToConstant:marginSize],
     ]];
     
-    bool needsVerticalButtonLayout = buttonWidth(showDetails) + buttonWidth(goBack) + 3 * marginSize > self.frame.size.width;
+    bool needsVerticalButtonLayout = buttonSize(showDetails).width + buttonSize(goBack).width + 3 * marginSize > self.frame.size.width;
     if (needsVerticalButtonLayout) {
         [NSLayoutConstraint activateConstraints:@[
             [[showDetails.trailingAnchor anchorWithOffsetToAnchor:box.trailingAnchor] constraintEqualToConstant:marginSize],
             [[goBack.bottomAnchor anchorWithOffsetToAnchor:showDetails.topAnchor] constraintEqualToConstant:marginSize],
-            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize * 2 + showDetails.frame.size.height],
+            [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize * 2 + buttonSize(showDetails).height],
         ]];
     } else {
         [NSLayoutConstraint activateConstraints:@[
@@ -338,6 +359,9 @@ static void setBackground(ViewType *view, ColorType *color)
             [[goBack.bottomAnchor anchorWithOffsetToAnchor:box.bottomAnchor] constraintEqualToConstant:marginSize],
         ]];
     }
+#if !PLATFORM(MAC)
+    [self updateContentSize];
+#endif
 #endif
 }
 
@@ -392,13 +416,20 @@ static void setBackground(ViewType *view, ColorType *color)
 #endif
     [self layoutText];
 #if !PLATFORM(MAC)
+    [self updateContentSize];
+#endif
+}
+
+#if !PLATFORM(MAC)
+- (void)updateContentSize
+{
     [self layoutIfNeeded];
     CGFloat height = 0;
     for (ViewType *subview in self.subviews)
         height += subview.frame.size.height;
     [self setContentSize: { self.frame.size.width, self.frame.size.height / 2 + height }];
-#endif
 }
+#endif
 
 - (void)layoutText
 {

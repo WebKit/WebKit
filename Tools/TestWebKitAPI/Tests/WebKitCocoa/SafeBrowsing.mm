@@ -32,12 +32,14 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool committedNavigation;
+static bool warningShown;
 
-@interface SafeBrowsingNavigationDelegate : NSObject <WKNavigationDelegate>
+@interface SafeBrowsingNavigationDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
 @end
 
 @implementation SafeBrowsingNavigationDelegate
@@ -45,6 +47,11 @@ static bool committedNavigation;
 - (void)webView:(WKWebView *)webView didCommitNavigation:(null_unspecified WKNavigation *)navigation
 {
     committedNavigation = true;
+}
+
+- (void)_webViewDidShowSafeBrowsingWarning:(WKWebView *)webView
+{
+    warningShown = true;
 }
 
 @end
@@ -173,9 +180,12 @@ static RetainPtr<WKWebView> safeBrowsingView()
     static auto delegate = adoptNS([SafeBrowsingNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple")]];
+    EXPECT_FALSE(warningShown);
     while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_TRUE(warningShown);
 #if !PLATFORM(MAC)
     [[webView _safeBrowsingWarning] didMoveToWindow];
 #endif

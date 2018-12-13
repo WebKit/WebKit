@@ -1,3 +1,14 @@
+2018-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        Implement safe browsing in WebKit on WatchOS
+        https://bugs.webkit.org/show_bug.cgi?id=192641
+        <rdar://problem/46376188>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/Platform.h:
+        WatchOS has safe browsing, too!
+
 2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix compilation warnings of WTF

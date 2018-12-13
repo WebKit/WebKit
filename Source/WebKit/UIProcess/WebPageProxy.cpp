@@ -4323,6 +4323,7 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
                     }
                 });
             });
+            m_uiClient->didShowSafeBrowsingWarning();
             return;
         }
         completionHandler(policyAction);

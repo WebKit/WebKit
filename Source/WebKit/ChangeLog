@@ -1,3 +1,36 @@
+2018-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        Implement safe browsing in WebKit on WatchOS
+        https://bugs.webkit.org/show_bug.cgi?id=192641
+        <rdar://problem/46376188>
+
+        Reviewed by Geoff Garen.
+
+        WatchOS has a few special requirements:
+        1. The margin size needs to be smaller and the title font smaller to fit on the screen.
+        2. The exclamation point cannot be beside the title or it won't fit on the screen.  I put it above the title.
+        3. The application must be told when the safe browsing warning has been shown.  I added a new delegate callback.
+        4. The UIScrollView's contentSize must be set even before the details are shown to be able to scroll down to the buttons.
+           This was already an issue on small WKWebViews on iOS, so this fixes both operating systems.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didShowSafeBrowsingWarning):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didShowSafeBrowsingWarning):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (fontOfSize):
+        (buttonSize):
+        (-[WKSafeBrowsingWarning addContent]):
+        (-[WKSafeBrowsingWarning showDetailsClicked]):
+        (-[WKSafeBrowsingWarning updateContentSize]):
+        (buttonWidth): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2018-12-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239129 and r239131.

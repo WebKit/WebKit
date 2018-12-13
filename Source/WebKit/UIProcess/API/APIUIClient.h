@@ -180,6 +180,8 @@ public:
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
     virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }
+    
+    virtual void didShowSafeBrowsingWarning() { }
 };
 
 } // namespace API
