@@ -1,3 +1,24 @@
+2018-12-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Don't attempt to animate invalid CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=192630
+        <rdar://problem/46664433>
+
+        Reviewed by Antoine Quint.
+
+        Inherited animation properties can cause child elements to think they need to animate CSS properties
+        that they do not support, leading to nullptr crashes.
+
+        Recognize that CSSPropertyInvalid is a potential requested animation property, and handle it
+        cleanly.
+
+        Tests: animations/invalid-property-animation.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue):
+
 2018-12-13  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r230064): Focus rings on webpages are fainter than in native UI.

@@ -115,6 +115,12 @@ void CompositeAnimation::updateTransitions(Element& element, const RenderStyle* 
                         continue;
                 }
 
+                if (prop == CSSPropertyInvalid) {
+                    if (!all)
+                        break;
+                    continue;
+                }
+                
                 // ImplicitAnimations are always hashed by actual properties, never animateAll.
                 ASSERT(prop >= firstCSSProperty && prop < (firstCSSProperty + numCSSProperties));
 
