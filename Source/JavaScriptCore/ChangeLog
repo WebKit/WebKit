@@ -1,3 +1,22 @@
+2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [BigInt] Implement DFG/FTL typeof for BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=192619
+
+        Reviewed by Keith Miller.
+
+        This patch implements typeof for BigInt in DFG and FTL. Our DFG and FTL tiers now correctly consider about BigInt
+        in the code generated for typeof.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::boolify): We add (SpecCell - SpecString) type filter for proven type since isString
+        check is already performed here.
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf): We use (SpecCell - SpecObject - SpecString) type filter for proven type
+        since String and Object are already checked here. If we know the proven type does not include Symbol type here, we
+        can omit the code for Symbol type.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitTypeOf):
+
 2018-12-11  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [BigInt] Simplify boolean context evaluation by leveraging JSString::offsetOfLength() == JSBigInt::offsetOfLength()

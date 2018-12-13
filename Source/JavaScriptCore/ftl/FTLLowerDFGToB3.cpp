@@ -13626,7 +13626,7 @@ private:
             
             m_out.appendTo(notStringCase, stringOrBigIntCase);
             m_out.branch(
-                isBigInt(value, provenType(edge) & SpecCell),
+                isBigInt(value, provenType(edge) & (SpecCell - SpecString)),
                 unsure(stringOrBigIntCase), unsure(notStringOrBigIntCase));
 
             m_out.appendTo(stringOrBigIntCase, notStringOrBigIntCase);
@@ -14217,6 +14217,8 @@ private:
         //         }
         //     } else if (is string) {
         //         return string
+        //     } else if (is bigint) {
+        //         return bigint
         //     } else {
         //         return symbol
         //     }
@@ -14229,6 +14231,10 @@ private:
         // } else {
         //     return undefined
         // }
+        //
+        // FIXME: typeof Symbol should be more frequently seen than BigInt.
+        // We should change the order of type detection based on this frequency.
+        // https://bugs.webkit.org/show_bug.cgi?id=192650
         
         LBasicBlock cellCase = m_out.newBlock();
         LBasicBlock objectCase = m_out.newBlock();
@@ -14239,6 +14245,8 @@ private:
         LBasicBlock unreachable = m_out.newBlock();
         LBasicBlock notObjectCase = m_out.newBlock();
         LBasicBlock stringCase = m_out.newBlock();
+        LBasicBlock notStringCase = m_out.newBlock();
+        LBasicBlock bigIntCase = m_out.newBlock();
         LBasicBlock symbolCase = m_out.newBlock();
         LBasicBlock notCellCase = m_out.newBlock();
         LBasicBlock numberCase = m_out.newBlock();
@@ -14288,10 +14296,18 @@ private:
         m_out.appendTo(notObjectCase, stringCase);
         m_out.branch(
             isString(value, provenType(child) & (SpecCell - SpecObject)),
-            unsure(stringCase), unsure(symbolCase));
+            unsure(stringCase), unsure(notStringCase));
         
-        m_out.appendTo(stringCase, symbolCase);
+        m_out.appendTo(stringCase, notStringCase);
         functor(TypeofType::String);
+
+        m_out.appendTo(notStringCase, bigIntCase);
+        m_out.branch(
+            isBigInt(value, provenType(child) & (SpecCell - SpecObject - SpecString)),
+            unsure(bigIntCase), unsure(symbolCase));
+
+        m_out.appendTo(bigIntCase, symbolCase);
+        functor(TypeofType::BigInt);
         
         m_out.appendTo(symbolCase, notCellCase);
         functor(TypeofType::Symbol);

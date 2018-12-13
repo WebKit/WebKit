@@ -1,3 +1,24 @@
+2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [BigInt] Implement DFG/FTL typeof for BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=192619
+
+        Reviewed by Keith Miller.
+
+        * stress/big-int-boolean-proven-type.js: Added.
+        (assert):
+        (bool):
+        * stress/big-int-type-of-proven-type-non-constant-including-symbol.js: Added.
+        (assert):
+        (typeOf):
+        (i.switch):
+        * stress/big-int-type-of-proven-type-non-constant.js: Added.
+        (assert):
+        (typeOf):
+        * stress/big-int-type-of.js:
+        (typeOf):
+        (func):
+
 2018-12-10  Mark Lam  <mark.lam@apple.com>
 
         PropertyAttribute needs a CustomValue bit.
