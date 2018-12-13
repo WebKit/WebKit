@@ -77,7 +77,7 @@ private:
 
 // COMPropertyBag ------------------------------------------------------------------
 template<typename ValueType, typename KeyType, typename HashType>
-COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType, typename KeyType, HashType>::createInstance(const HashMapType& hashMap)
+COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<ValueType, KeyType, HashType>::createInstance(const HashMapType& hashMap)
 {
     COMPropertyBag* instance = new COMPropertyBag(hashMap);
     instance->AddRef();
@@ -85,7 +85,7 @@ COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType,
 }
 
 template<typename ValueType, typename KeyType, typename HashType>
-COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<typename ValueType, typename KeyType, HashType>::adopt(HashMapType& hashMap)
+COMPropertyBag<ValueType, KeyType, HashType>* COMPropertyBag<ValueType, KeyType, HashType>::adopt(HashMapType& hashMap)
 {
     COMPropertyBag* instance = new COMPropertyBag;
     instance->m_hashMap.swap(hashMap);
@@ -137,8 +137,8 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(LPC
     if (!pszPropName)
         return E_POINTER;
 
-    HashMapType::const_iterator it = m_hashMap.find(String(pszPropName));
-    HashMapType::const_iterator end = m_hashMap.end();
+    auto it = m_hashMap.find(String(pszPropName));
+    auto end = m_hashMap.end();
     if (it == end)
         return E_INVALIDARG;
 
@@ -205,9 +205,8 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::GetPrope
         return E_INVALIDARG;
 
     *pcProperties = 0;
-    typedef HashMapType::const_iterator Iterator;
-    Iterator current = m_hashMap.begin();
-    Iterator end = m_hashMap.end();
+    auto current = m_hashMap.begin();
+    auto end = m_hashMap.end();
     for (ULONG i = 0; i < iProperty; ++i, ++current)
         ;
     for (ULONG j = 0; j < cProperties && current != end; ++j, ++current) {

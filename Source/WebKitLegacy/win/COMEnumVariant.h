@@ -69,7 +69,7 @@ private:
 
 // COMEnumVariant ------------------------------------------------------------------
 template<typename ContainerType>
-COMEnumVariant<typename ContainerType>* COMEnumVariant<ContainerType>::adopt(ContainerType& container) 
+COMEnumVariant<ContainerType>* COMEnumVariant<ContainerType>::adopt(ContainerType& container) 
 {
     COMEnumVariant* instance = new COMEnumVariant;
     instance->m_container.swap(container);
@@ -79,7 +79,7 @@ COMEnumVariant<typename ContainerType>* COMEnumVariant<ContainerType>::adopt(Con
 }
 
 template<typename ContainerType>
-COMEnumVariant<typename ContainerType>* COMEnumVariant<ContainerType>::createInstance(const ContainerType& container)
+COMEnumVariant<ContainerType>* COMEnumVariant<ContainerType>::createInstance(const ContainerType& container)
 {
     COMEnumVariant* instance = new COMEnumVariant(container);
     instance->AddRef();
@@ -135,7 +135,7 @@ HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Next(ULONG celt, VARIAN
         if (m_currentPos == m_container.end())
             return S_FALSE;
 
-        COMVariantSetter<ContainerType::ValueType>::setVariant(&rgVar[i], *m_currentPos);
+        COMVariantSetter<typename ContainerType::ValueType>::setVariant(&rgVar[i], *m_currentPos);
         ++m_currentPos;
         if (pCeltFetched)
             (*pCeltFetched)++;

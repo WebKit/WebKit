@@ -1,5 +1,22 @@
 2018-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][Clang][WebKitLegacy] warning: expected a qualified name after 'typename' of COMEnumVariant and COMPropertyBag
+        https://bugs.webkit.org/show_bug.cgi?id=192617
+
+        Reviewed by Alex Christensen.
+
+        * COMEnumVariant.h:
+        (COMEnumVariant<ContainerType>::adopt): Removed 'typename' from non dependent names.
+        (COMEnumVariant<ContainerType>::createInstance): Ditto.
+        (COMEnumVariant<ContainerType>::Next): Prepend 'typename' for dependent names.
+        * COMPropertyBag.h:
+        (HashType>::createInstance): Removed 'typename' from non dependent names.
+        (HashType>::adopt): Ditto.
+        (HashType>::Read): Replaced dependent name 'HashMapType::const_iterator' with 'auto'.
+        (HashType>::GetPropertyInfo): Ditto.
+
+2018-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Win][Clang][WebKitLegacy] WebFrame.cpp: warning: delete called on non-final 'WebFrame' that has virtual functions but non-virtual destructor [-Wdelete-non-virtual-dtor]
         https://bugs.webkit.org/show_bug.cgi?id=192618
 
