@@ -4978,10 +4978,11 @@
       "emails" : [
          "ross.kirsling@sony.com"
       ],
+      "expertise" : "JavaScript/ECMAScript, PlayStation port, WinCairo port",
       "nicks" : [
          "rkirsling"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Ruth Fong" : {
       "emails" : [
