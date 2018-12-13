@@ -29,7 +29,7 @@
 #include "WebKit.h"
 #include <WebCore/Credential.h>
 
-class WebURLCredential : public IWebURLCredential
+class WebURLCredential final : public IWebURLCredential
 {
 public:
     static WebURLCredential* createInstance();

@@ -32,7 +32,7 @@ namespace WebCore {
     class DOMWrapperWorld;
 }
 
-class WebScriptWorld : public IWebScriptWorld {
+class WebScriptWorld final : public IWebScriptWorld {
     WTF_MAKE_NONCOPYABLE(WebScriptWorld);
 public:
     static WebScriptWorld* standardWorld();

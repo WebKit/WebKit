@@ -36,7 +36,7 @@
 class DRTUndoManager;
 class DRTDesktopNotificationPresenter;
 
-class UIDelegate : public IWebUIDelegate2, IWebUIDelegatePrivate3 {
+class UIDelegate final : public IWebUIDelegate2, IWebUIDelegatePrivate3 {
 public:
     UIDelegate();
 

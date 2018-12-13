@@ -31,7 +31,7 @@
 
 #include "WebKit.h"
 
-class WebKitStatistics : public IWebKitStatistics {
+class WebKitStatistics final : public IWebKitStatistics {
 public:
     static WebKitStatistics* createInstance();
 protected:

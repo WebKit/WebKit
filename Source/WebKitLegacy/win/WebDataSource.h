@@ -35,7 +35,7 @@ class WebMutableURLRequest;
 
 extern const GUID IID_WebDataSource;
 
-class WebDataSource : public IWebDataSource, public IWebDataSourcePrivate
+class WebDataSource final : public IWebDataSource, public IWebDataSourcePrivate
 {
 public:
     static WebDataSource* createInstance(WebDocumentLoader*);

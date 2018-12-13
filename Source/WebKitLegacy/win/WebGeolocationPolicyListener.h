@@ -33,7 +33,7 @@ namespace WebCore {
     class Geolocation;
 }
 
-class WebGeolocationPolicyListener : public IWebGeolocationPolicyListener {
+class WebGeolocationPolicyListener final : public IWebGeolocationPolicyListener {
 public:
     static COMPtr<WebGeolocationPolicyListener> createInstance(RefPtr<WebCore::Geolocation>&&);
 

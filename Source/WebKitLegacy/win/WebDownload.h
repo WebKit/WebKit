@@ -43,7 +43,7 @@ namespace WebCore {
     class ResourceResponse;
 }
 
-class WebDownload
+class WebDownload final
 : public IWebDownload
 , public IWebURLAuthenticationChallengeSender
 #if USE(CURL)

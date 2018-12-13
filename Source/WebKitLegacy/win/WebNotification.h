@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebNotification : public IWebNotification
+class WebNotification final : public IWebNotification
 {
 public:
     static WebNotification* createInstance(BSTR name = 0, IUnknown* anObject = 0, IPropertyBag* userInfo = 0);

@@ -57,7 +57,7 @@ static inline bool isEqual(LPCWSTR s1, LPCWSTR s2)
     return !wcscmp(s1, s2);
 }
 
-class DatabaseDetailsPropertyBag : public IPropertyBag {
+class DatabaseDetailsPropertyBag final : public IPropertyBag {
     WTF_MAKE_NONCOPYABLE(DatabaseDetailsPropertyBag);
 public:
     static DatabaseDetailsPropertyBag* createInstance(const DatabaseDetails&);

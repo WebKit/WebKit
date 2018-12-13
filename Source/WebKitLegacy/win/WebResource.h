@@ -34,7 +34,7 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
-class WebResource : public IWebResource {
+class WebResource final : public IWebResource {
 public:
     static WebResource* createInstance(RefPtr<WebCore::SharedBuffer>&&, const WebCore::ResourceResponse&);
 protected:

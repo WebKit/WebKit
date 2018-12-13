@@ -31,7 +31,7 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/NavigationAction.h>
 
-class WebActionPropertyBag : public IPropertyBag {
+class WebActionPropertyBag final : public IPropertyBag {
 public:
     static WebActionPropertyBag* createInstance(const WebCore::NavigationAction&, RefPtr<WebCore::HTMLFormElement>&&, RefPtr<WebCore::Frame>&&);
 

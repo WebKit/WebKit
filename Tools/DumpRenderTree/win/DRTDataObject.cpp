@@ -47,7 +47,7 @@ FORMATETC* cfUrlWFormat()
     return &urlFormat;
 }
 
-class WCEnumFormatEtc : public IEnumFORMATETC {
+class WCEnumFormatEtc final : public IEnumFORMATETC {
 public:
     explicit WCEnumFormatEtc(const Vector<FORMATETC>& formats);
     explicit WCEnumFormatEtc(const Vector<std::unique_ptr<FORMATETC>>& formats);

@@ -1,3 +1,70 @@
+2018-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][WebKitLegacy] WebFrame.cpp: warning: delete called on non-final 'WebFrame' that has virtual functions but non-virtual destructor [-Wdelete-non-virtual-dtor]
+        https://bugs.webkit.org/show_bug.cgi?id=192618
+
+        Reviewed by Alex Christensen.
+
+        Classes which implement COM interface usually doesn't need the
+        virtual destructor because it has Release() virtual method to
+        destruct itself.
+
+        Marked 'final' such classes to suppress clang-cl's compilation
+        warnings.
+
+        * COMEnumVariant.h:
+        * COMPropertyBag.h:
+        * DefaultDownloadDelegate.h:
+        * DefaultPolicyDelegate.h:
+        * MemoryStream.h:
+        * WebActionPropertyBag.h:
+        * WebApplicationCache.h:
+        * WebArchive.h:
+        * WebBackForwardList.h:
+        * WebCache.h:
+        * WebCoreStatistics.h:
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebInspectorDelegate.h:
+        * WebDataSource.h:
+        * WebDatabaseManager.cpp:
+        * WebDatabaseManager.h:
+        * WebDownload.h:
+        * WebDropSource.h:
+        * WebElementPropertyBag.h:
+        * WebError.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+        * WebFramePolicyListener.h:
+        * WebGeolocationPolicyListener.h:
+        * WebGeolocationPosition.h:
+        * WebHTMLRepresentation.h:
+        * WebHistory.h:
+        * WebHistoryItem.h:
+        * WebInspector.h:
+        * WebJavaScriptCollector.h:
+        * WebKitClassFactory.h:
+        * WebKitMessageLoop.h:
+        * WebKitStatistics.h:
+        * WebMutableURLRequest.h:
+        * WebNavigationData.h:
+        * WebNotification.h:
+        * WebNotificationCenter.h:
+        * WebPreferences.h:
+        * WebResource.h:
+        * WebScriptWorld.h:
+        * WebSecurityOrigin.h:
+        * WebSerializedJSValue.h:
+        * WebTextRenderer.h:
+        * WebURLAuthenticationChallenge.h:
+        * WebURLAuthenticationChallengeSender.h:
+        * WebURLCredential.h:
+        * WebURLProtectionSpace.h:
+        * WebURLResponse.h:
+        * WebUserContentURLPattern.h:
+        * WebView.cpp:
+        * WebView.h:
+        * WebWorkersPrivate.h:
+
 2018-12-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix warning -Wmissing-field-initializers

@@ -30,7 +30,7 @@
 #include <ShlObj.h>
 #include <windows.h>
 
-class DRTDropSource : public IDropSource {
+class DRTDropSource final : public IDropSource {
 public:
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject);        
     virtual ULONG STDMETHODCALLTYPE AddRef();

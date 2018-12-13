@@ -33,7 +33,7 @@
 
 class TestRunner;
 
-class PolicyDelegate : public IWebPolicyDelegate {
+class PolicyDelegate final : public IWebPolicyDelegate {
 public:
     PolicyDelegate();
 

@@ -32,7 +32,7 @@
 #include <WebKitLegacy/WebKit.h>
 #include <windef.h>
 
-class DRTDesktopNotificationPresenter : public IWebDesktopNotificationsDelegate {
+class DRTDesktopNotificationPresenter final : public IWebDesktopNotificationsDelegate {
 public:
     DRTDesktopNotificationPresenter();
 

@@ -31,7 +31,7 @@
 
 #include <WebKitLegacy/WebKit.h>
 
-class __declspec(uuid("265DCD4B-79C3-44a2-84BC-511C3EDABD6F")) EditingDelegate : public IWebEditingDelegate2, public IWebNotificationObserver {
+class __declspec(uuid("265DCD4B-79C3-44a2-84BC-511C3EDABD6F")) EditingDelegate final : public IWebEditingDelegate2, public IWebNotificationObserver {
 public:
     EditingDelegate();
 

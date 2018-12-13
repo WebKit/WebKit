@@ -30,7 +30,7 @@
 
 class WebFrame;
 
-class WebHTMLRepresentation : public IWebHTMLRepresentation, IWebDocumentRepresentation
+class WebHTMLRepresentation final : public IWebHTMLRepresentation, IWebDocumentRepresentation
 {
 public:
     static WebHTMLRepresentation* createInstance(WebFrame* frame);

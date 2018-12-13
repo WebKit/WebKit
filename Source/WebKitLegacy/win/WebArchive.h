@@ -34,7 +34,7 @@ namespace WebCore {
     class LegacyWebArchive;
 }
 
-class WebArchive : public IWebArchive
+class WebArchive final : public IWebArchive
 {
 public:
     static WebArchive* createInstance();

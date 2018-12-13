@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class DefaultPolicyDelegate : public IWebPolicyDelegate {
+class DefaultPolicyDelegate final : public IWebPolicyDelegate {
 public:
     static DefaultPolicyDelegate* sharedInstance();
     static DefaultPolicyDelegate* createInstance();

@@ -41,7 +41,7 @@ struct StgMediumDeleter {
     }
 };
 
-class WCDataObject : public IDataObject {
+class WCDataObject final : public IDataObject {
 public:
     void CopyMedium(STGMEDIUM* pMedDest, STGMEDIUM* pMedSrc, FORMATETC* pFmtSrc);
 

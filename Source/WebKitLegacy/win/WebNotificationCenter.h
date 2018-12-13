@@ -30,7 +30,7 @@
 
 struct WebNotificationCenterPrivate;
 
-class WebNotificationCenter : public IWebNotificationCenter {
+class WebNotificationCenter final : public IWebNotificationCenter {
 public:
     static WebNotificationCenter* createInstance();
 

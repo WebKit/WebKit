@@ -35,7 +35,7 @@ namespace WebCore {
     class AuthenticationClient;
 }
 
-class DECLSPEC_UUID("5CACD637-F82F-491F-947A-5DCA38AA0FEA") WebURLAuthenticationChallengeSender
+class DECLSPEC_UUID("5CACD637-F82F-491F-947A-5DCA38AA0FEA") WebURLAuthenticationChallengeSender final
     : public IWebURLAuthenticationChallengeSender
 {
 public:

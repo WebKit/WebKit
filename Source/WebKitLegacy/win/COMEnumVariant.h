@@ -31,7 +31,7 @@
 #include "COMVariantSetter.h"
 
 template<typename ContainerType>
-class COMEnumVariant : public IEnumVARIANT {
+class COMEnumVariant final : public IEnumVARIANT {
     WTF_MAKE_NONCOPYABLE(COMEnumVariant);
 public:
     static COMEnumVariant* adopt(ContainerType&);

@@ -32,7 +32,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WTF/RefPtr.h>
 
-class MemoryStream : public IStream
+class MemoryStream final : public IStream
 {
 public:
     static COMPtr<MemoryStream> createInstance(RefPtr<WebCore::SharedBuffer>&&);

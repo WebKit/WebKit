@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebJavaScriptCollector : public IWebJavaScriptCollector
+class WebJavaScriptCollector final : public IWebJavaScriptCollector
 {
 public:
     static WebJavaScriptCollector* createInstance();

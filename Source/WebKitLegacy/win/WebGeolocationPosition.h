@@ -29,7 +29,7 @@
 #include <WebCore/COMPtr.h>
 #include <WebCore/GeolocationPosition.h>
 
-class WebGeolocationPosition : public IWebGeolocationPosition {
+class WebGeolocationPosition final : public IWebGeolocationPosition {
 public:
     static COMPtr<WebGeolocationPosition> createInstance();
 private:

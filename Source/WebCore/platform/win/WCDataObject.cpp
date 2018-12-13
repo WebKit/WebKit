@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class WCEnumFormatEtc : public IEnumFORMATETC
+class WCEnumFormatEtc final : public IEnumFORMATETC
 {
 public:
     WCEnumFormatEtc(const Vector<FORMATETC>& formats);

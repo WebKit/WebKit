@@ -30,7 +30,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/COMPtr.h>
 
-class DECLSPEC_UUID("FD3B2381-0BB6-4B59-AF09-0E599C8901CF") WebURLAuthenticationChallenge : public IWebURLAuthenticationChallenge {
+class DECLSPEC_UUID("FD3B2381-0BB6-4B59-AF09-0E599C8901CF") WebURLAuthenticationChallenge final : public IWebURLAuthenticationChallenge {
 public:
     static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&);
     static WebURLAuthenticationChallenge* createInstance(const WebCore::AuthenticationChallenge&, IWebURLAuthenticationChallengeSender*);

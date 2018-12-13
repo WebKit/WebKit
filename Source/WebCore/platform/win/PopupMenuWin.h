@@ -140,7 +140,7 @@ private:
     friend class AccessiblePopupMenu;
 };
 
-class AccessiblePopupMenu : public IAccessible {
+class AccessiblePopupMenu final : public IAccessible {
 public:
     AccessiblePopupMenu(const PopupMenuWin&);
     ~AccessiblePopupMenu();

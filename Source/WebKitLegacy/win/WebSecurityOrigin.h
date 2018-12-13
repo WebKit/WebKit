@@ -31,7 +31,7 @@
 #include "WebKit.h"
 #include <WebCore/SecurityOrigin.h>
 
-class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin2 {
+class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin final : public IWebSecurityOrigin2 {
 public:
     // WebSecurityOrigin
     static WebSecurityOrigin* createInstance(WebCore::SecurityOrigin* origin);

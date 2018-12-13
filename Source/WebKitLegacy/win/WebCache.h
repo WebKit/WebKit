@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebCache : public IWebCache
+class WebCache final : public IWebCache
 {
 public:
     static WebCache* createInstance();

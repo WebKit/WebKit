@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebCoreStatistics : public IWebCoreStatistics {
+class WebCoreStatistics final : public IWebCoreStatistics {
 public:
     static WebCoreStatistics* createInstance();
 protected:

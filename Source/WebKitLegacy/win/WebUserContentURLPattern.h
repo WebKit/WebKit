@@ -33,7 +33,7 @@ namespace WebCore {
     class UserContentURLPattern;
 }
 
-class WebUserContentURLPattern : public IWebUserContentURLPattern {
+class WebUserContentURLPattern final : public IWebUserContentURLPattern {
     WTF_MAKE_NONCOPYABLE(WebUserContentURLPattern);
 public:
     static COMPtr<WebUserContentURLPattern> createInstance();

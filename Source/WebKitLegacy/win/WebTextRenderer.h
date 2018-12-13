@@ -31,7 +31,7 @@
 
 #include "WebKit.h"
 
-class WebTextRenderer : public IWebTextRenderer {
+class WebTextRenderer final : public IWebTextRenderer {
 public:
     static WebTextRenderer* createInstance();
 

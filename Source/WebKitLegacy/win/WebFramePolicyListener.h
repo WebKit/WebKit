@@ -35,7 +35,7 @@ namespace WebCore {
     class Frame;
 }
 
-class WebFramePolicyListener : public IWebPolicyDecisionListener, public IWebFormSubmissionListener {
+class WebFramePolicyListener final : public IWebPolicyDecisionListener, public IWebFormSubmissionListener {
 public:
     static WebFramePolicyListener* createInstance(RefPtr<WebCore::Frame>&&);
 protected:

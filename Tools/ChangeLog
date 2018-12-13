@@ -1,3 +1,18 @@
+2018-12-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang][WebKitLegacy] WebFrame.cpp: warning: delete called on non-final 'WebFrame' that has virtual functions but non-virtual destructor [-Wdelete-non-virtual-dtor]
+        https://bugs.webkit.org/show_bug.cgi?id=192618
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/win/DRTDataObject.cpp:
+        * DumpRenderTree/win/DRTDataObject.h:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.h:
+        * DumpRenderTree/win/DRTDropSource.h:
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/PolicyDelegate.h:
+        * DumpRenderTree/win/UIDelegate.h:
+
 2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make TextInputController.legacyAttributedString take DOM nodes and offsets

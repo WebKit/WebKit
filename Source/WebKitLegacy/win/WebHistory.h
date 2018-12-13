@@ -41,7 +41,7 @@ class PageGroup;
 class WebPreferences;
 class WebVisitedLinkStore;
 
-class WebHistory : public IWebHistory, public IWebHistoryPrivate {
+class WebHistory final : public IWebHistory, public IWebHistoryPrivate {
 public:
     static WebHistory* createInstance();
 private:

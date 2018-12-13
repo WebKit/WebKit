@@ -32,7 +32,7 @@
 
 #include "WebKit.h"
 
-class WebInspectorDelegate : public IWebUIDelegate {
+class WebInspectorDelegate final : public IWebUIDelegate {
 public:
     static WebInspectorDelegate* createInstance();
 

@@ -33,7 +33,7 @@
 
 #include "WebKit.h"
 
-class WebWorkersPrivate : public IWebWorkersPrivate {
+class WebWorkersPrivate final : public IWebWorkersPrivate {
 public:
     static WebWorkersPrivate* createInstance();
 private:

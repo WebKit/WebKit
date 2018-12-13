@@ -28,7 +28,7 @@
 
 #include "WebKit.h"
 
-class WebKitMessageLoop : public IWebKitMessageLoop {
+class WebKitMessageLoop final : public IWebKitMessageLoop {
 public:
     WebKitMessageLoop();
     ~WebKitMessageLoop();

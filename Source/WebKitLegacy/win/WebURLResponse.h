@@ -28,7 +28,7 @@
 #include "WebKit.h"
 #include <WebCore/ResourceResponse.h>
 
-class WebURLResponse : public IWebHTTPURLResponse, IWebURLResponsePrivate
+class WebURLResponse final : public IWebHTTPURLResponse, IWebURLResponsePrivate
 {
 public:
     static WebURLResponse* createInstance();

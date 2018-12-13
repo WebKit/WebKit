@@ -32,7 +32,7 @@
 #include <CFNetwork/CFURLDownloadPriv.h>
 #endif
 
-class DefaultDownloadDelegate : public IWebDownloadDelegate
+class DefaultDownloadDelegate final : public IWebDownloadDelegate
 {
 public:
     static DefaultDownloadDelegate* sharedInstance();

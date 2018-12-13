@@ -36,7 +36,7 @@ class WebInspectorClient;
 class WebInspectorFrontendClient;
 class WebView;
 
-class WebInspector : public IWebInspector, public IWebInspectorPrivate {
+class WebInspector final : public IWebInspector, public IWebInspectorPrivate {
     WTF_MAKE_NONCOPYABLE(WebInspector);
 public:
     static WebInspector* createInstance(WebView* inspectedWebView, WebInspectorClient*);

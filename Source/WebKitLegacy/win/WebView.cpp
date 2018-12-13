@@ -282,7 +282,7 @@ static String localStorageDatabasePath(WebPreferences* preferences)
     return toString(localStorageDatabasePath);
 }
 
-class PreferencesChangedOrRemovedObserver : public IWebNotificationObserver {
+class PreferencesChangedOrRemovedObserver final : public IWebNotificationObserver {
 public:
     static PreferencesChangedOrRemovedObserver* sharedInstance();
 
@@ -7385,7 +7385,7 @@ void WebView::flushPendingGraphicsLayerChanges()
 }
 #endif
 
-class EnumTextMatches : public IEnumTextMatches
+class EnumTextMatches final : public IEnumTextMatches
 {
     long m_ref;
     UINT m_index;

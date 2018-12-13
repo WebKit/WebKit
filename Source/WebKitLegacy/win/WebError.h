@@ -30,7 +30,7 @@
 #include <WebCore/ResourceError.h>
 #include <wtf/RetainPtr.h>
 
-class WebError : public IWebError, IWebErrorPrivate {
+class WebError final : public IWebError, IWebErrorPrivate {
 public:
     static WebError* createInstance(const WebCore::ResourceError&, IPropertyBag* userInfo = 0);
     static WebError* createInstance();

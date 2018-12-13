@@ -31,7 +31,7 @@
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 
-class WebNavigationData : public IWebNavigationData {
+class WebNavigationData final : public IWebNavigationData {
 public:
     static WebNavigationData* createInstance(const WTF::String& url, const WTF::String& title, IWebURLRequest*, IWebURLResponse*, bool hasSubstituteData, const WTF::String& clientRedirectSource);
 private:

@@ -85,7 +85,7 @@ interface ID2D1HwndRenderTarget;
 interface ID2D1RenderTarget;
 #endif
 
-class WebView 
+class WebView final
     : public IWebView
     , public IWebViewPrivate5
     , public IWebIBActions

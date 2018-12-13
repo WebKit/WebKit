@@ -44,7 +44,7 @@ inline WebURLRequestCachePolicy kit(WebCore::ResourceRequestCachePolicy policy)
     return static_cast<WebURLRequestCachePolicy>(policy);
 }
 
-class WebMutableURLRequest : public IWebMutableURLRequest, IWebMutableURLRequestPrivate
+class WebMutableURLRequest final : public IWebMutableURLRequest, IWebMutableURLRequestPrivate
 {
 public:
     static WebMutableURLRequest* createInstance();

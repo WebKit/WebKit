@@ -28,7 +28,7 @@
 
 #include <unknwn.h>
 
-class WebKitClassFactory : public IClassFactory
+class WebKitClassFactory final : public IClassFactory
 {
 public:
     WebKitClassFactory(CLSID targetClass);

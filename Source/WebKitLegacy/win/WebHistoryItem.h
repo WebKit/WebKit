@@ -38,7 +38,7 @@ namespace WebCore {
 
 //-----------------------------------------------------------------------------
 
-class WebHistoryItem : public IWebHistoryItem, IWebHistoryItemPrivate
+class WebHistoryItem final : public IWebHistoryItem, IWebHistoryItemPrivate
 {
 public:
     static WebHistoryItem* createInstance();

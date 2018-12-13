@@ -63,7 +63,7 @@ public:
 
 // WebEditorUndoTarget -------------------------------------------------------------
 
-class WebEditorUndoTarget : public IWebUndoTarget
+class WebEditorUndoTarget final : public IWebUndoTarget
 {
 public:
     WebEditorUndoTarget();
@@ -508,7 +508,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* e)
     }
 }
 
-class WebEditorUndoCommand : public IWebUndoCommand
+class WebEditorUndoCommand final : public IWebUndoCommand
 {
 public:
     WebEditorUndoCommand(UndoStep&, bool isUndo);

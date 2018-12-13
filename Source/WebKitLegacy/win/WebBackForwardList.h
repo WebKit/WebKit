@@ -33,7 +33,7 @@
 
 class BackForwardList;
 
-class WebBackForwardList : public IWebBackForwardList, IWebBackForwardListPrivate
+class WebBackForwardList final : public IWebBackForwardList, IWebBackForwardListPrivate
 {
 public:
     static WebBackForwardList* createInstance(RefPtr<BackForwardList>&&);

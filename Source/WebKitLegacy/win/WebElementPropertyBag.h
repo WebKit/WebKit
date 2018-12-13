@@ -32,7 +32,7 @@ namespace WebCore {
     class HitTestResult;
 }
 
-class WebElementPropertyBag : public IPropertyBag
+class WebElementPropertyBag final : public IPropertyBag
 {
 public:
     static WebElementPropertyBag* createInstance(const WebCore::HitTestResult&);

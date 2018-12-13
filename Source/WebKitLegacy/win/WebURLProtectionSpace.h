@@ -29,7 +29,7 @@
 #include "WebKit.h"
 #include <WebCore/ProtectionSpace.h>
 
-class WebURLProtectionSpace : public IWebURLProtectionSpace
+class WebURLProtectionSpace final : public IWebURLProtectionSpace
 {
 public:
     static WebURLProtectionSpace* createInstance();

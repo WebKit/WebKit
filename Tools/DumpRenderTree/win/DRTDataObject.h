@@ -44,7 +44,7 @@ struct StgMediumDeleter {
     }
 };
 
-class DRTDataObject : public IDataObject {
+class DRTDataObject final : public IDataObject {
 public:
     void CopyMedium(STGMEDIUM* pMedDest, STGMEDIUM* pMedSrc, FORMATETC* pFmtSrc);
 

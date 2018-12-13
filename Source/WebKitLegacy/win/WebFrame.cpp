@@ -758,7 +758,7 @@ HRESULT WebFrame::parentFrame(_COM_Outptr_opt_ IWebFrame** frame)
     return hr;
 }
 
-class EnumChildFrames : public IEnumVARIANT
+class EnumChildFrames final : public IEnumVARIANT
 {
 public:
     EnumChildFrames(Frame* f)
