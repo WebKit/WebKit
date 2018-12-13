@@ -1,3 +1,30 @@
+2018-12-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Object.keys by caching own keys results in StructureRareData
+        https://bugs.webkit.org/show_bug.cgi?id=190047
+
+        Reviewed by Keith Miller.
+
+        * stress/object-keys-cached-zero.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-keys-changed-attribute.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-keys-changed-index.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-keys-changed.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-keys-indexed-non-cache.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-keys-overrides-get-property-names.js: Added.
+        (shouldBe):
+        (test):
+        (noInline):
+
 2018-12-12  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [DFG][FTL] Add NewSymbol

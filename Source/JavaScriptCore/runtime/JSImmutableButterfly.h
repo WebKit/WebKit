@@ -67,6 +67,11 @@ public:
         return array;
     }
 
+    static JSImmutableButterfly* createSentinel(VM& vm)
+    {
+        return create(vm, CopyOnWriteArrayWithContiguous, 0);
+    }
+
     unsigned publicLength() const { return m_header.publicLength(); }
     unsigned vectorLength() const { return m_header.vectorLength(); }
     unsigned length() const { return m_header.publicLength(); }

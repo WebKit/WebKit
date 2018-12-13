@@ -667,6 +667,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CreateThis:
     case InstanceOf:
     case StringValueOf:
+    case ObjectKeys:
         read(World);
         write(Heap);
         return;
@@ -1527,7 +1528,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             return;
         }
     }
-
 
     case NewObject:
     case NewRegexp:

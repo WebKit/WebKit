@@ -571,6 +571,7 @@ public:
     Strong<JSCell> emptyPropertyNameEnumerator;
     Strong<JSCell> sentinelSetBucket;
     Strong<JSCell> sentinelMapBucket;
+    Strong<JSCell> sentinelImmutableButterfly;
 
     std::unique_ptr<PromiseDeferredTimer> promiseDeferredTimer;
     

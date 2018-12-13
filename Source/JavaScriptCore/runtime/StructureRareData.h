@@ -58,7 +58,10 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
-    Structure* previousID() const;
+    Structure* previousID() const
+    {
+        return m_previous.get();
+    }
     void setPreviousID(VM&, Structure*);
     void clearPreviousID();
 
@@ -68,10 +71,19 @@ public:
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
 
+    JSImmutableButterfly* cachedOwnKeys() const;
+    JSImmutableButterfly* cachedOwnKeysConcurrently() const;
+    void setCachedOwnKeys(VM&, JSImmutableButterfly*);
+
     Box<InlineWatchpointSet> copySharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     const Box<InlineWatchpointSet>& sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     void setSharedPolyProtoWatchpoint(Box<InlineWatchpointSet>&& sharedPolyProtoWatchpoint) { m_polyProtoWatchpoint = WTFMove(sharedPolyProtoWatchpoint); }
     bool hasSharedPolyProtoWatchpoint() const { return static_cast<bool>(m_polyProtoWatchpoint); }
+
+    static ptrdiff_t offsetOfCachedOwnKeys()
+    {
+        return OBJECT_OFFSETOF(StructureRareData, m_cachedOwnKeys);
+    }
 
     DECLARE_EXPORT_INFO;
 
@@ -86,7 +98,10 @@ private:
 
     WriteBarrier<Structure> m_previous;
     WriteBarrier<JSString> m_objectToStringValue;
+    // FIXME: We should have some story for clearing these property names caches in GC.
+    // https://bugs.webkit.org/show_bug.cgi?id=192659
     WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
+    WriteBarrier<JSImmutableButterfly> m_cachedOwnKeys;
 
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;

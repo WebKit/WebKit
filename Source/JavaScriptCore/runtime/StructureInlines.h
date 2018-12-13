@@ -219,6 +219,29 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
+inline void Structure::setCachedOwnKeys(VM& vm, JSImmutableButterfly* ownKeys)
+{
+    ensureRareData(vm)->setCachedOwnKeys(vm, ownKeys);
+}
+
+inline JSImmutableButterfly* Structure::cachedOwnKeys() const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedOwnKeys();
+}
+
+inline bool Structure::canCacheOwnKeys() const
+{
+    if (isDictionary())
+        return false;
+    if (hasIndexedProperties(indexingType()))
+        return false;
+    if (typeInfo().overridesGetPropertyNames())
+        return false;
+    return true;
+}
+
 ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObject, const Structure* structure)
 {
     ASSERT(!structure->isObject());

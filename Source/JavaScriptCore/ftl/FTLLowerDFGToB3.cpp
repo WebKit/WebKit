@@ -863,6 +863,9 @@ private:
         case ObjectCreate:
             compileObjectCreate();
             break;
+        case ObjectKeys:
+            compileObjectKeys();
+            break;
         case NewObject:
             compileNewObject();
             break;
@@ -5483,6 +5486,75 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         setInt32(m_out.phi(Int32, zeroLengthResult, nonZeroLengthResult));
+    }
+
+    void compileObjectKeys()
+    {
+        switch (m_node->child1().useKind()) {
+        case ObjectUse: {
+            if (m_graph.isWatchingHavingABadTimeWatchpoint(m_node)) {
+                LBasicBlock notNullCase = m_out.newBlock();
+                LBasicBlock rareDataCase = m_out.newBlock();
+                LBasicBlock notNullCacheCase = m_out.newBlock();
+                LBasicBlock useCacheCase = m_out.newBlock();
+                LBasicBlock slowButArrayBufferCase = m_out.newBlock();
+                LBasicBlock slowCase = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                LValue object = lowObject(m_node->child1());
+                LValue structure = loadStructure(object);
+                LValue previousOrRareData = m_out.loadPtr(structure, m_heaps.Structure_previousOrRareData);
+                m_out.branch(m_out.notNull(previousOrRareData), unsure(notNullCase), unsure(slowCase));
+
+                LBasicBlock lastNext = m_out.appendTo(notNullCase, rareDataCase);
+                m_out.branch(
+                    m_out.notEqual(m_out.load32(previousOrRareData, m_heaps.JSCell_structureID), m_out.constInt32(m_graph.m_vm.structureStructure->structureID())),
+                    unsure(rareDataCase), unsure(slowCase));
+
+                m_out.appendTo(rareDataCase, notNullCacheCase);
+                LValue cachedOwnKeys = m_out.loadPtr(previousOrRareData, m_heaps.StructureRareData_cachedOwnKeys);
+                m_out.branch(m_out.notNull(cachedOwnKeys), unsure(notNullCacheCase), unsure(slowCase));
+
+                m_out.appendTo(notNullCacheCase, useCacheCase);
+                m_out.branch(m_out.notEqual(cachedOwnKeys, weakPointer(m_graph.m_vm.sentinelImmutableButterfly.get())), unsure(useCacheCase), unsure(slowCase));
+
+                m_out.appendTo(useCacheCase, slowButArrayBufferCase);
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+                RegisteredStructure arrayStructure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
+                LValue fastArray = allocateObject<JSArray>(arrayStructure, m_out.addPtr(cachedOwnKeys, JSImmutableButterfly::offsetOfData()), slowButArrayBufferCase);
+                ValueFromBlock fastResult = m_out.anchor(fastArray);
+                m_out.jump(continuation);
+
+                m_out.appendTo(slowButArrayBufferCase, slowCase);
+                LValue slowArray = vmCall(Int64, m_out.operation(operationNewArrayBuffer), m_callFrame, weakStructure(arrayStructure), cachedOwnKeys);
+                ValueFromBlock slowButArrayBufferResult = m_out.anchor(slowArray);
+                m_out.jump(continuation);
+
+                m_out.appendTo(slowCase, continuation);
+                VM& vm = this->vm();
+                LValue slowResultValue = lazySlowPath(
+                    [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                        return createLazyCallGenerator(vm,
+                            operationObjectKeysObject, locations[0].directGPR(), locations[1].directGPR());
+                    },
+                    object);
+                ValueFromBlock slowResult = m_out.anchor(slowResultValue);
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setJSValue(m_out.phi(pointerType(), fastResult, slowButArrayBufferResult, slowResult));
+                break;
+            }
+            setJSValue(vmCall(Int64, m_out.operation(operationObjectKeysObject), m_callFrame, lowObject(m_node->child1())));
+            break;
+        }
+        case UntypedUse:
+            setJSValue(vmCall(Int64, m_out.operation(operationObjectKeys), m_callFrame, lowJSValue(m_node->child1())));
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     void compileObjectCreate()
