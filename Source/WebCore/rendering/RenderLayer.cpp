@@ -6702,7 +6702,10 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
 
     auto layerRect = layer.rect();
 
-    stream << &layer << " " << layerRect << " " << layer.name();
+    stream << &layer << " " << layerRect;
+    if (layer.isComposited())
+        stream << " (layerID " << layer.backing()->graphicsLayer()->primaryLayerID() << ")";
+    stream << " " << layer.name();
     stream.nextLine();
 
     const_cast<WebCore::RenderLayer&>(layer).updateLayerListsIfNeeded();

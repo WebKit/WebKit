@@ -1184,6 +1184,8 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
     bool requireDescendantTraversal = layer.hasDescendantNeedingUpdateBackingOrHierarchyTraversal()
         || (layer.hasCompositingDescendant() && (!layerBacking || layer.needsCompositingLayerConnection() || !updateLevel.isEmpty()));
+    
+    bool requiresChildRebuild = layerBacking && layer.needsCompositingLayerConnection() && !layer.hasCompositingDescendant();
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
@@ -1208,11 +1210,11 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         
         for (auto* renderLayer : layer.positiveZOrderLayers())
             updateBackingAndHierarchy(*renderLayer, childList, updateLevel, depth + 1);
-    } else
+    } else if (requiresChildRebuild)
         appendForegroundLayerIfNecessary();
 
     if (layerBacking) {
-        if (requireDescendantTraversal) {
+        if (requireDescendantTraversal || requiresChildRebuild) {
             bool parented = false;
             if (is<RenderWidget>(layer.renderer()))
                 parented = parentFrameContentLayers(&downcast<RenderWidget>(layer.renderer()));
@@ -1236,7 +1238,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
         childLayersOfEnclosingLayer.append(*layerBacking->childForSuperlayers());
 
-        layerBacking->updateAfterDescendants(); // FIXME: validate.
+        layerBacking->updateAfterDescendants();
     }
     
     layer.clearUpdateBackingOrHierarchyTraversalState();

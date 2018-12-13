@@ -1,3 +1,27 @@
+2018-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238357): Pins on Yelp map disappear
+        https://bugs.webkit.org/show_bug.cgi?id=192597
+        rdar://problem/46578285
+
+        Reviewed by Zalan Bujtas.
+
+        RenderLayerCompositor::updateBackingAndHierarchy() had a bug where if a RenderLayer gained
+        a negative z-order child (triggering creation of a foreground layer), we'd fail to 
+        call the "setChildren()" with the vector containing that foreground layer.
+        
+        When updateBackingAndHierarchy() stops visiting descendants because none are composited,
+        it may still have to update the child list with the foreground layer, so make sure
+        the code handles this case.
+
+        Tests: compositing/z-order/add-negative-z-child.html
+               compositing/z-order/rebuild-sibling-of-layer-with-foreground-layer.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+
 2018-12-12  YUHAN WU  <yuhan_wu@apple.com>
 
         Implement non-timeslice mode encoding for MediaRecorder
