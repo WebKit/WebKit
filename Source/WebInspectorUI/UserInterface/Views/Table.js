@@ -338,8 +338,8 @@ WI.Table = class Table extends WI.View
         if (this.isRowSelected(rowIndex))
             this.deselectRow(rowIndex);
 
-        this._removeRows(new WI.IndexSet([rowIndex]));
-        this._selectionController.didRemoveItem(rowIndex);
+        let rowIndexes = new WI.IndexSet([rowIndex]);
+        this._removeRows(rowIndexes);
     }
 
     removeSelectedRows()
@@ -1392,6 +1392,8 @@ WI.Table = class Table extends WI.View
 
         this._cachedNumberOfRows -= removed;
         console.assert(this._cachedNumberOfRows >= 0);
+
+        this._selectionController.didRemoveItems(rowIndexes);
 
         if (this._delegate.tableDidRemoveRows) {
             this._delegate.tableDidRemoveRows(this, Array.from(rowIndexes));

@@ -295,12 +295,6 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
             child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
-        // Update the SelectionController before attaching the TreeElement.
-        // Attaching the TreeElement can cause it to become selected, and
-        // added to the SelectionController.
-        let insertionIndex = this.treeOutline._indexOfTreeElement(child) || 0;
-        this.treeOutline._selectionController.didInsertItem(insertionIndex);
-
         if (this._childrenListNode)
             child._attach();
 
@@ -318,9 +312,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             return;
 
         let child = this.children[childIndex];
-        this.children.splice(childIndex, 1);
-
         let parent = child.parent;
+
         if (child.deselect(suppressOnDeselect)) {
             if (child.previousSibling && !suppressSelectSibling)
                 child.previousSibling.select(true, false);
@@ -330,17 +323,18 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 parent.select(true, false);
         }
 
+        let treeOutline = child.treeOutline;
+        if (treeOutline) {
+            treeOutline._forgetTreeElement(child);
+            treeOutline._forgetChildrenRecursive(child);
+        }
+
         if (child.previousSibling)
             child.previousSibling.nextSibling = child.nextSibling;
         if (child.nextSibling)
             child.nextSibling.previousSibling = child.previousSibling;
 
-        let treeOutline = child.treeOutline;
-        if (treeOutline) {
-            treeOutline._forgetTreeElement(child);
-            treeOutline._forgetChildrenRecursive(child);
-            treeOutline._selectionController.didRemoveItem(childIndex);
-        }
+        this.children.splice(childIndex, 1);
 
         child._detach();
         child.treeOutline = null;
@@ -374,7 +368,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     removeChildren(suppressOnDeselect)
     {
-        for (let child of this.children) {
+        while (this.children.length) {
+            let child = this.children[0];
             child.deselect(suppressOnDeselect);
 
             let treeOutline = child.treeOutline;
@@ -391,9 +386,9 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
             if (treeOutline)
                 treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementRemoved, {element: child});
-        }
 
-        this.children = [];
+            this.children.shift();
+        }
     }
 
     _rememberTreeElement(element)
@@ -409,6 +404,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         // add the element
         elements.push(element);
         this._cachedNumberOfDescendents++;
+
+        let index = this._indexOfTreeElement(element);
+        if (index >= 0)
+            this._selectionController.didInsertItem(index);
     }
 
     _forgetTreeElement(element)
@@ -418,6 +417,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             this.selectedTreeElement = null;
         }
         if (this._knownTreeElements[element.identifier]) {
+            let index = this._indexOfTreeElement(element);
+            if (index >= 0)
+                this._selectionController.didRemoveItems(new WI.IndexSet([index]));
+
             this._knownTreeElements[element.identifier].remove(element, true);
             this._cachedNumberOfDescendents--;
         }
@@ -1030,7 +1033,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             ++index;
         }
 
-        console.assert(false, "Unable to get index for tree element.", treeElement, treeOutline);
+        console.assert(false, "Unable to get index for tree element.", treeElement);
         return NaN;
     }
 

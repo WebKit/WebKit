@@ -1,3 +1,38 @@
+2018-12-13  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Table selection becomes corrupted when deleting selected cookies
+        https://bugs.webkit.org/show_bug.cgi?id=192388
+        <rdar://problem/46472364>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController):
+        (WI.SelectionController.prototype.didRemoveItems):
+        (WI.SelectionController.prototype._updateSelectedItems):
+        (WI.SelectionController.prototype.didRemoveItem): Deleted.
+        Replace `didRemoveItem` with a method taking an IndexSet. Calling the
+        single-index version while iterating over multiple rows in ascending
+        order is unsafe, a detail best left to the SelectionController.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table.prototype.removeRow):
+        (WI.Table.prototype._removeRows):
+        Notify SelectionController of removed rows.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.insertChild):
+        (WI.TreeOutline.prototype.removeChildAtIndex):
+        Remove the child from the element's `children` after calling `_forgetTreeElement`,
+        which needs to calculate the child's index to pass to the SelectionController.
+
+        (WI.TreeOutline.prototype.removeChildren):
+        Remove child items during iteration so that `children` doesn't contain
+        detached TreeElements while calling `_forgetTreeElement`.
+
+        (WI.TreeOutline.prototype._rememberTreeElement):
+        (WI.TreeOutline.prototype._forgetTreeElement):
+
 2018-12-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r238599): unable to select specific timeline

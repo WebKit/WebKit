@@ -13,6 +13,11 @@ Given a Table with selected rows [0], remove row 0.
 Selection changed to [] before removing row 0.
 PASS: Should remove row 0.
 
+-- Running test case: Table.RemoveRow.PrecedingSelected
+Given a Table with selected rows [1,3], remove row 0.
+PASS: Should remove row 0.
+PASS: Selected row indexes should be adjusted.
+
 -- Running test case: Table.RemoveSelectedRows.Single.SelectFollowing
 Given a Table with selected rows [0]:
  * Row 0

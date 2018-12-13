@@ -134,6 +134,24 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "Table.RemoveRow.PrecedingSelected",
+        description: "Remove a row preceding the selection, causing the selection to shift up.",
+        test() {
+            let testDelegate = new RemoveRowTestDelegate;
+            let table = InspectorTest.createTableWithDelegate(testDelegate, numberOfRows);
+            table.allowsMultipleSelection = true;
+
+            table.selectRow(1);
+            table.selectRow(3, true);
+            testDelegate.triggerRemoveRow(table, 0);
+
+            InspectorTest.expectShallowEqual(table.selectedRows, [0, 2], "Selected row indexes should be adjusted.");
+
+            return true;
+        }
+    });
+
     function addTestCase({name, description, rowIndexes}) {
         suite.addTestCase({
             name, description,
