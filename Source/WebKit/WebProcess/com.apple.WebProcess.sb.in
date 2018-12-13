@@ -586,6 +586,7 @@
        (global-name "com.apple.cmio.registerassistantservice") ;; Needed by CoreMedia for plugin drivers
        (global-name "com.apple.cookied")
        (global-name "com.apple.coreservices.launchservicesd")
+       (global-name "com.apple.diagnosticd")
        (global-name "com.apple.fonts")
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
@@ -595,8 +596,10 @@
        (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.mobileassetd")
        (global-name "com.apple.powerlog.plxpclogger.xpc")
+       (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.tccd")
+       (global-name "com.apple.tccd.system")
        (global-name "com.apple.trustd.agent")
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
        (global-name "com.apple.CARenderServer") ; Needed for [CAContext remoteContextWithOptions]
@@ -616,7 +619,6 @@
     ; "com.apple.coremedia.endpointpicker.xpc" can be removed when <rdar://problem/30081582> is resolved.
     (global-name "com.apple.coremedia.endpointpicker.xpc")
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
-    (global-name "com.apple.diagnosticd")
     (global-name "com.apple.dock.server")
     (global-name "com.apple.dyld.closured")
     ;; OpenGL memory debugging
@@ -626,11 +628,9 @@
     (xpc-service-name "com.apple.ist.ds.appleconnect2.HelperService")
     (xpc-service-name "com.apple.signpost.signpost-notificationd")
 #endif
-    (global-name "com.apple.speech.speechsynthesisd")
     (global-name "com.apple.speech.synthesis.console")
     (global-name "com.apple.system.DirectoryService.libinfo_v1")
     (global-name "com.apple.system.opendirectoryd.api")
-    (global-name "com.apple.tccd.system")
     (global-name "com.apple.trustd")
     (global-name "com.apple.window_proxies")
     (global-name "com.apple.xpc.activity.unmanaged")
