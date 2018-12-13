@@ -1,3 +1,13 @@
+2018-12-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueDiv into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186178
+
+        Reviewed by Yusuke Suzuki.
+
+        * BigIntBench/big-int-simple-div.js: Added.
+        * BigIntBench/value-div-type-propagation.js: Added.
+
 2018-12-10  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueMul into DFG

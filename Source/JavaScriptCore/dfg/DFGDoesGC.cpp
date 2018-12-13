@@ -104,6 +104,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValueSub:
     case ValueMul:
     case ValueNegate:
+    case ValueDiv:
     case TryGetById:
     case GetById:
     case GetByIdFlush:

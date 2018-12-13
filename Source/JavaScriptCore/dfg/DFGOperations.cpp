@@ -1345,11 +1345,22 @@ JSCell* JIT_OPERATION operationMulBigInt(ExecState* exec, JSCell* op1, JSCell* o
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
+
+    JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
+    JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
+
+    return JSBigInt::multiply(exec, leftOperand, rightOperand);
+}
+    
+JSCell* JIT_OPERATION operationDivBigInt(ExecState* exec, JSCell* op1, JSCell* op2)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
     
     JSBigInt* leftOperand = jsCast<JSBigInt*>(op1);
     JSBigInt* rightOperand = jsCast<JSBigInt*>(op2);
     
-    return JSBigInt::multiply(exec, leftOperand, rightOperand);
+    return JSBigInt::divide(exec, leftOperand, rightOperand);
 }
 
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState* exec, JSCell* op1, JSCell* op2)

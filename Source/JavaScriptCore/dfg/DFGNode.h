@@ -1131,8 +1131,7 @@ public:
     NodeFlags arithNodeFlags()
     {
         NodeFlags result = m_flags & NodeArithFlagsMask;
-        if (op() == ArithMul || op() == ArithDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == ArithRound || op() == ArithFloor || op() == ArithCeil || op() == ArithTrunc || op() == DoubleAsInt32 || op() == ValueNegate
-            || op() == ValueMul)
+        if (op() == ArithMul || op() == ArithDiv || op() == ValueDiv || op() == ArithMod || op() == ArithNegate || op() == ArithPow || op() == ArithRound || op() == ArithFloor || op() == ArithCeil || op() == ArithTrunc || op() == DoubleAsInt32 || op() == ValueNegate || op() == ValueMul || op() == ValueDiv)
             return result;
         return result & ~NodeBytecodeNeedsNegZero;
     }

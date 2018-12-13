@@ -355,6 +355,7 @@ private:
             break;
         }
 
+        case ValueDiv:
         case ArithDiv:
         case ArithMod: {
             SpeculatedType left = node->child1()->prediction();
@@ -367,8 +368,15 @@ private:
                         changed |= mergePrediction(SpecInt32Only);
                     else
                         changed |= mergePrediction(SpecBytecodeDouble);
-                } else
+                } else if (op == ValueDiv && isBigIntSpeculation(left) && isBigIntSpeculation(right))
+                    changed |= mergePrediction(SpecBigInt);
+                else {
                     changed |= mergePrediction(SpecInt32Only | SpecBytecodeDouble);
+                    if (op == ValueDiv && (node->mayHaveBigIntResult()
+                        || (left & SpecBigInt)
+                        || (right & SpecBigInt)))
+                        changed |= mergePrediction(SpecBigInt);
+                }
             }
             break;
         }
@@ -600,6 +608,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithMod:
+        case ValueDiv:
         case ArithDiv: {
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
@@ -1114,6 +1123,7 @@ private:
         case ValueAdd:
         case ValueSub:
         case ValueMul:
+        case ValueDiv:
         case ArithAdd:
         case ArithSub:
         case ArithNegate:

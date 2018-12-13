@@ -914,6 +914,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case ValueDiv: {
+        clobberWorld();
+        if (node->binaryUseKind() == BigIntUse)
+            setTypeForNode(node, SpecBigInt);
+        else
+            setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
+        break;
+    }
+
     case ArithDiv: {
         JSValue left = forNode(node->child1()).value();
         JSValue right = forNode(node->child2()).value();
@@ -941,10 +950,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setNonCellTypeForNode(node, 
                 typeOfDoubleQuotient(
                     forNode(node->child1()).m_type, forNode(node->child2()).m_type));
-            break;
-        case UntypedUse:
-            clobberWorld();
-            setNonCellTypeForNode(node, SpecBytecodeNumber);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

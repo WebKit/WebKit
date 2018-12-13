@@ -1005,7 +1005,7 @@ private:
     
     Node* makeDivSafe(Node* node)
     {
-        ASSERT(node->op() == ArithDiv);
+        ASSERT(node->op() == ArithDiv || node->op() == ValueDiv);
         
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             node->mergeFlags(NodeMayOverflowInt32InDFG);
@@ -1024,6 +1024,10 @@ private:
         // FIXME: It might be possible to make this more granular.
         node->mergeFlags(NodeMayOverflowInt32InBaseline | NodeMayNegZeroInBaseline);
         
+        ArithProfile* arithProfile = m_inlineStackTop->m_profiledBlock->arithProfileForBytecodeOffset(m_currentIndex);
+        if (arithProfile->didObserveBigInt())
+            node->mergeFlags(NodeMayHaveBigIntResult);
+
         return node;
     }
     
@@ -5073,7 +5077,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpDiv>();
             Node* op1 = get(bytecode.lhs);
             Node* op2 = get(bytecode.rhs);
-            set(bytecode.dst, makeDivSafe(addToGraph(ArithDiv, op1, op2)));
+            if (op1->hasNumberResult() && op2->hasNumberResult())
+                set(bytecode.dst, makeDivSafe(addToGraph(ArithDiv, op1, op2)));
+            else
+                set(bytecode.dst, makeDivSafe(addToGraph(ValueDiv, op1, op2)));
             NEXT_OPCODE(op_div);
         }
 

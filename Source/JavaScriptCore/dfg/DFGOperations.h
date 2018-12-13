@@ -168,6 +168,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState*, JSGlobalObject*, Enc
 size_t JIT_OPERATION operationCompareStrictEqCell(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationSubBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationMulBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationDivBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitAndBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationBitOrBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationAddBigInt(ExecState*, JSCell* op1, JSCell* op2) WTF_INTERNAL;

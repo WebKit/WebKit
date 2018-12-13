@@ -613,6 +613,9 @@ private:
         case ArithMul:
             compileArithMul();
             break;
+        case ValueDiv:
+            compileValueDiv();
+            break;
         case ArithDiv:
             compileArithDiv();
             break;
@@ -2286,6 +2289,20 @@ private:
         }
     }
 
+    void compileValueDiv()
+    {
+        if (m_node->isBinaryUseKind(BigIntUse)) {
+            LValue left = lowBigInt(m_node->child1());
+            LValue right = lowBigInt(m_node->child2());
+            
+            LValue result = vmCall(pointerType(), m_out.operation(operationDivBigInt), m_callFrame, left, right);
+            setJSValue(result);
+            return;
+        }
+
+        emitBinarySnippet<JITDivGenerator, NeedScratchFPR>(operationValueDiv);
+    }
+
     void compileArithDiv()
     {
         switch (m_node->binaryUseKind()) {
@@ -2341,11 +2358,6 @@ private:
         case DoubleRepUse: {
             setDouble(m_out.doubleDiv(
                 lowDouble(m_node->child1()), lowDouble(m_node->child2())));
-            break;
-        }
-
-        case UntypedUse: {
-            emitBinarySnippet<JITDivGenerator, NeedScratchFPR>(operationValueDiv);
             break;
         }
 
@@ -2873,7 +2885,7 @@ private:
     {
         if (m_node->child1().useKind() == UntypedUse) {
             LValue operand = lowJSValue(m_node->child1());
-            LValue result = vmCall(pointerType(), m_out.operation(operationValueBitNot), m_callFrame, operand);
+            LValue result = vmCall(Int64, m_out.operation(operationValueBitNot), m_callFrame, operand);
             setJSValue(result);
             return;
         }

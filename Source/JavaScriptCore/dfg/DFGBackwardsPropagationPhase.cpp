@@ -346,6 +346,7 @@ private:
             break;
         }
             
+        case ValueDiv:
         case ArithDiv: {
             flags |= NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero;
             flags &= ~NodeBytecodeUsesAsOther;

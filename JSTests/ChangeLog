@@ -1,3 +1,14 @@
+2018-12-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] Add ValueDiv into DFG
+        https://bugs.webkit.org/show_bug.cgi?id=186178
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/big-int-div-jit-osr.js: Added.
+        * stress/big-int-div-jit-untyped.js: Added.
+        * stress/value-div-fixup-int32-big-int.js: Added.
+
 2018-12-10  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Object.keys by caching own keys results in StructureRareData
