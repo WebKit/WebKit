@@ -1774,7 +1774,7 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 
 #if ENABLE(INTERSECTION_OBSERVER)
     if (auto* observerData = intersectionObserverData()) {
-        for (auto observer : observerData->observers) {
+        for (const auto& observer : observerData->observers) {
             if (observer->hasObservationTargets()) {
                 oldDocument.removeIntersectionObserver(*observer);
                 newDocument.addIntersectionObserver(*observer);
@@ -3392,11 +3392,11 @@ void Element::disconnectFromIntersectionObservers()
     if (!observerData)
         return;
 
-    for (auto& registration : observerData->registrations)
+    for (const auto& registration : observerData->registrations)
         registration.observer->targetDestroyed(*this);
     observerData->registrations.clear();
 
-    for (auto observer : observerData->observers)
+    for (const auto& observer : observerData->observers)
         observer->rootDestroyed();
     observerData->observers.clear();
 }

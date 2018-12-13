@@ -1,3 +1,21 @@
+2018-12-13  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: loop variable is copied but only used as const reference in Document.cpp, Element.cpp
+        <https://webkit.org/b/192661>
+        <rdar://problem/46694035>
+
+        Reviewed by Daniel Bates.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateIntersectionObservations):
+        (WebCore::Document::notifyIntersectionObserversTimerFired):
+        * dom/Element.cpp:
+        (WebCore::Element::didMoveToNewDocument):
+        (WebCore::Element::disconnectFromIntersectionObservers):
+        - Change loop variables from `auto` to `const auto&` to prevent
+          unnecessary copies of WeakPtr<IntersectionObserver> or
+          struct IntersectionObserverRegistration objects.
+
 2018-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Remove HarfBuzzFace

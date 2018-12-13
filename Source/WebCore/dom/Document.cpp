@@ -7815,7 +7815,7 @@ void Document::updateIntersectionObservations()
 
     m_needsForcedIntersectionObservationUpdate = false;
 
-    for (auto observer : m_intersectionObservers) {
+    for (const auto& observer : m_intersectionObservers) {
         bool needNotify = false;
         DOMHighResTimeStamp timestamp;
         if (!observer->createTimestamp(timestamp))
@@ -7904,7 +7904,7 @@ void Document::scheduleForcedIntersectionObservationUpdate()
 
 void Document::notifyIntersectionObserversTimerFired()
 {
-    for (auto observer : m_intersectionObserversWithPendingNotifications) {
+    for (const auto& observer : m_intersectionObserversWithPendingNotifications) {
         if (observer)
             observer->notify();
     }
