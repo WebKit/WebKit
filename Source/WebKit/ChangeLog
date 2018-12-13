@@ -1,3 +1,20 @@
+2018-12-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r239129 and r239131.
+        https://bugs.webkit.org/show_bug.cgi?id=192646
+
+        Casued macOS and iOS Debug testing to fail early (Requested by
+        Truitt on #webkit).
+
+        Reverted changesets:
+
+        "Unreviewed build fix for WinCairo Debug after r239080(?)."
+        https://trac.webkit.org/changeset/239129
+
+        "Unreviewed fix for Cocoa Debug test instability following
+        r239129."
+        https://trac.webkit.org/changeset/239131
+
 2018-12-12  Vivek Seth  <v_seth@apple.com>
 
         HTTPS Upgrade: Figure out if/how to tell clients that the HTTPS upgrade happened
