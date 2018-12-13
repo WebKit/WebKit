@@ -1,5 +1,9 @@
 <script>
 
+// One easy way to generate new expected results for this test: add a
+// waitUntilDone here, run with --no-timeout, attach with the Web Inspector,
+// and copy out the generated SVG path.
+
 if (!window.internals)
         document.write("This test must be run in a test runner.")
 
@@ -229,6 +233,35 @@ window.onload = function () {
         [30, 0, 20, 20],
         [15, 15, 35, 20],
         [0, 30, 50, 20]]);
+
+    // More than 20 (our shrinkwrapping limit):
+
+    testRects([580, 300], [
+        [0, 0, 1, 1],
+        [4, 0, 1, 1],
+        [8, 0, 1, 1],
+        [12, 0, 1, 1],
+        [16, 0, 1, 1],
+        [0, 4, 1, 1],
+        [4, 4, 1, 1],
+        [8, 4, 1, 1],
+        [12, 4, 1, 1],
+        [16, 4, 1, 1],
+        [0, 8, 1, 1],
+        [4, 8, 1, 1],
+        [8, 8, 1, 1],
+        [12, 8, 1, 1],
+        [16, 8, 1, 1],
+        [0, 12, 1, 1],
+        [4, 12, 1, 1],
+        [8, 12, 1, 1],
+        [12, 12, 1, 1],
+        [16, 12, 1, 1],
+        [0, 16, 1, 1],
+        [4, 16, 1, 1],
+        [8, 16, 1, 1],
+        [12, 16, 1, 1],
+        [16, 16, 1, 1]]);    
 }
 
 </script>

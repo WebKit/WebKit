@@ -1,3 +1,18 @@
+2018-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r237565): >20 Find in Page highlights in one tile results in a single giant highlight
+        https://bugs.webkit.org/show_bug.cgi?id=192642
+        <rdar://problem/46498246>
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests; adjusted an existing test instead.
+
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::PathUtilities::pathsWithShrinkWrappedRects):
+        Instead of uniting when we fail to shrink-wrap, just return the original rects.
+        This seems like a more reasonable default in most cases.
+
 2018-12-12  Vivek Seth  <v_seth@apple.com>
 
         HTTPS Upgrade: Figure out if/how to tell clients that the HTTPS upgrade happened

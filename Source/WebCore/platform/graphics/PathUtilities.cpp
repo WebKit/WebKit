@@ -291,7 +291,8 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
 
     if (rects.size() > 20) {
         Path path;
-        path.addRoundedRect(unionRect(rects), FloatSize(radius, radius));
+        for (const auto& rect : rects)
+            path.addRoundedRect(rect, FloatSize(radius, radius));
         paths.append(path);
         return paths;
     }
@@ -300,7 +301,8 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
     Vector<FloatPointGraph::Polygon> polys = polygonsForRect(rects, graph);
     if (polys.isEmpty()) {
         Path path;
-        path.addRoundedRect(unionRect(rects), FloatSize(radius, radius));
+        for (const auto& rect : rects)
+            path.addRoundedRect(rect, FloatSize(radius, radius));
         paths.append(path);
         return paths;
     }

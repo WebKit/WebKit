@@ -1,3 +1,15 @@
+2018-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r237565): >20 Find in Page highlights in one tile results in a single giant highlight
+        https://bugs.webkit.org/show_bug.cgi?id=192642
+        <rdar://problem/46498246>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/shrink-wrap/rect-shrink-wrap-expected.html:
+        * fast/shrink-wrap/rect-shrink-wrap.html:
+        Add a test case with >20 tiny rects.
+
 2018-12-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed manual rollout of r239100-r239102 and r239116
