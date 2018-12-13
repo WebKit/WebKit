@@ -275,7 +275,16 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
             documentLoader->setNavigationID(navigationID);
     }
 
+    bool shouldSuspend = false;
+    if (action == PolicyAction::Suspend) {
+        shouldSuspend = true;
+        action = PolicyAction::Ignore;
+    }
+
     function(action);
+
+    if (shouldSuspend)
+        page()->suspendForProcessSwap();
 }
 
 void WebFrame::startDownload(const WebCore::ResourceRequest& request, const String& suggestedName)

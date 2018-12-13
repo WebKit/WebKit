@@ -1,3 +1,54 @@
+2018-12-13  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We should not need to navigate to 'about:blank' to suspend pages
+        https://bugs.webkit.org/show_bug.cgi?id=192668
+        <rdar://problem/46701466>
+
+        Reviewed by Alex Christensen.
+
+        To support PageCache when process-swap on cross-site navigation is enabled,
+        we've been navigating the previous process to 'about:blank' when swapping.
+        This would trigger PageCaching of the page in the old process. While
+        convenient, this design has led to a lot of bugs because we did not really
+        want a navigation to happen in the old process.
+
+        To address the issue, when a WebPage is asked to suspend (for process-swap),
+        we now attempt to add it to PageCache and save it on the current HistoryItem,
+        *without* triggering any navigation. Any pending navigation gets cancelled
+        and we just suspend in place.
+
+        Later on, when we want to go back to this HistoryItem, we simply leverage the
+        existing WebPage::goToBackForwardItem() code path. The only subtlety is that
+        we're actually asking the WebPage to load a HistoryItem that is the current
+        one in the History. I had to tweak a some logic / assertions to support this
+        as this is not something we usually do. However, it actually works with very
+        little changes and successfully restores the PageCache entry on the current
+        HistoryItem.
+
+        There is no expected overall behavior change and ProcessSwap API tests (which
+        cover PageCache) still pass. This is merely a simpler design because it avoids
+        navigating to about:blank.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::didSuspend):
+        (WebKit::SuspendedPageProxy::didReceiveMessage):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSuspendAfterProcessSwap):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        * WebProcess/WebPage/WebDocumentLoader.cpp:
+        (WebKit::WebDocumentLoader::setNavigationID):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendForProcessSwap):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::origin):
+
 2018-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove with-report from 3 services that are currently needed on macOS

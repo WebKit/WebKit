@@ -515,7 +515,7 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
     ASSERT_UNUSED(resource, &resource == m_mainResource);
 #if ENABLE(SERVICE_WORKER)
     bool isRedirectionFromServiceWorker = redirectResponse.source() == ResourceResponse::Source::ServiceWorker;
-    willSendRequest(WTFMove(request), redirectResponse, ShouldContinue::Yes, [isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
+    willSendRequest(WTFMove(request), redirectResponse, [isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
         ASSERT(!m_substituteData.isValid());
         if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
             completionHandler({ });
@@ -548,19 +548,17 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
         });
     });
 #else
-    willSendRequest(WTFMove(request), redirectResponse, ShouldContinue::Yes, WTFMove(completionHandler));
+    willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
 #endif
 }
 
-void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, ShouldContinue shouldContinue, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
     // deferrals plays less of a part in this function in preventing the bad behavior deferring 
     // callbacks is meant to prevent.
     ASSERT(!newRequest.isNull());
-
-    ASSERT(shouldContinue != ShouldContinue::No);
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
     if (!frameLoader()->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse)) {
@@ -628,16 +626,12 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     setRequest(newRequest);
 
-    if (!didReceiveRedirectResponse && shouldContinue != ShouldContinue::ForSuspension)
+    if (!didReceiveRedirectResponse)
         return completionHandler(WTFMove(newRequest));
 
     auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, ShouldContinue shouldContinue) mutable {
         m_waitingForNavigationPolicy = false;
         switch (shouldContinue) {
-        case ShouldContinue::ForSuspension:
-            // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
-            request = { WTF::blankURL() };
-            break;
         case ShouldContinue::No:
             stopLoadingForPolicyChange();
             break;
@@ -650,11 +644,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
 
     ASSERT(!m_waitingForNavigationPolicy);
     m_waitingForNavigationPolicy = true;
-
-    if (shouldContinue == ShouldContinue::ForSuspension) {
-        navigationPolicyCompletionHandler(WTFMove(newRequest), nullptr, shouldContinue);
-        return;
-    }
 
     frameLoader()->policyChecker().checkNavigationPolicy(WTFMove(newRequest), redirectResponse, WTFMove(navigationPolicyCompletionHandler));
 }
@@ -1693,10 +1682,8 @@ bool DocumentLoader::maybeLoadEmpty()
     return true;
 }
 
-void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
+void DocumentLoader::startLoadingMainResource()
 {
-    ASSERT(shouldContinue != ShouldContinue::No);
-
     m_mainDocumentError = ResourceError();
     timing().markStartTimeAndFetchStart();
     ASSERT(!m_mainResource);
@@ -1722,7 +1709,7 @@ void DocumentLoader::startLoadingMainResource(ShouldContinue shouldContinue)
     ASSERT(timing().startTime());
     ASSERT(timing().fetchStart());
 
-    willSendRequest(ResourceRequest(m_request), ResourceResponse(), shouldContinue, [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
+    willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
         m_request = request;
 
         // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.

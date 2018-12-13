@@ -183,7 +183,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
         case PolicyAction::Ignore:
             return function({ }, nullptr, ShouldContinue::No);
         case PolicyAction::Suspend:
-            return function({ WTF::blankURL() }, nullptr, ShouldContinue::ForSuspension);
+            RELEASE_ASSERT_NOT_REACHED();
         case PolicyAction::Use:
             if (!m_frame.loader().client().canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));

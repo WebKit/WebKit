@@ -505,6 +505,7 @@ messages -> WebPageProxy {
 #endif
 
     DidFailToSuspendAfterProcessSwap()
+    DidSuspendAfterProcessSwap()
 
     ImageOrMediaDocumentSizeChanged(WebCore::IntSize newSize)
 

@@ -735,12 +735,6 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
         return;
     }
 
-    // For suspension loads to about:blank, no need to ask the SuspendedPageProxy.
-    if (request.url() == WTF::blankURL() && webPage->isSuspended()) {
-        function(PolicyAction::Use);
-        return;
-    }
-
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.

@@ -312,7 +312,7 @@ void FrameLoader::init()
     // This somewhat odd set of steps gives the frame an initial empty document.
     setPolicyDocumentLoader(m_client.createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()).ptr());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
-    m_provisionalDocumentLoader->startLoadingMainResource(ShouldContinue::Yes);
+    m_provisionalDocumentLoader->startLoadingMainResource();
 
     Ref<Frame> protect(m_frame);
     m_frame.document()->cancelParsing();
@@ -1772,7 +1772,9 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
 
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
-    ASSERT(!m_frame.document() || m_frame.document()->pageCacheState() != Document::InPageCache);
+    if (m_frame.document() && m_frame.document()->pageCacheState() == Document::InPageCache)
+        return;
+
     if (!isStopLoadingAllowed())
         return;
 
@@ -1866,6 +1868,9 @@ void FrameLoader::setDocumentLoader(DocumentLoader* loader)
 {
     if (!loader && !m_documentLoader)
         return;
+
+    if (loader == m_documentLoader)
+        return;
     
     ASSERT(loader != m_documentLoader);
     ASSERT(!loader || loader->frameLoader() == this);
@@ -1953,7 +1958,7 @@ void FrameLoader::commitProvisionalLoad()
 
     willTransitionToCommitted();
 
-    if (!m_frame.tree().parent() && history().currentItem()) {
+    if (!m_frame.tree().parent() && history().currentItem() && history().currentItem() != history().provisionalItem()) {
         // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
         // We are doing this here because we know for sure that a new page is about to be loaded.
         PageCache::singleton().addIfCacheable(*history().currentItem(), m_frame.page());
@@ -3348,11 +3353,11 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
-    CompletionHandler<void()> completionHandler = [this, protectedFrame = makeRef(m_frame), shouldContinue] () mutable {
+    CompletionHandler<void()> completionHandler = [this, protectedFrame = makeRef(m_frame)] () mutable {
         if (!m_provisionalDocumentLoader)
             return;
         
-        prepareForLoadStart([this, protectedFrame = WTFMove(protectedFrame), shouldContinue] {
+        prepareForLoadStart([this, protectedFrame = WTFMove(protectedFrame)] {
 
             // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader,
             // so we need to null check it again.
@@ -3369,16 +3374,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             
             m_loadingFromCachedPage = false;
 
-            // We handle suspension by navigating forward to about:blank, which leaves us setup to navigate back to resume.
-            if (shouldContinue == ShouldContinue::ForSuspension) {
-                // Make sure we do a standard load to about:blank instead of reusing whatever the load type was on process swap.
-                // For example, using a Back/Forward load to load about blank would cause the current HistoryItem's url to be
-                // overwritten with 'about:blank', which we do not want.
-                m_loadType = FrameLoadType::Standard;
-                m_provisionalDocumentLoader->willContinueMainResourceLoadAfterRedirect({ WTF::blankURL() });
-            }
-
-            m_provisionalDocumentLoader->startLoadingMainResource(shouldContinue);
+            m_provisionalDocumentLoader->startLoadingMainResource();
         });
     };
     
@@ -3393,7 +3389,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,
     FormState* formState, const String& frameName, const NavigationAction& action, ShouldContinue shouldContinue, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy openerPolicy)
 {
-    ASSERT(shouldContinue != ShouldContinue::ForSuspension);
     if (shouldContinue != ShouldContinue::Yes)
         return;
 

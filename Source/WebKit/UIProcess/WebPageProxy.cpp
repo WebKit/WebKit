@@ -750,6 +750,9 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, std
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes)
         return false;
 
+    if (isPageOpenedByDOMShowingInitialEmptyDocument())
+        return false;
+
     auto* currentItem = navigation.fromItem();
     if (!currentItem) {
         LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " unable to create suspended page for process pid %i - No current back/forward item", pageID(), m_process->processIdentifier());
@@ -2626,7 +2629,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         }
 
         if (processForNavigation.ptr() != &process()) {
-            policyAction = PolicyAction::Suspend;
+            policyAction = isPageOpenedByDOMShowingInitialEmptyDocument() ? PolicyAction::Ignore : PolicyAction::Suspend;
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "%p - WebPageProxy::decidePolicyForNavigationAction, swapping process %i with process %i for navigation, reason: %{public}s", this, processIdentifier(), processForNavigation->processIdentifier(), reason.utf8().data());
             LOG(ProcessSwapping, "(ProcessSwapping) Switching from process %i to new process (%i) for navigation %" PRIu64 " '%s'", processIdentifier(), processForNavigation->processIdentifier(), navigation->navigationID(), navigation->loggingString());
         } else
@@ -2744,8 +2747,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
         }
     };
 
-    bool isInitialNavigationInNewWindow = openedByDOM() && !hasCommittedAnyProvisionalLoads();
-    if (!m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() || !isInitialNavigationInNewWindow || !mainFrameIDInPreviousProcess) {
+    if (!m_process->processPool().configuration().processSwapsOnWindowOpenWithOpener() || !isPageOpenedByDOMShowingInitialEmptyDocument() || !mainFrameIDInPreviousProcess) {
         // There is no way we'll be able to return to the page in the previous page so close it.
         if (!didSuspendPreviousPage)
             previousProcess->send(Messages::WebPage::Close(), m_pageID);
@@ -2759,12 +2761,26 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     };
 }
 
+bool WebPageProxy::isPageOpenedByDOMShowingInitialEmptyDocument() const
+{
+    return openedByDOM() && !hasCommittedAnyProvisionalLoads();
+}
+
 // MSVC gives a redeclaration error if noreturn is used on the definition and not the declaration, while
 // Cocoa tests segfault if it is moved to the declaration site (even if we move the definition with it!).
 #if !COMPILER(MSVC)
 NO_RETURN_DUE_TO_ASSERT
 #endif
 void WebPageProxy::didFailToSuspendAfterProcessSwap()
+{
+    // Only the SuspendedPageProxy should be getting this call.
+    ASSERT_NOT_REACHED();
+}
+
+#if !COMPILER(MSVC)
+NO_RETURN_DUE_TO_ASSERT
+#endif
+void WebPageProxy::didSuspendAfterProcessSwap()
 {
     // Only the SuspendedPageProxy should be getting this call.
     ASSERT_NOT_REACHED();

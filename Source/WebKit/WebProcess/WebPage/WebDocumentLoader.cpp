@@ -50,7 +50,6 @@ void WebDocumentLoader::detachFromFrame()
 void WebDocumentLoader::setNavigationID(uint64_t navigationID)
 {
     ASSERT(navigationID);
-    ASSERT(!m_navigationID || m_navigationID == navigationID);
 
     m_navigationID = navigationID;
 }

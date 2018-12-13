@@ -184,6 +184,7 @@
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/PageCache.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PingLoader.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -1309,6 +1310,27 @@ void WebPage::tryClose()
 void WebPage::sendClose()
 {
     send(Messages::WebPageProxy::ClosePage(false));
+}
+
+void WebPage::suspendForProcessSwap()
+{
+    auto failedToSuspend = [this, protectedThis = makeRef(*this)] {
+        close();
+        send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
+    };
+
+    auto* currentHistoryItem = m_mainFrame->coreFrame()->loader().history().currentItem();
+    if (!currentHistoryItem) {
+        failedToSuspend();
+        return;
+    }
+
+    if (!PageCache::singleton().addIfCacheable(*currentHistoryItem, corePage())) {
+        failedToSuspend();
+        return;
+    }
+
+    send(Messages::WebPageProxy::DidSuspendAfterProcessSwap());
 }
 
 void WebPage::loadURLInFrame(URL&& url, uint64_t frameID)

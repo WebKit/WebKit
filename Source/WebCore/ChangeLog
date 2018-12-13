@@ -1,3 +1,31 @@
+2018-12-13  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] We should not need to navigate to 'about:blank' to suspend pages
+        https://bugs.webkit.org/show_bug.cgi?id=192668
+        <rdar://problem/46701466>
+
+        Reviewed by Alex Christensen.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable):
+        * history/PageCache.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::setDocumentLoader):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        * loader/FrameLoaderTypes.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * loader/PolicyChecker.h:
+
 2018-12-13  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Inline WebVTT styles should override styles from Captions settings in System Preferences

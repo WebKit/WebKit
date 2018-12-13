@@ -130,13 +130,11 @@ void SuspendedPageProxy::unsuspend()
     m_process->send(Messages::WebPage::SetIsSuspended(false), m_page.pageID());
 }
 
-void SuspendedPageProxy::didFinishLoad()
+void SuspendedPageProxy::didSuspend()
 {
     LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processIdentifier());
 
     m_finishedSuspending = true;
-
-    m_process->send(Messages::WebProcess::UpdateActivePages(), 0);
 
 #if PLATFORM(IOS_FAMILY)
     m_suspensionToken = nullptr;
@@ -159,8 +157,8 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection&, IPC::Decoder& decod
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
-    if (decoder.messageName() == Messages::WebPageProxy::DidFinishLoadForFrame::name()) {
-        didFinishLoad();
+    if (decoder.messageName() == Messages::WebPageProxy::DidSuspendAfterProcessSwap::name()) {
+        didSuspend();
         return;
     }
 

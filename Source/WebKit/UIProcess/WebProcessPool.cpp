@@ -2197,9 +2197,8 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     if (navigation.treatAsSameOriginNavigation())
         return completionHandler(page.process(), nullptr, "The treatAsSameOriginNavigation flag is set"_s);
 
-    bool isInitialLoadInNewWindowOpenedByDOM = page.openedByDOM() && !page.hasCommittedAnyProvisionalLoads();
     URL sourceURL;
-    if (isInitialLoadInNewWindowOpenedByDOM && !navigation.requesterOrigin().isEmpty())
+    if (page.isPageOpenedByDOMShowingInitialEmptyDocument() && !navigation.requesterOrigin().isEmpty())
         sourceURL = URL { URL(), navigation.requesterOrigin().toString() };
     else
         sourceURL = URL { { }, page.pageLoadState().url() };

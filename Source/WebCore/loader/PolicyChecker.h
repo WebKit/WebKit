@@ -54,8 +54,7 @@ class ResourceResponse;
 
 enum class ShouldContinue {
     Yes,
-    No,
-    ForSuspension
+    No
 };
 
 enum class PolicyDecisionMode { Synchronous, Asynchronous };

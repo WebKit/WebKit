@@ -460,14 +460,6 @@ static NSURL *origin(WebPage& page)
         return nil;
 
     URL mainFrameURL = { URL(), mainFrame->url() };
-    if (page.isSuspended()) {
-        // Suspended page are navigated to about:blank upon suspension so we really want to report the previous URL.
-        if (auto* coreFrame = mainFrame->coreFrame()) {
-            if (auto* backHistoryItem = coreFrame->loader().history().previousItem())
-                mainFrameURL = { URL(), backHistoryItem->urlString() };
-        }
-    }
-
     Ref<SecurityOrigin> mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
     String mainFrameOriginString;
     if (!mainFrameOrigin->isUnique())

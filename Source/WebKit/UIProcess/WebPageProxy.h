@@ -1392,6 +1392,8 @@ public:
 
     void setDefersLoadingForTesting(bool);
 
+    bool isPageOpenedByDOMShowingInitialEmptyDocument() const;
+
     WebCore::IntRect syncRootViewToScreen(const WebCore::IntRect& viewRect);
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -1567,6 +1569,7 @@ private:
     void reattachToWebProcess();
     void swapToWebProcess(Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>&&, ShouldDelayAttachingDrawingArea);
     void didFailToSuspendAfterProcessSwap();
+    void didSuspendAfterProcessSwap();
 
     void finishAttachingToWebProcess(ShouldDelayAttachingDrawingArea = ShouldDelayAttachingDrawingArea::No);
 

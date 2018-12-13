@@ -55,7 +55,7 @@ public:
 #endif
 
 private:
-    void didFinishLoad();
+    void didSuspend();
     void didFailToSuspend();
 
     // IPC::MessageReceiver

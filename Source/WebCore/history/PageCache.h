@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT void setMaxSize(unsigned); // number of pages to cache.
     unsigned maxSize() const { return m_maxSize; }
 
-    void addIfCacheable(HistoryItem&, Page*); // Prunes if maxSize() is exceeded.
+    WEBCORE_EXPORT bool addIfCacheable(HistoryItem&, Page*); // Prunes if maxSize() is exceeded.
     WEBCORE_EXPORT void remove(HistoryItem&);
     CachedPage* get(HistoryItem&, Page*);
     std::unique_ptr<CachedPage> take(HistoryItem&, Page*);

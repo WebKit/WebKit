@@ -450,6 +450,8 @@ public:
     void clearMainFrameName();
     void sendClose();
 
+    void suspendForProcessSwap();
+
     void sendSetWindowFrame(const WebCore::FloatRect&);
 
     double textZoomFactor() const;
