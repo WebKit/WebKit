@@ -1,3 +1,10 @@
+2018-12-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [MSVC] Unreviewed build fix for r239080.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailToSuspendAfterProcessSwap):
+
 2018-12-12  Chris Fleizach  <cfleizach@apple.com>
 
         [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
