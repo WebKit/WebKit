@@ -761,7 +761,6 @@ imported/w3c/web-platform-tests/resource-timing/test_resource_timing.html [ Pass
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Failure ]
 webkit.org/b/168448 http/wpt/resource-timing/rt-shared-resource-in-frames.html [ Pass Failure ]
 webkit.org/b/168448 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Pass Failure ]
-webkit.org/b/171511 http/wpt/resource-timing/rt-revalidate-requests.html [ Pass Failure ]
 
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 

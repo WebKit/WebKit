@@ -1,3 +1,30 @@
+2018-12-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: [ MacOS iOS ] Layout Test http/wpt/resource-timing/rt-revalidate-requests.html is flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=191207
+        <rdar://problem/45818891>
+
+        Reviewed by Devin Rousso.
+
+        Splitting this test up into separate tests eliminated flakiness
+        and timeouts for my system that would occasionally encounter them.
+
+        * TestExpectations:
+        Remove expectation for the test now that splitting up eliminated flakiness so far.
+
+        * http/wpt/resource-timing/resources/rt-revalidate-utilities.sub.js
+        Common code for the split out tests.
+
+        * http/wpt/resource-timing/rt-revalidate-requests-1-expected.txt: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests-1.html: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests-2-expected.txt: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests-2.html: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests-3-expected.txt: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests-3.html: Added.
+        * http/wpt/resource-timing/rt-revalidate-requests.html: Removed.
+        * http/wpt/resource-timing/rt-revalidate-requests-expected.txt: Removed.
+        Split out into separate tests.        
+
 2018-12-12  Chris Dumez  <cdumez@apple.com>
 
         [Mojave Release Wk2] Layout Test http/tests/cache/disk-cache/disk-cache-validation-attachment.html is flaky

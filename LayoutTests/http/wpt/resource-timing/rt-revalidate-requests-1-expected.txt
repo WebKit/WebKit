@@ -1,0 +1,6 @@
+Resource Timing: ResourceTiming for revalidation requests
+
+
+PASS Same Origin network load 
+PASS Same Origin revalidation load 
+

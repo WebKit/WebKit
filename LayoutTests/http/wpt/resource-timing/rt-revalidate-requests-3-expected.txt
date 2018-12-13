@@ -1,0 +1,6 @@
+Resource Timing: ResourceTiming for revalidation requests
+
+
+PASS Cross Origin network load (with TimingAllow) 
+PASS Cross Origin revalidation load (with TimingAllow) 
+
