@@ -1,3 +1,20 @@
+2018-12-13  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+        <rdar://problem/46595508>
+
+        Reviewed by Darin Adler.
+
+        Part 6: Files in plugin process and UI process.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginProcess.cpp:
+        * PluginProcess/WebProcessConnection.cpp:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/WebStorage/LocalStorageDatabase.cpp:
+        * UIProcess/mac/WebPageProxyMac.mm:
+
 2018-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Calculate width or height when constraints contain only the other

@@ -38,13 +38,12 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-using namespace WebCore;
-
 static const auto databaseUpdateInterval = 1_s;
 
 static const int maximumItemsToUpdate = 100;
 
 namespace WebKit {
+using namespace WebCore;
 
 Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin)
 {
