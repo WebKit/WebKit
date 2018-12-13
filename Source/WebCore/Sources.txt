@@ -3228,6 +3228,9 @@ JSWebGPUBufferUsage.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUColor.cpp
 JSWebGPUDevice.cpp
+JSWebGPUIndexFormat.cpp
+JSWebGPUInputStateDescriptor.cpp
+JSWebGPUInputStepMode.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineStageDescriptor.cpp
@@ -3240,11 +3243,13 @@ JSWebGPURenderPipeline.cpp
 JSWebGPURenderPipelineDescriptor.cpp
 JSWebGPUShaderModule.cpp
 JSWebGPUShaderModuleDescriptor.cpp
-JSWebGPUShaderStage.cpp
 JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureFormatEnum.cpp
 JSWebGPUTextureView.cpp
+JSWebGPUVertexAttributeDescriptor.cpp
+JSWebGPUVertexFormat.cpp
+JSWebGPUVertexInputDescriptor.cpp
 JSWebMetalBuffer.cpp
 JSWebMetalCommandBuffer.cpp
 JSWebMetalCommandQueue.cpp

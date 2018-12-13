@@ -1,3 +1,26 @@
+2018-12-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Vertex buffers and WebGPUInputState
+        https://bugs.webkit.org/show_bug.cgi?id=192611
+
+        Reviewed by Dean Jackson.
+
+        Added variation of simple-triangle-strip to use a vertex buffer. Refactored aforementioned
+        test to share code with new test.
+
+        * webgpu/js/basic-webgpu-functions.js:
+        (setUpPipelineDescriptor):
+        * webgpu/js/webgpu-functions.js: Added.
+        (async.getBasicDevice):
+        (createBasicContext):
+        (createBasicPipeline):
+        (beginBasicRenderPass):
+        * webgpu/render-pipelines-expected.txt:
+        * webgpu/render-pipelines.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip-expected.html: Added.
+        * webgpu/vertex-buffer-triangle-strip.html: Added.
+
 2018-12-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION: [ MacOS iOS ] Layout Test http/wpt/resource-timing/rt-revalidate-requests.html is flaky timeout

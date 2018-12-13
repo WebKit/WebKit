@@ -33,11 +33,8 @@
 
 namespace WebCore {
 
-using WebGPUShaderStageEnum = unsigned long;
-
 struct WebGPUPipelineStageDescriptor {
     const WebGPUShaderModule* module = nullptr;
-    WebGPUShaderStageEnum stage;
     String entryPoint;
 };
 

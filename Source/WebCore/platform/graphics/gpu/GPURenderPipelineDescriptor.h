@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUInputStateDescriptor.h"
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineStageDescriptor.h"
 
@@ -46,6 +47,7 @@ struct GPURenderPipelineDescriptor {
     GPUPipelineStageDescriptor vertexStage;
     GPUPipelineStageDescriptor fragmentStage;
     PrimitiveTopology primitiveTopology;
+    GPUInputStateDescriptor inputState;
 };
 
 } // namespace WebCore

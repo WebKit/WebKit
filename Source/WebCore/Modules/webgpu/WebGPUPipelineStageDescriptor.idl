@@ -31,6 +31,5 @@ typedef unsigned long WebGPUShaderStageEnum;
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUPipelineStageDescriptor {
     WebGPUShaderModule module;
-    WebGPUShaderStageEnum stage;
     DOMString entryPoint;
 };

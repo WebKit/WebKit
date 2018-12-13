@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="vertex-buffer-triangle-strip-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct Vertex
+{
+    float4 position [[position]];
+};
+
+vertex Vertex vertex_main(const device Vertex* vertex_array [[buffer(0)]], uint vid [[vertex_id]])
+{
+    return vertex_array[vid];
+}
+
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return float4(0.0, 1.0, 0.0, 1.0);
+}
+`
+
+function createVertexBuffer(device) {
+    const bufferSize = 4 * 4 * 4;
+    const buffer = device.createBuffer({ size: bufferSize, usage: WebGPUBufferUsage.MAP_WRITE });
+    
+    let arrayBuffer = buffer.mapping;
+    let floatArray = new Float32Array(arrayBuffer);
+
+    floatArray[0] = -1;
+    floatArray[1] = 1;
+    floatArray[2] = 0;
+    floatArray[3] = 1;
+
+    floatArray[4] = -1;
+    floatArray[5] = -1;
+    floatArray[6] = 0;
+    floatArray[7] = 1;
+
+    floatArray[8] = 1;
+    floatArray[9] = 1;
+    floatArray[10] = 0;
+    floatArray[11] = 1;
+
+    floatArray[12] = 1;
+    floatArray[13] = -1;
+    floatArray[14] = 0;
+    floatArray[15] = 1;
+
+    return buffer;
+}
+
+function createInputStateDescriptor() {
+    return {
+        indexFormat: WebGPUIndexFormat.UINT32,
+        attributes: [{
+            shaderLocation: 0,
+            inputSlot: 0,
+            offset: 0,
+            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+        }],
+        inputs: [{
+            stride: 4 * 4,
+            stepMode: WebGPUInputStepMode.VERTEX
+        }]
+    }
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const context = createBasicContext(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    const vertexBuffer = createVertexBuffer(device);
+    const inputStateDescriptor = createInputStateDescriptor();
+    const pipeline = createBasicPipeline(shaderModule, device, inputStateDescriptor);
+    const commandBuffer = device.createCommandBuffer();
+    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline, vertexBuffer);
+    const queue = device.getQueue();
+
+    queue.submit([endCommandBuffer]);
+    context.present();
+}
+
+test();
+</script>

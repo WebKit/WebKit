@@ -29,5 +29,4 @@
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUPipelineDescriptorBase {
     // WebGPUPipelineLayout layout;
-    sequence<WebGPUPipelineStageDescriptor> stages;
 };

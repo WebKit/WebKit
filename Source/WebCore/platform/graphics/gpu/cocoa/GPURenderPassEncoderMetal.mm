@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPUBuffer.h"
 #import "GPUCommandBuffer.h"
 #import "GPURenderPassDescriptor.h"
 #import "GPURenderPipeline.h"
@@ -81,6 +82,13 @@ void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
 {
     [m_platformRenderPassEncoder setRenderPipelineState:pipeline->platformRenderPipeline()];
     m_pipeline = WTFMove(pipeline);
+}
+
+void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<const GPUBuffer>>&& buffers, Vector<unsigned>&& offsets) 
+{
+    ASSERT(buffers.size() && offsets.size() == buffers.size());
+    // FIXME: Only worry about the first buffer for now, and treat startSlot as the index.
+    [m_platformRenderPassEncoder setVertexBuffer:buffers[0]->platformBuffer() offset:offsets[0] atIndex:index];
 }
 
 static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(PrimitiveTopology type)

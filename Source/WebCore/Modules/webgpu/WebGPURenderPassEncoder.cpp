@@ -30,6 +30,8 @@
 
 #include "GPUProgrammablePassEncoder.h"
 #include "GPURenderPassEncoder.h"
+#include "Logging.h"
+#include "WebGPUBuffer.h"
 
 namespace WebCore {
 
@@ -42,6 +44,21 @@ WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&& crea
     : WebGPUProgrammablePassEncoder(WTFMove(creator))
     , m_passEncoder(WTFMove(encoder))
 {
+}
+
+void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned>&& offsets)
+{
+    if (buffers.isEmpty() || buffers.size() != offsets.size()) {
+        LOG(WebGPU, "WebGPURenderPassEncoder::setVertexBuffers: Invalid number of buffers or offsets!");
+        return;
+    }
+
+    auto gpuBuffers = buffers.map([] (const auto& buffer) -> Ref<const GPUBuffer> {
+        return buffer->buffer();
+    });
+
+    // FIXME: Use startSlot properly.
+    m_passEncoder->setVertexBuffers(startSlot, WTFMove(gpuBuffers), WTFMove(offsets));
 }
 
 void WebGPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance)

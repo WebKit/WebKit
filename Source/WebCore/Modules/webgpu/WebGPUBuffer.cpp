@@ -38,7 +38,6 @@ RefPtr<WebGPUBuffer> WebGPUBuffer::create(Ref<GPUBuffer>&& buffer)
 WebGPUBuffer::WebGPUBuffer(Ref<GPUBuffer>&& buffer)
     : m_buffer(WTFMove(buffer))
 {
-    UNUSED_PARAM(m_buffer);
 }
 
 } // namespace WebCore

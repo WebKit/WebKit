@@ -28,14 +28,19 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipelineDescriptor.h"
+#include "WebGPUInputStateDescriptor.h"
 #include "WebGPUPipelineDescriptorBase.h"
+#include "WebGPUPipelineStageDescriptor.h"
 
 namespace WebCore {
 
 struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
     using PrimitiveTopology = GPURenderPipelineDescriptor::PrimitiveTopology;
 
+    WebGPUPipelineStageDescriptor vertexStage;
+    WebGPUPipelineStageDescriptor fragmentStage;
     PrimitiveTopology primitiveTopology;
+    WebGPUInputStateDescriptor inputState;
 };
 
 } // namespace WebCore

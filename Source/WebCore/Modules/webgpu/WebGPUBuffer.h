@@ -38,6 +38,8 @@ class WebGPUBuffer : public RefCounted<WebGPUBuffer> {
 public:
     static RefPtr<WebGPUBuffer> create(Ref<GPUBuffer>&&);
 
+    const GPUBuffer& buffer() const { return m_buffer.get(); }
+
     JSC::ArrayBuffer* mapping() const { return m_buffer->mapping(); }
     void unmap() { /* FIXME: Unimplemented stub. */ }
     void destroy() { /* FIXME: Unimplemented stub. */ }

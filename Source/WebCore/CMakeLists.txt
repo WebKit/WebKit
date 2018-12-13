@@ -464,6 +464,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUColor.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl
+    Modules/webgpu/WebGPUIndexFormat.idl
+    Modules/webgpu/WebGPUInputStateDescriptor.idl
+    Modules/webgpu/WebGPUInputStepMode.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineStageDescriptor.idl
     Modules/webgpu/WebGPUProgrammablePassEncoder.idl
@@ -476,11 +479,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPURenderingContext.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl
-    Modules/webgpu/WebGPUShaderStage.idl
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureFormatEnum.idl
     Modules/webgpu/WebGPUTextureView.idl
+    Modules/webgpu/WebGPUVertexAttributeDescriptor.idl
+    Modules/webgpu/WebGPUVertexFormat.idl
+    Modules/webgpu/WebGPUVertexInputDescriptor.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl

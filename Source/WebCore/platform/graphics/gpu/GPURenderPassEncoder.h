@@ -32,11 +32,13 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_PROTOCOL(MTLRenderCommandEncoder);
 
 namespace WebCore {
 
+class GPUBuffer;
 class GPUCommandBuffer;
 class GPURenderPipeline;
 
@@ -51,6 +53,7 @@ public:
 
     void setPipeline(Ref<GPURenderPipeline>&&) final;
 
+    void setVertexBuffers(unsigned long, Vector<Ref<const GPUBuffer>>&&, Vector<unsigned>&&);
     void draw(unsigned long, unsigned long, unsigned long, unsigned long);
 
 private:

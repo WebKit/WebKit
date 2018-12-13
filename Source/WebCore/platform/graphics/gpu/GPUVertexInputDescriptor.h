@@ -31,11 +31,19 @@
 
 namespace WebCore {
 
-class WebGPUShaderStage : public RefCounted<WebGPUShaderStage> {
+using GPUInputStepModeEnum = unsigned long;
+
+class GPUInputStepMode : public RefCounted<GPUInputStepMode> {
 public:
-    static const unsigned long VERTEX = 0;
-    static const unsigned long FRAGMENT = 1;
-    static const unsigned long COMPUTE = 2;
+    enum Enum : GPUInputStepModeEnum {
+        Vertex = 0,
+        Instance = 1
+    };
+};
+
+struct GPUVertexInputDescriptor {
+    unsigned long stride;
+    GPUInputStepModeEnum stepMode;
 };
 
 } // namespace WebCore

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>HTML Reference File</title>
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script>
+const canvas = document.querySelector("canvas");
+const context = canvas.getContext('2d');
+
+context.fillStyle = 'rgb(0, 255, 0)';
+context.fillRect(0, 0, canvas.width, canvas.height);
+</script>

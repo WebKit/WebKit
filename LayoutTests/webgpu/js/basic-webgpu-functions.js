@@ -90,19 +90,18 @@ function setUpModule() {
 
 function setUpPipelineDescriptor() {
     vertexStageDescriptor = { 
-        module: shaderModule, 
-        stage: WebGPUShaderStage.VERTEX, 
+        module: shaderModule,
         entryPoint: "vertex_main" 
     };
 
     fragmentStageDescriptor = {
         module: shaderModule,
-        stage: WebGPUShaderStage.FRAGMENT,
         entryPoint: "fragment_main"
     };
 
     pipelineDescriptor = {
-        stages: [vertexStageDescriptor, fragmentStageDescriptor],
+        vertexStage: vertexStageDescriptor, 
+        fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     };
 }

@@ -22,16 +22,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUShaderStage {
-    const u32 VERTEX = 0;
-    const u32 FRAGMENT = 1;
-    const u32 COMPUTE = 2;
-};
+#if ENABLE(WEBGPU)
+
+#include "GPUVertexInputDescriptor.h"
+
+namespace WebCore {
+
+using WebGPUInputStepMode = GPUInputStepMode;
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

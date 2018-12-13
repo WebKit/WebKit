@@ -19,43 +19,32 @@ function setUpBadPipelines() {
     checkBadRenderPipeline({}, "WebGPURenderPipelineDescriptor");
 
     let noModuleVertexDescriptor = {
-        stage: WebGPUShaderStage.VERTEX,
         entryPoint: "vertex_main"
     }
     let noModulePipelineDescriptor = {
-        stages: [noModuleVertexDescriptor, fragmentStageDescriptor],
+        vertexStage: noModuleVertexDescriptor, 
+        fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
     checkBadRenderPipeline(noModulePipelineDescriptor, "shader module");
 
     // A (Metal) renderpipeline must have a vertex function.
     let noVertexPipelineDescriptor = {
-        stages: [fragmentStageDescriptor],
+        fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
     checkBadRenderPipeline(noVertexPipelineDescriptor, "vertex shader stage")
 
     let badEntryPointDescriptor = { 
-        module: shaderModule, 
-        stage: WebGPUShaderStage.VERTEX, 
+        module: shaderModule,
         entryPoint: "Vertex_Main" 
     };
     let badEntryPointPipelineDescsriptor = {
-        stages: [badEntryPointDescriptor, fragmentStageDescriptor],
+        vertexStage: badEntryPointDescriptor, 
+        fragmentStage: fragmentStageDescriptor,
         primitiveTopology: "triangleList"
     }
     checkBadRenderPipeline(badEntryPointPipelineDescsriptor, "vertex shader entry point");
-
-    let badStageEnumDescriptor = { 
-        module: shaderModule, 
-        stage: WebGPUShaderStage.COMPUTE, 
-        entryPoint: "vertex_main" 
-    };
-    let badStageEnumPipelineDescriptor = {
-        stages: [badStageEnumDescriptor, fragmentStageDescriptor],
-        primitiveTopology: "triangleList"
-    }
-    checkBadRenderPipeline(badStageEnumPipelineDescriptor, "WebGPUShaderStageEnum");
 }
 
 runWebGPUTests([setUpPipeline, setUpBadPipelines]);

@@ -27,13 +27,10 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUPipelineStageDescriptor.h"
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
 struct WebGPUPipelineDescriptorBase {
-    Vector<WebGPUPipelineStageDescriptor> stages;
+    // WebGPUPipelineLayout layout;
 };
 
 } // namespace WebCore

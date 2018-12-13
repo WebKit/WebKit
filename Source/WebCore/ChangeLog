@@ -1,3 +1,73 @@
+2018-12-12  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Vertex buffers and WebGPUInputState
+        https://bugs.webkit.org/show_bug.cgi?id=192611
+
+        Reviewed by Dean Jackson.
+
+        Test: webgpu/vertex-buffer-triangle-strip.html
+
+        Basic implementation of vertex buffers with Metal shading language in WebGPU. In 
+        WebGPURenderPipelineDescriptor, refactor to match updated shader stage structure and add 
+        WebGPUInputStateDescriptor. Also implement WebGPURenderPassEncoder::setVertexBuffers.
+
+        Add symbols and files for WebGPUIndexFormat, WebGPUInputStateDescriptor, WebGPUInputStepMode, 
+        WebGPUVertexAttributeDescriptor, WebGPUVertexFormat, WebGPUVertexInputDescriptor:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Add and implement interfaces and dictionaries for WebGPUInputState:
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::WebGPUBuffer):
+        * Modules/webgpu/WebGPUBuffer.h:
+        (WebCore::WebGPUBuffer::buffer const): Added getter for backing GPUBuffer.
+        * Modules/webgpu/WebGPUBufferDescriptor.h:
+        * Modules/webgpu/WebGPUBufferDescriptor.idl: Moving WebGPUBufferUsage out into its own IDL.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUIndexFormat.h: Added.
+        * Modules/webgpu/WebGPUIndexFormat.idl: Added. 
+        * Modules/webgpu/WebGPUInputStateDescriptor.h: Added.
+        * Modules/webgpu/WebGPUInputStateDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUInputStepMode.h: Added.
+        * Modules/webgpu/WebGPUInputStepMode.idl: Added.
+        * Modules/webgpu/WebGPUVertexAttributeDescriptor.h: Added.
+        * Modules/webgpu/WebGPUVertexAttributeDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUVertexFormat.h: Added.
+        * Modules/webgpu/WebGPUVertexFormat.idl: Added.
+        * Modules/webgpu/WebGPUVertexInputDescriptor.h: Added.
+        * Modules/webgpu/WebGPUVertexInputDescriptor.idl: Added.
+        * platform/graphics/gpu/GPUInputStateDescriptor.h: Added.
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Added.
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Added.
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h: Added.
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h: Added.
+
+        Refactor to support updated structure of pipeline descriptor in sketch IDL:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::validateAndConvertPipelineStage):
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.h:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl:
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.h:
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.idl:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Modules/webgpu/WebGPUShaderStage.*: Removed.
+
+        Add and implement setVertexBuffers:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers): Added. 
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl: 
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setInputStateForPipelineDescriptor):
+        (WebCore::GPURenderPipeline::create):
+
 2018-12-12  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r237565): >20 Find in Page highlights in one tile results in a single giant highlight

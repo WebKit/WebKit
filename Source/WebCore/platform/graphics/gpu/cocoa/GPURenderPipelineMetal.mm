@@ -32,6 +32,7 @@
 
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -82,6 +83,84 @@ static bool setFunctionsForPipelineDescriptor(const char* const functionName, MT
     return true;
 }
 
+static std::optional<MTLVertexFormat> validateAndConvertVertexFormatToMTLVertexFormat(GPUVertexFormatEnum format)
+{
+    switch (format) {
+    case GPUVertexFormat::FloatR32G32B32A32:
+        return MTLVertexFormatFloat4;
+    case GPUVertexFormat::FloatR32G32B32:
+        return MTLVertexFormatFloat3;
+    case GPUVertexFormat::FloatR32G32:
+        return MTLVertexFormatFloat2;
+    case GPUVertexFormat::FloatR32:
+        return MTLVertexFormatFloat;
+    default:
+        return std::nullopt;
+    }
+}
+
+static std::optional<MTLVertexStepFunction> validateAndConvertStepModeToMTLStepFunction(GPUInputStepModeEnum mode)
+{
+    switch (mode) {
+    case GPUInputStepMode::Vertex:
+        return MTLVertexStepFunctionPerVertex;
+    case GPUInputStepMode::Instance:
+        return MTLVertexStepFunctionPerInstance;
+    default:
+        return std::nullopt;
+    }
+}
+
+static bool setInputStateForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(functionName);
+#endif
+    auto mtlVertexDescriptor = adoptNS([MTLVertexDescriptor new]);
+
+    // Populate vertex attributes, if any.
+    const auto& attributes = descriptor.inputState.attributes;
+
+    // FIXME: What kind of validation is needed here?
+    MTLVertexAttributeDescriptorArray *attributeArray = mtlVertexDescriptor.get().attributes;
+
+    for (size_t i = 0; i < attributes.size(); ++i) {
+        auto mtlFormat = validateAndConvertVertexFormatToMTLVertexFormat(attributes[i].format);
+        if (!mtlFormat) {
+            LOG(WebGPU, "%s: Invalid WebGPUVertexFormatEnum for vertex attribute!", functionName);
+            return false;
+        }
+
+        MTLVertexAttributeDescriptor *mtlAttributeDesc = [attributeArray objectAtIndexedSubscript:i];
+        mtlAttributeDesc.format = *mtlFormat;
+        mtlAttributeDesc.offset = attributes[i].offset;
+        mtlAttributeDesc.bufferIndex = attributes[i].shaderLocation;
+        [mtlVertexDescriptor.get().attributes setObject:mtlAttributeDesc atIndexedSubscript:i];
+    }
+
+    // Populate vertex buffer layouts, if any.
+    const auto& inputs = descriptor.inputState.inputs;
+
+    MTLVertexBufferLayoutDescriptorArray *layoutArray = mtlVertexDescriptor.get().layouts;
+
+    for (size_t j = 0; j < inputs.size(); ++j) {
+        auto mtlStepFunction = validateAndConvertStepModeToMTLStepFunction(inputs[j].stepMode);
+        if (!mtlStepFunction) {
+            LOG(WebGPU, "%s: Invalid WebGPUInputStepMode for vertex input!", functionName);
+            return false;
+        }
+
+        MTLVertexBufferLayoutDescriptor *mtlLayoutDesc = [layoutArray objectAtIndexedSubscript:j];
+        mtlLayoutDesc.stepFunction = *mtlStepFunction;
+        mtlLayoutDesc.stride = inputs[j].stride;
+        [mtlVertexDescriptor.get().layouts setObject:mtlLayoutDesc atIndexedSubscript:j];
+    }
+
+    mtlDescriptor.vertexDescriptor = mtlVertexDescriptor.get();
+
+    return true;
+}
+
 RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPURenderPipelineDescriptor&& descriptor)
 {
     const char* const functionName = "GPURenderPipeline::create()";
@@ -104,7 +183,8 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    if (!setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor))
+    if (!setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor)
+        || !setInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor))
         return nullptr;
 
     // FIXME: Get the pixelFormat as configured for the context/CAMetalLayer.

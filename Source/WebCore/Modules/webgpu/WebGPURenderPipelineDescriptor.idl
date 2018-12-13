@@ -36,11 +36,15 @@ enum WebGPUPrimitiveTopology {
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
+    WebGPUPipelineStageDescriptor vertexStage;
+    WebGPUPipelineStageDescriptor fragmentStage;
+
     WebGPUPrimitiveTopology primitiveTopology;
-    /* To Be Implemented:
-    sequence<WebGPUBlendState> blendStates;
-    WebGPUDepthStencilState depthStencilState;
-    WebGPUInputState inputState;
-    WebGPUAttachmentsState attachmentsState; */
+    WebGPUInputStateDescriptor inputState;
+/* To Be Implemented:
+    sequence<WebGPUBlendStateDescriptor> blendStates;
+    WebGPUDepthStencilStateDescriptor depthStencilState;
+    WebGPUAttachmentsStateDescriptor attachmentsState;
     // TODO other properties
+*/
 };

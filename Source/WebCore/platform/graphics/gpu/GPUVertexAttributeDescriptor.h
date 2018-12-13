@@ -27,31 +27,27 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUProgrammablePassEncoder.h"
-
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class GPUProgrammablePassEncoder;
-class GPURenderPassEncoder;
-class WebGPUBuffer;
+using GPUVertexFormatEnum = unsigned long;
 
-class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
+class GPUVertexFormat : public RefCounted<GPUVertexFormat> {
 public:
-    static RefPtr<WebGPURenderPassEncoder> create(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
+    enum Enum : GPUVertexFormatEnum {
+        FloatR32G32B32A32 = 0,
+        FloatR32G32B32 = 1,
+        FloatR32G32 = 2,
+        FloatR32 = 3
+    };
+};
 
-    // FIXME: Last argument should be Vector<unsigned long>. Why is the generated code incorrectly assuming the IDL wants a sequence<unsigned int>?
-    void setVertexBuffers(unsigned long, Vector<RefPtr<WebGPUBuffer>>&&, Vector<unsigned>&&);
-    void draw(unsigned long, unsigned long, unsigned long, unsigned long);
-
-private:
-    WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
-
-    GPUProgrammablePassEncoder& passEncoder() const final;
-
-    Ref<GPURenderPassEncoder> m_passEncoder;
+struct GPUVertexAttributeDescriptor {
+    unsigned long shaderLocation;
+    unsigned long inputSlot;
+    unsigned long offset;
+    GPUVertexFormatEnum format;
 };
 
 } // namespace WebCore

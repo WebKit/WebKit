@@ -3,7 +3,6 @@ PASS WebGPURenderPipeline with invalid WebGPURenderPipelineDescriptor was not cr
 PASS WebGPURenderPipeline with invalid shader module was not created.
 PASS WebGPURenderPipeline with invalid vertex shader stage was not created.
 PASS WebGPURenderPipeline with invalid vertex shader entry point was not created.
-PASS WebGPURenderPipeline with invalid WebGPUShaderStageEnum was not created.
 All tests complete.
 PASS successfullyParsed is true
 

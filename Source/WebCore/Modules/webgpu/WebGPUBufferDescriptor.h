@@ -33,7 +33,6 @@ namespace WebCore {
 
 using WebGPUBufferDescriptor = GPUBufferDescriptor;
 using WebGPUBufferUsageFlags = GPUBufferUsageFlags;
-using WebGPUBufferUsage = GPUBufferUsage;
 
 } // namespace WebCore
 
