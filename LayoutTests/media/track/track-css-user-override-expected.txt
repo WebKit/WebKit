@@ -1,6 +1,6 @@
 
 
-internals.captionsStyleSheetOverride = function captionsStyleSheetOverride() { [native code] }
+internals.captionsStyleSheetOverride = 
 Test that style to all cues is applied correctly.
 EVENT(canplaythrough)
 EVENT(seeked)
@@ -16,7 +16,7 @@ EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColo
 
 ** Add an override, without '!important' **
 RUN(internals.setCaptionsStyleSheetOverride('video::cue { color: blue; background-color: yellow; }'))
-internals.captionsStyleSheetOverride = function captionsStyleSheetOverride() { [native code] }
+internals.captionsStyleSheetOverride = video::cue { color: blue; background-color: yellow; }
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(128, 0, 128)') OK
 EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(0, 255, 0)') OK
 

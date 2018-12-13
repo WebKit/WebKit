@@ -314,8 +314,13 @@ int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, co
 
 void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& override)
 {
+    if (override == m_captionsStyleSheetOverride)
+        return;
+
     m_captionsStyleSheetOverride = override;
     updateCaptionStyleSheetOverride();
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0_s);
 }
 
 void CaptionUserPreferences::updateCaptionStyleSheetOverride()

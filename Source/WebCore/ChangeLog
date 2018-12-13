@@ -1,3 +1,29 @@
+2018-12-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Inline WebVTT styles should override styles from Captions settings in System Preferences
+        https://bugs.webkit.org/show_bug.cgi?id=192638
+
+        Reviewed by Eric Carlson.
+
+        It is currently not possible to override caption styles generated from System Preferences with inline
+        WebVTT styles without adding !important. The reason for this is that the generated styles from
+        System preferences are author styles which have higher priority than the inline WebVTT styles, which
+        are user agent styles in the video user agent shadow tree. This can be fixed by moving the generated
+        styles to the video user agent shadow tree. Inline WebVTT styles will then have higher priority since
+        they are added after the generated styles. This patch also fixes a problem where inline styles could be
+        added twice to the video user agent shadow root.
+
+        Test: media/track/track-cue-css.html
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache const):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::getDisplayTree):
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::setCaptionsStyleSheetOverride):
+        * page/Page.cpp:
+        (WebCore::Page::setCaptionUserPreferencesStyleSheet):
+
 2018-12-13  Jer Noble  <jer.noble@apple.com>
 
         Fix leak of AVPlayer boundaryTimeObserver object.

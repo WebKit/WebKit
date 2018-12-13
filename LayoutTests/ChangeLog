@@ -1,3 +1,16 @@
+2018-12-13  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Inline WebVTT styles should override styles from Captions settings in System Preferences
+        https://bugs.webkit.org/show_bug.cgi?id=192638
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/css-styling.vtt:
+        * media/track/captions-webvtt/no-css-styling.vtt:
+        * media/track/track-css-user-override-expected.txt:
+        * media/track/track-css-user-override.html:
+        * media/track/track-cue-css-expected.html:
+
 2018-12-13  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Table selection becomes corrupted when deleting selected cookies

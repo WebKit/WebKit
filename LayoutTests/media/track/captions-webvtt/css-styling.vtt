@@ -11,6 +11,12 @@ color: red;
 font-size: 15px;
 }
 
+STYLE
+video::cue {
+color: green;
+font-size: 15px;
+}
+
 hello
 00:00:00.000 --> 00:00:10.000
-<b>Hello</b>.
+<b>Hello</b> first cue.

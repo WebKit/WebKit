@@ -2564,8 +2564,6 @@ void Page::setCaptionUserPreferencesStyleSheet(const String& styleSheet)
         return;
 
     m_captionUserPreferencesStyleSheet = styleSheet;
-    
-    invalidateInjectedStyleSheetCacheInAllFrames();
 }
 
 void Page::accessibilitySettingsDidChange()

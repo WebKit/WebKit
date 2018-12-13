@@ -896,12 +896,19 @@ VTTCueBox& VTTCue::getDisplayTree(const IntSize& videoSize, int fontSize)
     displayTree->setFontSizeFromCaptionUserPrefs(fontSize);
     displayTree->applyCSSProperties(videoSize);
 
+    if (displayTree->document().page()) {
+        auto cssString = displayTree->document().page()->captionUserPreferencesStyleSheet();
+        auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
+        style->setTextContent(cssString);
+        displayTree->appendChild(style);
+    }
+
     const auto& styleSheets = track()->styleSheets();
     if (styleSheets) {
         for (const auto& cssString : *styleSheets) {
-            auto style = HTMLStyleElement::create(HTMLNames::styleTag, m_cueBackdropBox->document(), false);
+            auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
             style->setTextContent(cssString);
-            m_cueBackdropBox->appendChild(style);
+            displayTree->appendChild(style);
         }
     }
 
