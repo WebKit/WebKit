@@ -1,5 +1,32 @@
 2018-12-13  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION(r238602): Elements: deleting multiple DOM nodes doesn't select the nearest node after deletion
+        https://bugs.webkit.org/show_bug.cgi?id=192116
+        <rdar://problem/46344339>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.prototype.removeSelectedItems):
+        Finding a new index to select should go through the delegate instead of
+        naively advancing the index.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WI.DOMTreeElement.prototype.ondelete): Deleted.
+        The menu item for removing the DOM node is now managed by the parent
+        DOMTreeOutline, since its UI and behavior now depend on whether there
+        are multiple elements selected.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.populateContextMenu):
+        (WI.DOMTreeOutline.prototype.ondelete.level):
+        (WI.DOMTreeOutline.prototype.ondelete):
+        Implement `ondelete` to remove selected DOM nodes using the delete and
+        backspace keys. Also used by the DOMTreeOutline's context menu handler.
+
+2018-12-13  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Table selection becomes corrupted when deleting selected cookies
         https://bugs.webkit.org/show_bug.cgi?id=192388
         <rdar://problem/46472364>

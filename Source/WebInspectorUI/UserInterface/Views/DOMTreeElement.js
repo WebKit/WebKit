@@ -625,19 +625,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         listItemElement.classList.add(WI.DOMTreeElement.HighlightStyleClassName);
     }
 
-    ondelete()
-    {
-        if (!this.editable)
-            return false;
-
-        var startTagTreeElement = this.treeOutline.findTreeElement(this.representedObject);
-        if (startTagTreeElement)
-            startTagTreeElement.remove();
-        else
-            this.remove();
-        return true;
-    }
-
     onenter()
     {
         if (!this.editable)
@@ -808,7 +795,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         subMenus.edit.appendItem(WI.UIString("HTML"), this._editAsHTML.bind(this), !this.editable);
         subMenus.copy.appendItem(WI.UIString("HTML"), this._copyHTML.bind(this), node.isPseudoElement());
-        subMenus.delete.appendItem(WI.UIString("Node"), this.remove.bind(this), !this.editable);
+
+        if (!this.selected || this.treeOutline.selectedTreeElements.length === 1)
+            subMenus.delete.appendItem(WI.UIString("Node"), this.remove.bind(this), !this.editable);
 
         for (let subMenu of Object.values(subMenus))
             contextMenu.pushItem(subMenu);

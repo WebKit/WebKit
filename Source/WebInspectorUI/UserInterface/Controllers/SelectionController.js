@@ -177,19 +177,19 @@ WI.SelectionController = class SelectionController extends WI.Object
 
         // Try selecting the item following the selection.
         let lastSelectedIndex = this._selectedIndexes.lastIndex;
-        let indexToSelect = lastSelectedIndex + 1;
-        if (indexToSelect === this.numberOfItems) {
+        let indexToSelect = this._nextSelectableIndex(lastSelectedIndex);
+        if (isNaN(indexToSelect)) {
             // If no item exists after the last item in the selection, try selecting
             // a deselected item (hole) within the selection.
             let firstSelectedIndex = this._selectedIndexes.firstIndex;
             if (lastSelectedIndex - firstSelectedIndex > numberOfSelectedItems) {
-                indexToSelect = this._selectedIndexes.firstIndex + 1;
+                indexToSelect = this._nextSelectableIndex(firstSelectedIndex);
                 while (this._selectedIndexes.has(indexToSelect))
-                    indexToSelect++;
+                    indexToSelect = this._nextSelectableIndex(firstSelectedIndex);
             } else {
                 // If the selection contains no holes, try selecting the item
                 // preceding the selection.
-                indexToSelect = firstSelectedIndex > 0 ? firstSelectedIndex - 1 : NaN;
+                indexToSelect = firstSelectedIndex > 0 ? this._previousSelectableIndex(firstSelectedIndex) : NaN;
             }
         }
 
