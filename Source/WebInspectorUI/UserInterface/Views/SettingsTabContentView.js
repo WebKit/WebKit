@@ -242,19 +242,19 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
+        let initialValues = new Map;
+
         if (window.CSSAgent) {
             let group = experimentalSettingsView.addGroup(WI.UIString("Styles Sidebar:"));
             group.addSetting(WI.settings.experimentalEnableComputedStyleCascades, WI.UIString("Enable Computed Style Cascades"));
             experimentalSettingsView.addSeparator();
         }
 
-        let layerTabEnabled = window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value;
         if (window.LayerTreeAgent) {
             experimentalSettingsView.addSetting(WI.UIString("Layers:"), WI.settings.experimentalEnableLayersTab, WI.UIString("Enable Layers Tab"));
             experimentalSettingsView.addSeparator();
         }
 
-        let auditTabEnabled = WI.settings.experimentalEnableAuditTab.value;
         experimentalSettingsView.addSetting(WI.UIString("Audit:"), WI.settings.experimentalEnableAuditTab, WI.UIString("Enable Audit Tab"));
         experimentalSettingsView.addSeparator();
 
@@ -266,9 +266,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         reloadInspectorButton.addEventListener("click", (event) => {
             // Force a copy so that WI.Setting sees it as a new value.
             let newTabs = WI._openTabsSetting.value.slice();
-            if (!layerTabEnabled && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)
+            if (!initialValues.get(WI.settings.experimentalEnableLayersTab) && window.LayerTreeAgent && WI.settings.experimentalEnableLayersTab.value)
                 newTabs.push(WI.LayersTabContentView.Type);
-            if (!auditTabEnabled && WI.settings.experimentalEnableAuditTab.value)
+            if (!initialValues.get(WI.settings.experimentalEnableAuditTab) && WI.settings.experimentalEnableAuditTab.value)
                 newTabs.push(WI.AuditTabContentView.Type);
             WI._openTabsSetting.value = newTabs;
 
@@ -279,9 +279,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         reloadInspectorContainerElement.classList.add("hidden");
 
         function listenForChange(setting) {
-            let initialValue = setting.value;
+            initialValues.set(setting, setting.value);
             setting.addEventListener(WI.Setting.Event.Changed, () => {
-                reloadInspectorContainerElement.classList.toggle("hidden", initialValue === setting.value);
+                reloadInspectorContainerElement.classList.toggle("hidden", Array.from(initialValues).every(([setting, initialValue]) => setting.value === initialValue));
             });
         }
 
