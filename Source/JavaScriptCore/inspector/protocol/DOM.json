@@ -9,11 +9,6 @@
             "description": "Unique DOM node identifier."
         },
         {
-            "id": "BackendNodeId",
-            "type": "integer",
-            "description": "Unique DOM node identifier used to reference a node that may not have been pushed to the front-end."
-        },
-        {
             "id": "EventListenerId",
             "type": "integer",
             "description": "Unique event listener identifier."
@@ -450,23 +445,6 @@
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for given path." }
-            ]
-        },
-        {
-            "name": "pushNodeByBackendIdToFrontend",
-            "description": "Requests that the node is sent to the caller given its backend node id.",
-            "parameters": [
-                { "name": "backendNodeId", "$ref": "BackendNodeId", "description": "The backend node id of the node." }
-            ],
-            "returns": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "The pushed node's id." }
-            ]
-        },
-        {
-            "name": "releaseBackendNodeIds",
-            "description": "Requests that group of <code>BackendNodeIds</code> is released.",
-            "parameters": [
-                { "name": "nodeGroup", "type": "string", "description": "The backend node ids group name." }
             ]
         },
         {

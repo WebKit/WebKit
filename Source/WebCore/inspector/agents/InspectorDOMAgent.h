@@ -76,7 +76,6 @@ class ShadowRoot;
 struct HighlightConfig;
 
 typedef String ErrorString;
-typedef int BackendNodeId;
 
 struct EventListenerInfo {
     EventListenerInfo(Node* node, const AtomicString& eventType, EventListenerVector&& eventListenerVector)
@@ -141,8 +140,6 @@ public:
     void setInspectModeEnabled(ErrorString&, bool enabled, const JSON::Object* highlightConfig) override;
     void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
     void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
-    void pushNodeByBackendIdToFrontend(ErrorString&, BackendNodeId, int* nodeId) override;
-    void releaseBackendNodeIds(ErrorString&, const String& nodeGroup) override;
     void hideHighlight(ErrorString&) override;
     void highlightRect(ErrorString&, int x, int y, int width, int height, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
     void highlightQuad(ErrorString&, const JSON::Array& quad, const JSON::Object* color, const JSON::Object* outlineColor, const bool* usePageCoordinates) override;
@@ -193,7 +190,6 @@ public:
     Node* nodeForId(int nodeId);
     int boundNodeId(const Node*);
     void setDOMListener(DOMListener*);
-    BackendNodeId backendNodeIdForNode(Node*, const String& nodeGroup);
 
     static String documentURLString(Document*);
 
@@ -269,16 +265,12 @@ private:
     InspectorOverlay* m_overlay { nullptr };
     DOMListener* m_domListener { nullptr };
     NodeToIdMap m_documentNodeToIdMap;
-    typedef HashMap<RefPtr<Node>, BackendNodeId> NodeToBackendIdMap;
-    HashMap<String, NodeToBackendIdMap> m_nodeGroupToBackendIdMap;
     // Owns node mappings for dangling nodes.
     Vector<std::unique_ptr<NodeToIdMap>> m_danglingNodeToIdMaps;
     HashMap<int, Node*> m_idToNode;
     HashMap<int, NodeToIdMap*> m_idToNodesMap;
     HashSet<int> m_childrenRequested;
-    HashMap<BackendNodeId, std::pair<Node*, String>> m_backendIdToNode;
     int m_lastNodeId { 1 };
-    BackendNodeId m_lastBackendNodeId { -1 };
     RefPtr<Document> m_document;
     typedef HashMap<String, Vector<RefPtr<Node>>> SearchResults;
     SearchResults m_searchResults;

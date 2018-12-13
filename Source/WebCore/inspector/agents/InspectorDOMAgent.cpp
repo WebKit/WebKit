@@ -546,8 +546,6 @@ void InspectorDOMAgent::discardBindings()
     m_eventListenerEntries.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
-    m_backendIdToNode.clear();
-    m_nodeGroupToBackendIdMap.clear();
 }
 
 int InspectorDOMAgent::pushNodeToFrontend(ErrorString& errorString, int documentNodeId, Node* nodeToPush)
@@ -682,37 +680,6 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 int InspectorDOMAgent::boundNodeId(const Node* node)
 {
     return m_documentNodeToIdMap.get(const_cast<Node*>(node));
-}
-
-BackendNodeId InspectorDOMAgent::backendNodeIdForNode(Node* node, const String& nodeGroup)
-{
-    if (!node)
-        return 0;
-
-    if (!m_nodeGroupToBackendIdMap.contains(nodeGroup))
-        m_nodeGroupToBackendIdMap.set(nodeGroup, NodeToBackendIdMap());
-
-    NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
-    BackendNodeId id = map.get(node);
-    if (!id) {
-        id = --m_lastBackendNodeId;
-        map.set(node, id);
-        m_backendIdToNode.set(id, std::make_pair(node, nodeGroup));
-    }
-
-    return id;
-}
-
-void InspectorDOMAgent::releaseBackendNodeIds(ErrorString& errorString, const String& nodeGroup)
-{
-    if (m_nodeGroupToBackendIdMap.contains(nodeGroup)) {
-        NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
-        for (auto& backendId : map.values())
-            m_backendIdToNode.remove(backendId);
-        m_nodeGroupToBackendIdMap.remove(nodeGroup);
-        return;
-    }
-    errorString = "Group name not found"_s;
 }
 
 void InspectorDOMAgent::setAttributeValue(ErrorString& errorString, int elementId, const String& name, const String& value)
@@ -2555,27 +2522,6 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString& errorString, const
         *nodeId = pushNodePathToFrontend(node);
     else
         errorString = "No node with given path found"_s;
-}
-
-void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString& errorString, BackendNodeId backendNodeId, int* nodeId)
-{
-    auto iterator = m_backendIdToNode.find(backendNodeId);
-    if (iterator == m_backendIdToNode.end()) {
-        errorString = "No node with given backend id found"_s;
-        return;
-    }
-
-    Node* node = iterator->value.first;
-    String nodeGroup = iterator->value.second;
-
-    *nodeId = pushNodePathToFrontend(node);
-
-    if (nodeGroup.isEmpty()) {
-        m_backendIdToNode.remove(iterator);
-        // FIXME: We really do the following only when nodeGroup is the empty string? Seems wrong.
-        ASSERT(m_nodeGroupToBackendIdMap.contains(nodeGroup));
-        m_nodeGroupToBackendIdMap.find(nodeGroup)->value.remove(node);
-    }
 }
 
 RefPtr<Inspector::Protocol::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)

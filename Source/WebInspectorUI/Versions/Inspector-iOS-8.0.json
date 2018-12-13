@@ -1272,11 +1272,6 @@
             "description": "Unique DOM node identifier."
         },
         {
-            "id": "BackendNodeId",
-            "type": "integer",
-            "description": "Unique DOM node identifier used to reference a node that may not have been pushed to the front-end."
-        },
-        {
             "id": "LiveRegionRelevant",
             "type": "string",
             "enum": ["additions", "removals", "text"],
@@ -1624,23 +1619,6 @@
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for given path." }
             ],
             "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath"
-        },
-        {
-            "name": "pushNodeByBackendIdToFrontend",
-            "parameters": [
-                { "name": "backendNodeId", "$ref": "BackendNodeId", "description": "The backend node id of the node." }
-            ],
-            "returns": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "The pushed node's id." }
-            ],
-            "description": "Requests that the node is sent to the caller given its backend node id."
-        },
-        {
-            "name": "releaseBackendNodeIds",
-            "parameters": [
-                { "name": "nodeGroup", "type": "string", "description": "The backend node ids group name." }
-            ],
-            "description": "Requests that group of <code>BackendNodeIds</code> is released."
         },
         {
             "name": "resolveNode",
