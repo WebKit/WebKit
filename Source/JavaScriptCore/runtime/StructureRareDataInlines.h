@@ -59,7 +59,7 @@ inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropert
 
 inline JSImmutableButterfly* StructureRareData::cachedOwnKeys() const
 {
-    ASSERT(!compilationOrGCThread())
+    ASSERT(!compilationOrGCThread());
     return m_cachedOwnKeys.get();
 }
 
