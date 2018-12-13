@@ -1,3 +1,26 @@
+2018-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): CAPCHA UI jumps to the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=192651
+        rdar://problem/46531919
+
+        Reviewed by Zalan Bujtas.
+        
+        When a RenderLayer becomes non-composited because of a style change, we need to set a dirty
+        bit to say that descendants need their geometry updated (because they now have to
+        compute their positions relative to a different ancestor). This wasn't happening
+        in the layerStyleChanged() code path.
+        
+        In the code path that did do this correctly (in the computeCompositingRequirements() tree walk),
+        we can address a FIXME and only dirty direct children, not all descendants (that code was
+        written before the child-only dirty bit existed).
+
+        Test: compositing/geometry/update-child-geometry-on-compositing-change.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
 2018-12-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make TextInputController.legacyAttributedString take DOM nodes and offsets

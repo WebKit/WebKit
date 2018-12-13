@@ -1,3 +1,16 @@
+2018-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238090): CAPCHA UI jumps to the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=192651
+        rdar://problem/46531919
+
+        Reviewed by Zalan Bujtas.
+        
+        Testcase that makes an intermediate layer non-composited (but still a RenderLayer).
+
+        * compositing/geometry/update-child-geometry-on-compositing-change-expected.html: Added.
+        * compositing/geometry/update-child-geometry-on-compositing-change.html: Added.
+
 2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make TextInputController.legacyAttributedString take DOM nodes and offsets

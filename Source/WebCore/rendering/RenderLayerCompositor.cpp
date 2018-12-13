@@ -986,8 +986,8 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // during post-order traversal (e.g. for clipping).
     if (updateBacking(layer, queryData, CompositingChangeRepaintNow, willBeComposited ? BackingRequired::Yes : BackingRequired::No)) {
         layer.setNeedsCompositingLayerConnection();
-        // Child layers need to get a geometry update to recompute their position. FIXME: Ideally we'd only dirty direct children.
-        layer.setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+        // Child layers need to get a geometry update to recompute their position.
+        layer.setChildrenNeedCompositingGeometryUpdate();
         // The composited bounds of enclosing layers depends on which descendants are composited, so they need a geometry update.
         layer.setNeedsCompositingGeometryUpdateOnAncestors();
     }
@@ -1379,6 +1379,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     
     bool layerChanged = updateBacking(layer, queryData, CompositingChangeRepaintNow);
     if (layerChanged) {
+        layer.setChildrenNeedCompositingGeometryUpdate();
         layer.setNeedsCompositingLayerConnection();
         layer.setSubsequentLayersNeedCompositingRequirementsTraversal();
         // Ancestor layers that composited for indirect reasons (things listed in styleChangeMayAffectIndirectCompositingReasons()) need to get updated.
