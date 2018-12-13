@@ -104,6 +104,8 @@
     <branch hash="sha256:910b4e0e2e897e8b6d06767af1779d70057c309f67292f485ff988d087aa0de5" module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" repo="gstreamer" version="1.14.4">
       <patch file="gst-plugins-bad-0001-aomenc-Add-support-for-10-12bit-decoding.patch" strip="1" /> <!-- Merged as 1d96d9e842dd71882f54ddffbf6c1ccecdb03fcd (to be shipped in 1.16) -->
       <patch file="gst-plugins-bad-0002-aomenc-Handle-8-bit_depth-images-with-AOM_IMG_FMT_HI.patch" strip="1" /> <!-- Merged as 10a37e0c3528a721084441c37af37baef0908ddc (to be shipped in 1.16) -->
+      <patch file="gst-plugins-bad-0003-fdkaacenc-Remove-MODE_2_1.patch" strip="1" /> <!-- Merged as f4fdb9770c76113f38515245fecc5f11b3ace20d (to be shipped in 1.14.5) -->
+      <patch file="gst-plugins-bad-0004-fdkaacdec-Use-WAV-channel-mapping-instead-of-interleave-setting.patch" strip="1" /> <!-- Merged as 19d34f6b5e1633d5ec4bb2832c58470f0c829cab (to be shipped in 1.14.5) -->
     </branch>
   </autotools>
 

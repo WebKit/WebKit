@@ -1,3 +1,22 @@
+2018-12-13  Carlos Eduardo Ramalho  <cadubentzen@gmail.com>
+
+        [GStreamer][JHBuild] update-webkit{gtk,wpe}-libs fails with libfdk-2.0.0
+        https://bugs.webkit.org/show_bug.cgi?id=192643
+
+        Reviewed by Philippe Normand.
+
+        This problem happens with Arch Linux users which have libfdk-2.0.0
+        installed (which is anybody with gst-plugins-bad 1.14.4 installed).
+
+        The problem has already been solved upstream at
+        https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/merge_requests/77.
+
+        Adding patches while this problem is not in a release yet.
+
+        * gstreamer/jhbuild.modules: Add patches to fix build of gst-plugins-bad with libfdk-2.0.0.
+        * gstreamer/patches/gst-plugins-bad-0003-fdkaacenc-Remove-MODE_2_1.patch: Added.
+        * gstreamer/patches/gst-plugins-bad-0004-fdkaacdec-Use-WAV-channel-mapping-instead-of-interleave-setting.patch: Added.
+
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Add initial implementation of variation fonts

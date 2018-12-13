@@ -1,0 +1,30 @@
+From f4fdb9770c76113f38515245fecc5f11b3ace20d Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>
+Date: Tue, 4 Dec 2018 17:54:42 +0100
+Subject: [PATCH] fdkaacenc: Remove MODE_2_1
+
+This is not a standard mode and no longer supported by fdk-aac 2.0.0.
+
+For https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/issues/825
+---
+ ext/fdkaac/gstfdkaacenc.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/ext/fdkaac/gstfdkaacenc.c b/ext/fdkaac/gstfdkaacenc.c
+index ad2bcb492..8410e684c 100644
+--- a/ext/fdkaac/gstfdkaacenc.c
++++ b/ext/fdkaac/gstfdkaacenc.c
+@@ -71,10 +71,6 @@ static const struct
+   GST_AUDIO_CHANNEL_POSITION_FRONT_CENTER,
+           GST_AUDIO_CHANNEL_POSITION_FRONT_LEFT,
+           GST_AUDIO_CHANNEL_POSITION_FRONT_RIGHT}}, {
+-    3, MODE_2_1, {
+-  GST_AUDIO_CHANNEL_POSITION_FRONT_LEFT,
+-          GST_AUDIO_CHANNEL_POSITION_FRONT_RIGHT,
+-          GST_AUDIO_CHANNEL_POSITION_LFE1}}, {
+     4, MODE_1_2_1, {
+   GST_AUDIO_CHANNEL_POSITION_FRONT_CENTER,
+           GST_AUDIO_CHANNEL_POSITION_FRONT_LEFT,
+-- 
+2.18.1
+

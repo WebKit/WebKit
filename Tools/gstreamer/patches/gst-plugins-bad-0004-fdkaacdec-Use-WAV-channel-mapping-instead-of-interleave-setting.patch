@@ -1,0 +1,47 @@
+From 19d34f6b5e1633d5ec4bb2832c58470f0c829cab Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>
+Date: Wed, 5 Dec 2018 10:10:39 +0100
+Subject: [PATCH] fdkaacdec: Use WAV channel mapping instead of interleave
+ setting
+
+The latter is going away in libfdk-aac 2.0.0. Instead, MPEG-style output
+is always non-interleaved and WAV-style output is always interleaved.
+Earlier libfdk-aac also defaults interleaving accordingly.
+
+Since our reordering looks at the associated PCE indices instead of the
+actual channel order, we're agnostic to the mapping.
+
+For https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/issues/825
+---
+ ext/fdkaac/gstfdkaacdec.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/ext/fdkaac/gstfdkaacdec.c b/ext/fdkaac/gstfdkaacdec.c
+index c27183752..f5136b334 100644
+--- a/ext/fdkaac/gstfdkaacdec.c
++++ b/ext/fdkaac/gstfdkaacdec.c
+@@ -151,17 +151,13 @@ gst_fdkaacdec_set_format (GstAudioDecoder * dec, GstCaps * caps)
+     gst_buffer_unref (codec_data);
+   }
+ 
++  /* Choose WAV channel mapping to get interleaving even with libfdk-aac 2.0.0
++   * The pChannelIndices retain the indices from the standard MPEG mapping so
++   * we're agnostic to the actual order. */
+   if ((err =
+           aacDecoder_SetParam (self->dec, AAC_PCM_OUTPUT_CHANNEL_MAPPING,
+-              0)) != AAC_DEC_OK) {
+-    GST_ERROR_OBJECT (self, "Failed to set output channel mapping: %d", err);
+-    return FALSE;
+-  }
+-
+-  if ((err =
+-          aacDecoder_SetParam (self->dec, AAC_PCM_OUTPUT_INTERLEAVED,
+               1)) != AAC_DEC_OK) {
+-    GST_ERROR_OBJECT (self, "Failed to set interleaved output: %d", err);
++    GST_ERROR_OBJECT (self, "Failed to set output channel mapping: %d", err);
+     return FALSE;
+   }
+ 
+-- 
+2.18.1
+
