@@ -19,33 +19,37 @@
  *
  */
 
-#ifndef FontCustomPlatformData_h
-#define FontCustomPlatformData_h
+#pragma once
 
 #if USE(CAIRO)
 
+#include "RefPtrCairo.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 typedef struct FT_FaceRec_*  FT_Face;
-typedef struct _cairo_font_face cairo_font_face_t;
 
 namespace WebCore {
 
 class FontDescription;
 class FontPlatformData;
 class SharedBuffer;
+struct FontSelectionSpecifiedCapabilities;
+struct FontVariantSettings;
+
+template <typename T> class FontTaggedSettings;
+typedef FontTaggedSettings<int> FontFeatureSettings;
 
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
     FontCustomPlatformData(FT_Face, SharedBuffer&);
-    ~FontCustomPlatformData();
-    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic);
+    ~FontCustomPlatformData() = default;
+    FontPlatformData fontPlatformData(const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
     static bool supportsFormat(const String&);
 
 private:
-    cairo_font_face_t* m_fontFace;
+    RefPtr<cairo_font_face_t> m_fontFace;
 };
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, const String&);
@@ -53,5 +57,3 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
 } // namespace WebCore
 
 #endif // USE(CAIRO)
-
-#endif // FontCustomPlatformData_h

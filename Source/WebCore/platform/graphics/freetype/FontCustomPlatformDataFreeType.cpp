@@ -22,6 +22,9 @@
 #include "config.h"
 #include "FontCustomPlatformData.h"
 
+#include "CairoUtilities.h"
+#include "FontCacheFreeType.h"
+#include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
 #include <cairo-ft.h>
@@ -36,29 +39,54 @@ static void releaseCustomFontData(void* data)
     static_cast<SharedBuffer*>(data)->deref();
 }
 
+static cairo_user_data_key_t freeTypeFaceKey;
+
 FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer& buffer)
-    : m_fontFace(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT))
+    : m_fontFace(adoptRef(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT)))
 {
     buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
     static cairo_user_data_key_t bufferKey;
-    cairo_font_face_set_user_data(m_fontFace, &bufferKey, &buffer,
+    cairo_font_face_set_user_data(m_fontFace.get(), &bufferKey, &buffer,
          static_cast<cairo_destroy_func_t>(releaseCustomFontData));
 
     // Cairo doesn't do FreeType reference counting, so we need to ensure that when
     // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
-    static cairo_user_data_key_t freeTypeFaceKey;
-    cairo_font_face_set_user_data(m_fontFace, &freeTypeFaceKey, freeTypeFace,
+    cairo_font_face_set_user_data(m_fontFace.get(), &freeTypeFaceKey, freeTypeFace,
         reinterpret_cast<cairo_destroy_func_t>(reinterpret_cast<void(*)(void)>(FT_Done_Face)));
 }
 
-FontCustomPlatformData::~FontCustomPlatformData()
+static FcPattern* defaultFontconfigOptions()
 {
-    cairo_font_face_destroy(m_fontFace);
+    // Get some generic default settings from fontconfig for web fonts. Strategy
+    // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
+    // For web fonts, the hint style is overridden in FontCustomPlatformData::FontCustomPlatformData
+    // so Fontconfig will not affect the hint style, but it may disable hinting completely.
+    static FcPattern* pattern = nullptr;
+    static std::once_flag flag;
+    std::call_once(flag, [](FcPattern*) {
+        pattern = FcPatternCreate();
+        FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+        cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
+        FcDefaultSubstitute(pattern);
+        FcPatternDel(pattern, FC_FAMILY);
+        FcConfigSubstitute(nullptr, pattern, FcMatchFont);
+    }, pattern);
+    return pattern;
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic)
+FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& description, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities)
 {
-    return FontPlatformData(m_fontFace, description, bold, italic);
+    auto* freeTypeFace = static_cast<FT_Face>(cairo_font_face_get_user_data(m_fontFace.get(), &freeTypeFaceKey));
+    ASSERT(freeTypeFace);
+    RefPtr<FcPattern> pattern = defaultFontconfigOptions();
+#if ENABLE(VARIATION_FONTS)
+    auto variants = buildVariationSettings(freeTypeFace, description);
+    if (!variants.isEmpty()) {
+        pattern = adoptRef(FcPatternDuplicate(pattern.get()));
+        FcPatternAddString(pattern.get(), FC_FONT_VARIATIONS, reinterpret_cast<const FcChar8*>(variants.utf8().data()));
+    }
+#endif
+    return FontPlatformData(m_fontFace.get(), pattern.get(), description.computedPixelSize(), freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
 }
 
 static bool initializeFreeTypeLibrary(FT_Library& library)
@@ -110,6 +138,14 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
         || equalLettersIgnoringASCIICase(format, "opentype")
 #if USE(WOFF2)
         || equalLettersIgnoringASCIICase(format, "woff2")
+#if ENABLE(VARIATION_FONTS)
+        || equalLettersIgnoringASCIICase(format, "woff2-variations")
+#endif
+#endif
+#if ENABLE(VARIATION_FONTS)
+        || equalLettersIgnoringASCIICase(format, "woff-variations")
+        || equalLettersIgnoringASCIICase(format, "truetype-variations")
+        || equalLettersIgnoringASCIICase(format, "opentype-variations")
 #endif
         || equalLettersIgnoringASCIICase(format, "woff");
 }

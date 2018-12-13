@@ -112,8 +112,7 @@ public:
 #endif
 
 #if USE(FREETYPE)
-    FontPlatformData(FcPattern*, const FontDescription&);
-    FontPlatformData(cairo_font_face_t*, const FontDescription&, bool syntheticBold, bool syntheticOblique);
+    FontPlatformData(cairo_font_face_t*, FcPattern*, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation);
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(FontPlatformData&&) = default;
     FontPlatformData& operator=(const FontPlatformData&);
@@ -171,6 +170,8 @@ public:
 #if USE(FREETYPE)
     HarfBuzzFace& harfBuzzFace() const;
     bool hasCompatibleCharmap() const;
+    FcPattern* fcPattern() const;
+    bool isFixedWidth() const { return m_fixedWidth; }
 #endif
 
     unsigned hash() const;

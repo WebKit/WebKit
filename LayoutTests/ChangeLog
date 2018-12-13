@@ -1,3 +1,14 @@
+2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Add initial implementation of variation fonts
+        https://bugs.webkit.org/show_bug.cgi?id=192151
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip variation fonts tests that are now passing in GTK+ port.
+
+        * platform/gtk/TestExpectations:
+
 2018-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238090): CAPCHA UI jumps to the wrong location

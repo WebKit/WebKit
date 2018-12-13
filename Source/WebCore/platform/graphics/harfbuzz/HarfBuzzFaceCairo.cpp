@@ -47,6 +47,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
+#if ENABLE(VARIATION_FONTS)
+#include FT_MULTIPLE_MASTERS_H
+#endif
+
 namespace WebCore {
 
 struct HarfBuzzFontData {
@@ -213,6 +217,29 @@ hb_font_t* HarfBuzzFace::createFont()
         hb_font_set_ppem(font, size, size);
     int scale = floatToHarfBuzzPosition(size);
     hb_font_set_scale(font, scale, scale);
+
+#if ENABLE(VARIATION_FONTS)
+    {
+        CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
+        if (FT_Face face = cairoFtFaceLocker.ftFace()) {
+            FT_MM_Var* ftMMVar;
+            if (!FT_Get_MM_Var(face, &ftMMVar)) {
+                Vector<FT_Fixed, 4> coords;
+                coords.resize(ftMMVar->num_axis);
+                if (!FT_Get_Var_Design_Coordinates(face, coords.size(), coords.data())) {
+                    Vector<hb_variation_t, 4> variations(coords.size());
+                    for (FT_UInt i = 0; i < ftMMVar->num_axis; ++i) {
+                        variations[i].tag = ftMMVar->axis[i].tag;
+                        variations[i].value = coords[i] / 65536.0;
+                    }
+                    hb_font_set_variations(font, variations.data(), variations.size());
+                }
+                FT_Done_MM_Var(face->glyph->library, ftMMVar);
+            }
+        }
+    }
+#endif
+
     hb_font_make_immutable(font);
     return font;
 }
