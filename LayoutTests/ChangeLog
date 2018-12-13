@@ -1,3 +1,16 @@
+2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make TextInputController.legacyAttributedString take DOM nodes and offsets
+        https://bugs.webkit.org/show_bug.cgi?id=192653
+
+        Reviewed by Wenson Hsieh.
+
+        Updated the tests per API change.
+
+        * editing/mac/attributed-string/attribute-string-for-copy-with-color-filter.html:
+        * editing/mac/attributed-string/resources/dump-attributed-string.js:
+        (dumpAttributedString):
+
 2018-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238357): Pins on Yelp map disappear

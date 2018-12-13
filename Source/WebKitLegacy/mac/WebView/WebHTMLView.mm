@@ -7032,6 +7032,13 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
     return attributedString;
 }
 
+- (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode*)startContainer offset:(int)startOffset to:(DOMNode*)endContainer offset:(int)endOffset
+{
+    return attributedStringBetweenStartAndEnd(
+        Position { core(startContainer), startOffset, Position::PositionIsOffsetInAnchor },
+        Position { core(endContainer), endOffset, Position::PositionIsOffsetInAnchor });
+}
+
 - (NSAttributedString *)attributedString
 {
     DOMDocument *document = [[self _frame] DOMDocument];

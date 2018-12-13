@@ -1,3 +1,20 @@
+2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make TextInputController.legacyAttributedString take DOM nodes and offsets
+        https://bugs.webkit.org/show_bug.cgi?id=192653
+
+        Reviewed by Wenson Hsieh.
+
+        Updated TextInputController.legacyAttributedString to take DOM nodes and offsets instead of
+        a DOM Range object in preparation to add layout tests for HTMLConverter which crosses
+        shadow boundaries.
+
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+        (+[TextInputController isSelectorExcludedFromWebScript:]): Updated the selector signature.
+        (+[TextInputController webScriptNameForSelector:]): Ditto.
+        (-[TextInputController legacyAttributedString:offset:to:offset:]): Made this function take
+        start node and offset then end node and offset pairs.
+
 2018-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Implement safe browsing in WebKit on WatchOS

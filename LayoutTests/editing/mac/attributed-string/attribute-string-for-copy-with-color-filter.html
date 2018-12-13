@@ -20,11 +20,7 @@
         var target = document.getElementById("target");
         target.focus();
 
-        const range = new Range;
-        range.setStart(target.firstChild, 2);
-        range.setEnd(target.firstChild, 4);
-
-        var attributedString = textInputController.legacyAttributedString(range);
+        var attributedString = textInputController.legacyAttributedString(target.firstChild, 2, target.firstChild, 4);
         var serializedString = serializeAttributedString(attributedString);
         log(serializedString);
 

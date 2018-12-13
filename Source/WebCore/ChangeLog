@@ -1,3 +1,18 @@
+2018-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make TextInputController.legacyAttributedString take DOM nodes and offsets
+        https://bugs.webkit.org/show_bug.cgi?id=192653
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests since there should be no observable behavioral change other than
+        TextInputController API in DumpRenderTree.
+
+        * editing/cocoa/HTMLConverter.h:
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::attributedStringFromSelection):
+        (WebCore::attributedStringBetweenStartAndEnd): Added.
+
 2018-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix macOS builds after r239145.

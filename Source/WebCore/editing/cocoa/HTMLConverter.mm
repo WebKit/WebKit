@@ -2467,7 +2467,12 @@ NSAttributedString *attributedStringFromSelection(const VisibleSelection& select
 {
     auto range = selection.toNormalizedRange();
     ASSERT(range);
-    return HTMLConverter { range->startPosition(), range->endPosition() }.convert();
+    return attributedStringBetweenStartAndEnd(range->startPosition(), range->endPosition());
+}
+
+NSAttributedString *attributedStringBetweenStartAndEnd(const Position& start, const Position& end)
+{
+    return HTMLConverter { start, end }.convert();
 }
     
 #if !PLATFORM(IOS_FAMILY)

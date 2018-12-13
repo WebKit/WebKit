@@ -15,7 +15,8 @@ var shouldAutoDump = true;
         range.selectNodeContents(container);
 
         var pre = document.createElement('pre');
-        pre.textContent = 'Input:\n' + container.innerHTML.trim() + '\n\nOutput:\n' + serializeAttributedString(textInputController.legacyAttributedString(range));
+        var result = serializeAttributedString(textInputController.legacyAttributedString(container, 0, container, container.childNodes.length));
+        pre.textContent = 'Input:\n' + container.innerHTML.trim() + '\n\nOutput:\n' + result;
 
         body.innerHTML = '';
         body.appendChild(pre);
