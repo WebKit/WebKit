@@ -33,6 +33,8 @@
 #include <fontconfig/fcfreetype.h>
 #include <ft2build.h>
 #include FT_TRUETYPE_TABLES_H
+#include <hb-ft.h>
+#include <hb-ot.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 
@@ -144,9 +146,6 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
 
     m_scaledFont = other.m_scaledFont;
 
-    // This will be re-created on demand.
-    m_harfBuzzFace = nullptr;
-
     return *this;
 }
 
@@ -182,13 +181,6 @@ FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source,
     ASSERT(copy.m_scaledFont.get());
     copy.buildScaledFont(cairo_scaled_font_get_font_face(copy.m_scaledFont.get()));
     return copy;
-}
-
-HarfBuzzFace& FontPlatformData::harfBuzzFace() const
-{
-    if (!m_harfBuzzFace)
-        m_harfBuzzFace = std::make_unique<HarfBuzzFace>(const_cast<FontPlatformData&>(*this), hash());
-    return *m_harfBuzzFace;
 }
 
 FcPattern* FontPlatformData::fcPattern() const
@@ -302,6 +294,20 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
         return nullptr;
 
     return SharedBuffer::create(WTFMove(data));
+}
+
+HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
+{
+    CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());
+    FT_Face ftFace = cairoFtFaceLocker.ftFace();
+    if (!ftFace)
+        return nullptr;
+
+    HbUniquePtr<hb_face_t> face(hb_ft_face_create_cached(ftFace));
+    if (!hb_ot_math_has_data(face.get()))
+        return nullptr;
+
+    return HbUniquePtr<hb_font_t>(hb_font_create(face.get()));
 }
 
 } // namespace WebCore
