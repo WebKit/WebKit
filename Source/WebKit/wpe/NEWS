@@ -1,4 +1,15 @@
 =================
+WPE WebKit 2.22.3
+=================
+
+What's new in WPE WebKit 2.22.3?
+
+  - Improved the logic to determine for which architectures to enable
+    the JIT compiler support and USE_SYSTEM_MALLOC at build time.
+  - Fix the build with ENABLE_VIDEO=OFF and ENABLE_OPENGL=OFF.
+  - Fix several crashes.
+
+=================
 WPE WebKit 2.22.2
 =================
 
