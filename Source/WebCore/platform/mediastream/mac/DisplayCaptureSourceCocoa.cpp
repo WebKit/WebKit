@@ -86,11 +86,11 @@ const RealtimeMediaSourceSettings& DisplayCaptureSourceCocoa::settings()
     if (!m_currentSettings) {
         RealtimeMediaSourceSettings settings;
         settings.setFrameRate(frameRate());
-        auto size = frameSize();
-        if (!size.isEmpty()) {
-            settings.setWidth(size.width());
-            settings.setHeight(size.height());
-        }
+
+        auto size = this->size();
+        settings.setWidth(size.width());
+        settings.setHeight(size.height());
+
         settings.setDisplaySurface(surfaceType());
         settings.setLogicalSurface(false);
 
@@ -148,19 +148,9 @@ IntSize DisplayCaptureSourceCocoa::frameSize() const
 {
     IntSize frameSize = size();
     if (frameSize.isEmpty())
-        frameSize = m_intrinsicSize;
+        return intrinsicSize();
 
     return frameSize;
-}
-
-void DisplayCaptureSourceCocoa::setIntrinsicSize(const IntSize& size)
-{
-    if (m_intrinsicSize == size)
-        return;
-
-    m_intrinsicSize = size;
-    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
-
 }
 
 void DisplayCaptureSourceCocoa::emitFrame()
@@ -194,8 +184,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
     if (imageSize.isEmpty())
         return;
 
-    if (m_intrinsicSize != imageSize)
-        setIntrinsicSize(imageSize);
+    setIntrinsicSize(imageSize);
 
     auto mediaSampleSize = isRemote() ? imageSize : frameSize();
 
@@ -216,14 +205,6 @@ void DisplayCaptureSourceCocoa::emitFrame()
 
     if (!sample) {
         ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (isRemote()) {
-        auto remoteSample = RemoteVideoSample::create(WTFMove(*sample));
-        if (remoteSample)
-            remoteVideoSampleAvailable(WTFMove(*remoteSample));
-
         return;
     }
 

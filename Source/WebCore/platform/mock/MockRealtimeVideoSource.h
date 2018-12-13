@@ -70,7 +70,7 @@ private:
     bool isCaptureSource() const final { return true; }
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
     void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
-    void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset> preset) final { m_preset = preset; }
+    void setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset>) final;
     IntSize captureSize() const;
 
     void generatePresets() final;

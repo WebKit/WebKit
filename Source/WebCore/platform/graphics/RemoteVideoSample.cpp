@@ -47,12 +47,14 @@ std::unique_ptr<RemoteVideoSample> RemoteVideoSample::create(MediaSample&& sampl
     ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 
     auto imageBuffer = CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer);
-    if (!imageBuffer)
+    if (!imageBuffer) {
+        RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: CMSampleBufferGetImageBuffer returned nullptr");
         return nullptr;
+    }
 
     auto surface = CVPixelBufferGetIOSurface(imageBuffer);
     if (!surface) {
-        RELEASE_LOG(Media, "RemoteVideoSample::create: CVPixelBufferGetIOSurface returned nullptr");
+        RELEASE_LOG_ERROR(Media, "RemoteVideoSample::create: CVPixelBufferGetIOSurface returned nullptr");
         return nullptr;
     }
 

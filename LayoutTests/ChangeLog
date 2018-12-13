@@ -1,3 +1,14 @@
+2018-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Calculate width or height when constraints contain only the other
+        https://bugs.webkit.org/show_bug.cgi?id=192632
+        <rdar://problem/46665734>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/constraint-intrinsic-size-expected.txt: Added.
+        * fast/mediastream/constraint-intrinsic-size.html: Added.
+
 2018-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Remove HarfBuzzFace

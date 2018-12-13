@@ -1,3 +1,19 @@
+2018-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Calculate width or height when constraints contain only the other
+        https://bugs.webkit.org/show_bug.cgi?id=192632
+        <rdar://problem/46665734>
+
+        Reviewed by Youenn Fablet.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::remoteVideoSampleAvailable): Deleted,
+        replaced with videoSampleAvailable.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::remoteVideoSampleAvailable): Use original frame
+        size if necessary when calculating new frame size.
+
 2018-12-12  Chris Fleizach  <cfleizach@apple.com>
 
         [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds

@@ -163,13 +163,6 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample)
     });
 }
 
-void RealtimeMediaSource::remoteVideoSampleAvailable(RemoteVideoSample&& sample)
-{
-    forEachObserver([&](auto& observer) {
-        observer.remoteVideoSampleAvailable(sample);
-    });
-}
-
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)
 {
     forEachObserver([&](auto& observer) {
@@ -456,7 +449,7 @@ static void applyNumericConstraint(const NumericConstraint<ValueType>& constrain
 
 void RealtimeMediaSource::setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
-    IntSize size = this->size();
+    IntSize size;
     if (width)
         size.setWidth(width.value());
     if (height)
@@ -872,14 +865,38 @@ void RealtimeMediaSource::setSize(const IntSize& size)
     if (size == m_size)
         return;
 
-    OptionSet<RealtimeMediaSourceSettings::Flag> changed;
-    if (m_size.width() != size.width())
-        changed.add(RealtimeMediaSourceSettings::Flag::Width);
-    if (m_size.height() != size.height())
-        changed.add(RealtimeMediaSourceSettings::Flag::Height);
-
     m_size = size;
-    notifySettingsDidChangeObservers(changed);
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
+const IntSize RealtimeMediaSource::size() const
+{
+    auto size = m_size;
+
+    if (size.isEmpty() && !m_intrinsicSize.isEmpty()) {
+        if (size.width())
+            size.setHeight(size.width() * (m_intrinsicSize.height() / static_cast<double>(m_intrinsicSize.width())));
+        else if (size.height())
+            size.setWidth(size.height() * (m_intrinsicSize.width() / static_cast<double>(m_intrinsicSize.height())));
+    }
+
+    return size;
+}
+
+void RealtimeMediaSource::setIntrinsicSize(const IntSize& size)
+{
+    if (m_intrinsicSize == size)
+        return;
+
+    m_intrinsicSize = size;
+
+    if (m_intrinsicSize != m_size)
+        notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
+const IntSize RealtimeMediaSource::intrinsicSize() const
+{
+    return m_intrinsicSize;
 }
 
 void RealtimeMediaSource::setFrameRate(double rate)

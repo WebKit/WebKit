@@ -99,9 +99,15 @@ public:
         m_manager.process().send(Messages::UserMediaCaptureManager::AudioSamplesAvailable(m_id, time, numberOfFrames, startFrame, endFrame), 0);
     }
 
-    virtual void remoteVideoSampleAvailable(RemoteVideoSample& sample)
+    void videoSampleAvailable(MediaSample& sample) final
     {
-        m_manager.process().send(Messages::UserMediaCaptureManager::RemoteVideoSampleAvailable(m_id, WTFMove(sample)), 0);
+#if HAVE(IOSURFACE)
+        auto remoteSample = RemoteVideoSample::create(WTFMove(sample));
+        if (remoteSample)
+            m_manager.process().send(Messages::UserMediaCaptureManager::RemoteVideoSampleAvailable(m_id, WTFMove(*remoteSample)), 0);
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     void storageChanged(SharedMemory* storage) final {

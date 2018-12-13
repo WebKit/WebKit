@@ -132,11 +132,18 @@ public:
     {
         ASSERT(type() == Type::Video);
 
-        auto videoSampleSize = IntSize(m_settings.width(), m_settings.height());
-        if (videoSampleSize.isEmpty())
-            videoSampleSize = remoteSample.size();
+        auto remoteSampleSize = remoteSample.size();
+        setIntrinsicSize(remoteSampleSize);
 
-        if (!m_imageTransferSession)
+        auto videoSampleSize = IntSize(m_settings.width(), m_settings.height());
+        if (videoSampleSize.isZero())
+            videoSampleSize = remoteSampleSize;
+        else if (!videoSampleSize.height())
+            videoSampleSize.setHeight(videoSampleSize.width() * (remoteSampleSize.height() / static_cast<double>(remoteSampleSize.width())));
+        else if (!videoSampleSize.width())
+            videoSampleSize.setWidth(videoSampleSize.height() * (remoteSampleSize.width() / static_cast<double>(remoteSampleSize.height())));
+
+        if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
             m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
 
         if (!m_imageTransferSession) {

@@ -80,6 +80,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, String&& nam
 
     if (mockDisplay()) {
         auto& properties = WTF::get<MockDisplayProperties>(m_device.properties);
+        setIntrinsicSize(properties.defaultSize);
         setSize(properties.defaultSize);
         m_fillColor = properties.fillColor;
         return;
@@ -105,10 +106,12 @@ void MockRealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std:
 {
     // FIXME: consider splitting mock display into another class so we don't don't have to do this silly dance
     // because of the RealtimeVideoSource inheritance.
-    if (mockCamera())
-        return RealtimeVideoSource::setSizeAndFrameRate(width, height, rate);
+    if (mockCamera()) {
+        RealtimeVideoSource::setSizeAndFrameRate(width, height, rate);
+        return;
+    }
 
-    return RealtimeMediaSource::setSizeAndFrameRate(width, height, rate);
+    RealtimeMediaSource::setSizeAndFrameRate(width, height, rate);
 }
 
 void MockRealtimeVideoSource::generatePresets()
@@ -176,6 +179,13 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     m_currentSettings = WTFMove(settings);
 
     return m_currentSettings.value();
+}
+
+void MockRealtimeVideoSource::setSizeAndFrameRateWithPreset(IntSize, double, RefPtr<VideoPreset> preset)
+{
+    m_preset = preset;
+    if (preset)
+        setIntrinsicSize(preset->size);
 }
 
 IntSize MockRealtimeVideoSource::captureSize() const
@@ -360,11 +370,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     string = String::format("Size: %u x %u", size.width(), size.height());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
-    statsLocation.move(0, m_statsFontSize);
-    string = String::format("Preset size: %u x %u", captureSize.width(), captureSize.height());
-    context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
-
     if (mockCamera()) {
+        statsLocation.move(0, m_statsFontSize);
+        string = String::format("Preset size: %u x %u", captureSize.width(), captureSize.height());
+        context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+
         const char* camera;
         switch (facingMode()) {
         case RealtimeMediaSourceSettings::User:

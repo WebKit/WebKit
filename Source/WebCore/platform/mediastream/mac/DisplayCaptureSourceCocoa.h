@@ -68,8 +68,6 @@ protected:
 
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
 
-    const IntSize& intrinsicSize() const { return m_intrinsicSize; }
-    void setIntrinsicSize(const IntSize&);
     IntSize frameSize() const;
 
 private:
@@ -81,7 +79,6 @@ private:
 
     void emitFrame();
 
-    IntSize m_intrinsicSize;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

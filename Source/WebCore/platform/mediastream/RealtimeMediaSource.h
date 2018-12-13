@@ -82,7 +82,6 @@ public:
 
         // Called on the main thread.
         virtual void videoSampleAvailable(MediaSample&) { }
-        virtual void remoteVideoSampleAvailable(RemoteVideoSample&) { }
 
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) { }
@@ -119,8 +118,11 @@ public:
     WEBCORE_EXPORT void addObserver(Observer&);
     WEBCORE_EXPORT void removeObserver(Observer&);
 
+    const IntSize size() const;
     void setSize(const IntSize&);
-    const IntSize& size() const { return m_size; }
+
+    const IntSize intrinsicSize() const;
+    void setIntrinsicSize(const IntSize&);
 
     double frameRate() const { return m_frameRate; }
     void setFrameRate(double);
@@ -202,7 +204,6 @@ protected:
 
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
-    void remoteVideoSampleAvailable(RemoteVideoSample&&);
 
 private:
     virtual void startProducingData() { }
@@ -221,6 +222,7 @@ private:
     mutable RecursiveLock m_observersLock;
     HashSet<Observer*> m_observers;
     IntSize m_size;
+    IntSize m_intrinsicSize;
     double m_frameRate { 30 };
     double m_aspectRatio { 0 };
     double m_volume { 1 };

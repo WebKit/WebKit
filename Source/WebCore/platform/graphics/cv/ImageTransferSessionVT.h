@@ -55,6 +55,8 @@ public:
     WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 #endif
 
+    uint32_t pixelFormat() const { return m_pixelFormat; }
+
 private:
     WEBCORE_EXPORT explicit ImageTransferSessionVT(uint32_t pixelFormat);
 
