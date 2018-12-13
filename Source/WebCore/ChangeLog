@@ -1,3 +1,14 @@
+2018-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Calculate width or height when constraints contain only the other
+        https://bugs.webkit.org/show_bug.cgi?id=192632
+        <rdar://problem/46665734>
+
+        Unreviewed, remove an unneeded assert.
+
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::dispatchMediaSampleToObservers):
+
 2018-12-13  Zach Li  <zachli@apple.com>
 
         Update Credit Card AutoFill button icon

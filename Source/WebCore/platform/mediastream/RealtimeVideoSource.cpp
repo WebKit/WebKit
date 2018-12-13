@@ -392,7 +392,6 @@ void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
 #if PLATFORM(COCOA)
     if (!isRemote()) {
         auto size = this->size();
-        ASSERT(!size.isEmpty());
         if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
 
             if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
