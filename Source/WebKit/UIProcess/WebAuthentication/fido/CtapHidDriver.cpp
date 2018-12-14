@@ -69,6 +69,8 @@ void CtapHidDriver::Worker::transact(fido::FidoHidMessage&& requestMessage, Mess
 void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
 {
     ASSERT(m_state == State::Write);
+    // FIXME(192061)
+    LOG_ERROR("Start writing data.");
     if (sent != HidConnection::DataSent::Yes) {
         returnMessage(std::nullopt);
         return;
@@ -96,6 +98,8 @@ void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
 void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
 {
     ASSERT(m_state == State::Read);
+    // FIXME(192061)
+    LOG_ERROR("Start reading data.");
     if (!m_responseMessage) {
         m_responseMessage = FidoHidMessage::createFromSerializedData(data);
         // The first few reports could be for other applications, and therefore ignore those.
@@ -126,6 +130,8 @@ void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
 
 void CtapHidDriver::Worker::returnMessage(std::optional<fido::FidoHidMessage>&& message)
 {
+    // FIXME(192061)
+    LOG_ERROR("Start returning data.");
     m_state = State::Idle;
     m_connection->unregisterDataReceivedCallback();
     m_callback(WTFMove(message));
@@ -146,6 +152,8 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
     m_responseCallback = WTFMove(callback);
 
     // Allocate a channel.
+    // FIXME(192061)
+    LOG_ERROR("Start allocating a channel.");
     ASSERT(m_nonce.size() == kHidInitNonceLength);
     cryptographicallyRandomValues(m_nonce.data(), m_nonce.size());
     auto initCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kInit, m_nonce);
@@ -187,6 +195,8 @@ void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&
     m_channelId |= static_cast<uint32_t>(payload[index++]) << 8;
     m_channelId |= static_cast<uint32_t>(payload[index]);
     // FIXME(191534): Check the reset of the payload.
+    // FIXME(192061)
+    LOG_ERROR("Start sending the request.");
     auto cmd = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kCbor, m_requestData);
     ASSERT(cmd);
     m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](std::optional<FidoHidMessage>&& response) mutable {
@@ -201,6 +211,8 @@ void CtapHidDriver::continueAfterResponseReceived(std::optional<fido::FidoHidMes
 {
     ASSERT(m_state == State::Ready);
     ASSERT(!message || message->channelId() == m_channelId);
+    // FIXME(192061)
+    LOG_ERROR("Start returning the response.");
     returnResponse(message ? message->getMessagePayload() : Vector<uint8_t>());
 }
 

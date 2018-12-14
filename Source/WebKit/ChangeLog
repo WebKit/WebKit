@@ -1,3 +1,29 @@
+2018-12-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+
+        Reviewed by Dewei Zhu.
+
+        Part 2.
+
+        Add some additional temporary logging info. Since the failure cannot be reproduced easily by human, we have to
+        rely on the test infrastructure to reporoduce it. Once the bug is determined and fixed, we should remove all
+        logging added in this patch.
+
+        * UIProcess/WebAuthentication/Cocoa/HidService.mm:
+        (WebKit::HidService::deviceAdded):
+        * UIProcess/WebAuthentication/fido/CtapHidAuthenticator.cpp:
+        (WebKit::CtapHidAuthenticator::makeCredential):
+        (WebKit::CtapHidAuthenticator::getAssertion):
+        * UIProcess/WebAuthentication/fido/CtapHidDriver.cpp:
+        (WebKit::CtapHidDriver::Worker::write):
+        (WebKit::CtapHidDriver::Worker::read):
+        (WebKit::CtapHidDriver::Worker::returnMessage):
+        (WebKit::CtapHidDriver::transact):
+        (WebKit::CtapHidDriver::continueAfterChannelAllocated):
+        (WebKit::CtapHidDriver::continueAfterResponseReceived):
+
 2018-12-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Unreviewed build fix.

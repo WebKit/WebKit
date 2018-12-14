@@ -93,6 +93,8 @@ void HidService::deviceAdded(IOHIDDeviceRef device)
 {
     auto driver = std::make_unique<CtapHidDriver>(createHidConnection(device));
     // Get authenticator info from the device.
+    // FIXME(192061)
+    LOG_ERROR("Start asking device info.");
     driver->transact(encodeEmptyAuthenticatorRequest(CtapRequestCommand::kAuthenticatorGetInfo), [weakThis = makeWeakPtr(*this), ptr = driver.get()](Vector<uint8_t>&& response) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
