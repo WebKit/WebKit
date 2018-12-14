@@ -1,3 +1,46 @@
+2018-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that StructureFlags initialization always starts with Base::StructureFlags.
+        https://bugs.webkit.org/show_bug.cgi?id=192686
+
+        Reviewed by Keith Miller.
+
+        No new tests needed because there's no new functionality.  Just refactoring.
+
+        * bindings/js/JSDOMWindowProperties.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePrototypeDeclaration):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.h:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestPluginInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+
 2018-12-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make HTMLConverter work across shadow boundaries

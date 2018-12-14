@@ -1,5 +1,41 @@
 2018-12-13  Mark Lam  <mark.lam@apple.com>
 
+        Ensure that StructureFlags initialization always starts with Base::StructureFlags.
+        https://bugs.webkit.org/show_bug.cgi?id=192686
+
+        Reviewed by Keith Miller.
+
+        This is purely a refactoring effort to make the code consistently start all
+        StructureFlags initialization with Base::StructureFlags.  Previously, sometimes
+        Base::StructureFlags is appended at the end, and sometimes, it is expressed using
+        the name of the superclass.  This patch makes the code all consistent and easier
+        to do a quick eye scan audit on to verify that no StructureFlags are forgetting
+        to inherit Base::StructureFlags.
+
+        Also added a static_assert in JSCallbackObject.h and JSBoundFunction.h.  Both of
+        these implement a customHasInstance() method, and rely on ImplementsHasInstance
+        being included in the StructureFlags, and conversely, ImplementsDefaultHasInstance
+        has to be excluded.
+
+        JSBoundFunction.h is the only case where a bit (ImplementsDefaultHasInstance)
+        needs to be masked out of the inherited Base::StructureFlags.
+
+        * API/JSCallbackObject.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayIteratorPrototype.h:
+        * runtime/Exception.h:
+        * runtime/FunctionRareData.h:
+        * runtime/InferredType.h:
+        * runtime/InferredTypeTable.h:
+        * runtime/InferredValue.h:
+        * runtime/JSBoundFunction.h:
+        * runtime/MapPrototype.h:
+        * runtime/SetPrototype.h:
+        * runtime/StringPrototype.h:
+        * runtime/SymbolConstructor.h:
+
+2018-12-13  Mark Lam  <mark.lam@apple.com>
+
         Add the JSC_traceBaselineJITExecution option for tracing baseline JIT execution.
         https://bugs.webkit.org/show_bug.cgi?id=192684
 

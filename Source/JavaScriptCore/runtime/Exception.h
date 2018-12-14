@@ -34,7 +34,7 @@ namespace JSC {
 class Exception final : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     enum StackCaptureAction {
         CaptureStack,

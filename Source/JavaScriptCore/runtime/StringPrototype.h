@@ -35,7 +35,7 @@ private:
 
 public:
     typedef StringObject Base;
-    static const unsigned StructureFlags = HasStaticPropertyTable | Base::StructureFlags;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static StringPrototype* create(VM&, JSGlobalObject*, Structure*);
 

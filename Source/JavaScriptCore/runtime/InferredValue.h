@@ -101,7 +101,7 @@ public:
         m_set.invalidate(vm, detail);
     }
     
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
     void finalizeUnconditionally(VM&);
     

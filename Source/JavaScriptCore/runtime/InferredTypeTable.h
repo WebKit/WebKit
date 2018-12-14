@@ -47,7 +47,7 @@ public:
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 

@@ -2835,11 +2835,11 @@ sub GenerateHeader
     # structure flags
     if (%structureFlags) {
         push(@headerContent, "public:\n");
-        push(@headerContent, "    static const unsigned StructureFlags = ");
+        push(@headerContent, "    static const unsigned StructureFlags = Base::StructureFlags");
         foreach my $structureFlag (sort (keys %structureFlags)) {
-            push(@headerContent, $structureFlag . " | ");
+            push(@headerContent, " | " . $structureFlag);
         }
-        push(@headerContent, "Base::StructureFlags;\n");
+        push(@headerContent, ";\n");
     }
 
     push(@headerContent, "protected:\n");
@@ -7046,11 +7046,11 @@ sub GeneratePrototypeDeclaration
     # structure flags
     if (%structureFlags) {
         push(@$outputArray, "public:\n");
-        push(@$outputArray, "    static const unsigned StructureFlags = ");
+        push(@$outputArray, "    static const unsigned StructureFlags = Base::StructureFlags");
         foreach my $structureFlag (sort (keys %structureFlags)) {
-            push(@$outputArray, $structureFlag . " | ");
+            push(@$outputArray, " | " . $structureFlag);
         }
-        push(@$outputArray, "Base::StructureFlags;\n");
+        push(@$outputArray, ";\n");
     }
 
     push(@$outputArray, "};\n\n");
