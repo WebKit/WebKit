@@ -55,10 +55,13 @@ String WebPageDebuggable::name() const
 String WebPageDebuggable::url() const
 {
     if (!m_page.mainFrame())
-        return String();
+        return "about:blank"_s;
 
     String url = m_page.mainFrame()->url().string();
-    return url.isEmpty() ? "about:blank"_s : url;
+    if (url.isEmpty())
+        return "about:blank"_s;
+
+    return url;
 }
 
 bool WebPageDebuggable::hasLocalDebugger() const
