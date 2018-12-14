@@ -507,6 +507,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useTracePoints, false, Normal, nullptr) \
     v(bool, traceLLIntExecution, false, Configurable, nullptr) \
     v(bool, traceLLIntSlowPath, false, Configurable, nullptr) \
+    v(bool, traceBaselineJITExecution, false, Normal, nullptr) \
 
 
 enum OptionEquivalence {

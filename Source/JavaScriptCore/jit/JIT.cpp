@@ -44,6 +44,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
 #include "PCToCodeOriginMap.h"
+#include "ProbeContext.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
 #include "ResultType.h"
@@ -269,6 +270,14 @@ void JIT::privateCompileMainPass()
             updateTopCallFrame();
 
         unsigned bytecodeOffset = m_bytecodeOffset;
+#if ENABLE(MASM_PROBE)
+        if (UNLIKELY(Options::traceBaselineJITExecution())) {
+            CodeBlock* codeBlock = m_codeBlock;
+            probe([=] (Probe::Context& ctx) {
+                dataLogLn("JIT [", bytecodeOffset, "] ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
+            });
+        }
+#endif
 
         switch (opcodeID) {
         DEFINE_SLOW_OP(in_by_val)
@@ -492,6 +501,17 @@ void JIT::privateCompileSlowCases()
 
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeOffset, label());
+
+#if ENABLE(MASM_PROBE)
+        if (UNLIKELY(Options::traceBaselineJITExecution())) {
+            OpcodeID opcodeID = currentInstruction->opcodeID();
+            unsigned bytecodeOffset = m_bytecodeOffset;
+            CodeBlock* codeBlock = m_codeBlock;
+            probe([=] (Probe::Context& ctx) {
+                dataLogLn("JIT [", bytecodeOffset, "] SLOW ", opcodeNames[opcodeID], " cfr ", RawPointer(ctx.fp()), " @ ", codeBlock);
+            });
+        }
+#endif
 
         switch (currentInstruction->opcodeID()) {
         DEFINE_SLOWCASE_OP(op_add)

@@ -1,3 +1,18 @@
+2018-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Add the JSC_traceBaselineJITExecution option for tracing baseline JIT execution.
+        https://bugs.webkit.org/show_bug.cgi?id=192684
+
+        Reviewed by Saam Barati.
+
+        This dataLogs the bytecode execution order of baseline JIT code when the
+        JSC_traceBaselineJITExecution option is true.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * runtime/Options.h:
+
 2018-12-13  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary object copies in JavaScriptCore
