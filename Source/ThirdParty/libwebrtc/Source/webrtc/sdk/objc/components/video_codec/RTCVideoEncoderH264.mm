@@ -608,19 +608,22 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFRelease(pixelFormat);
     pixelFormat = nullptr;
   }
-  CFDictionaryRef encoderSpecs = nullptr;
+  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #if !defined(WEBRTC_IOS)
   auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
   // the compression session will be created with hw accl disabled.
-  CFTypeRef sessionKeys[] = { kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, kVTCompressionPropertyKey_RealTime };
-  CFTypeRef sessionValues[] = { useHardwareEncoder, useHardwareEncoder, kCFBooleanTrue };
-  encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 3, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-#else
-  CFTypeRef sessionKeys[] = { kVTCompressionPropertyKey_RealTime };
-  CFTypeRef sessionValues[] = { kCFBooleanTrue };
-  encoderSpecs = CFDictionaryCreate(kCFAllocatorDefault, sessionKeys, sessionValues, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, useHardwareEncoder);
+  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, useHardwareEncoder);
 #endif
+  CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
+
+  if (auto key = getkVTVideoEncoderSpecification_Usage()) {
+    int usageValue = 1;
+    auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
+    CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)key, usage);
+    CFRelease(usage);
+  }
 
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
