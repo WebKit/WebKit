@@ -761,8 +761,6 @@ public:
         m_opInfo = structure;
         m_opInfo2 = OpInfoWrapper();
     }
-
-    void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     
     void convertToDirectCall(FrozenValue*);
 

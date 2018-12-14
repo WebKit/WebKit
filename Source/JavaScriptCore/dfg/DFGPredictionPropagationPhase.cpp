@@ -984,8 +984,7 @@ private:
         case NewArray:
         case NewArrayWithSize:
         case CreateRest:
-        case NewArrayBuffer:
-        case ObjectKeys: {
+        case NewArrayBuffer: {
             setPrediction(SpecArray);
             break;
         }

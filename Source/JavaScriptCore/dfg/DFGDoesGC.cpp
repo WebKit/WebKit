@@ -339,7 +339,6 @@ bool doesGC(Graph& graph, Node* node)
     case ToThis:
     case CreateThis:
     case ObjectCreate:
-    case ObjectKeys:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
     case Arrayify:

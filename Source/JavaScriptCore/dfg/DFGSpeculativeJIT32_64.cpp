@@ -3167,11 +3167,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ObjectKeys: {
-        compileObjectKeys(node);
-        break;
-    }
-
     case CreateThis: {
         compileCreateThis(node);
         break;

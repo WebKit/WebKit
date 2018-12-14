@@ -31,7 +31,6 @@
 #include "DFGGraph.h"
 #include "DFGPromotedHeapLocation.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
 
 namespace JSC { namespace DFG {
 
@@ -222,17 +221,6 @@ void Node::convertToLazyJSConstant(Graph& graph, LazyJSValue value)
     m_flags &= ~NodeMustGenerate;
     m_opInfo = graph.m_lazyJSValues.add(value);
     children.reset();
-}
-
-void Node::convertToNewArrayBuffer(FrozenValue* immutableButterfly)
-{
-    setOpAndDefaultFlags(NewArrayBuffer);
-    NewArrayBufferData data { };
-    data.indexingMode = immutableButterfly->cast<JSImmutableButterfly*>()->indexingMode();
-    data.vectorLengthHint = immutableButterfly->cast<JSImmutableButterfly*>()->toButterfly()->vectorLength();
-    children.reset();
-    m_opInfo = immutableButterfly;
-    m_opInfo2 = data.asQuadWord;
 }
 
 void Node::convertToDirectCall(FrozenValue* executable)

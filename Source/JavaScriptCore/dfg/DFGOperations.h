@@ -43,8 +43,6 @@ EncodedJSValue JIT_OPERATION operationStringFromCharCodeUntyped(ExecState*, Enco
 // These routines provide callbacks out to C++ implementations of operations too complex to JIT.
 JSCell* JIT_OPERATION operationCallObjectConstructor(ExecState*, JSGlobalObject*, EncodedJSValue encodedTarget) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationToObject(ExecState*, JSGlobalObject*, EncodedJSValue encodedTarget, UniquedStringImpl*) WTF_INTERNAL;
-JSArray* JIT_OPERATION operationObjectKeys(ExecState*, EncodedJSValue) WTF_INTERNAL;
-JSArray* JIT_OPERATION operationObjectKeysObject(ExecState*, JSObject*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationObjectCreate(ExecState*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationObjectCreateObject(ExecState*, JSObject*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateThis(ExecState*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;
