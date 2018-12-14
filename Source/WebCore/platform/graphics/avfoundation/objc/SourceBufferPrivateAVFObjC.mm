@@ -1159,7 +1159,7 @@ void SourceBufferPrivateAVFObjC::setActive(bool isActive)
         m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
-MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(MediaTime time, MediaTime negativeThreshold, MediaTime positiveThreshold)
+MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
     if (!m_client)
         return time;
@@ -1171,7 +1171,7 @@ void SourceBufferPrivateAVFObjC::willSeek()
     flush();
 }
 
-void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
+void SourceBufferPrivateAVFObjC::seekToTime(const MediaTime& time)
 {
     if (m_client)
         m_client->sourceBufferPrivateSeekToTime(time);

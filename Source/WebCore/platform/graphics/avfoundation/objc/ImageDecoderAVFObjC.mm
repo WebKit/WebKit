@@ -300,7 +300,7 @@ private:
     bool m_hasAlpha { false };
 };
 
-static ImageDecoderAVFObjCSample* toSample(PresentationOrderSampleMap::value_type pair)
+static ImageDecoderAVFObjCSample* toSample(const PresentationOrderSampleMap::value_type& pair)
 {
     return (ImageDecoderAVFObjCSample*)pair.second.get();
 }

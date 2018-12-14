@@ -301,7 +301,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)
 {
-    for (auto key : m_sampleBufferAudioRendererMap.keys())
+    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setVolume:volume];
 }
 
@@ -312,7 +312,7 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning() const
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
 {
-    for (auto key : m_sampleBufferAudioRendererMap.keys())
+    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setMuted:muted];
 }
 
@@ -460,7 +460,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
 void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
 {
     NSString *algorithm = preservesPitch ? AVAudioTimePitchAlgorithmSpectral : AVAudioTimePitchAlgorithmVarispeed;
-    for (auto key : m_sampleBufferAudioRendererMap.keys())
+    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
         [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
 }
 

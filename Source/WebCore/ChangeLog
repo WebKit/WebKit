@@ -1,3 +1,39 @@
+2018-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary object copies in WebCore/platform/graphics/avfoundation/objc/
+        <https://webkit.org/b/192708>
+        <rdar://problem/46735907>
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::toSample):
+        - Make argument a const reference.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        - Update method signatures for implementation changes.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setAsset):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange):
+        - Make RetainPtr<> argument an rvalue reference and use WTFMove().
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange):
+        - Make RetainPtr<> argument a const reference.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVolume):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setMuted):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch):
+        - Change for loop keys to be const references.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        - Update method signatures for implementation changes.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime):
+        (WebCore::SourceBufferPrivateAVFObjC::seekToTime):
+        - Make Mediatime arguments a const reference.
+
 2018-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r233268): contents of an animated element inside overflow:hidden disappear

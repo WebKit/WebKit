@@ -102,8 +102,8 @@ public:
     void trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC*);
 
     void willSeek();
-    void seekToTime(MediaTime);
-    MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
+    void seekToTime(const MediaTime&);
+    MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     FloatSize naturalSize();
 
     int protectedTrackID() const { return m_protectedTrackID; }
