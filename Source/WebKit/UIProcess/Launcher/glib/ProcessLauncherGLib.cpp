@@ -173,7 +173,7 @@ void ProcessLauncher::launchProcess()
         sandboxEnabled = !strcmp(sandboxEnv, "1");
 
     if (sandboxEnabled && isInsideFlatpak())
-        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());
+        process = flatpakSpawn(launcher.get(), m_launchOptions, argv, socketPair.client, &error.outPtr());
 #if ENABLE(BUBBLEWRAP_SANDBOX)
     else if (sandboxEnabled)
         process = bubblewrapSpawn(launcher.get(), m_launchOptions, argv, &error.outPtr());

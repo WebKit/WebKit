@@ -29,10 +29,11 @@
 #if OS(LINUX)
 
 #include <gio/gio.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 
-GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, GError **error)
+GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::ProcessLauncher::LaunchOptions& launchOptions, char** argv, int childProcessSocket, GError** error)
 {
     ASSERT(launcher);
 
@@ -44,8 +45,10 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     // much outside of `--sandbox` (no permissions) and `--no-network`. We need to
     // add some permissions in between those for this to provide meaningful security.
 
+    GUniquePtr<gchar> childProcessSocketArg(g_strdup_printf("--forward-fd=%d", childProcessSocket));
     Vector<const char*> flatpakArgs = {
         "/usr/bin/flatpak-spawn",
+        childProcessSocketArg.get(),
     };
 
     char** newArgv = g_newa(char*, g_strv_length(argv) + flatpakArgs.size() + 1);

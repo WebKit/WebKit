@@ -36,7 +36,7 @@ typedef struct _GSubprocessLauncher GSubprocessLauncher;
 
 namespace WebKit {
 
-GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher*, const WebKit::ProcessLauncher::LaunchOptions&, char** argv, GError**);
+GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher*, const WebKit::ProcessLauncher::LaunchOptions&, char** argv, int childProcessSocket, GError**);
 
 };
 

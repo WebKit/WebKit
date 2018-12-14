@@ -1,3 +1,18 @@
+2018-12-14  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Fix forwarding webkit socket to flatpak sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=192622
+
+        Reviewed by Michael Catanzaro.
+
+        This fixes running with the sandbox enabled in Flatpak.
+
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp:
+        (WebKit::flatpakSpawn):
+        * UIProcess/Launcher/glib/FlatpakLauncher.h:
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2018-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use new view state API from libwpe
