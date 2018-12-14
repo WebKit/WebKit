@@ -442,10 +442,10 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
         createAndAppendInlineItem();
         auto& inlineRun = *inlineFormattingState.inlineContent().last();
 
-        auto horizontalMargins = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
+        auto horizontalMargin = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
         inlineRun.addDetachingRule({ InlineItem::DetachingRule::BreakAtStart, InlineItem::DetachingRule::BreakAtEnd });
-        inlineRun.addNonBreakableStart(horizontalMargins.left);
-        inlineRun.addNonBreakableEnd(horizontalMargins.right);
+        inlineRun.addNonBreakableStart(horizontalMargin.start);
+        inlineRun.addNonBreakableEnd(horizontalMargin.end);
         // Skip formatting root subtree. They are not part of this inline formatting context.
         return;
     }
@@ -465,7 +465,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     // FIXME: Revisit this when we figured out how inline boxes fit the display tree.
     auto padding = Geometry::computedPadding(layoutState(), root);
     auto border = Geometry::computedBorder(layoutState(), root);
-    auto horizontalMargins = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
+    auto horizontalMargin = Geometry::computedNonCollapsedHorizontalMarginValue(layoutState(), root);
     // Setup breaking boundaries for this subtree.
     auto* lastDescendantInlineBox = inlineFormattingState.lastInlineItem();
     // Empty container?
@@ -475,13 +475,13 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
     auto rootBreaksAtStart = [&] {
         if (&root == &(this->root()))
             return false;
-        return (padding && padding->horizontal.left) || border.horizontal.left || horizontalMargins.left || root.isPositioned();
+        return (padding && padding->horizontal.left) || border.horizontal.left || horizontalMargin.start || root.isPositioned();
     };
 
     auto rootBreaksAtEnd = [&] {
         if (&root == &(this->root()))
             return false;
-        return (padding && padding->horizontal.right) || border.horizontal.right || horizontalMargins.right || root.isPositioned();
+        return (padding && padding->horizontal.right) || border.horizontal.right || horizontalMargin.end || root.isPositioned();
     };
 
     if (rootBreaksAtStart()) {
@@ -496,7 +496,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
         ASSERT(firstDescendantInlineBox);
         firstDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtStart);
-        auto startOffset = border.horizontal.left + horizontalMargins.left;
+        auto startOffset = border.horizontal.left + horizontalMargin.start;
         if (padding)
             startOffset += padding->horizontal.left;
         firstDescendantInlineBox->addNonBreakableStart(startOffset);
@@ -504,7 +504,7 @@ void InlineFormattingContext::collectInlineContentForSubtree(const Box& root, In
 
     if (rootBreaksAtEnd()) {
         lastDescendantInlineBox->addDetachingRule(InlineItem::DetachingRule::BreakAtEnd);
-        auto endOffset = border.horizontal.right + horizontalMargins.right;
+        auto endOffset = border.horizontal.right + horizontalMargin.end;
         if (padding)
             endOffset += padding->horizontal.right;
         lastDescendantInlineBox->addNonBreakableEnd(endOffset);

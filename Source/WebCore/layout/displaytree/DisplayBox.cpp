@@ -60,7 +60,7 @@ Box::Box(const Box& other)
     , m_horizontalMargin(other.m_horizontalMargin)
     , m_verticalMargin(other.m_verticalMargin)
     , m_horizontalNonComputedMargin(other.m_horizontalNonComputedMargin)
-    , m_estimatedMarginTop(other.m_estimatedMarginTop)
+    , m_estimatedMarginBefore(other.m_estimatedMarginBefore)
     , m_border(other.m_border)
     , m_padding(other.m_padding)
 #if !ASSERT_DISABLED
@@ -92,10 +92,10 @@ Box::Rect Box::marginBox() const
     auto borderBox = this->borderBox();
 
     Rect marginBox;
-    marginBox.setTop(borderBox.top() - marginTop());
-    marginBox.setLeft(borderBox.left() - marginLeft());
-    marginBox.setHeight(borderBox.height() + marginTop() + marginBottom());
-    marginBox.setWidth(borderBox.width() + marginLeft() + marginRight());
+    marginBox.setTop(borderBox.top() - marginBefore());
+    marginBox.setLeft(borderBox.left() - marginStart());
+    marginBox.setHeight(borderBox.height() + marginBefore() + marginAfter());
+    marginBox.setWidth(borderBox.width() + marginStart() + marginEnd());
     return marginBox;
 }
 
@@ -104,10 +104,10 @@ Box::Rect Box::nonCollapsedMarginBox() const
     auto borderBox = this->borderBox();
 
     Rect marginBox;
-    marginBox.setTop(borderBox.top() - nonCollapsedMarginTop());
-    marginBox.setLeft(borderBox.left() - marginLeft());
-    marginBox.setHeight(borderBox.height() + nonCollapsedMarginTop() + nonCollapsedMarginBottom());
-    marginBox.setWidth(borderBox.width() + marginLeft() + marginRight());
+    marginBox.setTop(borderBox.top() - nonCollapsedMarginBefore());
+    marginBox.setLeft(borderBox.left() - marginStart());
+    marginBox.setHeight(borderBox.height() + nonCollapsedMarginBefore() + nonCollapsedMarginAfter());
+    marginBox.setWidth(borderBox.width() + marginStart() + marginEnd());
     return marginBox;
 }
 

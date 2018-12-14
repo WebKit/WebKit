@@ -87,7 +87,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox)
     }
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.left);
+    displayBox.setLeft(horizontalGeometry.left + horizontalGeometry.widthAndMargin.margin.start);
     displayBox.setContentBoxWidth(horizontalGeometry.widthAndMargin.width);
     displayBox.setHorizontalMargin(horizontalGeometry.widthAndMargin.margin);
     displayBox.setHorizontalNonComputedMargin(horizontalGeometry.widthAndMargin.nonComputedMargin);
@@ -117,8 +117,8 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox) c
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     // Margins of absolutely positioned boxes do not collapse
     ASSERT(!verticalGeometry.heightAndMargin.margin.collapsedValues());
-    auto nonCollapsedVerticalMargins = verticalGeometry.heightAndMargin.margin.nonCollapsedValues();
-    displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargins.top);
+    auto nonCollapsedVerticalMargin = verticalGeometry.heightAndMargin.margin.nonCollapsedValues();
+    displayBox.setTop(verticalGeometry.top + nonCollapsedVerticalMargin.before);
     displayBox.setContentBoxHeight(verticalGeometry.heightAndMargin.height);
     displayBox.setVerticalMargin(verticalGeometry.heightAndMargin.margin);
 }
@@ -224,16 +224,16 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if ((layoutBox.isBlockLevelBox() || layoutBox.isOutOfFlowPositioned()) && !layoutBox.replaced()) {
             // margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right = width of containing block
             auto containingBlockWidth = containingBlockDisplayBox.contentBoxWidth();
-            ASSERT(displayBox.marginLeft() + displayBox.borderLeft() + displayBox.paddingLeft().value_or(0) + displayBox.contentBoxWidth()
-                + displayBox.paddingRight().value_or(0) + displayBox.borderRight() + displayBox.marginRight() == containingBlockWidth);
+            ASSERT(displayBox.marginStart() + displayBox.borderLeft() + displayBox.paddingLeft().value_or(0) + displayBox.contentBoxWidth()
+                + displayBox.paddingRight().value_or(0) + displayBox.borderRight() + displayBox.marginEnd() == containingBlockWidth);
         }
 
         // 10.6.4 Absolutely positioned, non-replaced elements
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.replaced()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockDisplayBox.contentBoxHeight();
-            ASSERT(displayBox.top() + displayBox.marginTop() + displayBox.borderTop() + displayBox.paddingTop().value_or(0) + displayBox.contentBoxHeight()
-                + displayBox.paddingBottom().value_or(0) + displayBox.borderBottom() + displayBox.marginBottom() == containingBlockHeight);
+            ASSERT(displayBox.top() + displayBox.marginBefore() + displayBox.borderTop() + displayBox.paddingTop().value_or(0) + displayBox.contentBoxHeight()
+                + displayBox.paddingBottom().value_or(0) + displayBox.borderBottom() + displayBox.marginAfter() == containingBlockHeight);
         }
     }
 }

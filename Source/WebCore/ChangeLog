@@ -1,5 +1,153 @@
 2018-12-14  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC] Transition to logical margin types.
+        https://bugs.webkit.org/show_bug.cgi?id=192699
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving over to logical types.
+        (This patch also transitions to singlular margin naming (verticalMargins -> VerticalMargin))
+
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowHorizontalGeometry const):
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        (WebCore::Layout::FormattingContext::validateGeometryConstraintsAfterLayout const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::staticVerticalPositionForOutOfFlowPositioned):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedHorizontalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::floatingNonReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::floatingReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedWidthAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/FormattingContextQuirks.cpp:
+        (WebCore::Layout::FormattingContext::Quirks::heightValueOfNearestContainingBlockWithFixedHeight):
+        * layout/MarginTypes.h:
+        (WebCore::Layout::VerticalMargin::usedValues const):
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingBlockBoxInformationIfNeeded):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBefore const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginBeforeForAncestors const):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded const):
+        (WebCore::Layout::hasPrecomputedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::computeFloatingPosition const):
+        (WebCore::Layout::BlockFormattingContext::computePositionToAvoidFloats const):
+        (WebCore::Layout::BlockFormattingContext::computeVerticalPositionForFloatClear const):
+        (WebCore::Layout::BlockFormattingContext::computeWidthAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTop const): Deleted.
+        (WebCore::Layout::BlockFormattingContext::computeEstimatedMarginTopForAncestors const): Deleted.
+        (WebCore::Layout::hasPrecomputedMarginTop): Deleted.
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowReplacedWidthAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::staticPosition):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::instrinsicWidthConstraints):
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::estimatedMarginBottom): Deleted.
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::hasMarginBeforeQuirkValue):
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreMarginBefore):
+        (WebCore::Layout::hasMarginTopQuirkValue): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Quirks::shouldIgnoreMarginTop): Deleted.
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::isMarginBeforeCollapsedWithSibling):
+        (WebCore::Layout::isMarginAfterCollapsedWithSibling):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParent):
+        (WebCore::Layout::isMarginAfterCollapsedThrough):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBeforeFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginAfterCollapsedWithParent):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfterFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginAfter):
+        (WebCore::Layout::isMarginTopCollapsedWithSibling): Deleted.
+        (WebCore::Layout::isMarginBottomCollapsedWithSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParent): Deleted.
+        (WebCore::Layout::isMarginBottomCollapsedThrough): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopFromFirstChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginTop): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBottom): Deleted.
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        (WebCore::Display::Box::marginBox const):
+        (WebCore::Display::Box::nonCollapsedMarginBox const):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::rectWithMargin const):
+        (WebCore::Display::Box::estimatedMarginBefore const):
+        (WebCore::Display::Box::setEstimatedMarginBefore):
+        (WebCore::Display::Box::top const):
+        (WebCore::Display::Box::topLeft const):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::marginBefore const):
+        (WebCore::Display::Box::marginStart const):
+        (WebCore::Display::Box::marginAfter const):
+        (WebCore::Display::Box::marginEnd const):
+        (WebCore::Display::Box::nonCollapsedMarginBefore const):
+        (WebCore::Display::Box::nonCollapsedMarginAfter const):
+        (WebCore::Display::Box::nonComputedMarginStart const):
+        (WebCore::Display::Box::nonComputedMarginEnd const):
+        (WebCore::Display::Box::estimatedMarginTop const): Deleted.
+        (WebCore::Display::Box::setEstimatedMarginTop): Deleted.
+        (WebCore::Display::Box::marginTop const): Deleted.
+        (WebCore::Display::Box::marginLeft const): Deleted.
+        (WebCore::Display::Box::marginBottom const): Deleted.
+        (WebCore::Display::Box::marginRight const): Deleted.
+        (WebCore::Display::Box::nonCollapsedMarginTop const): Deleted.
+        (WebCore::Display::Box::nonCollapsedMarginBottom const): Deleted.
+        (WebCore::Display::Box::nonComputedMarginLeft const): Deleted.
+        (WebCore::Display::Box::nonComputedMarginRight const): Deleted.
+        * layout/floats/FloatAvoider.cpp:
+        (WebCore::Layout::FloatAvoider::setHorizontalConstraints):
+        (WebCore::Layout::FloatAvoider::initialHorizontalPosition const):
+        (WebCore::Layout::FloatAvoider::overflowsContainingBlock const):
+        * layout/floats/FloatAvoider.h:
+        (WebCore::Layout::FloatAvoider::marginBefore const):
+        (WebCore::Layout::FloatAvoider::marginAfter const):
+        (WebCore::Layout::FloatAvoider::marginStart const):
+        (WebCore::Layout::FloatAvoider::marginEnd const):
+        (WebCore::Layout::FloatAvoider::marginBoxWidth const):
+        (WebCore::Layout::FloatAvoider::marginTop const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginBottom const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginLeft const): Deleted.
+        (WebCore::Layout::FloatAvoider::marginRight const): Deleted.
+        * layout/floats/FloatBox.cpp:
+        (WebCore::Layout::FloatBox::rect const):
+        (WebCore::Layout::FloatBox::horizontalPositionCandidate):
+        (WebCore::Layout::FloatBox::verticalPositionCandidate):
+        (WebCore::Layout::FloatBox::initialVerticalPosition const):
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::positionForFloat const):
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::collectInlineContentForSubtree const):
+
+2018-12-14  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC] Introduce VerticalMargin and HorizontalMargin types.
         https://bugs.webkit.org/show_bug.cgi?id=192692
 

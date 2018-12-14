@@ -61,11 +61,11 @@ void FloatAvoider::setHorizontalConstraints(HorizontalConstraints horizontalCons
         // Compute the horizontal position for the new floating by taking both the contining block and the current left/right floats into account.
         auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
         if (isLeftAligned())
-            return std::max<PositionInContextRoot>({ containingBlockContentBoxLeft + marginLeft() }, left);
+            return std::max<PositionInContextRoot>({ containingBlockContentBoxLeft + marginStart() }, left);
 
         // Make sure it does not overflow the containing block on the right.
         auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
-        return std::min<PositionInContextRoot>(left, { containingBlockContentBoxRight - marginBoxWidth() + marginLeft() });
+        return std::min<PositionInContextRoot>(left, { containingBlockContentBoxRight - marginBoxWidth() + marginStart() });
     };
 
     auto positionCandidate = horizontalPositionCandidate(horizontalConstraints);
@@ -99,7 +99,7 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
     auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
 
     auto left = isLeftAligned() ? containingBlockContentBoxLeft : containingBlockContentBoxRight - marginBoxWidth();
-    left += marginLeft();
+    left += marginStart();
 
     return { left };
 }
@@ -107,13 +107,13 @@ PositionInContextRoot FloatAvoider::initialHorizontalPosition() const
 bool FloatAvoider::overflowsContainingBlock() const
 {
     auto containingBlockContentBoxLeft = m_containingBlockAbsoluteDisplayBox.left() + m_containingBlockAbsoluteDisplayBox.contentBoxLeft();
-    auto left = displayBox().left() - marginLeft();
+    auto left = displayBox().left() - marginStart();
 
     if (containingBlockContentBoxLeft > left)
         return true;
 
     auto containingBlockContentBoxRight = containingBlockContentBoxLeft + m_containingBlockAbsoluteDisplayBox.contentBoxWidth();
-    auto right = displayBox().right() + marginRight();
+    auto right = displayBox().right() + marginEnd();
 
     return containingBlockContentBoxRight < right;
 }

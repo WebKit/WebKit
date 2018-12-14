@@ -128,9 +128,9 @@ Point FloatingContext::positionForFloat(const Box& layoutBox) const
             auto& containingBlockDisplayBox = layoutState().displayBoxForLayoutBox(*layoutBox.containingBlock());
 
             if (layoutBox.isLeftFloatingPositioned())
-                return Position { containingBlockDisplayBox.contentBoxLeft() + displayBox.marginLeft() };
+                return Position { containingBlockDisplayBox.contentBoxLeft() + displayBox.marginStart() };
 
-            return Position { containingBlockDisplayBox.contentBoxRight() - displayBox.marginRight() - displayBox.width() };
+            return Position { containingBlockDisplayBox.contentBoxRight() - displayBox.marginEnd() - displayBox.width() };
         };
 
         // No float box on the context yet -> align it with the containing block's left/right edge.
@@ -188,23 +188,23 @@ std::optional<Position> FloatingContext::verticalPositionWithClearance(const Box
             auto& previousInFlowDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowSibling);
 
             // Since the previous inflow sibling has already been laid out, its margin is collapsed by now.
-            ASSERT(!previousInFlowDisplayBox.marginBottom());
-            auto collapsedMargin = displayBox.marginTop();
+            ASSERT(!previousInFlowDisplayBox.marginAfter());
+            auto collapsedMargin = displayBox.marginBefore();
 
             // Reset previous bottom and current top margins to non-collapsing.
             auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
-            if (previousVerticalMargin.collapsedValues() && previousVerticalMargin.collapsedValues()->bottom) {
-                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues()->top, { } });
+            if (previousVerticalMargin.collapsedValues() && previousVerticalMargin.collapsedValues()->after) {
+                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues()->before, { } });
                 previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
             }
             // FIXME: check if collapsing through has anything to do with this.
             auto verticalMargin = displayBox.verticalMargin();
-            if (verticalMargin.collapsedValues() && verticalMargin.collapsedValues()->top) {
-                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues()->bottom });
+            if (verticalMargin.collapsedValues() && verticalMargin.collapsedValues()->before) {
+                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues()->after });
                 displayBox.setVerticalMargin(verticalMargin);
             }
 
-            auto nonCollapsedMargin = previousInFlowDisplayBox.marginBottom() + displayBox.marginTop();
+            auto nonCollapsedMargin = previousInFlowDisplayBox.marginAfter() + displayBox.marginBefore();
             auto marginOffset = nonCollapsedMargin - collapsedMargin;
             // Move the box to the position where it would be with non-collapsed margins.
             rootRelativeTop += marginOffset;

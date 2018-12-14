@@ -184,17 +184,17 @@ void BlockFormattingContext::computeStaticPosition(const Box& layoutBox) const
     layoutState.displayBoxForLayoutBox(layoutBox).setTopLeft(Geometry::staticPosition(layoutState, layoutBox));
 }
 
-void BlockFormattingContext::computeEstimatedMarginTop(const Box& layoutBox) const
+void BlockFormattingContext::computeEstimatedMarginBefore(const Box& layoutBox) const
 {
     auto& layoutState = this->layoutState();
-    auto estimatedMarginTop = Geometry::estimatedMarginTop(layoutState, layoutBox);
+    auto estimatedMarginBefore = Geometry::estimatedMarginBefore(layoutState, layoutBox);
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
-    displayBox.setEstimatedMarginTop(estimatedMarginTop);
-    displayBox.moveVertically(estimatedMarginTop);
+    displayBox.setEstimatedMarginBefore(estimatedMarginBefore);
+    displayBox.moveVertically(estimatedMarginBefore);
 }
 
-void BlockFormattingContext::computeEstimatedMarginTopForAncestors(const Box& layoutBox) const
+void BlockFormattingContext::computeEstimatedMarginBeforeForAncestors(const Box& layoutBox) const
 {
     // We only need to estimate margin top for float related layout (formatting context roots avoid floats).
     ASSERT(layoutBox.isFloatingPositioned() || layoutBox.hasFloatClear() || layoutBox.establishesBlockFormattingContext() || layoutBox.establishesInlineFormattingContext());
@@ -213,10 +213,10 @@ void BlockFormattingContext::computeEstimatedMarginTopForAncestors(const Box& la
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
         auto& displayBox = layoutState.displayBoxForLayoutBox(*ancestor);
         // FIXME: with incremental layout, we might actually have a valid (non-estimated) margin top as well.
-        if (displayBox.estimatedMarginTop())
+        if (displayBox.estimatedMarginBefore())
             return;
 
-        computeEstimatedMarginTop(*ancestor);
+        computeEstimatedMarginBefore(*ancestor);
     }
 }
 
@@ -226,22 +226,22 @@ void BlockFormattingContext::precomputeVerticalPositionForFormattingRootIfNeeded
 
     auto avoidsFloats = layoutBox.isFloatingPositioned() || layoutBox.establishesBlockFormattingContext() || layoutBox.hasFloatClear();
     if (avoidsFloats)
-        computeEstimatedMarginTopForAncestors(layoutBox);
+        computeEstimatedMarginBeforeForAncestors(layoutBox);
 
     // If the inline formatting root is also the root for the floats (happens when the root box also establishes a block formatting context)
     // the floats are in the coordinate system of this root. No need to find the final vertical position.
     auto inlineContextInheritsFloats = layoutBox.establishesInlineFormattingContext() && !layoutBox.establishesBlockFormattingContext();
     if (inlineContextInheritsFloats) {
-        computeEstimatedMarginTop(layoutBox);
-        computeEstimatedMarginTopForAncestors(layoutBox);
+        computeEstimatedMarginBefore(layoutBox);
+        computeEstimatedMarginBeforeForAncestors(layoutBox);
     }
 }
 
 #ifndef NDEBUG
-static bool hasPrecomputedMarginTop(const LayoutState& layoutState, const Box& layoutBox)
+static bool hasPrecomputedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     for (auto* ancestor = layoutBox.containingBlock(); ancestor && !ancestor->establishesBlockFormattingContext(); ancestor = ancestor->containingBlock()) {
-        if (layoutState.displayBoxForLayoutBox(*ancestor).estimatedMarginTop())
+        if (layoutState.displayBoxForLayoutBox(*ancestor).estimatedMarginBefore())
             continue;
         return false;
     }
@@ -253,7 +253,7 @@ void BlockFormattingContext::computeFloatingPosition(const FloatingContext& floa
 {
     auto& layoutState = this->layoutState();
     ASSERT(layoutBox.isFloatingPositioned());
-    ASSERT(hasPrecomputedMarginTop(layoutState, layoutBox));
+    ASSERT(hasPrecomputedMarginBefore(layoutState, layoutBox));
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     // 8.3.1 Collapsing margins
@@ -261,7 +261,7 @@ void BlockFormattingContext::computeFloatingPosition(const FloatingContext& floa
     // Adjust the static position by using the previous inflow box's non-collapsed margin.
     if (auto* previousInFlowBox = layoutBox.previousInFlowSibling()) {
         auto& previousDisplayBox = layoutState.displayBoxForLayoutBox(*previousInFlowBox);
-        displayBox.moveVertically(previousDisplayBox.nonCollapsedMarginBottom() - previousDisplayBox.marginBottom());
+        displayBox.moveVertically(previousDisplayBox.nonCollapsedMarginAfter() - previousDisplayBox.marginAfter());
     }
     displayBox.setTopLeft(floatingContext.positionForFloat(layoutBox));
 }
@@ -273,7 +273,7 @@ void BlockFormattingContext::computePositionToAvoidFloats(const FloatingContext&
     ASSERT(layoutBox.establishesBlockFormattingContext());
     ASSERT(!layoutBox.isFloatingPositioned());
     ASSERT(!layoutBox.hasFloatClear());
-    ASSERT(hasPrecomputedMarginTop(layoutState, layoutBox));
+    ASSERT(hasPrecomputedMarginBefore(layoutState, layoutBox));
 
     if (floatingContext.floatingState().isEmpty())
         return;
@@ -291,8 +291,8 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     auto& layoutState = this->layoutState();
     // For formatting roots, we already precomputed final position.
     if (!layoutBox.establishesFormattingContext())
-        computeEstimatedMarginTopForAncestors(layoutBox);
-    ASSERT(hasPrecomputedMarginTop(layoutState, layoutBox));
+        computeEstimatedMarginBeforeForAncestors(layoutBox);
+    ASSERT(hasPrecomputedMarginBefore(layoutState, layoutBox));
 
     if (auto verticalPositionWithClearance = floatingContext.verticalPositionWithClearance(layoutBox))
         layoutState.displayBoxForLayoutBox(layoutBox).setTop(*verticalPositionWithClearance);
@@ -331,7 +331,7 @@ void BlockFormattingContext::computeWidthAndMargin(const Box& layoutBox) const
 
     auto& displayBox = layoutState.displayBoxForLayoutBox(layoutBox);
     displayBox.setContentBoxWidth(widthAndMargin.width);
-    displayBox.moveHorizontally(widthAndMargin.margin.left);
+    displayBox.moveHorizontally(widthAndMargin.margin.start);
     displayBox.setHorizontalMargin(widthAndMargin.margin);
     displayBox.setHorizontalNonComputedMargin(widthAndMargin.nonComputedMargin);
 }
@@ -376,8 +376,8 @@ void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox) const
     displayBox.setVerticalMargin(heightAndMargin.margin);
 
     // If this box has already been moved by the estimated vertical margin, no need to move it again.
-    if (layoutBox.isFloatingPositioned() || !displayBox.estimatedMarginTop())
-        displayBox.moveVertically(heightAndMargin.margin.usedValues().top);
+    if (layoutBox.isFloatingPositioned() || !displayBox.estimatedMarginBefore())
+        displayBox.moveVertically(heightAndMargin.margin.usedValues().before);
 }
 
 FormattingContext::InstrinsicWidthConstraints BlockFormattingContext::instrinsicWidthConstraints() const

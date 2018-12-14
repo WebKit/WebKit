@@ -86,7 +86,7 @@ protected:
 
         static HeightAndMargin inlineReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
         static WidthAndMargin inlineReplacedWidthAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedWidth = { }, 
-            std::optional<LayoutUnit> precomputedMarginLeft = { }, std::optional<LayoutUnit> precomputedMarginRight = { });
+            std::optional<LayoutUnit> precomputedMarginStart = { }, std::optional<LayoutUnit> precomputedMarginEnd = { });
 
         static LayoutSize inFlowPositionedPositionOffset(const LayoutState&, const Box&);
 

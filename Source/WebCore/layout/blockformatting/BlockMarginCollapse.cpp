@@ -94,7 +94,7 @@ static LayoutUnit marginValue(LayoutUnit currentMarginValue, LayoutUnit candidat
     return currentMarginValue + candidateMarginValue;
 }
 
-static bool isMarginTopCollapsedWithSibling(const Box& layoutBox)
+static bool isMarginBeforeCollapsedWithSibling(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -109,7 +109,7 @@ static bool isMarginTopCollapsedWithSibling(const Box& layoutBox)
     return layoutBox.style().top().isAuto();
 }
 
-static bool isMarginBottomCollapsedWithSibling(const Box& layoutBox)
+static bool isMarginAfterCollapsedWithSibling(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -124,7 +124,7 @@ static bool isMarginBottomCollapsedWithSibling(const Box& layoutBox)
     return layoutBox.style().bottom().isAuto();
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParent(const LayoutState& layoutState, const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParent(const LayoutState& layoutState, const Box& layoutBox)
 {
     // The first inflow child could propagate its top margin to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -151,13 +151,13 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithP
     if (hasPaddingBefore(parent))
         return false;
 
-    if (BlockFormattingContext::Quirks::shouldIgnoreMarginTop(layoutState, layoutBox))
+    if (BlockFormattingContext::Quirks::shouldIgnoreMarginBefore(layoutState, layoutBox))
         return false;
 
     return true;
 }
 
-static bool isMarginBottomCollapsedThrough(const Box& layoutBox)
+static bool isMarginAfterCollapsedThrough(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -181,7 +181,7 @@ static bool isMarginBottomCollapsedThrough(const Box& layoutBox)
     return true;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopFromFirstChild(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBeforeFromFirstChild(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -195,21 +195,21 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginTopF
 
     // FIXME: Take collapsed through margin into account.
     auto& firstInFlowChild = *downcast<Container>(layoutBox).firstInFlowChild();
-    if (!isMarginTopCollapsedWithParent(layoutState, firstInFlowChild))
+    if (!isMarginBeforeCollapsedWithParent(layoutState, firstInFlowChild))
         return 0;
     // Collect collapsed margin top recursively.
-    return marginValue(computedNonCollapsedMarginTop(layoutState, firstInFlowChild), collapsedMarginTopFromFirstChild(layoutState, firstInFlowChild));
+    return marginValue(computedNonCollapsedMarginBefore(layoutState, firstInFlowChild), collapsedMarginBeforeFromFirstChild(layoutState, firstInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginTop(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
     // Non collapsed margin top includes collapsed margin from inflow first child.
-    return marginValue(computedNonCollapsedMarginTop(layoutState, layoutBox), collapsedMarginTopFromFirstChild(layoutState, layoutBox));
+    return marginValue(computedNonCollapsedMarginBefore(layoutState, layoutBox), collapsedMarginBeforeFromFirstChild(layoutState, layoutBox));
 }
 
-/*static bool hasAdjoiningMarginTopAndBottom(const Box&)
+/*static bool hasAdjoiningMarginBeforeAndAfter(const Box&)
 {
     // Two margins are adjoining if and only if:
     // 1. both belong to in-flow block-level boxes that participate in the same block formatting context
@@ -223,81 +223,81 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginT
     // A collapsed margin is considered adjoining to another margin if any of its component margins is adjoining to that margin.
     return false;
 }*/
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginTop(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).top;
+    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).before;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBottom(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).bottom;
+    return computedNonCollapsedVerticalMarginValue(layoutState, layoutBox).after;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginTop(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBefore(const LayoutState& layoutState, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
 
     ASSERT(layoutBox.isBlockLevelBox());
 
-    // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    if (isMarginTopCollapsedWithParent(layoutState, layoutBox))
+    // TODO: take _hasAdjoiningMarginBeforeAndAfter() into account.
+    if (isMarginBeforeCollapsedWithParent(layoutState, layoutBox))
         return 0;
 
     // FIXME: Find out the logic behind this.
-    if (BlockFormattingContext::Quirks::shouldIgnoreMarginTop(layoutState, layoutBox))
+    if (BlockFormattingContext::Quirks::shouldIgnoreMarginBefore(layoutState, layoutBox))
         return 0;
 
-    if (!isMarginTopCollapsedWithSibling(layoutBox)) {
-        if (!isMarginBottomCollapsedThrough(layoutBox))
-            return nonCollapsedMarginTop(layoutState, layoutBox);
+    if (!isMarginBeforeCollapsedWithSibling(layoutBox)) {
+        if (!isMarginAfterCollapsedThrough(layoutBox))
+            return nonCollapsedMarginBefore(layoutState, layoutBox);
         // Compute the collapsed through value.
-        auto marginTop = nonCollapsedMarginTop(layoutState, layoutBox);
-        auto marginBottom = nonCollapsedMarginBottom(layoutState, layoutBox); 
-        return marginValue(marginTop, marginBottom);
+        auto marginBefore = nonCollapsedMarginBefore(layoutState, layoutBox);
+        auto marginAfter = nonCollapsedMarginAfter(layoutState, layoutBox); 
+        return marginValue(marginBefore, marginAfter);
     }
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of its next in-flow block-level sibling,
     // unless that sibling has clearance.
     auto* previousInFlowSibling = layoutBox.previousInFlowSibling();
     if (!previousInFlowSibling)
-        return nonCollapsedMarginTop(layoutState, layoutBox);
+        return nonCollapsedMarginBefore(layoutState, layoutBox);
 
-    auto previousSiblingMarginBottom = nonCollapsedMarginBottom(layoutState, *previousInFlowSibling);
-    auto marginTop = nonCollapsedMarginTop(layoutState, layoutBox);
-    return marginValue(marginTop, previousSiblingMarginBottom);
+    auto previousSiblingMarginAfter = nonCollapsedMarginAfter(layoutState, *previousInFlowSibling);
+    auto marginBefore = nonCollapsedMarginBefore(layoutState, layoutBox);
+    return marginValue(marginBefore, previousSiblingMarginAfter);
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBottom(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     if (layoutBox.isAnonymous())
         return 0;
 
     ASSERT(layoutBox.isBlockLevelBox());
 
-    // TODO: take _hasAdjoiningMarginTopAndBottom() into account.
-    if (isMarginBottomCollapsedWithParent(layoutBox))
+    // TODO: take _hasAdjoiningMarginBeforeAndBottom() into account.
+    if (isMarginAfterCollapsedWithParent(layoutBox))
         return 0;
 
-    if (isMarginBottomCollapsedThrough(layoutBox))
+    if (isMarginAfterCollapsedThrough(layoutBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.
-    if (!isMarginBottomCollapsedWithSibling(layoutBox))
-        return nonCollapsedMarginBottom(layoutState, layoutBox);
+    if (!isMarginAfterCollapsedWithSibling(layoutBox))
+        return nonCollapsedMarginAfter(layoutState, layoutBox);
 
     // The bottom margin of an in-flow block-level element always collapses with the top margin of its next in-flow block-level sibling,
     // unless that sibling has clearance.
     if (layoutBox.nextInFlowSibling())
         return 0;
-    return nonCollapsedMarginBottom(layoutState, layoutBox);
+    return nonCollapsedMarginAfter(layoutState, layoutBox);
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWithParent(const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginAfterCollapsedWithParent(const Box& layoutBox)
 {
     // last inflow box to parent.
     // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
@@ -309,7 +309,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     if (layoutBox.isFloatingOrOutOfFlowPositioned())
         return false;
 
-    if (isMarginBottomCollapsedThrough(layoutBox))
+    if (isMarginAfterCollapsedThrough(layoutBox))
         return false;
 
     // Only the last inlflow child collapses with parent.
@@ -333,12 +333,12 @@ bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBottomCollapsedWi
     return true;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::isMarginTopCollapsedWithParentMarginBottom(const Box&)
+bool BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParentMarginAfter(const Box&)
 {
     return false;
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBottomFromLastChild(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfterFromLastChild(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
@@ -352,19 +352,19 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBott
 
     // FIXME: Check for collapsed through margin.
     auto& lastInFlowChild = *downcast<Container>(layoutBox).lastInFlowChild();
-    if (!isMarginBottomCollapsedWithParent(lastInFlowChild))
+    if (!isMarginAfterCollapsedWithParent(lastInFlowChild))
         return 0;
 
     // Collect collapsed margin bottom recursively.
-    return marginValue(computedNonCollapsedMarginBottom(layoutState, lastInFlowChild), collapsedMarginBottomFromLastChild(layoutState, lastInFlowChild));
+    return marginValue(computedNonCollapsedMarginAfter(layoutState, lastInFlowChild), collapsedMarginAfterFromLastChild(layoutState, lastInFlowChild));
 }
 
-LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBottom(const LayoutState& layoutState, const Box& layoutBox)
+LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
     // Non collapsed margin bottom includes collapsed margin from inflow last child.
-    return marginValue(computedNonCollapsedMarginBottom(layoutState, layoutBox), collapsedMarginBottomFromLastChild(layoutState, layoutBox));
+    return marginValue(computedNonCollapsedMarginAfter(layoutState, layoutBox), collapsedMarginAfterFromLastChild(layoutState, layoutBox));
 }
 
 }

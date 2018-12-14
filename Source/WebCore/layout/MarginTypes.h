@@ -34,15 +34,15 @@ namespace Layout {
 
 struct VerticalMargin {
     struct ComputedValues {
-        LayoutUnit top;
-        LayoutUnit bottom;
+        LayoutUnit before;
+        LayoutUnit after;
     };
     ComputedValues usedValues() const;
     ComputedValues nonCollapsedValues() const { return m_nonCollapsed; }
     
     struct CollapsedValues {
-        std::optional<LayoutUnit> top;
-        std::optional<LayoutUnit> bottom;
+        std::optional<LayoutUnit> before;
+        std::optional<LayoutUnit> after;
     };
     std::optional<CollapsedValues> collapsedValues() const { return m_collapsed; }
     void setCollapsedValues(CollapsedValues collapsedValues) { m_collapsed = collapsedValues; }
@@ -57,8 +57,8 @@ private:
 };
 
 struct HorizontalMargin {
-    LayoutUnit left;
-    LayoutUnit right;
+    LayoutUnit start;
+    LayoutUnit end;
 };
 
 struct PositiveAndNegativeVerticalMargin {
@@ -66,8 +66,8 @@ struct PositiveAndNegativeVerticalMargin {
         std::optional<LayoutUnit> positive;
         std::optional<LayoutUnit> negative;
     };
-    Values top;
-    Values bottom;
+    Values before;
+    Values after;
 };
 
 inline VerticalMargin::VerticalMargin(VerticalMargin::ComputedValues nonCollapsed, std::optional<VerticalMargin::CollapsedValues> collapsed)
@@ -80,8 +80,8 @@ inline VerticalMargin::ComputedValues VerticalMargin::usedValues() const
 {
     if (!m_collapsed)
         return m_nonCollapsed;
-    return { m_collapsed->top.value_or(m_nonCollapsed.top),
-        m_collapsed->bottom.value_or(m_nonCollapsed.bottom) };
+    return { m_collapsed->before.value_or(m_nonCollapsed.before),
+        m_collapsed->after.value_or(m_nonCollapsed.after) };
 }
 
 }
