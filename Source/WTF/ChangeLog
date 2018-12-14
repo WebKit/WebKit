@@ -1,3 +1,25 @@
+2018-12-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] RunLoop::dispatchAfter() GSource requires microsecond precision
+        https://bugs.webkit.org/show_bug.cgi?id=192696
+
+        Reviewed by Michael Catanzaro.
+
+        The GSource we set up in GLib's RunLoop::dispatchAfter() implementation
+        should support microsecond-precision delays. Such delays are common in
+        JSC's Watchdog implementation and missing support for them has been
+        causing test failures in the `testapi` program as well as some JSC
+        tests that depend on the termination determination functionality of the
+        JSC::Watchdog class.
+
+        RunLoop::dispatchAfter() is changed to spawn a raw GSource that uses the
+        existing GSourceFuncs implementation used elsewhere in GLib's RunLoop.
+        The GSource's ready time is set manually, now with the necessary
+        microsecond precision.
+
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::dispatchAfter):
+
 2018-12-13  Saam Barati  <sbarati@apple.com>
 
         The JSC shell should listen for memory pressure events and respond to them
