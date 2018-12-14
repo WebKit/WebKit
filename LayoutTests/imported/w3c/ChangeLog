@@ -1,3 +1,13 @@
+2018-12-13  Youenn Fablet  <youenn@apple.com>
+
+        RTCRtpTransceiver.stopped should be true when applying a remote description with the corresponding m section rejected
+        https://bugs.webkit.org/show_bug.cgi?id=192685
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-setDescription-transceiver.html:
+
 2018-12-10  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest removes spaces from content-types before processing

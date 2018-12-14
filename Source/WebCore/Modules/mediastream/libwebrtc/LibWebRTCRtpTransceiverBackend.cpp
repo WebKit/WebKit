@@ -73,6 +73,11 @@ void LibWebRTCRtpTransceiverBackend::stop()
     m_rtcTransceiver->Stop();
 }
 
+bool LibWebRTCRtpTransceiverBackend::stopped() const
+{
+    return m_rtcTransceiver->stopped();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

@@ -1,3 +1,25 @@
+2018-12-13  Youenn Fablet  <youenn@apple.com>
+
+        RTCRtpTransceiver.stopped should be true when applying a remote description with the corresponding m section rejected
+        https://bugs.webkit.org/show_bug.cgi?id=192685
+
+        Reviewed by Eric Carlson.
+
+        In case the remote description contains a rejected m section,
+        the corresponding transceiver should be marked as stopped.
+        Libwebrtc backend has that information so pipe it up to JS.
+
+        Covered by updated WPT test.
+
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::stopped const):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::stopped const): Deleted.
+        * Modules/mediastream/RTCRtpTransceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        (WebCore::LibWebRTCRtpTransceiverBackend::stopped const):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.h:
+
 2018-12-13  Mark Lam  <mark.lam@apple.com>
 
         Ensure that StructureFlags initialization always starts with Base::StructureFlags.

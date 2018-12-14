@@ -40,6 +40,7 @@ public:
 
     virtual String mid() = 0;
     virtual void stop() = 0;
+    virtual bool stopped() const = 0;
 };
 
 } // namespace WebCore

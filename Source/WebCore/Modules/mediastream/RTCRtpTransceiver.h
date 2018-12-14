@@ -62,7 +62,7 @@ public:
     RTCRtpSender& sender() { return m_sender.get(); }
     RTCRtpReceiver& receiver() { return m_receiver.get(); }
 
-    bool stopped() const { return m_stopped; }
+    bool stopped() const;
     void stop();
 
     // FIXME: Temporary solution to keep track of ICE states for this transceiver. Later, each

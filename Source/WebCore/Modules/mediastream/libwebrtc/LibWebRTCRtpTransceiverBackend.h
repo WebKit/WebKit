@@ -59,6 +59,7 @@ private:
     void setDirection(RTCRtpTransceiverDirection) final;
     String mid() final;
     void stop() final;
+    bool stopped() const final;
 
     rtc::scoped_refptr<webrtc::RtpTransceiverInterface> m_rtcTransceiver;
 };

@@ -114,6 +114,13 @@ void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
     m_transceivers.append(WTFMove(transceiver));
 }
 
+bool RTCRtpTransceiver::stopped() const
+{
+    if (m_backend)
+        return m_backend->stopped();
+    return m_stopped;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
