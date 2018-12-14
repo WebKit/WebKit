@@ -1,5 +1,16 @@
 2018-12-14  Chris Dumez  <cdumez@apple.com>
 
+        [PSON] Process-swapping on a loadHTMLString causes duplicate decidePolicyForNavigationAction delegate calls
+        https://bugs.webkit.org/show_bug.cgi?id=192704
+
+        Reviewed by Geoffrey Garen.
+
+        Extend existing API test to reproduce the problem.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2018-12-14  Chris Dumez  <cdumez@apple.com>
+
         [PSON] WebsitePolicies are lost on process-swap
         https://bugs.webkit.org/show_bug.cgi?id=192694
         <rdar://problem/46715748>

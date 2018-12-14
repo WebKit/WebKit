@@ -1,3 +1,25 @@
+2018-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Process-swapping on a loadHTMLString causes duplicate decidePolicyForNavigationAction delegate calls
+        https://bugs.webkit.org/show_bug.cgi?id=192704
+
+        Reviewed by Geoffrey Garen.
+
+        Process-swapping on a loadHTMLString causes duplicate decidePolicyForNavigationAction delegate calls. This
+        is because we were failing to pass the ShouldTreatAsContinuingLoad flag to the WebContent process when
+        doing a LoadData.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadDataWithNavigation):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Prefer "about:blank" instead of an empty string for WebPageDebuggable url

@@ -2997,6 +2997,8 @@ TEST(ProcessSwap, SwapOnLoadHTMLString)
     auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
+    numberOfDecidePolicyCalls = 0;
+
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
 
@@ -3013,6 +3015,8 @@ TEST(ProcessSwap, SwapOnLoadHTMLString)
 
     auto pid2 = [webView _webProcessIdentifier];
     EXPECT_NE(pid1, pid2);
+
+    EXPECT_EQ(2, numberOfDecidePolicyCalls);
 
     [webView evaluateJavaScript:@"document.body.innerText" completionHandler:^(id innerText, NSError *error) {
         EXPECT_WK_STREQ(@"substituteData", (NSString *)innerText);

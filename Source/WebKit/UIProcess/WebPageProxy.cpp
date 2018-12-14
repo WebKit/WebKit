@@ -1130,11 +1130,11 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
         return nullptr;
 
     auto navigation = m_navigationState->createLoadDataNavigation(std::make_unique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
-    loadDataWithNavigation(navigation, data, MIMEType, encoding, baseURL, userData);
+    loadDataWithNavigation(navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No);
     return WTFMove(navigation);
 }
 
-void WebPageProxy::loadDataWithNavigation(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, std::optional<WebsitePoliciesData>&& websitePolicies)
+void WebPageProxy::loadDataWithNavigation(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, std::optional<WebsitePoliciesData>&& websitePolicies)
 {
     ASSERT(!m_isClosed);
 
@@ -1151,6 +1151,7 @@ void WebPageProxy::loadDataWithNavigation(API::Navigation& navigation, const IPC
     loadParameters.MIMEType = MIMEType;
     loadParameters.encodingName = encoding;
     loadParameters.baseURLString = baseURL;
+    loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::Yes;
     loadParameters.userData = UserData(process().transformObjectsToHandles(userData).get());
     loadParameters.websitePolicies = WTFMove(websitePolicies);
     addPlatformLoadParameters(loadParameters);
@@ -2727,7 +2728,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, s
     // FIXME: Work out timing of responding with the last policy delegate, etc
     ASSERT(!navigation.currentRequest().isEmpty());
     if (auto& substituteData = navigation.substituteData())
-        loadDataWithNavigation(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), WTFMove(websitePolicies));
+        loadDataWithNavigation(navigation, { substituteData->content.data(), substituteData->content.size() }, substituteData->MIMEType, substituteData->encoding, substituteData->baseURL, substituteData->userData.get(), ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
     else
         loadRequestWithNavigation(navigation, ResourceRequest { navigation.currentRequest() }, WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes, nullptr, ShouldTreatAsContinuingLoad::Yes, WTFMove(websitePolicies));
 
