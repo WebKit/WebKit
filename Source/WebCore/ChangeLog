@@ -1,3 +1,59 @@
+2018-12-14  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC] Introduce VerticalMargin and HorizontalMargin types.
+        https://bugs.webkit.org/show_bug.cgi?id=192692
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for completing block margin collapsing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry const):
+        * layout/FormattingContext.h:
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowNonReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::outOfFlowReplacedVerticalGeometry):
+        (WebCore::Layout::FormattingContext::Geometry::complicatedCases):
+        (WebCore::Layout::FormattingContext::Geometry::inlineReplacedHeightAndMargin):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedHorizontalMarginValue):
+        (WebCore::Layout::FormattingContext::Geometry::computedNonCollapsedVerticalMarginValue):
+        * layout/LayoutState.cpp:
+        (WebCore::Layout::LayoutState::LayoutState):
+        * layout/LayoutUnits.h:
+        (WebCore::Layout::HeightAndMargin::usedMarginValues const): Deleted.
+        * layout/MarginTypes.h: Added.
+        (WebCore::Layout::VerticalMargin::nonCollapsedValues const):
+        (WebCore::Layout::VerticalMargin::collapsedValues const):
+        (WebCore::Layout::VerticalMargin::setCollapsedValues):
+        (WebCore::Layout::VerticalMargin::VerticalMargin):
+        (WebCore::Layout::VerticalMargin::usedValues const):
+        * layout/blockformatting/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::computeHeightAndMargin const):
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowHeightAndMargin):
+        * layout/blockformatting/BlockFormattingContextQuirks.cpp:
+        (WebCore::Layout::BlockFormattingContext::Quirks::stretchedHeight):
+        * layout/displaytree/DisplayBox.cpp:
+        (WebCore::Display::Box::Box):
+        * layout/displaytree/DisplayBox.h:
+        (WebCore::Display::Box::setHorizontalMargin):
+        (WebCore::Display::Box::setVerticalMargin):
+        (WebCore::Display::Box::setHorizontalNonComputedMargin):
+        (WebCore::Display::Box::verticalMargin const):
+        (WebCore::Display::Box::marginTop const):
+        (WebCore::Display::Box::marginLeft const):
+        (WebCore::Display::Box::marginBottom const):
+        (WebCore::Display::Box::marginRight const):
+        (WebCore::Display::Box::nonCollapsedMarginTop const):
+        (WebCore::Display::Box::nonCollapsedMarginBottom const):
+        (WebCore::Display::Box::setVerticalNonCollapsedMargin): Deleted.
+        * layout/floats/FloatingContext.cpp:
+        (WebCore::Layout::FloatingContext::verticalPositionWithClearance const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeHeightAndMargin const):
+
 2018-12-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix compilation warnings under Source/WebCore/platform/win

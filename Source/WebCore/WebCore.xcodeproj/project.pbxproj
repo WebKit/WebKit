@@ -9149,6 +9149,7 @@
 		6FBB860520B464B600DAD938 /* FormattingContextGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormattingContextGeometry.cpp; sourceTree = "<group>"; };
 		6FE198132178397B00446F08 /* InlineLineBreaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineLineBreaker.cpp; sourceTree = "<group>"; };
 		6FE198152178397C00446F08 /* InlineLineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineLineBreaker.h; sourceTree = "<group>"; };
+		6FE7AA2621C37B6300296DCD /* MarginTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarginTypes.h; sourceTree = "<group>"; };
 		6FE7CFA02177EEF1005B1573 /* InlineItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineItem.h; sourceTree = "<group>"; };
 		6FE7CFA32177EF10005B1573 /* LayoutLineBreakBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutLineBreakBox.h; sourceTree = "<group>"; };
 		6FE7CFA52177F069005B1573 /* LayoutLineBreakBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutLineBreakBox.cpp; sourceTree = "<group>"; };
@@ -16135,6 +16136,7 @@
 				6F7CA3C5208C2956002F29AB /* LayoutState.cpp */,
 				6F7CA3C4208C2956002F29AB /* LayoutState.h */,
 				6F73918C2106CEDD006AF262 /* LayoutUnits.h */,
+				6FE7AA2621C37B6300296DCD /* MarginTypes.h */,
 				11FF02D520BA3C810083F25B /* Verification.cpp */,
 			);
 			path = layout;
@@ -25549,9 +25551,7 @@
 				D0D8648E21B70676003C983C /* WebGPUBuffer.idl */,
 				D0D8648221B61727003C983C /* WebGPUBufferDescriptor.h */,
 				D0D8648321B61727003C983C /* WebGPUBufferDescriptor.idl */,
-				D063AE4E21C0810A000E6A35 /* WebGPUBufferUsage.h */,
 				D063AE3F21C05DDD000E6A35 /* WebGPUBufferUsage.h */,
-				D063AE4C21C07AB5000E6A35 /* WebGPUBufferUsage.idl */,
 				D063AE4021C05DDD000E6A35 /* WebGPUBufferUsage.idl */,
 				D001D9AC21B0C81A0023B9BC /* WebGPUColor.h */,
 				D001D9AD21B0C81A0023B9BC /* WebGPUColor.idl */,

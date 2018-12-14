@@ -80,9 +80,9 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutStat
 
     LayoutUnit totalVerticalMargins;
     if (layoutBox.isDocumentBox()) {
-        auto verticalMargins = heightAndMargin.usedMarginValues();
+        auto verticalMargins = heightAndMargin.margin.usedValues();
         // Document box's margins do not collapse.
-        ASSERT(!heightAndMargin.collapsedMargin);
+        ASSERT(!heightAndMargin.margin.collapsedValues());
         totalVerticalMargins = verticalMargins.top + verticalMargins.bottom;
     } else if (layoutBox.isBodyBox()) {
         // Here is the quirky part for body box:
@@ -93,7 +93,7 @@ HeightAndMargin BlockFormattingContext::Quirks::stretchedHeight(const LayoutStat
 
         // This quirk happens when the body height is 0 which means its vertical margins collapse through (top and bottom margins are adjoining).
         // However now that we stretch the body they don't collapse through anymore, so we need to use the non-collapsed values instead.
-        auto bodyBoxVerticalMargins = heightAndMargin.height ? heightAndMargin.usedMarginValues() : heightAndMargin.nonCollapsedMargin;
+        auto bodyBoxVerticalMargins = heightAndMargin.height ? heightAndMargin.margin.usedValues() : heightAndMargin.margin.nonCollapsedValues();
         totalVerticalMargins = bodyBoxVerticalMargins.top + bodyBoxVerticalMargins.bottom;
     }
 

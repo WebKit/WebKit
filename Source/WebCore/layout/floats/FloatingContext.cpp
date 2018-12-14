@@ -192,8 +192,17 @@ std::optional<Position> FloatingContext::verticalPositionWithClearance(const Box
             auto collapsedMargin = displayBox.marginTop();
 
             // Reset previous bottom and current top margins to non-collapsing.
-            previousInFlowDisplayBox.setVerticalMargin({ previousInFlowDisplayBox.marginTop(), previousInFlowDisplayBox.nonCollapsedMarginBottom() });
-            displayBox.setVerticalMargin({ displayBox.nonCollapsedMarginTop(), displayBox.marginBottom() });
+            auto previousVerticalMargin = previousInFlowDisplayBox.verticalMargin();
+            if (previousVerticalMargin.collapsedValues() && previousVerticalMargin.collapsedValues()->bottom) {
+                previousVerticalMargin.setCollapsedValues({ previousVerticalMargin.collapsedValues()->top, { } });
+                previousInFlowDisplayBox.setVerticalMargin(previousVerticalMargin);
+            }
+            // FIXME: check if collapsing through has anything to do with this.
+            auto verticalMargin = displayBox.verticalMargin();
+            if (verticalMargin.collapsedValues() && verticalMargin.collapsedValues()->top) {
+                verticalMargin.setCollapsedValues({ { }, verticalMargin.collapsedValues()->bottom });
+                displayBox.setVerticalMargin(verticalMargin);
+            }
 
             auto nonCollapsedMargin = previousInFlowDisplayBox.marginBottom() + displayBox.marginTop();
             auto marginOffset = nonCollapsedMargin - collapsedMargin;

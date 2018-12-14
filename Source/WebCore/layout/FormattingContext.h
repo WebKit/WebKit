@@ -96,8 +96,8 @@ protected:
         static Edges computedBorder(const LayoutState&, const Box&);
         static std::optional<Edges> computedPadding(const LayoutState&, const Box&);
 
-        static HorizontalEdges computedNonCollapsedHorizontalMarginValue(const LayoutState&, const Box&);
-        static VerticalEdges computedNonCollapsedVerticalMarginValue(const LayoutState&, const Box&);
+        static HorizontalMargin computedNonCollapsedHorizontalMarginValue(const LayoutState&, const Box&);
+        static VerticalMargin::ComputedValues computedNonCollapsedVerticalMarginValue(const LayoutState&, const Box&);
 
         static std::optional<LayoutUnit> computedValueIfNotAuto(const Length& geometryProperty, LayoutUnit containingBlockWidth);
         static std::optional<LayoutUnit> fixedValue(const Length& geometryProperty);
