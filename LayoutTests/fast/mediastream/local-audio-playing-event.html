@@ -8,19 +8,23 @@
 </head>
 <body>
     <audio id="audio" autoplay></audio>
+    <audio id="audioNoAutoplay" autoplay></audio>
     <script>
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    var audio = document.getElementById('audio');
-
-    promise_test((test) => {
-        return navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
-            audio.srcObject = stream;
-            var eventWatcher = new EventWatcher(test, audio, 'playing');
-            return eventWatcher.wait_for('playing');
-        });
+    promise_test(async (test) => {
+        audio.srcObject = await navigator.mediaDevices.getUserMedia({audio: true});
+        var eventWatcher = new EventWatcher(test, audio, 'playing');
+        return eventWatcher.wait_for('playing');
     }, 'Local audio playback fires playing event');
+
+    promise_test(async (test) => {
+        audioNoAutoplay.srcObject = await navigator.mediaDevices.getUserMedia({audio: true});
+        audioNoAutoplay.play();
+        var eventWatcher = new EventWatcher(test, audioNoAutoplay, 'playing');
+        return eventWatcher.wait_for('playing');
+    }, 'Calling play synchronously after setting srcObject shoud play and fire playing event');
     </script>
 </body>
 </html>

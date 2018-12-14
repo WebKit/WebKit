@@ -553,7 +553,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     void mediaStreamCaptureStarted() { resumeAutoplaying(); }
-    bool hasMediaStreamSrcObject() const { return !!m_mediaStreamSrcObject; }
+    bool hasMediaStreamSrcObject() const { return m_mediaProvider && WTF::holds_alternative<RefPtr<MediaStream>>(*m_mediaProvider); }
 #endif
 
     bool supportsSeeking() const override;
