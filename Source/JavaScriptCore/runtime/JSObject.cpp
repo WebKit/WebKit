@@ -2431,7 +2431,7 @@ bool JSObject::preventExtensions(JSObject* object, ExecState* exec)
 
 bool JSObject::isExtensible(JSObject* obj, ExecState* exec)
 {
-    return obj->isExtensibleImpl(exec->vm());
+    return obj->isStructureExtensible(exec->vm());
 }
 
 bool JSObject::isExtensible(ExecState* exec)

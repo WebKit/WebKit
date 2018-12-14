@@ -753,7 +753,6 @@ public:
 
 private:
     NonPropertyTransition suggestedArrayStorageTransition(VM&) const;
-    ALWAYS_INLINE bool isExtensibleImpl(VM& vm) { return isStructureExtensible(vm); }
 public:
     // You should only call isStructureExtensible() when:
     // - Performing this check in a way that isn't described in the specification 

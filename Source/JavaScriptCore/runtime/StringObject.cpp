@@ -114,7 +114,8 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         // https://tc39.github.io/ecma262/#sec-string-exotic-objects-getownproperty-p
         PropertyDescriptor current;
         bool isCurrentDefined = thisObject->getOwnPropertyDescriptor(exec, propertyName, current);
-        ASSERT(isCurrentDefined);
+        EXCEPTION_ASSERT(!scope.exception() == isCurrentDefined);
+        RETURN_IF_EXCEPTION(scope, false);
         bool isExtensible = thisObject->isExtensible(exec);
         RETURN_IF_EXCEPTION(scope, false);
         RELEASE_AND_RETURN(scope, validateAndApplyPropertyDescriptor(exec, nullptr, propertyName, isExtensible, descriptor, isCurrentDefined, current, throwException));

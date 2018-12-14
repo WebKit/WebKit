@@ -1,3 +1,25 @@
+2018-12-14  Keith Miller  <keith_miller@apple.com>
+
+        Callers of JSString::getIndex should check for OOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=192709
+
+        Reviewed by Mark Lam.
+
+        This patch also allows Strings to OOM when the StringObject wrapper
+        attempts to look up an own property on the string.
+
+        Remove isExtensibleImpl because it's only used in one place and call
+        isStructureExtensible instead.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::isExtensible):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isExtensibleImpl): Deleted.
+        * runtime/JSString.h:
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+
 2018-12-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang] DLLLauncherMain.cpp: warning: unused function 'prependPath' and 'appleApplicationSupportDirectory'
