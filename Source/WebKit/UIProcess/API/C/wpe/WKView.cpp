@@ -50,11 +50,6 @@ WKPageRef WKViewGetPage(WKViewRef view)
     return toAPI(&toImpl(view)->page());
 }
 
-void WKViewSetViewState(WKViewRef view, WKViewState viewState)
-{
-    toImpl(view)->setViewState(toViewStateFlags(viewState));
-}
-
 void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
 {
     class ViewClient final : public API::Client<WKViewClientBase>, public API::ViewClient {

@@ -714,7 +714,6 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
 }
 
-#if PLATFORM(GTK)
 // To test page visibility API. Currently only 'visible', 'hidden' and 'prerender' states are implemented fully in WebCore.
 // See also http://www.w3.org/TR/2011/WD-page-visibility-20110602/ and https://developers.google.com/chrome/whitepapers/pagevisibility
 static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
@@ -776,6 +775,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
 }
 
+#if PLATFORM(GTK)
 class SnapshotWebViewTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(SnapshotWebViewTest);
@@ -1261,8 +1261,8 @@ void beforeAll()
     // FIXME: View is initially visible in WPE and has a fixed hardcoded size.
 #if PLATFORM(GTK)
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
-    WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
 #endif
+    WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
 #if ENABLE(NOTIFICATIONS)
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-allowed", testWebViewNotificationInitialPermissionAllowed);

@@ -32,7 +32,6 @@
 
 #include "WKView.h"
 #include "WebGrammarDetail.h"
-#include <WebCore/ActivityState.h>
 
 namespace WKWPE {
 class View;
@@ -46,18 +45,6 @@ WK_ADD_API_MAPPING(WKViewRef, WKWPE::View)
 inline ProxyingRefPtr<WebGrammarDetail> toAPI(const WebCore::GrammarDetail& grammarDetail)
 {
     return ProxyingRefPtr<WebGrammarDetail>(WebGrammarDetail::create(grammarDetail));
-}
-
-inline OptionSet<WebCore::ActivityState::Flag> toViewStateFlags(WKViewState wkViewState)
-{
-    OptionSet<WebCore::ActivityState::Flag> viewStateFlags;
-
-    if (wkViewState & kWKViewStateIsInWindow)
-        viewStateFlags.add(WebCore::ActivityState::IsInWindow);
-    if (wkViewState & kWKViewStateIsVisible)
-        viewStateFlags.add(WebCore::ActivityState::IsVisible);
-
-    return viewStateFlags;
 }
 
 }

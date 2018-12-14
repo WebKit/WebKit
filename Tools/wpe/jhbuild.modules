@@ -166,8 +166,8 @@
   </autotools>
 
   <cmake id="libwpe">
-      <branch repo="wpewebkit" module="libwpe-1.0.0.tar.xz" version="1.0.0"
-              hash="sha256:aff11612123f9ab85a8b9a4bcdfb3a7503eba0a0d2d96f2cdecd30e911091719" />
+      <branch repo="wpewebkit" module="libwpe-1.1.0.tar.xz" version="1.1.0"
+              hash="sha256:72e34ad754be11abd1a438cfe195d8d644c52105ab2b1c3b39dec6228bc776ce"/>
   </cmake>
 
   <cmake id="wpebackend-fdo">

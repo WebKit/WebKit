@@ -69,7 +69,6 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
 
     OptionSet<WebCore::ActivityState::Flag> viewState() const { return m_viewStateFlags; }
-    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
 
     void close();
 
@@ -82,6 +81,7 @@ private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
 
     void setSize(const WebCore::IntSize&);
+    void setViewState(OptionSet<WebCore::ActivityState::Flag>);
 
     std::unique_ptr<API::ViewClient> m_client;
 

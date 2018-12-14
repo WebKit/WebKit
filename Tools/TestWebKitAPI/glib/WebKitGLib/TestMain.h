@@ -143,6 +143,10 @@ public:
     static WebKitWebViewBackend* createWebViewBackend()
     {
         auto* headlessBackend = new WPEToolingBackends::HeadlessViewBackend(800, 600);
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
+        // Make the view initially hidden for consistency with GTK+ tests.
+        wpe_view_backend_remove_activity_state(headlessBackend->backend(), wpe_view_activity_state_visible | wpe_view_activity_state_focused);
+#endif
         return webkit_web_view_backend_new(headlessBackend->backend(), [](gpointer userData) {
             delete static_cast<WPEToolingBackends::HeadlessViewBackend*>(userData);
         }, headlessBackend);

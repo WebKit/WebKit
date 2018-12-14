@@ -69,6 +69,10 @@ public:
     void emitPopupMenuSignal();
 #endif
 
+#if PLATFORM(WPE)
+    void showInWindow();
+#endif
+
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
     WebKitJavascriptResult* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, GError**);

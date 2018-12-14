@@ -39,14 +39,6 @@ WK_EXPORT WKViewRef WKViewCreate(struct wpe_view_backend*, WKPageConfigurationRe
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 
-enum {
-    kWKViewStateIsInWindow = 1 << 0,
-    kWKViewStateIsVisible = 1 << 1,
-};
-typedef uint32_t WKViewState;
-
-WK_EXPORT void WKViewSetViewState(WKViewRef, WKViewState);
-
 typedef void (*WKViewFrameDisplayed)(WKViewRef view, const void* clientInfo);
 
 typedef struct WKViewClientBase {

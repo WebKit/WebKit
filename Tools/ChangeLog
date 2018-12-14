@@ -1,3 +1,26 @@
+2018-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Use new view state API from libwpe
+        https://bugs.webkit.org/show_bug.cgi?id=191906
+
+        Reviewed by Žan Doberšek.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (beforeAll): Enable /webkit/WebKitWebView/page-visibility in WPE.
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::createWebViewBackend): Make the view initially hidden for consistency with GTK+ tests.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+        * TestWebKitAPI/glib/WebKitGLib/wpe/WebViewTestWPE.cpp:
+        (WebViewTest::showInWindow): Add wpe_view_activity_state_visible, wpe_view_activity_state_in_window and
+        wpe_view_activity_state_focused state flags.
+        (WebViewTest::hideView): Remove wpe_view_activity_state_visible and wpe_view_activity_state_focused state flags.
+        * wpe/backends/HeadlessViewBackend.cpp:
+        (WPEToolingBackends::HeadlessViewBackend::HeadlessViewBackend): Assume view is always visible, focused and in window.
+        * wpe/backends/WindowViewBackend.cpp:
+        (WPEToolingBackends::WindowViewBackend::WindowViewBackend): Update the view state flags depending on state
+        received in configure callback.
+        * wpe/jhbuild.modules: Bump libwpe to 1.1.0
+
 2018-12-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][Clang] DLLLauncherMain.cpp: warning: unused function 'prependPath' and 'appleApplicationSupportDirectory'

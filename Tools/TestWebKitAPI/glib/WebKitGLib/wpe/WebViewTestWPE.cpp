@@ -20,6 +20,8 @@
 #include "config.h"
 #include "WebViewTest.h"
 
+#include <wpe/wpe.h>
+
 void WebViewTest::platformDestroy()
 {
 }
@@ -39,9 +41,20 @@ void WebViewTest::resizeView(int width, int height)
     // FIXME: implement.
 }
 
+void WebViewTest::showInWindow()
+{
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
+    auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView));
+    wpe_view_backend_add_activity_state(backend, wpe_view_activity_state_visible | wpe_view_activity_state_in_window | wpe_view_activity_state_focused);
+#endif
+}
+
 void WebViewTest::hideView()
 {
-    // FIXME: implement.
+#if defined(WPE_BACKEND_CHECK_VERSION) && WPE_BACKEND_CHECK_VERSION(1, 1, 0)
+    auto* backend = webkit_web_view_backend_get_wpe_backend(webkit_web_view_get_backend(m_webView));
+    wpe_view_backend_remove_activity_state(backend, wpe_view_activity_state_visible | wpe_view_activity_state_focused);
+#endif
 }
 
 void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
