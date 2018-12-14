@@ -1,0 +1,73 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebAnimationsCSSIntegrationEnabled=false ] -->
+<html>
+<head>
+<style>
+    .container {
+        position: absolute;
+        top: 100px;
+        overflow: hidden;
+        width: 500px;
+        height: 150px;
+        border: 1px solid black;
+    }
+
+    .mover {
+        position: absolute;
+        width: 500px;
+        height: 100%;
+        left: 100%;
+        transform: translateX(-100%);
+        background-color: silver;
+        padding: 10px;
+    }
+    
+    .mover.animating {
+        animation: slide 1s linear forwards;
+    }
+
+    @keyframes slide {
+        100% { transform: translateX(0) }
+    }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function dumpLayerTree()
+    {
+        if (!window.internals)
+            return;
+
+        var out = document.getElementById('out');
+        out.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+    }
+
+    function dumpLayersSoon()
+    {
+        requestAnimationFrame(function() {
+            // Trigger layer flush
+            document.querySelector('.container').style.width = '501px';
+            dumpLayerTree();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    }
+
+    window.addEventListener('load', () => {
+        let box = document.getElementById('box');
+        box.addEventListener('animationstart', dumpLayersSoon, false);
+        box.classList.add('animating');
+    }, false);
+</script>
+</head>
+<body>
+<pre id="out"></pre>
+<div class="container">
+    <div id="box" class="mover">
+        Some text here to force backing store.
+    </div>
+</div>
+</body>
+</html>

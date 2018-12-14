@@ -1,0 +1,31 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 1
+        (GraphicsLayer
+          (offsetFromRenderer width=-501 height=0)
+          (position 9.00 101.00)
+          (bounds 501.00 150.00)
+          (backingStoreAttached 1)
+          (children 1
+            (GraphicsLayer
+              (position 501.00 0.00)
+              (bounds 520.00 170.00)
+              (contentsOpaque 1)
+              (drawsContent 1)
+              (backingStoreAttached 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-520.00 0.00 0.00 1.00])
+            )
+          )
+        )
+      )
+    )
+  )
+)
+Some text here to force backing store.

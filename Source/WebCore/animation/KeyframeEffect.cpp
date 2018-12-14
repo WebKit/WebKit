@@ -1408,23 +1408,30 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
     if (!is<RenderBox>(renderer()))
         return true; // Non-boxes don't get transformed;
 
-    RenderBox& box = downcast<RenderBox>(*renderer());
-    FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
+    auto& box = downcast<RenderBox>(*renderer());
+    auto rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
 
-    FloatRect cumulativeBounds = bounds;
+    auto cumulativeBounds = bounds;
 
     for (const auto& keyframe : m_blendingKeyframes.keyframes()) {
-        // FIXME: maybe for declarative animations we always say it's true for the first and last keyframe.
-        if (!keyframe.containsProperty(CSSPropertyTransform))
-            continue;
+        const auto* keyframeStyle = keyframe.style();
 
-        LayoutRect keyframeBounds = bounds;
+        // FIXME: maybe for declarative animations we always say it's true for the first and last keyframe.
+        if (!keyframe.containsProperty(CSSPropertyTransform)) {
+            // If the first keyframe is missing transform style, use the current style.
+            if (!keyframe.key())
+                keyframeStyle = &box.style();
+            else
+                continue;
+        }
+
+        auto keyframeBounds = bounds;
 
         bool canCompute;
         if (transformFunctionListsMatch())
-            canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframe.style(), keyframeBounds);
+            canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframeStyle, keyframeBounds);
         else
-            canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframe.style(), keyframeBounds);
+            canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframeStyle, keyframeBounds);
 
         if (!canCompute)
             return false;
@@ -1432,7 +1439,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         cumulativeBounds.unite(keyframeBounds);
     }
 
-    bounds = LayoutRect(cumulativeBounds);
+    bounds = cumulativeBounds;
     return true;
 }
 
