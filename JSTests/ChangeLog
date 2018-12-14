@@ -1,3 +1,13 @@
+2018-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Add a missing exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=192626
+        <rdar://problem/46662163>
+
+        Reviewed by Keith Miller.
+
+        * stress/regress-192626.js: Added.
+
 2018-12-13  Caio Lima  <ticaiolima@gmail.com>
 
         [BigInt] Add ValueDiv into DFG
