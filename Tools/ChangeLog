@@ -1,3 +1,15 @@
+2018-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] WebsitePolicies are lost on process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=192694
+        <rdar://problem/46715748>
+
+        Reviewed by Brady Eidson.
+
+        Extend existing API test to reproduce the issue.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+
 2018-12-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Error writing data to TLS socket in some sites when using the jhbuild

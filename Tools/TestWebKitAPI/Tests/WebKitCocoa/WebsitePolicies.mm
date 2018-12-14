@@ -972,6 +972,15 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
     while (loadCount != 9U)
         TestWebKitAPI::Util::spinRunLoop();
     loadCount = 0;
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://www.google.com/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    EXPECT_EQ(1U, loadCount);
+    loadCount = 0;
 }
 
 @interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>

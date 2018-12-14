@@ -49,6 +49,7 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << baseURLString;
     encoder << unreachableURLString;
     encoder << provisionalLoadErrorURLString;
+    encoder << websitePolicies;
     encoder << shouldOpenExternalURLsPolicy;
     encoder << shouldTreatAsContinuingLoad;
     encoder << userData;
@@ -104,6 +105,12 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 
     if (!decoder.decode(data.provisionalLoadErrorURLString))
         return false;
+
+    std::optional<std::optional<WebsitePoliciesData>> websitePolicies;
+    decoder >> websitePolicies;
+    if (!websitePolicies)
+        return false;
+    data.websitePolicies = WTFMove(*websitePolicies);
 
     if (!decoder.decode(data.shouldOpenExternalURLsPolicy))
         return false;

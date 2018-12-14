@@ -28,6 +28,7 @@
 #include "DataReference.h"
 #include "SandboxExtension.h"
 #include "UserData.h"
+#include "WebsitePoliciesData.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ResourceRequest.h>
 
@@ -59,6 +60,8 @@ struct LoadParameters {
     String baseURLString;
     String unreachableURLString;
     String provisionalLoadErrorURLString;
+
+    std::optional<WebsitePoliciesData> websitePolicies;
 
     uint64_t shouldOpenExternalURLsPolicy;
     bool shouldTreatAsContinuingLoad { false };

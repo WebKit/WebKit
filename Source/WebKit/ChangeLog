@@ -1,3 +1,38 @@
+2018-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] WebsitePolicies are lost on process-swap
+        https://bugs.webkit.org/show_bug.cgi?id=192694
+        <rdar://problem/46715748>
+
+        Reviewed by Brady Eidson.
+
+        In case of process-swap on navigation, instead of sending the websitePolicies to the old
+        process, send them to the new process as we trigger the navigation. We tell the new process
+        that it is continuing a load and it will therefore not re-trigger a decidePolicyForNavigationAction.
+
+        * Shared/LoadParameters.cpp:
+        (WebKit::LoadParameters::encode const):
+        (WebKit::LoadParameters::decode):
+        * Shared/LoadParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::loadRequestWithNavigation):
+        (WebKit::WebPageProxy::loadDataWithNavigation):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::loadDataImpl):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::goToBackForwardItem):
+        (WebKit::WebPage::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-12-14  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Fix forwarding webkit socket to flatpak sandbox
