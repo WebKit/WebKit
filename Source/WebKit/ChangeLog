@@ -1,3 +1,16 @@
+2018-12-14  David Quesada  <david_quesada@apple.com>
+
+        Remove a global 'using namespace WebKit' in WebViewImpl.mm
+        https://bugs.webkit.org/show_bug.cgi?id=192690
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKTextListTouchBarViewController initWithWebViewImpl:]):
+        (-[WKTextListTouchBarViewController _selectList:]):
+        (-[WKTextListTouchBarViewController setCurrentListType:]):
+        (-[WKTextTouchBarItemController initWithWebViewImpl:]):
+
 2018-12-14  Chris Dumez  <cdumez@apple.com>
 
         [PSON] WebsitePolicies are lost on process-swap

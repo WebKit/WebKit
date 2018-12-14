@@ -528,19 +528,17 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
-using namespace WebKit;
-
 #if HAVE(TOUCH_BAR)
 
 @interface WKTextListTouchBarViewController : NSViewController {
 @private
-    WebViewImpl* _webViewImpl;
-    ListType _currentListType;
+    WebKit::WebViewImpl* _webViewImpl;
+    WebKit::ListType _currentListType;
 }
 
-@property (nonatomic) ListType currentListType;
+@property (nonatomic) WebKit::ListType currentListType;
 
-- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl;
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl;
 
 @end
 
@@ -557,7 +555,7 @@ static const NSUInteger noListSegment = 0;
 static const NSUInteger unorderedListSegment = 1;
 static const NSUInteger orderedListSegment = 2;
 
-- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl
 {
     if (!(self = [super init]))
         return nil;
@@ -600,9 +598,9 @@ static const NSUInteger orderedListSegment = 2;
         // There is no "remove list" edit command, but InsertOrderedList and InsertUnorderedList both
         // behave as toggles, so we can invoke the appropriate edit command depending on our _currentListType
         // to remove an existing list. We don't have to do anything if _currentListType is NoList.
-        if (_currentListType == OrderedList)
+        if (_currentListType == WebKit::OrderedList)
             _webViewImpl->page().executeEditCommand(@"InsertOrderedList", @"");
-        else if (_currentListType == UnorderedList)
+        else if (_currentListType == WebKit::UnorderedList)
             _webViewImpl->page().executeEditCommand(@"InsertUnorderedList", @"");
         break;
     case unorderedListSegment:
@@ -616,17 +614,17 @@ static const NSUInteger orderedListSegment = 2;
     _webViewImpl->dismissTextTouchBarPopoverItemWithIdentifier(NSTouchBarItemIdentifierTextList);
 }
 
-- (void)setCurrentListType:(ListType)listType
+- (void)setCurrentListType:(WebKit::ListType)listType
 {
     NSSegmentedControl *insertListControl = (NSSegmentedControl *)self.view;
     switch (listType) {
-    case NoList:
+    case WebKit::NoList:
         [insertListControl setSelected:YES forSegment:noListSegment];
         break;
-    case OrderedList:
+    case WebKit::OrderedList:
         [insertListControl setSelected:YES forSegment:orderedListSegment];
         break;
-    case UnorderedList:
+    case WebKit::UnorderedList:
         [insertListControl setSelected:YES forSegment:unorderedListSegment];
         break;
     }
@@ -646,7 +644,7 @@ static const NSUInteger orderedListSegment = 2;
     RetainPtr<WKTextListTouchBarViewController> _textListTouchBarViewController;
 
 @private
-    WebViewImpl* _webViewImpl;
+    WebKit::WebViewImpl* _webViewImpl;
 }
 
 @property (nonatomic) BOOL textIsBold;
@@ -655,7 +653,7 @@ static const NSUInteger orderedListSegment = 2;
 @property (nonatomic) NSTextAlignment currentTextAlignment;
 @property (nonatomic, retain, readwrite) NSColor *textColor;
 
-- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl;
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl;
 @end
 
 @implementation WKTextTouchBarItemController
@@ -665,7 +663,7 @@ static const NSUInteger orderedListSegment = 2;
 @synthesize textIsUnderlined=_textIsUnderlined;
 @synthesize currentTextAlignment=_currentTextAlignment;
 
-- (instancetype)initWithWebViewImpl:(WebViewImpl*)webViewImpl
+- (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl*)webViewImpl
 {
     if (!(self = [super init]))
         return nil;
