@@ -1,3 +1,11 @@
+2018-12-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [SOUP] Unreviewed build fix after r239219
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse): Remove
+        handling of PolicyAction::Suspend, which is no longer available.
+
 2018-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, apply post-landing review comments after r239221.

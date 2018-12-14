@@ -385,9 +385,6 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
                 ASSERT_NOT_REACHED();
 
             break;
-        case PolicyAction::Suspend:
-            LOG_ERROR("PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
-            FALLTHROUGH;
         case PolicyAction::Ignore:
             clearRequest();
             break;
