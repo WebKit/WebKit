@@ -132,10 +132,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
             this._cookies.splice(rowIndex, 1);
 
-            // FIXME: <https://bugs.webkit.org/b/189533> add a WI.Cookie.url property
-            // once we switch over to using model objects instead of raw payload data.
-            let cookieURL = (cookie.secure ? "https://" : "http://") + cookie.domain + cookie.path;
-            PageAgent.deleteCookie(cookie.name, cookieURL);
+            PageAgent.deleteCookie(cookie.name, cookie.url);
         }
     }
 
@@ -312,7 +309,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
     _reloadCookies()
     {
         PageAgent.getCookies().then((payload) => {
-            this._cookies = this._filterCookies(payload.cookies);
+            this._cookies = this._filterCookies(payload.cookies.map(WI.Cookie.fromPayload));
             this._updateSort();
             this._table.reloadData();
         }).catch((error) => {

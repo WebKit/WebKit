@@ -1,3 +1,37 @@
+2018-12-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Cookies view should use model objects instead of raw payload data
+        https://bugs.webkit.org/show_bug.cgi?id=189533
+        <rdar://problem/44364183>
+
+        Reviewed by Joseph Pecoraro and Devin Rousso.
+
+        * UserInterface/Models/Cookie.js:
+        (WI.Cookie):
+        (WI.Cookie.fromPayload):
+        (WI.Cookie.parseSetCookieResponseHeader):
+        (WI.Cookie.prototype.get type):
+        (WI.Cookie.prototype.get name):
+        (WI.Cookie.prototype.get value):
+        (WI.Cookie.prototype.get header):
+        (WI.Cookie.prototype.get expires):
+        (WI.Cookie.prototype.get maxAge):
+        (WI.Cookie.prototype.get path):
+        (WI.Cookie.prototype.get domain):
+        (WI.Cookie.prototype.get secure):
+        (WI.Cookie.prototype.get httpOnly):
+        (WI.Cookie.prototype.get sameSite):
+        (WI.Cookie.prototype.get size):
+        (WI.Cookie.prototype.get url):
+        (WI.Cookie.prototype.expirationDate):
+        Cleanup Cookie object; add pubic getters for data, `url` property,
+        static `fromPayload` method, and calculate `_size` if missing.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype.tableDidRemoveRows):
+        (WI.CookieStorageContentView.prototype._reloadCookies):
+        Create Cookie objects from the payload instead of using raw payload data.
+
 2018-12-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove DOM.BackendNodeId and associated commands/events

@@ -55,7 +55,7 @@ function test()
                 InspectorTest.log(`HEADER: Set-Cookie: ${header}`);
                 let cookie = WI.Cookie.parseSetCookieResponseHeader(header);
                 InspectorTest.expectThat(cookie instanceof WI.Cookie, `Value should be a WI.Cookie.`);
-                InspectorTest.expectEqual(cookie.rawHeader, header, `cookie.rawHeader should be the original header text.`);
+                InspectorTest.expectEqual(cookie.header, header, `cookie.header should be the original header text.`);
                 InspectorTest.expectEqual(cookie.type, WI.Cookie.Type.Response, `cookie.type should be WI.Cookie.Type.Response.`);
                 InspectorTest.expectEqual(cookie.name, expected.name, `cookie.name should be '${expected.name}'.`);
                 InspectorTest.expectEqual(cookie.value, expected.value, `cookie.value should be '${expected.value}'.`);
@@ -205,6 +205,23 @@ function test()
                 secure: false,
                 httpOnly: false,
             });
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Cookie.url",
+        description: "Cookie url property.",
+        test() {
+            let cookieWithDomain = WI.Cookie.parseSetCookieResponseHeader(`name=value; domain=example.com`);
+            InspectorTest.expectEqual(cookieWithDomain.url, "http://example.com", "Cookie url should include domain.");
+
+            let cookieWithDomainAndPath = WI.Cookie.parseSetCookieResponseHeader(`name=value; domain=example.com; path=/foo`);
+            InspectorTest.expectEqual(cookieWithDomainAndPath.url, "http://example.com/foo", "Cookie url should include domain and path.");
+
+            let secureCookie = WI.Cookie.parseSetCookieResponseHeader(`name=value; domain=example.com; secure`);
+            InspectorTest.expectEqual(secureCookie.url, "https://example.com", "Secure cookie url should begin with 'https'.");
 
             return true;
         }

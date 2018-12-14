@@ -356,7 +356,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
                 let responseCookies = this._resource.responseCookies;
                 console.assert(responseCookies.length > 0);
                 for (let cookie of responseCookies)
-                    this._responseHeadersSection.appendKeyValuePair(key, cookie.rawHeader, "header");
+                    this._responseHeadersSection.appendKeyValuePair(key, cookie.header, "header");
                 continue;
             }
 
