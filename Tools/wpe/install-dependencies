@@ -119,6 +119,7 @@ function installDependenciesWithApt {
         libopus-dev \
         liborc-0.4-dev \
         libproxy-dev \
+        libpsl-dev \
         libpulse-dev \
         libsrtp0-dev \
         libtheora-dev \
@@ -210,6 +211,7 @@ function installDependenciesWithPacman {
         git \
         gsettings-desktop-schemas \
         libproxy \
+        libpsl \
         libpulse \
         libsrtp \
         libtheora \
@@ -301,6 +303,7 @@ function installDependenciesWithDnf {
         gsettings-desktop-schemas-devel \
         libmount-devel \
         libproxy-devel \
+        libpsl-devel \
         libsrtp-devel \
         libtheora-devel \
         libv4l-devel \

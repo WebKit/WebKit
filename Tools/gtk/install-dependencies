@@ -199,6 +199,7 @@ function installDependenciesWithApt {
         libp11-kit-dev \
         libpciaccess-dev \
         libproxy-dev \
+        libpsl-dev \
         libssl-dev \
         libtiff5-dev \
         libv4l-dev \
@@ -355,6 +356,7 @@ function installDependenciesWithPacman {
         p11-kit \
         libpciaccess \
         libproxy \
+        libpsl \
         libtiff \
         libxfixes \
         libxfont2 \
@@ -522,6 +524,7 @@ function installDependenciesWithDnf {
         libp11-devel \
         libpciaccess-devel \
         libproxy-devel \
+        libpsl-devel \
         libtiff-devel \
         libxcb-devel \
         libxkbfile-devel \

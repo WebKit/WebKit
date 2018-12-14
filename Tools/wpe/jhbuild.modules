@@ -77,26 +77,24 @@
     </branch>
   </meson>
 
-  <autotools id="glib-networking"
-             autogen-sh="configure">
+  <meson id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.54/glib-networking-2.54.1.tar.xz" version="2.54.1"
+    <branch module="/pub/GNOME/sources/glib-networking/2.58/glib-networking-${version}.tar.xz" version="2.58.0"
             repo="ftp.gnome.org"
-            hash="sha256:eaa787b653015a0de31c928e9a17eb57b4ce23c8cf6f277afaec0d685335012f"/>
-  </autotools>
+            hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
+  </meson>
 
   <autotools id="libsoup"
              autogen-sh="configure"
-             autogenargs="--without-gnome --disable-introspection">
+             autogenargs="--disable-introspection">
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.60/libsoup-2.60.3.tar.xz" version="2.60.3"
+    <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
             repo="ftp.gnome.org"
-            hash="sha256:1b0dc762f23abe4e0d29b77370e539fd35f31d8e8e0318d6ddccff395be68a22">
-          <patch file="libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch" strip="1"/>
+            hash="sha256:75ddc194a5b1d6f25033bb9d355f04bfe5c03e0e1c71ed0774104457b3a786c6">
     </branch>
   </autotools>
 

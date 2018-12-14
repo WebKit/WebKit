@@ -222,19 +222,14 @@
     </branch>
   </meson>
 
-  <autotools id="glib-networking"
-             autogen-sh="configure">
-    <if condition-set="macos">
-      <autogenargs value="--with-ca-certificates='/usr/local/etc/openssl/cert.pem' --without-pkcs11"/>
-    </if>
+  <meson id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib-networking/2.50/glib-networking-2.50.0.tar.xz" version="2.50.0"
+    <branch module="/pub/GNOME/sources/glib-networking/2.58/glib-networking-${version}.tar.xz" version="2.58.0"
             repo="ftp.gnome.org"
-            hash="sha256:3f1a442f3c2a734946983532ce59ed49120319fdb10c938447c373d5e5286bee"
-            md5sum="4d06d0224646f274918b1cb6da9a07f6"/>
-  </autotools>
+            hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
+  </meson>
 
   <autotools id="libsoup"
              autogen-sh="configure"
@@ -245,13 +240,9 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/libsoup/2.57/libsoup-2.57.1.tar.xz" version="2.57.1"
+    <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
             repo="ftp.gnome.org"
-            hash="sha256:ca1ca037e89e8bc7b782559f3ec5d89c9d0b836f505b2f95e008ed517fd6658f">
-      <patch file="libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch" strip="1"/>
-      <patch file="libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch" strip="1"/>
-      <patch file="libsoup-soup-message-io-Do-not-fail-when-there-s-no-empty-li.patch" strip="1"/>
-      <patch file="libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch" strip="1"/>
+            hash="sha256:75ddc194a5b1d6f25033bb9d355f04bfe5c03e0e1c71ed0774104457b3a786c6">
     </branch>
   </autotools>
 

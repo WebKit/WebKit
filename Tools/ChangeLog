@@ -1,3 +1,22 @@
+2018-12-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Error writing data to TLS socket in some sites when using the jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=192678
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update our ancient versions of libsoup and glib-networking.
+
+        * gtk/install-dependencies:
+        * gtk/jhbuild.modules:
+        * gtk/patches/libsoup-auth-Fix-async-authentication-when-flag-SOUP_MESSAGE.patch: Removed.
+        * gtk/patches/libsoup-auth-do-not-use-cached-credentials-in-lookup-method-.patch: Removed.
+        * gtk/patches/libsoup-soup-message-io-Do-not-fail-when-there-s-no-empty-li.patch: Removed.
+        * gtk/patches/libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch: Removed.
+        * wpe/install-dependencies:
+        * wpe/jhbuild.modules:
+        * wpe/patches/libsoup-soup-socket-fix-critical-warning-when-the-peer-certi.patch: Removed.
+
 2018-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use new view state API from libwpe
