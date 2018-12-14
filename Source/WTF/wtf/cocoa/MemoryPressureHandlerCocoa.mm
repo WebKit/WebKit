@@ -67,13 +67,13 @@ void MemoryPressureHandler::install()
     if (m_installed || timerEventSource)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(m_dispatchQueue, ^{
 #if PLATFORM(IOS_FAMILY)
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
 #else // PLATFORM(MAC)
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_CRITICAL;
 #endif
-        memoryPressureEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, dispatch_get_main_queue());
+        memoryPressureEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue);
 
         dispatch_source_set_event_handler(memoryPressureEventSource, ^{
             auto status = dispatch_source_get_data(memoryPressureEventSource);
@@ -102,13 +102,14 @@ void MemoryPressureHandler::install()
 #else // PLATFORM(MAC)
             respondToMemoryPressure(Critical::Yes);
 #endif
-            WTFLogAlways("Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
+            if (m_shouldLogMemoryMemoryPressureEvents)
+                WTFLogAlways("Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
         });
         dispatch_resume(memoryPressureEventSource);
     });
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
-    notify_register_dispatch("org.WebKit.lowMemory", &notifyTokens[0], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory", &notifyTokens[0], m_dispatchQueue, ^(int) {
 #if ENABLE(FMW_FOOTPRINT_COMPARISON)
         auto footprintBefore = pagesPerVMTag();
 #endif
@@ -122,15 +123,15 @@ void MemoryPressureHandler::install()
         logFootprintComparison(footprintBefore, footprintAfter);
 #endif
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(m_dispatchQueue, ^{
             endSimulatedMemoryPressure();
         });
     });
 
-    notify_register_dispatch("org.WebKit.lowMemory.begin", &notifyTokens[1], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory.begin", &notifyTokens[1], m_dispatchQueue, ^(int) {
         beginSimulatedMemoryPressure();
     });
-    notify_register_dispatch("org.WebKit.lowMemory.end", &notifyTokens[2], dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory.end", &notifyTokens[2], m_dispatchQueue, ^(int) {
         endSimulatedMemoryPressure();
     });
 
@@ -142,7 +143,7 @@ void MemoryPressureHandler::uninstall()
     if (!m_installed)
         return;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(m_dispatchQueue, ^{
         if (memoryPressureEventSource) {
             dispatch_source_cancel(memoryPressureEventSource);
             memoryPressureEventSource = nullptr;
@@ -162,8 +163,8 @@ void MemoryPressureHandler::uninstall()
 
 void MemoryPressureHandler::holdOff(Seconds seconds)
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        timerEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+    dispatch_async(m_dispatchQueue, ^{
+        timerEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue);
         if (timerEventSource) {
             dispatch_set_context(timerEventSource, this);
             // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.

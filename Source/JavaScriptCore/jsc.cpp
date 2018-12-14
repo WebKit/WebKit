@@ -80,8 +80,10 @@
 #include <sys/types.h>
 #include <thread>
 #include <type_traits>
+#include <wtf/Box.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/MainThread.h>
+#include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
@@ -2871,9 +2873,49 @@ int jscmain(int argc, char** argv)
 #endif
     Gigacage::disableDisablingPrimitiveGigacageIfShouldBeEnabled();
 
+#if PLATFORM(COCOA)
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+    {
+        dispatch_queue_t queue = dispatch_queue_create("jsc shell memory pressure handler", DISPATCH_QUEUE_SERIAL);
+        memoryPressureHandler.setDispatchQueue(queue);
+        dispatch_release(queue);
+    }
+    Box<Critical> memoryPressureCriticalState = Box<Critical>::create(Critical::No);
+    Box<Synchronous> memoryPressureSynchronousState = Box<Synchronous>::create(Synchronous::No);
+    memoryPressureHandler.setLowMemoryHandler([=] (Critical critical, Synchronous synchronous) {
+        // We set these racily with respect to reading them from the JS execution thread.
+        *memoryPressureCriticalState = critical;
+        *memoryPressureSynchronousState = synchronous;
+    });
+    memoryPressureHandler.setShouldLogMemoryMemoryPressureEvents(false);
+    memoryPressureHandler.install();
+
+    auto onEachMicrotaskTick = [&] (VM& vm) {
+        if (*memoryPressureCriticalState == Critical::No)
+            return;
+
+        *memoryPressureCriticalState = Critical::No;
+        bool isSynchronous = *memoryPressureSynchronousState == Synchronous::Yes;
+
+        WTF::releaseFastMallocFreeMemory();
+        vm.deleteAllCode(DeleteAllCodeIfNotCollecting);
+
+        if (!vm.heap.isCurrentThreadBusy()) {
+            if (isSynchronous) {
+                vm.heap.collectNow(Sync, CollectionScope::Full);
+                WTF::releaseFastMallocFreeMemory();
+            } else
+                vm.heap.collectNowFullIfNotDoneRecently(Async);
+        }
+    };
+#endif
+
     int result = runJSC(
         options, false,
-        [&] (VM&, GlobalObject* globalObject, bool& success) {
+        [&] (VM& vm, GlobalObject* globalObject, bool& success) {
+#if PLATFORM(COCOA)
+            vm.setOnEachMicrotaskTick(WTFMove(onEachMicrotaskTick));
+#endif
             runWithOptions(globalObject, options, success);
         });
 

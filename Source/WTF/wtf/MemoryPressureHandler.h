@@ -94,6 +94,10 @@ public:
 
     WTF_EXPORT_PRIVATE static MemoryUsagePolicy currentMemoryUsagePolicy();
 
+#if PLATFORM(COCOA)
+    WTF_EXPORT_PRIVATE void setDispatchQueue(dispatch_queue_t);
+#endif
+
     class ReliefLogger {
     public:
         explicit ReliefLogger(const char *log)
@@ -150,6 +154,8 @@ public:
 
     WTF_EXPORT_PRIVATE static void setPageCount(unsigned);
 
+    void setShouldLogMemoryMemoryPressureEvents(bool shouldLog) { m_shouldLogMemoryMemoryPressureEvents = shouldLog; }
+
 private:
     size_t thresholdForMemoryKill();
     void memoryPressureStatusChanged();
@@ -180,6 +186,7 @@ private:
 
     std::atomic<bool> m_underMemoryPressure;
     bool m_isSimulatingMemoryPressure { false };
+    bool m_shouldLogMemoryMemoryPressureEvents { true };
 
     std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
@@ -197,6 +204,10 @@ private:
 #if OS(LINUX)
     RunLoop::Timer<MemoryPressureHandler> m_holdOffTimer;
     void holdOffTimerFired();
+#endif
+
+#if PLATFORM(COCOA)
+    dispatch_queue_t m_dispatchQueue { nullptr };
 #endif
 };
 

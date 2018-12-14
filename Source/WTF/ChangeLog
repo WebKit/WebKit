@@ -1,3 +1,26 @@
+2018-12-13  Saam Barati  <sbarati@apple.com>
+
+        The JSC shell should listen for memory pressure events and respond to them
+        https://bugs.webkit.org/show_bug.cgi?id=192647
+
+        Reviewed by Keith Miller.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::MemoryPressureHandler):
+        (WTF::MemoryPressureHandler::setDispatchQueue):
+        Make it so that we can customize which dispatch queue memory pressure
+        events get handled on.
+
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setShouldLogMemoryMemoryPressureEvents):
+        Make it so that we can disable logging that happens on each memory
+        pressure event.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        (WTF::MemoryPressureHandler::uninstall):
+        (WTF::MemoryPressureHandler::holdOff):
+
 2018-12-13  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary parameter copies in ParallelHelperPool.cpp

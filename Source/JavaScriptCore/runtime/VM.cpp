@@ -1128,8 +1128,11 @@ void VM::queueMicrotask(JSGlobalObject& globalObject, Ref<Microtask>&& task)
 
 void VM::drainMicrotasks()
 {
-    while (!m_microtaskQueue.isEmpty())
+    while (!m_microtaskQueue.isEmpty()) {
         m_microtaskQueue.takeFirst()->run();
+        if (m_onEachMicrotaskTick)
+            m_onEachMicrotaskTick(*this);
+    }
 }
 
 void QueuedTask::run()

@@ -1,3 +1,23 @@
+2018-12-13  Saam Barati  <sbarati@apple.com>
+
+        The JSC shell should listen for memory pressure events and respond to them
+        https://bugs.webkit.org/show_bug.cgi?id=192647
+
+        Reviewed by Keith Miller.
+
+        We want the JSC shell to behave more like the WebContent process when
+        it comes to running performance tests. One way to make the shell
+        more like this is to have it respond to memory pressure events in
+        a similar way as the WebContent process. This makes it easier to run
+        benchmarks like JetStream2 on the CLI on iOS.
+
+        * jsc.cpp:
+        (jscmain):
+        * runtime/VM.cpp:
+        (JSC::VM::drainMicrotasks):
+        * runtime/VM.h:
+        (JSC::VM::setOnEachMicrotaskTick):
+
 2018-12-13  Mark Lam  <mark.lam@apple.com>
 
         Ensure that StructureFlags initialization always starts with Base::StructureFlags.

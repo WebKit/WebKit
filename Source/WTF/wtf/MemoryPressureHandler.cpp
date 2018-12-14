@@ -55,6 +55,9 @@ MemoryPressureHandler::MemoryPressureHandler()
     : m_windowsMeasurementTimer(RunLoop::main(), this, &MemoryPressureHandler::windowsMeasurementTimerFired)
 #endif
 {
+#if PLATFORM(COCOA)
+    setDispatchQueue(dispatch_get_main_queue());
+#endif
 }
 
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
@@ -296,6 +299,17 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 
 #if !OS(WINDOWS)
 void MemoryPressureHandler::platformInitialize() { }
+#endif
+
+#if PLATFORM(COCOA)
+void MemoryPressureHandler::setDispatchQueue(dispatch_queue_t queue)
+{
+    RELEASE_ASSERT(!m_installed);
+    dispatch_retain(queue);
+    if (m_dispatchQueue)
+        dispatch_release(m_dispatchQueue);
+    m_dispatchQueue = queue;
+}
 #endif
 
 } // namespace WebCore
