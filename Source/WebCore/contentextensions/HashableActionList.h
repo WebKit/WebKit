@@ -53,12 +53,12 @@ struct HashableActionList {
     bool isEmptyValue() const { return state == Empty; }
     bool isDeletedValue() const { return state == Deleted; }
 
-    bool operator==(const HashableActionList other) const
+    bool operator==(const HashableActionList& other) const
     {
         return state == other.state && actions == other.actions;
     }
 
-    bool operator!=(const HashableActionList other) const
+    bool operator!=(const HashableActionList& other) const
     {
         return !(*this == other);
     }

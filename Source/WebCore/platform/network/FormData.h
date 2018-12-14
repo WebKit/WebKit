@@ -85,7 +85,7 @@ struct FormDataElement {
             return { filename.isolatedCopy(), fileStart, fileLength, expectedFileModificationTime, generatedFilename.isolatedCopy(), shouldGenerateFile, ownsGeneratedFile };
         }
         
-        bool operator==(const EncodedFileData other) const
+        bool operator==(const EncodedFileData& other) const
         {
             return filename == other.filename
                 && fileStart == other.fileStart
@@ -149,7 +149,7 @@ struct FormDataElement {
     struct EncodedBlobData {
         URL url;
 
-        bool operator==(const EncodedBlobData other) const
+        bool operator==(const EncodedBlobData& other) const
         {
             return url == other.url;
         }

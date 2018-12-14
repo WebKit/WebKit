@@ -1,3 +1,15 @@
+2018-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy of objects for operator==() methods
+        <https://webkit.org/b/192712>
+        <rdar://problem/46739332>
+
+        Reviewed by Andy Estes.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        (JSC::B3::Air::(anonymous namespace)::AbstractColoringAllocator::InterferenceEdge::operator==):
+        - Change argument from const to const reference to avoid a copy.
+
 2018-12-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239153, r239154, and r239155.

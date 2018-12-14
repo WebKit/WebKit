@@ -466,7 +466,7 @@ protected:
             return m_value & 0xffffffff;
         }
 
-        bool operator==(const InterferenceEdge other) const
+        bool operator==(const InterferenceEdge& other) const
         {
             return m_value == other.m_value;
         }

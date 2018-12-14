@@ -1,3 +1,20 @@
+2018-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy of objects for operator==() methods
+        <https://webkit.org/b/192712>
+        <rdar://problem/46739332>
+
+        Reviewed by Andy Estes.
+
+        * contentextensions/HashableActionList.h:
+        (WebCore::ContentExtensions::HashableActionList::operator== const):
+        (WebCore::ContentExtensions::HashableActionList::operator!= const):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::EncodedFileData::operator== const):
+        (WebCore::FormDataElement::EncodedBlobData::operator== const):
+        - Change arguments from const to const reference to avoid
+          copies.
+
 2018-12-14  Jer Noble  <jer.noble@apple.com>
 
         CRASH in CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(WTF::String const&, WTF::Function<void ()>&&)
