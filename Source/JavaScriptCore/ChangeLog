@@ -1,3 +1,17 @@
+2018-12-13  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Improve GDB output for LLInt on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=192660
+
+        Reviewed by Yusuke Suzuki.
+
+        Annotate assembly code generated for LLInt with the bytecode operation. When debugging
+        LLInt assembly code GDB is then able to show which bytecode instruction is implemented by
+        the current assembly code. This also works for linux-perf.
+
+        * llint/LowLevelInterpreter.cpp:
+        * offlineasm/arm.rb:
+
 2018-12-13  Mark Lam  <mark.lam@apple.com>
 
         Add a missing exception check.

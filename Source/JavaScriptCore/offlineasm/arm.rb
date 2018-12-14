@@ -683,8 +683,8 @@ class Instruction
             temp = operands[2]
 
             uid = $asm.newUID
-            gotLabel = "L_offlineasm_arm_got_#{uid}"
-            offsetLabel = "L_offlineasm_arm_got_offset_#{uid}"
+            gotLabel = Assembler.localLabelReference("offlineasm_arm_got_#{uid}")
+            offsetLabel = Assembler.localLabelReference("offlineasm_arm_got_offset_#{uid}")
 
             $asm.puts "ldr #{dest.armOperand}, #{gotLabel}"
             $asm.puts "ldr #{temp.armOperand}, #{gotLabel}+4"
