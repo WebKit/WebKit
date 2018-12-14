@@ -1,3 +1,15 @@
+2018-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary copy of AtomicString each time one is logged
+        <https://webkit.org/b/192710>
+        <rdar://problem/46738962>
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString): Make argument a const reference to
+        avoid the copy.
+
 2018-12-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GLib] RunLoop::dispatchAfter() GSource requires microsecond precision
