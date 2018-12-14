@@ -1,3 +1,18 @@
+2018-12-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Web Inspector: Occasional UIProcess crashes under WebPageProxy::showInspectorIndication
+        https://bugs.webkit.org/show_bug.cgi?id=192689
+        <rdar://problem/46323610>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebPageProxy.h:
+        Don't wait until ~WebPageProxy to destroy the WebPageProxyDebuggable
+        which broadcasts it as a remote inspector target. Terminate this
+        as soon as the WebPageProxy closes and becomes invalid.
+
 2018-12-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix for tvOS.

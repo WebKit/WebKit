@@ -958,6 +958,9 @@ void WebPageProxy::close()
 
     m_backForwardList->pageClosed();
     m_inspectorController->pageClosed();
+#if ENABLE(REMOTE_INSPECTOR)
+    m_inspectorDebuggable = nullptr;
+#endif
     pageClient().pageClosed();
 
     m_process->disconnectFramesFromPage(this);
