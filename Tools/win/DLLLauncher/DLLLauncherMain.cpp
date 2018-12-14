@@ -55,6 +55,18 @@ static void enableTerminationOnHeapCorruption()
     HeapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
 }
 
+static wstring copyEnvironmentVariable(const wstring& variable)
+{
+    DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
+    if (!length)
+        return wstring();
+    vector<wchar_t> buffer(length);
+    if (!GetEnvironmentVariable(variable.c_str(), &buffer[0], buffer.size()) || !buffer[0])
+        return wstring();
+    return &buffer[0];
+}
+
+#if !defined(WIN_CAIRO)
 static wstring getStringValue(HKEY key, const wstring& valueName)
 {
     DWORD type = 0;
@@ -84,17 +96,6 @@ static wstring appleApplicationSupportDirectory()
     return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
 }
 
-static wstring copyEnvironmentVariable(const wstring& variable)
-{
-    DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
-    if (!length)
-        return wstring();
-    vector<wchar_t> buffer(length);
-    if (!GetEnvironmentVariable(variable.c_str(), &buffer[0], buffer.size()) || !buffer[0])
-        return wstring();
-    return &buffer[0];
-}
-
 static bool prependPath(const wstring& directoryToPrepend)
 {
     wstring pathVariable = L"PATH";
@@ -102,6 +103,7 @@ static bool prependPath(const wstring& directoryToPrepend)
     wstring newPath = directoryToPrepend + L';' + oldPath;
     return ::SetEnvironmentVariableW(pathVariable.c_str(), newPath.c_str());
 }
+#endif
 
 static int fatalError(const wstring& programName, const wstring& message)
 {

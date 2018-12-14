@@ -1,3 +1,19 @@
+2018-12-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][Clang] DLLLauncherMain.cpp: warning: unused function 'prependPath' and 'appleApplicationSupportDirectory'
+        https://bugs.webkit.org/show_bug.cgi?id=192688
+
+        Reviewed by Ross Kirsling.
+
+        These functions are used only in AppleWin port.
+
+        * shell/DLLLauncherMain.cpp:
+        (copyEnvironmentVariable): Moved.
+        (getStringValue): Enclosed with #if !defined(WIN_CAIRO).
+        (applePathFromRegistry): Ditto.
+        (appleApplicationSupportDirectory): Ditto.
+        (prependPath): Ditto.
+
 2018-12-13  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Improve GDB output for LLInt on Linux

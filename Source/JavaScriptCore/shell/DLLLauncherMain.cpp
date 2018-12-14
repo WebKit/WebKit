@@ -56,6 +56,18 @@ static void enableTerminationOnHeapCorruption()
     HeapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
 }
 
+static std::wstring copyEnvironmentVariable(const std::wstring& variable)
+{
+    DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
+    if (!length)
+        return std::wstring();
+    std::vector<wchar_t> buffer(length);
+    if (!GetEnvironmentVariable(variable.c_str(), &buffer[0], buffer.size()) || !buffer[0])
+        return std::wstring();
+    return &buffer[0];
+}
+
+#if !defined(WIN_CAIRO)
 static std::wstring getStringValue(HKEY key, const std::wstring& valueName)
 {
     DWORD type = 0;
@@ -85,17 +97,6 @@ static std::wstring appleApplicationSupportDirectory()
     return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
 }
 
-static std::wstring copyEnvironmentVariable(const std::wstring& variable)
-{
-    DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
-    if (!length)
-        return std::wstring();
-    std::vector<wchar_t> buffer(length);
-    if (!GetEnvironmentVariable(variable.c_str(), &buffer[0], buffer.size()) || !buffer[0])
-        return std::wstring();
-    return &buffer[0];
-}
-
 static bool prependPath(const std::wstring& directoryToPrepend)
 {
     std::wstring pathVariable = L"PATH";
@@ -103,6 +104,7 @@ static bool prependPath(const std::wstring& directoryToPrepend)
     std::wstring newPath = directoryToPrepend + L';' + oldPath;
     return ::SetEnvironmentVariableW(pathVariable.c_str(), newPath.c_str());
 }
+#endif
 
 static int fatalError(const std::wstring& programName, const std::wstring& message)
 {
