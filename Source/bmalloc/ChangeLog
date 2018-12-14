@@ -1,3 +1,14 @@
+2018-12-13  Mark Lam  <mark.lam@apple.com>
+
+        Verify that tryLargeZeroedMemalignVirtual()'s aligned size and alignment values are valid.
+        https://bugs.webkit.org/show_bug.cgi?id=192682
+        <rdar://problem/37751522>
+
+        Reviewed by Saam Barati.
+
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+
 2018-11-21  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Enable JIT on ARM/Linux

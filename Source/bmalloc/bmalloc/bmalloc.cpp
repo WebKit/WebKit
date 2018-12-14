@@ -39,13 +39,15 @@ void freeOutOfLine(void* object, HeapKind kind)
     free(object, kind);
 }
 
-void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, HeapKind kind)
+void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, HeapKind kind)
 {
-    BASSERT(isPowerOfTwo(alignment));
+    RELEASE_BASSERT(isPowerOfTwo(requiredAlignment));
 
     size_t pageSize = vmPageSize();
-    alignment = roundUpToMultipleOf(pageSize, alignment);
-    size = roundUpToMultipleOf(pageSize, size);
+    size_t alignment = roundUpToMultipleOf(pageSize, requiredAlignment);
+    size_t size = roundUpToMultipleOf(pageSize, requestedSize);
+    RELEASE_BASSERT(alignment >= requiredAlignment);
+    RELEASE_BASSERT(size >= requestedSize);
 
     kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
