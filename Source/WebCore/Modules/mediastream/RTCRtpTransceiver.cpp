@@ -106,19 +106,38 @@ void RTCRtpTransceiver::stop()
         m_backend->stop();
 }
 
-void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
-{
-    m_senders.append(transceiver->sender());
-    m_receivers.append(transceiver->receiver());
-
-    m_transceivers.append(WTFMove(transceiver));
-}
-
 bool RTCRtpTransceiver::stopped() const
 {
     if (m_backend)
         return m_backend->stopped();
     return m_stopped;
+}
+
+void RtpTransceiverSet::append(Ref<RTCRtpTransceiver>&& transceiver)
+{
+    m_transceivers.append(WTFMove(transceiver));
+}
+
+Vector<std::reference_wrapper<RTCRtpSender>> RtpTransceiverSet::senders() const
+{
+    Vector<std::reference_wrapper<RTCRtpSender>> senders;
+    for (auto& transceiver : m_transceivers) {
+        if (transceiver->stopped())
+            continue;
+        senders.append(transceiver->sender());
+    }
+    return senders;
+}
+
+Vector<std::reference_wrapper<RTCRtpReceiver>> RtpTransceiverSet::receivers() const
+{
+    Vector<std::reference_wrapper<RTCRtpReceiver>> receivers;
+    for (auto& transceiver : m_transceivers) {
+        if (transceiver->stopped())
+            continue;
+        receivers.append(transceiver->receiver());
+    }
+    return receivers;
 }
 
 } // namespace WebCore

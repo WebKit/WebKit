@@ -1,3 +1,33 @@
+2018-12-14  Youenn Fablet  <youenn@apple.com>
+
+        getSenders/getReceivers() should not return closed transceiver senders/receivers
+        https://bugs.webkit.org/show_bug.cgi?id=192706
+
+        Reviewed by Eric Carlson.
+
+        Updated as per https://github.com/w3c/webrtc-pc/commit/85284b76baebf9e149d194e692be16a21768a91a
+        This forces us to compute the sender/receiver list at getter call time.
+        Updated the internal call sites of senders to use the list of transceivers instead.
+
+        Covered by updated WPT tests.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::getSenders const):
+        (WebCore::RTCPeerConnection::getReceivers const):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::stopped const):
+        (WebCore::RtpTransceiverSet::append):
+        (WebCore::RtpTransceiverSet::senders const):
+        (WebCore::RtpTransceiverSet::receivers const):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RtpTransceiverSet::senders const): Deleted.
+        (WebCore::RtpTransceiverSet::receivers const): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::findExistingSender):
+        (WebCore::LibWebRTCPeerConnectionBackend::addTrack):
+
 2018-12-14  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy of objects for operator==() methods

@@ -91,14 +91,11 @@ public:
     const Vector<RefPtr<RTCRtpTransceiver>>& list() const { return m_transceivers; }
     void append(Ref<RTCRtpTransceiver>&&);
 
-    const Vector<std::reference_wrapper<RTCRtpSender>>& senders() const { return m_senders; }
-    const Vector<std::reference_wrapper<RTCRtpReceiver>>& receivers() const { return m_receivers; }
+    Vector<std::reference_wrapper<RTCRtpSender>> senders() const;
+    Vector<std::reference_wrapper<RTCRtpReceiver>> receivers() const;
 
 private:
     Vector<RefPtr<RTCRtpTransceiver>> m_transceivers;
-
-    Vector<std::reference_wrapper<RTCRtpSender>> m_senders;
-    Vector<std::reference_wrapper<RTCRtpReceiver>> m_receivers;
 };
 
 } // namespace WebCore
