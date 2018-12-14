@@ -2717,6 +2717,9 @@ private:
             fingerprints.uncheckedAppend(RTCCertificate::DtlsFingerprint { algorithm->string(), value->string() });
         }
 
+        if (!m_isDOMGlobalObject)
+            return constructEmptyObject(m_exec, m_globalObject->objectPrototype());
+
         auto rtcCertificate = RTCCertificate::create(SecurityOrigin::createFromString(origin->string()), expires, WTFMove(fingerprints), certificate->takeString(), keyedMaterial->takeString());
         return toJSNewlyCreated(m_exec, jsCast<JSDOMGlobalObject*>(m_globalObject), WTFMove(rtcCertificate));
     }

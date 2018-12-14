@@ -1,3 +1,19 @@
+2018-12-14  Youenn Fablet  <youenn@apple.com>
+
+        IDB should store RTCCertificate
+        https://bugs.webkit.org/show_bug.cgi?id=192599
+
+        Reviewed by Brady Eidson.
+
+        In case there is no script execution context, do not create a JS DOM wrapper for RTCCertificate.
+        Instead, create an empty object so that the deserialization can still succeed.
+        This should only impact IDB deserialization in the Network Process which does not need the actual JS DOM wrapper.
+
+        Test: webrtc/certificates-indexeddb.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+
 2018-12-14  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC] Transition to logical margin types.

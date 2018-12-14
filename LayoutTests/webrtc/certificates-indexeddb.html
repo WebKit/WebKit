@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing certificates IndexedDB storage</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+let certificate;
+
+function storeKey() {
+    var objectStore = db.transaction("certificate", "readwrite").objectStore("certificate");
+    var req = objectStore.put(certificate, "mycertificate");
+    req.onerror = function(event) {
+        assert_unreached("Could not put a key into database: " + event.target.error.name);
+    }
+    req.onsuccess = function(event) { readKey(); }
+}
+
+function readKey() {
+    var objectStore = db.transaction("certificate").objectStore("certificate");
+    var req = objectStore.get("mycertificate");
+    req.onerror = function(event) {
+        assert_not_reached("Could not get a key from database: " + event.target.error.name);
+    }
+    req.onsuccess = function(event) {
+        assert_not_equals(event.target.result, undefined);
+        assert_equals(event.target.result.expires, certificate.expires);
+        done();
+    }
+}
+
+async function doTest() {
+    certificate = await  RTCPeerConnection.generateCertificate({ name: 'ECDSA', namedCurve: 'P-256' });
+
+    var openRequest = indexedDB.open("rtc");
+    openRequest.onupgradeneeded = function(event) {
+        var objectStore = event.target.result.createObjectStore("certificate");
+    }
+    openRequest.onerror = function(event) {
+        assert_not_reached("Could not open database: " + event.target.error.name);
+    }
+    openRequest.onsuccess = function(event) {
+        db = event.target.result;
+        storeKey();
+    }
+}
+doTest();
+
+        </script>
+    </body>
+</html>
