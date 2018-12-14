@@ -5987,8 +5987,10 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
             m_pendingNavigationID = 0;
         }
 
-        if (auto pendingWebsitePolicies = WTFMove(m_pendingWebsitePolicies))
-            WebsitePoliciesData::applyToDocumentLoader(WTFMove(*pendingWebsitePolicies), documentLoader);
+        if (m_pendingWebsitePolicies) {
+            WebsitePoliciesData::applyToDocumentLoader(WTFMove(*m_pendingWebsitePolicies), documentLoader);
+            m_pendingWebsitePolicies = std::nullopt;
+        }
     }
 
     return WTFMove(documentLoader);
