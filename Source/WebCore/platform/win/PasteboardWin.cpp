@@ -888,7 +888,6 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
     ASSERT_ARG(image, image);
     ASSERT(image->image()->data());
 
-    HRESULT hr = S_OK;
     String fsPath;
     HGLOBAL memObj = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
     if (!memObj)
@@ -1015,7 +1014,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
 
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
-    wcscpy((LPWSTR)(dropFiles + 1), filePath);    
+    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filePath);
     GlobalUnlock(memObj);
 
     return memObj;

@@ -97,6 +97,8 @@ static String osVersionForUAString()
         return "Windows 98; Win 9x 4.90";
     case WindowsNT4:
         return "WinNT4.0";
+    default:
+        break;
     }
 
     const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";

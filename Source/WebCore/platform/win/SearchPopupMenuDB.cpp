@@ -284,7 +284,7 @@ std::unique_ptr<SQLiteStatement> SearchPopupMenuDB::createPreparedStatement(cons
 {
     auto statement = std::make_unique<SQLiteStatement>(m_database, sql);
     int ret = statement->prepare();
-    ASSERT(ret == SQLITE_OK);
+    ASSERT_UNUSED(ret, ret == SQLITE_OK);
     return statement;
 }
 

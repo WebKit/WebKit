@@ -1,3 +1,35 @@
+2018-12-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix compilation warnings under Source/WebCore/platform/win
+        https://bugs.webkit.org/show_bug.cgi?id=192693
+
+        Reviewed by Ross Kirsling.
+
+        No new tests, no behavior changes.
+
+        * platform/win/ClipboardUtilitiesWin.cpp: Reordered ClipboardDataItem members to match with the initializer list.
+        * platform/win/CursorWin.cpp:
+        (WebCore::loadCursorByName): Changed the argument type of 'name' to const char*.
+        * platform/win/DefWndProcWindowClass.cpp:
+        (WebCore::defWndProcWindowClassName): Removed an unused variable 'atom'.
+        * platform/win/DragImageWin.cpp: Removed an unused variable 'MinDragLabelWidthBeforeClip'.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::createGlobalImageFileDescriptor): Removed an unused variable 'hr'.
+        (WebCore::createGlobalHDropContent): Use reinterpret_cast to suppress warning.
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent): Reordered the initializer list.
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::paint): Removed an unused variable 'itemCount'.
+        * platform/win/PopupMenuWin.h: Marked override methods with 'override'.
+        * platform/win/SSLKeyGeneratorWin.cpp:
+        (WebCore::getSupportedKeySizes): Removed WebCore namespace prefix in WebCore namespace.
+        (WebCore::signedPublicKeyAndChallengeString): Ditto.
+        * platform/win/SearchPopupMenuDB.cpp:
+        (WebCore::SearchPopupMenuDB::createPreparedStatement): Use ASSERT_UNUSED instead of ASSERT.
+        * platform/win/StructuredExceptionHandlerSuppressor.h: Enclosed m_savedExceptionRegistration with #if defined(_M_IX86).
+        * platform/win/SystemInfo.cpp:
+        (WebCore::osVersionForUAString): Added default case.
+
 2018-12-13  Youenn Fablet  <youenn@apple.com>
 
         RTCRtpTransceiver.stopped should be true when applying a remote description with the corresponding m section rejected

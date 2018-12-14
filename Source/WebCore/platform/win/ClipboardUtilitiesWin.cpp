@@ -695,9 +695,9 @@ typedef void (*GetStringFunction)(IDataObject*, FORMATETC*, Vector<String>&);
 typedef void (*SetStringFunction)(IDataObject*, FORMATETC*, const Vector<String>&);
 
 struct ClipboardDataItem {
+    FORMATETC* format;
     GetStringFunction getString;
     SetStringFunction setString;
-    FORMATETC* format;
 
     ClipboardDataItem(FORMATETC* format, GetStringFunction getString, SetStringFunction setString): format(format), getString(getString), setString(setString) { }
 };

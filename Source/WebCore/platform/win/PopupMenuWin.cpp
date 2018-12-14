@@ -609,9 +609,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
     GraphicsContext context(m_DC.get());
 
-    int itemCount = client()->listSize();
-
-    // listRect is the damageRect translated into the coordinates of the entire menu list (which is itemCount * m_itemHeight pixels tall)
+    // listRect is the damageRect translated into the coordinates of the entire menu list (which is listSize * m_itemHeight pixels tall)
     IntRect listRect = damageRect;
     listRect.move(IntSize(0, m_scrollOffset * m_itemHeight));
 
@@ -822,8 +820,6 @@ LRESULT CALLBACK PopupMenuWin::PopupMenuWndProc(HWND hWnd, UINT message, WPARAM 
 
     return ::DefWindowProc(hWnd, message, wParam, lParam);
 }
-
-const int smoothScrollAnimationDuration = 5000;
 
 LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

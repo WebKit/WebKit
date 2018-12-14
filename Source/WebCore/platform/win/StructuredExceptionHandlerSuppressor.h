@@ -45,7 +45,9 @@ public:
     ~StructuredExceptionHandlerSuppressor();
 
 private:
+#if defined(_M_IX86)
     void* m_savedExceptionRegistration;
+#endif
 };
 
 } // namespace WebCore

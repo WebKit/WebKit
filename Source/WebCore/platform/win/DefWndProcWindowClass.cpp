@@ -45,7 +45,7 @@ static ATOM registerClass()
 
 const wchar_t* defWndProcWindowClassName()
 {
-    static ATOM atom = registerClass();
+    registerClass();
     return className;
 }
 

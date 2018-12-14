@@ -96,7 +96,6 @@ const float DragLabelBorderY = 2;
 const float DragLabelRadius = 5;
 const float LabelBorderYOffset = 2;
 
-const float MinDragLabelWidthBeforeClip = 120;
 const float MaxDragLabelWidth = 200;
 const float MaxDragLabelStringWidth = (MaxDragLabelWidth - 2 * DragLabelBorderX);
 

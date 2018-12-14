@@ -42,10 +42,10 @@ public:
     PopupMenuWin(PopupMenuClient*);
     ~PopupMenuWin();
 
-    virtual void show(const IntRect&, FrameView*, int index);
-    virtual void hide();
-    virtual void updateFromElement();
-    virtual void disconnectClient();
+    void show(const IntRect&, FrameView*, int index) override;
+    void hide() override;
+    void updateFromElement() override;
+    void disconnectClient() override;
 
     static LPCWSTR popupClassName();
 
