@@ -1601,6 +1601,18 @@ TextStream& operator<<(TextStream& stream, const Position& position)
     return stream;
 }
 
+RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
+{
+    auto* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
+    if (!commonScope)
+        return nullptr;
+    auto* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
+    ASSERT(nodeA);
+    auto* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
+    ASSERT(nodeB);
+    return Range::commonAncestorContainer(nodeA, nodeB);
+}
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

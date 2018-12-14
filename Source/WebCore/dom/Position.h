@@ -333,6 +333,8 @@ inline bool offsetIsBeforeLastNodeOffset(int offset, Node* anchorNode)
     return offset < currentOffset;
 }
 
+RefPtr<Node> commonShadowIncludingAncestor(const Position&, const Position&);
+
 WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
 
 } // namespace WebCore

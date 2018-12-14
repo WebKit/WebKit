@@ -34,6 +34,7 @@
 #import "CharacterData.h"
 #import "ColorCocoa.h"
 #import "ColorMac.h"
+#import "ComposedTreeIterator.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
@@ -494,12 +495,12 @@ NSAttributedString *HTMLConverter::convert()
     m_dataSource = commonAncestorContainer->document().frame()->loader().documentLoader();
     if (!m_dataSource)
         return nil;
-    
+
     _domRangeStartIndex = 0;
     _traverseNode(*commonAncestorContainer, 0, false /* embedded */);
     if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
-    
+
     return [[_attrStr retain] autorelease];
 }
 
@@ -665,7 +666,7 @@ static bool stringFromCSSValue(CSSValue& value, String& result)
 String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
     if (!is<Element>(node)) {
-        if (Node* parent = node.parentNode())
+        if (Node* parent = node.parentInComposedTree())
             return propertyValueForNode(*parent, propertyId);
         return String();
     }
@@ -773,7 +774,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     }
 
     if (inherit) {
-        if (Node* parent = node.parentNode())
+        if (Node* parent = node.parentInComposedTree())
             return propertyValueForNode(*parent, propertyId);
     }
     
@@ -810,7 +811,7 @@ static inline bool floatValueFromPrimitiveValue(CSSPrimitiveValue& primitiveValu
 bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID propertyId, float& result)
 {
     if (!is<Element>(node)) {
-        if (ContainerNode* parent = node.parentNode())
+        if (ContainerNode* parent = node.parentInComposedTree())
             return floatPropertyValueForNode(*parent, propertyId, result);
         return false;
     }
@@ -843,7 +844,7 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     }
 
     if (inherit) {
-        if (ContainerNode* parent = node.parentNode())
+        if (ContainerNode* parent = node.parentInComposedTree())
             return floatPropertyValueForNode(*parent, propertyId, result);
     }
 
@@ -950,7 +951,7 @@ Element* HTMLConverter::_blockLevelElementForNode(Node* node)
 {
     Element* element = node->parentElement();
     if (element && !_caches->isBlockElement(*element))
-        element = _blockLevelElementForNode(element->parentNode());
+        element = _blockLevelElementForNode(element->parentInComposedTree());
     return element;
 }
 
@@ -969,7 +970,7 @@ static Color normalizedColor(Color color, bool ignoreBlack)
 Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID propertyId)
 {
     if (!is<Element>(node)) {
-        if (Node* parent = node.parentNode())
+        if (Node* parent = node.parentInComposedTree())
             return colorPropertyValueForNode(*parent, propertyId);
         return Color();
     }
@@ -1005,7 +1006,7 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     }
 
     if (inherit) {
-        if (Node* parent = node.parentNode())
+        if (Node* parent = node.parentInComposedTree())
             return colorPropertyValueForNode(*parent, propertyId);
     }
 
@@ -1261,9 +1262,9 @@ NSDictionary* HTMLConverter::attributesForElement(Element& element)
 
 NSDictionary* HTMLConverter::aggregatedAttributesForAncestors(CharacterData& node)
 {
-    Node* ancestor = node.parentNode();
+    Node* ancestor = node.parentInComposedTree();
     while (ancestor && !is<Element>(*ancestor))
-        ancestor = ancestor->parentNode();
+        ancestor = ancestor->parentInComposedTree();
     if (!ancestor)
         return nullptr;
     return aggregatedAttributesForElementAndItsAncestors(downcast<Element>(*ancestor));
@@ -1278,9 +1279,9 @@ NSDictionary* HTMLConverter::aggregatedAttributesForElementAndItsAncestors(Eleme
     NSDictionary* attributesForCurrentElement = attributesForElement(element);
     ASSERT(attributesForCurrentElement);
 
-    Node* ancestor = element.parentNode();
+    Node* ancestor = element.parentInComposedTree();
     while (ancestor && !is<Element>(*ancestor))
-        ancestor = ancestor->parentNode();
+        ancestor = ancestor->parentInComposedTree();
 
     if (!ancestor) {
         cachedAttributes = attributesForCurrentElement;
@@ -1852,7 +1853,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         Element* tableElement = &element;
         if (displayValue == "table-row-group") {
             // If we are starting in medias res, the first thing we see may be the tbody, so go up to the table
-            tableElement = _blockLevelElementForNode(element.parentNode());
+            tableElement = _blockLevelElementForNode(element.parentInComposedTree());
             if (!tableElement || _caches->propertyValueForNode(*tableElement, CSSPropertyDisplay) != "table")
                 tableElement = &element;
         }
@@ -1923,7 +1924,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             retval = NO;
         }
     } else if (element.hasTagName(brTag)) {
-        Element* blockElement = _blockLevelElementForNode(element.parentNode());
+        Element* blockElement = _blockLevelElementForNode(element.parentInComposedTree());
         NSString *breakClass = element.getAttribute(classAttr);
         NSString *blockTag = blockElement ? (NSString *)blockElement->tagName() : nil;
         BOOL isExtraBreak = [@"Apple-interchange-newline" isEqualToString:breakClass];
@@ -2285,17 +2286,18 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
     bool isStart = false;
     bool isEnd = false;
     if (&node == m_start.containerNode()) {
-        startOffset = m_start.offsetInContainerNode();
+        startOffset = m_start.computeOffsetInContainerNode();
         isStart = true;
         _flags.reachedStart = YES;
     }
     if (&node == m_end.containerNode()) {
-        endOffset = m_end.offsetInContainerNode();
+        endOffset = m_end.computeOffsetInContainerNode();
         isEnd = true;
     }
     
     if (node.isDocumentNode() || node.isDocumentFragment()) {
         Node* child = node.firstChild();
+        ASSERT(child == firstChildInComposedTreeIgnoringUserAgentShadow(node));
         for (NSUInteger i = 0; child; i++) {
             if (isStart && i == startOffset)
                 _domRangeStartIndex = [_attrStr length];
@@ -2305,6 +2307,7 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                 _flags.reachedEnd = YES;
             if (_flags.reachedEnd)
                 break;
+            ASSERT(child->nextSibling() == nextSiblingInComposedTreeIgnoringUserAgentShadow(*child));
             child = child->nextSibling();
         }
     } else if (is<Element>(node)) {
@@ -2312,17 +2315,21 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
         if (_enterElement(element, embedded)) {
             NSUInteger startIndex = [_attrStr length];
             if (_processElement(element, depth)) {
-                Node* child = node.firstChild();
-                for (NSUInteger i = 0; child; i++) {
-                    if (isStart && i == startOffset)
-                        _domRangeStartIndex = [_attrStr length];
-                    if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
-                        _traverseNode(*child, depth + 1, embedded);
-                    if (isEnd && i + 1 >= endOffset)
-                        _flags.reachedEnd = YES;
-                    if (_flags.reachedEnd)
-                        break;
-                    child = child->nextSibling();
+                if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(element)) // Traverse through shadow root to detect start and end.
+                    _traverseNode(*shadowRoot, depth + 1, embedded);
+                else {
+                    auto* child = firstChildInComposedTreeIgnoringUserAgentShadow(node);
+                    for (NSUInteger i = 0; child; i++) {
+                        if (isStart && i == startOffset)
+                            _domRangeStartIndex = [_attrStr length];
+                        if ((!isStart || startOffset <= i) && (!isEnd || endOffset > i))
+                            _traverseNode(*child, depth + 1, embedded);
+                        if (isEnd && i + 1 >= endOffset)
+                            _flags.reachedEnd = YES;
+                        if (_flags.reachedEnd)
+                            break;
+                        child = nextSiblingInComposedTreeIgnoringUserAgentShadow(*child);
+                    }
                 }
                 _exitElement(element, depth, startIndex);
             }
@@ -2346,19 +2353,19 @@ void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
     bool isStart = false;
     bool isEnd = false;
     if (&element == m_start.containerNode()) {
-        startOffset = m_start.offsetInContainerNode();
+        startOffset = m_start.computeOffsetInContainerNode();
         isStart = true;
         _flags.reachedStart = YES;
     }
     if (&element == m_end.containerNode()) {
-        endOffset = m_end.offsetInContainerNode();
+        endOffset = m_end.computeOffsetInContainerNode();
         isEnd = true;
     }
     
     if (_enterElement(element, YES)) {
         NSUInteger startIndex = [_attrStr length];
         if (_processElement(element, depth)) {
-            Node* child = element.firstChild();
+            auto* child = firstChildInComposedTreeIgnoringUserAgentShadow(element);
             for (NSUInteger i = 0; child; i++) {
                 if (isStart && i == startOffset)
                     _domRangeStartIndex = [_attrStr length];
@@ -2368,7 +2375,7 @@ void HTMLConverter::_traverseFooterNode(Element& element, unsigned depth)
                     _flags.reachedEnd = YES;
                 if (_flags.reachedEnd)
                     break;
-                child = child->nextSibling();
+                child = nextSiblingInComposedTreeIgnoringUserAgentShadow(*child);
             }
             _exitElement(element, depth, startIndex);
         }
@@ -2388,17 +2395,17 @@ void HTMLConverter::_adjustTrailingNewline()
 
 Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
 {
-    Node* commonAncestor = Range::commonAncestorContainer(start.containerNode(), end.containerNode());
+    auto commonAncestor = commonShadowIncludingAncestor(start, end);
     Node* ancestor = start.containerNode();
 
     while (ancestor) {
         m_ancestorsUnderCommonAncestor.add(ancestor);
         if (ancestor == commonAncestor)
             break;
-        ancestor = ancestor->parentNode();
+        ancestor = ancestor->parentInComposedTree();
     }
 
-    return commonAncestor;
+    return commonAncestor.get();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2465,9 +2472,7 @@ NSAttributedString *attributedStringFromRange(Range& range)
 
 NSAttributedString *attributedStringFromSelection(const VisibleSelection& selection)
 {
-    auto range = selection.toNormalizedRange();
-    ASSERT(range);
-    return attributedStringBetweenStartAndEnd(range->startPosition(), range->endPosition());
+    return attributedStringBetweenStartAndEnd(selection.start(), selection.end());
 }
 
 NSAttributedString *attributedStringBetweenStartAndEnd(const Position& start, const Position& end)

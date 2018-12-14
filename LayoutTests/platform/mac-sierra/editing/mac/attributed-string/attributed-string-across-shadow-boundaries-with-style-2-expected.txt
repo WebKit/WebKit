@@ -1,0 +1,43 @@
+Input:
+<#start><div style="font-style: italic" id="host1"><#shadow-start><slot style="color: blue;"></slot> world<#shadow-end><b>hello</b></div><div id="host2"><#shadow-start><u>WebKit <#end><slot></slot></u><#shadow-end>rocks</div>
+
+Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (
+)
+    Lists: (
+)
+    BaseWritingDirection: 0
+    HyphenationFactor: 0
+    TighteningForTruncation: YES
+    HeaderLevel: 0
+[hello]
+    NSColor: #0000ff (NSCustomColorSpace)
+    NSFont: Times-BoldItalic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #0000ff (NSCustomColorSpace)
+    NSStrokeWidth: 0
+[ world\n]
+    NSFont: Times-Italic 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (NSCustomColorSpace)
+    NSStrokeWidth: 0
+[WebKit ]
+    NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: #000000 (NSCustomColorSpace)
+    NSStrokeWidth: 0
+    NSUnderline: true
+

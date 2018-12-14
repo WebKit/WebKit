@@ -818,18 +818,6 @@ static Node* highestAncestorToWrapMarkup(const Position& start, const Position& 
     return specialCommonAncestor;
 }
 
-static RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
-{
-    TreeScope* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
-    if (!commonScope)
-        return nullptr;
-    auto* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
-    ASSERT(nodeA);
-    auto* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
-    ASSERT(nodeB);
-    return Range::commonAncestorContainer(nodeA, nodeB);
-}
-
 static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs urlsToResolve, SerializeComposedTree serializeComposedTree,
     AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, MSOListMode msoListMode)
 {

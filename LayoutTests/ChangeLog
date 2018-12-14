@@ -1,3 +1,44 @@
+2018-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make HTMLConverter work across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=192640
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests for generating attributed string out across shadow boundaries based on the tests
+        of respective names in editing/pasteboard.
+
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1.html: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt: Added.
+        * editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2.html: Added.
+        * editing/mac/attributed-string/resources/dump-attributed-string.js:
+        (window.dumpAttributedString): Now takes start and end containers and offsets.
+        (serializeSubtreeWithShadow): Added. This function serializes the content of shadow roots along with
+        start and end markers.
+        (serializeSubtreeWithShadow.serializeCharacterData): Added.
+        (serializeSubtreeWithShadow.serializeNode): Added.
+        (serializeSubtreeWithShadow.serializeChildNodes): Added.
+        (serializeSubtreeWithShadow.serializeShadowRootAndChildNodes): Added.
+        (dumpAttributedString): Deleted.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-1-expected.txt: Added.
+        * platform/mac-sierra/editing/mac/attributed-string/attributed-string-across-shadow-boundaries-with-style-2-expected.txt: Added.
+
 2018-12-13  Youenn Fablet  <youenn@apple.com>
 
         Trying to play a media element synchronously after setting srcObject should succeed without user gesture
