@@ -55,6 +55,7 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebPageProxyMessages.h"
+#include "WebPolicyAction.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
 #include "WebsitePoliciesData.h"

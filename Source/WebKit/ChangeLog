@@ -1,3 +1,9 @@
+2018-12-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Unreviewed build fix.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Add missing WebPolicyAction.h include.
+
 2018-12-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix assertion failure in API test after r239210.
