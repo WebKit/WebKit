@@ -1,3 +1,40 @@
+2018-12-13  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary object copies in JavaScriptCore
+        <https://webkit.org/b/192680>
+        <rdar://problem/46708767>
+
+        Reviewed by Mark Lam.
+
+        * assembler/testmasm.cpp:
+        (JSC::invoke):
+        - Make MacroAssemblerCodeRef<JSEntryPtrTag> argument a const
+          reference.
+
+        * b3/testb3.cpp:
+        (JSC::B3::checkDisassembly):
+        - Make CString argument a const reference.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringEquality):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        - Make JITCompiler::JumpList arguments a const reference.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::checkStructure):
+        - Make RegisteredStructureSet argument a const reference.
+
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule): Make local auto
+        variables const references.
+        (Workers::report): Make String argument a const reference.
+        (addOption): Make Identifier argument a const reference.
+        (runJSC): Make CString loop variable a const reference.
+
 2018-12-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove DOM.BackendNodeId and associated commands/events

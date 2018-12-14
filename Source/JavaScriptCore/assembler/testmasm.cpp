@@ -153,7 +153,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> compile(Generator&& generate)
 }
 
 template<typename T, typename... Arguments>
-T invoke(MacroAssemblerCodeRef<JSEntryPtrTag> code, Arguments... arguments)
+T invoke(const MacroAssemblerCodeRef<JSEntryPtrTag>& code, Arguments... arguments)
 {
     void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);

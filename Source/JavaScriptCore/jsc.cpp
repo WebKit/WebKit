@@ -216,7 +216,7 @@ class GlobalObject;
 class Workers;
 
 template<typename Func>
-int runJSC(CommandLine, bool isWorker, const Func&);
+int runJSC(const CommandLine&, bool isWorker, const Func&);
 static void checkException(ExecState*, GlobalObject*, bool isLastFile, bool hasException, JSValue, CommandLine&, bool& success);
 
 class Message : public ThreadSafeRefCounted<Message> {
@@ -257,7 +257,7 @@ public:
     template<typename Func>
     void broadcast(const Func&);
     
-    void report(String);
+    void report(const String&);
     String tryGetReport();
     String getReport();
     
@@ -817,8 +817,8 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (sourceOrigin.isNull())
         return reject(createError(exec, "Could not resolve the module specifier."_s));
 
-    auto referrer = sourceOrigin.string();
-    auto moduleName = moduleNameValue->value(exec);
+    const auto& referrer = sourceOrigin.string();
+    const auto& moduleName = moduleNameValue->value(exec);
     if (UNLIKELY(catchScope.exception()))
         return reject(catchScope.exception());
 
@@ -1643,7 +1643,7 @@ void Workers::broadcast(const Func& func)
     m_condition.notifyAll();
 }
 
-void Workers::report(String string)
+void Workers::report(const String& string)
 {
     auto locker = holdLock(m_lock);
     m_reports.append(string.isolatedCopy());
@@ -1923,10 +1923,10 @@ EncodedJSValue JSC_HOST_CALL functionTotalCompileTime(ExecState*)
 }
 
 template<typename ValueType>
-typename std::enable_if<!std::is_fundamental<ValueType>::value>::type addOption(VM&, JSObject*, Identifier, ValueType) { }
+typename std::enable_if<!std::is_fundamental<ValueType>::value>::type addOption(VM&, JSObject*, const Identifier&, ValueType) { }
 
 template<typename ValueType>
-typename std::enable_if<std::is_fundamental<ValueType>::value>::type addOption(VM& vm, JSObject* optionsObject, Identifier identifier, ValueType value)
+typename std::enable_if<std::is_fundamental<ValueType>::value>::type addOption(VM& vm, JSObject* optionsObject, const Identifier& identifier, ValueType value)
 {
     optionsObject->putDirect(vm, identifier, JSValue(value));
 }
@@ -2759,7 +2759,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 }
 
 template<typename Func>
-int runJSC(CommandLine options, bool isWorker, const Func& func)
+int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 {
     Worker worker(Workers::singleton());
     
@@ -2820,7 +2820,7 @@ int runJSC(CommandLine options, bool isWorker, const Func& func)
         for (auto& entry : compileTimeStats)
             compileTimeKeys.append(entry.key);
         std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
-        for (CString key : compileTimeKeys)
+        for (const CString& key : compileTimeKeys)
             printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
     }
 #endif

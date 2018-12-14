@@ -164,7 +164,7 @@ void lowerToAirForTesting(Procedure& proc)
 }
 
 template<typename Func>
-void checkDisassembly(Compilation& compilation, const Func& func, CString failText)
+void checkDisassembly(Compilation& compilation, const Func& func, const CString& failText)
 {
     CString disassembly = compilation.disassembly();
     if (func(disassembly.data()))

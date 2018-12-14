@@ -6313,7 +6313,7 @@ void SpeculativeJIT::compilePeepHoleSymbolEquality(Node* node, Node* branchNode)
 void SpeculativeJIT::compileStringEquality(
     Node* node, GPRReg leftGPR, GPRReg rightGPR, GPRReg lengthGPR, GPRReg leftTempGPR,
     GPRReg rightTempGPR, GPRReg leftTemp2GPR, GPRReg rightTemp2GPR,
-    JITCompiler::JumpList fastTrue, JITCompiler::JumpList fastFalse)
+    const JITCompiler::JumpList& fastTrue, const JITCompiler::JumpList& fastFalse)
 {
     JITCompiler::JumpList trueCase;
     JITCompiler::JumpList falseCase;

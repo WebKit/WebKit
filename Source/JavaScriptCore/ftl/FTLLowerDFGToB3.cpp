@@ -11385,7 +11385,7 @@ private:
     template<typename Functor>
     void checkStructure(
         LValue structureDiscriminant, const FormattedValue& formattedValue, ExitKind exitKind,
-        RegisteredStructureSet set, const Functor& weakStructureDiscriminant)
+        const RegisteredStructureSet& set, const Functor& weakStructureDiscriminant)
     {
         if (set.isEmpty()) {
             terminate(exitKind);

@@ -228,7 +228,7 @@ void SpeculativeJIT::cachedGetById(
 
 void SpeculativeJIT::cachedGetByIdWithThis(
     CodeOrigin codeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPR, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR,
-    unsigned identifierNumber, JITCompiler::JumpList slowPathTarget)
+    unsigned identifierNumber, const JITCompiler::JumpList& slowPathTarget)
 {
     RegisterSet usedRegisters = this->usedRegisters();
     
