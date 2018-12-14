@@ -1,3 +1,25 @@
+2018-12-14  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(WTF::String const&, WTF::Function<void ()>&&)
+        https://bugs.webkit.org/show_bug.cgi?id=192713
+        <rdar://problem/46739706>
+
+        Reviewed by Eric Carlson.
+
+        A callback is being called twice, and the second time has a null Promise. Instead of these
+        callbacks being WTF::Function, make them WTF::CompletionHandlers, which self-nullify and
+        have ASSERTS() that they are called once-and-only-once.
+
+        * platform/encryptedmedia/CDMInstanceSession.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceSessionClearKey::closeSession):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed):
+
 2018-12-14  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary object copies in WebCore/platform/graphics/avfoundation/objc/

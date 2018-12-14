@@ -30,6 +30,7 @@
 #include "CDMKeyStatus.h"
 #include "CDMMessageType.h"
 #include "CDMSessionType.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -64,12 +65,12 @@ public:
         Succeeded,
     };
 
-    using LicenseCallback = Function<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
+    using LicenseCallback = CompletionHandler<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
     virtual void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&&) = 0;
 
     using KeyStatusVector = CDMInstanceSessionClient::KeyStatusVector;
     using Message = std::pair<MessageType, Ref<SharedBuffer>>;
-    using LicenseUpdateCallback = Function<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
+    using LicenseUpdateCallback = CompletionHandler<void(bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, SuccessValue succeeded)>;
     virtual void updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback&&) = 0;
 
     enum class SessionLoadFailure {
@@ -80,13 +81,13 @@ public:
         Other,
     };
 
-    using LoadSessionCallback = Function<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, SuccessValue, SessionLoadFailure)>;
+    using LoadSessionCallback = CompletionHandler<void(std::optional<KeyStatusVector>&&, std::optional<double>&&, std::optional<Message>&&, SuccessValue, SessionLoadFailure)>;
     virtual void loadSession(LicenseType, const String& sessionId, const String& origin, LoadSessionCallback&&) = 0;
 
-    using CloseSessionCallback = Function<void()>;
+    using CloseSessionCallback = CompletionHandler<void()>;
     virtual void closeSession(const String& sessionId, CloseSessionCallback&&) = 0;
 
-    using RemoveSessionDataCallback = Function<void(KeyStatusVector&&, std::optional<Ref<SharedBuffer>>&&, SuccessValue)>;
+    using RemoveSessionDataCallback = CompletionHandler<void(KeyStatusVector&&, std::optional<Ref<SharedBuffer>>&&, SuccessValue)>;
     virtual void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) = 0;
 
     virtual void storeRecordOfKeyUsage(const String& sessionId) = 0;

@@ -676,7 +676,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
 void CDMInstanceSessionClearKey::closeSession(const String&, CloseSessionCallback&& callback)
 {
     callOnMainThread(
-        [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] {
+        [weakThis = makeWeakPtr(*this), callback = WTFMove(callback)] () mutable {
             if (!weakThis)
                 return;
 

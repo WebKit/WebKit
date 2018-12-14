@@ -428,15 +428,15 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::closeSession(const String&, Clo
 {
     if (m_requestLicenseCallback) {
         m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
-        m_requestLicenseCallback = nullptr;
+        ASSERT(!m_requestLicenseCallback);
     }
     if (m_updateLicenseCallback) {
         m_updateLicenseCallback(true, std::nullopt, std::nullopt, std::nullopt, Failed);
-        m_updateLicenseCallback = nullptr;
+        ASSERT(!m_updateLicenseCallback);
     }
     if (m_removeSessionDataCallback) {
         m_removeSessionDataCallback({ }, std::nullopt, Failed);
-        m_removeSessionDataCallback = nullptr;
+        ASSERT(!m_removeSessionDataCallback);
     }
     m_currentRequest = nullptr;
     m_pendingRequests.clear();
@@ -516,7 +516,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
     if (keyIDs.isEmpty()) {
         if (m_requestLicenseCallback) {
             m_requestLicenseCallback(SharedBuffer::create(), m_sessionId, false, Failed);
-            m_requestLicenseCallback = nullptr;
+            ASSERT(!m_requestLicenseCallback);
         }
         return;
     }
@@ -533,7 +533,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequest(AVContentKeyR
                 m_requestLicenseCallback(SharedBuffer::create(contentKeyRequestData.get()), m_sessionId, false, Succeeded);
             else if (m_client)
                 m_client->sendMessage(CDMMessageType::LicenseRequest, SharedBuffer::create(contentKeyRequestData.get()));
-            m_requestLicenseCallback = nullptr;
+            ASSERT(!m_requestLicenseCallback);
         });
     }];
 }
@@ -569,7 +569,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
                 m_updateLicenseCallback(false, std::nullopt, std::nullopt, Message(MessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get())), Succeeded);
             else if (m_client)
                 m_client->sendMessage(CDMMessageType::LicenseRenewal, SharedBuffer::create(contentKeyRequestData.get()));
-            m_updateLicenseCallback = nullptr;
+            ASSERT(!m_updateLicenseCallback);
         });
     }];
 }
@@ -583,8 +583,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
 {
     UNUSED_PARAM(request);
     UNUSED_PARAM(error);
-    if (m_updateLicenseCallback)
+    if (m_updateLicenseCallback) {
         m_updateLicenseCallback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
+        ASSERT(!m_updateLicenseCallback);
+    }
 
     m_currentRequest = nullptr;
 
@@ -594,8 +596,10 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didFailToProvideRequest(AVConte
 void CDMInstanceSessionFairPlayStreamingAVFObjC::requestDidSucceed(AVContentKeyRequest *request)
 {
     UNUSED_PARAM(request);
-    if (m_updateLicenseCallback)
+    if (m_updateLicenseCallback) {
         m_updateLicenseCallback(false, std::make_optional(keyStatuses()), std::nullopt, std::nullopt, Succeeded);
+        ASSERT(!m_updateLicenseCallback);
+    }
 
     m_currentRequest = nullptr;
 
