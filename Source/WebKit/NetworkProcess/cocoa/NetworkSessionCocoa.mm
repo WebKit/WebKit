@@ -58,9 +58,6 @@ using namespace WebKit;
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
-    case WebCore::PolicyAction::Suspend:
-        LOG_ERROR("PolicyAction::Suspend encountered - Treating as PolicyAction::Ignore for now");
-        FALLTHROUGH;
     case WebCore::PolicyAction::Ignore:
         return NSURLSessionResponseCancel;
     case WebCore::PolicyAction::Use:

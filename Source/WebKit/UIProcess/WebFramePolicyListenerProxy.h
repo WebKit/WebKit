@@ -26,15 +26,12 @@
 #pragma once
 
 #include "APIObject.h"
+#include "WebPolicyAction.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Vector.h>
 
 namespace API {
 class WebsitePolicies;
-}
-
-namespace WebCore {
-enum class PolicyAction : uint8_t;
 }
 
 namespace WebKit {
@@ -47,7 +44,7 @@ enum class ShouldExpectSafeBrowsingResult { No, Yes };
 class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
 
-    using Reply = CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>;
+    using Reply = CompletionHandler<void(WebPolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&&)>;
     static Ref<WebFramePolicyListenerProxy> create(Reply&& reply, ShouldExpectSafeBrowsingResult expect)
     {
         return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(reply), expect));

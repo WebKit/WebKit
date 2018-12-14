@@ -43,6 +43,7 @@
 #include "WebDocumentLoader.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebPolicyAction.h"
 #include "WebProcess.h"
 #include "WebsitePoliciesData.h"
 #include <JavaScriptCore/APICast.h>
@@ -253,10 +254,26 @@ void WebFrame::invalidatePolicyListener()
         completionHandler();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, std::optional<WebsitePoliciesData>&& websitePolicies)
+static WebCore::PolicyAction toPolicyAction(WebPolicyAction policyAction)
+{
+    switch (policyAction) {
+    case WebPolicyAction::Use:
+        return WebCore::PolicyAction::Use;
+    case WebPolicyAction::Ignore:
+        return WebCore::PolicyAction::Ignore;
+    case WebPolicyAction::Download:
+        return WebCore::PolicyAction::Download;
+    case WebPolicyAction::Suspend:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::PolicyAction::Ignore;
+}
+
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebPolicyAction action, uint64_t navigationID, DownloadID downloadID, std::optional<WebsitePoliciesData>&& websitePolicies)
 {
     if (!m_coreFrame || !m_policyListenerID || listenerID != m_policyListenerID || !m_policyFunction) {
-        if (action == PolicyAction::Suspend)
+        if (action == WebPolicyAction::Suspend)
             page()->send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
         return;
     }
@@ -276,12 +293,12 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     }
 
     bool shouldSuspend = false;
-    if (action == PolicyAction::Suspend) {
+    if (action == WebPolicyAction::Suspend) {
         shouldSuspend = true;
-        action = PolicyAction::Ignore;
+        action = WebPolicyAction::Ignore;
     }
 
-    function(action);
+    function(toPolicyAction(action));
 
     if (shouldSuspend)
         page()->suspendForProcessSwap();

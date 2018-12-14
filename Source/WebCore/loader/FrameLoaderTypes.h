@@ -44,7 +44,6 @@ enum class PolicyAction : uint8_t {
     Use,
     Download,
     Ignore,
-    Suspend, // FIXME: This is only used by WebKit2 so we shouldn't need this in the WebCore enum.
 };
 
 enum class ReloadOption : uint8_t {
@@ -153,8 +152,7 @@ template<> struct EnumTraits<WebCore::PolicyAction> {
         WebCore::PolicyAction,
         WebCore::PolicyAction::Use,
         WebCore::PolicyAction::Download,
-        WebCore::PolicyAction::Ignore,
-        WebCore::PolicyAction::Suspend
+        WebCore::PolicyAction::Ignore
     >;
 };
 

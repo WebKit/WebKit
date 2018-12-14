@@ -1,3 +1,19 @@
+2018-12-14  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Stop exposing PolicyAction::Suspend to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=192701
+
+        Reviewed by Brady Eidson.
+
+        Drop PolicyAction::Suspend enum value and stop dealing with it in WebCore.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/FrameLoaderTypes.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
         IDB should store RTCCertificate

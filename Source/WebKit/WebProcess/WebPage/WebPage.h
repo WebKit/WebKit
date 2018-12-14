@@ -238,6 +238,7 @@ class RemoteLayerTreeTransaction;
 
 enum FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
+enum class WebPolicyAction : uint8_t;
 
 struct AssistedNodeInformation;
 struct AttributedString;
@@ -1293,7 +1294,7 @@ private:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, const DownloadID&, std::optional<WebsitePoliciesData>&&);
+    void didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, WebPolicyAction, uint64_t navigationID, const DownloadID&, std::optional<WebsitePoliciesData>&&);
     void continueWillSubmitForm(uint64_t frameID, uint64_t listenerID);
     void setUserAgent(const String&);
     void setCustomTextEncodingName(const String&);
