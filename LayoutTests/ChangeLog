@@ -1,3 +1,12 @@
+2018-12-14  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed test gardening.
+
+        LFC does not support logical to physical coordinate conversion yet.
+
+        * fast/block/block-only/float-avoider-with-margins-expected.txt:
+        * fast/block/block-only/float-avoider-with-margins.html:
+
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
         IDB should store RTCCertificate

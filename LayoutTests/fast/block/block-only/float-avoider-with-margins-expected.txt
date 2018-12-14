@@ -16,9 +16,9 @@ layer at (59,21) size 182x12 clip at (60,22) size 180x10
   RenderBlock {DIV} at (51,13) size 182x12 [border: (1px solid #008000)]
 layer at (109,33) size 182x12 clip at (110,34) size 180x10
   RenderBlock {DIV} at (101,25) size 182x12 [border: (1px solid #008000)]
-layer at (77,111) size 182x12 clip at (78,112) size 180x10
-  RenderBlock {DIV} at (69,1) size 182x12 [border: (1px solid #008000)]
+layer at (115,111) size 182x12 clip at (116,112) size 180x10
+  RenderBlock {DIV} at (107,1) size 182x12 [border: (1px solid #008000)]
 layer at (115,123) size 182x12 clip at (116,124) size 180x10
   RenderBlock {DIV} at (107,13) size 182x12 [border: (1px solid #008000)]
-layer at (-233,243) size 292x12 backgroundClip at (0,243) size 59x12 clip at (0,244) size 58x10
-  RenderBlock {DIV} at (-241,133) size 292x12 [border: (1px solid #008000)]
+layer at (17,243) size 292x12 clip at (18,244) size 290x10
+  RenderBlock {DIV} at (9,133) size 292x12 [border: (1px solid #008000)]
