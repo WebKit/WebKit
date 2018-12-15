@@ -180,8 +180,12 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
+    Page* overlayPage = this->overlayPage();
+    if (!overlayPage)
+        return;
+
     GraphicsContextStateSaver stateSaver(context);
-    FrameView* view = overlayPage()->mainFrame().view();
+    FrameView* view = overlayPage->mainFrame().view();
 
 #if PLATFORM(MAC)
     LocalDefaultSystemAppearance localAppearance(view->useDarkAppearance());
@@ -290,9 +294,12 @@ void InspectorOverlay::update()
     if (!view)
         return;
 
-    FrameView* overlayView = overlayPage()->mainFrame().view();
-    IntSize frameViewFullSize = view->sizeForVisibleContent(ScrollableArea::IncludeScrollbars);
-    overlayView->resize(frameViewFullSize);
+    Page* overlayPage = this->overlayPage();
+    if (overlayPage) {
+        FrameView* overlayView = overlayPage->mainFrame().view();
+        IntSize frameViewFullSize = view->sizeForVisibleContent(ScrollableArea::IncludeScrollbars);
+        overlayView->resize(frameViewFullSize);
+    }
 
     // Clear canvas and paint things.
     IntSize viewportSize = view->sizeForVisibleContent();
@@ -309,9 +316,12 @@ void InspectorOverlay::update()
         drawRulers();
 
     // Position DOM elements.
-    overlayPage()->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
-    if (overlayView->needsLayout())
-        overlayView->layoutContext().layout();
+    if (overlayPage) {
+        overlayPage->mainFrame().document()->resolveStyle(Document::ResolveStyleType::Rebuild);
+        FrameView* overlayView = overlayPage->mainFrame().view();
+        if (overlayView->needsLayout())
+            overlayView->layoutContext().layout();
+    }
 
     forcePaint();
 }
@@ -702,6 +712,9 @@ void InspectorOverlay::drawPausedInDebuggerMessage()
 
 Page* InspectorOverlay::overlayPage()
 {
+#if PLATFORM(IOS_FAMILY)
+    return nullptr;
+#else
     if (m_overlayPage)
         return m_overlayPage.get();
 
@@ -746,6 +759,7 @@ Page* InspectorOverlay::overlayPage()
 #endif
 
     return m_overlayPage.get();
+#endif
 }
 
 void InspectorOverlay::forcePaint()
@@ -770,6 +784,9 @@ void InspectorOverlay::reset(const IntSize& viewportSize, const IntPoint& scroll
 
 static void evaluateCommandInOverlay(Page* page, Ref<JSON::Array>&& command)
 {
+    if (!page)
+        return;
+
     page->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 

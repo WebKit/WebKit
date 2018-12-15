@@ -1,3 +1,21 @@
+2018-12-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid creating and evaluating in the InspectorOverlay page on iOS as it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=192724
+        <rdar://problem/46745911>
+
+        Reviewed by Devin Rousso.
+
+        iOS never installs the InspectorOverlay page as a page overlay.
+        It also uses its own node highlighting painting. Avoid any work
+        and resources associated with the overlay page for iOS.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::overlayPage):
+        (WebCore::evaluateCommandInOverlay):
+
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorderPrivateAVFImpl should have a Ref<MediaRecorderPrivateWriter> as member
