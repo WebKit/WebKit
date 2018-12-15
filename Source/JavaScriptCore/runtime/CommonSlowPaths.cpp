@@ -177,8 +177,9 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
 {
     BEGIN();
     int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForCall);
-    if (slotsToAdd < 0) {
-        exec->convertToStackOverflowFrame(vm);
+    if (UNLIKELY(slotsToAdd < 0)) {
+        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(exec, CodeForCall);
+        exec->convertToStackOverflowFrame(vm, codeBlock);
         NativeCallFrameTracer tracer(&vm, exec);
         ErrorHandlingScope errorScope(vm);
         throwScope.release();
@@ -192,8 +193,9 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
 {
     BEGIN();
     int slotsToAdd = CommonSlowPaths::arityCheckFor(exec, vm, CodeForConstruct);
-    if (slotsToAdd < 0) {
-        exec->convertToStackOverflowFrame(vm);
+    if (UNLIKELY(slotsToAdd < 0)) {
+        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(exec, CodeForCall);
+        exec->convertToStackOverflowFrame(vm, codeBlock);
         NativeCallFrameTracer tracer(&vm, exec);
         ErrorHandlingScope errorScope(vm);
         throwArityCheckStackOverflowError(exec, throwScope);

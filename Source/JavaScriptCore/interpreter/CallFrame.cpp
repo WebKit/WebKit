@@ -337,9 +337,10 @@ const char* CallFrame::describeFrame()
     return buffer;
 }
 
-void CallFrame::convertToStackOverflowFrame(VM& vm)
+void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound)
 {
     ASSERT(!isGlobalExec());
+    ASSERT(codeBlockToKeepAliveUntilFrameIsUnwound->inherits<CodeBlock>(vm));
 
     EntryFrame* entryFrame = vm.topEntryFrame;
     CallFrame* throwOriginFrame = this;
@@ -350,7 +351,7 @@ void CallFrame::convertToStackOverflowFrame(VM& vm)
     JSObject* originCallee = throwOriginFrame ? throwOriginFrame->jsCallee() : vmEntryRecord(vm.topEntryFrame)->callee();
     JSObject* stackOverflowCallee = originCallee->globalObject()->stackOverflowFrameCallee();
 
-    setCodeBlock(nullptr);
+    setCodeBlock(codeBlockToKeepAliveUntilFrameIsUnwound);
     setCallee(stackOverflowCallee);
     setArgumentCountIncludingThis(0);
 }

@@ -257,7 +257,7 @@ namespace JSC  {
             return callerFrameAndPC().callerFrame == noCaller() && callerFrameAndPC().returnPC == nullptr;
         }
 
-        void convertToStackOverflowFrame(VM&);
+        void convertToStackOverflowFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
         inline bool isStackOverflowFrame() const;
         inline bool isWasmFrame() const;
 

@@ -72,11 +72,16 @@ ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, 
     return numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis) + numberOfExtraSlots(argumentCountIncludingThis);
 }
 
-ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind kind)
+ALWAYS_INLINE CodeBlock* codeBlockFromCallFrameCallee(ExecState* exec, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     ASSERT(!callee->isHostFunction());
-    CodeBlock* newCodeBlock = callee->jsExecutable()->codeBlockFor(kind);
+    return callee->jsExecutable()->codeBlockFor(kind);
+}
+
+ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind kind)
+{
+    CodeBlock* newCodeBlock = codeBlockFromCallFrameCallee(exec, kind);
     ASSERT(exec->argumentCountIncludingThis() < static_cast<unsigned>(newCodeBlock->numParameters()));
     int padding = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, exec->argumentCountIncludingThis());
     

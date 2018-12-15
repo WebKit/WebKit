@@ -1,3 +1,48 @@
+2018-12-14  Mark Lam  <mark.lam@apple.com>
+
+        CallFrame::convertToStackOverflowFrame() needs to keep the top CodeBlock alive.
+        https://bugs.webkit.org/show_bug.cgi?id=192717
+        <rdar://problem/46660677>
+
+        Reviewed by Saam Barati.
+
+        When throwing a StackOverflowError, we convert the topCallFrame into a
+        StackOverflowFrame.  Previously, we would nullify the codeBlock field in the frame
+        because a StackOverflowFrame is only a sentinel and doesn't really correspond to
+        any CodeBlocks.  However, this is a problem because the topCallFrame may be the
+        only remaining place that references the CodeBlock that the stack overflow is
+        triggered in.  The way we handle exceptions in JIT code is to return (from the
+        runtime operation function throwing the exception) to the JIT code to check for
+        the exception and if needed, do some clean up before jumping to the exception
+        handling thunk.  As a result, we need to keep that JIT code alive, which means we
+        need to keep its CodeBlock alive.  We only need to keep this CodeBlock alive until
+        we've unwound (in terms of exception handling) out of it.
+
+        We fix this issue by storing the CodeBlock to keep alive in the StackOverflowFrame
+        for the GC to scan while the frame is still on the stack.
+
+        We removed the call to convertToStackOverflowFrame() in
+        lookupExceptionHandlerFromCallerFrame() because it is redundant.
+        lookupExceptionHandlerFromCallerFrame() will only every be called after
+        a StackOverFlowError has been thrown.  Hence, the top frame is already
+        guaranteed to be a StackOverflowFrame, and there should always be a
+        StackOverFlowError exception pending.  We added assertions for these
+        instead.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::convertToStackOverflowFrame):
+        * interpreter/CallFrame.h:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::codeBlockFromCallFrameCallee):
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/VM.h:
+        (JSC::VM::exceptionForInspection const):
+
 2018-12-14  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy of objects for operator==() methods

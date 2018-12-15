@@ -559,7 +559,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     }
 #endif
 
-    exec->convertToStackOverflowFrame(vm);
+    exec->convertToStackOverflowFrame(vm, codeBlock);
     ErrorHandlingScope errorScope(vm);
     throwStackOverflowError(exec, throwScope);
     pc = returnToThrow(exec);
