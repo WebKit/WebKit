@@ -1,3 +1,13 @@
+2018-12-14  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorderPrivateAVFImpl should have a Ref<MediaRecorderPrivateWriter> as member
+        https://bugs.webkit.org/show_bug.cgi?id=192720
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/mediarecorder/MediaRecorder-onremovetrack-expected.txt: Added.
+        * http/wpt/mediarecorder/MediaRecorder-onremovetrack.html: Added.
+
 2018-12-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cookies view should use model objects instead of raw payload data

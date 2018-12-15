@@ -103,7 +103,6 @@ private:
     void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     
     void scheduleDeferredTask(Function<void()>&&);
-    void setNewRecordingState(RecordingState, Ref<Event>&&);
     
     static creatorFunction m_customCreator;
     

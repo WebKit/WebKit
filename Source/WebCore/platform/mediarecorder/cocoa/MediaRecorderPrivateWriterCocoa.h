@@ -45,11 +45,12 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
+class MediaStreamTrackPrivate;
 class PlatformAudioData;
 
 class MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter> {
 public:
-    MediaRecorderPrivateWriter() = default;
+    static RefPtr<MediaRecorderPrivateWriter> create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack);
     ~MediaRecorderPrivateWriter();
     
     bool setupWriter();
@@ -61,6 +62,7 @@ public:
     RefPtr<SharedBuffer> fetchData();
     
 private:
+    MediaRecorderPrivateWriter(RetainPtr<AVAssetWriter>&&, String&& path);
     void clear();
 
     RetainPtr<AVAssetWriter> m_writer;

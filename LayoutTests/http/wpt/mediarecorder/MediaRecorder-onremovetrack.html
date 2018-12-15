@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <title>MediaRecorder should stop when track is removed</title
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script src="../resources/gc.js"></script>
+<canvas id="canvas" width="200" height="200">
+</canvas>
+<script>
+const ac = new webkitAudioContext();
+const osc = ac.createOscillator();
+const dest = ac.createMediaStreamDestination();
+const audio = dest.stream;
+osc.connect(dest);
+
+function finishTest()
+{
+    gc();
+    setTimeout(() => {
+        done();
+        ac.close();
+    }, 100);
+}
+
+function removeTrack()
+{
+    audio.removeTrack(audio.getAudioTracks()[0]);
+    setTimeout(finishTest, 100);
+}
+
+function doTest()
+{
+    const recorder = new MediaRecorder(audio);
+
+    recorder.onerror = () => {
+        assert_equals(recorder.state, 'inactive', 'MediaRecorder is inactive');
+    };
+    recorder.start();
+    osc.start();
+    assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+    setTimeout(removeTrack, 100);
+}
+
+doTest();
+
+</script>
+</body>
+</html>

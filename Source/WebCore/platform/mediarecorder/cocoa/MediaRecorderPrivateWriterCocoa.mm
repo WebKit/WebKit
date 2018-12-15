@@ -31,6 +31,7 @@
 #include "AudioStreamDescription.h"
 #include "FileSystem.h"
 #include "Logging.h"
+#include "MediaStreamTrackPrivate.h"
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
 #include <AVFoundation/AVAssetWriterInput.h>
@@ -86,6 +87,41 @@ namespace WebCore {
 
 using namespace PAL;
 
+RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack)
+{
+    NSString *directory = FileSystem::createTemporaryDirectory(@"videos");
+    NSString *filename = [NSString stringWithFormat:@"/%lld.mp4", CMClockGetTime(CMClockGetHostTimeClock()).value];
+    NSString *path = [directory stringByAppendingString:filename];
+
+    NSURL *outputURL = [NSURL fileURLWithPath:path];
+    String filePath = [path UTF8String];
+    NSError *error = nil;
+    auto avAssetWriter = adoptNS([allocAVAssetWriterInstance() initWithURL:outputURL fileType:AVFileTypeMPEG4 error:&error]);
+    if (error) {
+        RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
+        return nullptr;
+    }
+
+    auto writer = adoptRef(*new MediaRecorderPrivateWriter(WTFMove(avAssetWriter), WTFMove(filePath)));
+
+    if (audioTrack && !writer->setAudioInput())
+        return nullptr;
+
+    if (videoTrack) {
+        auto& settings = videoTrack->settings();
+        if (!writer->setVideoInput(settings.width(), settings.height()))
+            return nullptr;
+    }
+
+    return WTFMove(writer);
+}
+
+MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(RetainPtr<AVAssetWriter>&& avAssetWriter, String&& filePath)
+    : m_writer(WTFMove(avAssetWriter))
+    , m_path(WTFMove(filePath))
+{
+}
+
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
     clear();
@@ -103,26 +139,6 @@ void MediaRecorderPrivateWriter::clear()
     }
     if (m_writer)
         m_writer.clear();
-}
-
-bool MediaRecorderPrivateWriter::setupWriter()
-{
-    ASSERT(!m_writer);
-    
-    NSString *directory = FileSystem::createTemporaryDirectory(@"videos");
-    NSString *filename = [NSString stringWithFormat:@"/%lld.mp4", CMClockGetTime(CMClockGetHostTimeClock()).value];
-    NSString *path = [directory stringByAppendingString:filename];
-
-    NSURL *outputURL = [NSURL fileURLWithPath:path];
-    m_path = [path UTF8String];
-    NSError *error = nil;
-    m_writer = adoptNS([allocAVAssetWriterInstance() initWithURL:outputURL fileType:AVFileTypeMPEG4 error:&error]);
-    if (error) {
-        RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
-        m_writer = nullptr;
-        return false;
-    }
-    return true;
 }
 
 bool MediaRecorderPrivateWriter::setVideoInput(int width, int height)
@@ -260,7 +276,7 @@ void MediaRecorderPrivateWriter::appendAudioSampleBuffer(const PlatformAudioData
         }
         m_isFirstAudioSample = false;
         RefPtr<MediaRecorderPrivateWriter> protectedThis = this;
-        [m_audioInput requestMediaDataWhenReadyOnQueue:m_audioPullQueue usingBlock:[this, protectedThis] {
+        [m_audioInput requestMediaDataWhenReadyOnQueue:m_audioPullQueue usingBlock:[this, protectedThis = WTFMove(protectedThis)] {
             do {
                 if (![m_audioInput isReadyForMoreMediaData])
                     break;

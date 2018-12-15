@@ -161,8 +161,9 @@ void MediaRecorder::didAddOrRemoveTrack()
     scheduleDeferredTask([this] {
         if (!m_isActive || state() == RecordingState::Inactive)
             return;
+        stopRecordingInternal();
         auto event = MediaRecorderErrorEvent::create(eventNames().errorEvent, Exception { UnknownError, "Track cannot be added to or removed from the MediaStream while recording is happening"_s });
-        setNewRecordingState(RecordingState::Inactive, WTFMove(event));
+        dispatchEvent(WTFMove(event));
     });
 }
 
@@ -185,12 +186,6 @@ void MediaRecorder::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSam
 void MediaRecorder::audioSamplesAvailable(MediaStreamTrackPrivate& track, const MediaTime& mediaTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
     m_private->audioSamplesAvailable(track, mediaTime, audioData, description, sampleCount);
-}
-
-void MediaRecorder::setNewRecordingState(RecordingState newState, Ref<Event>&& event)
-{
-    m_state = newState;
-    dispatchEvent(WTFMove(event));
 }
 
 void MediaRecorder::scheduleDeferredTask(Function<void()>&& function)

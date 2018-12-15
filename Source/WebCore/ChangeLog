@@ -1,5 +1,41 @@
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
+        MediaRecorderPrivateAVFImpl should have a Ref<MediaRecorderPrivateWriter> as member
+        https://bugs.webkit.org/show_bug.cgi?id=192720
+
+        Reviewed by Eric Carlson.
+
+        Make sure that MediaRecorderPrivateAVFImpl takes a Ref<MediaRecorderPrivateWriter> as member,
+        as the latter is a ref counted object.
+        Made some refactoring to return early in case of error.
+
+        Also made sure that in the case of a MediaRecorder stopped by a track removal in the recorded stream
+        the MediaRecorder will stop listening for its tracks.
+        Otherwise, the tracks will continue calling the MediaRecorder even after it is dead.
+
+        Test: http/wpt/mediarecorder/MediaRecorder-onremovetrack.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::didAddOrRemoveTrack):
+        (WebCore::MediaRecorder::setNewRecordingState): Deleted.
+        * Modules/mediarecorder/MediaRecorder.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        (WebCore::MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl):
+        (WebCore::MediaRecorderPrivateAVFImpl::sampleBufferUpdated):
+        (WebCore::MediaRecorderPrivateAVFImpl::audioSamplesAvailable):
+        (WebCore::MediaRecorderPrivateAVFImpl::stopRecording):
+        (WebCore::MediaRecorderPrivateAVFImpl::fetchData):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::create):
+        (WebCore::MediaRecorderPrivateWriter::MediaRecorderPrivateWriter):
+        (WebCore::MediaRecorderPrivateWriter::appendAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::setupWriter): Deleted.
+
+2018-12-14  Youenn Fablet  <youenn@apple.com>
+
         getSenders/getReceivers() should not return closed transceiver senders/receivers
         https://bugs.webkit.org/show_bug.cgi?id=192706
 

@@ -38,58 +38,55 @@ namespace WebCore {
 
 std::unique_ptr<MediaRecorderPrivateAVFImpl> MediaRecorderPrivateAVFImpl::create(const MediaStreamPrivate& stream)
 {
-    auto instance = std::unique_ptr<MediaRecorderPrivateAVFImpl>(new MediaRecorderPrivateAVFImpl(stream));
-    if (!instance->m_isWriterReady)
-        return nullptr;
-    return instance;
-}
+    // FIXME: we will need to implement support for multiple audio/video tracks
+    // Currently we only choose the first track as the recorded track.
+    // FIXME: We would better to throw an exception to JavaScript if writer creation fails.
 
-MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(const MediaStreamPrivate& stream)
-{
-    if (!m_writer.setupWriter())
-        return;
-    auto tracks = stream.tracks();
-    bool videoSelected = false;
-    bool audioSelected = false;
-    for (auto& track : tracks) {
+    String audioTrackId;
+    String videoTrackId;
+    const MediaStreamTrackPrivate* audioTrack { nullptr };
+    const MediaStreamTrackPrivate* videoTrack { nullptr };
+    for (auto& track : stream.tracks()) {
         if (!track->enabled() || track->ended())
             continue;
         switch (track->type()) {
         case RealtimeMediaSource::Type::Video: {
             auto& settings = track->settings();
-            if (videoSelected || !settings.supportsWidth() || !settings.supportsHeight())
-                break;
-            // FIXME: we will need to implement support for multiple video tracks, currently we only choose the first track as the recorded track.
-            // FIXME: we would better to throw an exception to JavaScript if setVideoInput failed
-            if (!m_writer.setVideoInput(settings.width(), settings.height()))
-                return;
-            m_recordedVideoTrackID = track->id();
-            videoSelected = true;
+            if (!videoTrack && settings.supportsWidth() && settings.supportsHeight()) {
+                videoTrack = track.get();
+                videoTrackId = videoTrack->id();
+            }
             break;
         }
-        case RealtimeMediaSource::Type::Audio: {
-            if (audioSelected)
-                break;
-            // FIXME: we will need to implement support for multiple audio tracks, currently we only choose the first track as the recorded track.
-            // FIXME: we would better to throw an exception to JavaScript if setAudioInput failed
-            if (!m_writer.setAudioInput())
-                return;
-            m_recordedAudioTrackID = track->id();
-            audioSelected = true;
+        case RealtimeMediaSource::Type::Audio:
+            if (!audioTrack) {
+                audioTrack = track.get();
+                audioTrackId = audioTrack->id();
+            }
             break;
-        }
         case RealtimeMediaSource::Type::None:
             break;
         }
     }
-    m_isWriterReady = true;
+    auto writer = MediaRecorderPrivateWriter::create(audioTrack, videoTrack);
+    if (!writer)
+        return nullptr;
+
+    return std::make_unique<MediaRecorderPrivateAVFImpl>(writer.releaseNonNull(), WTFMove(audioTrackId), WTFMove(videoTrackId));
+}
+
+MediaRecorderPrivateAVFImpl::MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&& writer, String&& audioTrackId, String&& videoTrackId)
+    : m_writer(WTFMove(writer))
+    , m_recordedAudioTrackID(WTFMove(audioTrackId))
+    , m_recordedVideoTrackID(WTFMove(videoTrackId))
+{
 }
 
 void MediaRecorderPrivateAVFImpl::sampleBufferUpdated(MediaStreamTrackPrivate& track, MediaSample& sampleBuffer)
 {
     if (track.id() != m_recordedVideoTrackID)
         return;
-    m_writer.appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
+    m_writer->appendVideoSampleBuffer(sampleBuffer.platformSample().sample.cmSampleBuffer);
 }
 
 void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(MediaStreamTrackPrivate& track, const WTF::MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
@@ -98,17 +95,17 @@ void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(MediaStreamTrackPrivate&
         return;
     ASSERT(is<WebAudioBufferList>(data));
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
-    m_writer.appendAudioSampleBuffer(data, description, mediaTime, sampleCount);
+    m_writer->appendAudioSampleBuffer(data, description, mediaTime, sampleCount);
 }
 
 void MediaRecorderPrivateAVFImpl::stopRecording()
 {
-    m_writer.stopRecording();
+    m_writer->stopRecording();
 }
 
 RefPtr<SharedBuffer> MediaRecorderPrivateAVFImpl::fetchData()
 {
-    return m_writer.fetchData();
+    return m_writer->fetchData();
 }
 
 const String& MediaRecorderPrivateAVFImpl::mimeType()

@@ -38,7 +38,9 @@ public:
     static std::unique_ptr<MediaRecorderPrivateAVFImpl> create(const MediaStreamPrivate&);
 
 private:
-    explicit MediaRecorderPrivateAVFImpl(const MediaStreamPrivate&);
+    MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&, String&& audioTrackId, String&& videoTrackId);
+
+    friend std::unique_ptr<MediaRecorderPrivateAVFImpl> std::make_unique<MediaRecorderPrivateAVFImpl>(Ref<MediaRecorderPrivateWriter>&&, String&&, String&&);
 
     void sampleBufferUpdated(MediaStreamTrackPrivate&, MediaSample&) final;
     void audioSamplesAvailable(MediaStreamTrackPrivate&, const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
@@ -46,12 +48,9 @@ private:
     const String& mimeType() final;
     void stopRecording();
     
-    String m_recordedVideoTrackID;
+    Ref<MediaRecorderPrivateWriter> m_writer;
     String m_recordedAudioTrackID;
-
-    MediaRecorderPrivateWriter m_writer;
-    
-    bool m_isWriterReady { false };
+    String m_recordedVideoTrackID;
 };
 
 } // namespace WebCore
