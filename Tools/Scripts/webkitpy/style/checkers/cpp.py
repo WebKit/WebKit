@@ -1093,6 +1093,43 @@ def check_invalid_increment(clean_lines, line_number, error):
               'Changing pointer instead of value (or unused value of operator*).')
 
 
+# Matches Xcode *VERSION_MIN_REQUIRED and *VERSION_MAX_ALLOWED macros.
+_RE_PATTERN_XCODE_VERSION_MACRO = re.compile(
+    r'.+(VERSION_MIN_REQUIRED|VERSION_MAX_ALLOWED)')
+
+_RE_PATTERN_XCODE_MIN_REQUIRED_MACRO = re.compile(
+    r'.+?([A-Z_]+)_VERSION_MIN_REQUIRED [><=]+ (\d+)')
+
+
+def check_os_version_checks(filename, clean_lines, line_number, error):
+    """ Checks for mistakes using VERSION_MIN_REQUIRED and VERSION_MAX_ALLOWED macros:
+    1. These should only be used centrally to defined named HAVE, USE or ENABLE style macros.
+    2. VERSION_MIN_REQUIRED never changes for a minor OS version.
+
+    These should be centralized in wtf/Platform.h and wtf/FeatureDefines.h.
+
+    Args:
+      filename: Name of the file that is being processed.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]
+
+    for version_match in _RE_PATTERN_XCODE_MIN_REQUIRED_MACRO.finditer(line):
+        os_prefix = version_match.group(1)
+        version_number = int(version_match.group(2))
+        if os_prefix == '__MAC_OS_X' and version_number % 100 != 0 or os_prefix != '__MAC_OS_X' and version_number % 10000 != 0:
+            error(line_number, 'build/version_check', 5, 'Incorrect OS version check. VERSION_MIN_REQUIRED values never include a minor version. You may be looking for a combination of VERSION_MIN_REQUIRED for target OS version check and VERSION_MAX_ALLOWED for SDK check.')
+            break
+
+    if filename == 'Source/WTF/wtf/Platform.h' or filename == 'Source/WTF/wtf/FeatureDefines.h':
+        return
+
+    if _RE_PATTERN_XCODE_VERSION_MACRO.match(line):
+        error(line_number, 'build/version_check', 5, 'Misplaced OS version check. Please use a named macro in wtf/Platform.h or wtf/FeatureDefines.h.')
+
 class _ClassInfo(object):
     """Stores information about a class."""
 
@@ -3865,6 +3902,7 @@ def process_line(filename, file_extension,
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
+    check_os_version_checks(filename, clean_lines, line, error)
 
 
 class _InlineASMState(object):
@@ -3954,6 +3992,7 @@ class CppChecker(object):
         'build/cpp_comment',
         'build/webcore_export',
         'build/wk_api_available',
+        'build/version_check',
         'legal/copyright',
         'readability/braces',
         'readability/casting',

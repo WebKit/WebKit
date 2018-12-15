@@ -1,3 +1,17 @@
+2018-12-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a style checker rule for Xcode version macros use
+        https://bugs.webkit.org/show_bug.cgi?id=192703
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_os_version_checks):
+        (process_line):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_os_version_checks):
+
 2018-12-14  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Process-swapping on a loadHTMLString causes duplicate decidePolicyForNavigationAction delegate calls
