@@ -1,3 +1,15 @@
+2018-12-14  Darin Adler  <darin@apple.com>
+
+        Verify size is valid in USE_SYSTEM_MALLOC version of tryAllocateZeroedVirtualPages
+        https://bugs.webkit.org/show_bug.cgi?id=192738
+        rdar://problem/37502342
+
+        Reviewed by Mark Lam.
+
+        * wtf/Gigacage.cpp:
+        (Gigacage::tryAllocateZeroedVirtualPages): Added a RELEASE_ASSERT just
+        like the one in tryLargeZeroedMemalignVirtual in bmalloc.
+
 2018-12-14  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary copy of AtomicString each time one is logged
