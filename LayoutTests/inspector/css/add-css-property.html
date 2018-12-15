@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let nodeStyles = null;
+    let suite = InspectorTest.createAsyncSuite("AddCSSProperty");
+
+    function getMatchedStyle(selector, resolve) {
+        for (let rule of nodeStyles.matchedRules) {
+            if (rule.selectorText === selector)
+                return rule.style;
+        }
+
+        InspectorTest.fail(`No style found for selector "${selector}"`);
+        resolve();
+    }
+
+    suite.addTestCase({
+        name: "AddCSSProperty.AppendAfterMissingSemicolon",
+        test(resolve, reject) {
+            let styleDeclaration = getMatchedStyle(".rule-a", resolve);
+            styleDeclaration.locked = true;
+            let newProperty = styleDeclaration.newBlankProperty(1);
+            newProperty.name = "color";
+            newProperty.rawValue = "green";
+
+            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 14px;color: green;`, "`color: green` property should be appended.");
+
+            styleDeclaration.locked = false;
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddCSSProperty.InsertBeforeAndAfter",
+        test(resolve, reject) {
+            let styleDeclaration = getMatchedStyle(".rule-b", resolve);
+            styleDeclaration.locked = true;
+            let newProperty = styleDeclaration.newBlankProperty(0);
+            newProperty.name = "color";
+            newProperty.rawValue = "green";
+
+            let expected = `color: green;\n    outline: 2px solid brown;\n`;
+            InspectorTest.expectEqual(styleDeclaration.text, expected, "`color: green` property should be inserted before the first property.");
+
+            styleDeclaration = getMatchedStyle(".rule-b", resolve);
+            newProperty = styleDeclaration.newBlankProperty(2);
+            newProperty.name = "display";
+            newProperty.rawValue = "block";
+
+            expected = `color: green;\n    outline: 2px solid brown;display: block;\n`;
+            InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: block` property should be appended at the end.");
+
+            styleDeclaration.locked = false;
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddCSSProperty.InsertBetween",
+        test(resolve, reject) {
+            let styleDeclaration = getMatchedStyle(".rule-c", resolve);
+            styleDeclaration.locked = true;
+            let newProperty = styleDeclaration.newBlankProperty(1);
+            newProperty.name = "font-family";
+            newProperty.rawValue = "fantasy";
+
+            let expected = `\n    background-color: peachpuff;font-family: fantasy;\n    color: burlywood\n`;
+            InspectorTest.expectEqual(styleDeclaration.text, expected, "`font-family: fantasy` property should be inserted after the first property.");
+
+            styleDeclaration.locked = false;
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddCSSProperty.AppendAfterCommentedOutProperty",
+        test(resolve, reject) {
+            let styleDeclaration = getMatchedStyle(".rule-d", resolve);
+            styleDeclaration.locked = true;
+            let newProperty = styleDeclaration.newBlankProperty(2);
+            newProperty.name = "display";
+            newProperty.rawValue = "inline";
+
+            const expected = `\n    font-size: 14px;\n    /* color: red; */display: inline;\n`;
+            InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: inline` property should be appended.");
+
+            styleDeclaration.locked = false;
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "AddCSSProperty.AppendAfterCommentedOutPropertyWithoutSemicolon",
+        test(resolve, reject) {
+            let styleDeclaration = getMatchedStyle(".rule-e", resolve);
+            styleDeclaration.locked = true;
+            let newProperty = styleDeclaration.newBlankProperty(2);
+            newProperty.name = "display";
+            newProperty.rawValue = "inline";
+
+            const expected = `\n    font-size: 14px;\n    /* color: red */display: inline;\n`;
+            InspectorTest.expectEqual(styleDeclaration.text, expected, "`display: inline` property should be appended.");
+
+            styleDeclaration.locked = false;
+            resolve();
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish()
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that CSSStyleDeclaration updates after inserting new CSS properties.</p>
+
+<style>
+.rule-a {font-size: 14px}
+.rule-b {
+    outline: 2px solid brown;
+}
+.rule-c {
+    background-color: peachpuff;
+    color: burlywood
+}
+.rule-d {
+    font-size: 14px;
+    /* color: red; */
+}
+.rule-e {
+    font-size: 14px;
+    /* color: red */
+}
+</style>
+<div id="x" class="rule-a rule-b rule-c rule-d rule-e" style="width: 100px"></div>
+</body>
+</html>

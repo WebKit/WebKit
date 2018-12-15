@@ -23,6 +23,8 @@ function test() {
                     if (rule.selectorText === ".rule-b")
                         return rule.style;
                 }
+                InspectorTest.fail("No declaration found.");
+                resolve();
             };
 
             let getProperty = (propertyName) => {
@@ -31,6 +33,8 @@ function test() {
                     if (property.name === propertyName)
                         return property;
                 }
+                InspectorTest.fail("No property found.");
+                resolve();
             };
 
             let styleDeclaration = getMatchedStyleDeclaration();
@@ -54,6 +58,8 @@ function test() {
                     if (rule.selectorText === ".rule-a")
                         return rule.style;
                 }
+                InspectorTest.fail("No declaration found.");
+                resolve();
             };
 
             let getProperty = (propertyName) => {
@@ -62,6 +68,8 @@ function test() {
                     if (property.name === propertyName)
                         return property;
                 }
+                InspectorTest.fail("No property found.");
+                resolve();
             };
 
             let styleDeclaration = getMatchedStyleDeclaration();
@@ -93,6 +101,8 @@ function test() {
                     if (styleDeclaration.type === styleDeclaration.constructor.Type.Inline)
                         return styleDeclaration;
                 }
+                InspectorTest.fail("No declaration found.");
+                resolve();
             };
 
             let getProperty = (propertyName) => {
@@ -101,6 +111,8 @@ function test() {
                     if (property.name === propertyName)
                         return property;
                 }
+                InspectorTest.fail("No property found.");
+                resolve();
             };
 
             let styleDeclaration = getInlineStyleDeclaration();
@@ -124,6 +136,101 @@ function test() {
             InspectorTest.expectEqual(styleDeclaration.text, `width: 64px;`, `Style declaration text should stay "width: 64px".`);
 
             InspectorTest.evaluateInPage(`makeWide()`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "ModifyCSSProperty.CommentOutAndUncommentPropertyWithNewlines",
+        test(resolve, reject) {
+            let getMatchedStyleDeclaration = () => {
+                for (let rule of nodeStyles.matchedRules) {
+                    if (rule.selectorText === ".rule-c")
+                        return rule.style;
+                }
+                InspectorTest.fail("No declaration found.");
+                resolve();
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getMatchedStyleDeclaration();
+                for (let property of styleDeclaration.allProperties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                InspectorTest.fail("No property found.");
+                resolve();
+            };
+
+            let styleDeclaration = getMatchedStyleDeclaration();
+            styleDeclaration.locked = true;
+
+            InspectorTest.expectThat(!getProperty("padding-right").enabled, `Commented out property should be disabled.`);
+
+            let disabled = false;
+            getProperty("padding-right").commentOut(disabled);
+
+            let expectedStyleText = `\n        /* padding-left: 2em; */\n        padding-right: 0px;\n    `;
+            InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with uncommented property.`);
+
+            InspectorTest.expectThat(getProperty("padding-right").enabled, `Uncommented property should be enabled.`);
+
+            disabled = true;
+            getProperty("padding-right").commentOut(disabled);
+
+            expectedStyleText = `\n        /* padding-left: 2em; */\n        /* padding-right: 0px; */\n    `;
+            InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with commented out property.`);
+
+            InspectorTest.expectThat(!getProperty("padding-right").enabled, `Commented out property should be disabled.`);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "ModifyCSSProperty.CommentOutAndUncommentPropertyWithoutNewlines",
+        test(resolve, reject) {
+            let getMatchedStyleDeclaration = () => {
+                for (let rule of nodeStyles.matchedRules) {
+                    if (rule.selectorText === ".rule-d")
+                        return rule.style;
+                }
+                InspectorTest.fail("No declaration found.");
+                resolve();
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getMatchedStyleDeclaration();
+                for (let property of styleDeclaration.allProperties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+                InspectorTest.fail("No property found.");
+                resolve();
+            };
+
+            let styleDeclaration = getMatchedStyleDeclaration();
+            styleDeclaration.locked = true;
+
+            InspectorTest.expectThat(!getProperty("font-size").enabled, `Commented out property should be disabled.`);
+
+            let disabled = false;
+            getProperty("font-size").commentOut(disabled);
+
+            let expectedStyleText = `font-size: 13px;/*border: 2px solid brown*/`;
+            InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with uncommented property.`);
+
+            InspectorTest.expectThat(getProperty("font-size").enabled, `Uncommented property should be enabled.`);
+            InspectorTest.expectThat(!getProperty("border").enabled, `Commented out property should be disabled.`);
+
+            disabled = false;
+            getProperty("border").commentOut(disabled);
+
+            expectedStyleText = `font-size: 13px;border: 2px solid brown`;
+            InspectorTest.expectEqual(styleDeclaration.text, expectedStyleText, `Style declaration text should update immediately with commented out property.`);
+
+            InspectorTest.expectThat(getProperty("border").enabled, `Uncommented property should be enabled.`);
+
+            resolve();
         }
     });
 
@@ -160,7 +267,12 @@ function test() {
         margin-top: 1em;
     }
     .rule-b {font-size: 12px; color: antiquewhite}
+    .rule-c {
+        /* padding-left: 2em; */
+        /* padding-right: 0px; */
+    }
+    .rule-d {/*font-size: 13px;*//*border: 2px solid brown*/}
     </style>
-    <div id="x" class="test-node rule-a rule-b" style="width: 100px"></div>
+    <div id="x" class="test-node rule-a rule-b rule-c rule-d" style="width: 100px"></div>
 </body>
 </html>

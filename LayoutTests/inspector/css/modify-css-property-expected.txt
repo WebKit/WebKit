@@ -16,3 +16,18 @@ PASS: Style declaration text should stay "width: 64px".
 PASS: "width" property value should update to "200px".
 PASS: Inline style declaration text should update when not locked.
 
+-- Running test case: ModifyCSSProperty.CommentOutAndUncommentPropertyWithNewlines
+PASS: Commented out property should be disabled.
+PASS: Style declaration text should update immediately with uncommented property.
+PASS: Uncommented property should be enabled.
+PASS: Style declaration text should update immediately with commented out property.
+PASS: Commented out property should be disabled.
+
+-- Running test case: ModifyCSSProperty.CommentOutAndUncommentPropertyWithoutNewlines
+PASS: Commented out property should be disabled.
+PASS: Style declaration text should update immediately with uncommented property.
+PASS: Uncommented property should be enabled.
+PASS: Commented out property should be disabled.
+PASS: Style declaration text should update immediately with commented out property.
+PASS: Uncommented property should be enabled.
+

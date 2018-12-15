@@ -1,3 +1,19 @@
+2018-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: toggling selected properties may cause data corruption
+        https://bugs.webkit.org/show_bug.cgi?id=192396
+        <rdar://problem/46478383>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/css/add-css-property-expected.txt: Added.
+        * inspector/css/add-css-property.html: Added.
+        Test adding new properties.
+
+        * inspector/css/modify-css-property-expected.txt:
+        * inspector/css/modify-css-property.html:
+        Test commenting out and uncommenting CSS properties.
+
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorderPrivateAVFImpl should have a Ref<MediaRecorderPrivateWriter> as member

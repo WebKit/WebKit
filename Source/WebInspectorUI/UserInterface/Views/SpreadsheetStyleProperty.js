@@ -129,6 +129,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     remove(replacement = null)
     {
+        console.assert(this._property.ownerStyle.locked, `Removed property was unlocked (${this._property.name})`);
         this.element.remove();
 
         if (replacement)
@@ -153,6 +154,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._checkboxElement.checked = this._property.enabled;
             this._checkboxElement.tabIndex = -1;
             this._checkboxElement.addEventListener("click", (event) => {
+                console.assert(this._property.ownerStyle.locked, `Toggled property was unlocked (${this._property.name})`);
                 event.stopPropagation();
                 let disabled = !this._checkboxElement.checked;
                 this._property.commentOut(disabled);
@@ -651,11 +653,15 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _handleNameChange()
     {
+        console.assert(this._property.ownerStyle.locked, `Modified property was unlocked (${this._property.name})`);
+
         this._property.name = this._nameElement.textContent.trim();
     }
 
     _handleValueChange()
     {
+        console.assert(this._property.ownerStyle.locked, `Modified property was unlocked (${this._property.name})`);
+
         this._property.rawValue = this._valueElement.textContent.trim();
     }
 

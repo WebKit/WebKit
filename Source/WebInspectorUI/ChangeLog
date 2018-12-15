@@ -1,3 +1,42 @@
+2018-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: toggling selected properties may cause data corruption
+        https://bugs.webkit.org/show_bug.cgi?id=192396
+        <rdar://problem/46478383>
+
+        Reviewed by Devin Rousso.
+
+        Uncommenting a property after a commented out property used to insert an unnecessary semicolon,
+        and not updating ranges of the following properties.
+
+        For example:
+
+            /* color: red; */
+            /* font-size: 12px */
+
+        Uncommenting `font-size` would result in something like this:
+
+            /* color: red; */; font-size: 12px
+                             ^
+                             unnecessary semicolon
+
+        Now the semicolon doesn't get inserted and the white space is preserved better:
+
+            /* color: red; */
+            font-size: 12px
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty.prototype._appendSemicolonIfNeeded): Removed.
+        (WI.CSSProperty.prototype._prependSemicolonIfNeeded): Added.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.remove):
+        (WI.SpreadsheetStyleProperty.prototype.update):
+        (WI.SpreadsheetStyleProperty.prototype._handleNameChange):
+        (WI.SpreadsheetStyleProperty.prototype._handleValueChange):
+        Style declaration should be locked while editing. Add asserts to ensure this.
+
 2018-12-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION(r238599): Uncaught Exception: TypeError: null is not an object (evaluating 'treeElement.listItemElement.classList')
