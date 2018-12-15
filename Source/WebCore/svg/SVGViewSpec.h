@@ -67,6 +67,8 @@ public:
     SVGPreserveAspectRatioValue& preserveAspectRatio() { return m_preserveAspectRatio; }
     void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio = preserveAspectRatio; }
 
+    const WeakPtr<SVGElement>& contextElementConcurrently() const { return m_contextElement; }
+
 private:
     explicit SVGViewSpec(SVGElement&);
 
@@ -82,7 +84,7 @@ private:
     static Ref<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(SVGViewSpec* contextElement);
     static Ref<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* contextElement);
 
-    SVGElement* m_contextElement;
+    WeakPtr<SVGElement> m_contextElement;
     SVGZoomAndPanType m_zoomAndPan { SVGZoomAndPanMagnify };
     SVGTransformListValues m_transform;
     FloatRect m_viewBox;

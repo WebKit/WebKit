@@ -78,7 +78,7 @@ const SVGPropertyInfo* SVGViewSpec::transformPropertyInfo()
 }
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
-    : m_contextElement(&contextElement)
+    : m_contextElement(makeWeakPtr(contextElement))
 {
 }
 

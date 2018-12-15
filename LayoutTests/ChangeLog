@@ -1,3 +1,18 @@
+2018-12-14  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/46603448
+
+    2018-12-14  Brent Fulgham  <bfulgham@apple.com>
+
+            SVGViewSpec objects should mark relevant SVG elements
+            https://bugs.webkit.org/show_bug.cgi?id=192567
+            <rdar://problem/46491325>
+
+            Reviewed by Ryosuke Niwa.
+
+            * svg/animations/view-dependency-crash-expected.txt: Added.
+            * svg/animations/view-dependency-crash.html: Added.
+
 2018-12-11  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r238877. rdar://problem/45997440
