@@ -60,7 +60,10 @@
     [_pencilView setFingerDrawingEnabled:NO];
     [_pencilView setUserInteractionEnabled:YES];
     [_pencilView setOpaque:NO];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [_pencilView setDrawingDelegate:self];
+#pragma clang diagnostic pop
 
     [self addSubview:_pencilView.get()];
 
