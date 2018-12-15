@@ -1,5 +1,18 @@
 2018-12-14  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION(r238599): Uncaught Exception: TypeError: null is not an object (evaluating 'treeElement.listItemElement.classList')
+        https://bugs.webkit.org/show_bug.cgi?id=192090
+        <rdar://problem/46318614>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selectionControllerSelectionDidChange):
+        Check that `listItemElement` is valid before accessing it to update class
+        names. The selection can change before the TreeElement has been attached.
+
+2018-12-14  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Cookies view should use model objects instead of raw payload data
         https://bugs.webkit.org/show_bug.cgi?id=189533
         <rdar://problem/44364183>

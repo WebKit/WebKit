@@ -803,7 +803,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             let treeElement = this._treeElementAtIndex(index);
             console.assert(treeElement, "Missing TreeElement for deselected index " + index);
             if (treeElement) {
-                treeElement.listItemElement.classList.remove("selected");
+                if (treeElement.listItemElement)
+                    treeElement.listItemElement.classList.remove("selected");
                 if (!this._suppressNextSelectionDidChangeEvent)
                     treeElement.deselect();
             }
@@ -813,7 +814,8 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             let treeElement = this._treeElementAtIndex(index);
             console.assert(treeElement, "Missing TreeElement for selected index " + index);
             if (treeElement) {
-                treeElement.listItemElement.classList.add("selected");
+                if (treeElement.listItemElement)
+                    treeElement.listItemElement.classList.add("selected");
                 if (!this._suppressNextSelectionDidChangeEvent)
                     treeElement.select();
             }
@@ -821,12 +823,12 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
         let selectedTreeElement = this.selectedTreeElement;
         if (selectedTreeElement !== this._previousSelectedTreeElement) {
-            if (this._previousSelectedTreeElement)
+            if (this._previousSelectedTreeElement && this._previousSelectedTreeElement.listItemElement)
                 this._previousSelectedTreeElement.listItemElement.classList.remove("last-selected");
 
             this._previousSelectedTreeElement = selectedTreeElement;
 
-            if (this._previousSelectedTreeElement)
+            if (this._previousSelectedTreeElement && this._previousSelectedTreeElement.listItemElement)
                 this._previousSelectedTreeElement.listItemElement.classList.add("last-selected");
         }
 
