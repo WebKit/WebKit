@@ -1,3 +1,18 @@
+2018-12-14  Keith Miller  <keith_miller@apple.com>
+
+        Gigacage runway should immediately follow the primitive cage
+        https://bugs.webkit.org/show_bug.cgi?id=192733
+
+        Reviewed by Saam Barati.
+
+        This patch makes sure that the Gigacage runway is always
+        immediately after the primitive cage. Since writing outside the
+        primitive gigacage is likely to be more dangerous than the JSValue
+        cage. The ordering of the cages is still random however.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+
 2018-12-13  Mark Lam  <mark.lam@apple.com>
 
         Verify that tryLargeZeroedMemalignVirtual()'s aligned size and alignment values are valid.

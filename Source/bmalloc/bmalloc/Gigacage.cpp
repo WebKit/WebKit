@@ -99,6 +99,18 @@ struct PrimitiveDisableCallbacks {
     Vector<Callback> callbacks;
 };
 
+#if GIGACAGE_ENABLED
+size_t runwaySize(Kind kind)
+{
+    switch (kind) {
+    case Kind::Primitive:
+        return static_cast<size_t>(GIGACAGE_RUNWAY);
+    case Kind::JSValue:
+        return static_cast<size_t>(0);
+    }
+}
+#endif
+
 } // anonymous namespace
 
 void ensureGigacage()
@@ -140,10 +152,10 @@ void ensureGigacage()
             
             for (Kind kind : shuffledKinds) {
                 totalSize = bump(kind, alignTo(kind, totalSize));
+                totalSize += runwaySize(kind);
                 maxAlignment = std::max(maxAlignment, alignment(kind));
             }
-            totalSize += GIGACAGE_RUNWAY;
-            
+
             // FIXME: Randomize where this goes.
             // https://bugs.webkit.org/show_bug.cgi?id=175245
             void* base = tryVMAllocate(maxAlignment, totalSize);
@@ -155,21 +167,20 @@ void ensureGigacage()
                 BCRASH();
             }
 
-            if (GIGACAGE_RUNWAY > 0) {
-                char* runway = reinterpret_cast<char*>(base) + totalSize - GIGACAGE_RUNWAY;
-                // Make OOB accesses into the runway crash.
-                vmRevokePermissions(runway, GIGACAGE_RUNWAY);
-            }
-
-            vmDeallocatePhysicalPages(base, totalSize);
-            
             size_t nextCage = 0;
             for (Kind kind : shuffledKinds) {
                 nextCage = alignTo(kind, nextCage);
                 basePtr(kind) = reinterpret_cast<char*>(base) + nextCage;
                 nextCage = bump(kind, nextCage);
+                if (runwaySize(kind) > 0) {
+                    char* runway = reinterpret_cast<char*>(base) + nextCage;
+                    // Make OOB accesses into the runway crash.
+                    vmRevokePermissions(runway, runwaySize(kind));
+                    nextCage += runwaySize(kind);
+                }
             }
             
+            vmDeallocatePhysicalPages(base, totalSize);
             protectGigacageBasePtrs();
             g_wasEnabled = true;
         });
