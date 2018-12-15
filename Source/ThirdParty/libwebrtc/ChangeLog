@@ -1,5 +1,16 @@
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
+        kVTVideoEncoderSpecification_Usage should not be set if VCP is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=192716
+
+        Reviewed by Eric Carlson.
+
+        https://trac.webkit.org/changeset/239220 sets the usage value for all platforms, but we should only enable it for VCP.
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCSingleVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
+2018-12-14  Youenn Fablet  <youenn@apple.com>
+
         Set kVTVideoEncoderSpecification_Usage both when creating the compression session and once created
         https://bugs.webkit.org/show_bug.cgi?id=192700
 

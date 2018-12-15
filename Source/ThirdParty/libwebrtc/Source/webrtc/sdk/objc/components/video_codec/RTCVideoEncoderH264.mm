@@ -618,13 +618,13 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 #endif
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
 
-  if (auto key = getkVTVideoEncoderSpecification_Usage()) {
-    int usageValue = 1;
-    auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
-    CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)key, usage);
-    CFRelease(usage);
-  }
-
+#if ENABLE_VCP_ENCODER
+  auto key = getkVTVideoEncoderSpecification_Usage();
+  int usageValue = 1;
+  auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
+  CFDictionarySetValue(encoderSpecs, (__bridge CFStringRef)key, usage);
+  CFRelease(usage);
+#endif
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
                                  _width,
