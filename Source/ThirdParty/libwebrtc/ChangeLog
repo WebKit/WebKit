@@ -1,3 +1,14 @@
+2018-12-15  Youenn Fablet  <youenn@apple.com>
+
+        Make RTCRtpSender.setParameters to activate specific encodings
+        https://bugs.webkit.org/show_bug.cgi?id=192732
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
 2018-12-14  Youenn Fablet  <youenn@apple.com>
 
         kVTVideoEncoderSpecification_Usage should not be set if VCP is not enabled

@@ -72,31 +72,6 @@ static inline RTCRtpEncodingParameters toRTCEncodingParameters(const webrtc::Rtp
     return parameters;
 }
 
-static inline webrtc::RtpEncodingParameters fromRTCEncodingParameters(const RTCRtpEncodingParameters& parameters)
-{
-    webrtc::RtpEncodingParameters rtcParameters;
-
-    if (parameters.dtx) {
-        switch (*parameters.dtx) {
-        case RTCDtxStatus::Disabled:
-            rtcParameters.dtx = webrtc::DtxStatus::DISABLED;
-            break;
-        case RTCDtxStatus::Enabled:
-            rtcParameters.dtx = webrtc::DtxStatus::ENABLED;
-        }
-    }
-    rtcParameters.active = parameters.active;
-    if (parameters.maxBitrate)
-        rtcParameters.max_bitrate_bps = parameters.maxBitrate;
-    if (parameters.maxFramerate)
-        rtcParameters.max_framerate = parameters.maxFramerate;
-    rtcParameters.rid = parameters.rid.utf8().data();
-    if (parameters.scaleResolutionDownBy != 1)
-        rtcParameters.scale_resolution_down_by = parameters.scaleResolutionDownBy;
-
-    return rtcParameters;
-}
-
 static inline RTCRtpHeaderExtensionParameters toRTCHeaderExtensionParameters(const webrtc::RtpHeaderExtensionParameters& rtcParameters)
 {
     RTCRtpHeaderExtensionParameters parameters;
@@ -185,13 +160,28 @@ RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters& rtcPara
     return parameters;
 }
 
-webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters& parameters)
+void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::RtpParameters& currentParameters)
 {
-    webrtc::RtpParameters rtcParameters;
+    webrtc::RtpParameters rtcParameters = currentParameters;
+
     rtcParameters.transaction_id = parameters.transactionId.utf8().data();
 
-    for (auto& encoding : parameters.encodings)
-        rtcParameters.encodings.push_back(fromRTCEncodingParameters(encoding));
+    if (parameters.encodings.size() != rtcParameters.encodings.size()) {
+        // If encodings size is different, setting parameters will fail. Let's make it so.
+        rtcParameters.encodings.clear();
+        return;
+    }
+
+    // We copy all current encodings parameters and only update parameters that can actually be usefully updated.
+    for (size_t i = 0; i < parameters.encodings.size(); ++i) {
+        rtcParameters.encodings[i].active = parameters.encodings[i].active;
+        if (parameters.encodings[i].maxBitrate)
+            rtcParameters.encodings[i].max_bitrate_bps = parameters.encodings[i].maxBitrate;
+        if (parameters.encodings[i].maxFramerate)
+            rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
+    }
+
+    rtcParameters.header_extensions.clear();
     for (auto& extension : parameters.headerExtensions)
         rtcParameters.header_extensions.push_back(fromRTCHeaderExtensionParameters(extension));
     // Codecs parameters are readonly
@@ -207,7 +197,6 @@ webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters& param
         rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
         break;
     }
-    return rtcParameters;
 }
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection rtcDirection)

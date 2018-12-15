@@ -39,37 +39,103 @@ function testImage()
     assert_true(data[index + 2] < 100);
 }
 
-promise_test((test) => {
+var pc1, pc2;
+promise_test(async (test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
 
-    return navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}}).then((stream) => {
-        if (window.internals)
-            assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
-        return new Promise((resolve, reject) => {
-            createConnections((firstConnection) => {
-                var track = stream.getVideoTracks()[0];
-                firstConnection.addTrack(stream.getVideoTracks()[0], stream);
-            }, (secondConnection) => {
-                secondConnection.ontrack = (trackEvent) => {
-                    assert_true(trackEvent.track instanceof MediaStreamTrack);
-                    assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
-                    assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
-                    assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
-                    assert_equals(trackEvent.track.id, stream.getVideoTracks()[0].id);
-                    assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
-                    resolve(trackEvent.streams[0]);
-                };
-            });
-            setTimeout(() => reject("Test timed out"), 5000);
+    const localStream = await navigator.mediaDevices.getUserMedia({video: {advanced: [{width:{min:640}}, {height:{min:480} } ]}});
+    if (window.internals)
+        assert_true(internals.pageMediaState().includes('HasActiveVideoCaptureDevice'), "Unexpected HasActiveVideoCaptureDevice");
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                assert_true(trackEvent.track instanceof MediaStreamTrack);
+                assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
+                assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
+                assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
+                assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
+                resolve(trackEvent.streams[0]);
+            };
         });
-    }).then((stream) => {
-        video.srcObject = stream;
-        return video.play();
-    }).then(test.step_func(() => {
-        testImage();
-    }));
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    testImage();
 }, "Basic video exchange");
+
+async function getInboundRTPStatsNumberOfDecodedFrames(connection)
+{
+    var report = await connection.getStats();
+    var framesDecoded;
+    report.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            framesDecoded = statItem.framesDecoded;
+    });
+    return framesDecoded;
+}
+
+async function testFrameDecodedIncreased(connection, count, previousFramesNumber)
+{
+    if (previousFramesNumber === undefined) {
+        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+        await waitFor(1000);
+        return testFrameDecodedIncreased(connection, 0, number);
+    }
+
+    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+    if (previousFramesNumber && number > previousFramesNumber)
+        return;
+
+    if (count >= 20)
+        return Promise.reject("test increasing frame encoded timed out");
+
+    await waitFor(1000);
+    return testFrameDecodedIncreased(connection, ++count, previousFramesNumber);
+}
+
+async function testFrameDecodedDidNotIncreased(connection, count, previousFramesNumber)
+{
+    if (previousFramesNumber === undefined) {
+        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+        await waitFor(100);
+        return testFrameDecodedDidNotIncreased(connection, 0, number);
+    }
+
+    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+    if (previousFramesNumber && number == previousFramesNumber)
+        return;
+
+    if (count >= 20)
+        return Promise.reject("test increasing frame encoded timed out");
+
+    await waitFor(100);
+    return testFrameDecodedIncreased(connection, ++count, number);
+}
+
+promise_test(async (test) => {
+   let p = pc1.getSenders()[0].getParameters();
+   p.encodings[0].active = false;
+   await pc1.getSenders()[0].setParameters(p);
+
+   await testFrameDecodedDidNotIncreased(pc2);
+}, "Call setParameters to disable sending a given encoding");
+
+promise_test(async (test) => {
+   let p = pc1.getSenders()[0].getParameters();
+   p.encodings[0].active = true;
+   await pc1.getSenders()[0].setParameters(p);
+
+   await testFrameDecodedIncreased(pc2);
+}, "Call setParameters to reenable sending a given encoding");
         </script>
     </body>
 </html>

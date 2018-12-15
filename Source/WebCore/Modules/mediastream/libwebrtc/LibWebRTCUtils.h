@@ -44,9 +44,9 @@ struct RTCRtpTransceiverInit;
 enum class RTCRtpTransceiverDirection;
 
 RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters&);
-webrtc::RtpParameters fromRTCRtpParameters(const RTCRtpParameters&);
+void updateRTCRtpSendParameters(const RTCRtpSendParameters&, webrtc::RtpParameters&);
 RTCRtpSendParameters toRTCRtpSendParameters(const webrtc::RtpParameters&);
-webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters&);
+webrtc::RtpParameters fromRTCRtpSendParameters(const RTCRtpSendParameters&, const webrtc::RtpParameters& currentParameters);
 
 RTCRtpTransceiverDirection toRTCRtpTransceiverDirection(webrtc::RtpTransceiverDirection);
 webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiverDirection);

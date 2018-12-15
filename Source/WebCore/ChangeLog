@@ -1,3 +1,30 @@
+2018-12-15  Youenn Fablet  <youenn@apple.com>
+
+        Make RTCRtpSender.setParameters to activate specific encodings
+        https://bugs.webkit.org/show_bug.cgi?id=192732
+
+        Reviewed by Eric Carlson.
+
+        The conversion between libwebrtc and WebCore is lossy for send parameters.
+        Libwebrtc checking the differences of values, call to setParameters will often fail.
+
+        Given some parameters cannot be exposed, the sender backend keeps the
+        current set of parameters when gathered and reuses them when parameters are set.
+
+        For encodings, we only change activate/maxBitRate/maxFrameRate as
+        these are the most important parameters to be able to modify.
+
+        Covered by added tests in webrtc/video.html.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::getParameters const):
+        (WebCore::LibWebRTCRtpSenderBackend::setParameters):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::fromRTCRtpSendParameters):
+        (WebCore::fromRTCEncodingParameters): Deleted.
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+
 2018-12-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Avoid creating and evaluating in the InspectorOverlay page on iOS as it is unused

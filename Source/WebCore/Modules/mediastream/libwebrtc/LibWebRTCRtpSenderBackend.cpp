@@ -117,7 +117,8 @@ RTCRtpSendParameters LibWebRTCRtpSenderBackend::getParameters() const
     if (!m_rtcSender)
         return { };
 
-    return toRTCRtpSendParameters(m_rtcSender->GetParameters());
+    m_currentParameters = m_rtcSender->GetParameters();
+    return toRTCRtpSendParameters(*m_currentParameters);
 }
 
 void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parameters, DOMPromiseDeferred<void>&& promise)
@@ -126,7 +127,17 @@ void LibWebRTCRtpSenderBackend::setParameters(const RTCRtpSendParameters& parame
         promise.reject(NotSupportedError);
         return;
     }
-    auto error = m_rtcSender->SetParameters(fromRTCRtpSendParameters(parameters));
+
+    if (!m_currentParameters) {
+        promise.reject(Exception { InvalidStateError, "getParameters must be called before setParameters"_s });
+        return;
+    }
+
+    auto rtcParameters = WTFMove(*m_currentParameters);
+    updateRTCRtpSendParameters(parameters, rtcParameters);
+    m_currentParameters = std::nullopt;
+
+    auto error = m_rtcSender->SetParameters(rtcParameters);
     if (!error.ok()) {
         promise.reject(Exception { InvalidStateError, error.message() });
         return;
