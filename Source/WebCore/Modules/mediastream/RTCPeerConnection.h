@@ -215,7 +215,6 @@ private:
 
     RTCConfiguration m_configuration;
     RTCController* m_controller { nullptr };
-    Vector<RefPtr<RTCCertificate>> m_certificates;
     RefPtr<PendingActivity<RTCPeerConnection>> m_pendingActivity;
 };
 
