@@ -231,6 +231,13 @@
             hash="sha256:bdfa0255e031b8ee003cc283002536b77ee76450105f1dc6ab066b9bf4330068"/>
   </meson>
 
+  <autotools id="libpsl">
+    <branch module="rockdaboot/libpsl/releases/download/libpsl-${version}/libpsl-${version}.tar.gz"
+            version="0.20.2"
+            repo="github-tarball"
+            hash="sha256:f8fd0aeb66252dfcc638f14d9be1e2362fdaf2ca86bde0444ff4d5cc961b560f"/>
+  </autotools>
+
   <autotools id="libsoup"
              autogen-sh="configure"
              autogenargs="--disable-introspection">
@@ -239,6 +246,7 @@
     </if>
     <dependencies>
       <dep package="glib-networking"/>
+      <dep package="libpsl/"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
             repo="ftp.gnome.org"

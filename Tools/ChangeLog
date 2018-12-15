@@ -1,3 +1,13 @@
+2018-12-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Add libpsl to JHBuild module sets
+        https://bugs.webkit.org/show_bug.cgi?id=192740
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/jhbuild.modules: Add libpsl module.
+        * wpe/jhbuild.modules: Ditto.
+
 2018-12-14  Alexey Proskuryakov  <ap@apple.com>
 
         Add a style checker rule for Xcode version macros use
