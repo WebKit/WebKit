@@ -31,39 +31,37 @@
 #include "WKAPICast.h"
 #include "WebsiteDataRecord.h"
 
-using namespace WebKit;
-
 WKTypeID WKApplicationCacheManagerGetTypeID()
 {
-    return toAPI(API::WebsiteDataStore::APIType);
+    return WebKit::toAPI(API::WebsiteDataStore::APIType);
 }
 
 void WKApplicationCacheManagerGetApplicationCacheOrigins(WKApplicationCacheManagerRef applicationCacheManager, void* context, WKApplicationCacheManagerGetApplicationCacheOriginsFunction callback)
 {
-    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
-    websiteDataStore.fetchData(WebsiteDataType::OfflineWebApplicationCache, { }, [context, callback](auto dataRecords) {
+    auto& websiteDataStore = WebKit::toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+    websiteDataStore.fetchData(WebKit::WebsiteDataType::OfflineWebApplicationCache, { }, [context, callback](auto dataRecords) {
         Vector<RefPtr<API::Object>> securityOrigins;
         for (const auto& dataRecord : dataRecords) {
             for (const auto& origin : dataRecord.origins)
                 securityOrigins.append(API::SecurityOrigin::create(origin.securityOrigin()));
         }
 
-        callback(toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
+        callback(WebKit::toAPI(API::Array::create(WTFMove(securityOrigins)).ptr()), nullptr, context);
     });
 }
 
 void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRef applicationCacheManager, WKSecurityOriginRef origin)
 {
-    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+    auto& websiteDataStore = WebKit::toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
 
-    WebsiteDataRecord dataRecord;
-    dataRecord.add(WebsiteDataType::OfflineWebApplicationCache, toImpl(origin)->securityOrigin().data());
+    WebKit::WebsiteDataRecord dataRecord;
+    dataRecord.add(WebKit::WebsiteDataType::OfflineWebApplicationCache, WebKit::toImpl(origin)->securityOrigin().data());
 
-    websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, { dataRecord }, [] { });
+    websiteDataStore.removeData(WebKit::WebsiteDataType::OfflineWebApplicationCache, { dataRecord }, [] { });
 }
 
 void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager)
 {
-    auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
-    websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, -WallTime::infinity(), [] { });
+    auto& websiteDataStore = WebKit::toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
+    websiteDataStore.removeData(WebKit::WebsiteDataType::OfflineWebApplicationCache, -WallTime::infinity(), [] { });
 }

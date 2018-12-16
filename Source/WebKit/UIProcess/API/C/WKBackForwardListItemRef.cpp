@@ -29,24 +29,22 @@
 #include "WKAPICast.h"
 #include "WebBackForwardListItem.h"
 
-using namespace WebKit;
-
 WKTypeID WKBackForwardListItemGetTypeID()
 {
-    return toAPI(WebBackForwardListItem::APIType);
+    return WebKit::toAPI(WebBackForwardListItem::APIType);
 }
 
 WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef itemRef)
 {
-    return toCopiedURLAPI(toImpl(itemRef)->url());
+    return WebKit::toCopiedURLAPI(toImpl(itemRef)->url());
 }
 
 WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
 {
-    return toCopiedAPI(toImpl(itemRef)->title());
+    return WebKit::toCopiedAPI(toImpl(itemRef)->title());
 }
 
 WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
 {
-    return toCopiedURLAPI(toImpl(itemRef)->originalURL());
+    return WebKit::toCopiedURLAPI(toImpl(itemRef)->originalURL());
 }

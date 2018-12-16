@@ -1,3 +1,114 @@
+2018-12-15  Chris Fleizach  <cfleizach@apple.com>
+
+        [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds
+        https://bugs.webkit.org/show_bug.cgi?id=192449
+        <rdar://problem/46595508>
+
+        Reviewed by Darin Adler.
+
+        Part 7: Files in UIProcess/API
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        * UIProcess/API/APIHitTestResult.cpp:
+        * UIProcess/API/APINavigation.cpp:
+        * UIProcess/API/APIOpenPanelParameters.cpp:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerGetTypeID):
+        (WKApplicationCacheManagerGetApplicationCacheOrigins):
+        (WKApplicationCacheManagerDeleteEntriesForOrigin):
+        (WKApplicationCacheManagerDeleteAllEntries):
+        * UIProcess/API/C/WKAuthenticationDecisionListener.cpp:
+        (WKAuthenticationDecisionListenerGetTypeID):
+        (WKAuthenticationDecisionListenerUseCredential):
+        (WKAuthenticationDecisionListenerCancel):
+        (WKAuthenticationDecisionListenerRejectProtectionSpaceAndContinue):
+        * UIProcess/API/C/WKBackForwardListItemRef.cpp:
+        (WKBackForwardListItemGetTypeID):
+        (WKBackForwardListItemCopyURL):
+        (WKBackForwardListItemCopyTitle):
+        (WKBackForwardListItemCopyOriginalURL):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetTypeID):
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        (WKContextCreateWithConfiguration):
+        (WKContextSetClient):
+        (WKContextSetInjectedBundleClient):
+        (WKContextSetHistoryClient):
+        (WKContextSetDownloadClient):
+        (WKContextSetConnectionClient):
+        (WKContextDownloadURLRequest):
+        (WKContextResumeDownload):
+        (WKContextSetInitializationUserDataForInjectedBundle):
+        (WKContextPostMessageToInjectedBundle):
+        (WKContextGetGlobalStatistics):
+        (WKContextAddVisitedLink):
+        (WKContextClearVisitedLinks):
+        (WKContextSetCacheModel):
+        (WKContextGetCacheModel):
+        (WKContextSetMaximumNumberOfProcesses):
+        (WKContextGetMaximumNumberOfProcesses):
+        (WKContextSetAlwaysUsesComplexTextCodePath):
+        (WKContextSetShouldUseFontSmoothing):
+        (WKContextSetAdditionalPluginsDirectory):
+        (WKContextRefreshPlugIns):
+        (WKContextRegisterURLSchemeAsEmptyDocument):
+        (WKContextRegisterURLSchemeAsSecure):
+        (WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy):
+        (WKContextRegisterURLSchemeAsCachePartitioned):
+        (WKContextRegisterURLSchemeAsCanDisplayOnlyIfCanRequest):
+        (WKContextSetDomainRelaxationForbiddenForURLScheme):
+        (WKContextSetCanHandleHTTPSServerTrustEvaluation):
+        (WKContextSetPrewarmsProcessesAutomatically):
+        (WKContextSetCustomWebContentServiceBundleIdentifier):
+        (WKContextSetDiskCacheSpeculativeValidationEnabled):
+        (WKContextPreconnectToServer):
+        (WKContextGetCookieManager):
+        (WKContextGetWebsiteDataStore):
+        (WKContextGetGeolocationManager):
+        (WKContextGetMediaSessionFocusManager):
+        (WKContextGetNotificationManager):
+        (WKContextStartMemorySampler):
+        (WKContextStopMemorySampler):
+        (WKContextAllowSpecificHTTPSCertificateForHost):
+        (WKContextDisableProcessTermination):
+        (WKContextEnableProcessTermination):
+        (WKContextSetHTTPPipeliningEnabled):
+        (WKContextWarmInitialProcess):
+        (WKContextGetStatistics):
+        (WKContextGetStatisticsWithOptions):
+        (WKContextJavaScriptConfigurationFileEnabled):
+        (WKContextSetJavaScriptConfigurationFileEnabled):
+        (WKContextGarbageCollectJavaScriptObjects):
+        (WKContextSetJavaScriptGarbageCollectorTimerEnabled):
+        (WKContextUseTestingNetworkSession):
+        (WKContextSetAllowsAnySSLCertificateForWebSocketTesting):
+        (WKContextSetAllowsAnySSLCertificateForServiceWorkerTesting):
+        (WKContextClearCachedCredentials):
+        (WKContextCopyPlugInAutoStartOriginHashes):
+        (WKContextSetPlugInAutoStartOriginHashes):
+        (WKContextSetPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime):
+        (WKContextSetPlugInAutoStartOrigins):
+        (WKContextSetInvalidMessageFunction):
+        (WKContextSetMemoryCacheDisabled):
+        (WKContextSetFontWhitelist):
+        (WKContextTerminateNetworkProcess):
+        (WKContextTerminateServiceWorkerProcess):
+        (WKContextGetNetworkProcessIdentifier):
+        (WKContextAddSupportedPlugin):
+        (WKContextClearSupportedPlugins):
+        (WKContextSetIDBPerOriginQuota):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadURLWithShouldOpenExternalURLsPolicy):
+        (WKPageLoadURLWithUserData):
+        (WKPageLoadURLRequestWithUserData):
+        (WKPageSetPaginationMode):
+        (WKPageGetPaginationMode):
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPagePolicyClient):
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Use warning-ignoring macros more consistently and simply
