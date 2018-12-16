@@ -1,5 +1,16 @@
 2018-12-16  Adrian Perez de Castro  <aperez@igalia.com>
 
+        Unreviewed follow up after r239260
+        https://bugs.webkit.org/show_bug.cgi?id=192714
+        <rdar://problem/46762407>
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::allocate): Use PAGE_READWRITE directly instead
+        of going through the protectAttribute() function, which is removed
+        because it is now unused.
+
+2018-12-16  Adrian Perez de Castro  <aperez@igalia.com>
+
         Unify SharedMemory factory functions
         https://bugs.webkit.org/show_bug.cgi?id=192714
 

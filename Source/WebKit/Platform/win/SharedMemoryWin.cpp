@@ -117,22 +117,9 @@ bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     return true;
 }
 
-static DWORD protectAttribute(SharedMemory::Protection protection)
-{
-    switch (protection) {
-    case SharedMemory::Protection::ReadOnly:
-        return PAGE_READONLY;
-    case SharedMemory::Protection::ReadWrite:
-        return PAGE_READWRITE;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
-    HANDLE handle = ::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, protectAttribute(SharedMemory::Protection::ReadWrite), 0, size, 0);
+    HANDLE handle = ::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0);
     if (!handle)
         return nullptr;
 
