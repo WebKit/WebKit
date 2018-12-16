@@ -553,7 +553,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
 
             String canonicalizedTag = canonicalizeLanguageTag(tag->value(&state));
             if (canonicalizedTag.isNull()) {
-                throwException(&state, scope, createRangeError(&state, String::format("invalid language tag: %s", tag->value(&state).utf8().data())));
+                throwException(&state, scope, createRangeError(&state, "invalid language tag: " + tag->value(&state)));
                 return Vector<String>();
             }
 

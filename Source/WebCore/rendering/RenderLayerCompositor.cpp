@@ -1301,7 +1301,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, const char* p
         backing->backingStoreMemoryEstimate() / 1024));
     
     if (!layer.renderer().style().hasAutoZIndex())
-        logString.append(String::format(" z-index: %d", layer.renderer().style().zIndex())); 
+        logString.append(makeString(" z-index: ", layer.renderer().style().zIndex()));
 
     logString.appendLiteral(" (");
     logString.append(logReasonsForCompositing(layer));

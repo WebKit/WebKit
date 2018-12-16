@@ -1,3 +1,13 @@
+2018-12-15  Darin Adler  <darin@apple.com>
+
+        Replace many uses of String::format with more type-safe alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+
+        Reviewed by Mark Lam.
+
+        * pal/FileSizeFormatter.cpp:
+        (fileSizeDescription): Use makeString.
+
 2018-12-11  Justin Michaud  <justin_michaud@apple.com>
 
         Implement feature flag for CSS Typed OM

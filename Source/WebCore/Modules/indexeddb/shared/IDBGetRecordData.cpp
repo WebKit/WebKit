@@ -38,10 +38,12 @@ IDBGetRecordData IDBGetRecordData::isolatedCopy() const
 }
 
 #if !LOG_DISABLED
+
 String IDBGetRecordData::loggingString() const
 {
-    return String::format("<GetRecord: %s %s>", type == IDBGetRecordDataType::KeyOnly ? "KeyOnly" : "Key+Value", keyRangeData.loggingString().utf8().data());
+    return makeString("<GetRecord: ", type == IDBGetRecordDataType::KeyOnly ? "KeyOnly" : "Key+Value", ' ', keyRangeData.loggingString(), '>');
 }
+
 #endif
 
 } // namespace WebCore

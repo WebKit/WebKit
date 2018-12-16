@@ -180,7 +180,7 @@ int AVTrackPrivateAVFObjCImpl::index() const
 AtomicString AVTrackPrivateAVFObjCImpl::id() const
 {
     if (m_assetTrack)
-        return String::format("%d", [m_assetTrack trackID]);
+        return AtomicString::number([m_assetTrack trackID]);
     if (m_mediaSelectionOption)
         return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] stringValue];
     ASSERT_NOT_REACHED();

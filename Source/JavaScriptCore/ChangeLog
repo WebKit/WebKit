@@ -1,3 +1,25 @@
+2018-12-15  Darin Adler  <darin@apple.com>
+
+        Replace many uses of String::format with more type-safe alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+
+        Reviewed by Mark Lam.
+
+        * inspector/InjectedScriptBase.cpp:
+        (Inspector::InjectedScriptBase::makeCall): Use makeString.
+        (Inspector::InjectedScriptBase::makeAsyncCall): Ditto.
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::getPropertyValue): Ditto.
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::enable): Ditto.
+        * jsc.cpp:
+        (FunctionJSCStackFunctor::operator() const): Ditto.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Use string concatenation.
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList): Ditto.
+
 2018-12-14  Darin Adler  <darin@apple.com>
 
         LiteralParser has a bunch of uses of String::format with untrusted data

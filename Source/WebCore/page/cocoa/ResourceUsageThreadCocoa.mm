@@ -35,6 +35,7 @@
 #include <mach/vm_statistics.h>
 #include <pal/spi/cocoa/MachVMSPI.h>
 #include <wtf/MachSendRight.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::a
             continue;
         String tagName = displayNameForVMTag(i);
         if (!tagName)
-            tagName = String::format("Tag %u", i);
+            tagName = makeString("Tag ", i);
         WTFLogAlways("  %02X %16s %10ld %10ld %10ld",
             i,
             tagName.ascii().data(),
