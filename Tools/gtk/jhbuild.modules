@@ -246,7 +246,7 @@
     </if>
     <dependencies>
       <dep package="glib-networking"/>
-      <dep package="libpsl/"/>
+      <dep package="libpsl"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/libsoup/2.64/libsoup-${version}.tar.xz" version="2.64.2"
             repo="ftp.gnome.org"
