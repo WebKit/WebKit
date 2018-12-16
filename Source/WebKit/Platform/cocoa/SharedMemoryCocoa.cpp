@@ -157,7 +157,7 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
     return WTF::MachSendRight::adopt(port);
 }
 
-RefPtr<SharedMemory> SharedMemory::create(void* data, size_t size, Protection protection)
+RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
 {
     ASSERT(size);
 

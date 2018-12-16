@@ -1,3 +1,31 @@
+2018-12-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unify SharedMemory factory functions
+        https://bugs.webkit.org/show_bug.cgi?id=192714
+
+        Reviewed by Darin Adler.
+
+        This unifies SharedMemory so in the following way, across platforms:
+
+        - SharedMemory::create() is removed, to avoid ambiguity.
+        - SharedMemory::allocate() always allocates a new block of shared memory.
+        - SharedMemory::wrapMap() always creates a SharedMemory object which refers to an
+          existing region of memory resulting from memory-mapping a file.
+
+        * NetworkProcess/cache/NetworkCacheDataCocoa.mm:
+        (WebKit::NetworkCache::Data::tryCreateSharedMemory const): Use SharedMemory::wrapMap().
+        * Platform/SharedMemory.h: Remove the definition of SharedMemory::create(), and make
+        SharedMemory::wrapMap() available on OS(DARWIN) as well.
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::SharedMemory::wrapMap): Renamed from ::create().
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::allocate): Renamed from ::create().
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::allocate): Renamed from ::create()
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::createExtension): Use NetworkCache::Data::tryCreateSharedMemory() instead of
+        SharedMemory::create().
+
 2018-12-15  Chris Fleizach  <cfleizach@apple.com>
 
         [meta][WebKit] Remove using namespace WebCore and WebKit in the global scope for unified source builds

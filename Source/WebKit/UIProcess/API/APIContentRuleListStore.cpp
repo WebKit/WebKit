@@ -369,7 +369,11 @@ static std::error_code compiledToFile(WTF::String&& json, Vector<WebCore::Conten
 
 static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, const ContentRuleListMetaData& metaData, const WebKit::NetworkCache::Data& fileData)
 {
-    auto sharedMemory = WebKit::SharedMemory::create(const_cast<uint8_t*>(fileData.data()), fileData.size(), WebKit::SharedMemory::Protection::ReadOnly);
+    // Content extensions are always compiled to files, and at this point the file
+    // has been already mapped, therefore tryCreateSharedMemory() cannot fail.
+    auto sharedMemory = fileData.tryCreateSharedMemory();
+    ASSERT(sharedMemory);
+
     const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + metaData.sourceSize;
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTFMove(sharedMemory),

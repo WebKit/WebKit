@@ -148,7 +148,7 @@ static int createSharedMemory()
     return fileDescriptor;
 }
 
-RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection protection)
+RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     int fileDescriptor = createSharedMemory();
     if (fileDescriptor == -1) {
@@ -163,7 +163,7 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
         }
     }
 
-    void* data = mmap(address, size, accessModeMMap(protection), MAP_SHARED, fileDescriptor, 0);
+    void* data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
     if (data == MAP_FAILED) {
         closeWithRetry(fileDescriptor);
         return nullptr;
@@ -174,11 +174,6 @@ RefPtr<SharedMemory> SharedMemory::create(void* address, size_t size, Protection
     instance->m_fileDescriptor = fileDescriptor;
     instance->m_size = size;
     return instance;
-}
-
-RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
-{
-    return SharedMemory::create(nullptr, size, SharedMemory::Protection::ReadWrite);
 }
 
 RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)

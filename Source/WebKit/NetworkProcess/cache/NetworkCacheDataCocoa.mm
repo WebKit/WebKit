@@ -108,7 +108,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    return SharedMemory::create(const_cast<uint8_t*>(data()), m_size, SharedMemory::Protection::ReadOnly);
+    return SharedMemory::wrapMap(const_cast<uint8_t*>(data()), m_size, SharedMemory::Protection::ReadOnly);
 }
 
 }
