@@ -471,14 +471,9 @@ static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* e
             break;
         case mouseDown:
             if (obj->eventLogging) {
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 GlobalToLocal(&pt);
-#if __clang__
-#pragma clang diagnostic pop
-#endif
+                ALLOW_DEPRECATED_DECLARATIONS_END
                 pluginLog(instance, "mouseDown at (%d, %d)", pt.h, pt.v);
             }
             if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
@@ -486,14 +481,9 @@ static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* e
             break;
         case mouseUp:
             if (obj->eventLogging) {
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#endif
+                ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 GlobalToLocal(&pt);
-#if __clang__
-#pragma clang diagnostic pop
-#endif
+                ALLOW_DEPRECATED_DECLARATIONS_END
                 pluginLog(instance, "mouseUp at (%d, %d)", pt.h, pt.v);
             }
             break;

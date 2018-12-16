@@ -34,7 +34,8 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
+IGNORE_WARNINGS_BEGIN("nullability-completeness")
+
 SOFT_LINK_FRAMEWORK(AVKit)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTouchBarMediaSelectionOption)
@@ -343,9 +344,8 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<MediaSelecti
         _playbackSessionInterfaceMac->playbackSessionModel()->togglePictureInPicture();
 }
 
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 
 @end
 
 #endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
-

@@ -244,7 +244,7 @@ static inline WKQuad zeroQuad()
 
 @implementation DOMNode (WebCoreInternal)
 
-IGNORE_CLANG_WARNINGS_BEGIN("objc-protocol-method-implementation")
+IGNORE_WARNINGS_BEGIN("objc-protocol-method-implementation")
 
 - (NSString *)description
 {
@@ -258,7 +258,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("objc-protocol-method-implementation")
     return [NSString stringWithFormat:@"<%@ [%@]: %p>", [[self class] description], [self nodeName], _internal];
 }
 
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 
 - (Bindings::RootObject*)_rootObject
 {

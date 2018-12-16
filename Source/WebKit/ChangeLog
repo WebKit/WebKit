@@ -1,5 +1,23 @@
 2018-12-15  Darin Adler  <darin@apple.com>
 
+        Use warning-ignoring macros more consistently and simply
+        https://bugs.webkit.org/show_bug.cgi?id=192743
+
+        Reviewed by Mark Lam.
+
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView initWithEmbeddedViewID:webPageProxy:]):
+        Use ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (-[WKFullScreenWindowController _EVOrganizationName]): Ditto.
+
+        * WebProcess/WebCoreSupport/WebAlternativeTextClient.h: Use
+        IGNORE_WARNINGS_BEGIN/END instead of IGNORE_CLANG_WARNINGS_BEGIN/END
+        because there is no need to accomodate non-clang compilers here.
+        Also use #pragma once, add a missing "explicit", and fix conditionals.
+
+2018-12-15  Darin Adler  <darin@apple.com>
+
         Replace many uses of String::format with more type-safe alternatives
         https://bugs.webkit.org/show_bug.cgi?id=192742
 

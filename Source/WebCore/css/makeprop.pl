@@ -248,11 +248,7 @@ print GPERF << "EOF";
 #include <wtf/text/WTFString.h>
 #include <string.h>
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored \"-Wunknown-pragmas\"
-#pragma clang diagnostic ignored \"-Wimplicit-fallthrough\"
-#endif
+IGNORE_WARNINGS_BEGIN(\"implicit-fallthrough\")
 
 // Older versions of gperf like to use the `register` keyword.
 #define register
@@ -421,9 +417,7 @@ print GPERF << "EOF";
 
 } // namespace WebCore
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
+IGNORE_WARNINGS_END
 EOF
 
 close GPERF;

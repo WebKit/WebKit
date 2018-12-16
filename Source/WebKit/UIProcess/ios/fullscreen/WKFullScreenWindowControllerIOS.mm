@@ -907,10 +907,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         SecTrustResultType result = kSecTrustResultProceed;
 
         // FIXME: This is deprecated <rdar://problem/45894288>.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         OSStatus err = SecTrustEvaluate(trust, &result);
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (err == noErr)
             infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];

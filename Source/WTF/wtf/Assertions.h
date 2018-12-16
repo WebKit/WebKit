@@ -610,14 +610,14 @@ inline void compilerFenceForCrash()
 #if COMPILER(CLANG)
 // This would be a macro except that its use of #pragma works best around
 // a function. Hence it uses macro naming convention.
-IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
+IGNORE_WARNINGS_BEGIN("missing-noreturn")
 static inline void UNREACHABLE_FOR_PLATFORM()
 {
     // This *MUST* be a release assert. We use it in places where it's better to crash than to keep
     // going.
     RELEASE_ASSERT_NOT_REACHED();
 }
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 #else
 #define UNREACHABLE_FOR_PLATFORM() RELEASE_ASSERT_NOT_REACHED()
 #endif

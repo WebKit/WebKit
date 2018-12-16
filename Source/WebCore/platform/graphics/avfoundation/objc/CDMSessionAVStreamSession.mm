@@ -198,11 +198,11 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
 
-        IGNORE_CLANG_WARNINGS_BEGIN("objc-literal-conversion")
+        IGNORE_WARNINGS_BEGIN("objc-literal-conversion")
         String storagePath = this->storagePath();
         if (!storagePath.isEmpty() && [getAVStreamSessionClass() respondsToSelector:@selector(removePendingExpiredSessionReports:withAppIdentifier:storageDirectoryAtURL:)])
             [getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
-        IGNORE_CLANG_WARNINGS_END
+        IGNORE_WARNINGS_END
         m_expiredSession = nullptr;
         return true;
     }

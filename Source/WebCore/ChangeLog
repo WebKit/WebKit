@@ -1,5 +1,49 @@
 2018-12-15  Darin Adler  <darin@apple.com>
 
+        Use warning-ignoring macros more consistently and simply
+        https://bugs.webkit.org/show_bug.cgi?id=192743
+
+        Reviewed by Mark Lam.
+
+        * bridge/objc/WebScriptObject.mm: Use IGNORE_WARNINGS_BEGIN rather than
+        IGNORE_CLANG_WARNINGS_BEGIN here. There is no need to compile Objective-C++
+        files like this one with non-clang compilers, and no need to worry about
+        them when choosing the macro.
+
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::getPublicKeyComponents): Use ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+
+        * css/makeprop.pl: Use IGNORE_WARNINGS_BEGIN/END, obviating the need for
+        the "unknown-pragmas" trick, which the macro should take care of.
+        * css/makevalues.pl: Ditto.
+        * platform/ColorData.gperf: Ditto.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update): Use IGNORE_WARNINGS_BEGIN/END
+        (see rationale above for Objective-C++).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics): Use
+        ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN/END.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics): Ditto.
+
+        * platform/ios/DragImageIOS.mm: Use IGNORE_WARNINGS_BEGIN/END
+        (see rationale above for Objective-C++).
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVPlayerViewController setWebKitOverrideRouteSharingPolicy:routingContextUID:]):
+        Use ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN/END.
+
+        * platform/mac/WebPlaybackControlsManager.mm: Use IGNORE_WARNINGS_BEGIN/END
+        (see rationale above for Objective-C++).
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const): Use
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+
+2018-12-15  Darin Adler  <darin@apple.com>
+
         Replace many uses of String::format with more type-safe alternatives
         https://bugs.webkit.org/show_bug.cgi?id=192742
 

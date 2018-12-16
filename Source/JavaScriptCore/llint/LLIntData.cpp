@@ -74,7 +74,7 @@ void initialize()
 #endif // ENABLE(C_LOOP)
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("missing-noreturn")
+IGNORE_WARNINGS_BEGIN("missing-noreturn")
 void Data::performAssertions(VM& vm)
 {
     UNUSED_PARAM(vm);
@@ -184,6 +184,6 @@ void Data::performAssertions(VM& vm)
         STATIC_ASSERT(ArithProfile::observedBinaryIntNumber().rhsObservedType().isOnlyNumber());
     }
 }
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 
 } } // namespace JSC::LLInt

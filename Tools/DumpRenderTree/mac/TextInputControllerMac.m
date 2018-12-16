@@ -541,10 +541,9 @@ NSString *NSTextInsertionUndoableAttributeName;
     
     id result = [inputMethodHandler callWebScriptMethod:@"call" withArguments:[NSArray arrayWithObjects:inputMethodHandler, eventParam, nil]];
     if (![result respondsToSelector:@selector(boolValue)] || ![result boolValue]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
+        IGNORE_WARNINGS_BEGIN("undeclared-selector")
         [sender doCommandBySelector:@selector(noop:)]; // AppKit sends noop: if the ime does not handle an event
-#pragma clang diagnostic pop
+        IGNORE_WARNINGS_END
     }
 
     inputMethodView = nil;

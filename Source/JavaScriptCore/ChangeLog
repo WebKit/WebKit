@@ -1,5 +1,19 @@
 2018-12-15  Darin Adler  <darin@apple.com>
 
+        Use warning-ignoring macros more consistently and simply
+        https://bugs.webkit.org/show_bug.cgi?id=192743
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGSpeculativeJIT64.cpp: Use IGNORE_WARNINGS_BEGIN/END instead of
+        IGNORE_CLANG_WARNINGS_BEGIN/END. Other callsites are using the non-clang-specific
+        one for this warning, "implicit-fallthrough", and it seems there is no special
+        need to use the clang-specific one here.
+        * llint/LLIntData.cpp: Ditto, but here it's "missing-noreturn"."
+        * tools/CodeProfiling.cpp: Ditto.
+
+2018-12-15  Darin Adler  <darin@apple.com>
+
         Replace many uses of String::format with more type-safe alternatives
         https://bugs.webkit.org/show_bug.cgi?id=192742
 

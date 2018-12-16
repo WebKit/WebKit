@@ -702,12 +702,12 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     return self;
 }
 
-IGNORE_CLANG_WARNINGS_BEGIN("objc-missing-super-calls")
+IGNORE_WARNINGS_BEGIN("objc-missing-super-calls")
 - (void)dealloc
 {
-    return;
+    // Intentionally not calling [super dealloc] since we never want to deallocate our single instance.
 }
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 
 + (WebUndefined *)undefined
 {

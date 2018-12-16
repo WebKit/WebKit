@@ -97,10 +97,9 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
 
     if (trustResultType == kSecTrustResultInvalid) {
         // FIXME: This is deprecated <rdar://problem/45894288>.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         result = SecTrustEvaluate(trust, &trustResultType);
-#pragma clang diagnostic pop
+        ALLOW_DEPRECATED_DECLARATIONS_END
         if (result != errSecSuccess)
             return { };
     }

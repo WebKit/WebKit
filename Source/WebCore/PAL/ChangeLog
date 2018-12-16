@@ -1,5 +1,16 @@
 2018-12-15  Darin Adler  <darin@apple.com>
 
+        Use warning-ignoring macros more consistently and simply
+        https://bugs.webkit.org/show_bug.cgi?id=192743
+
+        Reviewed by Mark Lam.
+
+        * pal/spi/cocoa/AVKitSPI.h: Use IGNORE_WARNINGS_BEGIN instead of
+        IGNORE_CLANG_WARNINGS_BEGIN; there is no special need to accomodate
+        non-clang compilers here.
+
+2018-12-15  Darin Adler  <darin@apple.com>
+
         Replace many uses of String::format with more type-safe alternatives
         https://bugs.webkit.org/show_bug.cgi?id=192742
 

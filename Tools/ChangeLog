@@ -1,5 +1,25 @@
 2018-12-15  Darin Adler  <darin@apple.com>
 
+        Use warning-ignoring macros more consistently and simply
+        https://bugs.webkit.org/show_bug.cgi?id=192743
+
+        Reviewed by Mark Lam.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventCarbon): Use ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END.
+        * DumpRenderTree/mac/TextInputControllerMac.m:
+        (-[TextInputController interpretKeyEvents:withSender:]): Use
+        IGNORE_WARNINGS_BEGIN/END.
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseForceClick): Use
+        IGNORE_NULL_CHECK_WARNINGS_BEGIN/END.
+        (WTR::EventSenderProxy::startAndCancelMouseForceClick): Ditto.
+        (WTR::EventSenderProxy::mouseForceDown): Ditto.
+        (WTR::EventSenderProxy::mouseForceUp): Ditto.
+        (WTR::EventSenderProxy::mouseForceChanged): Ditto.
+
+2018-12-15  Darin Adler  <darin@apple.com>
+
         Replace many uses of String::format with more type-safe alternatives
         https://bugs.webkit.org/show_bug.cgi?id=192742
 

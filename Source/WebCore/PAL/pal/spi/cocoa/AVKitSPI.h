@@ -38,9 +38,9 @@
 #endif
 
 #import <AVKit/AVPlayerController.h>
-IGNORE_CLANG_WARNINGS_BEGIN("objc-property-no-attribute")
+IGNORE_WARNINGS_BEGIN("objc-property-no-attribute")
 #import <AVKit/AVPlayerLayerView.h>
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 #import <AVKit/AVPlayerViewController_Private.h>
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 

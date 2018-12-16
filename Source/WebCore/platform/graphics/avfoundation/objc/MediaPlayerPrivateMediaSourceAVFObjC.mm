@@ -657,12 +657,10 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC:
         return std::nullopt;
 
     uint32_t displayCompositedFrames = 0;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])
         displayCompositedFrames = [metrics numberOfDisplayCompositedVideoFrames];
-#pragma clang diagnostic pop
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     return VideoPlaybackQualityMetrics {
         static_cast<uint32_t>([metrics totalNumberOfVideoFrames]),

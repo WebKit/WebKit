@@ -52,7 +52,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
-IGNORE_CLANG_WARNINGS_BEGIN("nullability-completeness")
+IGNORE_WARNINGS_BEGIN("nullability-completeness")
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIFont)
@@ -62,7 +62,7 @@ SOFT_LINK(UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
 SOFT_LINK(UIKit, UIGraphicsGetImageFromCurrentImageContext, UIImage *, (void), ())
 SOFT_LINK(UIKit, UIGraphicsEndImageContext, void, (void), ())
 
-IGNORE_CLANG_WARNINGS_END
+IGNORE_WARNINGS_END
 
 namespace WebCore {
 
