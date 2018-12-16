@@ -1,3 +1,9 @@
+2018-12-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Unreviewed, suppress warnings in Linux
+
+        * bmalloc/Gigacage.cpp:
+
 2018-12-14  Keith Miller  <keith_miller@apple.com>
 
         Gigacage runway should immediately follow the primitive cage

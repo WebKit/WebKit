@@ -108,6 +108,7 @@ size_t runwaySize(Kind kind)
     case Kind::JSValue:
         return static_cast<size_t>(0);
     }
+    return static_cast<size_t>(0);
 }
 #endif
 

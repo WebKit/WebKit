@@ -2914,6 +2914,7 @@ int jscmain(int argc, char** argv)
     int result = runJSC(
         options, false,
         [&] (VM& vm, GlobalObject* globalObject, bool& success) {
+            UNUSED_PARAM(vm);
 #if PLATFORM(COCOA)
             vm.setOnEachMicrotaskTick(WTFMove(onEachMicrotaskTick));
 #endif
