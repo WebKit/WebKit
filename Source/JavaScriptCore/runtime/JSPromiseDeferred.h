@@ -49,7 +49,7 @@ public:
     };
     static DeferredData createDeferredData(ExecState*, JSGlobalObject*, JSPromiseConstructor*);
 
-    JS_EXPORT_PRIVATE static JSPromiseDeferred* create(ExecState*, JSGlobalObject*);
+    JS_EXPORT_PRIVATE static JSPromiseDeferred* tryCreate(ExecState*, JSGlobalObject*);
     JS_EXPORT_PRIVATE static JSPromiseDeferred* create(VM&, JSPromise*, JSFunction* resolve, JSFunction* reject);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -1,3 +1,43 @@
+2018-12-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Null pointer dereference in JSC::WriteBarrierBase()
+        https://bugs.webkit.org/show_bug.cgi?id=191252
+
+        Reviewed by Keith Miller.
+
+        JSPromiseDeferred::create can return nullptr and an exception if stack overflow happens.
+        We would like to make it RELEASE_ASSERT since the current module mechanism is not immune
+        to stack overflow.
+
+        This patch renames JSPromiseDeferred::create to JSPromiseDeferred::tryCreate to tell that
+        it can return nullptr. And we insert error checks or assertions after this call.
+
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderFetch):
+        * runtime/Completion.cpp:
+        (JSC::rejectPromise):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncImportModule):
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::tryCreate):
+        (JSC::JSInternalPromiseDeferred::create): Deleted.
+        * runtime/JSInternalPromiseDeferred.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::moduleLoaderParseModule):
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::tryCreate):
+        * runtime/JSPromiseDeferred.h:
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyCompileFunc):
+        (JSC::webAssemblyInstantiateFunc):
+        (JSC::webAssemblyCompileStreamingInternal):
+        (JSC::webAssemblyInstantiateStreamingInternal):
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Use warning-ignoring macros more consistently and simply

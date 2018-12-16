@@ -154,8 +154,10 @@ static JSInternalPromise* rejectPromise(ExecState* exec, JSGlobalObject* globalO
     scope.assertNoException();
     JSValue exception = scope.exception()->value();
     scope.clearException();
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
+    scope.releaseAssertNoException();
     deferred->reject(exec, exception);
+    scope.releaseAssertNoException();
     return deferred->promise();
 }
 

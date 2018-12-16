@@ -31,16 +31,9 @@ namespace JSC {
 
 class JSPromise : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
 
     static JSPromise* create(VM&, Structure*);
-    struct JSPromiseAndCallbacks {
-        JSPromise* promise;
-        JSFunction* resolve;
-        JSFunction* reject;
-    };
-    static JSPromiseAndCallbacks createWithCallbacks(VM&, Structure*);
-
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;

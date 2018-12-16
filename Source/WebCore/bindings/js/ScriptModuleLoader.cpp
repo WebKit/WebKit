@@ -146,16 +146,17 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(vm, scriptFetcher));
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
-    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
-    auto deferred = DeferredPromise::create(globalObject, jsPromise);
+    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(exec, &globalObject);
+    RELEASE_ASSERT(jsPromise);
+    auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     if (moduleKeyValue.isSymbol()) {
         deferred->reject(TypeError, "Symbol module key should be already fulfilled with the inlined resource."_s);
-        return jsPromise.promise();
+        return jsPromise->promise();
     }
 
     if (!moduleKeyValue.isString()) {
         deferred->reject(TypeError, "Module key is not Symbol or String."_s);
-        return jsPromise.promise();
+        return jsPromise->promise();
     }
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
@@ -163,7 +164,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     URL completedURL(URL(), asString(moduleKeyValue)->value(exec));
     if (!completedURL.isValid()) {
         deferred->reject(TypeError, "Module key is a valid URL."_s);
-        return jsPromise.promise();
+        return jsPromise->promise();
     }
 
     RefPtr<ModuleFetchParameters> topLevelFetchParameters;
@@ -176,10 +177,10 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         loader->clearClient();
         m_loaders.remove(WTFMove(loader));
         rejectToPropagateNetworkError(deferred.get(), ModuleFetchFailureKind::WasErrored, "Importing a module script failed."_s);
-        return jsPromise.promise();
+        return jsPromise->promise();
     }
 
-    return jsPromise.promise();
+    return jsPromise->promise();
 }
 
 URL ScriptModuleLoader::moduleURL(JSC::ExecState& state, JSC::JSValue moduleKeyValue)
@@ -214,10 +215,11 @@ JSC::JSValue ScriptModuleLoader::evaluate(JSC::JSGlobalObject*, JSC::ExecState* 
 
 static JSC::JSInternalPromise* rejectPromise(JSC::ExecState& state, JSDOMGlobalObject& globalObject, ExceptionCode ec, ASCIILiteral message)
 {
-    auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(&state, &globalObject);
-    auto deferred = DeferredPromise::create(globalObject, jsPromise);
+    auto* jsPromise = JSC::JSInternalPromiseDeferred::tryCreate(&state, &globalObject);
+    RELEASE_ASSERT(jsPromise);
+    auto deferred = DeferredPromise::create(globalObject, *jsPromise);
     deferred->reject(ec, WTFMove(message));
-    return jsPromise.promise();
+    return jsPromise->promise();
 }
 
 JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parameters, const JSC::SourceOrigin& sourceOrigin)

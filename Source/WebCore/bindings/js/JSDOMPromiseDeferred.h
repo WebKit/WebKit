@@ -44,7 +44,7 @@ public:
 
     static RefPtr<DeferredPromise> create(JSC::ExecState& state, JSDOMGlobalObject& globalObject, Mode mode = Mode::ClearPromiseOnResolve)
     {
-        auto* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
+        auto* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
         if (!promiseDeferred)
             return nullptr;
         return adoptRef(new DeferredPromise(globalObject, *promiseDeferred, mode));
@@ -270,7 +270,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(state);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
     if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)
@@ -290,7 +290,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, PromiseFunctor fu
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(state);
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, &globalObject);
+    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::tryCreate(&state, &globalObject);
 
     // promiseDeferred can be null when terminating a Worker abruptly.
     if (executionScope == PromiseExecutionScope::WindowOrWorker && !promiseDeferred)

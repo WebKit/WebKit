@@ -37,7 +37,7 @@ namespace JSC {
 
 const ClassInfo JSInternalPromiseDeferred::s_info = { "JSInternalPromiseDeferred", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromiseDeferred) };
 
-JSInternalPromiseDeferred* JSInternalPromiseDeferred::create(ExecState* exec, JSGlobalObject* globalObject)
+JSInternalPromiseDeferred* JSInternalPromiseDeferred::tryCreate(ExecState* exec, JSGlobalObject* globalObject)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

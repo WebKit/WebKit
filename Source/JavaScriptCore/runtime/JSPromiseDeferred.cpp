@@ -66,7 +66,7 @@ JSPromiseDeferred::DeferredData JSPromiseDeferred::createDeferredData(ExecState*
     return result;
 }
 
-JSPromiseDeferred* JSPromiseDeferred::create(ExecState* exec, JSGlobalObject* globalObject)
+JSPromiseDeferred* JSPromiseDeferred::tryCreate(ExecState* exec, JSGlobalObject* globalObject)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

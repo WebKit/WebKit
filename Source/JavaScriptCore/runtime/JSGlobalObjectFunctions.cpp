@@ -787,7 +787,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
 
     auto* globalObject = exec->lexicalGlobalObject();
 
-    auto* promise = JSPromiseDeferred::create(exec, globalObject);
+    auto* promise = JSPromiseDeferred::tryCreate(exec, globalObject);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);

@@ -207,8 +207,8 @@ JSValue JSCustomElementRegistry::whenDefined(ExecState& state)
     auto scope = DECLARE_CATCH_SCOPE(state.vm());
 
     ASSERT(globalObject());
-    auto promiseDeferred = JSPromiseDeferred::create(&state, globalObject());
-    ASSERT(promiseDeferred);
+    auto promiseDeferred = JSPromiseDeferred::tryCreate(&state, globalObject());
+    RELEASE_ASSERT(promiseDeferred);
     JSValue promise = whenDefinedPromise(state, *globalObject(), wrapped(), *promiseDeferred);
 
     if (UNLIKELY(scope.exception())) {

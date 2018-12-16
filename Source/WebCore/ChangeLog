@@ -1,3 +1,24 @@
+2018-12-15  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        Null pointer dereference in JSC::WriteBarrierBase()
+        https://bugs.webkit.org/show_bug.cgi?id=191252
+
+        Reviewed by Keith Miller.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::whenDefined):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::createDeferredPromise):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::DeferredPromise::create):
+        (WebCore::callPromiseFunction):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::moduleLoaderFetch):
+        (WebCore::JSDOMWindowBase::moduleLoaderImportModule):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch):
+        (WebCore::rejectPromise):
+
 2018-12-15  Darin Adler  <darin@apple.com>
 
         Use warning-ignoring macros more consistently and simply

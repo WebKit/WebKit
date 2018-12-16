@@ -806,7 +806,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    auto* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
@@ -1000,7 +1000,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);

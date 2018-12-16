@@ -191,9 +191,9 @@ void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& g
 
 Ref<DeferredPromise> createDeferredPromise(JSC::ExecState& state, JSDOMWindow& domWindow)
 {
-    JSC::JSPromiseDeferred* deferred = JSC::JSPromiseDeferred::create(&state, &domWindow);
+    JSC::JSPromiseDeferred* deferred = JSC::JSPromiseDeferred::tryCreate(&state, &domWindow);
     // deferred can only be null in workers.
-    ASSERT(deferred);
+    RELEASE_ASSERT(deferred);
     return DeferredPromise::create(domWindow, *deferred);
 }
 

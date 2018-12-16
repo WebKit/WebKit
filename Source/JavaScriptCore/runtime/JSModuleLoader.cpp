@@ -238,7 +238,7 @@ JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* modul
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
         RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, exec, this, moduleName, parameters, referrer));
 
-    auto* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    auto* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
@@ -271,7 +271,7 @@ JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValu
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, exec->lexicalGlobalObject());
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
@@ -301,7 +301,7 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue p
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
         RELEASE_AND_RETURN(throwScope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, parameters, scriptFetcher));
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, globalObject);
     RETURN_IF_EXCEPTION(throwScope, nullptr);
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
@@ -362,7 +362,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderParseModule(ExecState* exec)
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, exec->lexicalGlobalObject());
+    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::tryCreate(exec, exec->lexicalGlobalObject());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
