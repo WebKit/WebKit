@@ -1,3 +1,28 @@
+2018-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r233268): Elements animated in from offscreen sometimes don't display
+        https://bugs.webkit.org/show_bug.cgi?id=192725
+        rdar://problem/46011418
+
+        Reviewed by Antoine Quint.
+
+        There were two problems with backing store attachment and animation.
+        
+        First, animations are an input into the "backing store attached" logic, so when they change
+        we should set the CoverageRectChanged bit on GraphicsLayerCA.
+        
+        Secondly, when an ancestor has unknown animation extent, all its descendants need to
+        get backing store, so we need to set childCommitState.ancestorWithTransformAnimationIntersectsCoverageRect when
+        the current layer has no animation extent.
+
+        Tests: compositing/backing/animate-into-view-with-descendant.html
+               compositing/backing/animate-into-view.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::removeAnimation):
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+
 2018-12-17  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Unify margin collapse function naming

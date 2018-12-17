@@ -1039,7 +1039,7 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, Seconds { timeOffset });
 
     if (createdAnimations)
-        noteLayerPropertyChanged(AnimationChanged);
+        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 
     return createdAnimations;
 }
@@ -1072,7 +1072,7 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
         return;
 
     addProcessingActionForAnimation(animationName, AnimationProcessingAction(Remove));
-    noteLayerPropertyChanged(AnimationChanged);
+    noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
 }
 
 void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey, MonotonicTime startTime)
@@ -1577,7 +1577,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
 
     if (nowRunningTransformAnimation) {
         childCommitState.ancestorHasTransformAnimation = true;
-        if (m_intersectsCoverageRect)
+        if (m_intersectsCoverageRect || !animationExtent())
             childCommitState.ancestorWithTransformAnimationIntersectsCoverageRect = true;
         affectedByTransformAnimation = true;
     }
