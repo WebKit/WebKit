@@ -420,7 +420,8 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
         return;
 
     Node* node = position.containerNode();
-    for (auto* marker : node->document().markers().markersFor(node)) {
+    ASSERT(node);
+    for (auto* marker : node->document().markers().markersFor(*node)) {
         ASSERT(marker);
         if (respondToMarkerAtEndOfWord(*marker, position))
             break;

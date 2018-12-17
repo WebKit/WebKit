@@ -315,7 +315,7 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
             SET_REASON_AND_RETURN_IF_NEEDED(FlowChildIsSelected, reasons, includeReasons);
         if (is<RenderText>(*child)) {
             const auto& renderText = downcast<RenderText>(*child);
-            if (!renderText.document().markers().markersFor(renderText.textNode()).isEmpty())
+            if (renderText.textNode() && !renderText.document().markers().markersFor(*renderText.textNode()).isEmpty())
                 SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesDocumentMarkers, reasons, includeReasons);
             child = child->nextSibling();
             continue;

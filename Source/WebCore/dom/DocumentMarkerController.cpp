@@ -521,13 +521,13 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoin
     return nullptr;
 }
 
-Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node* node, OptionSet<DocumentMarker::MarkerType> markerTypes)
+Vector<RenderedDocumentMarker*> DocumentMarkerController::markersFor(Node& node, OptionSet<DocumentMarker::MarkerType> markerTypes)
 {
     if (!possiblyHasMarkers(markerTypes))
         return { };
 
     Vector<RenderedDocumentMarker*> result;
-    MarkerList* list = m_markers.get(node);
+    MarkerList* list = m_markers.get(&node);
     if (!list)
         return result;
 
@@ -551,7 +551,8 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range& 
 
     Node* pastLastNode = range.pastLastNode();
     for (Node* node = range.firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        for (auto* marker : markersFor(node)) {
+        ASSERT(node);
+        for (auto* marker : markersFor(*node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
             if (node == &startContainer && marker->endOffset() <= range.startOffset())
@@ -763,7 +764,8 @@ bool DocumentMarkerController::hasMarkers(Range& range, OptionSet<DocumentMarker
 
     Node* pastLastNode = range.pastLastNode();
     for (Node* node = range.firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        for (auto* marker : markersFor(node)) {
+        ASSERT(node);
+        for (auto* marker : markersFor(*node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
             if (node == &startContainer && marker->endOffset() <= static_cast<unsigned>(range.startOffset()))

@@ -862,7 +862,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
     if (!renderer().textNode())
         return { };
 
-    Vector<RenderedDocumentMarker*> markers = renderer().document().markers().markersFor(renderer().textNode());
+    Vector<RenderedDocumentMarker*> markers = renderer().document().markers().markersFor(*renderer().textNode());
 
     auto markedTextTypeForMarkerType = [] (DocumentMarker::MarkerType type) {
         switch (type) {

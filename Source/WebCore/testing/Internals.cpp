@@ -1541,7 +1541,7 @@ ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& ma
         return Exception { SyntaxError };
 
     node.document().frame()->editor().updateEditorUINowIfScheduled();
-    return node.document().markers().markersFor(&node, markerTypes).size();
+    return node.document().markers().markersFor(node, markerTypes).size();
 }
 
 ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const String& markerType, unsigned index)
@@ -1554,7 +1554,7 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
 
     node.document().frame()->editor().updateEditorUINowIfScheduled();
 
-    Vector<RenderedDocumentMarker*> markers = node.document().markers().markersFor(&node, markerTypes);
+    Vector<RenderedDocumentMarker*> markers = node.document().markers().markersFor(node, markerTypes);
     if (markers.size() <= index)
         return nullptr;
     return markers[index];

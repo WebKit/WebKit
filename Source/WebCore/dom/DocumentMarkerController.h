@@ -82,7 +82,7 @@ public:
     void setMarkersActive(Range*, bool);
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
-    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(Range&, OptionSet<DocumentMarker::MarkerType>);
     void clearDescriptionOnMarkersIntersectingRange(Range&, OptionSet<DocumentMarker::MarkerType>);
 

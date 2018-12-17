@@ -3768,7 +3768,7 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, i
 
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);
-    Vector<RenderedDocumentMarker*> markers = document().markers().markersFor(node);
+    Vector<RenderedDocumentMarker*> markers = document().markers().markersFor(*node);
     for (auto* marker : markers) {
         if (marker->startOffset() <= startOffset && endOffset <= marker->endOffset() && marker->type() == markerType)
             return true;
