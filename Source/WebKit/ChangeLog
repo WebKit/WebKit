@@ -1,3 +1,12 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r239262): Fix broken builds prior to Mojave
+        <https://bugs.webkit.org/show_bug.cgi?id=192373>
+        <rdar://problem/46462670>
+
+        * UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm:
+        Wrap header in ENABLE(ACCESSIBILITY_EVENTS) to fix the build.
+
 2018-12-17  Daniel Bates  <dabates@apple.com>
 
         [iOS] Remove -[WebEvent initWithKeyEventType:...:characterSet:]

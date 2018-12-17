@@ -28,8 +28,11 @@
 
 #if PLATFORM(COCOA)
 
-#import "AccessibilitySupportSPI.h"
 #import "WebProcessPool.h"
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
+#import "AccessibilitySupportSPI.h"
+#endif
 
 #if PLATFORM(MAC)
 static NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
