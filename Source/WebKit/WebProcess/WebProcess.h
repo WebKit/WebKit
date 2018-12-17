@@ -399,6 +399,8 @@ private:
 #endif
 #endif
 
+    void clearCurrentModifierStateForTesting();
+
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<uint64_t, RefPtr<WebPage>> m_pageMap;

@@ -228,7 +228,7 @@ private:
 
     UIScriptContext* m_context;
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     bool m_capsLockOn { false };
 #endif
 };

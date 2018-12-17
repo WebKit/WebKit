@@ -38,15 +38,17 @@ function runTest()
         return;
 
     let input = document.getElementById("input");
-    input.focus();
-
-    function handleCapsLockEnabled(event) {
-        console.assert(event.key === "CapsLock");
-        input.addEventListener("keyup", handleKeyUp, false);
-        UIHelper.keyDown("a");
+    function handleFocus() {
+        function handleCapsLockEnabled(event) {
+            console.assert(event.key === "CapsLock");
+            input.addEventListener("keyup", handleKeyUp, false);
+            UIHelper.keyDown("a");
+        }
+        input.addEventListener("keydown", handleCapsLockEnabled, { once: true });
+        UIHelper.toggleCapsLock();
     }
-    input.addEventListener("keydown", handleCapsLockEnabled, { once: true });
-    UIHelper.toggleCapsLock();
+    input.addEventListener("focus", handleFocus, { once: true });
+    UIHelper.activateElement(input);
 }
 </script>
 </head>

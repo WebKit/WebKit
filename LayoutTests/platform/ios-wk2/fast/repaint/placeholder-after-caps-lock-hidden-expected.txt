@@ -1,0 +1,27 @@
+Tests that the placeholder text is repainted when the caps lock indicator is hidden.
+
+
+(repaint rects
+  (rect 25 50.50 27 27)
+  (rect 30 55.50 17 17)
+  (rect 11.50 50.50 23.50 24)
+  (rect 16.50 57 13.50 14)
+  (rect 11.50 50.50 40.50 24)
+  (rect 16.50 57 30.50 14)
+  (rect 25 50.50 27 24)
+  (rect 30 57 17 14)
+  (rect 25 50.50 10 24)
+  (rect 11.50 49 40.50 27)
+  (rect 16.50 55.50 30.50 17)
+  (rect 11.50 49 40.50 24)
+  (rect 16.50 55.50 30.50 14)
+  (rect 11.50 50.50 40.50 27)
+  (rect 16.50 55.50 30.50 17)
+  (rect 11.50 52 40.50 24)
+  (rect 16.50 57 30.50 14)
+  (rect 11.50 52 23.50 24)
+  (rect 16.50 57 13.50 14)
+  (rect 11.50 52 40.50 24)
+  (rect 16.50 57 30.50 14)
+)
+

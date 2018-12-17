@@ -925,6 +925,8 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
     if (auto keyCode = keyCodeForDOMFunctionKey(key))
         return *keyCode;
 
+    if ([key isEqualToString:@"capsLock"])
+        return kHIDUsage_KeyboardCapsLock;
     if ([key isEqualToString:@"pageUp"])
         return kHIDUsage_KeyboardPageUp;
     if ([key isEqualToString:@"pageDown"])

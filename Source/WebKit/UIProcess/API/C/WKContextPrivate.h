@@ -118,6 +118,8 @@ WK_EXPORT void WKContextClearSupportedPlugins(WKContextRef context);
 
 WK_EXPORT void WKContextSetIDBPerOriginQuota(WKContextRef context, uint64_t quota);
 
+WK_EXPORT void WKContextClearCurrentModifierStateForTesting(WKContextRef context);
+
 #ifdef __cplusplus
 }
 #endif

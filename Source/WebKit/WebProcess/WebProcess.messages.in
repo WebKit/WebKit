@@ -153,4 +153,6 @@ messages -> WebProcess LegacyReceiver {
     RemoveMockMediaDevice(String persistentId);
     ResetMockMediaDevices();
 #endif
+
+    ClearCurrentModifierStateForTesting()
 }

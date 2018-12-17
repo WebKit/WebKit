@@ -1,5 +1,29 @@
 2018-12-17  Daniel Bates  <dabates@apple.com>
 
+        Implement UIScriptController::toggleCapsLock() for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=191815
+
+        Reviewed by Andy Estes.
+
+        Add support for toggling the caps lock state in WebKitTestRunner on iOS.
+
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues): Clear the current modifier state
+        before running a test. This ensures that the caps lock state does not persist between
+        tests should a test enable caps lock and not disable it.
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (hidUsageCodeForCharacter): Map "capsLock" to the Caps Lock key usage code.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::createUIPhysicalKeyboardEvent): Modified to take the keyboard input flags to use to
+        create the event. Also substituted NSString* for const String& as the data type for the first
+        two parameters to avoid conversions in the implementation of UIScriptController::toggleCapsLock()
+        below.
+        (WTR::UIScriptController::keyDown): Update as needed due to changes to prototype of createUIPhysicalKeyboardEvent().
+        (WTR::UIScriptController::toggleCapsLock): Dispatch a UIEvent to toggle caps lock.
+
+2018-12-17  Daniel Bates  <dabates@apple.com>
+
         [iOS] Remove -[WebEvent initWithKeyEventType:...:characterSet:]
         https://bugs.webkit.org/show_bug.cgi?id=192633
 

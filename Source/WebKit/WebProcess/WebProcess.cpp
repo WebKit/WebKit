@@ -104,6 +104,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/ResourceLoadObserver.h>
@@ -1760,5 +1761,10 @@ void WebProcess::resetMockMediaDevices()
     MockRealtimeMediaSourceCenter::resetDevices();
 }
 #endif
+
+void WebProcess::clearCurrentModifierStateForTesting()
+{
+    PlatformKeyboardEvent::setCurrentModifierState({ });
+}
 
 } // namespace WebKit

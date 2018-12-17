@@ -2358,4 +2358,9 @@ void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, c
     process.send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);
 }
 
+void WebProcessPool::clearCurrentModifierStateForTesting()
+{
+    sendToAllProcesses(Messages::WebProcess::ClearCurrentModifierStateForTesting());
+}
+
 } // namespace WebKit

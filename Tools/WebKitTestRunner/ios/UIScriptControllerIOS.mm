@@ -400,9 +400,9 @@ static UIKeyModifierFlags parseModifierArray(JSContextRef context, JSValueRef ar
     return modifiers;
 }
 
-static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(const String& hidInputString, const String& uiEventInputString, UIKeyModifierFlags modifierFlags, bool isKeyDown)
+static UIPhysicalKeyboardEvent *createUIPhysicalKeyboardEvent(NSString *hidInputString, NSString *uiEventInputString, UIKeyModifierFlags modifierFlags, UIKeyboardInputFlags inputFlags, bool isKeyDown)
 {
-    auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:(UIKeyboardInputFlags)0];
+    auto* keyboardEvent = [getUIPhysicalKeyboardEventClass() _eventWithInput:uiEventInputString inputFlags:inputFlags];
     keyboardEvent._modifierFlags = modifierFlags;
     auto hidEvent = createHIDKeyEvent(hidInputString, keyboardEvent.timestamp, isKeyDown);
     [keyboardEvent _setHIDEvent:hidEvent.get() keyboard:nullptr];
@@ -422,15 +422,16 @@ void UIScriptController::keyDown(JSStringRef character, JSValueRef modifierArray
     String inputString = toWTFString(toWK(character));
     String uiEventInputString = inputString.length() > 1 ? emptyString() : inputString;
     auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
+    UIKeyboardInputFlags inputFlags = static_cast<UIKeyboardInputFlags>(0);
 
     // Note that UIKit will call -release on the passed UIPhysicalKeyboardEvent.
 
     // Key down
-    auto* keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, true /* isKeyDown */);
+    auto* keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, inputFlags, true /* isKeyDown */);
     [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
 
     // Key up
-    keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, false /* isKeyDown */);
+    keyboardEvent = createUIPhysicalKeyboardEvent(inputString, uiEventInputString, modifierFlags, inputFlags, false /* isKeyDown */);
     [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
 }
 
@@ -932,7 +933,10 @@ void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef identifier)
 
 void UIScriptController::toggleCapsLock(JSValueRef callback)
 {
-    // FIXME: Implement for iOS. See <https://bugs.webkit.org/show_bug.cgi?id=191815>.
+    m_capsLockOn = !m_capsLockOn;
+    auto *keyboardEvent = createUIPhysicalKeyboardEvent(@"capsLock", [NSString string], m_capsLockOn ? UIKeyModifierAlphaShift : 0,
+        kUIKeyboardInputModifierFlagsChanged, m_capsLockOn);
+    [[UIApplication sharedApplication] handleKeyUIEvent:keyboardEvent];
     doAsyncTask(callback);
 }
 

@@ -1,3 +1,23 @@
+2018-12-17  Daniel Bates  <dabates@apple.com>
+
+        Implement UIScriptController::toggleCapsLock() for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=191815
+
+        Reviewed by Andy Estes.
+
+        Add iOS-specific results for some of the tests. We need to continue to skip the caps
+        lock tests on iOS until we have the fix for <rdar://problem/44930119>.
+
+        * fast/forms/password-scrolled-after-caps-lock-toggled.html: Replace input.focus() with
+        UIHelper.activateElement(input) to make it work on iOS and update logic accordingly.
+        Compensate for the fact that one less character than the size of the input is visible in
+        a password field on iOS.
+        * fast/repaint/placeholder-after-caps-lock-hidden.html: Replace input.focus() with
+        UIHelper.activateElement(input) to make it work on iOS and update logic accordingly.
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/fast/forms/password-scrolled-after-caps-lock-toggled-expected.txt: Added.
+        * platform/ios-wk2/fast/repaint/placeholder-after-caps-lock-hidden-expected.txt: Added.
+
 2018-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r233268): Elements animated in from offscreen sometimes don't display

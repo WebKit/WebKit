@@ -183,6 +183,7 @@ enum {
     kHIDUsage_KeyboardComma = 0x36,
     kHIDUsage_KeyboardPeriod = 0x37,
     kHIDUsage_KeyboardSlash = 0x38,
+    kHIDUsage_KeyboardCapsLock = 0x39,
     kHIDUsage_KeyboardF1 = 0x3A,
     kHIDUsage_KeyboardPrintScreen = 0x46,
     kHIDUsage_KeyboardInsert = 0x49,

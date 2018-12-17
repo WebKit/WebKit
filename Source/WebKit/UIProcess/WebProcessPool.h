@@ -467,6 +467,7 @@ public:
     void resetMockMediaDevices();
 
     void sendDisplayConfigurationChangedMessageForTesting();
+    void clearCurrentModifierStateForTesting();
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool enabled) { m_sandboxEnabled = enabled; };
