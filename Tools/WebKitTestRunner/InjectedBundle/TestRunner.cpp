@@ -55,7 +55,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WTR {
 
@@ -814,7 +813,7 @@ static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
         return;
 
     if (callbackMap().contains(index)) {
-        InjectedBundle::singleton().outputText(makeString("FAIL: Tried to install a second TestRunner callback for the same event (id ", index, ")\n\n"));
+        InjectedBundle::singleton().outputText(String::format("FAIL: Tried to install a second TestRunner callback for the same event (id %d)\n\n", index));
         return;
     }
 

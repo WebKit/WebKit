@@ -191,7 +191,7 @@ void LocalAuthenticator::makeCredential()
         weakThis->continueMakeCredentialAfterUserConsented(consent);
     };
     m_connection->getUserConsent(
-        "Allow " + requestData().creationOptions.rp.id + " to create a public key credential for " + requestData().creationOptions.user.name,
+        String::format("Allow %s to create a public key credential for %s", requestData().creationOptions.rp.id.utf8().data(), requestData().creationOptions.user.name.utf8().data()),
         WTFMove(callback));
 #endif // !PLATFORM(IOS_FAMILY)
 }

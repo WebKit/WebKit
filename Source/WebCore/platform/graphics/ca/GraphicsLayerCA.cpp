@@ -52,8 +52,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SystemMemory.h"
@@ -1101,7 +1101,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
             m_contentsLayerPurpose = ContentsLayerPurpose::BackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents color ", m_contentsLayer->layerID()));
+            m_contentsLayer->setName(String::format("contents color %llu", m_contentsLayer->layerID()));
 #else
             m_contentsLayer->setName("contents color");
 #endif
@@ -2555,7 +2555,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsLayer->setName(makeString("contents image ", m_contentsLayer->layerID()));
+            m_contentsLayer->setName(String::format("contents image %llu", m_contentsLayer->layerID()));
 #else
             m_contentsLayer->setName("contents image");
 #endif
@@ -2661,7 +2661,7 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint(FloatPoint());
 #if ENABLE(TREE_DEBUGGING)
-            m_contentsClippingLayer->setName(makeString("contents clipping ", m_contentsClippingLayer->layerID()));
+            m_contentsClippingLayer->setName(String::format("contents clipping %llu", m_contentsClippingLayer->layerID()));
 #else
             m_contentsClippingLayer->setName("contents clipping");
 #endif
@@ -3145,7 +3145,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     for (int internalFilterPropertyIndex = 0; internalFilterPropertyIndex < numAnimatedProperties; ++internalFilterPropertyIndex) {
         bool valuesOK;
         RefPtr<PlatformCAAnimation> caAnimation;
-        String keyPath = makeString("filters.filter_", animationIndex, '.', PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
+        String keyPath = String::format("filters.filter_%d.%s", animationIndex, PlatformCAFilters::animatedFilterPropertyName(filterOp, internalFilterPropertyIndex));
         
         if (isKeyframe) {
             caAnimation = createKeyframeAnimation(animation, keyPath, false);
@@ -3903,7 +3903,7 @@ RefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Platfo
     } else {
         resultLayer = cloneLayer(sourceLayer, cloneLevel);
 #if ENABLE(TREE_DEBUGGING)
-        resultLayer->setName(makeString("clone ", cloneID[0U], " of ", sourceLayer->layerID()));
+        resultLayer->setName(String::format("clone %d of %llu", cloneID[0U], sourceLayer->layerID()));
 #else
         resultLayer->setName("clone of " + m_name);
 #endif

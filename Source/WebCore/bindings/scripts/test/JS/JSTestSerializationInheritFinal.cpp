@@ -263,7 +263,7 @@ void JSTestSerializationInheritFinal::heapSnapshot(JSCell* cell, HeapSnapshotBui
     auto* thisObject = jsCast<JSTestSerializationInheritFinal*>(cell);
     builder.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        builder.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        builder.setLabelForCell(cell, String::format("url %s", thisObject->scriptExecutionContext()->url().string().utf8().data()));
     Base::heapSnapshot(cell, builder);
 }
 

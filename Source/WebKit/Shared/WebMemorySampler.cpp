@@ -32,7 +32,6 @@
 #include <wtf/ProcessID.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -143,7 +142,7 @@ void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sam
 
 void WebMemorySampler::writeHeaders()
 {
-    String processDetails = makeString("Process: ", processName(), " Pid: ", getCurrentProcessID(), '\n');
+    String processDetails = String::format("Process: %s Pid: %d\n", processName().utf8().data(), getCurrentProcessID());
 
     CString utf8String = processDetails.utf8();
     FileSystem::writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());

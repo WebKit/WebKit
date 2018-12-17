@@ -169,7 +169,7 @@ void logMemoryStatisticsAtTimeOfDeath()
             continue;
         String tagName = displayNameForVMTag(i);
         if (!tagName)
-            tagName = makeString("Tag ", i);
+            tagName = String::format("Tag %u", i);
         RELEASE_LOG(MemoryPressure, "%16s: %lu MB", tagName.latin1().data(), dirty / MB);
     }
 #endif

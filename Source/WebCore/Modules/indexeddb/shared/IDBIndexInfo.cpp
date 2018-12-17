@@ -28,8 +28,6 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/text/StringConcatenateNumbers.h>
-
 namespace WebCore {
 
 IDBIndexInfo::IDBIndexInfo()
@@ -52,20 +50,19 @@ IDBIndexInfo IDBIndexInfo::isolatedCopy() const
 }
 
 #if !LOG_DISABLED
-
 String IDBIndexInfo::loggingString(int indent) const
 {
     String indentString;
     for (int i = 0; i < indent; ++i)
         indentString.append(" ");
-    return makeString(indentString, "Index: ", m_name, " (", m_identifier, ") keyPath: ", WebCore::loggingString(m_keyPath), '\n');
+
+    return makeString(indentString, "Index: ", m_name, String::format(" (%" PRIu64 ") keyPath: %s\n", m_identifier, WebCore::loggingString(m_keyPath).utf8().data()));
 }
 
 String IDBIndexInfo::condensedLoggingString() const
 {
-    return makeString("<Idx: ", m_name, " (", m_identifier, "), OS (", m_objectStoreIdentifier, ")>");
+    return String::format("<Idx: %s (%" PRIu64 "), OS (%" PRIu64 ")>", m_name.utf8().data(), m_identifier, m_objectStoreIdentifier);
 }
-
 #endif
 
 } // namespace WebCore

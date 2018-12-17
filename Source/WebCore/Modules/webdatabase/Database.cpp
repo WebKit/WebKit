@@ -107,7 +107,7 @@ static const char* fullyQualifiedInfoTableName()
 
 static String formatErrorMessage(const char* message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
-    return makeString(message, " (", sqliteErrorCode, ' ', sqliteErrorMessage, ')');
+    return String::format("%s (%d %s)", message, sqliteErrorCode, sqliteErrorMessage);
 }
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)

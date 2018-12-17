@@ -78,7 +78,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
 #include <WebKit/WKContextPrivateMac.h>
@@ -2061,11 +2061,11 @@ void TestController::didReceiveAuthenticationChallenge(WKPageRef page, WKAuthent
 
     std::string host = toSTD(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
     int port = WKProtectionSpaceGetPort(protectionSpace);
-    String message = makeString(host.c_str(), ':', port, " - didReceiveAuthenticationChallenge - ", toString(authenticationScheme), " - ");
+    String message = String::format("%s:%d - didReceiveAuthenticationChallenge - %s - ", host.c_str(), port, toString(authenticationScheme));
     if (!m_handlesAuthenticationChallenges)
         message.append("Simulating cancelled authentication sheet\n");
     else
-        message.append("Responding with " + m_authenticationUsername + ":" + m_authenticationPassword + "\n");
+        message.append(String::format("Responding with %s:%s\n", m_authenticationUsername.utf8().data(), m_authenticationPassword.utf8().data()));
     m_currentInvocation->outputText(message);
 
     if (!m_handlesAuthenticationChallenges) {
@@ -2163,7 +2163,8 @@ void TestController::downloadDidReceiveServerRedirectToURL(WKContextRef, WKDownl
 void TestController::downloadDidFail(WKContextRef, WKDownloadRef, WKErrorRef error)
 {
     if (m_shouldLogDownloadCallbacks) {
-        m_currentInvocation->outputText("Download failed.\n"_s);
+        String message = String::format("Download failed.\n");
+        m_currentInvocation->outputText(message);
 
         WKRetainPtr<WKStringRef> errorDomain = adoptWK(WKErrorCopyDomain(error));
         WKRetainPtr<WKStringRef> errorDescription = adoptWK(WKErrorCopyLocalizedDescription(error));

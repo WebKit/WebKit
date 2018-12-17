@@ -38,14 +38,12 @@ IDBGetAllRecordsData IDBGetAllRecordsData::isolatedCopy() const
 }
 
 #if !LOG_DISABLED
-
 String IDBGetAllRecordsData::loggingString() const
 {
     if (indexIdentifier)
-        return makeString("<GetAllRecords: Idx ", indexIdentifier, ", OS ", objectStoreIdentifier, ", ", getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", ", range ", keyRangeData.loggingString(), '>');
-    return makeString("<GetAllRecords: OS ", objectStoreIdentifier, ", ", getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", ", range ", keyRangeData.loggingString(), '>');
+        return String::format("<GetAllRecords: Idx %" PRIu64 ", OS %" PRIu64 ", %s, range %s>", indexIdentifier, objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
+    return String::format("<GetAllRecords: OS %" PRIu64 ", %s, range %s>", objectStoreIdentifier, getAllType == IndexedDB::GetAllType::Keys ? "Keys" : "Values", keyRangeData.loggingString().utf8().data());
 }
-
 #endif
 
 } // namespace WebCore

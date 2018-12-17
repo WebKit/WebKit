@@ -89,7 +89,6 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if OS(WINDOWS)
 #include <direct.h>
@@ -1165,7 +1164,7 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        m_trace.append(makeString("    ", visitor->index(), "   ", visitor->toString(), '\n'));
+        m_trace.append(String::format("    %zu   %s\n", visitor->index(), visitor->toString().utf8().data()));
         return StackVisitor::Continue;
     }
 

@@ -153,7 +153,7 @@ String IDBObjectStoreInfo::loggingString(int indent) const
 
 String IDBObjectStoreInfo::condensedLoggingString() const
 {
-    return makeString("<OS: ", m_name, " (", m_identifier, ")>");
+    return String::format("<OS: %s (%" PRIu64 ")>", m_name.utf8().data(), m_identifier);
 }
 
 #endif

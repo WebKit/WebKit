@@ -45,7 +45,6 @@
 #include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -202,7 +201,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
         // If there is no Records table at all, create it and then bail.
         if (sqliteResult == SQLITE_DONE) {
             if (!m_database->executeCommand(recordsTableSchema()))
-                return makeString("Could not create Records table in database (", m_database->lastError(), ") - ", m_database->lastErrorMsg());
+                return String::format("Could not create Records table in database (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return { };
         }
 
@@ -359,7 +358,7 @@ String RegistrationDatabase::importRecords()
 
     SQLiteStatement sql(*m_database, "SELECT * FROM Records;"_s);
     if (sql.prepare() != SQLITE_OK)
-        return makeString("Failed to prepare statement to retrieve registrations from records table (", m_database->lastError(), ") - ", m_database->lastErrorMsg());
+        return String::format("Failed to prepare statement to retrieve registrations from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
 
     int result = sql.step();
 
@@ -409,7 +408,7 @@ String RegistrationDatabase::importRecords()
     }
 
     if (result != SQLITE_DONE)
-        return makeString("Failed to import at least one registration from records table (", m_database->lastError(), ") - ", m_database->lastErrorMsg());
+        return String::format("Failed to import at least one registration from records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
 
     return { };
 }

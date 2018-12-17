@@ -1,3 +1,16 @@
+2018-12-17  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r239254.
+
+        This broke the Windows 10 Debug build
+
+        Reverted changeset:
+
+        "Replace many uses of String::format with more type-safe
+        alternatives"
+        https://bugs.webkit.org/show_bug.cgi?id=192742
+        https://trac.webkit.org/changeset/239254
+
 2018-12-17  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Remove the redundant m_scheduledMicrotask from WebAnimation

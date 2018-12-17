@@ -30,15 +30,12 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ProcessPrivilege.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 #if PLATFORM(COCOA)
 #include "PublicSuffix.h"
 #include "ResourceRequest.h"
 #endif
-
 #if USE(CFURLCONNECTION)
-
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CookiesStrategy.h"
@@ -50,6 +47,7 @@
 #include <wtf/SoftLinking.h>
 #include <wtf/URL.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/text/WTFString.h>
 
 enum {
     CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3
@@ -63,15 +61,18 @@ struct CFTypeTrait<ClassName##Ref> { \
 static inline CFTypeID typeID() { return ClassName##GetTypeID(); } \
 };
 
+#if COMPILER(CLANG)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+#endif
 DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
+#if COMPILER(CLANG)
 ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
 #undef DECLARE_CF_TYPE_TRAIT
-
 } // namespace WTF
 
-#endif //  USE(CFURLCONNECTION)
+#endif
 
 namespace WebCore {
 
@@ -131,7 +132,6 @@ static std::unique_ptr<NetworkStorageSession>& defaultNetworkStorageSession()
 }
 
 #if !PLATFORM(COCOA)
-
 static CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, CFURLStorageSessionRef defaultStorageSession)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
@@ -165,13 +165,12 @@ static CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier
 
     return storageSession;
 }
-
 #endif
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
     // Session name should be short enough for shared memory region name to be under the limit, otehrwise sandbox rules won't work (see <rdar://problem/13642852>).
-    String sessionName = makeString("WebKit Test-", getCurrentProcessID());
+    String sessionName = String::format("WebKit Test-%u", static_cast<uint32_t>(getCurrentProcessID()));
 
     RetainPtr<CFURLStorageSessionRef> session;
 #if PLATFORM(COCOA)
@@ -256,15 +255,17 @@ void NetworkStorageSession::setStorageAccessAPIEnabled(bool enabled)
 }
 
 #if !PLATFORM(COCOA)
-
 void NetworkStorageSession::setCookies(const Vector<Cookie>&, const URL&, const URL&)
 {
     // FIXME: Implement this. <https://webkit.org/b/156298>
 }
-
 #endif
 
+} // namespace WebCore
+
 #if USE(CFURLCONNECTION)
+
+namespace WebCore {
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
@@ -517,6 +518,6 @@ void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime)
 {
 }
 
-#endif // USE(CFURLCONNECTION)
-
 } // namespace WebCore
+
+#endif // USE(CFURLCONNECTION)

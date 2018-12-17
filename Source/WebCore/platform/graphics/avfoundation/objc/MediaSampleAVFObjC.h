@@ -84,7 +84,7 @@ protected:
     }
     MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
         : m_sample(sample)
-        , m_id(AtomicString::number(trackID))
+        , m_id(String::format("%d", trackID))
     {
     }
     MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)

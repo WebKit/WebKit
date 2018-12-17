@@ -157,7 +157,7 @@ private:
 
     String mergeId() final
     {
-        return "SetStyleSheetText " + m_styleSheet->id();
+        return String::format("SetStyleSheetText %s", m_styleSheet->id().utf8().data());
     }
 
     void merge(std::unique_ptr<Action> action) override
@@ -198,7 +198,7 @@ public:
     String mergeId() override
     {
         ASSERT(m_styleSheet->id() == m_cssId.styleSheetId());
-        return makeString("SetStyleText ", m_styleSheet->id(), ':', m_cssId.ordinal());
+        return String::format("SetStyleText %s:%u", m_styleSheet->id().utf8().data(), m_cssId.ordinal());
     }
 
     void merge(std::unique_ptr<Action> action) override

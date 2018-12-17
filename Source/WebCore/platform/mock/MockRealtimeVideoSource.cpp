@@ -44,7 +44,7 @@
 #include "RealtimeMediaSourceSettings.h"
 #include <math.h>
 #include <wtf/UUID.h>
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -367,12 +367,12 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 
     auto size = this->size();
     statsLocation.move(0, m_statsFontSize);
-    string = makeString("Size: ", size.width(), " x ", size.height());
+    string = String::format("Size: %u x %u", size.width(), size.height());
     context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
     if (mockCamera()) {
         statsLocation.move(0, m_statsFontSize);
-        string = makeString("Preset size: ", captureSize.width(), " x ", captureSize.height());
+        string = String::format("Preset size: %u x %u", captureSize.width(), captureSize.height());
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
 
         const char* camera;
@@ -393,7 +393,7 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
             camera = "Unknown";
             break;
         }
-        string = makeString("Camera: ", camera);
+        string = String::format("Camera: %s", camera);
         statsLocation.move(0, m_statsFontSize);
         context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
     } else if (!name().isNull()) {

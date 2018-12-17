@@ -49,7 +49,7 @@ public:
 private:
     MockMediaSample(const MockSampleBox& box)
         : m_box(box)
-        , m_id(String::number(box.trackID()))
+        , m_id(String::format("%d", box.trackID()))
     {
     }
 

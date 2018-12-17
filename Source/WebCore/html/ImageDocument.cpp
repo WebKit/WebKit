@@ -49,7 +49,6 @@
 #include "RenderElement.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -274,7 +273,7 @@ void ImageDocument::imageUpdated()
 #if PLATFORM(IOS_FAMILY)
         FloatSize screenSize = page()->chrome().screenSize();
         if (imageSize.width() > screenSize.width())
-            processViewport(makeString("width=", imageSize.width().toInt(), ",viewport-fit=cover"), ViewportArguments::ImageDocument);
+            processViewport(String::format("width=%u,viewport-fit=cover", static_cast<unsigned>(imageSize.width().toInt())), ViewportArguments::ImageDocument);
 
         if (page())
             page()->chrome().client().imageOrMediaDocumentSizeChanged(IntSize(imageSize.width(), imageSize.height()));

@@ -31,7 +31,6 @@
 #include "IDBDatabase.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
@@ -101,15 +100,13 @@ IDBCursorInfo IDBCursorInfo::isolatedCopy() const
 }
 
 #if !LOG_DISABLED
-
 String IDBCursorInfo::loggingString() const
 {
     if (m_source == IndexedDB::CursorSource::Index)
-        return makeString("<Crsr: ", m_cursorIdentifier.loggingString(), " Idx ", m_sourceIdentifier, ", OS ", m_objectStoreIdentifier, ", tx ", m_transactionIdentifier.loggingString(), '>');
+        return String::format("<Crsr: %s Idx %" PRIu64 ", OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_sourceIdentifier, m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
 
-    return makeString("<Crsr: ", m_cursorIdentifier.loggingString(), " OS ", m_objectStoreIdentifier, ", tx ", m_transactionIdentifier.loggingString(), '>');
+    return String::format("<Crsr: %s OS %" PRIu64 ", tx %s>", m_cursorIdentifier.loggingString().utf8().data(), m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
 }
-
 #endif
 
 } // namespace WebCore
