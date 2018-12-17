@@ -88,6 +88,7 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<cons
 {
     ASSERT(buffers.size() && offsets.size() == buffers.size());
     // FIXME: Only worry about the first buffer for now, and treat startSlot as the index.
+    // FIXME: Replace with MTLRenderPassEncoder::setVertexBuffers.
     [m_platformRenderPassEncoder setVertexBuffer:buffers[0]->platformBuffer() offset:offsets[0] atIndex:index];
 }
 

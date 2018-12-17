@@ -3222,6 +3222,8 @@ JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
+JSWebGPUBindGroupLayoutBinding.cpp
+JSWebGPUBindGroupLayoutDescriptor.cpp
 JSWebGPUBuffer.cpp
 JSWebGPUBufferDescriptor.cpp
 JSWebGPUBufferUsage.cpp
@@ -3243,6 +3245,7 @@ JSWebGPURenderPipeline.cpp
 JSWebGPURenderPipelineDescriptor.cpp
 JSWebGPUShaderModule.cpp
 JSWebGPUShaderModuleDescriptor.cpp
+JSWebGPUShaderStageBit.cpp
 JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureFormatEnum.cpp

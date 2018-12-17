@@ -375,6 +375,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutBinding.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBufferUsage.idl \
@@ -396,6 +398,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPURenderingContext.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModule.idl \
     $(WebCore)/Modules/webgpu/WebGPUShaderModuleDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
     $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
     $(WebCore)/Modules/webgpu/WebGPUTextureFormatEnum.idl \

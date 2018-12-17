@@ -1,3 +1,15 @@
+2018-12-17  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPUBindGroupLayoutDescriptor and its supporting dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=192726
+
+        Reviewed by Myles C. Maxfield.
+
+        Add simple test to ensure a WebGPUBindGroupLayoutDescriptor can be created.
+
+        * webgpu/bind-group-layouts-expected.txt: Added.
+        * webgpu/bind-group-layouts.html: Added.
+
 2018-12-17  Zalan Bujtas  <zalan@apple.com>
 
         Reproducible ASSERTion failure when toggling layer borders with find-in-page up

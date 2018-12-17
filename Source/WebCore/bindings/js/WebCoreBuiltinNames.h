@@ -201,6 +201,7 @@ namespace WebCore {
     macro(WebGPURenderPassEncoder) \
     macro(WebGPURenderPipeline) \
     macro(WebGPUShaderModule) \
+    macro(WebGPUShaderStageBit) \
     macro(WebGPUSwapChain) \
     macro(WebGPUTexture) \
     macro(WebGPUTextureView) \

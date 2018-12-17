@@ -458,6 +458,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUAdapterDescriptor.idl
+    Modules/webgpu/WebGPUBindGroupLayoutBinding.idl
+    Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/WebGPUBuffer.idl
     Modules/webgpu/WebGPUBufferDescriptor.idl
     Modules/webgpu/WebGPUBufferUsage.idl
@@ -479,6 +481,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPURenderingContext.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl
+    Modules/webgpu/WebGPUShaderStageBit.idl
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureFormatEnum.idl

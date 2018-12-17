@@ -1,3 +1,32 @@
+2018-12-17  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement WebGPUBindGroupLayoutDescriptor and its supporting dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=192726
+
+        Reviewed by Myles C. Maxfield.
+
+        Test: webgpu/bind-group-layouts.html
+        Implement the WebGPUBindGroupLayoutDescriptor struct and its sub-structs:
+        * Modules/streams/WebGPUBindGroupLayoutDescriptor.h: Added.
+        * Modules/streams/WebGPUBindGroupLayoutDescriptor.idl: Added.
+        * Modules/webgpu/WebGPUBindGroupLayoutBinding.h: Added.
+        * Modules/webgpu/WebGPUBindGroupLayoutBinding.idl: Added.
+        * Modules/webgpu/WebGPUShaderStageBit.h: Added.
+        * Modules/webgpu/WebGPUShaderStageBit.idl: Added.
+        * platform/graphics/gpu/GPUBindGroupLayoutBinding.h: Added.
+        * platform/graphics/gpu/GPUBindGroupLayoutDescriptor.h: Added.
+
+        Add the new symbols and files to the project:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Small FIXME update for later:
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+
 2018-12-17  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed build fix.
