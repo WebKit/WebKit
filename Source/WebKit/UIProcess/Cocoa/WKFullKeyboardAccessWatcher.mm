@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,38 @@
 #import "config.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
+#import "AccessibilitySupportSPI.h"
 #import "WebProcessPool.h"
 
-NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
-const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
+#if PLATFORM(MAC)
+static NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
+static const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
+#endif
 
 @implementation WKFullKeyboardAccessWatcher
+
+static inline BOOL platformIsFullKeyboardAccessEnabled()
+{
+    BOOL fullKeyboardAccessEnabled = NO;
+#if PLATFORM(MAC)
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
+    
+    Boolean keyExistsAndHasValidFormat;
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
+    if (keyExistsAndHasValidFormat) {
+        // The keyboard access mode has two bits:
+        // Bit 0 is set if user can set the focus to menus, the dock, and various windows using the keyboard.
+        // Bit 1 is set if controls other than text fields are included in the tab order (WebKit also always includes lists).
+        fullKeyboardAccessEnabled = (mode & 0x2);
+    }
+#elif PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+    fullKeyboardAccessEnabled = _AXSFullKeyboardAccessEnabled();
+#endif
+    
+    return fullKeyboardAccessEnabled;
+}
 
 - (void)notifyAllProcessPools
 {
@@ -45,17 +69,8 @@ const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 {
     BOOL oldValue = fullKeyboardAccessEnabled;
 
-    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
-
-    Boolean keyExistsAndHasValidFormat;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, kCFPreferencesCurrentApplication, &keyExistsAndHasValidFormat);
-    if (keyExistsAndHasValidFormat) {
-        // The keyboard access mode has two bits:
-        // Bit 0 is set if user can set the focus to menus, the dock, and various windows using the keyboard.
-        // Bit 1 is set if controls other than text fields are included in the tab order (WebKit also always includes lists).
-        fullKeyboardAccessEnabled = (mode & 0x2);
-    }
-
+    fullKeyboardAccessEnabled = platformIsFullKeyboardAccessEnabled();
+    
     if (fullKeyboardAccessEnabled != oldValue)
         [self notifyAllProcessPools];
 }
@@ -68,9 +83,19 @@ const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 
     [self retrieveKeyboardUIModeFromPreferences:nil];
 
-    [[NSDistributedNotificationCenter defaultCenter] 
-        addObserver:self selector:@selector(retrieveKeyboardUIModeFromPreferences:) 
-        name:KeyboardUIModeDidChangeNotification object:nil];
+    NSNotificationCenter *notificationCenter = nil;
+    NSString *notitificationName = nil;
+    
+#if PLATFORM(MAC)
+    notificationCenter = [NSDistributedNotificationCenter defaultCenter];
+    notitificationName = KeyboardUIModeDidChangeNotification;
+#elif PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+    notificationCenter = [NSNotificationCenter defaultCenter];
+    notitificationName = (NSString *)kAXSFullKeyboardAccessEnabledNotification;
+#endif
+    
+    if (notitificationName)
+        [notificationCenter addObserver:self selector:@selector(retrieveKeyboardUIModeFromPreferences:) name:notitificationName object:nil];
 
     return self;
 }
@@ -83,4 +108,4 @@ const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
 
 @end
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)

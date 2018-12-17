@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFullKeyboardAccessWatcher_h
-#define WKFullKeyboardAccessWatcher_h
+#pragma once
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 @interface WKFullKeyboardAccessWatcher : NSObject {
 @private
@@ -37,6 +36,4 @@
 
 @end;
 
-#endif // PLATFORM(MAC)
-
-#endif // WKFullKeyboardAccessWatcher_h
+#endif // PLATFORM(COCOA)

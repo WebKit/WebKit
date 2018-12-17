@@ -256,6 +256,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/UIDelegate.mm
     UIProcess/Cocoa/VersionChecks.mm
     UIProcess/Cocoa/ViewGestureController.cpp
+    UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
     UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
     UIProcess/Cocoa/WebPageProxyCocoa.mm
@@ -296,7 +297,6 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
     UIProcess/mac/ViewGestureControllerMac.mm
     UIProcess/mac/ViewSnapshotStore.mm
-    UIProcess/mac/WKFullKeyboardAccessWatcher.mm
     UIProcess/mac/WKFullScreenWindowController.mm
     UIProcess/mac/WKImmediateActionController.mm
     UIProcess/mac/WKInspectorViewController.mm

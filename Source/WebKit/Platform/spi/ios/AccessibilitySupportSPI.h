@@ -38,5 +38,7 @@ extern Boolean _AXSKeyRepeatEnabled();
 extern CFTimeInterval _AXSKeyRepeatDelay();
 extern CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
 extern Boolean _AXSWebAccessibilityEventsEnabled();
+extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
+extern Boolean _AXSFullKeyboardAccessEnabled();
 
 WTF_EXTERN_C_END
