@@ -1,3 +1,17 @@
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Fix stale assertion in attemptToForceStringArrayModeByToStringConversion().
+        https://bugs.webkit.org/show_bug.cgi?id=192770
+        <rdar://problem/46449037>
+
+        Reviewed by Keith Miller.
+
+        This assertion was added before Array::OriginalNonArray was introduced.  It just
+        needs to be updated to allow for Array::OriginalNonArray.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+
 2018-12-17  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r239254.
