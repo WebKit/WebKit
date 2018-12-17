@@ -89,8 +89,8 @@ private:
             static LayoutUnit marginBefore(const LayoutState&, const Box&);
             static LayoutUnit marginAfter(const LayoutState&, const Box&);
 
-            static bool isMarginAfterCollapsedWithParent(const Box&);
-            static bool isMarginBeforeCollapsedWithParentMarginAfter(const Box&);
+            static bool marginBeforeCollapsesWithParentMarginAfter(const Box&);
+            static bool marginAfterCollapsesWithParentMarginAfter(const Box&);
 
         private:
             static LayoutUnit collapsedMarginAfterFromLastChild(const LayoutState&, const Box&);
@@ -102,7 +102,10 @@ private:
             static LayoutUnit collapsedMarginBeforeFromFirstChild(const LayoutState&, const Box&);
             static LayoutUnit nonCollapsedMarginBefore(const LayoutState&, const Box&);
 
-            static bool isMarginBeforeCollapsedWithParent(const LayoutState&, const Box&);
+            static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
+            static bool marginBeforeCollapsesWithPreviousSibling(const Box&);
+            static bool marginAfterCollapsesWithNextSibling(const Box&);
+            static bool marginsCollapseThrough(const Box&);
         };
 
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });

@@ -1,3 +1,37 @@
+2018-12-17  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Unify margin collapse function naming
+        https://bugs.webkit.org/show_bug.cgi?id=192747
+
+        Reviewed by Antti Koivisto.
+
+        Rename some margin collapse getters.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::computedNonCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::nonCollapsedMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginBeforeFromFirstChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfterFromLastChild):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginAfter):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithNextSibling):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfter):
+        (WebCore::Layout::isMarginBeforeCollapsedWithSibling): Deleted.
+        (WebCore::Layout::isMarginAfterCollapsedWithSibling): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParent): Deleted.
+        (WebCore::Layout::isMarginAfterCollapsedThrough): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginAfterCollapsedWithParent): Deleted.
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::isMarginBeforeCollapsedWithParentMarginAfter): Deleted.
+
 2018-12-17  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: loop variable is copied but only used as const reference in WebCore, WebKit, Tools
