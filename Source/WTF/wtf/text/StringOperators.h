@@ -112,6 +112,12 @@ inline StringAppend<const char*, AtomicString> operator+(const char* string1, co
     return StringAppend<const char*, AtomicString>(string1, string2);
 }
 
+template<typename T, typename = std::enable_if_t<std::is_same<std::decay_t<T>, StringView>::value>>
+inline StringAppend<const char*, StringView> operator+(const char* string1, T string2)
+{
+    return StringAppend<const char*, StringView>(string1, string2);
+}
+
 template<typename U, typename V>
 inline StringAppend<const char*, StringAppend<U, V>> operator+(const char* string1, const StringAppend<U, V>& string2)
 {
@@ -126,6 +132,12 @@ inline StringAppend<const UChar*, String> operator+(const UChar* string1, const 
 inline StringAppend<const UChar*, AtomicString> operator+(const UChar* string1, const AtomicString& string2)
 {
     return StringAppend<const UChar*, AtomicString>(string1, string2);
+}
+
+template<typename T, typename = std::enable_if_t<std::is_same<std::decay_t<T>, StringView>::value>>
+inline StringAppend<const UChar*, StringView> operator+(const UChar* string1, T string2)
+{
+    return StringAppend<const UChar*, StringView>(string1, string2);
 }
 
 template<typename U, typename V>
@@ -144,6 +156,12 @@ inline StringAppend<ASCIILiteral, AtomicString> operator+(const ASCIILiteral& st
     return StringAppend<ASCIILiteral, AtomicString>(string1, string2);
 }
 
+template<typename T, typename = std::enable_if_t<std::is_same<std::decay_t<T>, StringView>::value>>
+inline StringAppend<ASCIILiteral, StringView> operator+(const ASCIILiteral& string1, T string2)
+{
+    return StringAppend<ASCIILiteral, StringView>(string1, string2);
+}
+
 template<typename U, typename V>
 inline StringAppend<ASCIILiteral, StringAppend<U, V>> operator+(const ASCIILiteral& string1, const StringAppend<U, V>& string2)
 {
@@ -154,6 +172,12 @@ template<typename T>
 StringAppend<String, T> operator+(const String& string1, T string2)
 {
     return StringAppend<String, T>(string1, string2);
+}
+
+template<typename T, typename U, typename = std::enable_if_t<std::is_same<std::decay_t<T>, StringView>::value>>
+StringAppend<StringView, U> operator+(T string1, U string2)
+{
+    return StringAppend<StringView, U>(string1, string2);
 }
 
 template<typename U, typename V, typename W>
