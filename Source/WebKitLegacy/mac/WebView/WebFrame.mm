@@ -1733,7 +1733,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     id previousMetadata = nil;
     
     for (Node* node = root; node; node = NodeTraversal::next(*node)) {
-        auto markers = document->markers().markersFor(node);
+        auto markers = document->markers().markersFor(*node);
         for (auto* marker : markers) {
 
             if (marker->type() != DocumentMarker::DictationResult)

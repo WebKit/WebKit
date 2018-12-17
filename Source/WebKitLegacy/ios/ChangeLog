@@ -1,3 +1,11 @@
+2018-12-17  Zalan Bujtas  <zalan@apple.com>
+
+        Unreviewed build fix.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]):
+
 2018-12-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn WritingDirection into an enum class
