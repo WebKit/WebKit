@@ -338,7 +338,7 @@ bool WebVTTParser::checkAndStoreRegion(const String& line)
     if (!m_currentRegion->id().isEmpty()) {
         // If the text track list of regions regions contains a region
         // with the same region identifier value as region, remove that region.
-        for (auto region : m_regionList) {
+        for (const auto& region : m_regionList) {
             if (region->id() == m_currentRegion->id()) {
                 m_regionList.removeFirst(region);
                 break;

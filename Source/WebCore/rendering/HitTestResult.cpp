@@ -682,7 +682,7 @@ void HitTestResult::append(const HitTestResult& other, const HitTestRequest& req
 
     if (other.m_listBasedTestResult) {
         NodeSet& set = mutableListBasedTestResult();
-        for (auto node : *other.m_listBasedTestResult)
+        for (const auto& node : *other.m_listBasedTestResult)
             set.add(node.get());
     }
 }

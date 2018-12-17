@@ -406,7 +406,7 @@ Vector<RefPtr<Element>> TreeScope::elementsFromPoint(double clientX, double clie
     documentScope().renderView()->hitTest(request, result);
 
     Node* lastNode = nullptr;
-    for (auto listBasedNode : result.listBasedTestResult()) {
+    for (const auto& listBasedNode : result.listBasedTestResult()) {
         Node* node = listBasedNode.get();
         node = &retargetToScope(*node);
         while (!is<Element>(*node)) {

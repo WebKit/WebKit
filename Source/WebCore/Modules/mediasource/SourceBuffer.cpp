@@ -739,13 +739,13 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
 #endif
 
     PlatformTimeRanges erasedRanges;
-    for (auto sampleIt : samples) {
+    for (const auto& sampleIt : samples) {
         const DecodeOrderSampleMap::KeyType& decodeKey = sampleIt.first;
 #if !LOG_DISABLED
         size_t startBufferSize = trackBuffer.samples.sizeInBytes();
 #endif
 
-        RefPtr<MediaSample>& sample = sampleIt.second;
+        const RefPtr<MediaSample>& sample = sampleIt.second;
         LOG(MediaSource, "SourceBuffer::%s(%p) - removing sample(%s)", logPrefix, buffer, toString(*sampleIt.second).utf8().data());
 
         // Remove the erased samples from the TrackBuffer sample map.

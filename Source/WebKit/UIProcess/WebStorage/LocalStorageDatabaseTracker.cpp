@@ -85,7 +85,7 @@ void LocalStorageDatabaseTracker::deleteDatabaseWithOrigin(const SecurityOriginD
 void LocalStorageDatabaseTracker::deleteAllDatabases()
 {
     auto paths = FileSystem::listDirectory(m_localStorageDirectory, "*.localstorage");
-    for (auto path : paths) {
+    for (const auto& path : paths) {
         SQLiteFileSystem::deleteDatabaseFile(path);
 
         // FIXME: Call out to the client.
@@ -118,7 +118,7 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::origins() const
     Vector<SecurityOriginData> databaseOrigins;
     auto paths = FileSystem::listDirectory(m_localStorageDirectory, "*.localstorage");
     
-    for (auto path : paths) {
+    for (const auto& path : paths) {
         auto filename = FileSystem::pathGetFileName(path);
         auto originIdentifier = filename.substring(0, filename.length() - strlen(".localstorage"));
         auto origin = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
@@ -137,7 +137,7 @@ Vector<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker::
     auto databaseOrigins = origins();
     result.reserveInitialCapacity(databaseOrigins.size());
 
-    for (auto origin : databaseOrigins) {
+    for (const auto& origin : databaseOrigins) {
         String path = databasePath(origin);
 
         OriginDetails details;

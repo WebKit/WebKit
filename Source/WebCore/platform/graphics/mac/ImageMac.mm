@@ -88,7 +88,7 @@ RetainPtr<CFDataRef> BitmapImage::tiffRepresentation(const Vector<NativeImagePtr
     if (!destination)
         return nullptr;
 
-    for (auto nativeImage : nativeImages)
+    for (const auto& nativeImage : nativeImages)
         CGImageDestinationAddImage(destination.get(), nativeImage.get(), 0);
 
     CGImageDestinationFinalize(destination.get());

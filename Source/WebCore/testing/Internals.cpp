@@ -1071,7 +1071,7 @@ Vector<Internals::AcceleratedAnimation> Internals::acceleratedAnimationsForEleme
         return { };
 
     Vector<Internals::AcceleratedAnimation> animations;
-    for (auto animationAsPair : element.document().timeline().acceleratedAnimationsForElement(element))
+    for (const auto& animationAsPair : element.document().timeline().acceleratedAnimationsForElement(element))
         animations.append({ animationAsPair.first, animationAsPair.second });
     return animations;
 }

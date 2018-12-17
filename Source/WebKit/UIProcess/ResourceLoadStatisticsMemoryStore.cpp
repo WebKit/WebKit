@@ -228,7 +228,7 @@ void ResourceLoadStatisticsMemoryStore::removeDataRecords(CompletionHandler<void
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_activePluginTokens.clear();
-    for (auto plugin : PluginProcessManager::singleton().pluginProcesses())
+    for (const auto& plugin : PluginProcessManager::singleton().pluginProcesses())
         m_activePluginTokens.add(plugin->pluginProcessToken());
 #endif
 
@@ -877,7 +877,7 @@ bool ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords() const
         return false;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    for (auto plugin : PluginProcessManager::singleton().pluginProcesses()) {
+    for (const auto& plugin : PluginProcessManager::singleton().pluginProcesses()) {
         if (!m_activePluginTokens.contains(plugin->pluginProcessToken()))
             return true;
     }

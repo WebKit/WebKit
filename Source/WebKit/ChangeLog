@@ -1,3 +1,40 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: loop variable is copied but only used as const reference in WebCore, WebKit, Tools
+        <https://webkit.org/b/192751>
+        <rdar://problem/46771623>
+
+        Reviewed by Daniel Bates.
+
+        Change loop variables to const references to avoid unnecessary
+        copies.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::~WebSWServerConnection):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toNSErrors):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setFilesToSelectForFileUpload):
+        (WebKit::WebAutomationSession::performKeyboardInteractions):
+        (WebKit::WebAutomationSession::performInteractionSequence):
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcess):
+        * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveDataRecords const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::serializedAttachmentDataForIdentifiers):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteAllDatabases):
+        (WebKit::LocalStorageDatabaseTracker::origins const):
+        (WebKit::LocalStorageDatabaseTracker::originDetails):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_shouldAttachDrawingAreaOnPageTransition):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired):
+
 2018-12-17  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

@@ -134,7 +134,7 @@ void InspectorTimelineAgent::setInstruments(ErrorString& errorString, const JSON
     Vector<Protocol::Timeline::Instrument> newInstruments;
     newInstruments.reserveCapacity(instruments.length());
 
-    for (auto instrumentValue : instruments) {
+    for (const auto& instrumentValue : instruments) {
         String enumValueString;
         if (!instrumentValue->asString(enumValueString)) {
             errorString = "Unexpected type in instruments list, should be string"_s;

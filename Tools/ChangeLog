@@ -1,3 +1,17 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: loop variable is copied but only used as const reference in WebCore, WebKit, Tools
+        <https://webkit.org/b/192751>
+        <rdar://problem/46771623>
+
+        Reviewed by Daniel Bates.
+
+        Change loop variables to const references to avoid unnecessary
+        copies.
+
+        * DumpRenderTree/mac/DumpRenderTreePasteboard.mm:
+        (-[LocalPasteboard pasteboardItems]):
+
 2018-12-17  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

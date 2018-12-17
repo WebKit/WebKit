@@ -1,3 +1,65 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: loop variable is copied but only used as const reference in WebCore, WebKit, Tools
+        <https://webkit.org/b/192751>
+        <rdar://problem/46771623>
+
+        Reviewed by Daniel Bates.
+
+        Change loop variables to const references to avoid unnecessary
+        copies.
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::objectStoreIdentifiers):
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::IDBDatabaseInfo):
+        (WebCore::IDBDatabaseInfo::loggingString const):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::removeSamplesFromTrackBuffer):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::targetElementForActiveDescendant const):
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::headerObject):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::computedNeedsForcedLayout):
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::importJwk):
+        (WebCore::CryptoKeyRSA::exportJwk const):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::OrderedNamedLinesCollector::appendLines const):
+        * dom/DataTransfer.cpp:
+        (WebCore::readURLsFromPasteboardAsString):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::elementsFromPoint):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::checkAndStoreRegion):
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::setInstruments):
+        * page/Page.cpp:
+        (WebCore::Page::updateIntersectionObservations):
+        * page/TextIndicator.cpp:
+        (WebCore::estimatedBackgroundColorForRange):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::computeLayoutDependency):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::displayWasUpdated):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::moveOrCopyAnimations):
+        (WebCore::GraphicsLayerCA::updateAnimations):
+        (WebCore::GraphicsLayerCA::isRunningTransformAnimation const):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::BitmapImage::tiffRepresentation):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::append):
+        * testing/Internals.cpp:
+        (WebCore::Internals::acceleratedAnimationsForElement):
+
 2018-12-17  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI

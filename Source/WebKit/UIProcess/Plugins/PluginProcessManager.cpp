@@ -123,7 +123,7 @@ void PluginProcessManager::deleteWebsiteDataForHostNames(const PluginModuleInfo&
 
 PluginProcessProxy* PluginProcessManager::getPluginProcess(uint64_t pluginProcessToken)
 {
-    for (auto pluginProcess : m_pluginProcesses) {
+    for (const auto& pluginProcess : m_pluginProcesses) {
         if (pluginProcess->pluginProcessToken() == pluginProcessToken)
             return pluginProcess.get();
     }

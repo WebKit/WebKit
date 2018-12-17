@@ -135,7 +135,7 @@ AccessibilityObject* AccessibilityTableRow::headerObject()
     // Verify that the row header is not part of an entire row of headers.
     // In that case, it is unlikely this is a row header.
     bool allHeadersInRow = true;
-    for (auto cell : rowChildren) {
+    for (const auto& cell : rowChildren) {
         if (cell->node() && !cell->node()->hasTagName(thTag)) {
             allHeadersInRow = false;
             break;

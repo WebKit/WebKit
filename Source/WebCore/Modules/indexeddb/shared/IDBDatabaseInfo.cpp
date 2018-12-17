@@ -47,7 +47,7 @@ IDBDatabaseInfo::IDBDatabaseInfo(const IDBDatabaseInfo& other, IsolatedCopyTag)
     , m_version(other.m_version)
     , m_maxObjectStoreID(other.m_maxObjectStoreID)
 {
-    for (auto entry : other.m_objectStoreMap)
+    for (const auto& entry : other.m_objectStoreMap)
         m_objectStoreMap.set(entry.key, entry.value.isolatedCopy());
 }
 
@@ -164,7 +164,7 @@ String IDBDatabaseInfo::loggingString() const
     builder.appendLiteral(" version ");
     builder.appendNumber(m_version);
     builder.append('\n');
-    for (auto objectStore : m_objectStoreMap.values()) {
+    for (const auto& objectStore : m_objectStoreMap.values()) {
         builder.append(objectStore.loggingString(1));
         builder.append('\n');
     }

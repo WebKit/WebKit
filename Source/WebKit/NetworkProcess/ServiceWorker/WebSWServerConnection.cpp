@@ -71,7 +71,7 @@ WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& 
 WebSWServerConnection::~WebSWServerConnection()
 {
     NetworkProcess::singleton().unregisterSWServerConnection(*this);
-    for (auto keyValue : m_clientOrigins)
+    for (const auto& keyValue : m_clientOrigins)
         server().unregisterServiceWorkerClient(keyValue.value, keyValue.key);
 }
 

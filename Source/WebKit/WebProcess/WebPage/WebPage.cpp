@@ -616,7 +616,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 #endif
 
-    for (auto iterator : parameters.urlSchemeHandlers)
+    for (const auto& iterator : parameters.urlSchemeHandlers)
         registerURLSchemeHandler(iterator.value, iterator.key);
 
     m_userContentController->addUserContentWorlds(parameters.userContentWorlds);

@@ -92,7 +92,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     }
 
     Vector<CryptoKeyRSAComponents::PrimeInfo> otherPrimeInfos;
-    for (auto value : keyData.oth.value()) {
+    for (const auto& value : keyData.oth.value()) {
         CryptoKeyRSAComponents::PrimeInfo info;
         if (!WTF::base64URLDecode(value.r, info.primeFactor))
             return nullptr;
@@ -137,7 +137,7 @@ JsonWebKey CryptoKeyRSA::exportJwk() const
         return result;
 
     Vector<RsaOtherPrimesInfo> oth;
-    for (auto info : rsaComponents->otherPrimeInfos()) {
+    for (const auto& info : rsaComponents->otherPrimeInfos()) {
         RsaOtherPrimesInfo otherInfo;
         otherInfo.r = base64URLEncode(info.primeFactor);
         otherInfo.d = base64URLEncode(info.factorCRTExponent);

@@ -517,7 +517,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << static_cast<uint64_t>(m_changedLayers.size());
 
-    for (RefPtr<PlatformCALayerRemote> layer : m_changedLayers) {
+    for (const auto& layer : m_changedLayers) {
         encoder << layer->layerID();
         encoder << layer->properties();
     }

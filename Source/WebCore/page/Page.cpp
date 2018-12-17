@@ -1263,7 +1263,7 @@ void Page::addDocumentNeedingIntersectionObservationUpdate(Document& document)
 void Page::updateIntersectionObservations()
 {
     m_intersectionObservationUpdateTimer.stop();
-    for (auto document : m_documentsNeedingIntersectionObservationUpdate) {
+    for (const auto& document : m_documentsNeedingIntersectionObservationUpdate) {
         if (document)
             document->updateIntersectionObservations();
     }

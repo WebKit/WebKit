@@ -8164,7 +8164,7 @@ void WebPageProxy::invalidateAllAttachments()
 
 void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers, Vector<WebCore::SerializedAttachmentData>& serializedData)
 {
-    for (auto identifier : identifiers) {
+    for (const auto& identifier : identifiers) {
         auto attachment = attachmentForIdentifier(identifier);
         if (!attachment)
             continue;

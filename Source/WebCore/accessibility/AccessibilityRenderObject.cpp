@@ -2523,7 +2523,7 @@ RenderObject* AccessibilityRenderObject::targetElementForActiveDescendant(const 
 {
     AccessibilityObject::AccessibilityChildrenVector elements;
     ariaElementsFromAttribute(elements, attributeName);
-    for (auto element : elements) {
+    for (const auto& element : elements) {
         if (activeDescendant->isDescendantOfObject(element.get()))
             return element->renderer();
     }

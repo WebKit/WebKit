@@ -421,7 +421,7 @@ const Vector<uint64_t>& UniqueIDBDatabaseTransaction::objectStoreIdentifiers()
         return m_objectStoreIdentifiers;
 
     auto& info = m_databaseConnection->database()->info();
-    for (auto objectStoreName : info.objectStoreNames()) {
+    for (const auto& objectStoreName : info.objectStoreNames()) {
         auto objectStoreInfo = info.infoForExistingObjectStore(objectStoreName);
         ASSERT(objectStoreInfo);
         if (!objectStoreInfo)

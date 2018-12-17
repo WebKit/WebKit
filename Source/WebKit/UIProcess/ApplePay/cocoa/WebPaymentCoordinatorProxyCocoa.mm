@@ -636,7 +636,7 @@ static RetainPtr<NSArray> toNSErrors(const Vector<WebCore::PaymentError>& errors
 {
     auto result = adoptNS([[NSMutableArray alloc] init]);
 
-    for (auto error : errors) {
+    for (const auto& error : errors) {
         if (auto nsError = toNSError(error))
             [result addObject:nsError.get()];
     }

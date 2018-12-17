@@ -531,7 +531,7 @@ void UniqueIDBDatabase::maybeNotifyConnectionsOfVersionChange()
     // Fire a versionchange event at each connection in m_openDatabaseConnections that is open.
     // The event must not be fired on connections which has the closePending flag set.
     HashSet<uint64_t> connectionIdentifiers;
-    for (auto connection : m_openDatabaseConnections) {
+    for (const auto& connection : m_openDatabaseConnections) {
         if (connection->closePending())
             continue;
 

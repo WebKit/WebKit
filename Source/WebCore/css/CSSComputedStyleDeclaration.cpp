@@ -1145,7 +1145,7 @@ void OrderedNamedLinesCollector::appendLines(CSSGridLineNamesValue& lineNamesVal
         return;
 
     auto& cssValuePool = CSSValuePool::singleton();
-    for (auto lineName : iter->value)
+    for (const auto& lineName : iter->value)
         lineNamesValue.append(cssValuePool.createValue(lineName, CSSPrimitiveValue::CSS_STRING));
 }
 

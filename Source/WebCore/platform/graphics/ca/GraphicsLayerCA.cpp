@@ -688,7 +688,7 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
         return;
 
     // Look for running animations affecting this property.
-    for (auto it : m_animations->runningAnimations) {
+    for (const auto& it : m_animations->runningAnimations) {
         const auto& propertyAnimations = it.value;
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {
@@ -2846,7 +2846,7 @@ void GraphicsLayerCA::updateAnimations()
     }
 
     if (m_animations->animationsToProcess.size()) {
-        for (auto it : m_animations->animationsToProcess) {
+        for (const auto& it : m_animations->animationsToProcess) {
             const String& currentAnimationName = it.key;
             auto animationIterator = m_animations->runningAnimations.find(currentAnimationName);
             if (animationIterator == m_animations->runningAnimations.end())
@@ -2882,7 +2882,7 @@ bool GraphicsLayerCA::isRunningTransformAnimation() const
     if (!hasAnimations())
         return false;
 
-    for (auto it : m_animations->runningAnimations) {
+    for (const auto& it : m_animations->runningAnimations) {
         const auto& propertyAnimations = it.value;
         size_t numAnimations = propertyAnimations.size();
         for (size_t i = 0; i < numAnimations; ++i) {

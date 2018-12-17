@@ -1198,7 +1198,7 @@ void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorStrin
     Vector<String> newFileList;
     newFileList.reserveInitialCapacity(filenames.length());
 
-    for (auto item : filenames) {
+    for (const auto& item : filenames) {
         String filename;
         if (!item->asString(filename))
             SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
@@ -1639,7 +1639,7 @@ void WebAutomationSession::performKeyboardInteractions(const String& handle, con
     Vector<WTF::Function<void()>> actionsToPerform;
     actionsToPerform.reserveCapacity(interactions.length());
 
-    for (auto interaction : interactions) {
+    for (const auto& interaction : interactions) {
         RefPtr<JSON::Object> interactionObject;
         if (!interaction->asObject(interactionObject))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter was invalid.");
@@ -1746,7 +1746,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
     if (!inputSources.length())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'inputSources' was not found or empty.");
 
-    for (auto inputSource : inputSources) {
+    for (const auto& inputSource : inputSources) {
         RefPtr<JSON::Object> inputSourceObject;
         if (!inputSource->asObject(inputSourceObject))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An input source in the 'inputSources' parameter was invalid.");
@@ -1781,7 +1781,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
     if (!steps.length())
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'steps' was not found or empty.");
 
-    for (auto step : steps) {
+    for (const auto& step : steps) {
         RefPtr<JSON::Object> stepObject;
         if (!step->asObject(stepObject))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "A step in the 'steps' parameter was not an object.");
@@ -1793,7 +1793,7 @@ void WebAutomationSession::performInteractionSequence(const String& handle, cons
         Vector<SimulatedInputKeyFrame::StateEntry> entries;
         entries.reserveCapacity(stepStates->length());
 
-        for (auto state : *stepStates) {
+        for (const auto& state : *stepStates) {
             RefPtr<JSON::Object> stateObject;
             if (!state->asObject(stateObject))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Encountered a non-object step state.");

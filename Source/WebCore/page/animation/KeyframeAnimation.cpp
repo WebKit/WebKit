@@ -95,7 +95,7 @@ void KeyframeAnimation::computeLayoutDependency()
         }
         if (keyframeStyle->hasTransform()) {
             auto& transformOperations = keyframeStyle->transform();
-            for (auto operation : transformOperations.operations()) {
+            for (const auto& operation : transformOperations.operations()) {
                 if (operation->isTranslateTransformOperationType()) {
                     auto translation = downcast<TranslateTransformOperation>(operation.get());
                     if (translation->x().isPercent() || translation->y().isPercent()) {

@@ -252,7 +252,7 @@ static Color estimatedBackgroundColorForRange(const Range& range, const Frame& f
             parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
     }
     parentRendererBackgroundColors.reverse();
-    for (auto backgroundColor : parentRendererBackgroundColors)
+    for (const auto& backgroundColor : parentRendererBackgroundColors)
         estimatedBackgroundColor = estimatedBackgroundColor.blend(backgroundColor);
 
     return estimatedBackgroundColor;

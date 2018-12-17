@@ -529,7 +529,7 @@ void TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired()
     if (m_activityStateChangeID != ActivityStateChangeAsynchronous)
         m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
 
-    for (auto callbackID : m_nextActivityStateChangeCallbackIDs)
+    for (const auto& callbackID : m_nextActivityStateChangeCallbackIDs)
         m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
 
     m_nextActivityStateChangeCallbackIDs.clear();

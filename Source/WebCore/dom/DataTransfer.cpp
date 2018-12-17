@@ -146,7 +146,7 @@ void DataTransfer::clearData(const String& type)
 static String readURLsFromPasteboardAsString(Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
 {
     StringBuilder urlList;
-    for (auto urlString : pasteboard.readAllStrings("text/uri-list"_s)) {
+    for (const auto& urlString : pasteboard.readAllStrings("text/uri-list"_s)) {
         if (!shouldIncludeURL(urlString))
             continue;
         if (!urlList.isEmpty())
