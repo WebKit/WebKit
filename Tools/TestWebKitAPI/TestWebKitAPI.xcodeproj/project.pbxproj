@@ -315,6 +315,7 @@
 		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
 		5CEAB5E11FA939F400A77FAA /* _WKInputDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */; };
 		5E4B1D2E1D404C6100053621 /* WKScrollViewDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B1D2C1D404C6100053621 /* WKScrollViewDelegate.mm */; };
+		5FAD3AE421B97EEE00BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE321B97C5000BEE178 /* URLHelpers.cpp */; };
 		631EFFF61E7B5E8D00D2EBB8 /* Geolocation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */; };
 		634910E01E9D3FF300880309 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 634910DF1E9D3FF300880309 /* CoreLocation.framework */; };
 		6354F4D11F7C3AB500D89DF3 /* ApplicationManifestParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */; };
@@ -1662,6 +1663,7 @@
 		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
 		5CEAB5DF1FA937CB00A77FAA /* _WKInputDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInputDelegate.mm; sourceTree = "<group>"; };
 		5E4B1D2C1D404C6100053621 /* WKScrollViewDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollViewDelegate.mm; path = ../ios/WKScrollViewDelegate.mm; sourceTree = "<group>"; };
+		5FAD3AE321B97C5000BEE178 /* URLHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLHelpers.cpp; path = Tests/WTF/URLHelpers.cpp; sourceTree = "<group>"; };
 		631EFFF51E7B5E8D00D2EBB8 /* Geolocation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Geolocation.mm; sourceTree = "<group>"; };
 		634910DF1E9D3FF300880309 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationManifestParser.cpp; sourceTree = "<group>"; };
@@ -2286,6 +2288,7 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
+				5FAD3AE321B97C5000BEE178 /* URLHelpers.cpp */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				BCB9EB66112366D800A137E0 /* Tests */,
 				BC90957D12554CEA00083756 /* Configurations */,
@@ -3814,6 +3817,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C83DFA21D0A5AE400FEBCF3 /* mainIOS.mm in Sources */,
+				5FAD3AE421B97EEE00BEE178 /* URLHelpers.cpp in Sources */,
 				7C83DFAD1D0A5AE400FEBCF3 /* mainMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

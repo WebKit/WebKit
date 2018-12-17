@@ -1,3 +1,23 @@
+2018-12-17  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI
+        https://bugs.webkit.org/show_bug.cgi?id=174816
+
+        Reviewed by Michael Catanzaro.
+
+        Add tests for userVisibleString() and (for GTK and WPE) webkit_uri_for_display().
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/URLHelpers.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitURIUtilities.cpp: Added.
+        (testURIForDisplayUnaffected):
+        (testURIForDisplayAffected):
+        (beforeAll):
+        (afterAll):
+        * TestWebKitAPI/glib/CMakeLists.txt:
+
 2018-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add API to notify about frame displayed view backend callback

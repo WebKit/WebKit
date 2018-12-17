@@ -1,3 +1,27 @@
+2018-12-17  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK][WPE] Need a function to convert internal URI to display ("pretty") URI
+        https://bugs.webkit.org/show_bug.cgi?id=174816
+
+        Reviewed by Michael Catanzaro.
+
+        Add webkit_uri_for_display for GTK and WPE.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitURIUtilities.cpp: Added.
+        (webkit_uri_for_display):
+        * UIProcess/API/gtk/WebKitURIUtilities.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/webkit2.h:
+        * UIProcess/API/wpe/WebKitURIUtilities.h: Added.
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt:
+        * UIProcess/API/wpe/docs/wpe-docs.sgml:
+        * UIProcess/API/wpe/webkit.h:
+
 2018-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add API to notify about frame displayed view backend callback
