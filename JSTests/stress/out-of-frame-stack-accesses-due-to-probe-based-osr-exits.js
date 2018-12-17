@@ -1,4 +1,4 @@
-//@ requireOptions("--useProbeOSRExit=true", ""--forceEagerCompilation=true"")
+//@ requireOptions("--useProbeOSRExit=true", "--forceEagerCompilation=true")
 
 // This test passes if it does not crash especially on ASAN builds.
 
