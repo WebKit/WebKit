@@ -97,11 +97,12 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         if (!this._levelScopeBar) {
             let scopeBarItems = [];
 
-            let addScopeBarItem = (level, label) => {
+            let addScopeBarItem = (level, labelSingular, labelPlural) => {
                 let count = levelCounts[level];
                 if (isNaN(count) || count <= 0)
                     return;
 
+                let label = (labelPlural && count !== 1) ? labelPlural : labelSingular;
                 let scopeBarItem = new WI.ScopeBarItem(level, label.format(count), {
                     className: level,
                     exclusive: false,
@@ -111,10 +112,10 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
                 scopeBarItems.push(scopeBarItem);
             };
 
-            addScopeBarItem(WI.AuditTestCaseResult.Level.Pass, WI.UIString("%d Pass"));
-            addScopeBarItem(WI.AuditTestCaseResult.Level.Warn, WI.UIString("%d Warn"));
-            addScopeBarItem(WI.AuditTestCaseResult.Level.Fail, WI.UIString("%d Fail"));
-            addScopeBarItem(WI.AuditTestCaseResult.Level.Error, WI.UIString("%d Error"));
+            addScopeBarItem(WI.AuditTestCaseResult.Level.Pass, WI.UIString("%d Passed"));
+            addScopeBarItem(WI.AuditTestCaseResult.Level.Warn, WI.UIString("%d Warning"), WI.UIString("%d Warnings"));
+            addScopeBarItem(WI.AuditTestCaseResult.Level.Fail, WI.UIString("%d Failed"));
+            addScopeBarItem(WI.AuditTestCaseResult.Level.Error, WI.UIString("%d Error"), WI.UIString("%d Errors"));
             addScopeBarItem(WI.AuditTestCaseResult.Level.Unsupported, WI.UIString("%d Unsupported"));
 
             this._levelScopeBar = new WI.ScopeBar(null, scopeBarItems);

@@ -180,7 +180,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             else if (result.didFail)
                 message = WI.UIString("The \u201C%s\u201D audit failed");
             else if (result.didWarn)
-                message = WI.UIString("The \u201C%s\u201D audit warned");
+                message = WI.UIString("The \u201C%s\u201D audit resulted in a warning");
             else if (result.didPass)
                 message = WI.UIString("The \u201C%s\u201D audit passed");
             else if (result.unsupported)
