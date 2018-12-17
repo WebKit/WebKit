@@ -1645,8 +1645,3 @@ WEBKIT_PRINT_CUSTOM_WIDGET_GET_CLASS
 WebKitPrintCustomWidgetPrivate
 webkit_print_custom_widget_get_type
 </SECTION>
-
-<SECTION>
-<FILE>WebKitURIUtilities</FILE>
-webkit_uri_for_display
-</SECTION>

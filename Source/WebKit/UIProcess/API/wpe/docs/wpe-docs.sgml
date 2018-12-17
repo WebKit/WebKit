@@ -56,11 +56,6 @@
     <xi:include href="xml/WebKitApplicationInfo.xml"/>
   </chapter>
 
-  <chapter>
-    <title>Utilities</title>
-    <xi:include href="xml/WebKitURIUtilities.xml"/>
-  </chapter>
-
   <index id="index-all">
     <title>Index</title>
   </index>

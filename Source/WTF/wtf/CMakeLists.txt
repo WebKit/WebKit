@@ -241,7 +241,6 @@ set(WTF_PUBLIC_HEADERS
     TriState.h
     TypeCasts.h
     URL.h
-    URLHelpers.h
     URLHash.h
     URLParser.h
     UUID.h
@@ -399,7 +398,6 @@ set(WTF_SOURCES
     TimeWithDynamicClockType.cpp
     TimingScope.cpp
     URL.cpp
-    URLHelpers.cpp
     URLParser.cpp
     UUID.cpp
     WTFAssertions.cpp

@@ -185,7 +185,6 @@
 #include <wtf/Language.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/URLHelpers.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -4210,9 +4209,10 @@ String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement& medi
 
 #if !PLATFORM(COCOA)
 
-String Internals::userVisibleString(const DOMURL& url)
+String Internals::userVisibleString(const DOMURL&)
 {
-    return WTF::URLHelpers::userVisibleURL(url.href().string().utf8());
+    // Cocoa-specific function. Could ASSERT_NOT_REACHED, but that's probably overkill.
+    return String();
 }
 
 #endif
