@@ -157,44 +157,6 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
     return characters;
 }
 
-// FIXME: to be removed when the adoption of the new initializer is complete.
-- (WebEvent *)initWithKeyEventType:(WebEventType)type
-                         timeStamp:(CFTimeInterval)timeStamp
-                        characters:(NSString *)characters
-       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
-                         modifiers:(WebEventFlags)modifiers
-                       isRepeating:(BOOL)repeating
-                         withFlags:(NSUInteger)flags
-                           keyCode:(uint16_t)keyCode
-                          isTabKey:(BOOL)tabKey
-                      characterSet:(WebEventCharacterSet)characterSet
-{
-    UNUSED_PARAM(characterSet);
-    self = [super init];
-    if (!self)
-        return nil;
-    
-    _type = type;
-    _timestamp = timeStamp;
-    _keyboardFlags = flags;
-    _modifierFlags = modifiers;
-    if (keyCode)
-        _keyCode = windowsKeyCodeForKeyCode(keyCode);
-    else if ([charactersIgnoringModifiers length] == 1) {
-        // This event is likely for a software keyboard-generated event.
-        _keyCode = windowsKeyCodeForCharCodeIOS([charactersIgnoringModifiers characterAtIndex:0]);
-    }
-
-    if (!(_keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)) {
-        _characters = [normalizedStringWithAppKitCompatibilityMapping(characters, keyCode) retain];
-        _charactersIgnoringModifiers = [normalizedStringWithAppKitCompatibilityMapping(charactersIgnoringModifiers, keyCode) retain];
-        _tabKey = tabKey;
-        _keyRepeating = repeating;
-    }
-
-    return self;
-}
-
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
                         characters:(NSString *)characters

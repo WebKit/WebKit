@@ -1134,16 +1134,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         isARepeat:NO
                         keyCode:keyCode];
 #else
-    WebEvent *event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyDown
-                        timeStamp:[self currentEventTime]
-                        characters:eventCharacter
-                        charactersIgnoringModifiers:charactersIgnoringModifiers
-                        modifiers:(WebEventFlags)modifierFlags
-                        isRepeating:NO
-                        withFlags:0
-                        keyCode:[character characterAtIndex:0]
-                        isTabKey:([character characterAtIndex:0] == '\t')
-                        characterSet:WebEventCharacterSetASCII];
+    WebEvent *event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')];
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1167,16 +1158,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                         keyCode:keyCode];
 #else
     [event release];
-    event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyUp
-                        timeStamp:[self currentEventTime]
-                        characters:eventCharacter
-                        charactersIgnoringModifiers:charactersIgnoringModifiers
-                        modifiers:(WebEventFlags)modifierFlags
-                        isRepeating:NO
-                        withFlags:0
-                        keyCode:[character characterAtIndex:0]
-                        isTabKey:([character characterAtIndex:0] == '\t')
-                        characterSet:WebEventCharacterSetASCII];
+    event = [[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:[self currentEventTime] characters:eventCharacter charactersIgnoringModifiers:charactersIgnoringModifiers modifiers:(WebEventFlags)modifierFlags isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:[character characterAtIndex:0] isTabKey:([character characterAtIndex:0] == '\t')];
 #endif
 
 #if !PLATFORM(IOS_FAMILY)

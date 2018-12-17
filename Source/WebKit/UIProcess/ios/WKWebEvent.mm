@@ -53,7 +53,7 @@
         event = [[keyEvent _cloneEvent] autorelease]; // UIKit uses a singleton for hardware keyboard events.
     }
 
-    self = [super initWithKeyEventType:(event._isKeyDown ? WebEventKeyDown : WebEventKeyUp) timeStamp:event.timestamp characters:event._modifiedInput charactersIgnoringModifiers:event._unmodifiedInput modifiers:modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags keyCode:keyCode isTabKey:[event._modifiedInput isEqualToString:@"\t"] characterSet:WebEventCharacterSetUnicode];
+    self = [super initWithKeyEventType:(event._isKeyDown ? WebEventKeyDown : WebEventKeyUp) timeStamp:event.timestamp characters:event._modifiedInput charactersIgnoringModifiers:event._unmodifiedInput modifiers:modifierFlags isRepeating:(inputFlags & kUIKeyboardInputRepeat) withFlags:inputFlags withInputManagerHint:nil keyCode:keyCode isTabKey:[event._modifiedInput isEqualToString:@"\t"]];
     if (!self)
         return nil;
 

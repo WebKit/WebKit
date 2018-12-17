@@ -159,18 +159,6 @@ WEBCORE_EXPORT @interface WebEvent : NSObject {
                         gestureScale:(float)gestureScale
                      gestureRotation:(float)gestureRotation;
 
-// FIXME: this needs to be removed when UIKit adopts the other initializer.
-- (WebEvent *)initWithKeyEventType:(WebEventType)type
-                         timeStamp:(CFTimeInterval)timeStamp
-                        characters:(NSString *)characters
-       charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers
-                         modifiers:(WebEventFlags)modifiers
-                       isRepeating:(BOOL)repeating
-                         withFlags:(WebKeyboardInputFlags)flags
-                           keyCode:(uint16_t)keyCode
-                          isTabKey:(BOOL)tabKey
-                      characterSet:(WebEventCharacterSet)characterSet;
-
 - (WebEvent *)initWithKeyEventType:(WebEventType)type
                          timeStamp:(CFTimeInterval)timeStamp
                         characters:(NSString *)characters
