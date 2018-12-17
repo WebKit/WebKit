@@ -4,8 +4,6 @@ import time
 from threading import Event
 
 from launch_time import LaunchTimeBenchmark, DefaultLaunchTimeHandler
-import feedback_server
-
 
 class NewTabBenchmark(LaunchTimeBenchmark):
     def _parse_wait_time(self, string):

@@ -10,7 +10,6 @@ import sys
 import threading
 import time
 
-from feedback_server import FeedbackServer
 
 
 # Supress logs from feedback server
@@ -146,6 +145,7 @@ class LaunchTimeBenchmark:
         self._server_ready.acquire()
 
         if self._feedback_in_browser:
+            from feedback_server import FeedbackServer
             self._feedback_server = FeedbackServer()
             self._feedback_port = self._feedback_server.start()
 
