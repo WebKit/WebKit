@@ -181,8 +181,8 @@
       <dep package="libwpe"/>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="wpewebkit" module="wpebackend-fdo-1.0.0.tar.xz" version="1.0.0"
-            hash="sha256:7a747f87a1ae46d30144369050e3ce348b58986d04e1a139ba75c198fa636729"/>
+    <branch repo="wpewebkit" module="wpebackend-fdo-1.1.0.tar.xz" version="1.1.0"
+            hash="sha256:f6c72130d16e50860cb83eb0f6e109c76f1826d2c6bee39025fb3651941761e7"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">

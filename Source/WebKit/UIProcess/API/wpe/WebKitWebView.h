@@ -166,6 +166,18 @@ typedef enum {
     WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT
 } WebKitWebProcessTerminationReason;
 
+/**
+ * WebKitFrameDisplayedCallback:
+ * @web_view: a #WebKitWebView
+ * @user_data: user data
+ *
+ * Callback to be called when a frame is displayed in a #webKitWebView.
+ *
+ * Since: 2.24
+ */
+typedef void (* WebKitFrameDisplayedCallback) (WebKitWebView *web_view,
+                                               gpointer       user_data);
+
 struct _WebKitWebView {
     GObject parent;
 
@@ -494,6 +506,16 @@ webkit_web_view_get_session_state                    (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_restore_session_state                (WebKitWebView             *web_view,
                                                       WebKitWebViewSessionState *state);
+
+WEBKIT_API guint
+webkit_web_view_add_frame_displayed_callback         (WebKitWebView               *web_view,
+                                                      WebKitFrameDisplayedCallback callback,
+                                                      gpointer                     user_data,
+                                                      GDestroyNotify               destroy_notify);
+
+WEBKIT_API void
+webkit_web_view_remove_frame_displayed_callback      (WebKitWebView               *web_view,
+                                                      guint                        id);
 
 G_END_DECLS
 

@@ -1,3 +1,21 @@
+2018-12-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add API to notify about frame displayed view backend callback
+        https://bugs.webkit.org/show_bug.cgi?id=192224
+
+        Reviewed by Michael Catanzaro.
+
+        Add API to add a callback to the view to be called when the view backend notifies that a frame has been
+        displayed.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (FrameDisplayedCallback::FrameDisplayedCallback):
+        (FrameDisplayedCallback::~FrameDisplayedCallback):
+        (webkit_web_view_add_frame_displayed_callback):
+        (webkit_web_view_remove_frame_displayed_callback):
+        * UIProcess/API/wpe/WebKitWebView.h:
+        * UIProcess/API/wpe/docs/wpe-0.1-sections.txt:
+
 2018-12-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support keyboard access preference for iOS in WebKit

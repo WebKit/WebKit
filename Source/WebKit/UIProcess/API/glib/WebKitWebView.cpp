@@ -71,6 +71,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/SetForScope.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -197,6 +198,34 @@ typedef HashMap<uint64_t, GRefPtr<GTask> > SnapshotResultsMap;
 
 class PageLoadStateObserver;
 
+#if PLATFORM(WPE)
+static unsigned frameDisplayCallbackID;
+struct FrameDisplayedCallback {
+    FrameDisplayedCallback(WebKitFrameDisplayedCallback callback, gpointer userData = nullptr, GDestroyNotify destroyNotifyFunction = nullptr)
+        : id(++frameDisplayCallbackID)
+        , callback(callback)
+        , userData(userData)
+        , destroyNotifyFunction(destroyNotifyFunction)
+    {
+    }
+
+    ~FrameDisplayedCallback()
+    {
+        if (destroyNotifyFunction)
+            destroyNotifyFunction(userData);
+    }
+
+    FrameDisplayedCallback(FrameDisplayedCallback&&) = default;
+    FrameDisplayedCallback(const FrameDisplayedCallback&) = delete;
+    FrameDisplayedCallback& operator=(const FrameDisplayedCallback&) = delete;
+
+    unsigned id { 0 };
+    WebKitFrameDisplayedCallback callback { nullptr };
+    gpointer userData { nullptr };
+    GDestroyNotify destroyNotifyFunction { nullptr };
+};
+#endif // PLATFORM(WPE)
+
 struct _WebKitWebViewPrivate {
     ~_WebKitWebViewPrivate()
     {
@@ -208,6 +237,9 @@ struct _WebKitWebViewPrivate {
 #if PLATFORM(WPE)
     GRefPtr<WebKitWebViewBackend> backend;
     std::unique_ptr<WKWPE::View> view;
+    Vector<FrameDisplayedCallback> frameDisplayedCallbacks;
+    bool inFrameDisplayed;
+    HashSet<unsigned> frameDisplayedCallbacksToRemove;
 #endif
 
     WebKitWebView* relatedView;
@@ -372,6 +404,24 @@ private:
     void handleDownloadRequest(WKWPE::View&, DownloadProxy& downloadProxy) override
     {
         webkitWebViewHandleDownloadRequest(m_webView, &downloadProxy);
+    }
+
+    void frameDisplayed(WKWPE::View&) override
+    {
+        {
+            SetForScope<bool> inFrameDisplayedGuard(m_webView->priv->inFrameDisplayed, true);
+            for (const auto& callback : m_webView->priv->frameDisplayedCallbacks) {
+                if (!m_webView->priv->frameDisplayedCallbacksToRemove.contains(callback.id))
+                    callback.callback(m_webView, callback.userData);
+            }
+        }
+
+        while (!m_webView->priv->frameDisplayedCallbacksToRemove.isEmpty()) {
+            auto id = m_webView->priv->frameDisplayedCallbacksToRemove.takeAny();
+            m_webView->priv->frameDisplayedCallbacks.removeFirstMatching([id](const auto& item) {
+                return item.id == id;
+            });
+        }
     }
 
     WebKitWebView* m_webView;
@@ -4091,3 +4141,55 @@ void webkit_web_view_restore_session_state(WebKitWebView* webView, WebKitWebView
 
     getPage(webView).restoreFromSessionState(webkitWebViewSessionStateGetSessionState(state), false);
 }
+
+#if PLATFORM(WPE)
+/**
+ * webkit_web_view_add_frame_displayed_callback:
+ * @web_view: a #WebKitWebView
+ * @callback: a #WebKitFrameDisplayedCallback
+ * @user_data: (closure): user data to pass to @callback
+ * @destroy_notify: (nullable): destroy notifier for @user_data
+ *
+ * Add a callback to be called when the backend notifies that a frame has been displayed in @web_view.
+ *
+ * Returns: an identifier that should be passed to webkit_web_view_remove_frame_displayed_callback()
+ *    to remove the callback.
+ *
+ * Since: 2.24
+ */
+unsigned webkit_web_view_add_frame_displayed_callback(WebKitWebView* webView, WebKitFrameDisplayedCallback callback, gpointer userData, GDestroyNotify destroyNotify)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(callback, 0);
+
+    webView->priv->frameDisplayedCallbacks.append(FrameDisplayedCallback(callback, userData, destroyNotify));
+    return webView->priv->frameDisplayedCallbacks.last().id;
+}
+
+/**
+ * webkit_web_view_remove_frame_displayed_callback:
+ * @web_view: a #WebKitWebView
+ * @id: an identifier
+ *
+ * Removes a #WebKitFrameDisplayedCallback previously added to @web_view with
+ * webkit_web_view_add_frame_displayed_callback().
+ *
+ * Since: 2.24
+ */
+void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, unsigned id)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(id);
+
+    Function<bool(const FrameDisplayedCallback&)> matchFunction = [id](const auto& item) {
+        return item.id == id;
+    };
+
+    if (webView->priv->inFrameDisplayed) {
+        auto index = webView->priv->frameDisplayedCallbacks.findMatching(matchFunction);
+        if (index != notFound)
+            webView->priv->frameDisplayedCallbacksToRemove.add(id);
+    } else
+        webView->priv->frameDisplayedCallbacks.removeFirstMatching(matchFunction);
+}
+#endif // PLATFORM(WPE)
