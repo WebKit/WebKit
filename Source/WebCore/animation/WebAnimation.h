@@ -174,6 +174,7 @@ private:
     bool m_finishNotificationStepsMicrotaskPending;
     bool m_scheduledMicrotask;
     bool m_isRelevant;
+    bool m_shouldSkipUpdatingFinishedStateWhenResolving;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
     TimeToRunPendingTask m_timeToRunPendingPlayTask { TimeToRunPendingTask::NotScheduled };

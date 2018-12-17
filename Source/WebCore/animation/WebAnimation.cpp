@@ -696,6 +696,7 @@ ExceptionOr<void> WebAnimation::finish()
 
 void WebAnimation::timingDidChange(DidSeek didSeek, SynchronouslyNotify synchronouslyNotify)
 {
+    m_shouldSkipUpdatingFinishedStateWhenResolving = false;
     updateFinishedState(didSeek, synchronouslyNotify);
     if (m_timeline)
         m_timeline->animationTimingDidChange(*this);
@@ -1107,6 +1108,7 @@ bool WebAnimation::needsTick() const
 void WebAnimation::tick()
 {
     updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+    m_shouldSkipUpdatingFinishedStateWhenResolving = true;
 
     // Run pending tasks, if any.
     if (hasPendingPauseTask())
@@ -1119,7 +1121,10 @@ void WebAnimation::tick()
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
 {
-    updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+    if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
+        updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+    m_shouldSkipUpdatingFinishedStateWhenResolving = false;
+
     if (m_effect)
         m_effect->apply(targetStyle);
 }

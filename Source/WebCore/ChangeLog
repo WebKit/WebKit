@@ -1,3 +1,23 @@
+2018-12-17  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Ensure we don't update an animation's finished state twice when updating animations
+        https://bugs.webkit.org/show_bug.cgi?id=192757
+
+        Reviewed by Dean Jackson.
+
+        When animations are udpated and DocumentTimeline::updateAnimationsAndSendEvents() is called, we used to update an animation's finished state
+        twice since we'd do it once when calling tick() and once again when calling resolve() in the ensuing style invalidation. We now keep track of
+        whether we've already updated an animation's finished state during animation update in the call to tick() and avoid updating in the immediate
+        next call to resolve(), unless any of the timing properties have changed in the meantime.
+
+        No new test since there is no user-observable change.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::timingDidChange):
+        (WebCore::WebAnimation::tick):
+        (WebCore::WebAnimation::resolve):
+        * animation/WebAnimation.h:
+
 2018-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r233268): Elements animated in from offscreen sometimes don't display
