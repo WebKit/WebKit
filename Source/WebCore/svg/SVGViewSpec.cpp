@@ -157,21 +157,21 @@ Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateViewBoxWrapper(SVGViewSpec* 
 {
     ASSERT(ownerType);
     ASSERT(ownerType->m_contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedRect, FloatRect>(ownerType->m_contextElement, viewBoxPropertyInfo(), ownerType->m_viewBox);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedRect, FloatRect>(ownerType->m_contextElement.get(), viewBoxPropertyInfo(), ownerType->m_viewBox);
 }
 
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* ownerType)
 {
     ASSERT(ownerType);
     ASSERT(ownerType->m_contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatioValue>(ownerType->m_contextElement, preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatioValue>(ownerType->m_contextElement.get(), preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
 }
 
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateTransformWrapper(SVGViewSpec* ownerType)
 {
     ASSERT(ownerType);
     ASSERT(ownerType->m_contextElement);
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformListValues>(ownerType->m_contextElement, transformPropertyInfo(), ownerType->m_transform);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformListValues>(ownerType->m_contextElement.get(), transformPropertyInfo(), ownerType->m_transform);
 }
 
 void SVGViewSpec::reset()

@@ -1,3 +1,17 @@
+2018-12-16  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/46603448
+
+    2018-12-16  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed branch-specific build fix.
+
+            * bindings/js/WindowProxy.cpp:
+            * svg/SVGViewSpec.cpp:
+            (WebCore::SVGViewSpec::lookupOrCreateViewBoxWrapper):
+            (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper):
+            (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper):
+
 2018-07-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use JOB_POOLS to avoid memory-hungry linker processes running at the same time
