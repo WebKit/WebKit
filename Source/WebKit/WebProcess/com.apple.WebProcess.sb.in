@@ -662,10 +662,7 @@
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup
     (global-name-regex #"^com.apple.distributed_notifications")                                                       
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
-    (global-name "com.apple.CoreServices.coreservicesd")
-#endif
-)
+    (global-name "com.apple.CoreServices.coreservicesd"))
 (allow file-read-data
     (literal "/dev/autofs_nowait")) ; Used by CF to circumvent automount triggers
 (allow ipc-posix-shm

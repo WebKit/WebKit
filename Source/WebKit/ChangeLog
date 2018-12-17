@@ -1,3 +1,16 @@
+2018-12-17  Suresh Koppisetty  <skoppisettyt@apple.com>
+
+        Rollout r235411
+        https://bugs.webkit.org/show_bug.cgi?id=192778
+        <rdar://46789485>
+
+        Disabling access to CoreServices is causing a performance
+        regression in process launch time.  See <rdar://46141878>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-12-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix after r239277.
