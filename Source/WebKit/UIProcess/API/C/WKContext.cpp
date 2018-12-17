@@ -652,5 +652,5 @@ void WKContextSetIDBPerOriginQuota(WKContextRef contextRef, uint64_t quota)
 
 void WKContextClearCurrentModifierStateForTesting(WKContextRef contextRef)
 {
-    toImpl(contextRef)->clearCurrentModifierStateForTesting();
+    WebKit::toImpl(contextRef)->clearCurrentModifierStateForTesting();
 }

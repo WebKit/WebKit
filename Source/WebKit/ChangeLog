@@ -1,3 +1,11 @@
+2018-12-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix after r239277.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextClearCurrentModifierStateForTesting):
+        Use the WebKit:: namespace specifier as it is used across this file.
+
 2018-12-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239265 and r239274.
