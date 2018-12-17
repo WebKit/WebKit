@@ -1,3 +1,23 @@
+2018-12-17  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Settings: add singular "space" UIString
+        https://bugs.webkit.org/show_bug.cgi?id=192766
+        <rdar://problem/46776948>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SettingEditor.js:
+        (WI.SettingEditor):
+        (WI.SettingEditor.prototype.get label):
+        (WI.SettingEditor.prototype.set label): Added.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView.addSpacesSetting): Added.
+        (WI.SettingsTabContentView.prototype._createGeneralSettingsView.addSpacesSetting.updateLabel): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2018-12-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: toggling selected properties may cause data corruption

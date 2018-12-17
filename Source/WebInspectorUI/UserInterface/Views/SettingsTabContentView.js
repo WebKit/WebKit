@@ -184,11 +184,19 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             WI.settings.indentWithTabs.value = indentEditor.value === indentValues[0];
         });
 
-        const widthLabel = WI.UIString("spaces");
-        const widthOptions = {min: 1};
+        function addSpacesSetting(title, setting) {
+            let editor = generalSettingsView.addSetting(title, setting, WI.UIString("spaces"), {min: 1});
 
-        generalSettingsView.addSetting(WI.UIString("Tab width:"), WI.settings.tabSize, widthLabel, widthOptions);
-        generalSettingsView.addSetting(WI.UIString("Indent width:"), WI.settings.indentUnit, widthLabel, widthOptions);
+            function updateLabel() {
+                editor.label = setting.value === 1 ? WI.UIString("space") : WI.UIString("spaces");
+            }
+            setting.addEventListener(WI.Setting.Event.Changed, (event) => {
+                updateLabel();
+            });
+            updateLabel();
+        }
+        addSpacesSetting(WI.UIString("Tab width:"), WI.settings.tabSize);
+        addSpacesSetting(WI.UIString("Indent width:"), WI.settings.indentUnit);
 
         generalSettingsView.addSetting(WI.UIString("Line wrapping:"), WI.settings.enableLineWrapping, WI.UIString("Wrap lines to editor width"));
 

@@ -1043,6 +1043,7 @@ localizedStrings["line "] = "line ";
 localizedStrings["originally %s"] = "originally %s";
 localizedStrings["popup"] = "popup";
 localizedStrings["popup, toggle"] = "popup, toggle";
+localizedStrings["space"] = "space";
 localizedStrings["spaces"] = "spaces";
 localizedStrings["time before stopping"] = "time before stopping";
 localizedStrings["times before stopping"] = "times before stopping";

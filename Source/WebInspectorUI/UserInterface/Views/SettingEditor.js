@@ -30,7 +30,6 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         super();
 
         this._type = type;
-        this._label = label;
         this._value = null;
 
         this._editorElement = this._createEditorElement(options);
@@ -40,14 +39,7 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         this._element.classList.add("editor");
         this._element.append(this._editorElement);
 
-        if (this._label) {
-            this._editorElement.id = "setting-editor-" + WI.SettingEditor._nextEditorIdentifier++;
-            let labelElement = document.createElement("label");
-            labelElement.setAttribute("for", this._editorElement.id);
-            labelElement.textContent = label;
-
-            this._element.append(labelElement);
-        }
+        this.label = label;
     }
 
     static createForSetting(setting, label, options)
@@ -74,7 +66,36 @@ WI.SettingEditor = class SettingEditor extends WI.Object
 
     get element() { return this._element; }
     get type() { return this._type; }
-    get label() { return this._label; }
+
+    get label()
+    {
+        return this._label;
+    }
+
+    set label(label)
+    {
+        if (label === this._label)
+            return;
+
+        this._label = label;
+
+        if (!this._label) {
+            if (this._labelElement)
+                this._labelElement.remove();
+
+            this._editorElement.removeAttribute("id");
+            this._labelElement = null;
+            return;
+        }
+
+        if (!this._labelElement) {
+            this._editorElement.id = "setting-editor-" + WI.SettingEditor._nextEditorIdentifier++;
+            this._labelElement = this._element.appendChild(document.createElement("label"));
+            this._labelElement.setAttribute("for", this._editorElement.id);
+        }
+
+        this._labelElement.textContent = this._label;
+    }
 
     get value()
     {
