@@ -82,7 +82,7 @@ public:
         DraggedContent = 1 << 14
     };
 
-    static OptionSet<MarkerType> allMarkers();
+    static constexpr OptionSet<MarkerType> allMarkers();
 
     using IsActiveMatchData = bool;
     using DescriptionData = String;
@@ -141,9 +141,9 @@ private:
     Data m_data;
 };
 
-inline auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
+constexpr auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
 {
-    OptionSet<MarkerType> markers {
+    return {
         AcceptedCandidate,
         Autocorrected,
         CorrectionIndicator,
@@ -164,7 +164,6 @@ inline auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
         DictationResult,
 #endif
     };
-    return markers;
 }
 
 inline DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch)

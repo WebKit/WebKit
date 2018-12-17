@@ -1,3 +1,16 @@
+2018-12-17  Daniel Bates  <dabates@apple.com>
+
+        Make DocumentMarker::allMarkers() constexpr
+        https://bugs.webkit.org/show_bug.cgi?id=192634
+
+        Reviewed by Simon Fraser.
+
+        The result of DocumentMarker::allMarkers() can be computed at compile time. We should annotate
+        it constexpr to do just that.
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::allMarkers):
+
 2018-12-17  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement WebGPUBindGroupLayoutDescriptor and its supporting dictionaries
