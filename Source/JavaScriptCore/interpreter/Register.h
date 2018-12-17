@@ -65,11 +65,16 @@ namespace JSC {
         JSObject* object() const;
         JSScope* scope() const;
         int32_t unboxedInt32() const;
+        int32_t asanUnsafeUnboxedInt32() const;
         int64_t unboxedInt52() const;
+        int64_t asanUnsafeUnboxedInt52() const;
         int64_t unboxedStrictInt52() const;
+        int64_t asanUnsafeUnboxedStrictInt52() const;
         bool unboxedBoolean() const;
         double unboxedDouble() const;
+        double asanUnsafeUnboxedDouble() const;
         JSCell* unboxedCell() const;
+        JSCell* asanUnsafeUnboxedCell() const;
         int32_t payload() const;
         int32_t tag() const;
         int32_t unsafePayload() const;
@@ -170,12 +175,27 @@ namespace JSC {
         return payload();
     }
 
+    SUPPRESS_ASAN ALWAYS_INLINE int32_t Register::asanUnsafeUnboxedInt32() const
+    {
+        return unsafePayload();
+    }
+
     ALWAYS_INLINE int64_t Register::unboxedInt52() const
     {
         return u.integer >> JSValue::int52ShiftAmount;
     }
 
+    SUPPRESS_ASAN ALWAYS_INLINE int64_t Register::asanUnsafeUnboxedInt52() const
+    {
+        return u.integer >> JSValue::int52ShiftAmount;
+    }
+
     ALWAYS_INLINE int64_t Register::unboxedStrictInt52() const
+    {
+        return u.integer;
+    }
+
+    SUPPRESS_ASAN ALWAYS_INLINE int64_t Register::asanUnsafeUnboxedStrictInt52() const
     {
         return u.integer;
     }
@@ -190,7 +210,21 @@ namespace JSC {
         return u.number;
     }
 
+    SUPPRESS_ASAN ALWAYS_INLINE double Register::asanUnsafeUnboxedDouble() const
+    {
+        return u.number;
+    }
+
     ALWAYS_INLINE JSCell* Register::unboxedCell() const
+    {
+#if USE(JSVALUE64)
+        return u.encodedValue.ptr;
+#else
+        return bitwise_cast<JSCell*>(payload());
+#endif
+    }
+
+    SUPPRESS_ASAN ALWAYS_INLINE JSCell* Register::asanUnsafeUnboxedCell() const
     {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;

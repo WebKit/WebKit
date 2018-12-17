@@ -569,7 +569,7 @@ void OSRExit::executeOSRExit(Context& context)
 
         switch (recovery.technique()) {
         case DisplacedInJSStack:
-            frame.setOperand(operand, exec->r(recovery.virtualRegister()).jsValue());
+            frame.setOperand(operand, exec->r(recovery.virtualRegister()).asanUnsafeJSValue());
             break;
 
         case InFPR:
@@ -591,7 +591,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case CellDisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).unboxedCell()));
+            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedCell()));
             break;
 
 #if USE(JSVALUE32_64)
@@ -602,9 +602,9 @@ void OSRExit::executeOSRExit(Context& context)
 
         case BooleanDisplacedInJSStack:
 #if USE(JSVALUE64)
-            frame.setOperand(operand, exec->r(recovery.virtualRegister()).jsValue());
+            frame.setOperand(operand, exec->r(recovery.virtualRegister()).asanUnsafeJSValue());
 #else
-            frame.setOperand(operand, jsBoolean(exec->r(recovery.virtualRegister()).jsValue().payload()));
+            frame.setOperand(operand, jsBoolean(exec->r(recovery.virtualRegister()).asanUnsafeJSValue().payload()));
 #endif
             break;
 
@@ -613,7 +613,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case Int32DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).unboxedInt32()));
+            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedInt32()));
             break;
 
 #if USE(JSVALUE64)
@@ -622,7 +622,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case Int52DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).unboxedInt52()));
+            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedInt52()));
             break;
 
         case UnboxedStrictInt52InGPR:
@@ -630,7 +630,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case StrictInt52DisplacedInJSStack:
-            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).unboxedStrictInt52()));
+            frame.setOperand(operand, JSValue(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedStrictInt52()));
             break;
 #endif
 
@@ -639,7 +639,7 @@ void OSRExit::executeOSRExit(Context& context)
             break;
 
         case DoubleDisplacedInJSStack:
-            frame.setOperand(operand, JSValue(JSValue::EncodeAsDouble, purifyNaN(exec->r(recovery.virtualRegister()).unboxedDouble())));
+            frame.setOperand(operand, JSValue(JSValue::EncodeAsDouble, purifyNaN(exec->r(recovery.virtualRegister()).asanUnsafeUnboxedDouble())));
             break;
 
         case Constant:

@@ -1,5 +1,25 @@
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
+        Suppress ASAN on valid stack accesses in Probe-based OSRExit::executeOSRExit().
+        https://bugs.webkit.org/show_bug.cgi?id=192776
+        <rdar://problem/46772368>
+
+        Reviewed by Keith Miller.
+
+        1. Add some asanUnsafe methods to the Register class.
+        2. Update the probe-based OSRExit::executeOSRExit() to use these asanUnsafe methods.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        * interpreter/Register.h:
+        (JSC::Register::asanUnsafeUnboxedInt32 const):
+        (JSC::Register::asanUnsafeUnboxedInt52 const):
+        (JSC::Register::asanUnsafeUnboxedStrictInt52 const):
+        (JSC::Register::asanUnsafeUnboxedDouble const):
+        (JSC::Register::asanUnsafeUnboxedCell const):
+
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
         Fix stale assertion in attemptToForceStringArrayModeByToStringConversion().
         https://bugs.webkit.org/show_bug.cgi?id=192770
         <rdar://problem/46449037>

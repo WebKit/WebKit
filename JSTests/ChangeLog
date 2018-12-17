@@ -1,5 +1,15 @@
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
+        Suppress ASAN on valid stack accesses in Probe-based OSRExit::executeOSRExit().
+        https://bugs.webkit.org/show_bug.cgi?id=192776
+        <rdar://problem/46772368>
+
+        Reviewed by Keith Miller.
+
+        * stress/out-of-frame-stack-accesses-due-to-probe-based-osr-exits.js: Added.
+
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
         Fix stale assertion in attemptToForceStringArrayModeByToStringConversion().
         https://bugs.webkit.org/show_bug.cgi?id=192770
         <rdar://problem/46449037>
