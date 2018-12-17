@@ -773,7 +773,12 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             // Otherwise, if synchronously notify is false, queue a microtask to run finish notification steps for animation unless there
             // is already a microtask queued to run those steps for animation.
             m_finishNotificationStepsMicrotaskPending = true;
-            scheduleMicrotaskIfNeeded();
+            MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([this, protectedThis = makeRef(*this)] () {
+                if (m_finishNotificationStepsMicrotaskPending) {
+                    m_finishNotificationStepsMicrotaskPending = false;
+                    finishNotificationSteps();
+                }
+            }));
         }
     }
 
@@ -783,27 +788,6 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
         m_finishedPromise = makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve);
 
     updateRelevance();
-}
-
-void WebAnimation::scheduleMicrotaskIfNeeded()
-{
-    if (m_scheduledMicrotask)
-        return;
-
-    m_scheduledMicrotask = true;
-    MicrotaskQueue::mainThreadQueue().append(std::make_unique<VoidMicrotask>([this, protectedThis = makeRef(*this)] () {
-        this->performMicrotask();
-    }));
-}
-
-void WebAnimation::performMicrotask()
-{
-    m_scheduledMicrotask = false;
-    if (!m_finishNotificationStepsMicrotaskPending)
-        return;
-
-    m_finishNotificationStepsMicrotaskPending = false;
-    finishNotificationSteps();
 }
 
 void WebAnimation::finishNotificationSteps()

@@ -1,5 +1,24 @@
 2018-12-17  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Remove the redundant m_scheduledMicrotask from WebAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=192758
+
+        Reviewed by Dean Jackson.
+
+        We tracked whether we had a pending microtask twice so we remove the m_scheduledMicrotask flag as m_finishNotificationStepsMicrotaskPending
+        gives us enough information as it is. Additionally, we remove the scheduleMicrotaskIfNeeded() and performMicrotask() functions since there is
+        less bookkeeping to perform.
+
+        No new test since there is no user-observable change.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::updateFinishedState):
+        (WebCore::WebAnimation::scheduleMicrotaskIfNeeded): Deleted.
+        (WebCore::WebAnimation::performMicrotask): Deleted.
+        * animation/WebAnimation.h:
+
+2018-12-17  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Ensure we don't update an animation's finished state twice when updating animations
         https://bugs.webkit.org/show_bug.cgi?id=192757
 

@@ -143,8 +143,6 @@ private:
     std::optional<Seconds> currentTime(RespectHoldTime) const;
     ExceptionOr<void> silentlySetCurrentTime(std::optional<Seconds>);
     void finishNotificationSteps();
-    void scheduleMicrotaskIfNeeded();
-    void performMicrotask();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }
     bool hasPendingPlayTask() const { return m_timeToRunPendingPlayTask != TimeToRunPendingTask::NotScheduled; }
     ExceptionOr<void> play(AutoRewind);
@@ -172,7 +170,6 @@ private:
     bool m_isStopped { false };
     bool m_isSuspended { false };
     bool m_finishNotificationStepsMicrotaskPending;
-    bool m_scheduledMicrotask;
     bool m_isRelevant;
     bool m_shouldSkipUpdatingFinishedStateWhenResolving;
     UniqueRef<ReadyPromise> m_readyPromise;
