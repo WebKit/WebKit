@@ -55,6 +55,9 @@ class NewTabBenchmark(LaunchTimeBenchmark):
     def group_init(self):
         self.launch_browser()
 
+    def get_test_name(self):
+        return "NewTabBenchmark"
+
     def will_parse_arguments(self):
         self.argument_parser.add_argument('-g', '--groups', type=int,
             help='number of groups of iterations to run (default: {})'.format(self.iteration_groups))

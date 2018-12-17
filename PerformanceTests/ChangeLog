@@ -1,5 +1,54 @@
 2018-12-17  Suresh Koppisetty  <skoppisetty@apple.com>
 
+        Add "-o/--output" option to startup.py and new_tab.py benchmark scripts to save the results in json format.
+        https://bugs.webkit.org/show_bug.cgi?id=192385
+
+        Reviewed by Ryosuke Niwa.
+
+        Sample json output for new tab benchmark script after running for 2 iterations and 2 groups. Values are in milliseconds.
+        {
+                "NewTabBenchmark": {
+                        "metrics": {
+                                "Time": {
+                                        "current": [
+                                                [
+                                                        410.2939453125,
+                                                        307.81494140625
+                                                ],
+                                                [
+                                                        340.616943359375,
+                                                        265.94384765625
+                                                ]
+                                        ]
+                                }
+                        }
+                }
+        }
+
+        Sample json output for startup time benchmark script after running for 2 iterations. Values are in milliseconds.
+        {
+                "StartupBenchmark": {
+                        "metrics": {
+                                "Time": {
+                                        "current": [
+                                                [
+                                                        1415.2099609375,
+                                                        1439.552978515625
+                                                ]
+                                        ]
+                                }
+                        }
+                }
+        }
+
+        * LaunchTime/launch_time.py:
+        * LaunchTime/new_tab.py:
+        (NewTabBenchmark.get_test_name):
+        * LaunchTime/startup.py:
+        (StartupBenchmark.get_test_name):
+
+2018-12-17  Suresh Koppisetty  <skoppisetty@apple.com>
+
         Import FeedbackServer only if "-f/--feedback-in-browser" option is enabled.
         https://bugs.webkit.org/show_bug.cgi?id=192378
 

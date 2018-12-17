@@ -24,6 +24,9 @@ class StartupBenchmark(LaunchTimeBenchmark):
         self.quit_browser()
         return result
 
+    def get_test_name(self):
+        return "StartupBenchmark"
+
     @staticmethod
     def ResponseHandler(startup_benchmark):
         class Handler(DefaultLaunchTimeHandler):

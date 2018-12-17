@@ -5,6 +5,7 @@ import logging
 from math import sqrt
 from operator import mul
 import os
+import json
 from subprocess import call, check_output
 import sys
 import threading
@@ -82,6 +83,8 @@ class LaunchTimeBenchmark:
         self._app_name = None
         self._verbose = False
         self._feedback_in_browser = False
+        self._save_results_to_json = False
+        self._json_results_path = None
         self._do_not_ignore_first_result = False
         self._iterations = 5
         self._browser_bundle_path = '/Applications/Safari.app'
@@ -109,6 +112,8 @@ class LaunchTimeBenchmark:
             help="print each iteration's time")
         self.argument_parser.add_argument('-f', '--feedback-in-browser', action='store_true',
             help="show benchmark results in browser (default: {})".format(self._feedback_in_browser))
+        self.argument_parser.add_argument('-o', '--output', type=self._json_results_path,
+            help='saves benchmark results in json format (default: {})'.format(self._json_results_path))
         self.will_parse_arguments()
 
         args = self.argument_parser.parse_args()
@@ -120,6 +125,9 @@ class LaunchTimeBenchmark:
             self._verbose = args.verbose
         if args.feedback_in_browser is not None:
             self._feedback_in_browser = args.feedback_in_browser
+        if args.output:
+            self._save_results_to_json = True
+            self._json_results_path = args.output
         path_len = len(self._browser_bundle_path)
         start_index = self._browser_bundle_path.rfind('/', 0, path_len)
         end_index = self._browser_bundle_path.rfind('.', 0, path_len)
@@ -248,6 +256,9 @@ class LaunchTimeBenchmark:
 
         try:
             group_means = []
+            if self._save_results_to_json:
+                resultsDict = {self.get_test_name(): {"metrics": {"Time": {"current": []}}}}
+
             results_by_iteration_number = [[] for _ in range(self._iterations)]
 
             group = 1
@@ -273,6 +284,9 @@ class LaunchTimeBenchmark:
                 if not self._verbose:
                     print ''
 
+                if self._save_results_to_json:
+                    resultsDict[self.get_test_name()]["metrics"]["Time"]["current"].append(results)
+
                 mean, stdev = self._compute_results(results)
                 self.log_verbose('RESULTS:\n')
                 self.log_verbose('mean: {} ms\n'.format(mean))
@@ -288,6 +302,10 @@ class LaunchTimeBenchmark:
 
             if self._feedback_in_browser:
                 self.launch_browser()
+
+            if self._save_results_to_json and self._json_results_path:
+                with open(self._json_results_path, "w") as jsonFile:
+                    json.dump(resultsDict, jsonFile, indent=4, separators=(',', ': '))
 
             means_by_iteration_number = []
             if len(results_by_iteration_number) > 1 and not self._do_not_ignore_first_result:
@@ -319,3 +337,6 @@ class LaunchTimeBenchmark:
 
     def did_parse_arguments(self, args):
         pass
+
+    def get_test_name(self):
+        return "LaunchTimeBenchmark"
