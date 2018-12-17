@@ -30,17 +30,10 @@
 #import "CrashReporterClientSPI.h"
 
 // Avoid having to link with libCrashReporterClient.a
-#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000) || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 130000)
-CRASH_REPORTER_CLIENT_HIDDEN
-struct crashreporter_annotations_t gCRAnnotations
-__attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))
-    = { {CRASHREPORTER_ANNOTATIONS_VERSION}, {0}, {0}, {0}, {0}, {0}, {0}, {0} };
-#else
 CRASH_REPORTER_CLIENT_HIDDEN
 struct crashreporter_annotations_t gCRAnnotations
 __attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))
     = { CRASHREPORTER_ANNOTATIONS_VERSION, 0, 0, 0, 0, 0, 0, 0 };
-#endif
 
 namespace WebKit {
 

@@ -1,3 +1,9 @@
+2018-12-17  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert recent CrashReporterClient build fixes as they are no longer needed.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+
 2018-12-17  Suresh Koppisetty  <skoppisettyt@apple.com>
 
         Rollout r235411
