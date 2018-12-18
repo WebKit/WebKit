@@ -91,7 +91,7 @@ HeightAndMargin BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMarg
 
         // 3. the bottom border edge of the last in-flow child whose top margin doesn't collapse with the element's bottom margin
         auto* inFlowChild = lastInFlowChild;
-        while (inFlowChild && MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(*inFlowChild))
+        while (inFlowChild && MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(layoutState, *inFlowChild))
             inFlowChild = inFlowChild->previousInFlowSibling();
         if (inFlowChild) {
             auto& inFlowDisplayBox = layoutState.displayBoxForLayoutBox(*inFlowChild);

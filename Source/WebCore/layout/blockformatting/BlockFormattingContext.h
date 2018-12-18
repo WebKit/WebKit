@@ -89,7 +89,7 @@ private:
             static LayoutUnit marginBefore(const LayoutState&, const Box&);
             static LayoutUnit marginAfter(const LayoutState&, const Box&);
 
-            static bool marginBeforeCollapsesWithParentMarginAfter(const Box&);
+            static bool marginBeforeCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
             static bool marginAfterCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
 
         private:

@@ -174,8 +174,21 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::collapsedMarginAfte
     return marginValue(computedNonCollapsedMarginAfter(layoutState, lastInFlowChild), collapsedMarginAfterFromLastChild(layoutState, lastInFlowChild));
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(const Box&)
+bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter(const LayoutState& layoutState, const Box& layoutBox)
 {
+    // 1. This is the last in-flow child and its margins collapse through and the margin after collapses with parent's margin after or
+    // 2. This box's margin after collapses with the next sibling's margin before and that sibling collapses through and
+    // we can get to the last in-flow child like that.
+    auto* lastInFlowChild = layoutBox.parent()->lastInFlowChild();
+    for (auto* currentBox = &layoutBox; currentBox; currentBox = currentBox->nextInFlowSibling()) {
+        if (!marginsCollapseThrough(layoutState, *currentBox))
+            return false;
+        if (currentBox == lastInFlowChild)
+            return marginAfterCollapsesWithParentMarginAfter(layoutState, *currentBox); 
+        if (!marginAfterCollapsesWithNextSibling(*currentBox))
+            return false;
+    }
+    ASSERT_NOT_REACHED();
     return false;
 }
 

@@ -1,5 +1,18 @@
 2018-12-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] Implement marginBeforeCollapsesWithParentMarginAfter
+        https://bugs.webkit.org/show_bug.cgi?id=192801
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::inFlowNonReplacedHeightAndMargin):
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginAfter):
+
+2018-12-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Implement marginAfterCollapsesWithSiblingMarginBeforeWithClearance
         https://bugs.webkit.org/show_bug.cgi?id=192799
 
