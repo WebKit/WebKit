@@ -1,3 +1,16 @@
+2018-12-18  Vivek Seth  <v_seth@apple.com>
+
+        HTTPS Upgrade: Scripts / preprocessing necessary to create new database in future
+        https://bugs.webkit.org/show_bug.cgi?id=192612
+        <rdar://problem/46651207>
+
+        Reviewed by Andy Estes.
+
+        * Configurations/WebKit.xcconfig:
+        * DerivedSources.make:
+        * Scripts/generate-https-upgrade-database.sh: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the 32-bit watchOS build after r239314

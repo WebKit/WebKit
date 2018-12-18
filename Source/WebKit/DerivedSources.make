@@ -315,3 +315,9 @@ $(WEB_PREFERENCES_COMBINED_INPUT_FILE) : $(WEB_PREFERENCES_INPUT_FILES)
 
 $(WEB_PREFERENCES_PATTERNS) : $(WebKit2)/Scripts/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
 	$(RUBY) $< --input $(WEB_PREFERENCES_COMBINED_INPUT_FILE)
+
+ifeq ($(ENABLE_HTTPS_UPGRADE),ENABLE_HTTPS_UPGRADE)
+all : HTTPSUpgradeList.db
+HTTPSUpgradeList.db : HTTPSUpgradeList.txt $(WebKit2)/Scripts/generate-https-upgrade-database.sh
+	sh $(WebKit2)/Scripts/generate-https-upgrade-database.sh $< $@
+endif # ENABLE_HTTPS_UPGRADE
