@@ -41,9 +41,10 @@ void* tryMalloc(Kind, size_t size)
     return FastMalloc::tryMalloc(size);
 }
 
-void* tryAllocateZeroedVirtualPages(Kind, size_t size)
+void* tryAllocateZeroedVirtualPages(Kind, size_t requestedSize)
 {
-    size = roundUpToMultipleOf(WTF::pageSize(), size);
+    size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
+    RELEASE_ASSERT(size >= requestedSize);
     void* result = OSAllocator::reserveAndCommit(size);
 #if !ASSERT_DISABLED
     if (result) {
