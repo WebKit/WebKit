@@ -1,3 +1,22 @@
+2018-12-17  Justin Michaud  <justin_michaud@apple.com>
+
+        Bindings generator should support Conditional= along with CachedAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=192721
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a bug where specifying both attributes causes compilation errors because the compile-time
+        condition is not included in the derived code.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjCachedAttribute3Getter):
+        (WebCore::jsTestObjCachedAttribute3):
+        (WebCore::JSTestObj::visitChildren):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+
 2018-12-17  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary object copy in CPUMonitor::setCPULimit()

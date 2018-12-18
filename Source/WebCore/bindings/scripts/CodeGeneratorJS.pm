@@ -4524,7 +4524,10 @@ sub GenerateImplementation
         if ($numCachedAttributes > 0) {
             foreach my $attribute (@{$interface->attributes}) {
                 if ($attribute->extendedAttributes->{CachedAttribute}) {
+                    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
+                    push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
                     push(@implContent, "    visitor.append(thisObject->m_" . $attribute->name . ");\n");
+                    push(@implContent, "#endif\n") if $conditionalString;
                 }
             }
         }

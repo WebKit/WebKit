@@ -60,6 +60,9 @@ public:
     static JSC::JSObject* serialize(JSC::ExecState&, JSTestObj& thisObject, JSDOMGlobalObject&, JSC::ThrowScope&);
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
+#if ENABLE(CONDITION)
+    mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute3;
+#endif
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
     static void heapSnapshot(JSCell*, JSC::HeapSnapshotBuilder&);

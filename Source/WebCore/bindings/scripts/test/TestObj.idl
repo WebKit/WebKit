@@ -276,6 +276,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     [CachedAttribute] readonly attribute any cachedAttribute1;
     [CachedAttribute] readonly attribute any cachedAttribute2;
+    [CachedAttribute, Conditional=CONDITION] readonly attribute any cachedAttribute3;
 
     attribute any anyAttribute;
     attribute object objectAttribute;
