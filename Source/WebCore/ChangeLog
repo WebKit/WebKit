@@ -1,3 +1,13 @@
+2018-12-18  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Use const reference for MediaTime parameter to prevent object copy
+        <https://webkit.org/b/192814>
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/JSDOMConvertNumbers.h:
+        (WebCore::JSConverter<IDLUnrestrictedDouble>::convert):
+
 2018-12-18  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] BindGroupLayout and Device::createBindGroupLayout

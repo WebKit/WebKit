@@ -1,3 +1,13 @@
+2018-12-18  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Use const reference for MediaTime parameter to prevent object copy
+        <https://webkit.org/b/192814>
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSCJSValue.h:
+        (JSC::jsNumber):
+
 2018-12-18  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Appease a build error where we weren't using a variable defined in an "if"

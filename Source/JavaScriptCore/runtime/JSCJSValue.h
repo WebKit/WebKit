@@ -551,7 +551,7 @@ ALWAYS_INLINE JSValue jsNumber(double d)
     return JSValue(d);
 }
 
-ALWAYS_INLINE JSValue jsNumber(MediaTime t)
+ALWAYS_INLINE JSValue jsNumber(const MediaTime& t)
 {
     return jsNumber(t.toDouble());
 }
