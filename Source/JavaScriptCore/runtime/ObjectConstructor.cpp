@@ -30,6 +30,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSImmutableButterfly.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "PropertyDescriptor.h"
@@ -73,7 +74,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   getOwnPropertyDescriptors objectConstructorGetOwnPropertyDescriptors  DontEnum|Function 1
   getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1
   getOwnPropertySymbols     objectConstructorGetOwnPropertySymbols      DontEnum|Function 1
-  keys                      objectConstructorKeys                       DontEnum|Function 1
+  keys                      objectConstructorKeys                       DontEnum|Function 1 ObjectKeysIntrinsic
   defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
   defineProperties          objectConstructorDefineProperties           DontEnum|Function 2
   create                    objectConstructorCreate                     DontEnum|Function 2 ObjectCreateIntrinsic
@@ -271,7 +272,6 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(ExecState* e
     RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include)));
 }
 
-// FIXME: Use the enumeration cache.
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -892,11 +892,23 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIs(ExecState* exec)
     return JSValue::encode(jsBoolean(sameValue(exec, exec->argument(0), exec->argument(1))));
 }
 
-// FIXME: Use the enumeration cache.
 JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* globalObject = exec->lexicalGlobalObject();
+    bool isObjectKeys = propertyNameMode == PropertyNameMode::Strings && dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude;
+    // We attempt to look up own property keys cache in Object.keys case.
+    if (isObjectKeys) {
+        if (LIKELY(!globalObject->isHavingABadTime())) {
+            if (auto* immutableButterfly = object->structure(vm)->cachedOwnKeys()) {
+                Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
+                return JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly());
+            }
+        }
+    }
+
     PropertyNameArray properties(&vm, propertyNameMode, PrivateSymbolMode::Exclude);
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -918,8 +930,30 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     if (propertyNameMode != PropertyNameMode::StringsAndSymbols) {
         ASSERT(propertyNameMode == PropertyNameMode::Strings || propertyNameMode == PropertyNameMode::Symbols);
         if (!mustFilterProperty && properties.size() < MIN_SPARSE_ARRAY_INDEX) {
-            auto* globalObject = exec->lexicalGlobalObject();
             if (LIKELY(!globalObject->isHavingABadTime())) {
+                if (isObjectKeys) {
+                    Structure* structure = object->structure(vm);
+                    if (structure->canCacheOwnKeys()) {
+                        auto* cachedButterfly = structure->cachedOwnKeysIgnoringSentinel();
+                        if (cachedButterfly == StructureRareData::cachedOwnKeysSentinel()) {
+                            size_t numProperties = properties.size();
+                            auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                            for (size_t i = 0; i < numProperties; i++) {
+                                const auto& identifier = properties[i];
+                                ASSERT(!identifier.isSymbol());
+                                newButterfly->setIndex(vm, i, jsOwnedString(&vm, identifier.string()));
+                            }
+
+                            structure->setCachedOwnKeys(vm, newButterfly);
+                            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(newButterfly->indexingMode());
+                            return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
+                        }
+
+                        if (cachedButterfly == nullptr)
+                            structure->setCachedOwnKeys(vm, StructureRareData::cachedOwnKeysSentinel());
+                    }
+                }
+
                 size_t numProperties = properties.size();
                 JSArray* keys = JSArray::create(vm, globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous), numProperties);
                 WriteBarrier<Unknown>* buffer = keys->butterfly()->contiguous().data();

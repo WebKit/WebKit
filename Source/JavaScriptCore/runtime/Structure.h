@@ -38,7 +38,6 @@
 #include "PutPropertySlot.h"
 #include "StructureIDBlob.h"
 #include "StructureRareData.h"
-#include "StructureRareDataInlines.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
@@ -326,6 +325,14 @@ public:
         return static_cast<const StructureRareData*>(m_previousOrRareData.get());
     }
 
+    const StructureRareData* rareDataConcurrently() const
+    {
+        JSCell* cell = m_previousOrRareData.get();
+        if (isRareData(cell))
+            return static_cast<StructureRareData*>(cell);
+        return nullptr;
+    }
+
     StructureRareData* ensureRareData(VM& vm)
     {
         if (!hasRareData())
@@ -472,6 +479,11 @@ public:
     bool canCachePropertyNameEnumerator() const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
+    void setCachedOwnKeys(VM&, JSImmutableButterfly*);
+    JSImmutableButterfly* cachedOwnKeys() const;
+    JSImmutableButterfly* cachedOwnKeysIgnoringSentinel() const;
+    bool canCacheOwnKeys() const;
+
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);
 
     JSString* objectToStringValue()
@@ -518,6 +530,11 @@ public:
     static ptrdiff_t inlineCapacityOffset()
     {
         return OBJECT_OFFSETOF(Structure, m_inlineCapacity);
+    }
+
+    static ptrdiff_t previousOrRareDataOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_previousOrRareData);
     }
 
     static Structure* createStructure(VM&);

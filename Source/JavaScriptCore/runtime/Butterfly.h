@@ -85,6 +85,11 @@ struct ContiguousData {
             m_data.setWithoutWriteBarrier(value);
         }
 
+        void setStartingValue(JSValue value)
+        {
+            m_data.setStartingValue(value);
+        }
+
         void clear()
         {
             ASSERT(m_isWritable);

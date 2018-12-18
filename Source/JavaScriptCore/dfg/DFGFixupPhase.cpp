@@ -1595,6 +1595,14 @@ private:
             break;
         }
 
+        case ObjectKeys: {
+            if (node->child1()->shouldSpeculateObject()) {
+                watchHavingABadTime(node);
+                fixEdge<ObjectUse>(node->child1());
+            }
+            break;
+        }
+
         case CheckStringIdent: {
             fixEdge<StringIdentUse>(node->child1());
             break;

@@ -1252,17 +1252,7 @@ JSPropertyNameEnumerator* Structure::cachedPropertyNameEnumerator() const
 
 bool Structure::canCachePropertyNameEnumerator() const
 {
-    auto canCache = [] (const Structure* structure) {
-        if (structure->isDictionary())
-            return false;
-        if (hasIndexedProperties(structure->indexingType()))
-            return false;
-        if (structure->typeInfo().overridesGetPropertyNames())
-            return false;
-        return true;
-    };
-
-    if (!canCache(this))
+    if (!this->canCacheOwnKeys())
         return false;
 
     StructureChain* structureChain = m_cachedPrototypeChain.get();
@@ -1271,7 +1261,7 @@ bool Structure::canCachePropertyNameEnumerator() const
     while (true) {
         if (!structure->get())
             return true;
-        if (!canCache(structure->get()))
+        if (!structure->get()->canCacheOwnKeys())
             return false;
         structure++;
     }

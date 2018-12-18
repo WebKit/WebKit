@@ -2692,6 +2692,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, VirtualRegister result, I
         return true;
     }
 
+    case ObjectKeysIntrinsic: {
+        if (argumentCountIncludingThis < 2)
+            return false;
+
+        insertChecks();
+        set(result, addToGraph(ObjectKeys, get(virtualRegisterForArgument(1, registerOffset))));
+        return true;
+    }
+
     case ReflectGetPrototypeOfIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

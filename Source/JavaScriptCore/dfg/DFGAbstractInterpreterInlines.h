@@ -43,6 +43,7 @@
 #include "Operations.h"
 #include "PutByIdStatus.h"
 #include "StringObject.h"
+#include "StructureRareDataInlines.h"
 #include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
 
@@ -2577,6 +2578,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (node->child1().useKind() == UntypedUse)
             clobberWorld();
         setTypeForNode(node, SpecFinalObject);
+        break;
+    }
+
+    case ObjectKeys: {
+        if (node->child1().useKind() == ObjectUse) {
+            auto& structureSet = forNode(node->child1()).m_structure;
+            if (structureSet.isFinite() && structureSet.size() == 1) {
+                RegisteredStructure structure = structureSet.onlyStructure();
+                if (auto* rareData = structure->rareDataConcurrently()) {
+                    if (auto* immutableButterfly = rareData->cachedOwnKeysConcurrently()) {
+                        if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+                            m_state.setFoundConstants(true);
+                            didFoldClobberWorld();
+                            setTypeForNode(node, SpecArray);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        clobberWorld();
+        setTypeForNode(node, SpecArray);
         break;
     }
 

@@ -12365,6 +12365,94 @@ void SpeculativeJIT::compileToThis(Node* node)
     jsValueResult(tempRegs, node);
 }
 
+void SpeculativeJIT::compileObjectKeys(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case ObjectUse: {
+        if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+            SpeculateCellOperand object(this, node->child1());
+            GPRTemporary structure(this);
+            GPRTemporary scratch(this);
+            GPRTemporary scratch2(this);
+            GPRTemporary scratch3(this);
+            GPRTemporary result(this);
+
+            GPRReg objectGPR = object.gpr();
+            GPRReg structureGPR = structure.gpr();
+            GPRReg scratchGPR = scratch.gpr();
+            GPRReg scratch2GPR = scratch2.gpr();
+            GPRReg scratch3GPR = scratch3.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            speculateObject(node->child1(), objectGPR);
+
+            CCallHelpers::JumpList slowCases;
+            m_jit.emitLoadStructure(*m_jit.vm(), objectGPR, structureGPR, scratchGPR);
+            m_jit.loadPtr(CCallHelpers::Address(structureGPR, Structure::previousOrRareDataOffset()), scratchGPR);
+
+            slowCases.append(m_jit.branchTestPtr(CCallHelpers::Zero, scratchGPR));
+            slowCases.append(m_jit.branch32(CCallHelpers::Equal, CCallHelpers::Address(scratchGPR, JSCell::structureIDOffset()), TrustedImm32(bitwise_cast<int32_t>(m_jit.vm()->structureStructure->structureID()))));
+
+            m_jit.loadPtr(CCallHelpers::Address(scratchGPR, StructureRareData::offsetOfCachedOwnKeys()), scratchGPR);
+
+            ASSERT(bitwise_cast<uintptr_t>(StructureRareData::cachedOwnKeysSentinel()) == 1);
+            slowCases.append(m_jit.branchPtr(CCallHelpers::BelowOrEqual, scratchGPR, TrustedImmPtr(bitwise_cast<void*>(StructureRareData::cachedOwnKeysSentinel()))));
+
+            MacroAssembler::JumpList slowButArrayBufferCases;
+
+            JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+            RegisteredStructure arrayStructure = m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
+
+            m_jit.move(scratchGPR, scratch3GPR);
+            m_jit.addPtr(TrustedImmPtr(JSImmutableButterfly::offsetOfData()), scratchGPR);
+
+            emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(arrayStructure), scratchGPR, structureGPR, scratch2GPR, slowButArrayBufferCases);
+
+            addSlowPathGenerator(slowPathCall(slowButArrayBufferCases, this, operationNewArrayBuffer, resultGPR, arrayStructure, scratch3GPR));
+
+            addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectKeysObject, resultGPR, objectGPR));
+
+            cellResult(resultGPR, node);
+            break;
+        }
+
+        SpeculateCellOperand object(this, node->child1());
+
+        GPRReg objectGPR = object.gpr();
+
+        speculateObject(node->child1(), objectGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationObjectKeysObject, resultGPR, objectGPR);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        break;
+    }
+
+    case UntypedUse: {
+        JSValueOperand object(this, node->child1());
+
+        JSValueRegs objectRegs = object.jsValueRegs();
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationObjectKeys, resultGPR, objectRegs);
+        m_jit.exceptionCheck();
+
+        cellResult(resultGPR, node);
+        break;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void SpeculativeJIT::compileObjectCreate(Node* node)
 {
     switch (node->child1().useKind()) {

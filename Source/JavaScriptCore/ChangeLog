@@ -1,3 +1,102 @@
+2018-12-16  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
+
+        [JSC] Optimize Object.keys by caching own keys results in StructureRareData
+        https://bugs.webkit.org/show_bug.cgi?id=190047
+
+        Reviewed by Saam Barati.
+
+        Object.keys is one of the most frequently used function in web-tooling-benchmarks (WTB).
+        Object.keys is dominant in lebab of WTB, and frequently called in babel and others.
+        Since our Structure knows the shape of JSObject, we can cache the result of Object.keys
+        in Structure (StructureRareData) as we cache JSPropertyNameEnumerator in StructureRareData.
+
+        This patch caches the result of Object.keys in StructureRareData. The cached array is created
+        as JSImmutableButterfly. And Object.keys creates CoW from this data. Currently, the lifetime
+        strategy of this JSImmutableButterfly is the same to cached JSPropertyNameEnumerator. It is
+        referenced from Structure, and collected when Structure is collected.
+
+        This improves several benchmarks in SixSpeed.
+
+                                        baseline                  patched
+
+            object-assign.es5      350.1710+-3.6303     ^    226.0368+-4.7558        ^ definitely 1.5492x faster
+            for-of-object.es6      269.1941+-3.3430     ^    127.9317+-2.3875        ^ definitely 2.1042x faster
+
+        And it improves WTB lebab by 11.8%.
+
+            Before: lebab:  6.10 runs/s
+            After:  lebab:  6.82 runs/s
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToNewArrayBuffer):
+        * dfg/DFGNode.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectKeys):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeys):
+        * runtime/Butterfly.h:
+        (JSC::ContiguousData::Data::setStartingValue):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::JSImmutableButterfly):
+        We set JSEmpty to the underlying butterfly storage if indexing type is Contiguous.
+        Otherwise, JSImmutableButterfly is half-baked one until all the storage is filled with some meaningful values, it leads to crash
+        if half-baked JSImmutableButterfly is exposed to GC.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownPropertyKeys):
+        * runtime/Structure.cpp:
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setCachedOwnKeys):
+        (JSC::Structure::cachedOwnKeys const):
+        (JSC::Structure::cachedOwnKeysIgnoringSentinel const):
+        (JSC::Structure::canCacheOwnKeys const):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        (JSC::StructureRareData::cachedPropertyNameEnumerator const): Deleted.
+        (JSC::StructureRareData::setCachedPropertyNameEnumerator): Deleted.
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::cachedPropertyNameEnumerator const):
+        (JSC::StructureRareData::setCachedPropertyNameEnumerator):
+        (JSC::StructureRareData::cachedOwnKeys const):
+        (JSC::StructureRareData::cachedOwnKeysIgnoringSentinel const):
+        (JSC::StructureRareData::cachedOwnKeysConcurrently const):
+        (JSC::StructureRareData::setCachedOwnKeys):
+        (JSC::StructureRareData::previousID const): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
         SamplingProfiler's isValidFramePointer() should reject address at stack origin.
