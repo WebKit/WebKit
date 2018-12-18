@@ -139,7 +139,7 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         columns.paintCount.title = WI.UIString("Paints");
         columns.paintCount.sortable = true;
         columns.paintCount.aligned = "right";
-        columns.paintCount.width = "50px";
+        columns.paintCount.width = "70px";
 
         columns.memory.title = WI.UIString("Memory");
         columns.memory.sortable = true;

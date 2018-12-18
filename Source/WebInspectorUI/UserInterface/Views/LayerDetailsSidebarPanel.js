@@ -87,7 +87,7 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
                 title: WI.UIString("Paints"),
                 sortable: true,
                 aligned: "right",
-                width: "50px",
+                width: "70px",
             },
             memory: {
                 title: WI.UIString("Memory"),
