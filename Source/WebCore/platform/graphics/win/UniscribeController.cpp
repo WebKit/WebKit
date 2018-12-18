@@ -50,8 +50,8 @@ UniscribeController::UniscribeController(const FontCascade* font, const TextRun&
     , m_maxGlyphBoundingBoxX(numeric_limits<float>::min())
     , m_minGlyphBoundingBoxY(numeric_limits<float>::max())
     , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
-    , m_end(run.length())
     , m_currentCharacter(0)
+    , m_end(run.length())
     , m_runWidthSoFar(0)
     , m_padding(run.expansion())
     , m_computingOffsetPosition(false)
@@ -87,7 +87,7 @@ int UniscribeController::offsetForPosition(int x, bool includePartialGlyphs)
     advance(m_run.length());
     if (m_computingOffsetPosition) {
         // The point is to the left or to the right of the entire run.
-        if (m_offsetX >= m_runWidthSoFar && m_run.ltr() || m_offsetX < 0 && m_run.rtl())
+        if ((m_offsetX >= m_runWidthSoFar && m_run.ltr()) || (m_offsetX < 0 && m_run.rtl()))
             m_offsetPosition = m_end;
     }
     m_computingOffsetPosition = false;
@@ -260,7 +260,6 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const F
     Vector<int> advances;
     offsets.resize(glyphs.size());
     advances.resize(glyphs.size());
-    int glyphCount = 0;
     HRESULT placeResult = ScriptPlace(0, fontData->scriptCache(), glyphs.data(), glyphs.size(), visualAttributes.data(),
                                       &item.a, advances.data(), offsets.data(), 0);
     if (placeResult == E_PENDING) {

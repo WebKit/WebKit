@@ -43,8 +43,6 @@
 
 namespace WebCore {
 
-const float cSmallCapsFontSizeMultiplier = 0.7f;
-
 static bool g_shouldApplyMacAscentHack;
 
 void Font::setShouldApplyMacAscentHack(bool b)
@@ -110,7 +108,7 @@ void Font::initGDIFont()
     m_maxCharWidth = textMetrics.tmMaxCharWidth;
     float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
     GLYPHMETRICS gm;
-    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
     DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
     if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
         xHeight = gm.gmptGlyphOrigin.y;
@@ -177,7 +175,7 @@ FloatRect Font::boundsForGDIGlyph(Glyph glyph) const
     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
 
     GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
     GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
 
     SelectObject(hdc, oldFont);
@@ -193,7 +191,7 @@ float Font::widthForGDIGlyph(Glyph glyph) const
     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
 
     GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
     GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
     float result = gdiMetrics.gmCellIncX + m_syntheticBoldOffset;
 

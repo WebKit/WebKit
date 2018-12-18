@@ -186,8 +186,6 @@ void GraphicsContextPlatformPrivate::scale(const FloatSize& size)
     ModifyWorldTransform(m_hdc, &xform, MWT_LEFTMULTIPLY);
 }
 
-static const double deg2rad = 0.017453292519943295769; // pi/180
-
 void GraphicsContextPlatformPrivate::rotate(float degreesAngle)
 {
     XFORM xform = TransformationMatrix().rotate(degreesAngle);

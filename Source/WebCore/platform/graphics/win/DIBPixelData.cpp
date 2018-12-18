@@ -28,8 +28,10 @@
 
 namespace WebCore {
 
+#ifndef NDEBUG
 static const WORD bitmapType = 0x4d42; // BMP format
 static const WORD bitmapPixelsPerMeter = 2834; // 72 dpi
+#endif
 
 DIBPixelData::DIBPixelData(HBITMAP bitmap)
 {

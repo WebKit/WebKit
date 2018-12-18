@@ -116,7 +116,7 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
     cairo_win32_scaled_font_select_font(scaledFont, dc);
 
     GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
     GetGlyphOutline(dc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
 
     cairo_win32_scaled_font_done_font(scaledFont);

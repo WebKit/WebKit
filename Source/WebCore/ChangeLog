@@ -1,3 +1,39 @@
+2018-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix compilation warnings WebCore/platform/graphics directory
+        https://bugs.webkit.org/show_bug.cgi?id=192752
+
+        Reviewed by Don Olmstead.
+
+        No new tests, no behavior changes.
+
+        * platform/graphics/win/DIBPixelData.cpp:
+        Enclosed bitmapType and bitmapPixelsPerMeter with #ifndef NDEBUG.
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::openTypeTable const): Use ASSERT_UNUSED instead of ASSERT.
+        * platform/graphics/win/GraphicsContextWin.cpp: Removed unused variable 'deg2rad'.
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        Removed unused soft links MFCreateSampleGrabberSinkActivate, MFCreateMemoryBuffer and MFCreateSample.
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        Reorder the initializer list.
+        (WebCore::MediaPlayerPrivateMediaFoundation::seek): Use ASSERT_UNUSED instead of ASSERT.
+        (WebCore::MediaPlayerPrivateMediaFoundation::setAllChannelVolumes): Ditto.
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession): Ditto.
+        (WebCore::MediaPlayerPrivateMediaFoundation::endSession): Ditto.
+        (WebCore::MediaPlayerPrivateMediaFoundation::onCreatedMediaSource): Ditto.
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame): Added default case.
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::platformBoundsForGlyph const): Use inner braces to initialize subobjects of MAT2.
+        * platform/graphics/win/SimpleFontDataWin.cpp: Removed unused 'cSmallCapsFontSizeMultiplier'.
+        (WebCore::Font::initGDIFont): Use inner braces to initialize subobjects of MAT2.
+        (WebCore::Font::boundsForGDIGlyph const): Ditto.
+        (WebCore::Font::widthForGDIGlyph const): Ditto.
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::UniscribeController):
+        Reorder the initializer list.
+        (WebCore::UniscribeController::offsetForPosition): Use parentheses to combine && and ||.
+        (WebCore::UniscribeController::shapeAndPlaceItem): Removed unused 'glyphCount'.
+
 2018-12-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] A stream's first video frame should be rendered
