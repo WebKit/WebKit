@@ -1,3 +1,19 @@
+2018-12-18  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION: [iOS] API test TestWebKitAPI._WKDownload.OriginatingWebView is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=192810
+        <rdar://problem/46812536>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[OriginatingWebViewDownloadDelegate _downloadDidStart:]):
+            After releasing our reference to the web view, wait until the next turn of the runloop
+            before checking that the originatingWebView has been zeroed, since the web view might
+            still be referenced in the autorelease pool. This _WKDownload unit test isn't about
+            testing general memory management of WKWebViews, only that _WKDownload does not retain
+            its web view via the 'originatingWebView' property.
+
 2018-12-18  Sihui Liu  <sihui_liu@apple.com>
 
         Clean up IndexedDB files between tests

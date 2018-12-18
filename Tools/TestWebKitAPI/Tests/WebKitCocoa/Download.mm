@@ -41,6 +41,7 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
@@ -253,13 +254,13 @@ TEST(_WKDownload, CancelDownload)
 
 - (void)_downloadDidStart:(_WKDownload *)download
 {
-    @autoreleasepool {
-        EXPECT_EQ([download originatingWebView], _webView);
-    }
-
+    EXPECT_EQ([download originatingWebView], _webView);
     _webView = nullptr;
-    EXPECT_NULL([download originatingWebView]);
-    isDone = true;
+
+    WTF::callOnMainThread([download = retainPtr(download)] {
+        EXPECT_NULL([download originatingWebView]);
+        isDone = true;
+    });
 }
 
 @end
