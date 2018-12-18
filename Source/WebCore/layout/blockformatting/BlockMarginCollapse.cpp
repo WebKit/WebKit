@@ -28,6 +28,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutContainer.h"
 #include "LayoutUnit.h"
@@ -326,26 +327,38 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithN
     return marginBeforeCollapsesWithPreviousSibling(*layoutBox.nextInFlowSibling());
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough(const Box& layoutBox)
+bool BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough(const LayoutState& layoutState, const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    // If the top and bottom margins of a box are adjoining, then it is possible for margins to collapse through it.
+    // A box's own margins collapse if the 'min-height' property is zero, and it has neither top or bottom borders nor top or bottom padding,
+    // and it has a 'height' of either 0 or 'auto', and it does not contain a line box, and all of its in-flow children's margins (if any) collapse.
     if (hasBorderBefore(layoutBox) || hasBorderAfter(layoutBox))
         return false;
 
     if (hasPaddingBefore(layoutBox) || hasPaddingAfter(layoutBox))
         return false;
 
-    if (!layoutBox.style().height().isAuto() || !layoutBox.style().minHeight().isAuto())
+    // FIXME: Check for computed 0 height.
+    if (!layoutBox.style().height().isAuto())
+        return false;
+
+    // FIXME: Check for computed 0 height.
+    if (!layoutBox.style().minHeight().isAuto())
         return false;
 
     if (!is<Container>(layoutBox))
         return true;
 
-    auto& container = downcast<Container>(layoutBox);
-    if (container.hasInFlowOrFloatingChild())
-        return false;
+    if (layoutBox.establishesInlineFormattingContext()) {
+        if (downcast<InlineFormattingState>(layoutState.establishedFormattingState(layoutBox)).inlineRuns().isEmpty())
+            return false;
+    } else {
+        for (auto* inflowChild = downcast<Container>(layoutBox).firstInFlowChild(); inflowChild; inflowChild = inflowChild->nextInFlowSibling()) {
+            if (!marginsCollapseThrough(layoutState, *inflowChild))
+                return true;
+        }
+    }
 
     return true;
 }
@@ -366,7 +379,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginBefore(const 
         return 0;
 
     if (!marginBeforeCollapsesWithPreviousSibling(layoutBox)) {
-        if (!marginsCollapseThrough(layoutBox))
+        if (!marginsCollapseThrough(layoutState, layoutBox))
             return nonCollapsedMarginBefore(layoutState, layoutBox);
         // Compute the collapsed through value.
         auto marginBefore = nonCollapsedMarginBefore(layoutState, layoutBox);
@@ -396,7 +409,7 @@ LayoutUnit BlockFormattingContext::Geometry::MarginCollapse::marginAfter(const L
     if (marginAfterCollapsesWithParentMarginAfter(layoutBox))
         return 0;
 
-    if (marginsCollapseThrough(layoutBox))
+    if (marginsCollapseThrough(layoutState, layoutBox))
         return 0;
 
     // Floats and out of flow positioned boxes do not collapse their margins.

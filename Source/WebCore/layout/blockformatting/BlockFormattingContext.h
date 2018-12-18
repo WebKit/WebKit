@@ -107,7 +107,7 @@ private:
             static bool marginAfterCollapsesWithNextSibling(const Box&);
             static bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&);
             static bool marginAfterCollapsesWithParentMarginBefore(const Box&);
-            static bool marginsCollapseThrough(const Box&);
+            static bool marginsCollapseThrough(const LayoutState&, const Box&);
         };
 
         static HeightAndMargin inFlowNonReplacedHeightAndMargin(const LayoutState&, const Box&, std::optional<LayoutUnit> usedHeight = { });
