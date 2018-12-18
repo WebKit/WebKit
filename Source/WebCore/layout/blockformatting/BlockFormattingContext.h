@@ -105,6 +105,8 @@ private:
             static bool marginBeforeCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
             static bool marginBeforeCollapsesWithPreviousSibling(const Box&);
             static bool marginAfterCollapsesWithNextSibling(const Box&);
+            static bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&);
+            static bool marginAfterCollapsesWithParentMarginBefore(const Box&);
             static bool marginsCollapseThrough(const Box&);
         };
 

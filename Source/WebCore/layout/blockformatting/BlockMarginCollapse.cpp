@@ -69,6 +69,14 @@ static bool hasPaddingAfter(const Box& layoutBox)
     return hasPadding(layoutBox.style().paddingAfter());
 }
 
+static bool hasClearance(const Box& layoutBox)
+{
+    if (!layoutBox.hasFloatClear())
+        return false;
+    // FIXME
+    return false;
+}
+
 static bool establishesBlockFormattingContext(const Box& layoutBox)
 {
     // WebKit treats the document element renderer as a block formatting context root. It probably only impacts margin collapsing, so let's not do
@@ -179,7 +187,16 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
 
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutBox.isFloatingOrOutOfFlowPositioned())
+    // Margins between a floated box and any other box do not collapse.
+    if (layoutBox.isFloatingPositioned())
+        return false;
+
+    // Margins of absolutely positioned boxes do not collapse.
+    if (layoutBox.isOutOfFlowPositioned())
+        return false;
+
+    // Margins of inline-block boxes do not collapse.
+    if (layoutBox.isInlineBlockBox())
         return false;
 
     // Only the first inlflow child collapses with parent.
@@ -197,25 +214,43 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
     if (hasPaddingBefore(parent))
         return false;
 
+    // ...and the child has no clearance.
+    if (hasClearance(layoutBox))
+        return false;
+
     if (BlockFormattingContext::Quirks::shouldIgnoreMarginBefore(layoutState, layoutBox))
         return false;
 
     return true;
 }
 
+bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&)
+{
+    return false;
+}
+
+bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginBefore(const Box&)
+{
+    return false;
+}
+
 bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginAfter(const Box& layoutBox)
 {
-    // last inflow box to parent.
-    // https://www.w3.org/TR/CSS21/box.html#collapsing-margins
     if (layoutBox.isAnonymous())
         return false;
 
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutBox.isFloatingOrOutOfFlowPositioned())
+    // Margins between a floated box and any other box do not collapse.
+    if (layoutBox.isFloatingPositioned())
         return false;
 
-    if (marginsCollapseThrough(layoutBox))
+    // Margins of absolutely positioned boxes do not collapse.
+    if (layoutBox.isOutOfFlowPositioned())
+        return false;
+
+    // Margins of inline-block boxes do not collapse.
+    if (layoutBox.isInlineBlockBox())
         return false;
 
     // Only the last inlflow child collapses with parent.
@@ -223,17 +258,29 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithP
         return false;
 
     auto& parent = *layoutBox.parent();
-    // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children
+    // Margins of elements that establish new block formatting contexts do not collapse with their in-flow children.
     if (establishesBlockFormattingContext(parent))
         return false;
 
-    if (hasBorderBefore(parent))
+    // The bottom margin of an in-flow block box with a 'height' of 'auto' collapses with its last in-flow block-level child's bottom margin, if:
+    if (!parent.style().height().isAuto())
         return false;
 
+    // the box has no bottom padding, and
     if (hasPaddingBefore(parent))
         return false;
 
-    if (!parent.style().height().isAuto())
+    // the box has no bottom border, and
+    if (hasBorderBefore(parent))
+        return false;
+
+    // the child's bottom margin neither collapses with a top margin that has clearance...
+    if (marginAfterCollapsesWithSiblingMarginBeforeWithClearance(layoutBox))
+        return false;
+
+    // nor (if the box's min-height is non-zero) with the box's top margin.
+    auto computedMinHeight = parent.style().logicalMinHeight();
+    if (!computedMinHeight.isAuto() && computedMinHeight.value() && marginAfterCollapsesWithParentMarginBefore(layoutBox))
         return false;
 
     return true;

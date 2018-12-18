@@ -1,3 +1,18 @@
+2018-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][BFC][MarginCollapsing] Expand marginAfterCollapsesWithParentMarginAfter and marginBeforeCollapsesWithParentMarginBefore collapsing logic
+        https://bugs.webkit.org/show_bug.cgi?id=192787
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockFormattingContext.h:
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::hasClearance):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginBefore):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithParentMarginAfter):
+
 2018-12-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix compilation warnings WebCore/platform/graphics directory
