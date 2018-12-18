@@ -1,3 +1,15 @@
+2018-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: m3u8 content not shown, it should be text
+        https://bugs.webkit.org/show_bug.cgi?id=192731
+        <rdar://problem/46747728>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.shouldTreatMIMETypeAsText):
+        Support m3u8/m3u files as text.
+
 2018-12-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: path view is misaligned

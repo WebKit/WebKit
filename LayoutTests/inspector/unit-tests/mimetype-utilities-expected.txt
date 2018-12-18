@@ -28,3 +28,21 @@ PASS: File extension for "application/xhtml+xml" should be "xhtml".
 PASS: File extension for "image/svg+xml" should be "svg".
 PASS: File extension for "text/foo+xml" should be "xml".
 
+-- Running test case: shouldTreatMIMETypeAsText
+PASS: null mime type should not be treated as text.
+PASS: "application/unknown" should not be treated as text.
+PASS: "text/plain" should be treated as text.
+PASS: "text/javascript" should be treated as text.
+PASS: "application/json" should be treated as text.
+PASS: "application/vnd.api+json" should be treated as text.
+PASS: "application/vnd.apple.mpegurl" should be treated as text.
+PASS: "image/svg+xml" should be treated as text.
+PASS: "text/x-coffeescript" should be treated as text.
+PASS: "image/jpeg" should not be treated as text.
+PASS: "image/png" should not be treated as text.
+PASS: "image/gif" should not be treated as text.
+PASS: "font/woff" should not be treated as text.
+PASS: "video/mpeg" should not be treated as text.
+PASS: "audio/ogg" should not be treated as text.
+PASS: "application/pdf" should not be treated as text.
+

@@ -315,7 +315,14 @@ WI.shouldTreatMIMETypeAsText = function(mimeType)
     if (mimeType.endsWith("+json") || mimeType.endsWith("+xml"))
         return true;
 
+    // Various media text mime types.
+    let extension = WI.fileExtensionForMIMEType(mimeType);
+    if (extension === "m3u8" || extension === "m3u")
+        return true;
+
     // Various script and JSON mime types.
+    if (extension === "js" || extension === "json")
+        return true;
     if (mimeType.startsWith("application/"))
         return mimeType.endsWith("script") || mimeType.endsWith("json");
 

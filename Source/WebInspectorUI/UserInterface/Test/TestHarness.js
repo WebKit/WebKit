@@ -116,6 +116,11 @@ TestHarness = class TestHarness extends WI.Object
         this._expect(TestHarness.ExpectationType.True, !!actual, message, actual);
     }
 
+    expectTrue(actual, message)
+    {
+        this._expect(TestHarness.ExpectationType.True, !!actual, message, actual);
+    }
+
     expectFalse(actual, message)
     {
         this._expect(TestHarness.ExpectationType.False, !actual, message, actual);

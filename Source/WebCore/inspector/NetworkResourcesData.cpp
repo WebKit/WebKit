@@ -187,6 +187,9 @@ InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String
 
 void NetworkResourcesData::setResourceContent(const String& requestId, const String& content, bool base64Encoded)
 {
+    if (content.isNull())
+        return;
+
     ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;

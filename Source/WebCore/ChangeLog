@@ -1,3 +1,24 @@
+2018-12-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: m3u8 content not shown, it should be text
+        https://bugs.webkit.org/show_bug.cgi?id=192731
+        <rdar://problem/46747728>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::setResourceContent):
+        Don't clobber data if setting empty content on a resource that has content.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::shouldTreatAsText):
+        Additional non-"text/" mime types that can be treated as text.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isTextMediaPlaylistMIMEType):
+        * platform/MIMETypeRegistry.h:
+        Detect media playlist mime types that are text (m3u8/m3u).
+
 2018-12-18  Daniel Bates  <dabates@apple.com>
 
         Remove <meta http-equiv=set-cookie> support

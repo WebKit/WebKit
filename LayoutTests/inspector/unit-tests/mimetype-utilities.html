@@ -51,6 +51,39 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "shouldTreatMIMETypeAsText",
+        test() {
+            function expectText(mimeType) {
+                InspectorTest.expectTrue(WI.shouldTreatMIMETypeAsText(mimeType), `"${mimeType}" should be treated as text.`);
+            }
+            function expectNotText(mimeType) {
+                InspectorTest.expectFalse(WI.shouldTreatMIMETypeAsText(mimeType), `"${mimeType}" should not be treated as text.`);
+            }
+
+            InspectorTest.expectFalse(WI.shouldTreatMIMETypeAsText(null), `null mime type should not be treated as text.`);
+            expectNotText("application/unknown");
+
+            expectText("text/plain");
+            expectText("text/javascript");
+            expectText("application/json");
+            expectText("application/vnd.api+json");
+            expectText("application/vnd.apple.mpegurl");
+            expectText("image/svg+xml");
+            expectText("text/x-coffeescript");
+
+            expectNotText("image/jpeg");
+            expectNotText("image/png");
+            expectNotText("image/gif");
+            expectNotText("font/woff");
+            expectNotText("video/mpeg");
+            expectNotText("audio/ogg");
+            expectNotText("application/pdf");
+
+            return true;
+        }
+    })
+
     suite.runTestCasesAndFinish();
 }
 </script>

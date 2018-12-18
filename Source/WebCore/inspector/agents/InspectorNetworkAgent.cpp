@@ -978,7 +978,8 @@ bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
     return startsWithLettersIgnoringASCIICase(mimeType, "text/")
         || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)
-        || MIMETypeRegistry::isXMLMIMEType(mimeType);
+        || MIMETypeRegistry::isXMLMIMEType(mimeType)
+        || MIMETypeRegistry::isTextMediaPlaylistMIMEType(mimeType);
 }
 
 Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& mimeType, const String& textEncodingName)

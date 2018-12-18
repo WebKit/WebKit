@@ -499,6 +499,26 @@ bool MIMETypeRegistry::isSupportedFontMIMEType(const String& mimeType)
         || equalLettersIgnoringASCIICase(subtype, "sfnt");
 }
 
+bool MIMETypeRegistry::isTextMediaPlaylistMIMEType(const String& mimeType)
+{
+    if (startsWithLettersIgnoringASCIICase(mimeType, "application/")) {
+        static const unsigned applicationLength = 12;
+        auto subtype = StringView { mimeType }.substring(applicationLength);
+        return equalLettersIgnoringASCIICase(subtype, "vnd.apple.mpegurl")
+            || equalLettersIgnoringASCIICase(subtype, "mpegurl")
+            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl");
+    }
+
+    if (startsWithLettersIgnoringASCIICase(mimeType, "audio/")) {
+        static const unsigned audioLength = 6;
+        auto subtype = StringView { mimeType }.substring(audioLength);
+        return equalLettersIgnoringASCIICase(subtype, "mpegurl")
+            || equalLettersIgnoringASCIICase(subtype, "x-mpegurl");
+    }
+
+    return false;
+}
+
 bool MIMETypeRegistry::isSupportedJSONMIMEType(const String& mimeType)
 {
     if (mimeType.isEmpty())
