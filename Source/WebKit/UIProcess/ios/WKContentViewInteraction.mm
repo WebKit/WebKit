@@ -1256,6 +1256,10 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 - (void)_showTapHighlight
 {
     auto shouldPaintTapHighlight = [&](const WebCore::FloatRect& rect) {
+#if PLATFORM(IOSMAC)
+        UNUSED_PARAM(rect);
+        return NO;
+#else
         static const float highlightPaintThreshold = 0.3; // 30%
         float highlightArea = 0;
         for (auto highlightQuad : _tapHighlightInformation.quads) {
@@ -1265,6 +1269,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
                 return false;
         }
         return highlightArea < rect.area() * highlightPaintThreshold;
+#endif
     };
 
     if (!shouldPaintTapHighlight(_page->unobscuredContentRect()) && !_showDebugTapHighlightsForFastClicking)

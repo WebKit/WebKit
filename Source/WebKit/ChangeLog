@@ -1,5 +1,19 @@
 2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Tap highlights should not be shown on iOSMac
+        https://bugs.webkit.org/show_bug.cgi?id=192797
+        <rdar://problem/46793995>
+
+        Reviewed by Tim Horton.
+
+        WKWebViews in iOSMac should avoid painting tap highlights, since tap highlights are not present in the rest of
+        the macOS platform. Simply disable this functionality by bailing in `-[WKContentView _showTapHighlight]`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showTapHighlight]):
+
+2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the iOSMac engineering build again
 
         After r239311, `WebProcessProxy::fullKeyboardAccessEnabled` in `WebProcessProxyIOS.mm` attempts to use
