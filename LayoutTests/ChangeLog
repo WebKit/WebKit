@@ -1,3 +1,14 @@
+2018-12-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+
+        Reviewed by Dewei Zhu.
+
+        Add a time out value.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+
 2018-12-17  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] A stream's first video frame should be rendered

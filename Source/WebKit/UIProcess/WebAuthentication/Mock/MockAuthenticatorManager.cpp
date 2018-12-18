@@ -47,6 +47,8 @@ void MockAuthenticatorManager::respondReceivedInternal(Respond&& respond)
 
     pendingCompletionHandler()(WTFMove(respond));
     clearStateAsync();
+    // FIXME(192061)
+    LOG_ERROR("Stop timer.");
     requestTimeOutTimer().stop();
 }
 

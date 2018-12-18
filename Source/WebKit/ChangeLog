@@ -1,3 +1,22 @@
+2018-12-17  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=192061
+
+        Reviewed by Dewei Zhu.
+
+        Part 3.
+
+        Add some additional temporary logging info to determine if the timer is working as expected.
+        Once the bug is determined and fixed, we should remove all logging added in this patch.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        (WebKit::AuthenticatorManager::timeOutTimerFired):
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.cpp:
+        (WebKit::MockAuthenticatorManager::respondReceivedInternal):
+
 2018-12-17  Saam barati  <sbarati@apple.com>
 
         Enable HTTP and HTTPS proxies on iOS and make it a property of the NSURLSession
