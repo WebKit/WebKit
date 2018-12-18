@@ -1,3 +1,10 @@
+2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the 32-bit watchOS build after r239314
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
 2018-12-18  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView has old URL while displaying SafeBrowsing interstitial, for link-click navigations
