@@ -194,6 +194,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 + (NSURL *)_confirmMalwareSentinel WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (NSURL *)_visitUnsafeWebsiteSentinel WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_isJITEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_removeDataDetectedLinks:(dispatch_block_t)completion WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

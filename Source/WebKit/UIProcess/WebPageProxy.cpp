@@ -4339,6 +4339,12 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
         m_pageClient->clearSafeBrowsingWarning();
 
         if (safeBrowsingWarning) {
+            if (frame->isMainFrame() && safeBrowsingWarning->url().isValid()) {
+                auto transaction = m_pageLoadState.transaction();
+                m_pageLoadState.setPendingAPIRequestURL(transaction, safeBrowsingWarning->url());
+                m_pageLoadState.commitChanges();
+            }
+
             m_pageClient->showSafeBrowsingWarning(*safeBrowsingWarning, [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), policyAction] (auto&& result) mutable {
                 switchOn(result, [&] (const URL& url) {
                     completionHandler(WebPolicyAction::Ignore);

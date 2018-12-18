@@ -1,3 +1,17 @@
+2018-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView has old URL while displaying SafeBrowsing interstitial, for link-click navigations
+        https://bugs.webkit.org/show_bug.cgi?id=192675
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (goBack):
+        (TEST):
+        (visitUnsafeSite):
+        (-[SafeBrowsingHelper observeValueForKeyPath:ofObject:change:context:]):
+        (-[SafeBrowsingHelper webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+
 2018-12-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(r239182) SuspendedPage's process reuse for link navigation optimization sometimes broken

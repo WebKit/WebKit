@@ -45,12 +45,13 @@ public:
     }
 #endif
 #if PLATFORM(COCOA)
-    static Ref<SafeBrowsingWarning> create(String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    static Ref<SafeBrowsingWarning> create(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
     {
-        return adoptRef(*new SafeBrowsingWarning(WTFMove(title), WTFMove(warning), WTFMove(details)));
+        return adoptRef(*new SafeBrowsingWarning(WTFMove(url), WTFMove(title), WTFMove(warning), WTFMove(details)));
     }
 #endif
 
+    const URL& url() const { return m_url; }
     const String& title() const { return m_title; }
     const String& warning() const { return m_warning; }
 #if PLATFORM(COCOA)
@@ -65,9 +66,10 @@ private:
     SafeBrowsingWarning(const URL&, SSBServiceLookupResult *);
 #endif
 #if PLATFORM(COCOA)
-    SafeBrowsingWarning(String&&, String&&, RetainPtr<NSAttributedString>&&);
+    SafeBrowsingWarning(URL&&, String&&, String&&, RetainPtr<NSAttributedString>&&);
 #endif
 
+    URL m_url;
     String m_title;
     String m_warning;
 #if PLATFORM(COCOA)

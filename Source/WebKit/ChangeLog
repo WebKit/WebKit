@@ -1,3 +1,24 @@
+2018-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView has old URL while displaying SafeBrowsing interstitial, for link-click navigations
+        https://bugs.webkit.org/show_bug.cgi?id=192675
+
+        Reviewed by Geoffrey Garen.
+
+        When a safe browsing warning is being shown, WKWebView.URL should be the unsafe website, not the safe website before it.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarningWithTitle:warning:details:completionHandler:]):
+        (-[WKWebView _showSafeBrowsingWarningWithURL:title:warning:details:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm:
+        (WebKit::SafeBrowsingWarning::SafeBrowsingWarning):
+        * UIProcess/SafeBrowsingWarning.h:
+        (WebKit::SafeBrowsingWarning::create):
+        (WebKit::SafeBrowsingWarning::url const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2018-12-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(r239182) SuspendedPage's process reuse for link navigation optimization sometimes broken

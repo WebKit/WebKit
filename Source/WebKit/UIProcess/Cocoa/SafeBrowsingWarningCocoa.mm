@@ -150,15 +150,17 @@ static NSMutableAttributedString *safeBrowsingDetailsText(const URL& url, SSBSer
 }
 
 SafeBrowsingWarning::SafeBrowsingWarning(const URL& url, SSBServiceLookupResult *result)
-    : m_title(safeBrowsingTitleText(result))
+    : m_url(url)
+    , m_title(safeBrowsingTitleText(result))
     , m_warning(safeBrowsingWarningText(result))
     , m_details(safeBrowsingDetailsText(url, result))
 {
 }
 #endif
 
-SafeBrowsingWarning::SafeBrowsingWarning(String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
-    : m_title(WTFMove(title))
+SafeBrowsingWarning::SafeBrowsingWarning(URL&& url, String&& title, String&& warning, RetainPtr<NSAttributedString>&& details)
+    : m_url(WTFMove(url))
+    , m_title(WTFMove(title))
     , m_warning(WTFMove(warning))
     , m_details(WTFMove(details))
 {

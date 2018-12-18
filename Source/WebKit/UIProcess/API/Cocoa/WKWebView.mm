@@ -4800,7 +4800,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
 {
-    auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(title, warning, details);
+    // FIXME: Adopt _showSafeBrowsingWarningWithURL and remove this function.
+    [self _showSafeBrowsingWarningWithURL:nil title:title warning:warning details:details completionHandler:completionHandler];
+}
+
+- (void)_showSafeBrowsingWarningWithURL:(NSURL *)url title:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler
+{
+    auto safeBrowsingWarning = WebKit::SafeBrowsingWarning::create(url, title, warning, details);
     auto wrapper = [completionHandler = makeBlockPtr(completionHandler)] (Variant<WebKit::ContinueUnsafeLoad, URL>&& variant) {
         switchOn(variant, [&] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) {
             switch (continueUnsafeLoad) {
