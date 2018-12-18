@@ -74,8 +74,13 @@ public:
     uint32_t length(ExecState* exec) const
     {
         VM& vm = exec->vm();
-        if (UNLIKELY(storageHeader().overrodeThings))
-            return get(exec, vm.propertyNames->length).toUInt32(exec);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        if (UNLIKELY(storageHeader().overrodeThings)) {
+            auto value = get(exec, vm.propertyNames->length);
+            RETURN_IF_EXCEPTION(scope, 0);
+            scope.release();
+            return value.toUInt32(exec);
+        }
         return internalLength();
     }
     
