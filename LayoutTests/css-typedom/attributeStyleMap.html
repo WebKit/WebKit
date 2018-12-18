@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSTypedOMEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test element.attributeStyleMap basics">
+<link rel="help" content="https://drafts.css-houdini.org/css-typed-om-1/">
+
+<div id="el" style = "width: 150px; height: 10em; --my-prop: hello;"></div>
+
+<script>
+  test(function() {
+    assert_true(!!el.attributeStyleMap);
+    assert_true(el.attributeStyleMap instanceof StylePropertyMap);
+  }, 'test that element.attributeStyleMap exists');
+
+  test(function() {
+    assert_true(el.attributeStyleMap.get('width') instanceof CSSUnitValue);
+    assert_equals(el.attributeStyleMap.get('width').value, 150);
+    assert_equals(el.attributeStyleMap.get('width').unit, 'px');
+  }, 'test that element.attributeStyleMap has a valid width value');
+
+</script>

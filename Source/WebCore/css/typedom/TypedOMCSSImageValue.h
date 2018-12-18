@@ -39,27 +39,27 @@ namespace WebCore {
 
 class TypedOMCSSImageValue final : public TypedOMCSSStyleValue {
 public:
-    static Ref<TypedOMCSSImageValue> create(CSSImageValue& cssValue, RenderElement& renderer)
+    static Ref<TypedOMCSSImageValue> create(CSSImageValue& cssValue, Document& document)
     {
-        return adoptRef(*new TypedOMCSSImageValue(cssValue, renderer));
+        return adoptRef(*new TypedOMCSSImageValue(cssValue, document));
     }
 
     String toString() final { return m_cssValue->cssText(); }
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
-    const RenderElement* renderer() const { return m_renderer.get(); }
+    Document* document() const { return m_document.get(); }
 
 private:
-    TypedOMCSSImageValue(CSSImageValue& cssValue, RenderElement& renderer)
+    TypedOMCSSImageValue(CSSImageValue& cssValue, Document& document)
         : m_cssValue(makeRef(cssValue))
-        , m_renderer(makeWeakPtr(renderer))
+        , m_document(makeWeakPtr(document))
     {
     }
 
     bool isImageValue() final { return true; }
 
     Ref<CSSImageValue> m_cssValue;
-    WeakPtr<RenderElement> m_renderer;
+    WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore

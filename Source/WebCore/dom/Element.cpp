@@ -4105,4 +4105,18 @@ Vector<RefPtr<WebAnimation>> Element::getAnimations()
     return animations;
 }
 
+#if ENABLE(CSS_TYPED_OM)
+StylePropertyMap* Element::attributeStyleMap()
+{
+    if (!hasRareData())
+        return nullptr;
+    return elementRareData()->attributeStyleMap();
+}
+
+void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
+{
+    ensureElementRareData().setAttributeStyleMap(WTFMove(map));
+}
+#endif
+
 } // namespace WebCore

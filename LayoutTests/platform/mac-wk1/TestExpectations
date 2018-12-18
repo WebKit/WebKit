@@ -640,6 +640,7 @@ webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propaga
 fast/css-custom-paint [ Skip ]
 imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
 css-custom-properties-api [ Skip ]
+css-typedom [ Skip ]
 css-dark-mode [ Skip ]
 
 webkit.org/b/189908 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]

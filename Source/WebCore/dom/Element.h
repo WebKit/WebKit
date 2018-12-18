@@ -54,6 +54,7 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 class PseudoElement;
 class RenderTreePosition;
+class StylePropertyMap;
 class WebAnimation;
 struct ElementStyle;
 struct ScrollIntoViewOptions;
@@ -607,6 +608,11 @@ protected:
     void addShadowRoot(Ref<ShadowRoot>&&);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
+
+#if ENABLE(CSS_TYPED_OM)
+    StylePropertyMap* attributeStyleMap();
+    void setAttributeStyleMap(Ref<StylePropertyMap>&&);
+#endif
 
 private:
     Frame* documentFrameWithNonNullView() const;

@@ -1,0 +1,196 @@
+Checks that get_by_pname doesn't get confused about which properties go where when it comes to stacic properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a["foo"] is 1
+PASS a["bar"] is 2
+PASS a["wibble"] is 3
+PASS a["hick"] is 4
+PASS a["hock"] is 5
+PASS a["snood"] is 6
+PASS a["charset"] is 
+PASS a["coords"] is 
+PASS a["download"] is 
+PASS a["hreflang"] is 
+PASS a["name"] is 
+PASS a["ping"] is 
+PASS a["rel"] is 
+PASS a["rev"] is 
+PASS a["shape"] is 
+PASS a["target"] is 
+PASS a["type"] is 
+PASS a["text"] is nerget
+PASS a["relList"] is 
+PASS a["origin"] is file://
+PASS a["protocol"] is file:
+PASS a["username"] is 
+PASS a["password"] is 
+PASS a["host"] is 
+PASS a["hostname"] is 
+PASS a["port"] is 
+PASS a["search"] is 
+PASS a["hash"] is 
+PASS a["title"] is 
+PASS a["lang"] is 
+PASS a["translate"] is true
+PASS a["dir"] is 
+PASS a["dataset"] is [object DOMStringMap]
+PASS a["hidden"] is false
+PASS a["tabIndex"] is 0
+PASS a["accessKey"] is 
+PASS a["draggable"] is true
+PASS a["spellcheck"] is true
+PASS a["innerText"] is nerget
+PASS a["contentEditable"] is inherit
+PASS a["isContentEditable"] is false
+PASS a["offsetParent"] is [object HTMLBodyElement]
+PASS a["offsetTop"] is 714
+PASS a["offsetLeft"] is 8
+PASS a["offsetWidth"] is 40
+PASS a["offsetHeight"] is 18
+PASS a["outerText"] is nerget
+PASS a["webkitdropzone"] is 
+PASS a["inputMode"] is 
+PASS a["style"] is [object CSSStyleDeclaration]
+PASS a["attributeStyleMap"] is [object StylePropertyMap]
+PASS a["onabort"] is null
+PASS a["onblur"] is null
+PASS a["oncanplay"] is null
+PASS a["oncanplaythrough"] is null
+PASS a["onchange"] is null
+PASS a["onclick"] is null
+PASS a["oncontextmenu"] is null
+PASS a["oncuechange"] is null
+PASS a["ondblclick"] is null
+PASS a["ondrag"] is null
+PASS a["ondragend"] is null
+PASS a["ondragenter"] is null
+PASS a["ondragleave"] is null
+PASS a["ondragover"] is null
+PASS a["ondragstart"] is null
+PASS a["ondrop"] is null
+PASS a["ondurationchange"] is null
+PASS a["onemptied"] is null
+PASS a["onended"] is null
+PASS a["onerror"] is null
+PASS a["onfocus"] is null
+PASS a["oninput"] is null
+PASS a["oninvalid"] is null
+PASS a["onkeydown"] is null
+PASS a["onkeypress"] is null
+PASS a["onkeyup"] is null
+PASS a["onload"] is null
+PASS a["onloadeddata"] is null
+PASS a["onloadedmetadata"] is null
+PASS a["onloadstart"] is null
+PASS a["onmousedown"] is null
+PASS a["onmouseenter"] is null
+PASS a["onmouseleave"] is null
+PASS a["onmousemove"] is null
+PASS a["onmouseout"] is null
+PASS a["onmouseover"] is null
+PASS a["onmouseup"] is null
+PASS a["onmousewheel"] is null
+PASS a["onpause"] is null
+PASS a["onplay"] is null
+PASS a["onplaying"] is null
+PASS a["onprogress"] is null
+PASS a["onratechange"] is null
+PASS a["onrejectionhandled"] is null
+PASS a["onreset"] is null
+PASS a["onresize"] is null
+PASS a["onscroll"] is null
+PASS a["onseeked"] is null
+PASS a["onseeking"] is null
+PASS a["onselect"] is null
+PASS a["onstalled"] is null
+PASS a["onsubmit"] is null
+PASS a["onsuspend"] is null
+PASS a["ontimeupdate"] is null
+PASS a["ontoggle"] is null
+PASS a["onunhandledrejection"] is null
+PASS a["onvolumechange"] is null
+PASS a["onwaiting"] is null
+PASS a["ontransitionend"] is null
+PASS a["ontransitionrun"] is null
+PASS a["ontransitionstart"] is null
+PASS a["ontransitioncancel"] is null
+PASS a["onanimationend"] is null
+PASS a["onanimationiteration"] is null
+PASS a["onanimationstart"] is null
+PASS a["onanimationcancel"] is null
+PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
+PASS a["prefix"] is null
+PASS a["localName"] is a
+PASS a["tagName"] is A
+PASS a["id"] is foo
+PASS a["className"] is 
+PASS a["classList"] is 
+PASS a["slot"] is 
+PASS a["attributes"] is [object NamedNodeMap]
+PASS a["shadowRoot"] is null
+PASS a["scrollTop"] is 0
+PASS a["scrollLeft"] is 0
+PASS a["scrollWidth"] is 0
+PASS a["scrollHeight"] is 0
+PASS a["clientTop"] is 0
+PASS a["clientLeft"] is 0
+PASS a["clientWidth"] is 0
+PASS a["clientHeight"] is 0
+PASS a["innerHTML"] is nerget
+PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
+PASS a["onaccessiblecontextmenu"] is null
+PASS a["onaccessibleclick"] is null
+PASS a["onaccessibledecrement"] is null
+PASS a["onaccessibledismiss"] is null
+PASS a["onaccessiblefocus"] is null
+PASS a["onaccessibleincrement"] is null
+PASS a["onaccessiblescrollintoview"] is null
+PASS a["onaccessiblesetvalue"] is null
+PASS a["onaccessibleselect"] is null
+PASS a["oncopy"] is null
+PASS a["oncut"] is null
+PASS a["onpaste"] is null
+PASS a["previousElementSibling"] is [object HTMLDivElement]
+PASS a["nextElementSibling"] is [object HTMLScriptElement]
+PASS a["children"] is [object HTMLCollection]
+PASS a["firstElementChild"] is null
+PASS a["lastElementChild"] is null
+PASS a["childElementCount"] is 0
+PASS a["assignedSlot"] is null
+PASS a["nodeType"] is 1
+PASS a["nodeName"] is A
+PASS a["isConnected"] is true
+PASS a["ownerDocument"] is [object HTMLDocument]
+PASS a["parentNode"] is [object HTMLBodyElement]
+PASS a["parentElement"] is [object HTMLBodyElement]
+PASS a["childNodes"] is [object NodeList]
+PASS a["firstChild"] is [object Text]
+PASS a["lastChild"] is [object Text]
+PASS a["previousSibling"] is [object Text]
+PASS a["nextSibling"] is [object Text]
+PASS a["nodeValue"] is null
+PASS a["textContent"] is nerget
+PASS a["ELEMENT_NODE"] is 1
+PASS a["ATTRIBUTE_NODE"] is 2
+PASS a["TEXT_NODE"] is 3
+PASS a["CDATA_SECTION_NODE"] is 4
+PASS a["ENTITY_REFERENCE_NODE"] is 5
+PASS a["ENTITY_NODE"] is 6
+PASS a["PROCESSING_INSTRUCTION_NODE"] is 7
+PASS a["COMMENT_NODE"] is 8
+PASS a["DOCUMENT_NODE"] is 9
+PASS a["DOCUMENT_TYPE_NODE"] is 10
+PASS a["DOCUMENT_FRAGMENT_NODE"] is 11
+PASS a["NOTATION_NODE"] is 12
+PASS a["DOCUMENT_POSITION_DISCONNECTED"] is 1
+PASS a["DOCUMENT_POSITION_PRECEDING"] is 2
+PASS a["DOCUMENT_POSITION_FOLLOWING"] is 4
+PASS a["DOCUMENT_POSITION_CONTAINS"] is 8
+PASS a["DOCUMENT_POSITION_CONTAINED_BY"] is 16
+PASS a["DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC"] is 32
+PASS successfullyParsed is true
+
+TEST COMPLETE
+nerget

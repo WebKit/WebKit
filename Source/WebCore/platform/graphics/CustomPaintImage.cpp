@@ -39,6 +39,7 @@
 #include "JSCSSPaintCallback.h"
 #include "PaintRenderingContext2D.h"
 #include "RenderElement.h"
+#include "StylePropertyMap.h"
 #include "TypedOMCSSImageValue.h"
 #include "TypedOMCSSUnitValue.h"
 #include "TypedOMCSSUnparsedValue.h"
@@ -56,6 +57,58 @@ CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& def
 }
 
 CustomPaintImage::~CustomPaintImage() = default;
+
+static RefPtr<TypedOMCSSStyleValue> extractComputedProperty(const String& name, Element& element)
+{
+    ComputedStyleExtractor extractor(&element);
+
+    if (isCustomPropertyName(name)) {
+        auto value = extractor.customPropertyValue(name);
+        return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
+    }
+
+    CSSPropertyID propertyID = cssPropertyID(name);
+    if (!propertyID)
+        return nullptr;
+
+    auto value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
+    return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
+}
+
+class HashMapStylePropertyMap final : public StylePropertyMap {
+public:
+    static Ref<StylePropertyMap> create(HashMap<String, RefPtr<TypedOMCSSStyleValue>>&& map)
+    {
+        return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
+    }
+
+    static RefPtr<TypedOMCSSStyleValue> extractComputedProperty(const String& name, Element& element)
+    {
+        ComputedStyleExtractor extractor(&element);
+
+        if (isCustomPropertyName(name)) {
+            auto value = extractor.customPropertyValue(name);
+            return StylePropertyMapReadOnly::customPropertyValueOrDefault(name, element.document(), value.get(), &element);
+        }
+
+        CSSPropertyID propertyID = cssPropertyID(name);
+        if (!propertyID)
+            return nullptr;
+
+        auto value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
+        return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
+    }
+
+private:
+    explicit HashMapStylePropertyMap(HashMap<String, RefPtr<TypedOMCSSStyleValue>>&& map)
+        : m_map(WTFMove(map))
+    {
+    }
+
+    RefPtr<TypedOMCSSStyleValue> get(const String& property) const final { return makeRefPtr(m_map.get(property)); }
+
+    HashMap<String, RefPtr<TypedOMCSSStyleValue>> m_map;
+};
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
 {
@@ -82,36 +135,15 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
     auto context = contextOrException.releaseReturnValue();
 
-    HashMap<String, Ref<TypedOMCSSStyleValue>> propertyValues;
-    ComputedStyleExtractor extractor(m_element->element());
+    HashMap<String, RefPtr<TypedOMCSSStyleValue>> propertyValues;
 
-    for (auto& name : m_inputProperties) {
-        RefPtr<CSSValue> value;
-        if (isCustomPropertyName(name))
-            value = extractor.customPropertyValue(name);
-        else {
-            CSSPropertyID propertyID = cssPropertyID(name);
-            if (!propertyID)
-                return ImageDrawResult::DidNothing;
-            value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
-        }
-
-        if (!value) {
-            propertyValues.add(name, TypedOMCSSUnparsedValue::create(emptyString()));
-            continue;
-        }
-
-        // FIXME: Properly reify all length values.
-        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).primitiveType() == CSSPrimitiveValue::CSS_PX)
-            propertyValues.add(name, TypedOMCSSUnitValue::create(downcast<CSSPrimitiveValue>(*value).doubleValue(), "px"));
-        else if (is<CSSImageValue>(*value))
-            propertyValues.add(name, TypedOMCSSImageValue::create(downcast<CSSImageValue>(*value), *m_element));
-        else
-            propertyValues.add(name, TypedOMCSSUnparsedValue::create(value->cssText()));
+    if (auto* element = m_element->element()) {
+        for (auto& name : m_inputProperties)
+            propertyValues.add(name, extractComputedProperty(name, *element));
     }
 
     auto size = CSSPaintSize::create(destSize.width(), destSize.height());
-    auto propertyMap = StylePropertyMapReadOnly::create(WTFMove(propertyValues));
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMap::create(WTFMove(propertyValues));
 
     auto& vm = *paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);

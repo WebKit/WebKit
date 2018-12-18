@@ -12,10 +12,17 @@
     --my-prop:helloworld1;
     --my-registered-prop:helloworld2;
   }
+
+  .paint2 {
+    background-image: paint(my-paint,150px,helloworld1,initialValueProp);
+    width: 150px;
+    height: 150px;
+    --my-prop:helloworld1;
+  }
 </style>
 
 <div class="paint"></div>
-<div class="paint"></div>
+<div class="paint2"></div>
 
 <script id="code" type="text/worklet">
 class MyPaint {
@@ -27,6 +34,7 @@ class MyPaint {
   testThis() { return this.myAttribute; }
 
   paint(ctx, geom, properties, args) {
+    assert_true(properties instanceof StylePropertyMapReadOnly);
     assert_equals(properties.get('height').toString(), args[0].toString());
     assert_equals(properties.get('height').value, 150);
     assert_equals(properties.get('height').unit, 'px');

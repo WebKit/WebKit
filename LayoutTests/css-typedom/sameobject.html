@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:CSSTypedOMEnabled=true ] -->
+<meta name="author" title="Justin Michaud" href="mailto:justin_michaud@webkit.org">
+<meta name="assert" content="Test that the [SameObject] idl attribute is respected">
+<script src="../resources/js-test-pre.js"></script>
+
+<div id="el" style = "width: 150px; height: 10em; --my-prop: hello;"></div>
+
+<script>
+description("Tests that idl [SameObject] is specified.");
+window.jsTestIsAsync = true;
+
+function promiseChain(body, times) {
+  let i = 0;
+  return new Promise(function(resolve, reject) {
+      handle = setInterval(function() {
+          if (i >= times) {
+            clearInterval(handle);
+            resolve();
+            return;
+          }
+
+          body();
+
+          ++i;
+      }, 10);
+  });
+}
+
+function makeAlive() {
+  el.attributeStyleMap.alive = true;
+}
+
+function isAlive() {
+  return !!el.attributeStyleMap.alive;
+}
+
+function testAlive() {
+  if (isAlive()) {
+    testPassed("element is still alive");
+  } else {
+    testFailed("element is not alive");
+  }
+}
+
+window.onload = function() {
+  setTimeout(function() {
+    makeAlive();
+    testAlive()
+
+    promiseChain(function() {
+      gc();
+      testAlive();
+    }, 10).then(function () {
+      finishJSTest();
+    });
+  }, 10);
+}
+</script>
+<script src="../resources/js-test-post.js"></script>

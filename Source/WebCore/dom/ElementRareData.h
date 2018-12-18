@@ -30,6 +30,7 @@
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ShadowRoot.h"
+#include "StylePropertyMap.h"
 
 namespace WebCore {
 
@@ -127,6 +128,11 @@ public:
     void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
 #endif
 
+#if ENABLE(CSS_TYPED_OM)
+    StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
+    void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
+#endif
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -201,6 +207,10 @@ private:
 
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
+
+#if ENABLE(CSS_TYPED_OM)
+    RefPtr<StylePropertyMap> m_attributeStyleMap;
+#endif
 
     void releasePseudoElement(PseudoElement*);
 };

@@ -721,6 +721,8 @@ css/parser/MediaQueryParser.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
 
+css/typedom/StylePropertyMapReadOnly.cpp
+
 cssjit/SelectorCompiler.cpp
 
 dom/AbortController.cpp
@@ -3184,6 +3186,7 @@ JSStorage.cpp
 JSStorageEvent.cpp
 JSStringCallback.cpp
 JSStyleMedia.cpp
+JSStylePropertyMap.cpp
 JSStylePropertyMapReadOnly.cpp
 JSStyleSheet.cpp
 JSStyleSheetList.cpp

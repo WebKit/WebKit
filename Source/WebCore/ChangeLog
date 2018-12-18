@@ -1,3 +1,50 @@
+2018-12-18  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Typed OM should expose attributeStyleMap
+        https://bugs.webkit.org/show_bug.cgi?id=192671
+
+        Reviewed by Ryosuke Niwa.
+
+        Exposes element.attributeStyleMap, adds a stub for the StylePropertyMap class, and updates the existing
+        TypedOMCSSImageValue to not require a RenderObject so that it can still work inside attributeStyleMap.
+
+        Test: css-typedom/attributeStyleMap.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/ElementCSSInlineStyle.idl:
+        * css/typedom/StylePropertyMap.h: Copied from Source/WebCore/css/typedom/StylePropertyMapReadOnly.h.
+        * css/typedom/StylePropertyMap.idl: Copied from Source/WebCore/css/typedom/StylePropertyMapReadOnly.idl.
+        * css/typedom/StylePropertyMapReadOnly.cpp: Added.
+        (WebCore::StylePropertyMapReadOnly::reifyValue):
+        (WebCore::StylePropertyMapReadOnly::customPropertyValueOrDefault):
+        * css/typedom/StylePropertyMapReadOnly.h:
+        (WebCore::StylePropertyMapReadOnly::create): Deleted.
+        (WebCore::StylePropertyMapReadOnly::get const): Deleted.
+        (WebCore::StylePropertyMapReadOnly::StylePropertyMapReadOnly): Deleted.
+        * css/typedom/StylePropertyMapReadOnly.idl:
+        * css/typedom/TypedOMCSSImageValue.h:
+        * dom/Element.cpp:
+        (WebCore::Element::attributeStyleMap):
+        (WebCore::Element::setAttributeStyleMap):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::attributeStyleMap):
+        (WebCore::ElementRareData::setAttributeStyleMap):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::ensureAttributeStyleMap):
+        * dom/StyledElement.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::extractComputedProperty):
+        (WebCore::CustomPaintImage::doCustomPaint):
+
 2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Calling setValue() while typing should invoke -textDidChangeInTextField in the injected bundle

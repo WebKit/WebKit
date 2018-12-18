@@ -1,3 +1,21 @@
+2018-12-18  Justin Michaud  <justin_michaud@apple.com>
+
+        CSS Typed OM should expose attributeStyleMap
+        https://bugs.webkit.org/show_bug.cgi?id=192671
+
+        Reviewed by Ryosuke Niwa.
+
+        * css-typedom/attributeStyleMap-expected.txt: Added.
+        * css-typedom/attributeStyleMap.html: Added.
+        * css-typedom/sameobject-expected.txt: Added.
+        * css-typedom/sameobject.html: Added.
+        * fast/css-custom-paint/properties.html:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/js/dom/dom-static-property-for-in-iteration-expected.txt: Added.
+        * platform/win/TestExpectations:
+
 2018-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Fix test failure after r239306.

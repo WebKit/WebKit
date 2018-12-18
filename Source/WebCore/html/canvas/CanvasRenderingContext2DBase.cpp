@@ -1442,10 +1442,11 @@ static inline FloatSize size(HTMLVideoElement& video)
 #if ENABLE(CSS_TYPED_OM)
 static inline FloatSize size(TypedOMCSSImageValue& image)
 {
-    LayoutSize size;
-    if (auto* cachedImage = image.image())
-        size = cachedImage->imageSizeForRenderer(image.renderer(), 1.0f); // FIXME: Not sure about this, see fixme in size(HTMLImageElement&...)
-    return size;
+    auto* cachedImage = image.image();
+    if (!cachedImage)
+        return FloatSize();
+
+    return cachedImage->imageSizeForRenderer(nullptr, 1.0f);
 }
 #endif
 
@@ -1512,13 +1513,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
 #if ENABLE(CSS_TYPED_OM)
 ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(TypedOMCSSImageValue& image, const FloatRect& srcRect, const FloatRect& dstRect)
 {
-    auto* renderer = image.renderer();
     auto* cachedImage = image.image();
-    if (!renderer || !cachedImage)
+    if (!cachedImage || !image.document())
         return { };
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
 
-    auto result = drawImage(renderer->document(), cachedImage, renderer, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
+    auto result = drawImage(*image.document(), cachedImage, nullptr, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
 
     if (!result.hasException())
         checkOrigin(image);

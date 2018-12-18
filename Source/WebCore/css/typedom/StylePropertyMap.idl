@@ -26,10 +26,8 @@
 [
     EnabledAtRuntime=CSSTypedOM,
     Conditional=CSS_TYPED_OM,
-    Exposed=(Window,Worker,PaintWorklet),
+    Exposed=(Window),
     SkipVTableValidation,
-    JSGenerateToJSObject,
-] interface StylePropertyMapReadOnly {
-    // FIXME: should be (undefined or TypedOMCSSStyleValue), not null
-    TypedOMCSSStyleValue? get(USVString property);
+    JSGenerateToJSObject
+] interface StylePropertyMap : StylePropertyMapReadOnly {
 };

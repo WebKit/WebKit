@@ -2000,5 +2000,6 @@ webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-s
 # Not supported on WK1
 css-custom-properties-api [ Skip ]
 fast/css-custom-paint [ Skip ]
+css-typedom [ Skip ]
 
 webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]

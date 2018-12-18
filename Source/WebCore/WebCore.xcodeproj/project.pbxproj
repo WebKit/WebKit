@@ -1382,6 +1382,7 @@
 		4BAFD0D921921EA000C0AB64 /* TypedOMCSSUnparsedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0D821921EA000C0AB64 /* TypedOMCSSUnparsedValue.h */; };
 		4BAFD0E0219220AB00C0AB64 /* TypedOMCSSNumericValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */; };
 		4BAFD0E1219242A000C0AB64 /* TypedOMCSSUnitValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */; };
+		4BD781BF21C1965F00D9703E /* StylePropertyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BD781BE21C1965F00D9703E /* StylePropertyMap.h */; };
 		4BDA3FFE2151B6F500FD6604 /* DOMCSSCustomPropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */; };
 		4BDA3FFF2151B6F500FD6604 /* DOMCSSRegisterCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FF92151B6F300FD6604 /* DOMCSSRegisterCustomProperty.h */; };
 		4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7919,6 +7920,9 @@
 		4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = TypedOMCSSUnitValue.h; sourceTree = "<group>"; };
 		4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedOMCSSNumericValue.h; sourceTree = "<group>"; };
 		4BAFD0E22192604D00C0AB64 /* JSTypedOMCSSStyleValueCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedOMCSSStyleValueCustom.cpp; sourceTree = "<group>"; };
+		4BD781BC21C1964800D9703E /* StylePropertyMap.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = StylePropertyMap.idl; sourceTree = "<group>"; };
+		4BD781BE21C1965F00D9703E /* StylePropertyMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StylePropertyMap.h; sourceTree = "<group>"; };
+		4BD781C521C1D67700D9703E /* StylePropertyMapReadOnly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StylePropertyMapReadOnly.cpp; sourceTree = "<group>"; };
 		4BDA3FF52151B6F000FD6604 /* DOMCSSRegisterCustomProperty.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMCSSRegisterCustomProperty.idl; sourceTree = "<group>"; };
 		4BDA3FF72151B6F100FD6604 /* DOMCSSRegisterCustomProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMCSSRegisterCustomProperty.cpp; sourceTree = "<group>"; };
 		4BDA3FF82151B6F200FD6604 /* DOMCSSCustomPropertyDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSCustomPropertyDescriptor.h; sourceTree = "<group>"; };
@@ -18154,6 +18158,9 @@
 		4BAFD0DA21921EAD00C0AB64 /* typedom */ = {
 			isa = PBXGroup;
 			children = (
+				4BD781BE21C1965F00D9703E /* StylePropertyMap.h */,
+				4BD781BC21C1964800D9703E /* StylePropertyMap.idl */,
+				4BD781C521C1D67700D9703E /* StylePropertyMapReadOnly.cpp */,
 				4BAFD0CE2190F9B400C0AB64 /* StylePropertyMapReadOnly.h */,
 				4BAFD0D02190F9C200C0AB64 /* StylePropertyMapReadOnly.idl */,
 				4B43864F219CD56100F8D3C5 /* TypedOMCSSImageValue.h */,
@@ -31154,6 +31161,7 @@
 				BC5EB74E0E81E06700B25965 /* StyleMultiColData.h in Headers */,
 				E4DACE6A1D12E10B0075980F /* StylePendingResources.h in Headers */,
 				A80E6DFC0A199067007FB8C5 /* StyleProperties.h in Headers */,
+				4BD781BF21C1965F00D9703E /* StylePropertyMap.h in Headers */,
 				4BAFD0CF2190F9B500C0AB64 /* StylePropertyMapReadOnly.h in Headers */,
 				E1B25107152A0BB00069B779 /* StylePropertyShorthand.h in Headers */,
 				83C05A5B1A686212007E5DEA /* StylePropertyShorthandFunctions.h in Headers */,

@@ -177,6 +177,7 @@ namespace WebCore {
     macro(SpectreGadget) \
     macro(StaticRange) \
     macro(StylePropertyMapReadOnly) \
+    macro(StylePropertyMap) \
     macro(VRDisplay) \
     macro(VRDisplayCapabilities) \
     macro(VRDisplayEvent) \
