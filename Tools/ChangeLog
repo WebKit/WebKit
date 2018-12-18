@@ -1,3 +1,11 @@
+2018-12-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, JHBuild GTK build fix attempt
+
+        * gtk/jhbuild.modules: There's no libffi in this moduleset anymore.
+        There's no ninja module either, it should be provided by the
+        host system.
+
 2018-12-17  Chris Dumez  <cdumez@apple.com>
 
         Allow passing nil as session state to [WKWebView _restoreSessionState:]

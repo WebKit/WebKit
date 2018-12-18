@@ -213,9 +213,6 @@
 
   <meson id="glib"
          mesonargs="-Dlibmount=false -Dselinux=false">
-    <dependencies>
-      <dep package="libffi"/>
-    </dependencies>
     <branch module="/pub/GNOME/sources/glib/2.58/glib-${version}.tar.xz" version="2.58.1"
             repo="ftp.gnome.org"
             hash="sha256:97d6a9d926b6aa3dfaadad3077cfb43eec74432ab455dff14250c769d526d7d6">
@@ -513,9 +510,6 @@
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
             hash="sha256:425d12edbb81498314926afa93a3eb2fca4ca6929cbe0f8abeb6ab45d1d9fa8f"/>
-    <dependencies>
-      <dep package="ninja"/>
-    </dependencies>
   </distutils>
 
   <autotools id="xdg-dbus-proxy" autogen-sh="configure">
