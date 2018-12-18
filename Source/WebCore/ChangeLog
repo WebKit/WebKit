@@ -1,5 +1,16 @@
 2018-12-18  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][BFC][MarginCollapsing] Expand marginAfterCollapsesWithNextSibling and marginBeforeCollapsesWithPreviousSibling collapsing logic
+        https://bugs.webkit.org/show_bug.cgi?id=192791
+
+        Reviewed by Antti Koivisto.
+
+        * layout/blockformatting/BlockMarginCollapse.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWithPreviousSibling):
+        (WebCore::Layout::BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithNextSibling):
+
+2018-12-18  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][BFC][MarginCollapsing] Expand marginAfterCollapsesWithParentMarginAfter and marginBeforeCollapsesWithParentMarginBefore collapsing logic
         https://bugs.webkit.org/show_bug.cgi?id=192787
 

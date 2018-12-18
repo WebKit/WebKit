@@ -290,30 +290,40 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutBox.isFloatingPositioned())
+    if (!layoutBox.previousInFlowSibling())
         return false;
 
-    if (!layoutBox.isPositioned() || layoutBox.isInFlowPositioned())
-        return true;
+    auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
 
-    // Out of flow positioned.
-    ASSERT(layoutBox.isOutOfFlowPositioned());
-    return layoutBox.style().top().isAuto();
+    // Margins between a floated box and any other box do not collapse.
+    if (layoutBox.isFloatingPositioned() || previousInFlowSibling.isFloatingPositioned())
+        return false;
+
+    // Margins of absolutely positioned boxes do not collapse.
+    if ((layoutBox.isOutOfFlowPositioned() && !layoutBox.style().top().isAuto())
+        || (previousInFlowSibling.isOutOfFlowPositioned() && !previousInFlowSibling.style().bottom().isAuto()))
+        return false;
+
+    // Margins of inline-block boxes do not collapse.
+    if (layoutBox.isInlineBlockBox() || previousInFlowSibling.isInlineBlockBox())
+        return false;
+
+    // The bottom margin of an in-flow block-level element always collapses with the top margin of
+    // its next in-flow block-level sibling, unless that sibling has clearance.
+    if (hasClearance(layoutBox))
+        return false;
+
+    return true;
 }
 
 bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithNextSibling(const Box& layoutBox)
 {
     ASSERT(layoutBox.isBlockLevelBox());
 
-    if (layoutBox.isFloatingPositioned())
+    if (!layoutBox.nextInFlowSibling())
         return false;
 
-    if (!layoutBox.isPositioned() || layoutBox.isInFlowPositioned())
-        return true;
-
-    // Out of flow positioned.
-    ASSERT(layoutBox.isOutOfFlowPositioned());
-    return layoutBox.style().bottom().isAuto();
+    return marginBeforeCollapsesWithPreviousSibling(*layoutBox.nextInFlowSibling());
 }
 
 bool BlockFormattingContext::Geometry::MarginCollapse::marginsCollapseThrough(const Box& layoutBox)
