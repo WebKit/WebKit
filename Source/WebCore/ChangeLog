@@ -1,3 +1,22 @@
+2018-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        Synchronous media query evaluation could destroy current Frame/FrameView.
+        https://bugs.webkit.org/show_bug.cgi?id=192781
+        <rdar://problem/34416793>
+
+        Reviewed by Chris Dumez.
+
+        Protect Frame and FrameView when coming back from printing and check if the current Frame/FrameView/FrameLoader objects are still valid.
+
+        Test: printing/print-with-media-query-destory.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+
 2018-12-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: m3u8 content not shown, it should be text
