@@ -149,7 +149,7 @@ static bool isNameOfInlineEventHandler(const Vector<UChar, 32>& name)
 static bool isDangerousHTTPEquiv(const String& value)
 {
     String equiv = value.stripWhiteSpace();
-    return equalLettersIgnoringASCIICase(equiv, "refresh") || equalLettersIgnoringASCIICase(equiv, "set-cookie");
+    return equalLettersIgnoringASCIICase(equiv, "refresh");
 }
 
 static inline String decode16BitUnicodeEscapeSequences(const String& string)

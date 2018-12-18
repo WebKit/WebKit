@@ -1,3 +1,3 @@
-CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?test=/security/xssAuditor/cookie-injection.html&alert-cookie=1&q=%3Cmeta%20http-equiv=%22Set-Cookie%22%20content=%22xssAuditorTestCookie=FAIL%22%20/%3E' because its source code was found within the request. The auditor was enabled because the server did not send an 'X-XSS-Protection' header.
+CONSOLE MESSAGE: line 4: The Set-Cookie meta tag is obsolete and was ignored. Use the HTTP header Set-Cookie or document.cookie instead.
 ALERT: PASS
 

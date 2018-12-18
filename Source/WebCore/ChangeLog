@@ -1,3 +1,23 @@
+2018-12-18  Daniel Bates  <dabates@apple.com>
+
+        Remove <meta http-equiv=set-cookie> support
+        https://bugs.webkit.org/show_bug.cgi?id=185077
+        <rdar://problem/41791397>
+
+        Reviewed by Brent Fulgham.
+
+        Remove support for the HTTP-equiv. pragma Set-Cookie to set a cookie. In <https://github.com/whatwg/html/pull/3649>
+        the HTML living standard was ammended to define this pragma as no-op. Chrome and Edge have also
+        removed support for this pragma and Firefox has an open bug to remove it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Emit a message that the Set-Cookie pragma is obsolete and
+        was ignored instead of setting the cookie.
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::isDangerousHTTPEquiv): We no longer need to consider the Set-Cookie pragma
+        as dangerous and erase attribute http-equiv when we find it because we no longer honor
+        this pragma.
+
 2018-12-18  Justin Michaud  <justin_michaud@apple.com>
 
         CSS Typed OM should expose attributeStyleMap
