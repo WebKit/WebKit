@@ -225,8 +225,19 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginBeforeCollapsesWith
     return true;
 }
 
-bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&)
+bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const LayoutState& layoutState, const Box& layoutBox)
 {
+    // If the top and bottom margins of an element with clearance are adjoining, its margins collapse with the adjoining margins
+    // of following siblings but that resulting margin does not collapse with the bottom margin of the parent block.
+    if (!marginsCollapseThrough(layoutState, layoutBox))
+        return false;
+
+    for (auto* previousSibling = layoutBox.previousInFlowSibling(); previousSibling; previousSibling = previousSibling->previousInFlowSibling()) {
+        if (!marginsCollapseThrough(layoutState, *previousSibling))
+            return false;
+        if (hasClearance(*previousSibling))
+            return true;
+    }
     return false;
 }
 
@@ -289,7 +300,7 @@ bool BlockFormattingContext::Geometry::MarginCollapse::marginAfterCollapsesWithP
         return false;
 
     // the child's bottom margin neither collapses with a top margin that has clearance...
-    if (marginAfterCollapsesWithSiblingMarginBeforeWithClearance(layoutBox))
+    if (marginAfterCollapsesWithSiblingMarginBeforeWithClearance(layoutState, layoutBox))
         return false;
 
     // nor (if the box's min-height is non-zero) with the box's top margin.
