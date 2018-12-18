@@ -780,11 +780,16 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     // case, we need to initialize m_mainFrame to reflect the fact the the WebProcess' WebPage
     // already exists and already has a main frame.
     if (destinationSuspendedPage) {
-        ASSERT(!m_mainFrame);
-        ASSERT(&destinationSuspendedPage->process() == m_process.ptr());
-        destinationSuspendedPage->unsuspend();
-        m_mainFrame = WebFrameProxy::create(*this, destinationSuspendedPage->mainFrameID());
-        m_process->frameCreated(destinationSuspendedPage->mainFrameID(), *m_mainFrame);
+        if (!destinationSuspendedPage->failedToSuspend()) {
+            ASSERT(!m_mainFrame);
+            ASSERT(&destinationSuspendedPage->process() == m_process.ptr());
+            destinationSuspendedPage->unsuspend();
+            m_mainFrame = WebFrameProxy::create(*this, destinationSuspendedPage->mainFrameID());
+            m_process->frameCreated(destinationSuspendedPage->mainFrameID(), *m_mainFrame);
+        } else {
+            // We failed to suspend the page so destroy it now and merely reuse its WebContent process.
+            destinationSuspendedPage = nullptr;
+        }
     }
 
     m_process->addExistingWebPage(*this, m_pageID, WebProcessProxy::BeginsUsingDataStore::No);

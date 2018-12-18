@@ -1,3 +1,33 @@
+2018-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r239182) SuspendedPage's process reuse for link navigation optimization sometimes broken
+        https://bugs.webkit.org/show_bug.cgi?id=192772
+
+        Reviewed by Antti Koivisto.
+
+        With r239182, if the page in the previous process would fail to enter PageCache, we would destroy
+        the corresponding SuspendedPageProxy, which would potentially terminate the process. This would
+        regress performance when trying to navigate back in history to that page. This would also regress
+        performance when link-navigating to the same domain as we would have previously reused the suspended
+        page's process for such navigation.
+
+        Address the issue by keeping the SuspendedPageProxy alive even if the WebPage fails to suspend.
+        When trying to reuse a SuspendedPageProxy, if the page failed to suspend, reuse its process but
+        not the suspended page itself.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::~SuspendedPageProxy):
+        (WebKit::SuspendedPageProxy::waitUntilReadyToUnsuspend):
+        (WebKit::SuspendedPageProxy::unsuspend):
+        (WebKit::SuspendedPageProxy::didSuspend):
+        (WebKit::SuspendedPageProxy::didFailToSuspend):
+        (WebKit::SuspendedPageProxy::loggingString const):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2018-12-17  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky

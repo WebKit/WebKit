@@ -1,3 +1,14 @@
+2018-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r239182) SuspendedPage's process reuse for link navigation optimization sometimes broken
+        https://bugs.webkit.org/show_bug.cgi?id=192772
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2018-12-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, JHBuild GTK build fix attempt

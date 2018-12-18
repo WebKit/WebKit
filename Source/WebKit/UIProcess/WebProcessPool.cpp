@@ -2177,7 +2177,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         if (auto* suspendedPage = backForwardListItem->suspendedPage()) {
             return suspendedPage->waitUntilReadyToUnsuspend([createNewProcess = WTFMove(createNewProcess), completionHandler = WTFMove(completionHandler)](SuspendedPageProxy* suspendedPage) mutable {
                 if (!suspendedPage)
-                    return completionHandler(createNewProcess(), nullptr, "Using new process because target back/forward item's process failed to suspend"_s);
+                    return completionHandler(createNewProcess(), nullptr, "Using new process because target back/forward item's suspended page is not reusable"_s);
                 Ref<WebProcessProxy> process = suspendedPage->process();
                 completionHandler(WTFMove(process), suspendedPage, "Using target back/forward item's process"_s);
             });
