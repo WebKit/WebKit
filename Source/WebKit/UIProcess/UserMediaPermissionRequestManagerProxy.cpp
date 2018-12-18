@@ -41,13 +41,13 @@ using namespace WebCore;
 
 #if ENABLE(MEDIA_STREAM)
 static const MediaProducer::MediaStateFlags activeCaptureMask = MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice;
-#endif
 
 static uint64_t generateRequestID()
 {
     static uint64_t uniqueRequestID = 1;
     return uniqueRequestID++;
 }
+#endif
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)

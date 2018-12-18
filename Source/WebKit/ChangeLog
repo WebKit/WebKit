@@ -1,3 +1,12 @@
+2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the iOSMac engineering build
+
+        `generateRequestID()` is only invoked from code under `ENABLE(MEDIA_STREAM)`; move it under this guard to avoid
+        an unused function warning.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+
 2018-12-17  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Fix unnecessary object copy in CPUMonitor::setCPULimit()
