@@ -269,17 +269,20 @@ JSValue Stringifier::stringify(JSValue value)
     JSObject* object = nullptr;
     if (isCallableReplacer()) {
         object = constructEmptyObject(m_exec);
-        RETURN_IF_EXCEPTION(scope, jsNull());
+        RETURN_IF_EXCEPTION(scope, jsUndefined());
         object->putDirect(vm, vm.propertyNames->emptyIdentifier, value);
     }
 
     StringBuilder result(StringBuilder::OverflowHandler::RecordOverflow);
     Holder root(Holder::RootHolder, object);
     auto stringifyResult = appendStringifiedValue(result, value, root, emptyPropertyName);
-    EXCEPTION_ASSERT(!scope.exception() || (stringifyResult != StringifySucceeded));
+    RETURN_IF_EXCEPTION(scope, jsUndefined());
+    if (UNLIKELY(result.hasOverflowed())) {
+        throwOutOfMemoryError(m_exec, scope);
+        return jsUndefined();
+    }
     if (UNLIKELY(stringifyResult != StringifySucceeded))
         return jsUndefined();
-
     RELEASE_AND_RETURN(scope, jsString(m_exec, result.toString()));
 }
 
@@ -359,10 +362,6 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         const String& string = asString(value)->value(m_exec);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
         builder.appendQuotedJSONString(string);
-        if (UNLIKELY(builder.hasOverflowed())) {
-            throwOutOfMemoryError(m_exec, scope);
-            return StringifyFailed;
-        }
         return StringifySucceeded;
     }
 
@@ -391,6 +390,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailedDueToUndefinedOrSymbolValue;
     }
 
+    if (UNLIKELY(builder.hasOverflowed()))
+        return StringifyFailed;
+
     // Handle cycle detection, and put the holder on the stack.
     for (unsigned i = 0; i < m_holderStack.size(); i++) {
         if (m_holderStack[i].object() == object) {
@@ -410,6 +412,8 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         while (m_holderStack.last().appendNextProperty(*this, builder))
             RETURN_IF_EXCEPTION(scope, StringifyFailed);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
+        if (UNLIKELY(builder.hasOverflowed()))
+            return StringifyFailed;
         m_holderStack.removeLast();
         m_objectStack.removeLast();
     } while (!m_holderStack.isEmpty());
@@ -493,6 +497,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         }
         stringifier.indent();
     }
+    if (UNLIKELY(builder.hasOverflowed()))
+        return false;
 
     // Last time through, finish up and return false.
     if (m_index == m_size) {

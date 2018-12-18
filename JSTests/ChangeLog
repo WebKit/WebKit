@@ -1,3 +1,13 @@
+2018-12-18  Mark Lam  <mark.lam@apple.com>
+
+        JSON.stringify() should throw OOM on StringBuilder overflows.
+        https://bugs.webkit.org/show_bug.cgi?id=192822
+        <rdar://problem/46670577>
+
+        Reviewed by Saam Barati.
+
+        * stress/json-stringify-string-builder-overflow.js: Added.
+
 2018-12-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Redeclaration of var over let/const/class should be a syntax error.
