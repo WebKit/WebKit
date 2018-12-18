@@ -22,58 +22,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "GPUCommandBuffer.h"
-#include "GPUQueue.h"
-
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_PROTOCOL(MTLDevice);
-
-namespace WebCore {
-
-using PlatformDevice = MTLDevice;
-using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
-
-class GPUBindGroupLayout;
-class GPUBuffer;
-class GPURenderPipeline;
-class GPUShaderModule;
-
-struct GPUBindGroupLayoutDescriptor;
-struct GPUBufferDescriptor;
-struct GPUShaderModuleDescriptor;
-struct GPURenderPipelineDescriptor;
-
-class GPUDevice : public RefCounted<GPUDevice> {
-public:
-    static RefPtr<GPUDevice> create();
-
-    RefPtr<GPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
-
-    Ref<GPUBindGroupLayout> createBindGroupLayout(GPUBindGroupLayoutDescriptor&&) const;
-
-    RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;
-    RefPtr<GPURenderPipeline> createRenderPipeline(GPURenderPipelineDescriptor&&) const;
-
-    RefPtr<GPUCommandBuffer> createCommandBuffer();
-
-    RefPtr<GPUQueue> getQueue();
-    PlatformDevice* platformDevice() const { return m_platformDevice.get(); }
-
-private:
-    GPUDevice(PlatformDeviceSmartPtr&&);
-
-    PlatformDeviceSmartPtr m_platformDevice;
-    RefPtr<GPUQueue> m_queue;
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface WebGPUBindGroupLayout {
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEBGPU)

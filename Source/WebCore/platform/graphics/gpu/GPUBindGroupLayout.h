@@ -27,51 +27,21 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
-#include "WebGPUBindGroupLayoutDescriptor.h"
-#include "WebGPUBufferDescriptor.h"
-#include "WebGPUQueue.h"
+#include "GPUBindGroupLayoutDescriptor.h"
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUBindGroupLayout;
-class WebGPUBuffer;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
-
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
-
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
+class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
-
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return m_device.get(); }
-
-    RefPtr<WebGPUBuffer> createBuffer(WebGPUBufferDescriptor&&) const;
-
-    Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;
-
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
-    RefPtr<WebGPUQueue> getQueue();
+    static Ref<GPUBindGroupLayout> create(GPUBindGroupLayoutDescriptor&&);
 
 private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, Ref<GPUDevice>&&);
+    GPUBindGroupLayout(GPUBindGroupLayoutDescriptor&&);
 
-    Ref<WebGPUAdapter> m_adapter;
-    Ref<GPUDevice> m_device;
-    RefPtr<WebGPUQueue> m_queue;
+    GPUBindGroupLayoutDescriptor m_descriptor;
 };
 
 } // namespace WebCore

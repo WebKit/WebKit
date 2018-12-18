@@ -31,6 +31,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;

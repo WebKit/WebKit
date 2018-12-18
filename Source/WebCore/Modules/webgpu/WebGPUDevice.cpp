@@ -33,6 +33,7 @@
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "Logging.h"
+#include "WebGPUBindGroupLayout.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUCommandBuffer.h"
 #include "WebGPUPipelineStageDescriptor.h"
@@ -62,6 +63,12 @@ RefPtr<WebGPUBuffer> WebGPUDevice::createBuffer(WebGPUBufferDescriptor&& descrip
     // FIXME: Validation on descriptor needed?
     auto buffer = m_device->createBuffer(GPUBufferDescriptor { descriptor.size, descriptor.usage });
     return buffer ? WebGPUBuffer::create(buffer.releaseNonNull()) : nullptr;
+}
+
+Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&& descriptor) const
+{
+    auto layout = m_device->createBindGroupLayout(GPUBindGroupLayoutDescriptor { descriptor.bindings });
+    return WebGPUBindGroupLayout::create(WTFMove(layout));
 }
 
 RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDescriptor&& descriptor) const

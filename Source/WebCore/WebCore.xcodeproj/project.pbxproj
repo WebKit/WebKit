@@ -13717,6 +13717,9 @@
 		D001D9AD21B0C81A0023B9BC /* WebGPUColor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUColor.idl; sourceTree = "<group>"; };
 		D001D9B021B0C8A80023B9BC /* WebGPURenderPassColorAttachmentDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderPassColorAttachmentDescriptor.h; sourceTree = "<group>"; };
 		D001D9B121B0C8A80023B9BC /* WebGPURenderPassColorAttachmentDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderPassColorAttachmentDescriptor.idl; sourceTree = "<group>"; };
+		D003287921C8645B00622AA6 /* WebGPUBindGroupLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUBindGroupLayout.h; sourceTree = "<group>"; };
+		D003287A21C8645B00622AA6 /* WebGPUBindGroupLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUBindGroupLayout.cpp; sourceTree = "<group>"; };
+		D003287B21C8645B00622AA6 /* WebGPUBindGroupLayout.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroupLayout.idl; sourceTree = "<group>"; };
 		D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebGPU.h; sourceTree = "<group>"; };
 		D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebGPU.cpp; sourceTree = "<group>"; };
 		D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowWebGPU.idl; sourceTree = "<group>"; };
@@ -13731,6 +13734,8 @@
 		D00F595421701D8C000D71DB /* WebGPUDevice.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUDevice.idl; sourceTree = "<group>"; };
 		D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceSplitString.cpp; sourceTree = "<group>"; };
 		D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceSplitString.h; sourceTree = "<group>"; };
+		D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayout.h; sourceTree = "<group>"; };
+		D02454D121C4A41C00B73628 /* GPUBindGroupLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBindGroupLayout.cpp; sourceTree = "<group>"; };
 		D02B83ED21C8397A00F85473 /* WebGPUBindGroupLayoutDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBindGroupLayoutDescriptor.idl; sourceTree = "<group>"; };
 		D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUAdapterDescriptor.h; sourceTree = "<group>"; };
 		D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUAdapterDescriptor.idl; sourceTree = "<group>"; };
@@ -18051,6 +18056,8 @@
 			children = (
 				D087CE3721ACA94200BDE174 /* cocoa */,
 				312FF8CE21A4C33F00EB199D /* legacy */,
+				D02454D121C4A41C00B73628 /* GPUBindGroupLayout.cpp */,
+				D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */,
 				D0B8BB0121C46E78000C7681 /* GPUBindGroupLayoutBinding.h */,
 				D083D98421C48050008E8EFF /* GPUBindGroupLayoutDescriptor.h */,
 				D0D8649221B760F2003C983C /* GPUBuffer.h */,
@@ -25563,6 +25570,9 @@
 				D00F5951216FFAC2000D71DB /* WebGPUAdapter.idl */,
 				D02C26912181416D00D818E4 /* WebGPUAdapterDescriptor.h */,
 				D02C26922181416D00D818E4 /* WebGPUAdapterDescriptor.idl */,
+				D003287A21C8645B00622AA6 /* WebGPUBindGroupLayout.cpp */,
+				D003287921C8645B00622AA6 /* WebGPUBindGroupLayout.h */,
+				D003287B21C8645B00622AA6 /* WebGPUBindGroupLayout.idl */,
 				D0B8BB0521C47256000C7681 /* WebGPUBindGroupLayoutBinding.h */,
 				D0B8BB0621C47256000C7681 /* WebGPUBindGroupLayoutBinding.idl */,
 				D083D98621C4813E008E8EFF /* WebGPUBindGroupLayoutDescriptor.h */,

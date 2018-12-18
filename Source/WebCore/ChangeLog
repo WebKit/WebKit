@@ -1,3 +1,41 @@
+2018-12-18  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] BindGroupLayout and Device::createBindGroupLayout
+        https://bugs.webkit.org/show_bug.cgi?id=192817
+
+        Reviewed by Dean Jackson.
+
+        Update bind-group-layouts to test new functionality.
+
+        Implement the emtpy WebGPUBindGroupLayout interface, and enable creation via WebGPUDevice::createBindGroupLayout:
+        * Modules/webgpu/WebGPUBindGroupLayout.cpp: Added.
+        (WebCore::WebGPUBindGroupLayout::create):
+        (WebCore::WebGPUBindGroupLayout::WebGPUBindGroupLayout):
+        * Modules/webgpu/WebGPUBindGroupLayout.h: Added.
+        * Modules/webgpu/WebGPUBindGroupLayout.idl: Added. Empty interface for now.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroupLayout const): Added.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * platform/graphics/gpu/GPUBindGroupLayout.cpp: Added.
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout):
+        * platform/graphics/gpu/GPUBindGroupLayout.h: Added.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBindGroupLayout const): Added.
+        * platform/graphics/gpu/GPUDevice.h:
+
+        Add files and symbols to project:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Missing includes that were previously provided via UnifiedSources:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/sql/SQLiteFileSystem.h:
+
 2018-12-18  Youenn Fablet  <youenn@apple.com>
 
         Make ReadableStreamXX constructs use PrivateIdentifier

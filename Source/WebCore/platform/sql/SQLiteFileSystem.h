@@ -31,6 +31,7 @@
 #ifndef SQLiteFileSystem_h
 #define SQLiteFileSystem_h
 
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 struct sqlite3;

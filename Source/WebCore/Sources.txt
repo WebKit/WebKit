@@ -303,6 +303,7 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webgpu/DOMWindowWebGPU.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUAdapter.cpp
+Modules/webgpu/WebGPUBindGroupLayout.cpp
 Modules/webgpu/WebGPUBuffer.cpp
 Modules/webgpu/WebGPUCommandBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
@@ -1741,6 +1742,7 @@ platform/graphics/filters/SourceAlpha.cpp
 platform/graphics/filters/SourceGraphic.cpp
 platform/graphics/filters/SpotLightSource.cpp
 
+platform/graphics/gpu/GPUBindGroupLayout.cpp
 platform/graphics/gpu/GPUDevice.cpp
 platform/graphics/gpu/legacy/GPULegacyBuffer.cpp
 platform/graphics/gpu/legacy/GPULegacyCommandBuffer.cpp
@@ -3225,6 +3227,7 @@ JSWebAnimation.cpp
 JSWebGPU.cpp
 JSWebGPUAdapter.cpp
 JSWebGPUAdapterDescriptor.cpp
+JSWebGPUBindGroupLayout.cpp
 JSWebGPUBindGroupLayoutBinding.cpp
 JSWebGPUBindGroupLayoutDescriptor.cpp
 JSWebGPUBuffer.cpp

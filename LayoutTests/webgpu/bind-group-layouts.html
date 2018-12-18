@@ -1,7 +1,8 @@
 <!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <meta charset=utf-8>
-<title>Create WebGPUBindGroupLayoutDescriptor.</title>
+<title>Create WebGPUBindGroupLayout.</title>
 <body>
+<script src="js/webgpu-functions.js"></script>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
 <script>
@@ -14,12 +15,16 @@ function createBindGroupLayoutBinding() {
 }
 
 test(() => {
-    const bindGroupLayoutBinding = createBindGroupLayoutBinding();
-    const bindGroupLayoutDescriptor = { bindings: [bindGroupLayoutBinding] };
+    const bindGroupLayoutDescriptor = { bindings: [createBindGroupLayoutBinding()] };
     assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & WebGPUShaderStageBit.FRAGMENT, 0);
     assert_not_equals(bindGroupLayoutDescriptor.bindings[0].visibility & WebGPUShaderStageBit.VERTEX, 0);
     assert_equals(bindGroupLayoutDescriptor.bindings[0].type, "storageBuffer");
-});
+}, "Create a basic WebGPUBindGroupLayoutDescriptor.");
 
+promise_test(async () => {
+    const device = await window.getBasicDevice();
+    const bindGroupLayout = device.createBindGroupLayout({ bindings: [createBindGroupLayoutBinding()] });
+    assert_true(bindGroupLayout instanceof WebGPUBindGroupLayout, "createBindGroupLayout returned a WebGPUBindGroupLayout");
+}, "Create a basic WebGPUBindGroupLayout with a WebGPUDevice.");
 </script>
 </body>

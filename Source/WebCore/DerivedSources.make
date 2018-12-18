@@ -375,6 +375,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapterDescriptor.idl \
+    $(WebCore)/Modules/webgpu/WebGPUBindGroupLayout.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUBuffer.idl \

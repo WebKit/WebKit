@@ -1,3 +1,4 @@
 
-PASS Create WebGPUBindGroupLayoutDescriptor. 
+PASS Create a basic WebGPUBindGroupLayoutDescriptor. 
+PASS Create a basic WebGPUBindGroupLayout with a WebGPUDevice. 
 

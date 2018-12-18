@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBindGroupLayout.h"
+#include "GPUBindGroupLayoutDescriptor.h"
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
 #include "GPURenderPipeline.h"
@@ -40,6 +42,11 @@ namespace WebCore {
 RefPtr<GPUBuffer> GPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
 {
     return GPUBuffer::create(*this, WTFMove(descriptor));
+}
+
+Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(GPUBindGroupLayoutDescriptor&& descriptor) const
+{
+    return GPUBindGroupLayout::create(WTFMove(descriptor));
 }
 
 RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const

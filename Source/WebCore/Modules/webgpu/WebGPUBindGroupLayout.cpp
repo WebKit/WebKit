@@ -23,56 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUBindGroupLayout.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDevice.h"
-#include "WebGPUAdapter.h"
-#include "WebGPUBindGroupLayoutDescriptor.h"
-#include "WebGPUBufferDescriptor.h"
-#include "WebGPUQueue.h"
-
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class ScriptExecutionContext;
-class WebGPUBindGroupLayout;
-class WebGPUBuffer;
-class WebGPUCommandBuffer;
-class WebGPURenderPipeline;
-class WebGPUShaderModule;
+Ref<WebGPUBindGroupLayout> WebGPUBindGroupLayout::create(Ref<GPUBindGroupLayout>&& layout)
+{
+    return adoptRef(*new WebGPUBindGroupLayout(WTFMove(layout)));
+}
 
-struct WebGPURenderPipelineDescriptor;
-struct WebGPUShaderModuleDescriptor;
-
-class WebGPUDevice : public RefCounted<WebGPUDevice> {
-public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
-
-    const WebGPUAdapter& adapter() const { return m_adapter.get(); }
-    const GPUDevice& device() const { return m_device.get(); }
-
-    RefPtr<WebGPUBuffer> createBuffer(WebGPUBufferDescriptor&&) const;
-
-    Ref<WebGPUBindGroupLayout> createBindGroupLayout(WebGPUBindGroupLayoutDescriptor&&) const;
-
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
-
-    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
-    RefPtr<WebGPUQueue> getQueue();
-
-private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, Ref<GPUDevice>&&);
-
-    Ref<WebGPUAdapter> m_adapter;
-    Ref<GPUDevice> m_device;
-    RefPtr<WebGPUQueue> m_queue;
-};
+WebGPUBindGroupLayout::WebGPUBindGroupLayout(Ref<GPUBindGroupLayout>&& layout)
+    : m_layout(WTFMove(layout))
+{
+}
 
 } // namespace WebCore
 

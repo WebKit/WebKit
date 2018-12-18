@@ -1,3 +1,15 @@
+2018-12-18  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] BindGroupLayout and Device::createBindGroupLayout
+        https://bugs.webkit.org/show_bug.cgi?id=192817
+
+        Reviewed by Dean Jackson.
+
+        Update bind-group-layouts to test new functionality.
+
+        * webgpu/bind-group-layouts-expected.txt:
+        * webgpu/bind-group-layouts.html:
+
 2018-12-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening after r239306 and r239338.
