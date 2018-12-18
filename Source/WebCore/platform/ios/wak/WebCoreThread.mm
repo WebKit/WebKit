@@ -132,6 +132,8 @@ static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
 
 static NSMutableArray* sAsyncDelegates = nil;
 
+WEBCORE_EXPORT volatile unsigned webThreadDelegateMessageScopeCount = 0;
+
 static inline void SendMessage(NSInvocation* invocation)
 {
     [invocation invoke];
@@ -171,6 +173,16 @@ static void HandleDelegateSource(void*)
 #endif
 }
 
+class WebThreadDelegateMessageScope {
+public:
+    WebThreadDelegateMessageScope() { ++webThreadDelegateMessageScopeCount; }
+    ~WebThreadDelegateMessageScope()
+    {
+        ASSERT(webThreadDelegateMessageScopeCount);
+        --webThreadDelegateMessageScopeCount;
+    }
+};
+
 static void SendDelegateMessage(NSInvocation* invocation)
 {
     if (!WebThreadIsCurrent()) {
@@ -194,6 +206,7 @@ static void SendDelegateMessage(NSInvocation* invocation)
 #endif
 
     {
+        WebThreadDelegateMessageScope delegateScope;
         // Code block created to scope JSC::JSLock::DropAllLocks outside of WebThreadLock()
         JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
         _WebThreadUnlock();

@@ -26,6 +26,10 @@
 #include "ContainerNode.h"
 #include <wtf/MainThread.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "WebCoreThread.h"
+#endif
+
 namespace WebCore {
 
 class ScriptDisallowedScope {
@@ -86,7 +90,11 @@ public:
         static bool isScriptAllowed()
         {
             ASSERT(isMainThread());
+#if PLATFORM(IOS_FAMILY)
+            return !s_count || webThreadDelegateMessageScopeCount;
+#else
             return !s_count;
+#endif
         }
     };
     

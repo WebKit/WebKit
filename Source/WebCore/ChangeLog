@@ -1,3 +1,26 @@
+2018-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some iOS app crash in FrameLoader::checkCompleted
+        https://bugs.webkit.org/show_bug.cgi?id=192804
+        <rdar://problem/44240573>
+
+        Reviewed by Tim Horton.
+
+        It's possible for the main thread to call into WebCore / UIWebView selectors while Web thread
+        is trying to send a delegate message. Disable the release assertion while this is happening
+        so that iOS app would not crash.
+
+        Unfortunately no new test as there is no way to easily test UIWebView in iOS,
+        and this requires a race between the web thread & the main thread.
+
+        * dom/ScriptDisallowedScope.h:
+        (WebCore::ScriptDisallowedScope::InMainThread::isScriptAllowed):
+        * platform/ios/wak/WebCoreThread.h:
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadDelegateMessageScope::WebThreadDelegateMessageScope):
+        (WebThreadDelegateMessageScope::~WebThreadDelegateMessageScope):
+        (SendDelegateMessage):
+
 2018-12-18  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Use const reference for MediaTime parameter to prevent object copy

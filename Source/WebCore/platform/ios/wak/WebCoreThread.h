@@ -44,6 +44,7 @@ typedef struct {
 } WebThreadContext;
     
 extern volatile bool webThreadShouldYield;
+extern volatile unsigned webThreadDelegateMessageScopeCount;
 
 #ifdef __OBJC__
 @class NSRunLoop;
