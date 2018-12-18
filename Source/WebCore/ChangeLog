@@ -1,3 +1,17 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary object copy in CPUMonitor::setCPULimit()
+        <https://webkit.org/b/192707>
+        <rdar://problem/46734926>
+
+        Reviewed by Daniel Bates.
+
+        * platform/CPUMonitor.cpp:
+        (WebCore::CPUMonitor::setCPULimit):
+        * platform/CPUMonitor.h:
+        (WebCore::CPUMonitor::setCPULimit):
+        - Change parameter to const reference to fix unnecessary copies.
+
 2018-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         offsetLeft and offsetParent should adjust across shadow boundaries

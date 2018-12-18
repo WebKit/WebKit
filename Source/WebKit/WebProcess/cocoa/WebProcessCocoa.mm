@@ -561,7 +561,7 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
         // not want to report that a process has exceeded its background CPU limit even though most of the CPU time was used while the process was visible.
         m_cpuMonitor->setCPULimit(std::nullopt);
     }
-    m_cpuMonitor->setCPULimit(m_cpuLimit.value());
+    m_cpuMonitor->setCPULimit(m_cpuLimit);
 #else
     UNUSED_PARAM(reason);
 #endif

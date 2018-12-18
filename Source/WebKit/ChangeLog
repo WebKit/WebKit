@@ -1,3 +1,16 @@
+2018-12-17  David Kilzer  <ddkilzer@apple.com>
+
+        clang-tidy: Fix unnecessary object copy in CPUMonitor::setCPULimit()
+        <https://webkit.org/b/192707>
+        <rdar://problem/46734926>
+
+        Reviewed by Daniel Bates.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateCPUMonitorState):
+        - Pass m_cpuLimit directly since getting its value causes an
+          identical std::optional<double> to be created unnecessarily.
+
 2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Focusing a large editable element always scrolls to the top of the element

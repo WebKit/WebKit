@@ -37,7 +37,7 @@ public:
     using ExceededCPULimitHandler = WTF::Function<void(double)>;
     WEBCORE_EXPORT CPUMonitor(Seconds checkInterval, ExceededCPULimitHandler&&);
 
-    WEBCORE_EXPORT void setCPULimit(std::optional<double>);
+    WEBCORE_EXPORT void setCPULimit(const std::optional<double>&);
 
 private:
     void timerFired();
