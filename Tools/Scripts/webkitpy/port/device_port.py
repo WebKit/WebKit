@@ -123,6 +123,10 @@ class DevicePort(DarwinPort):
         if device_type.software_variant and self.DEFAULT_DEVICE_TYPE.software_variant != device_type.software_variant:
             return 0
 
+        if self.get_option('force'):
+            device_type.hardware_family = None
+            device_type.hardware_type = None
+
         return self.DEVICE_MANAGER.device_count_for_type(
             self._device_type_with_version(device_type),
             host=self.host,
@@ -146,7 +150,7 @@ class DevicePort(DarwinPort):
             device_type,
             use_booted_simulator=not self.get_option('dedicated_simulators', False),
             use_existing_simulator=False,
-            allow_incomplete_match=True,
+            allow_incomplete_match=self.get_option('force'),
         )
         self.DEVICE_MANAGER.initialize_devices(
             [request] * self.child_processes(),

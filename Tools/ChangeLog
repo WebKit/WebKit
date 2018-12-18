@@ -1,3 +1,20 @@
+2018-12-18  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Ignore device type for test when using --force
+        https://bugs.webkit.org/show_bug.cgi?id=192786
+        <rdar://problem/46794894>
+
+        Reviewed by Daniel Bates.
+
+        It is sometimes the case that a contributor will wish to run a test on a specific device,
+        despite expectations which indicate a test should not be run on that device.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort.default_child_processes): Strip device type information when using --force.
+        (DevicePort.setup_test_run): Only allow incomplete match when using --force.
+
 2018-12-18  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView has old URL while displaying SafeBrowsing interstitial, for link-click navigations
