@@ -229,7 +229,7 @@ void RealtimeIncomingVideoSourceCocoa::processNewSample(CMSampleBufferRef sample
     m_buffer = sample;
     auto size = this->size();
     if (WTF::safeCast<int>(width) != size.width() || WTF::safeCast<int>(height) != size.height())
-        setSize(IntSize(width, height));
+        setIntrinsicSize(IntSize(width, height));
 
     videoSampleAvailable(MediaSampleAVFObjC::create(sample, rotation));
 }

@@ -524,11 +524,15 @@ void AVVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
         return;
 
     m_buffer = &sample.get();
+    setIntrinsicSize(expandedIntSize(sample->presentationSize()));
     dispatchMediaSampleToObservers(WTFMove(sample));
 }
 
 void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutputType*, CMSampleBufferRef sampleBuffer, AVCaptureConnectionType* captureConnection)
 {
+    if (m_framesToDropAtStartup && m_framesToDropAtStartup--)
+        return;
+
     auto sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
     scheduleDeferredTask([this, sample = WTFMove(sample)] () mutable {
         processNewFrame(WTFMove(sample));
@@ -542,6 +546,9 @@ void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
             return;
 
         m_isRunning = state;
+        if (m_isRunning)
+            m_framesToDropAtStartup = 4;
+
         notifyMutedChange(!m_isRunning);
     });
 }
@@ -573,7 +580,7 @@ void AVVideoCaptureSource::generatePresets()
     for (AVCaptureDeviceFormatType* format in [device() formats]) {
 
         CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-        IntSize size = {dimensions.width, dimensions.height};
+        IntSize size = { dimensions.width, dimensions.height };
         auto index = presets.findMatching([&size](auto& preset) {
             return size == preset->size;
         });

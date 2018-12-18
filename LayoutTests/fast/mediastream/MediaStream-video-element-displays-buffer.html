@@ -2,7 +2,6 @@
 <html>
 <head>
     <script src="../../resources/js-test-pre.js"></script>
-    <script src="./resources/getUserMedia-helper.js"></script>
 </head>
 <body onload="start()">
 <p id="description"></p>
@@ -85,12 +84,14 @@
     {
         debug(`<br> === checking pixels from ${!currentTest ? "front" : "back"} camera ===`);
         let constraints = {video : !currentTest ? true : {facingMode: "environment"}};
-        getUserMedia("allow", constraints, setupVideoElement);
+        navigator.mediaDevices.getUserMedia(constraints).then(setupVideoElement);
     }
     
     function start()
     {
         description("Tests that the stream displays captured buffers to the video element.");
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
 
         videos = Array.from(document.getElementsByTagName('video'));
         videos.forEach((video) => {

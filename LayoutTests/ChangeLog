@@ -1,3 +1,19 @@
+2018-12-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] A stream's first video frame should be rendered
+        https://bugs.webkit.org/show_bug.cgi?id=192629
+        <rdar://problem/46664353>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/MediaStream-video-element-displays-buffer.html: Updated.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled-expected.txt: Ditto.
+        * fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html: Ditto.
+        * fast/mediastream/media-stream-renders-first-frame-expected.txt: Added.
+        * fast/mediastream/media-stream-renders-first-frame.html: Added.
+        * http/tests/media/media-stream/getusermedia-with-canvas-expected.txt: Removed.
+        * http/tests/media/media-stream/getusermedia-with-canvas.html: Removed.
+
 2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Focusing a large editable element always scrolls to the top of the element

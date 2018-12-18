@@ -874,7 +874,9 @@ const IntSize RealtimeMediaSource::size() const
     auto size = m_size;
 
     if (size.isEmpty() && !m_intrinsicSize.isEmpty()) {
-        if (size.width())
+        if (size.isZero())
+            size = m_intrinsicSize;
+        else if (size.width())
             size.setHeight(size.width() * (m_intrinsicSize.height() / static_cast<double>(m_intrinsicSize.width())));
         else if (size.height())
             size.setWidth(size.height() * (m_intrinsicSize.width() / static_cast<double>(m_intrinsicSize.height())));

@@ -165,6 +165,14 @@ using namespace WebCore;
 
     if ((CALayer *)object == _parent->backgroundLayer()) {
         if ([keyPath isEqualToString:@"bounds"]) {
+            if (!_parent)
+                return;
+
+            if (isMainThread()) {
+                _parent->backgroundLayerBoundsChanged();
+                return;
+            }
+
             callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
                 if (!protectedSelf->_parent)
                     return;
@@ -363,7 +371,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
             updateReadyState();
     }
 
-    if (m_displayMode != LivePreview || (m_displayMode == PausedImage && m_imagePainter.mediaSample))
+    if (m_displayMode != LivePreview && !m_waitingForFirstImage)
         return;
 
     auto videoTrack = m_videoTrackMap.get(track.id());
@@ -391,6 +399,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     }
 
     enqueueCorrectedVideoSample(sample);
+    if (m_waitingForFirstImage) {
+        m_waitingForFirstImage = false;
+        updateDisplayMode();
+    }
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData()
@@ -481,8 +493,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     m_sampleBufferDisplayLayer.get().videoGravity = AVLayerVideoGravityResizeAspectFill;
 
     m_backgroundLayer = adoptNS([[CALayer alloc] init]);
+    m_backgroundLayer.get().hidden = hideBackgroundLayer();
+
     m_backgroundLayer.get().backgroundColor = cachedCGColor(Color::black);
     m_backgroundLayer.get().needsDisplayOnBoundsChange = YES;
+
+    auto size = snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size();
+    m_backgroundLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
 
     [m_statusChangeListener beginObservingLayers];
 
@@ -496,7 +513,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     updateRenderingMode();
     updateDisplayLayer();
 
-    m_videoFullscreenLayerManager->setVideoLayer(m_backgroundLayer.get(), snappedIntRect(m_player->client().mediaPlayerContentBoxRect()).size());
+    m_videoFullscreenLayerManager->setVideoLayer(m_backgroundLayer.get(), size);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
@@ -601,6 +618,9 @@ MediaPlayerPrivateMediaStreamAVFObjC::DisplayMode MediaPlayerPrivateMediaStreamA
             return PaintItBlack;
     }
 
+    if (m_waitingForFirstImage)
+        return WaitingForFirstImage;
+
     if (playing() && !m_ended) {
         if (!m_mediaStreamPrivate->isProducingData())
             return PausedImage;
@@ -623,9 +643,16 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
     INFO_LOG(LOGIDENTIFIER, "updated to ", static_cast<int>(displayMode));
     m_displayMode = displayMode;
 
-    if (m_sampleBufferDisplayLayer) {
-        runWithoutAnimations([this] {
-            m_sampleBufferDisplayLayer.get().hidden = m_displayMode < PausedImage;
+    auto hidden = m_displayMode < PausedImage;
+    if (m_sampleBufferDisplayLayer && m_sampleBufferDisplayLayer.get().hidden != hidden) {
+        runWithoutAnimations([this, hidden] {
+            m_sampleBufferDisplayLayer.get().hidden = hidden;
+        });
+    }
+    hidden = hideBackgroundLayer();
+    if (m_backgroundLayer && m_backgroundLayer.get().hidden != hidden) {
+        runWithoutAnimations([this, hidden] {
+            m_backgroundLayer.get().hidden = hidden;
         });
     }
 
@@ -646,7 +673,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
     for (const auto& track : m_audioTrackMap.values())
         track->play();
 
-    m_shouldDisplayFirstVideoFrame = true;
     updateDisplayMode();
 
     scheduleDeferredTask([this] {
@@ -765,13 +791,13 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState(
             allTracksAreLive = false;
 
         if (track == m_mediaStreamPrivate->activeVideoTrack() && !m_imagePainter.mediaSample) {
-            if (!m_haveSeenMetadata)
+            if (!m_haveSeenMetadata || m_waitingForFirstImage)
                 return MediaPlayer::ReadyState::HaveNothing;
             allTracksAreLive = false;
         }
     }
 
-    if (!allTracksAreLive && !m_haveSeenMetadata)
+    if (m_waitingForFirstImage || (!allTracksAreLive && !m_haveSeenMetadata))
         return MediaPlayer::ReadyState::HaveMetadata;
 
     return MediaPlayer::ReadyState::HaveEnoughData;
@@ -828,6 +854,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
     if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
         m_intrinsicSize = intrinsicSize;
         sizeChanged = true;
+        if (m_playbackState == PlaybackState::None)
+            m_playbackState = PlaybackState::Paused;
     }
 
     updateTracks();
@@ -979,10 +1007,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack()
             }
         }
 
-        if (oldVideoTrack != m_activeVideoTrack)
+        if (oldVideoTrack != m_activeVideoTrack) {
             m_imagePainter.reset();
+            if (m_displayMode == None)
+                m_waitingForFirstImage = true;
+        }
         ensureLayers();
         m_sampleBufferDisplayLayer.get().hidden = hideVideoLayer || m_displayMode < PausedImage;
+        m_backgroundLayer.get().hidden = hideBackgroundLayer();
+
         m_pendingSelectedTrackCheck = false;
         updateDisplayMode();
     });
@@ -1075,10 +1108,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsCo
         updateCurrentFrameImage();
 
     GraphicsContextStateSaver stateSaver(context);
-    if (m_displayMode == PaintItBlack || !m_imagePainter.cgImage || !m_imagePainter.mediaSample) {
+    if (m_displayMode == PaintItBlack) {
         context.fillRect(IntRect(IntPoint(), IntSize(destRect.width(), destRect.height())), Color::black);
         return;
     }
+
+    if (!m_imagePainter.cgImage || !m_imagePainter.mediaSample)
+        return;
 
     auto image = m_imagePainter.cgImage.get();
     FloatRect imageRect(0, 0, CGImageGetWidth(image), CGImageGetHeight(image));
@@ -1164,10 +1200,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayLayer()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::backgroundLayerBoundsChanged()
 {
-    scheduleDeferredTask([this] {
-        runWithoutAnimations([this] {
-            updateDisplayLayer();
-        });
+    runWithoutAnimations([this] {
+        updateDisplayLayer();
     });
 }
 

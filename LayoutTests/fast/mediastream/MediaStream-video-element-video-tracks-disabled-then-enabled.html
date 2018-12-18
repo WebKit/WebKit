@@ -2,7 +2,6 @@
 <html>
 <head>
     <script src="../../resources/js-test-pre.js"></script>
-    <script src="./resources/getUserMedia-helper.js"></script>
 </head>
 <body onload="start()">
 <p id="description"></p>
@@ -14,7 +13,6 @@
     let context;
     let mediaStream;
     let video;
-    let havePlayed = false;
     
     let buffer;
 
@@ -35,7 +33,7 @@
 
     function canvasShouldBeBlack()
     {
-        return !(mediaStream.getVideoTracks()[0].enabled && havePlayed);
+        return !mediaStream.getVideoTracks()[0].enabled;
     }
     
     function attempt(numberOfTries, call, callback)
@@ -61,7 +59,6 @@
         if (video.paused) {
             debug('<br> ===== play video =====');
             evalAndLog('video.play()');
-            havePlayed = true;
             beginTestRound();
         } else {
             debug('');
@@ -73,7 +70,7 @@
     function reenableTrack()
     {
         mediaStream.getVideoTracks()[0].enabled = true;
-        debug(`<br> === video track reenabled, should${havePlayed ? "" : " NOT"} render current frame ===`);
+        debug(`<br> === video track reenabled, should render current frame ===`);
 
         // The video is not guaranteed to render non-black frames before the canvas is drawn to and the pixels are checked.
         // A timeout is used to ensure that the pixel check is done after the video renders non-black frames.
@@ -123,11 +120,18 @@
     function start()
     {
         description("Tests that re-enabling a video MediaStreamTrack when all tracks were previously disabled causes captured media to display.");
+        if (window.testRunner)
+            testRunner.setUserMediaPermission(true);
 
         video = document.querySelector('video');
         video.addEventListener('canplay', canplay);
 
-        getUserMedia("allow", {video:true}, setupVideoElementWithStream);
+        navigator.mediaDevices.getUserMedia({ video : true })
+            .then((stream) => {
+                mediaStream = stream;
+                testPassed('mediaDevices.getUserMedia generated a stream successfully.');
+                evalAndLog('video.srcObject = mediaStream');
+            });
     }
 
     window.jsTestIsAsync = true;

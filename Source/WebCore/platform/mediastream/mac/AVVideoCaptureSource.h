@@ -126,6 +126,7 @@ private:
     IntSize m_pendingSize;
     double m_pendingFrameRate;
     InterruptionReason m_interruption { InterruptionReason::None };
+    int m_framesToDropAtStartup { 0 };
     bool m_isRunning { false };
 };
 

@@ -1,3 +1,31 @@
+2018-12-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] A stream's first video frame should be rendered
+        https://bugs.webkit.org/show_bug.cgi?id=192629
+        <rdar://problem/46664353>
+
+        Reviewed by Youenn Fablet.
+
+        Test: fast/mediastream/media-stream-renders-first-frame.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode const):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentReadyState):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::checkSelectedVideoTrack):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::size const):
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::processNewFrame):
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::processNewSample):
+
 2018-12-17  Justin Michaud  <justin_michaud@apple.com>
 
         Bindings generator should support Conditional= along with CachedAttribute
