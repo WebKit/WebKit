@@ -78,12 +78,12 @@
 }
 
 .content-view:not(.tab).recording :matches(img, canvas) {
+    position: absolute;
     max-width: 100%;
     max-height: 100%;
 }
 
 .content-view:not(.tab).recording canvas.path {
-    position: absolute;
     z-index: 10;
 }
 
