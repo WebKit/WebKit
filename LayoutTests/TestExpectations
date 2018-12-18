@@ -129,6 +129,7 @@ http/tests/storageAccess/ [ Skip ]
 http/tests/navigation/process-swap-window-open.html [ Skip ]
 http/tests/navigation/useragent-reload.php [ Skip ]
 storage/indexeddb/modern/opendatabase-after-storage-crash.html [ Skip ]
+fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]

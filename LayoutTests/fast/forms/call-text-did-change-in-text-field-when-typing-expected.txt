@@ -1,0 +1,19 @@
+
+Verifies that programmatically changing text field values with user interaction invokes the -didChangeInTextField injected bundle method. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+1. Changing text field value with user typing gesture:
+Text did change in text field.
+The value of the text field is: "a"
+
+2. Changing text field value with non-typing user gesture:
+PASS buttonClicked became true
+The value of the text field is: "ab"
+
+3. Changing text field value without user gesture:
+The value of the text field is: "abc"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

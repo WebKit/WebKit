@@ -1,3 +1,21 @@
+2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Calling setValue() while typing should invoke -textDidChangeInTextField in the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=192785
+        <rdar://problem/45321184>
+
+        Reviewed by Tim Horton.
+
+        Makes a minor adjustment in `TextFieldInputType::setValue` to consider value changes as "user editing", if we're
+        currently processing a keystroke from the user. This is useful for certain private clients, such as Safari, that
+        need to know when the user is typing in a text form control, but the page is preventing default text insertion
+        behavior and instead updating values programmatically.
+
+        Test: fast/forms/call-text-did-change-in-text-field-when-typing.html
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue):
+
 2018-12-18  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][BFC][MarginCollapsing] Implement marginBeforeCollapsesWithParentMarginAfter

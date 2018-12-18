@@ -57,6 +57,7 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
+#include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -168,6 +169,9 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
     // FIXME: Why do we do this when eventBehavior == DispatchNoEvent
     if (!input->focused() || eventBehavior == DispatchNoEvent)
         input->setTextAsOfLastFormControlChangeEvent(sanitizedValue);
+
+    if (UserTypingGestureIndicator::processingUserTypingGesture())
+        didSetValueByUserEdit();
 }
 
 #if ENABLE(DATALIST_ELEMENT)
