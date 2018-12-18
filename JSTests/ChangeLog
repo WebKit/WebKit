@@ -1,5 +1,17 @@
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
+        Skip the stress/materialized-regexp-has-correct-last-index-set-by-match.js test on 32-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=192019
+        <rdar://problem/46525456>
+
+        Reviewed by Yusuke Suzuki.
+
+        The test runs too slow on 32-bit.
+
+        * stress/materialized-regexp-has-correct-last-index-set-by-match.js:
+
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
         Skip the stress/materialize-regexp-cyclic-regexp.js test on 32-bit.
         https://bugs.webkit.org/show_bug.cgi?id=191373
         <rdar://problem/46525458>
