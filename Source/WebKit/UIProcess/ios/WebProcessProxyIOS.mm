@@ -35,7 +35,11 @@ namespace WebKit {
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()
 {
+#if ENABLE(FULL_KEYBOARD_ACCESS)
     return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
+#else
+    return NO;
+#endif
 }
 
 } // namespace WebKit

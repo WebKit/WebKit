@@ -1,5 +1,17 @@
 2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the iOSMac engineering build again
+
+        After r239311, `WebProcessProxy::fullKeyboardAccessEnabled` in `WebProcessProxyIOS.mm` attempts to use
+        `WKFullKeyboardAccessWatcher`, which is guarded by `ENABLE(FULL_KEYBOARD_ACCESS)`. However, on iOSMac,
+        `ENABLE(FULL_KEYBOARD_ACCESS)` is 0. Fix the build by putting access to `WKFullKeyboardAccessWatcher` behind
+        `ENABLE(FULL_KEYBOARD_ACCESS)`.
+
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::fullKeyboardAccessEnabled):
+
+2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the iOSMac engineering build
 
         `generateRequestID()` is only invoked from code under `ENABLE(MEDIA_STREAM)`; move it under this guard to avoid
