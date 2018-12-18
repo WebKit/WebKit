@@ -1,3 +1,14 @@
+2018-12-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Clean up IndexedDB files between tests
+        https://bugs.webkit.org/show_bug.cgi?id=192796
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreRemoveAllIndexedDatabasesSync):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2018-12-18  Vivek Seth  <v_seth@apple.com>
 
         HTTPS Upgrade: Scripts / preprocessing necessary to create new database in future

@@ -509,8 +509,8 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime, 
     }
 
     HashSet<UniqueIDBDatabase*> openDatabases;
-    for (auto* connection : m_databaseConnections.values())
-        openDatabases.add(connection->database());
+    for (auto& database : m_uniqueIDBDatabaseMap.values())
+        openDatabases.add(database.get());
 
     for (auto& database : openDatabases)
         database->immediateCloseForUserDelete();

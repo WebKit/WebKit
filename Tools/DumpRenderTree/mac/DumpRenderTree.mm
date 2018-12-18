@@ -2012,6 +2012,8 @@ static void runTest(const string& inputLine)
     sizeWebViewForCurrentTest();
     gTestRunner->setIconDatabaseEnabled(false);
     gTestRunner->clearAllApplicationCaches();
+    gTestRunner->clearAllDatabases();
+    gTestRunner->setIDBPerOriginQuota(50 * MB);
 
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs);

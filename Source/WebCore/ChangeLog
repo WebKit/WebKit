@@ -1,3 +1,44 @@
+2018-12-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Clean up IndexedDB files between tests
+        https://bugs.webkit.org/show_bug.cgi?id=192796
+
+        Reviewed by Geoffrey Garen.
+
+        We should clean up the IndexedDB files between tests to make sure each test is independent of others.
+
+        This patch also fixes some issues in IDB.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        We should shut down all open databases instead of databases from open database connections before deleting 
+        files, because database starts accessing files before connection to database is established.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose):
+        We should shutdown database after tasks in queue are completed, because tasks have pointer of UniqueIDBDatabase 
+        and UniqueIDBDatabase can be destructed after shutdown.
+
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        didDeleteBackingStore can be posted to main thread after immediateCloseForUserDelete, and timer should not be 
+        invoked during the hard close.
+
+        (WebCore::IDBServer::UniqueIDBDatabase::handleDatabaseOperations):
+        Tasks like didOpenBackingStore could be posted from database thread to main thread after 
+        immediateCloseForUserDelete, but we know the backing store will be deleted soon, so no need to handle any 
+        database operation. 
+
+        (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor):
+        performPrefetchCursor needs to be aware of whether UniqueIDBDatabase is being closed, so that it will not access 
+        m_backingStore when m_backingStore may already be deleted. 
+
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        immediateCloseForUserDelete does not handle transactions that are in the process of commit or abort. 
+        m_objectStoreTransactionCounts and m_objectStoreWriteTransactions may be used by those transactions in 
+        transactionCompleted, so they do not need to be cleared here.
+
 2018-12-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Thick overlines and line-throughs grow in the wrong direction
