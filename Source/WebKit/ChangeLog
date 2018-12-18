@@ -1,3 +1,41 @@
+2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Focusing a large editable element always scrolls to the top of the element
+        https://bugs.webkit.org/show_bug.cgi?id=192745
+        <rdar://problem/46758445>
+
+        Reviewed by Tim Horton.
+
+        Currently, when focusing form controls or editable elements, we try to scroll such that the focused element rect
+        is centered within the visible area. In the case of very large focusable elements whose dimensions exceed the
+        width or height of the visible area, we instead scroll such that the top left point of the element is at the top
+        left corner of the visible area.
+
+        However, this results in unnecessary scrolling if the top of the element is already near the top of the visible
+        area. For WebKit2-based rich text editors that have an editable body element with a top content inset that
+        contains additional content, this means we will always scroll the additional content away when focusing the
+        editable body.
+
+        To avoid this behavior, adjust focused element zooming logic for editable elements that are too large to be
+        centered in the visible area, such that we only scroll the top left position of the focused element to the top
+        half or top right of the visible area, respectively. This reduces the amount of scrolling when focusing large
+        editable elements, while still making it clear which element is being focused.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
+        Make some small adjustments to improve the readability of this method by using `clampTo` instead of clamping
+        values by comparing and setting values.
+
+        Also, fix an existing bug wherein focusable elements that are meant to be centered within the visible area are
+        currently offset by half the difference between the bottom inset amount and the top inset amount, in the case
+        where the `_obscuredInsets` SPI is used to specify content insets for the web view (i.e., MobileSafari).
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+
+        Make a couple of arguments `const FloatRect&` instead of just `FloatRect`.
+
 2018-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         offsetLeft and offsetParent should adjust across shadow boundaries

@@ -1,0 +1,6 @@
+    Here's to the crazy ones. The misfits. The rebels. The troublemakers. The round pegs in the square holes. The ones who see things differently. They're not fond of rules. And they have no respect for the status quo. You can quote them, disagree with them, glorify or vilify them. About the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world, are the ones who do.
+    
+This test verifies that we avoid unnecessary scrolling when focusing large editable areas. To reproduce manually, scroll to the top and focus the first line of editable text in the dashed box. The blue box should still be visible.
+
+The initial scroll offset is: 0,0
+The final scroll offset is: 0,0

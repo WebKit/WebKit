@@ -2225,7 +2225,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 }
 
 // focusedElementRect and selectionRect are both in document coordinates.
-- (void)_zoomToFocusRect:(WebCore::FloatRect)focusedElementRectInDocumentCoordinates selectionRect:(WebCore::FloatRect)selectionRectInDocumentCoordinates insideFixed:(BOOL)insideFixed
+- (void)_zoomToFocusRect:(const WebCore::FloatRect&)focusedElementRectInDocumentCoordinates selectionRect:(const WebCore::FloatRect&)selectionRectInDocumentCoordinates insideFixed:(BOOL)insideFixed
     fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
 {
     LOG_WITH_STREAM(VisibleRects, stream << "_zoomToFocusRect:" << focusedElementRectInDocumentCoordinates << " selectionRect:" << selectionRectInDocumentCoordinates);
@@ -2305,53 +2305,85 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             return;
     }
 
-    // We want to zoom to the left/top corner of the DOM node, with as much spacing on all sides as we
-    // can get based on the visible area after zooming (workingFrame).  The spacing in either dimension is half the
+    // We want to center the focused element within the viewport, with as much spacing on all sides as
+    // we can get based on the visible area after zooming. The spacing in either dimension is half the
     // difference between the size of the DOM node and the size of the visible frame.
-    CGFloat horizontalSpaceInWebViewCoordinates = std::max((visibleSize.width - focusedElementRectInNewScale.width()) / 2.0, 0.0);
-    CGFloat verticalSpaceInWebViewCoordinates = std::max((visibleSize.height - focusedElementRectInNewScale.height()) / 2.0, 0.0);
+    // If the element is too wide to be horizontally centered or too tall to be vertically centered, we
+    // instead scroll such that the left edge or top edge of the element is within the left half or top
+    // half of the viewport, respectively.
+    CGFloat horizontalSpaceInWebViewCoordinates = (visibleSize.width - focusedElementRectInNewScale.width()) / 2.0;
+    CGFloat verticalSpaceInWebViewCoordinates = (visibleSize.height - focusedElementRectInNewScale.height()) / 2.0;
 
-    CGPoint topLeft;
-    topLeft.x = focusedElementRectInNewScale.x() - horizontalSpaceInWebViewCoordinates;
-    topLeft.y = focusedElementRectInNewScale.y() - verticalSpaceInWebViewCoordinates - visibleOffsetFromTop;
+    auto topLeft = CGPointZero;
+    auto scrollViewInsets = [_scrollView _effectiveContentInset];
+    auto currentTopLeft = [_scrollView contentOffset];
 
-    CGFloat minimumAllowableHorizontalOffsetInWebViewCoordinates = -INFINITY;
-    CGFloat minimumAllowableVerticalOffsetInWebViewCoordinates = -INFINITY;
-    if (selectionRectIsNotNull) {
-        WebCore::FloatRect selectionRectInNewScale = selectionRectInDocumentCoordinates;
-        selectionRectInNewScale.scale(scale);
-        selectionRectInNewScale.moveBy([_contentView frame].origin);
-        minimumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.width;
-        minimumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.height - visibleOffsetFromTop;
+    if (_haveSetObscuredInsets) {
+        currentTopLeft.x += _obscuredInsets.left;
+        currentTopLeft.y += _obscuredInsets.top;
     }
+
+    if (horizontalSpaceInWebViewCoordinates > 0)
+        topLeft.x = focusedElementRectInNewScale.x() - horizontalSpaceInWebViewCoordinates;
+    else {
+        auto minimumOffsetToRevealLeftEdge = std::max(-scrollViewInsets.left, focusedElementRectInNewScale.x() - visibleSize.width / 2);
+        auto maximumOffsetToRevealLeftEdge = focusedElementRectInNewScale.x();
+        topLeft.x = clampTo<double>(currentTopLeft.x, minimumOffsetToRevealLeftEdge, maximumOffsetToRevealLeftEdge);
+    }
+
+    if (verticalSpaceInWebViewCoordinates > 0)
+        topLeft.y = focusedElementRectInNewScale.y() - verticalSpaceInWebViewCoordinates;
+    else {
+        auto minimumOffsetToRevealTopEdge = std::max(-scrollViewInsets.top, focusedElementRectInNewScale.y() - visibleSize.height / 2);
+        auto maximumOffsetToRevealTopEdge = focusedElementRectInNewScale.y();
+        topLeft.y = clampTo<double>(currentTopLeft.y, minimumOffsetToRevealTopEdge, maximumOffsetToRevealTopEdge);
+    }
+
+    topLeft.y -= visibleOffsetFromTop;
 
     WebCore::FloatRect documentBoundsInNewScale = [_contentView bounds];
     documentBoundsInNewScale.scale(scale);
     documentBoundsInNewScale.moveBy([_contentView frame].origin);
 
+    CGFloat minimumAllowableHorizontalOffsetInWebViewCoordinates = -INFINITY;
+    CGFloat minimumAllowableVerticalOffsetInWebViewCoordinates = -INFINITY;
+    CGFloat maximumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(documentBoundsInNewScale) - visibleSize.width;
+    CGFloat maximumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(documentBoundsInNewScale) - visibleSize.height;
+
+    if (selectionRectIsNotNull) {
+        WebCore::FloatRect selectionRectInNewScale = selectionRectInDocumentCoordinates;
+        selectionRectInNewScale.scale(scale);
+        selectionRectInNewScale.moveBy([_contentView frame].origin);
+        // Adjust the min and max allowable scroll offsets, such that the selection rect remains visible.
+        minimumAllowableHorizontalOffsetInWebViewCoordinates = CGRectGetMaxX(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.width;
+        minimumAllowableVerticalOffsetInWebViewCoordinates = CGRectGetMaxY(selectionRectInNewScale) + caretOffsetFromWindowEdge - visibleSize.height - visibleOffsetFromTop;
+        maximumAllowableHorizontalOffsetInWebViewCoordinates = std::min(maximumAllowableHorizontalOffsetInWebViewCoordinates, CGRectGetMinX(selectionRectInNewScale) - caretOffsetFromWindowEdge);
+        maximumAllowableVerticalOffsetInWebViewCoordinates = std::min(maximumAllowableVerticalOffsetInWebViewCoordinates, CGRectGetMinY(selectionRectInNewScale) - caretOffsetFromWindowEdge - visibleOffsetFromTop);
+    }
+
     // Constrain the left edge in document coordinates so that:
     //  - it isn't so small that the scrollVisibleRect isn't visible on the screen
     //  - it isn't so great that the document's right edge is less than the right edge of the screen
-    if (selectionRectIsNotNull && topLeft.x < minimumAllowableHorizontalOffsetInWebViewCoordinates)
-        topLeft.x = minimumAllowableHorizontalOffsetInWebViewCoordinates;
-    else {
-        CGFloat maximumAllowableHorizontalOffset = CGRectGetMaxX(documentBoundsInNewScale) - visibleSize.width;
-        if (topLeft.x > maximumAllowableHorizontalOffset)
-            topLeft.x = maximumAllowableHorizontalOffset;
-    }
+    topLeft.x = clampTo<CGFloat>(topLeft.x, minimumAllowableHorizontalOffsetInWebViewCoordinates, maximumAllowableHorizontalOffsetInWebViewCoordinates);
 
     // Constrain the top edge in document coordinates so that:
     //  - it isn't so small that the scrollVisibleRect isn't visible on the screen
     //  - it isn't so great that the document's bottom edge is higher than the top of the form assistant
-    if (selectionRectIsNotNull && topLeft.y < minimumAllowableVerticalOffsetInWebViewCoordinates)
-        topLeft.y = minimumAllowableVerticalOffsetInWebViewCoordinates;
-    else {
-        CGFloat maximumAllowableVerticalOffset = CGRectGetMaxY(documentBoundsInNewScale) - visibleSize.height;
-        if (topLeft.y > maximumAllowableVerticalOffset)
-            topLeft.y = maximumAllowableVerticalOffset;
+    topLeft.y = clampTo<CGFloat>(topLeft.y, minimumAllowableVerticalOffsetInWebViewCoordinates, maximumAllowableVerticalOffsetInWebViewCoordinates);
+
+    if (_haveSetObscuredInsets) {
+        // This looks unintuitive, but is necessary in order to precisely center the focused element in the visible area.
+        // The top left position already accounts for top and left obscured insets - i.e., a topLeft of (0, 0) corresponds
+        // to the top- and left-most point below (and to the right of) the top inset area and left inset areas, respectively.
+        // However, when telling WKScrollView to scroll to a given center position, this center position is computed relative
+        // to the coordinate space of the scroll view. Thus, to compute our center position from the top left position, we
+        // need to first move the top left position up and to the left, and then add half the width and height of the content
+        // area (including obscured insets).
+        topLeft.x -= _obscuredInsets.left;
+        topLeft.y -= _obscuredInsets.top;
     }
 
-    WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + unobscuredScrollViewRectInWebViewCoordinates.size.width / 2.0, topLeft.y + unobscuredScrollViewRectInWebViewCoordinates.size.height / 2.0);
+    WebCore::FloatPoint newCenter = CGPointMake(topLeft.x + CGRectGetWidth(self.bounds) / 2, topLeft.y + CGRectGetHeight(self.bounds) / 2);
 
     if (scale != currentScale)
         _page->willStartUserTriggeredZooming();
