@@ -25,20 +25,36 @@
 
 #pragma once
 
+#if HAVE(ACCESSIBILITY_SUPPORT)
+
 #if USE(APPLE_INTERNAL_SDK)
+
 // FIXME (46432011): We shouldn't need to wrap this include in extern "C".
 WTF_EXTERN_C_BEGIN
 #include <AccessibilitySupport.h>
 WTF_EXTERN_C_END
-#endif
+
+#else
 
 WTF_EXTERN_C_BEGIN
 
+#if PLATFORM(IOS_FAMILY)
 extern Boolean _AXSKeyRepeatEnabled();
 extern CFTimeInterval _AXSKeyRepeatDelay();
+#endif
+
+#if ENABLE(ACCESSIBILITY_EVENTS)
 extern CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
 extern Boolean _AXSWebAccessibilityEventsEnabled();
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 extern Boolean _AXSFullKeyboardAccessEnabled();
+#endif
 
 WTF_EXTERN_C_END
+
+#endif
+
+#endif // HAVE(ACCESSIBILITY_SUPPORT)

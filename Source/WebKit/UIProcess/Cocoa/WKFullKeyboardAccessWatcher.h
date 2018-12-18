@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
 
 @interface WKFullKeyboardAccessWatcher : NSObject {
 @private
@@ -36,4 +36,4 @@
 
 @end;
 
-#endif // PLATFORM(COCOA)
+#endif // ENABLE(FULL_KEYBOARD_ACCESS)

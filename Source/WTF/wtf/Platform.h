@@ -1454,3 +1454,11 @@
 /* FIXME: Is this still necessary? CFURLConnection isn't used on Cocoa platforms any more. */
 #define ENABLE_SEC_ITEM_SHIM 1
 #endif
+
+#if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
+#define HAVE_ACCESSIBILITY_SUPPORT 1
+#endif
+
+#if PLATFORM(MAC)
+#define ENABLE_FULL_KEYBOARD_ACCESS 1
+#endif

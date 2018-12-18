@@ -1,3 +1,12 @@
+2018-12-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Some builds are broken after r239262
+        https://bugs.webkit.org/show_bug.cgi?id=192777
+
+        Reviewed by Simon Fraser.
+
+        * wtf/Platform.h:
+
 2018-12-17  Daniel Bates  <dabates@apple.com>
 
         Support concatenating StringView with other string types

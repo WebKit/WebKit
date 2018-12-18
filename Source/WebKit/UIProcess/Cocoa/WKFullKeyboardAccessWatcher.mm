@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
-#if PLATFORM(COCOA)
+#if ENABLE(FULL_KEYBOARD_ACCESS)
 
 #import "WebProcessPool.h"
 
@@ -55,7 +55,7 @@ static inline BOOL platformIsFullKeyboardAccessEnabled()
         // Bit 1 is set if controls other than text fields are included in the tab order (WebKit also always includes lists).
         fullKeyboardAccessEnabled = (mode & 0x2);
     }
-#elif PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+#elif PLATFORM(IOS_FAMILY)
     fullKeyboardAccessEnabled = _AXSFullKeyboardAccessEnabled();
 #endif
     
@@ -92,7 +92,7 @@ static inline BOOL platformIsFullKeyboardAccessEnabled()
 #if PLATFORM(MAC)
     notificationCenter = [NSDistributedNotificationCenter defaultCenter];
     notitificationName = KeyboardUIModeDidChangeNotification;
-#elif PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+#elif PLATFORM(IOS_FAMILY)
     notificationCenter = [NSNotificationCenter defaultCenter];
     notitificationName = (NSString *)kAXSFullKeyboardAccessEnabledNotification;
 #endif
@@ -111,4 +111,4 @@ static inline BOOL platformIsFullKeyboardAccessEnabled()
 
 @end
 
-#endif // PLATFORM(COCOA)
+#endif // ENABLE(FULL_KEYBOARD_ACCESS)
