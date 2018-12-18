@@ -1,3 +1,17 @@
+2018-12-17  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Handle case where stdout and stderr don't accept unicode
+        https://bugs.webkit.org/show_bug.cgi?id=192775
+        <rdar://problem/46497303>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.write): If unicode cannot be written to the stream, replace unicode
+        characters with '?'.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest.test_stream_with_encoding):
+
 2018-12-17  Daniel Bates  <dabates@apple.com>
 
         Support concatenating StringView with other string types

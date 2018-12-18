@@ -107,7 +107,16 @@ class MeteredStream(object):
         if not self._isatty or self._verbose:
             txt = self._ensure_newline(txt)
 
-        self._stream.write(timestamp_string + txt)
+        try:
+            self._stream.write(timestamp_string + txt)
+        except UnicodeEncodeError:
+            output = ''
+            for c in timestamp_string + txt:
+                try:
+                    output += '{}'.format(c)
+                except UnicodeEncodeError:
+                    output += '?'
+            self._stream.write(output)
 
     def writeln(self, txt, now=None, pid=None):
         self.write(self._ensure_newline(txt), now, pid)

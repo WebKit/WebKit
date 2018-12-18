@@ -117,6 +117,24 @@ class RegularTest(unittest.TestCase):
         self.logger.info('‘example’')
         self.assertEqual(self.buflist[-1][-14:], '‘example’\n')
 
+    def test_stream_with_encoding(self):
+        class AsciiStream(StringIO.StringIO):
+            def write(self, s):
+                return StringIO.StringIO.write(self, '{}'.format(s))
+
+        stream = AsciiStream()
+
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+        logger.propagate = False
+
+        try:
+            meter = MeteredStream(stream, self.verbose, logger, self.time_fn, 8675, print_timestamps=self.print_timestamps)
+            self.logger.info(u'\u2713')
+            self.assertEqual(stream.buflist[-1][-2:], '?\n')
+        finally:
+            meter.cleanup()
+
 
 class TtyTest(RegularTest):
     verbose = False
