@@ -1,3 +1,13 @@
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Array unshift/shift should not race against the AI in the compiler thread.
+        https://bugs.webkit.org/show_bug.cgi?id=192795
+        <rdar://problem/46724263>
+
+        Reviewed by Saam Barati.
+
+        * stress/array-unshift-should-not-race-against-compiler-thread.js: Added.
+
 2018-12-16  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Object.keys by caching own keys results in StructureRareData

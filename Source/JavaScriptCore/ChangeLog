@@ -1,3 +1,36 @@
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
+        Array unshift/shift should not race against the AI in the compiler thread.
+        https://bugs.webkit.org/show_bug.cgi?id=192795
+        <rdar://problem/46724263>
+
+        Reviewed by Saam Barati.
+
+        The Array unshift and shift operations for ArrayStorage type arrays are protected
+        using the cellLock.  The AbstractInterpreter's foldGetByValOnConstantProperty()
+        function does grab the cellLock before reading a value from the array's ArrayStorage,
+        but does not get the array butterfly under the protection of the cellLock.
+
+        This is insufficient and racy.  For ArrayStorage type arrays, the fetching of the
+        butterfly also needs to be protected by the cellLock.  The unshift / shift
+        operations can move values around in the butterfly.  Hence, the fact that AI has
+        fetched a butterfly pointer (while ensuring no structure change) is insufficient
+        to guarantee that the values in the butterfly haven't shifted.
+
+        Having AI hold the cellLock the whole time (from before fetching the butterfly
+        till after reading the value from it) eliminates this race.  Note: we only need
+        to do this for ArrayStorage type arrays.
+
+        Note also that though AI is holding the cellLock in this case, we still need to
+        ensure that the array structure hasn't changed around the fetching of the butterfly.
+        This is because operations other than unshift and shift are guarded by this
+        protocol, and not the cellLock.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+
 2018-12-16  Yusuke Suzuki  <yusukesuzuki@slowstart.org>
 
         [JSC] Optimize Object.keys by caching own keys results in StructureRareData
