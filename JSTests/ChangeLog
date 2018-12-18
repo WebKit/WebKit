@@ -1,3 +1,25 @@
+2018-12-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Redeclaration of var over let/const/class should be a syntax error.
+        https://bugs.webkit.org/show_bug.cgi?id=192298
+
+        Reviewed by Keith Miller.
+
+        * test262.yaml:
+        * test262/expectations.yaml:
+        Mark 46 tests as passing.
+
+        * stress/block-scope-redeclarations.js:
+        Add some new tests.
+
+        * stress/for-in-invalidate-context-weird-assignments.js:
+        * stress/for-in-tests.js:
+        Replace tests for outdated behavior with tests for SyntaxError.
+
+        * ChakraCore/test/LetConst/defer3.baseline-jsc:
+        * ChakraCore/test/LetConst/letvar.baseline-jsc:
+        Update expectations.
+
 2018-12-18  Mark Lam  <mark.lam@apple.com>
 
         Skip the stress/elidable-new-object-roflcopter-then-exit.js test on 32-bit.

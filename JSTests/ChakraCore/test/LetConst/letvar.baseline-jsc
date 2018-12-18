@@ -1,8 +1,3 @@
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
-var x
-undefined
-let y
-var y
-undefined
-let x
-undefined
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.

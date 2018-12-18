@@ -1765,25 +1765,18 @@ test/language/block-scope/syntax/redeclaration/async-function-declaration-attemp
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-class-declaration.js:
@@ -1794,12 +1787,8 @@ test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-r
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-let-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-var-declaration-nested-in-function.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-class-declaration.js:
@@ -1814,32 +1803,19 @@ test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-class-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-const-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/block-scope/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-let-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/computed-property-names/class/static/method-number.js:
@@ -3416,8 +3392,6 @@ test/language/statements/class/subclass/class-definition-superclass-generator.js
 test/language/statements/class/super-fielddefinition-initializer-abrupt-completion.js:
   default: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
   strict mode: "SyntaxError: Unexpected token '='. Expected an opening '(' before a method's parameter list."
-test/language/statements/const/redeclaration-error-from-within-strict-mode-function-const.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/do-while/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/12.6.4-2.js:
@@ -3461,12 +3435,6 @@ test/language/statements/for-in/dstr-obj-prop-nested-obj-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/dstr-obj-rest-not-last-element-invalid.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/head-const-bound-names-in-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-in/head-let-bound-names-in-stmt.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-in/head-lhs-cover-non-asnmt-trgt.js:
@@ -3605,16 +3573,10 @@ test/language/statements/for-of/dstr-obj-prop-nested-obj-invalid.js:
 test/language/statements/for-of/dstr-obj-rest-not-last-element-invalid.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-const-bound-names-in-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-decl-no-expr.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-expr-no-expr.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/for-of/head-let-bound-names-in-stmt.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/head-lhs-cover-non-asnmt-trgt.js:
@@ -3634,9 +3596,6 @@ test/language/statements/for-of/head-var-no-expr.js:
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for-of/let-array-with-newline.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/for/head-let-bound-names-in-stmt.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/for/head-lhs-let.js:
   default: "SyntaxError: Unexpected token ';'. Expected a parameter pattern or a ')' in parameter list."
 test/language/statements/for/let-array-with-newline.js:
@@ -3700,13 +3659,8 @@ test/language/statements/labeled/value-yield-strict.js:
   strict mode: "SyntaxError: Cannot use 'yield' as a label in strict mode."
 test/language/statements/let/block-local-closure-set-before-initialization.js:
   default: 'Test262Error: Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/language/statements/let/redeclaration-error-from-within-strict-mode-function.js:
-  default: 'Test262: This statement should not be evaluated.'
 test/language/statements/let/syntax/attempt-to-redeclare-let-binding-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/let/syntax/attempt-to-redeclare-let-binding-with-var.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/let/syntax/escaped-let.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'l\\u0065t'"
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
@@ -3723,25 +3677,18 @@ test/language/statements/switch/syntax/redeclaration/async-function-declaration-
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/async-function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/class-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/const-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-class-declaration.js:
@@ -3754,7 +3701,6 @@ test/language/statements/switch/syntax/redeclaration/function-declaration-attemp
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/function-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-class-declaration.js:
@@ -3769,32 +3715,19 @@ test/language/statements/switch/syntax/redeclaration/generator-declaration-attem
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/generator-declaration-attempt-to-redeclare-with-var-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-async-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-generator-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/let-declaration-attempt-to-redeclare-with-var-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-async-function-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-class-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-const-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-function-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-generator-declaration.js:
-  default: 'Test262: This statement should not be evaluated.'
-  strict mode: 'Test262: This statement should not be evaluated.'
-test/language/statements/switch/syntax/redeclaration/var-declaration-attempt-to-redeclare-with-let-declaration.js:
   default: 'Test262: This statement should not be evaluated.'
   strict mode: 'Test262: This statement should not be evaluated.'
 test/language/statements/try/early-catch-function.js:

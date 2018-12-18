@@ -173,6 +173,7 @@ public:
         , m_isAsyncFunctionBoundary(false)
         , m_isLexicalScope(false)
         , m_isGlobalCodeScope(false)
+        , m_isSimpleCatchParameterScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
         , m_hasArguments(false)
@@ -290,6 +291,9 @@ public:
     void setIsGlobalCodeScope() { m_isGlobalCodeScope = true; }
     bool isGlobalCodeScope() const { return m_isGlobalCodeScope; }
 
+    void setIsSimpleCatchParameterScope() { m_isSimpleCatchParameterScope = true; }
+    bool isSimpleCatchParameterScope() { return m_isSimpleCatchParameterScope; }
+
     void setIsLexicalScope() 
     { 
         m_isLexicalScope = true;
@@ -354,8 +358,6 @@ public:
         addResult.iterator->value.setIsVar();
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
-        if (m_lexicalVariables.contains(ident->impl()))
-            result |= DeclarationResult::InvalidDuplicateDeclaration;
         return result;
     }
 
@@ -386,6 +388,12 @@ public:
         addResult.iterator->value.setIsFunction();
 
         return result;
+    }
+
+    void addVariableBeingHoisted(const Identifier* ident)
+    {
+        ASSERT(!m_allowsVarDeclarations);
+        m_variablesBeingHoisted.add(ident->impl());
     }
 
     void addSloppyModeHoistableFunctionCandidate(const Identifier* ident)
@@ -421,7 +429,7 @@ public:
             addResult.iterator->value.setIsImportedNamespace();
         }
 
-        if (!addResult.isNewEntry)
+        if (!addResult.isNewEntry || m_variablesBeingHoisted.contains(ident->impl()))
             result |= DeclarationResult::InvalidDuplicateDeclaration;
         if (!isValidStrictMode)
             result |= DeclarationResult::InvalidStrictMode;
@@ -429,7 +437,7 @@ public:
         return result;
     }
 
-    bool hasDeclaredVariable(const Identifier& ident)
+    ALWAYS_INLINE bool hasDeclaredVariable(const Identifier& ident)
     {
         return hasDeclaredVariable(ident.impl());
     }
@@ -441,6 +449,11 @@ public:
             return false;
         VariableEnvironmentEntry entry = iter->value;
         return entry.isVar(); // The callee isn't a "var".
+    }
+
+    ALWAYS_INLINE bool hasLexicallyDeclaredVariable(const Identifier& ident)
+    {
+        return hasLexicallyDeclaredVariable(ident.impl());
     }
 
     bool hasLexicallyDeclaredVariable(const RefPtr<UniquedStringImpl>& ident) const
@@ -798,6 +811,7 @@ private:
     bool m_isAsyncFunctionBoundary;
     bool m_isLexicalScope;
     bool m_isGlobalCodeScope;
+    bool m_isSimpleCatchParameterScope;
     bool m_isFunctionBoundary;
     bool m_isValidStrictMode;
     bool m_hasArguments;
@@ -816,6 +830,7 @@ private:
     VariableEnvironment m_declaredVariables;
     VariableEnvironment m_lexicalVariables;
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
+    UniquedStringImplPtrSet m_variablesBeingHoisted;
     UniquedStringImplPtrSet m_sloppyModeHoistableFunctionCandidates;
     HashSet<UniquedStringImpl*> m_closedVariableCandidates;
     DeclarationStacks::FunctionStack m_functionDeclarations;
@@ -1208,11 +1223,31 @@ private:
         cleanupScope.setPopped();
         popScopeInternal(scope, shouldTrackClosedVariables);
     }
+
+    NEVER_INLINE DeclarationResultMask declareHoistedVariable(const Identifier* ident)
+    {
+        unsigned i = m_scopeStack.size() - 1;
+        ASSERT(i < m_scopeStack.size());
+        while (true) {
+            // Annex B.3.5 exempts `try {} catch (e) { var e; }` from being a syntax error.
+            // FIXME: This exemption should not apply if the var declaration is a for-of initializer.
+            if (m_scopeStack[i].hasLexicallyDeclaredVariable(*ident) && !m_scopeStack[i].isSimpleCatchParameterScope())
+                return DeclarationResult::InvalidDuplicateDeclaration;
+
+            if (m_scopeStack[i].allowsVarDeclarations())
+                return m_scopeStack[i].declareVariable(ident);
+
+            m_scopeStack[i].addVariableBeingHoisted(ident);
+
+            i--;
+            ASSERT(i < m_scopeStack.size());
+        }
+    }
     
     DeclarationResultMask declareVariable(const Identifier* ident, DeclarationType type = DeclarationType::VarDeclaration, DeclarationImportType importType = DeclarationImportType::NotImported)
     {
         if (type == DeclarationType::VarDeclaration)
-            return currentVariableScope()->declareVariable(ident);
+            return declareHoistedVariable(ident);
 
         ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration);
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.

@@ -28,10 +28,10 @@ SyntaxError: Cannot declare a const variable twice: 'x'.
 SyntaxError: Cannot declare a let variable twice: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
-Syntax check succeeded
-Syntax check succeeded
-Syntax check succeeded
-Syntax check succeeded
+SyntaxError: Cannot declare a const variable twice: 'x'.
+SyntaxError: Cannot declare a let variable twice: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
 SyntaxError: Cannot declare a const variable twice: 'x'.
 SyntaxError: Cannot declare a let variable twice: 'x'.
 SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.

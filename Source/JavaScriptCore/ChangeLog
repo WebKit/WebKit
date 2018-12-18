@@ -1,3 +1,39 @@
+2018-12-18  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Redeclaration of var over let/const/class should be a syntax error.
+        https://bugs.webkit.org/show_bug.cgi?id=192298
+
+        Reviewed by Keith Miller.
+
+        From https://tc39.github.io/ecma262/#sec-block-static-semantics-early-errors:
+        It is a Syntax Error if any element of the LexicallyDeclaredNames of StatementList also occurs in the
+        VarDeclaredNames of StatementList.
+
+        Accordingly, this patch ensures that { let x; { var x; } } and { { var x; } let x; } are syntax errors.
+
+        For the "var after" scenario:
+        When checking for existing lexically-declared names, we can't simply check the current var scope;
+        we need to check *all* enclosing scopes up to (and including) the current var scope. In so doing,
+        we must also avoid violating the Annex B.3.5 condition that allows `try {} catch (e) { var e; }`.
+
+        For the "var before" scenario:
+        We ensure that lexical scopes always keep track of the vars being hoisted over them; this gives us
+        a simple way to check the current block's var-declared names prior to making a lexical declaration.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTryStatement):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setIsSimpleCatchParameterScope): Added.
+        (JSC::Scope::isSimpleCatchParameterScope): Added.
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::addVariableBeingHoisted): Added.
+        (JSC::Scope::declareLexicalVariable):
+        (JSC::Scope::hasDeclaredVariable):
+        (JSC::Scope::hasLexicallyDeclaredVariable): Added.
+        (JSC::Parser::declareHoistedVariable): Added.
+        (JSC::Parser::declareVariable):
+
 2018-12-18  David Kilzer  <ddkilzer@apple.com>
 
         clang-tidy: Use const reference for MediaTime parameter to prevent object copy

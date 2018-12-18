@@ -1,3 +1,15 @@
+function shouldThrowSyntaxError(script) {
+    let error;
+    try {
+        eval(script);
+    } catch (e) {
+        error = e;
+    }
+
+    if (!(error instanceof SyntaxError))
+        throw new Error('Expected SyntaxError!');
+}
+
 (function() {
     // Iterate over an array with normal indexed properties.
     var foo = function() {
@@ -149,30 +161,14 @@
     }
 })();
 
-(function() {
-    var foo = function(a, b, first) {
-        {   
+shouldThrowSyntaxError(
+    `function foo(a, b) {
+        {
             let p = 'some-value';
             for (var p = b in a) {}
-            if (first)
-                return p;
         }
-        return p;
-    };
-    noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
-        var expected = 'expected-result';
-        var result = foo({}, expected, true);
-        if (expected !== result)
-            throw new Error("bad result: " + result + "!==" + expected);
-    }
-    for (var i = 0; i < 10000; ++i) {
-        var expected = 'expected-result';
-        var result = foo({}, expected, false);
-        if (typeof result !== 'undefined')
-            throw new Error("bad result: " + result + "!== undefined");
-    }
-})();
+    }`
+);
 
 (function() {
     var foo = function(a, b, c) {
@@ -188,24 +184,16 @@
     }
 })();
 
-(function() {
-    var error = false;
-    try {
-        eval("(function() { 'use strict'; for (var i = 0 in {}) {}})()");
-    } catch(e) {
-        error = e instanceof SyntaxError;
-    }
-    if (!error)
-        throw new Error("Expected SyntaxError error");
-})();
+shouldThrowSyntaxError(
+    `function foo() {
+        'use strict';
+        for (var i = 0 in {}) {}
+    }`
+);
 
-(function() {
-    var error = false;
-    try {
-        eval("(function() { const i = 10; for (var i = 0 in {}) {}})()");
-    } catch(e) {
-        error = e instanceof SyntaxError;
-    }
-    if (!error)
-        throw new Error("Expected SyntaxError error");
-})();
+shouldThrowSyntaxError(
+    `function foo() {
+        const i = 10;
+        for (var i = 0 in {}) {}
+    }`
+);
