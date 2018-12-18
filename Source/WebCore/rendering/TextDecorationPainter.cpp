@@ -296,12 +296,15 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         if (m_decorations.contains(TextDecoration::Overline)) {
             float wavyOffset = m_styles.overlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
-            rect.move(0, -wavyOffset);
+            float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+            rect.move(0, autoTextDecorationThickness - textDecorationThickness - wavyOffset);
             paintDecoration(TextDecoration::Overline, m_styles.overlineStyle, m_styles.overlineColor, rect);
         }
         if (m_decorations.contains(TextDecoration::LineThrough)) {
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
-            rect.move(0, 2 * fontMetrics.floatAscent() / 3);
+            float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
+            auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
+            rect.move(0, center - textDecorationThickness / 2);
             paintDecoration(TextDecoration::LineThrough, m_styles.linethroughStyle, m_styles.linethroughColor, rect);
         }
     } while (shadow);

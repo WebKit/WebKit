@@ -1,3 +1,19 @@
+2018-12-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Thick overlines and line-throughs grow in the wrong direction
+        https://bugs.webkit.org/show_bug.cgi?id=192264
+
+        Reviewed by Dean Jackson.
+
+        Overlines should grow upward, and line-throughs should stay centered.
+
+        Test: fast/css3-text/css3-text-decoration/text-decoration-thicknes-overline-grow-direction.html
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::visualOverflowForDecorations):
+
 2018-12-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some iOS app crash in FrameLoader::checkCompleted
