@@ -318,6 +318,9 @@ TEST(SafeBrowsing, URLObservation)
         [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:simpleURL.get()];
         while (![webView _safeBrowsingWarning])
             TestWebKitAPI::Util::spinRunLoop();
+#if !PLATFORM(MAC)
+        [[webView _safeBrowsingWarning] didMoveToWindow];
+#endif
         visitUnsafeSite([webView _safeBrowsingWarning]);
         TestWebKitAPI::Util::run(&done);
         EXPECT_FALSE(!![webView _safeBrowsingWarning]);
@@ -326,6 +329,9 @@ TEST(SafeBrowsing, URLObservation)
         [webView evaluateJavaScript:[NSString stringWithFormat:@"window.location='%@'", simple2URL.get()] completionHandler:nil];
         while (![webView _safeBrowsingWarning])
             TestWebKitAPI::Util::spinRunLoop();
+#if !PLATFORM(MAC)
+        [[webView _safeBrowsingWarning] didMoveToWindow];
+#endif
         return webView;
     };
     

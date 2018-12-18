@@ -1,3 +1,15 @@
+2018-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        Fix API test introduced in r239339 on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=192675
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (TEST):
+        The iOS implementation of the safe browsing warning is a little different.
+        It does some element creation when it is added to the window so it knows how big it is.
+        To test these elements, we need to simulate adding it to the window.
+        A similar technique is done in other iOS API tests, such as SafeBrowsing.ShowWarningSPI.
+
 2018-12-18  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore device type for test when using --force
