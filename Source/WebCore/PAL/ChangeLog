@@ -1,3 +1,14 @@
+2018-12-17  Saam barati  <sbarati@apple.com>
+
+        Enable HTTP and HTTPS proxies on iOS and make it a property of the NSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=192374
+        <rdar://problem/46506286>
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+        Remove the now-unused SPI declaration.
+
 2018-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Don't use more expensive layer backing store formats when subpixel text antialiasing is not enabled

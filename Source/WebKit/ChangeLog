@@ -1,3 +1,52 @@
+2018-12-17  Saam barati  <sbarati@apple.com>
+
+        Enable HTTP and HTTPS proxies on iOS and make it a property of the NSURLSession
+        https://bugs.webkit.org/show_bug.cgi?id=192374
+        <rdar://problem/46506286>
+
+        Reviewed by Alex Christensen.
+
+        This patch makes it so that we can use HTTP/HTTPS proxies on iOS as well.
+        To enable on iOS, you can do something like:
+        $ defaults write -g WebKit2HTTPProxy -string "http://localhost:8080"
+        $ defaults write -g WebKit2HTTPSProxy -string "http://localhost:8080"
+        
+        This patch also changes the Proxy to be enabled on a per NSURLSession
+        basis instead of a per process basis.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::proxyDictionary):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        (WebKit::overrideSystemProxies): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _initWithConfiguration:]):
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration httpProxy]):
+        (-[_WKWebsiteDataStoreConfiguration setHTTPProxy:]):
+        (-[_WKWebsiteDataStoreConfiguration httpsProxy]):
+        (-[_WKWebsiteDataStoreConfiguration setHTTPSProxy:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::httpProxy const):
+        (WebKit::WebsiteDataStoreConfiguration::setHTTPProxy):
+        (WebKit::WebsiteDataStoreConfiguration::httpsProxy const):
+        (WebKit::WebsiteDataStoreConfiguration::setHTTPSProxy):
+
 2018-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tap highlights should not be shown on iOSMac

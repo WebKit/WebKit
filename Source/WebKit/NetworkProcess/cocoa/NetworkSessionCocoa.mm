@@ -55,6 +55,9 @@
 
 using namespace WebKit;
 
+CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
+CFStringRef const WebKit2HTTPSProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPSProxy");
+
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
@@ -601,6 +604,29 @@ Ref<NetworkSession> NetworkSessionCocoa::create(NetworkSessionCreationParameters
     return adoptRef(*new NetworkSessionCocoa(WTFMove(parameters)));
 }
 
+static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
+{
+    if (!httpProxy.isValid() && !httpsProxy.isValid())
+        return nil;
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+    NSMutableDictionary *dictionary = [[[NSMutableDictionary alloc] init] autorelease];
+    if (httpProxy.isValid()) {
+        [dictionary setObject:httpProxy.host().toString() forKey:(NSString *)kCFStreamPropertyHTTPProxyHost];
+        if (auto port = httpProxy.port())
+            [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPProxyPort];
+    }
+    if (httpsProxy.isValid()) {
+        [dictionary setObject:httpsProxy.host().toString() forKey:(NSString *)kCFStreamPropertyHTTPSProxyHost];
+        if (auto port = httpsProxy.port())
+            [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPSProxyPort];
+    }
+    return dictionary;
+
+    ALLOW_DEPRECATED_DECLARATIONS_END
+}
+
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& parameters)
     : NetworkSession(parameters.sessionID)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
@@ -639,6 +665,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkSessionCreationParameters&& para
 
     if (!parameters.sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = parameters.sourceApplicationSecondaryIdentifier;
+
+    configuration.connectionProxyDictionary = proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
 
 #if PLATFORM(IOS_FAMILY)
     auto& ctDataConnectionServiceType = globalCTDataConnectionServiceType();

@@ -64,41 +64,6 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
 #endif
 }
 
-static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)
-{
-    NSMutableDictionary *proxySettings = [NSMutableDictionary dictionary];
-
-    if (!httpProxy.isNull()) {
-        URL httpProxyURL(URL(), httpProxy);
-        if (httpProxyURL.isValid()) {
-            [proxySettings setObject:nsStringFromWebCoreString(httpProxyURL.host().toString()) forKey:(NSString *)kCFNetworkProxiesHTTPProxy];
-            if (httpProxyURL.port()) {
-                NSNumber *port = [NSNumber numberWithInt:httpProxyURL.port().value()];
-                [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPPort];
-            }
-        }
-        else
-            NSLog(@"Malformed HTTP Proxy URL '%s'.  Expected 'http://<hostname>[:<port>]'\n", httpProxy.utf8().data());
-    }
-
-    if (!httpsProxy.isNull()) {
-        URL httpsProxyURL(URL(), httpsProxy);
-        if (httpsProxyURL.isValid()) {
-#if !PLATFORM(IOSMAC)
-            [proxySettings setObject:nsStringFromWebCoreString(httpsProxyURL.host().toString()) forKey:(NSString *)kCFNetworkProxiesHTTPSProxy];
-            if (httpsProxyURL.port()) {
-                NSNumber *port = [NSNumber numberWithInt:httpsProxyURL.port().value()];
-                [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPSPort];
-            }
-#endif
-        } else
-            NSLog(@"Malformed HTTPS Proxy URL '%s'.  Expected 'https://<hostname>[:<port>]'\n", httpsProxy.utf8().data());
-    }
-
-    if ([proxySettings count] > 0)
-        _CFNetworkSetOverrideSystemProxySettings((__bridge CFDictionaryRef)proxySettings);
-}
-
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitializeNetworkProcessCocoa(parameters);
@@ -107,9 +72,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     // SecItemShim is needed for CFNetwork APIs that query Keychains beneath us.
     initializeSecItemShim(*this);
 #endif
-
-    if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
-        overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
