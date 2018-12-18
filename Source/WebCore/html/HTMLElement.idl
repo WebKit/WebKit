@@ -52,9 +52,9 @@
     readonly attribute boolean isContentEditable;
 
     // Extensions from CSSOM-view specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface).
-    [ImplementedAs=bindingsOffsetParent] readonly attribute Element? offsetParent;
-    readonly attribute double offsetTop; // FIXME: Should be of type long.
-    readonly attribute double offsetLeft; // FIXME: Should be of type long.
+    [ImplementedAs=offsetParentForBindings] readonly attribute Element? offsetParent;
+    [ImplementedAs=offsetTopForBindings] readonly attribute double offsetTop; // FIXME: Should be of type long.
+    [ImplementedAs=offsetLeftForBindings] readonly attribute double offsetLeft; // FIXME: Should be of type long.
     readonly attribute double offsetWidth; // FIXME: Should be of type long.
     readonly attribute double offsetHeight; // FIXME: Should be of type long.
 

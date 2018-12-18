@@ -883,27 +883,77 @@ static double convertToNonSubpixelValueIfNeeded(double value, const Document& do
     return subpixelMetricsEnabled(document) ? value : roundStrategy == Round ? round(value) : floor(value);
 }
 
+static double adjustOffsetForZoomAndSubpixelLayout(RenderBoxModelObject* renderer, const LayoutUnit& offset)
+{
+    LayoutUnit offsetLeft = subpixelMetricsEnabled(renderer->document()) ? offset : LayoutUnit(roundToInt(offset));
+    double zoomFactor = 1;
+    double offsetLeftAdjustedWithZoom = adjustForLocalZoom(offsetLeft, *renderer, zoomFactor);
+    return convertToNonSubpixelValueIfNeeded(offsetLeftAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
+}
+
+static HashSet<TreeScope*> collectAncestorTreeScopeAsHashSet(Node& node)
+{
+    HashSet<TreeScope*> ancestors;
+    for (auto* currentScope = &node.treeScope(); currentScope; currentScope = currentScope->parentTreeScope())
+        ancestors.add(currentScope);
+    return ancestors;
+}
+
+double Element::offsetLeftForBindings()
+{
+    auto offset = offsetLeft();
+
+    auto parent = makeRefPtr(offsetParent());
+    if (!parent || !parent->isInShadowTree())
+        return offset;
+
+    ASSERT(&parent->document() == &document());
+    if (&parent->treeScope() == &treeScope())
+        return offset;
+
+    auto ancestorTreeScopes = collectAncestorTreeScopeAsHashSet(*this);
+    while (parent && !ancestorTreeScopes.contains(&parent->treeScope())) {
+        offset += parent->offsetLeft();
+        parent = parent->offsetParent();
+    }
+
+    return offset;
+}
+
 double Element::offsetLeft()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-        LayoutUnit offsetLeft = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetLeft() : LayoutUnit(roundToInt(renderer->offsetLeft()));
-        double zoomFactor = 1;
-        double offsetLeftAdjustedWithZoom = adjustForLocalZoom(offsetLeft, *renderer, zoomFactor);
-        return convertToNonSubpixelValueIfNeeded(offsetLeftAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
-    }
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustOffsetForZoomAndSubpixelLayout(renderer, renderer->offsetLeft());
     return 0;
+}
+
+double Element::offsetTopForBindings()
+{
+    auto offset = offsetTop();
+
+    auto parent = makeRefPtr(offsetParent());
+    if (!parent || !parent->isInShadowTree())
+        return offset;
+
+    ASSERT(&parent->document() == &document());
+    if (&parent->treeScope() == &treeScope())
+        return offset;
+
+    auto ancestorTreeScopes = collectAncestorTreeScopeAsHashSet(*this);
+    while (parent && !ancestorTreeScopes.contains(&parent->treeScope())) {
+        offset += parent->offsetTop();
+        parent = parent->offsetParent();
+    }
+
+    return offset;
 }
 
 double Element::offsetTop()
 {
     document().updateLayoutIgnorePendingStylesheets();
-    if (RenderBoxModelObject* renderer = renderBoxModelObject()) {
-        LayoutUnit offsetTop = subpixelMetricsEnabled(renderer->document()) ? renderer->offsetTop() : LayoutUnit(roundToInt(renderer->offsetTop()));
-        double zoomFactor = 1;
-        double offsetTopAdjustedWithZoom = adjustForLocalZoom(offsetTop, *renderer, zoomFactor);
-        return convertToNonSubpixelValueIfNeeded(offsetTopAdjustedWithZoom, renderer->document(), zoomFactor == 1 ? Floor : Round);
-    }
+    if (RenderBoxModelObject* renderer = renderBoxModelObject())
+        return adjustOffsetForZoomAndSubpixelLayout(renderer, renderer->offsetTop());
     return 0;
 }
 
@@ -927,12 +977,14 @@ double Element::offsetHeight()
     return 0;
 }
 
-Element* Element::bindingsOffsetParent()
+Element* Element::offsetParentForBindings()
 {
     Element* element = offsetParent();
     if (!element || !element->isInShadowTree())
         return element;
-    return element->containingShadowRoot()->mode() == ShadowRootMode::UserAgent ? nullptr : element;
+    while (element && !isDescendantOrShadowDescendantOf(&element->rootNode()))
+        element = element->offsetParent();
+    return element;
 }
 
 Element* Element::offsetParent()

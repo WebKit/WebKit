@@ -1,3 +1,16 @@
+2018-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        offsetLeft and offsetParent should adjust across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=157437
+        <rdar://problem/26154021>
+
+        Reviewed by Simon Fraser.
+
+        Added a W3C style testharness.js test.
+
+        * fast/shadow-dom/offsetParent-across-shadow-boundaries-expected.txt: Added.
+        * fast/shadow-dom/offsetParent-across-shadow-boundaries.html: Added.
+
 2018-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Don't use more expensive layer backing store formats when subpixel text antialiasing is not enabled

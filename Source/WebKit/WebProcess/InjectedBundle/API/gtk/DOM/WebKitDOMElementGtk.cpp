@@ -1088,7 +1088,7 @@ gdouble webkit_dom_element_get_offset_left(WebKitDOMElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     WebCore::Element* item = WebKit::core(self);
-    gdouble result = item->offsetLeft();
+    gdouble result = item->offsetLeftForBindings();
     return result;
 }
 
@@ -1097,7 +1097,7 @@ gdouble webkit_dom_element_get_offset_top(WebKitDOMElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     WebCore::Element* item = WebKit::core(self);
-    gdouble result = item->offsetTop();
+    gdouble result = item->offsetTopForBindings();
     return result;
 }
 
@@ -1228,7 +1228,7 @@ WebKitDOMElement* webkit_dom_element_get_offset_parent(WebKitDOMElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     WebCore::Element* item = WebKit::core(self);
-    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->bindingsOffsetParent());
+    RefPtr<WebCore::Element> gobjectResult = WTF::getPtr(item->offsetParentForBindings());
     return WebKit::kit(gobjectResult.get());
 }
 

@@ -1,3 +1,43 @@
+2018-12-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        offsetLeft and offsetParent should adjust across shadow boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=157437
+        <rdar://problem/26154021>
+
+        Reviewed by Simon Fraser.
+
+        Update the WebKit's treatment of shadow boundaries in offsetLeft, offsetTop, and offsetParent to match
+        the latest discussion in CSS WG. See https://github.com/w3c/webcomponents/issues/497
+        and https://github.com/w3c/webcomponents/issues/763
+
+        The latest consensus is to use the retargeting algorithm (https://dom.spec.whatwg.org/#retarget).
+        In practice, this would mean that we need to keep walking up the offset parent ancestors until we find
+        the one which is in the same tree as a shadow-inclusive ancestor of the context object.
+
+        For example, if a node (the context object of offsetTop, offsetLeft, offsetParent) was assigned to a slot
+        inside a shadow tree and its offset parent was in the shadow tree, we need to walk up to its offset parent,
+        then its offset parent, etc... until we find the offset parent in the same tree as the context object.
+
+        Note it's possible that the context object is inside a shadow tree which does not have its own offset parent.
+        (e.g. all elements have position: static) For this reason, we need to consider not just offset parent in
+        the same tree as the context object but as well as any offset parent which is in its ancestor trees.
+
+        Test: fast/shadow-dom/offsetParent-across-shadow-boundaries.html
+
+        * dom/Element.cpp:
+        (WebCore::adjustOffsetForZoomAndSubpixelLayout): Extracted to share code between offsetLeft and offsetTop.
+        (WebCore::collectAncestorTreeScopeAsHashSet): Added.
+        (WebCore::Element::offsetLeftForBindings): Added. Sums up offsetLeft's until it finds the first offset parent
+        which is a shadow-including ancestor (https://dom.spec.whatwg.org/#concept-shadow-including-ancestor).
+        (WebCore::Element::offsetLeft): Now uses adjustOffsetForZoomAndSubpixelLayout.
+        (WebCore::Element::offsetTopForBindings): Added. Like offsetLeftForBindings, this function sums up offsetTop's
+        until it finds the first offset parent which is a shadow-including ancestor.
+        (WebCore::Element::offsetTop): Now uses adjustOffsetForZoomAndSubpixelLayout.
+        (WebCore::Element::offsetParentForBindings): Renamed from bindingsOffsetParent to be consistent with other
+        functions meant to be used for bindings code.
+        * dom/Element.h:
+        * html/HTMLElement.idl:
+
 2018-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Don't use more expensive layer backing store formats when subpixel text antialiasing is not enabled

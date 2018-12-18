@@ -156,7 +156,9 @@ public:
     WEBCORE_EXPORT void scrollByLines(int lines);
     WEBCORE_EXPORT void scrollByPages(int pages);
 
+    WEBCORE_EXPORT double offsetLeftForBindings();
     WEBCORE_EXPORT double offsetLeft();
+    WEBCORE_EXPORT double offsetTopForBindings();
     WEBCORE_EXPORT double offsetTop();
     WEBCORE_EXPORT double offsetWidth();
     WEBCORE_EXPORT double offsetHeight();
@@ -165,7 +167,7 @@ public:
 
     // FIXME: Replace uses of offsetParent in the platform with calls
     // to the render layer and merge bindingsOffsetParent and offsetParent.
-    WEBCORE_EXPORT Element* bindingsOffsetParent();
+    WEBCORE_EXPORT Element* offsetParentForBindings();
 
     const Element* rootElement() const;
 
