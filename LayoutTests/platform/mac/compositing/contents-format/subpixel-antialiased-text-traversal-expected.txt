@@ -16,7 +16,6 @@
           (offsetFromRenderer width=-6 height=-6)
           (position 182.00 17.00)
           (bounds 162.00 606.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
@@ -29,7 +28,6 @@
           (offsetFromRenderer width=-6 height=-6)
           (position 522.00 17.00)
           (bounds 641.00 1227.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
       )

@@ -22,35 +22,30 @@ Image and some text child composited
           (offsetFromRenderer width=-6 height=-6)
           (position 182.00 17.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 352.00 17.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 522.00 17.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 12.00 187.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 182.00 187.00)
           (bounds 162.00 162.00)
-          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
@@ -62,7 +57,6 @@ Image and some text child composited
             (GraphicsLayer
               (position 27.00 101.00)
               (bounds 108.00 60.00)
-              (supports subpixel antialiased text 1)
               (drawsContent 1)
             )
           )

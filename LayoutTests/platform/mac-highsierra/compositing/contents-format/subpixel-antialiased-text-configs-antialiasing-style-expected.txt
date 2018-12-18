@@ -1,17 +1,27 @@
-      Solid background
+     
 Text here
 
-Text here
+Antialiased text
 
-Negative z-index child
-And more content
-Child layer
+Smoothed text
+
+Antialised text
+Smoothed text
 
 Child composited layer
 
-Child composited layer
+Smoothed text
 
-Text here.  
+Antialiased text
+
+Antialiased text
+
+Smoothed text
+
+Exceeds depth test antialiased
+
+Exceeds depth test smoothed
+
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -19,7 +29,7 @@ Text here.
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 11
+      (children 12
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 12.00 17.00)
@@ -36,12 +46,14 @@ Text here.
           (offsetFromRenderer width=-6 height=-6)
           (position 352.00 17.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 522.00 17.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
@@ -54,19 +66,14 @@ Text here.
           (offsetFromRenderer width=-6 height=-6)
           (position 182.00 187.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
-          (children 1
-            (GraphicsLayer
-              (position 27.00 79.00)
-              (bounds 100.00 40.00)
-              (drawsContent 1)
-            )
-          )
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 352.00 187.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
@@ -78,6 +85,7 @@ Text here.
             (GraphicsLayer
               (position 27.00 43.00)
               (bounds 108.00 60.00)
+              (supports subpixel antialiased text 1)
               (drawsContent 1)
             )
           )
@@ -90,7 +98,8 @@ Text here.
           (children 1
             (GraphicsLayer
               (position 27.00 43.00)
-              (bounds 108.00 60.00)
+              (bounds 108.00 20.00)
+              (supports subpixel antialiased text 1)
               (drawsContent 1)
             )
           )
@@ -99,12 +108,27 @@ Text here.
           (offsetFromRenderer width=-6 height=-6)
           (position 182.00 357.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 27.00 43.00)
+              (bounds 108.00 20.00)
+              (drawsContent 1)
+            )
+          )
         )
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 352.00 357.00)
           (bounds 162.00 162.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (offsetFromRenderer width=-6 height=-6)
+          (position 522.00 357.00)
+          (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
       )

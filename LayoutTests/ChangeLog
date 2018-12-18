@@ -1,3 +1,33 @@
+2018-12-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening after r239306 and r239338.
+
+        Move test compositing/contents-format baselines for Mojave into platform/mac, add new baselines for High Sierra and earlier.
+
+        * platform/mac-highsierra-wk1/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt: Copied from LayoutTests/platform/mac-wk1/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-nested-layer-expected.txt: Copied from LayoutTests/platform/mac-mojave/compositing/contents-format/subpixel-antialiased-nested-layer-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-configs-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-configs-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-images-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-images-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt.
+        * platform/mac-highsierra/compositing/contents-format/subpixel-antialiased-text-visibility-expected.txt: Copied from LayoutTests/platform/mac/compositing/contents-format/subpixel-antialiased-text-visibility-expected.txt.
+        * platform/mac-mojave-wk1/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-configs-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-images-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt: Removed.
+        * platform/mac-mojave/compositing/contents-format/subpixel-antialiased-text-visibility-expected.txt: Removed.
+        * platform/mac-wk1/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-nested-layer-expected.txt: Renamed from LayoutTests/platform/mac-mojave/compositing/contents-format/subpixel-antialiased-nested-layer-expected.txt.
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-configs-antialiasing-style-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-configs-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-enabled-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-images-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-traversal-expected.txt:
+        * platform/mac/compositing/contents-format/subpixel-antialiased-text-visibility-expected.txt:
+
 2018-12-18  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query evaluation could destroy current Frame/FrameView.

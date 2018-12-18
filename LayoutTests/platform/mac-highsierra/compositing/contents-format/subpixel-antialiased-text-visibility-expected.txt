@@ -1,9 +1,12 @@
- Image and some text   
-Image and some text child layer
+Visibility hidden ancestor with visible child
 
-Image and some text with z-index
 
-Image and some text child composited
+
+Only visible text is antialiased
+
+This text is antialiased. There is a hidden smoothed child
+
+
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -11,11 +14,12 @@ Image and some text child composited
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 7
+      (children 4
         (GraphicsLayer
           (offsetFromRenderer width=-6 height=-6)
           (position 12.00 17.00)
           (bounds 162.00 162.00)
+          (supports subpixel antialiased text 1)
           (drawsContent 1)
         )
         (GraphicsLayer
@@ -35,31 +39,6 @@ Image and some text child composited
           (position 522.00 17.00)
           (bounds 162.00 162.00)
           (drawsContent 1)
-        )
-        (GraphicsLayer
-          (offsetFromRenderer width=-6 height=-6)
-          (position 12.00 187.00)
-          (bounds 162.00 162.00)
-          (drawsContent 1)
-        )
-        (GraphicsLayer
-          (offsetFromRenderer width=-6 height=-6)
-          (position 182.00 187.00)
-          (bounds 162.00 162.00)
-          (drawsContent 1)
-        )
-        (GraphicsLayer
-          (offsetFromRenderer width=-6 height=-6)
-          (position 352.00 187.00)
-          (bounds 162.00 162.00)
-          (drawsContent 1)
-          (children 1
-            (GraphicsLayer
-              (position 27.00 101.00)
-              (bounds 108.00 60.00)
-              (drawsContent 1)
-            )
-          )
         )
       )
     )
