@@ -172,7 +172,8 @@ protected:
             uint8_t* stackLimit = static_cast<uint8_t*>(thread->stack().end());
             RELEASE_ASSERT(stackBase);
             RELEASE_ASSERT(stackLimit);
-            if (fpCast <= stackBase && fpCast >= stackLimit)
+            RELEASE_ASSERT(stackLimit <= stackBase);
+            if (fpCast < stackBase && fpCast >= stackLimit)
                 return true;
         }
         return false;

@@ -1,5 +1,20 @@
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
+        SamplingProfiler's isValidFramePointer() should reject address at stack origin.
+        https://bugs.webkit.org/show_bug.cgi?id=192779
+        <rdar://problem/46775869>
+
+        Reviewed by Saam Barati.
+
+        isValidFramePointer() was previously treating the address at StackBounds::origin()
+        as valid stack memory.  This is not true.  StackBounds::origin() is actually the
+        first address beyond valid stack memory. This is now fixed.
+
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::isValidFramePointer):
+
+2018-12-17  Mark Lam  <mark.lam@apple.com>
+
         Suppress ASAN on valid stack accesses in Probe-based OSRExit::executeOSRExit().
         https://bugs.webkit.org/show_bug.cgi?id=192776
         <rdar://problem/46772368>
