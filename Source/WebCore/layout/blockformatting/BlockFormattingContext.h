@@ -90,7 +90,7 @@ private:
             static LayoutUnit marginAfter(const LayoutState&, const Box&);
 
             static bool marginBeforeCollapsesWithParentMarginAfter(const Box&);
-            static bool marginAfterCollapsesWithParentMarginAfter(const Box&);
+            static bool marginAfterCollapsesWithParentMarginAfter(const LayoutState&, const Box&);
 
         private:
             static LayoutUnit collapsedMarginAfterFromLastChild(const LayoutState&, const Box&);
@@ -106,7 +106,7 @@ private:
             static bool marginBeforeCollapsesWithPreviousSibling(const Box&);
             static bool marginAfterCollapsesWithNextSibling(const Box&);
             static bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&);
-            static bool marginAfterCollapsesWithParentMarginBefore(const Box&);
+            static bool marginAfterCollapsesWithParentMarginBefore(const LayoutState&, const Box&);
             static bool marginsCollapseThrough(const LayoutState&, const Box&);
         };
 
