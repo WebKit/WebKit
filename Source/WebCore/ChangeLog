@@ -1,3 +1,26 @@
+2018-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Make ReadableStreamXX constructs use PrivateIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=192771
+
+        Reviewed by Chris Dumez.
+
+        PrivateIdentifier is a better name for making sure a given construct does not show up in the global scope.
+        Covered by existing binding tests.
+
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableStreamBYOBReader.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsConstructorProperty):
+        * bindings/scripts/preprocess-idls.pl:
+        (shouldExposeInterface):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h: Removed.
+        * bindings/scripts/test/TestCustomConstructor.idl: Removed.
+
 2018-12-18  Zalan Bujtas  <zalan@apple.com>
 
         Synchronous media query evaluation could destroy current Frame/FrameView.

@@ -138,7 +138,7 @@ foreach my $idlFile (sort keys %idlFileHash) {
     #   property must exist on the ECMAScript environment's global object.
     # See https://heycam.github.io/webidl/#es-interfaces
     my $extendedAttributes = getInterfaceExtendedAttributesFromIDL($idlFileContents);
-    unless ($extendedAttributes->{"NoInterfaceObject"}) {
+    if (shouldExposeInterface($extendedAttributes)) {
         if (!isCallbackInterfaceFromIDL($idlFileContents) || interfaceHasConstantAttribute($idlFileContents)) {
             my $exposedAttribute = $extendedAttributes->{"Exposed"} || "Window";
             $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
@@ -402,4 +402,13 @@ sub interfaceHasConstantAttribute
     my $fileContents = shift;
 
     return $fileContents =~ /\s+const[\s\w]+=\s+[\w]+;/gs;
+}
+
+sub shouldExposeInterface
+{
+    my $extendedAttributes = shift;
+
+    return 0 if $extendedAttributes->{"NoInterfaceObject"};
+    return 0 if $extendedAttributes->{"PrivateIdentifier"} && !($extendedAttributes->{"PublicIdentifier"});
+    return 1;
 }

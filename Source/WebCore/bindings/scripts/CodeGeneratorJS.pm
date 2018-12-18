@@ -7343,9 +7343,7 @@ sub NeedsConstructorProperty
 {
     my $interface = shift;
     
-    # FIXME: This condition makes little sense. It should not be possible to have a constructor at all if you have
-    # no interface object. This seems to be only used by the ReadableStreams code.
-    return !$interface->extendedAttributes->{NoInterfaceObject} || $interface->extendedAttributes->{CustomConstructor};
+    return !$interface->extendedAttributes->{NoInterfaceObject};
 }
 
 sub IsConstructable

@@ -30,9 +30,8 @@
 [
     Conditional=STREAMS_API,
     CustomConstructor(ReadableStream stream, any underlyingSource, unsigned long size, unsigned long highWaterMark),
-    Exposed=(Window,Worker),
     JSBuiltin,
-    NoInterfaceObject
+    PrivateIdentifier
 ] interface ReadableStreamDefaultController {
     [NotEnumerable] void enqueue(optional any chunk);
     [NotEnumerable] void close();

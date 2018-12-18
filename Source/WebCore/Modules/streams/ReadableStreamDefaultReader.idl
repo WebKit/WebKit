@@ -30,9 +30,8 @@
 [
     Conditional=STREAMS_API,
     CustomConstructor(ReadableStream stream),
-    Exposed=(Window,Worker),
     JSBuiltin,
-    NoInterfaceObject
+    PrivateIdentifier
 ] interface ReadableStreamDefaultReader {
     [NotEnumerable] Promise<any> read();
     [NotEnumerable] Promise<any> cancel(optional any reason);

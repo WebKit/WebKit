@@ -32,7 +32,7 @@
     CustomConstructor(ReadableStream stream, any underlyingByteSource, unsigned long highWaterMark),
     Exposed=(Window,Worker),
     JSBuiltin,
-    NoInterfaceObject
+    PrivateIdentifier
 ] interface ReadableByteStreamController {
     [NotEnumerable] void enqueue(optional any chunk);
     [NotEnumerable] void close();
