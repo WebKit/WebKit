@@ -1,3 +1,10 @@
+2018-12-18  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Appease a build error where we weren't using a variable defined in an "if"
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2018-12-17  Mark Lam  <mark.lam@apple.com>
 
         Array unshift/shift should not race against the AI in the compiler thread.
