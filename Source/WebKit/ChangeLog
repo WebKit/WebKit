@@ -1,3 +1,15 @@
+2018-12-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix occasional null-dereference crash in WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame
+        https://bugs.webkit.org/show_bug.cgi?id=192744
+        <rdar://problem/45842668>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        Things happen.  Navigations can be null.  If they are, we shouldn't dereference pointers to them.
+
 2018-12-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, revert recent CrashReporterClient build fixes as they are no longer needed.

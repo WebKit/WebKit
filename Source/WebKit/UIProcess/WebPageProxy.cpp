@@ -3773,11 +3773,9 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     MESSAGE_CHECK_URL(request.url());
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    RefPtr<API::Navigation> navigation;
-    if (navigationID) {
-        navigation = navigationState().navigation(navigationID);
+    RefPtr<API::Navigation> navigation = navigationID ? navigationState().navigation(navigationID) : nullptr;
+    if (navigation)
         navigation->appendRedirectionURL(request.url());
-    }
 
     auto transaction = m_pageLoadState.transaction();
 
