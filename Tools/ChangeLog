@@ -1,3 +1,16 @@
+2018-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't use more expensive layer backing store formats when subpixel text antialiasing is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=192780
+        rdar://problem/43394387
+
+        Reviewed by Tim Horton.
+
+        No need to set "AppleFontSmoothing" defaults for WK2.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+
 2018-12-17  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Handle case where stdout and stderr don't accept unicode

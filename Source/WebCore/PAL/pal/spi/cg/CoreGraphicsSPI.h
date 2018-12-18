@@ -255,7 +255,7 @@ CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
 CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);
 void CGIOSurfaceContextSetDisplayMask(CGContextRef, uint32_t mask);
-#endif
+#endif // HAVE(IOSURFACE)
 
 #if PLATFORM(COCOA)
 bool CGColorSpaceUsesExtendedRange(CGColorSpaceRef);
@@ -285,7 +285,12 @@ void CGContextDrawConicGradient(CGContextRef, CGGradientRef, CGPoint center, CGF
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
 void CGPathAddUnevenCornersRoundedRect(CGMutablePathRef, const CGAffineTransform *, CGRect, const CGSize corners[4]);
 #endif
+
+#if HAVE(CG_FONT_RENDERING_GET_FONT_SMOOTHING_DISABLED)
+bool CGFontRenderingGetFontSmoothingDisabled(void);
 #endif
+
+#endif // PLATFORM(COCOA)
 
 #if PLATFORM(WIN)
 CGFontCache* CGFontCacheGetLocalCache();
@@ -296,7 +301,7 @@ void CGContextSetFontSmoothingStyle(CGContextRef, uint32_t);
 uint32_t CGContextGetFontSmoothingStyle(CGContextRef);
 void CGContextSetShouldUsePlatformNativeGlyphs(CGContextRef, bool);
 void CGContextSetFocusRingWithColor(CGContextRef, CGFloat blur, CGColorRef, const CGRect *clipRect, CFDictionaryRef options);
-#endif
+#endif // PLATFORM(WIN)
 
 #if PLATFORM(MAC)
 void CGSShutdownServerConnections(void);
@@ -321,6 +326,6 @@ CGSDisplayID CGSMainDisplayID(void);
 
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
-#endif
+#endif // PLATFORM(MAC)
 
 WTF_EXTERN_C_END

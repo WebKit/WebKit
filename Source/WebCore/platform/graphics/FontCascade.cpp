@@ -595,6 +595,13 @@ bool FontCascade::shouldUseSmoothing()
     return shouldUseFontSmoothing;
 }
 
+#if !PLATFORM(COCOA)
+bool FontCascade::isSubpixelAntialiasingAvailable()
+{
+    return false;
+}
+#endif
+
 void FontCascade::setCodePath(CodePath p)
 {
     s_codePath = p;

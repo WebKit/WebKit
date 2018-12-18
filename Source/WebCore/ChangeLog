@@ -1,3 +1,30 @@
+2018-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't use more expensive layer backing store formats when subpixel text antialiasing is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=192780
+        rdar://problem/43394387
+
+        Reviewed by Tim Horton.
+        
+        macOS Mojave disabled text subpixel antialiasing by default, so we no longer need to use the
+        memory-hungry "linear glyph mask" CALayer backing store formats for non-opaque with text in them.
+        
+        Add FontCascade::isSubpixelAntialiasingAvailable() which reports whether subpixel antialiasing is available,
+        and consult it when making decisions that affect layer backing store format.
+
+        Tested by new results for existing tests.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::isSubpixelAntialiasingAvailable):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::isSubpixelAntialiasingAvailable): CGFontRenderingGetFontSmoothingDisabled() isn't super cheap, so fetch
+        it once.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setFontSmoothingEnabled): Remove a WebCore::
+
 2018-12-17  Daniel Bates  <dabates@apple.com>
 
         Make DocumentMarker::allMarkers() constexpr

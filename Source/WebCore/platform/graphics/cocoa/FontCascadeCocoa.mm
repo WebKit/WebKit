@@ -58,6 +58,24 @@ SOFT_LINK_CLASS(UIKit, UIColor)
 
 namespace WebCore {
 
+// Confusingly, even when CGFontRenderingGetFontSmoothingDisabled() returns true, CGContextSetShouldSmoothFonts() still impacts text
+// rendering, which is why this function uses the "subpixel antialiasing" rather than "smoothing" terminology.
+bool FontCascade::isSubpixelAntialiasingAvailable()
+{
+#if HAVE(CG_FONT_RENDERING_GET_FONT_SMOOTHING_DISABLED)
+    static bool subpixelAntialiasingEnabled;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] () {
+        subpixelAntialiasingEnabled = !CGFontRenderingGetFontSmoothingDisabled();
+    });
+    return subpixelAntialiasingEnabled;
+#elif PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool FontCascade::canReturnFallbackFontsForComplexText()
 {
     return true;

@@ -36,7 +36,6 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
 {
-    static const int NoFontSmoothing = 0;
     static const int BlueTintedAppearance = 1;
 
     // Work around missing /etc/catalog <rdar://problem/4292995>.
@@ -50,9 +49,6 @@ void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
 
     NSDictionary *dict = @{
         @"AppleAntiAliasingThreshold": @4,
-        // FIXME: Setting AppleFontSmoothing is likely unnecessary and ineffective. WebKit2 has its own preference for font smoothing, which is
-        // applied to each context via CGContextSetShouldSmoothFonts, presumably overriding the default.
-        @"AppleFontSmoothing": @(NoFontSmoothing),
         @"AppleAquaColorVariant": @(BlueTintedAppearance),
         @"AppleHighlightColor": @"0.709800 0.835300 1.000000",
         @"AppleOtherHighlightColor": @"0.500000 0.500000 0.500000",

@@ -1259,7 +1259,7 @@ void RenderLayerBacking::updateAfterDescendants()
 {
     // FIXME: this potentially duplicates work we did in updateConfiguration().
     PaintedContentsInfo contentsInfo(*this);
-    contentsInfo.setWantsSubpixelAntialiasedTextState(GraphicsLayer::supportsSubpixelAntialiasedLayerText());
+    contentsInfo.setWantsSubpixelAntialiasedTextState(GraphicsLayer::supportsSubpixelAntialiasedLayerText() && FontCascade::isSubpixelAntialiasingAvailable());
 
     if (!m_owningLayer.isRenderViewLayer()) {
         bool didUpdateContentsRect = false;
