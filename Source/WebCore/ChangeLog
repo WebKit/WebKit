@@ -1,3 +1,26 @@
+2018-12-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r235165): [GTK][WPE] Garbled rendering on GitLab
+        https://bugs.webkit.org/show_bug.cgi?id=192230
+
+        Reviewed by Carlos Garcia Campos.
+
+        Single tile can after r235165 be assigned multiple content updates
+        without a commit occurring between each update, whereas before these
+        commits were done for each update.
+
+        To avoid repeating updates for a single tile purging information about
+        the previous update, these updates are now accumulated inside a Vector
+        and then iterated over during the commit phase.
+
+        * platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp:
+        (WebCore::CoordinatedBackingStoreTile::addUpdate):
+        (WebCore::CoordinatedBackingStoreTile::swapBuffers):
+        (WebCore::CoordinatedBackingStore::updateTile):
+        (WebCore::CoordinatedBackingStoreTile::setBackBuffer): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedBackingStore.h:
+        (WebCore::CoordinatedBackingStoreTile::scale const):
+
 2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] A copied text selection is pasted as a web archive attachment in the entry view in Messages

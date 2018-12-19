@@ -27,6 +27,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace Nicosia {
 class Buffer;
@@ -42,15 +43,20 @@ public:
     {
     }
 
-    inline float scale() const { return m_scale; }
+    float scale() const { return m_scale; }
+
+    struct Update {
+        RefPtr<Nicosia::Buffer> buffer;
+        IntRect sourceRect;
+        IntRect tileRect;
+        IntPoint bufferOffset;
+    };
+    void addUpdate(Update&&);
+
     void swapBuffers(TextureMapper&);
-    void setBackBuffer(const IntRect&, const IntRect&, RefPtr<Nicosia::Buffer>&&, const IntPoint&);
 
 private:
-    RefPtr<Nicosia::Buffer> m_buffer;
-    IntRect m_sourceRect;
-    IntRect m_tileRect;
-    IntPoint m_bufferOffset;
+    Vector<Update> m_updates;
     float m_scale;
 };
 

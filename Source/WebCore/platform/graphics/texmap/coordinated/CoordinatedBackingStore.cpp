@@ -29,34 +29,34 @@
 
 namespace WebCore {
 
-void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
+void CoordinatedBackingStoreTile::addUpdate(Update&& update)
 {
-    if (!m_buffer)
-        return;
-
-    ASSERT(textureMapper.maxTextureSize().width() >= m_tileRect.size().width());
-    ASSERT(textureMapper.maxTextureSize().height() >= m_tileRect.size().height());
-
-    FloatRect unscaledTileRect(m_tileRect);
-    unscaledTileRect.scale(1. / m_scale);
-
-    if (!m_texture || unscaledTileRect != rect()) {
-        setRect(unscaledTileRect);
-        m_texture = textureMapper.acquireTextureFromPool(m_tileRect.size(), m_buffer->supportsAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
-    } else if (m_buffer->supportsAlpha() == m_texture->isOpaque())
-        m_texture->reset(m_tileRect.size(), m_buffer->supportsAlpha());
-
-    m_buffer->waitUntilPaintingComplete();
-    m_texture->updateContents(m_buffer->data(), m_sourceRect, m_bufferOffset, m_buffer->stride());
-    m_buffer = nullptr;
+    m_updates.append(WTFMove(update));
 }
 
-void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& tileRect, const IntRect& sourceRect, RefPtr<Nicosia::Buffer>&& buffer, const IntPoint& offset)
+void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
 {
-    m_sourceRect = sourceRect;
-    m_tileRect = tileRect;
-    m_bufferOffset = offset;
-    m_buffer = WTFMove(buffer);
+    auto updates = WTFMove(m_updates);
+    for (auto& update : updates) {
+        if (!update.buffer)
+            continue;
+
+        ASSERT(textureMapper.maxTextureSize().width() >= update.tileRect.size().width());
+        ASSERT(textureMapper.maxTextureSize().height() >= update.tileRect.size().height());
+
+        FloatRect unscaledTileRect(update.tileRect);
+        unscaledTileRect.scale(1. / m_scale);
+
+        if (!m_texture || unscaledTileRect != rect()) {
+            setRect(unscaledTileRect);
+            m_texture = textureMapper.acquireTextureFromPool(update.tileRect.size(), update.buffer->supportsAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
+        } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
+            m_texture->reset(update.tileRect.size(), update.buffer->supportsAlpha());
+
+        update.buffer->waitUntilPaintingComplete();
+        m_texture->updateContents(update.buffer->data(), update.sourceRect, update.bufferOffset, update.buffer->stride());
+        update.buffer = nullptr;
+    }
 }
 
 void CoordinatedBackingStore::createTile(uint32_t id, float scale)
@@ -81,7 +81,7 @@ void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect,
 {
     CoordinatedBackingStoreTileMap::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
-    it->value.setBackBuffer(tileRect, sourceRect, WTFMove(buffer), offset);
+    it->value.addUpdate({ WTFMove(buffer), sourceRect, tileRect, offset });
 }
 
 void CoordinatedBackingStore::setSize(const FloatSize& size)
