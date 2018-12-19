@@ -1,3 +1,15 @@
+2018-12-19  Lucas Stach  <l.stach@pengutronix.de>
+
+        Fix build on 64bit ARM with arm64 SYSTEM_PROCESSOR
+        https://bugs.webkit.org/show_bug.cgi?id=192497
+
+        Reviewed by Philippe Normand.
+
+        Android and some embedded Linux build systems use arm64 instead of
+        aarch64 as the CMAKE_HOST_PROCESSOR. Fix the JIT build for this scenario.
+
+        * CMakeLists.txt:
+
 2018-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Add initial implementation of variation fonts
