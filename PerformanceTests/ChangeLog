@@ -1,3 +1,14 @@
+2018-12-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] We should enable CSE into arithmetic operations that speculate BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=192723
+
+        Reviewed by Saam Barati.
+
+        * BigIntBench/big-int-cse.js: Added.
+        * BigIntBench/big-int-global-cse.js: Added.
+        * BigIntBench/big-int-licm.js: Added.
+
 2018-12-17  Suresh Koppisetty  <skoppisetty@apple.com>
 
         Add "-o/--output" option to startup.py and new_tab.py benchmark scripts to save the results in json format.
