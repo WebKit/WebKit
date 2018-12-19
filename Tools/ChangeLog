@@ -1,3 +1,16 @@
+2018-12-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][WPE] Unify TestController::platformRunUntil() and honor condition flag
+        https://bugs.webkit.org/show_bug.cgi?id=192855
+
+        Reviewed by Michael Catanzaro.
+
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::notifyDone): Use the WPE implementation.
+        (WTR::TestController::platformRunUntil): Use the WPE implementation.
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformRunUntil): Honor the condition flag.
+
 2018-12-19  Megan Gardner  <megan_gardner@apple.com>
 
         Allow clients to set the navigator platform

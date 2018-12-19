@@ -58,22 +58,29 @@ void TestController::platformInitializeContext()
 {
 }
 
-void TestController::platformRunUntil(bool& condition, WTF::Seconds timeout)
+void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
 {
     struct TimeoutTimer {
         TimeoutTimer()
             : timer(RunLoop::main(), this, &TimeoutTimer::fired)
         { }
 
-        void fired() { RunLoop::main().stop(); }
+        void fired()
+        {
+            timedOut = true;
+            RunLoop::main().stop();
+        }
+
         RunLoop::Timer<TimeoutTimer> timer;
+        bool timedOut { false };
     } timeoutTimer;
 
     timeoutTimer.timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
     if (timeout >= 0_s)
         timeoutTimer.timer.startOneShot(timeout);
 
-    RunLoop::main().run();
+    while (!done && !timeoutTimer.timedOut)
+        RunLoop::main().run();
 
     timeoutTimer.timer.stop();
 }
