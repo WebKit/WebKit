@@ -1,3 +1,17 @@
+2018-12-19  Mark Lam  <mark.lam@apple.com>
+
+        JSPropertyNameEnumerator should cache the iterated object's structure only after getting its property names.
+        https://bugs.webkit.org/show_bug.cgi?id=192464
+        <rdar://problem/46519455>
+
+        Reviewed by Saam Barati.
+
+        This patch is about a 10% speed up on the new for-in-on-object-with-lazily-materialized-properties.js
+        microbenchmark.
+
+        * microbenchmarks/for-in-on-object-with-lazily-materialized-properties.js: Added.
+        * stress/property-name-enumerator-should-cache-structure-after-getting-property-names.js: Added.
+
 2018-12-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         String overflow in JSC::createError results in ASSERT in WTF::makeString

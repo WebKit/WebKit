@@ -135,8 +135,9 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
     bool sawPolyProto;
     bool successfullyNormalizedChain = normalizePrototypeChain(exec, base, sawPolyProto) != InvalidPrototypeChain;
 
-    enumerator = JSPropertyNameEnumerator::create(vm, structure, indexedLength, numberStructureProperties, WTFMove(propertyNames));
-    if (!indexedLength && successfullyNormalizedChain && base->structure(vm) == structure) {
+    Structure* structureAfterGettingPropertyNames = base->structure(vm);
+    enumerator = JSPropertyNameEnumerator::create(vm, structureAfterGettingPropertyNames, indexedLength, numberStructureProperties, WTFMove(propertyNames));
+    if (!indexedLength && successfullyNormalizedChain && structureAfterGettingPropertyNames == structure) {
         enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(exec, base));
         if (structure->canCachePropertyNameEnumerator())
             structure->setCachedPropertyNameEnumerator(vm, enumerator);
