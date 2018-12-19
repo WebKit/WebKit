@@ -1,3 +1,24 @@
+2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] fast/forms/datalist/datalist-textinput-suggestions-order.html sometimes crashes after r239337
+        https://bugs.webkit.org/show_bug.cgi?id=192836
+        <rdar://problem/45321184>
+
+        Reviewed by Tim Horton.
+
+        r239337 exposed a subtle issue in the implementation of `-[WKDataListSuggestionsView updateWithInformation:]`,
+        wherein we might end up recomputing information for table view cells at rows that no longer exist. This currently
+        happens because we first set the datalist's `_suggestions`, then change the table view's frame, and then finally
+        reload the table view; however, in the case where the number of suggestions decreased and the frame changed
+        (which prompts AppKit to ask us again for table cell views), we'll attempt to access an out-of-bounds index in
+        the `_suggestions` vector.
+
+        To address this, we change our suggestions and immediately reload the table view before updating `NSTableView`'s
+        frame, so that we only provide table view cells for rows that actually correspond to items in `_suggestions`.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionsView updateWithInformation:]):
+
 2018-12-18  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Mac] Layout Test http/wpt/webauthn/public-key-credential-create-success-hid.https.html and http/wpt/webauthn/public-key-credential-get-success-hid.https.html are flaky

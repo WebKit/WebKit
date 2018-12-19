@@ -346,9 +346,10 @@ void WebDataListSuggestionsDropdownMac::close()
 - (void)updateWithInformation:(WebCore::DataListSuggestionInformation&&)information
 {
     _suggestions = WTFMove(information.suggestions);
+    [_table reload];
+
     [_enclosingWindow setFrame:[self dropdownRectForElementRect:information.elementRect] display:YES];
     [_table setVisibleRect:[_enclosingWindow frame]];
-    [_table reload];
 }
 
 - (void)moveSelectionByDirection:(const String&)direction
