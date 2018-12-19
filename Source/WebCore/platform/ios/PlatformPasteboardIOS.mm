@@ -369,10 +369,13 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
-#if !PLATFORM(IOSMAC)
-        [representationsToRegister addData:webArchiveData.get() forType:WebArchivePboardType];
+#if PLATFORM(IOSMAC)
+        NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
+#else
+        // FIXME: We should additionally register "com.apple.webarchive" once <rdar://problem/46830277> is fixed.
+        NSString *webArchiveType = WebArchivePboardType;
 #endif
-        [representationsToRegister addData:webArchiveData.get() forType:(__bridge NSString *)kUTTypeWebArchive];
+        [representationsToRegister addData:webArchiveData.get() forType:webArchiveType];
     }
 
     if (content.dataInAttributedStringFormat) {

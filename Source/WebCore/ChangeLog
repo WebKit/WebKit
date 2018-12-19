@@ -1,3 +1,19 @@
+2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] A copied text selection is pasted as a web archive attachment in the entry view in Messages
+        https://bugs.webkit.org/show_bug.cgi?id=192842
+        <rdar://problem/46823586>
+
+        Reviewed by Tim Horton.
+
+        Temporarily revert a behavior change introduced by r238661, where we now add "com.apple.webarchive" as a
+        registered UTI when dragging or copying a text selection. This broke the Messages app on iOS, which currently
+        inserts a copied or dragged text selection from WebKit-based views as a web archive file attachment. A fix for
+        this is internally tracked in <rdar://problem/46830277>.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2018-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, add a missing UNUSED_PARAM()

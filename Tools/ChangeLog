@@ -1,3 +1,16 @@
+2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] A copied text selection is pasted as a web archive attachment in the entry view in Messages
+        https://bugs.webkit.org/show_bug.cgi?id=192842
+        <rdar://problem/46823586>
+
+        Reviewed by Tim Horton.
+
+        Adjusts an existing API test to verify that "com.apple.webarchive" is not one of the types registered to the
+        item provider when dragging a rich text selection.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+
 2018-12-18  David Quesada  <david_quesada@apple.com>
 
         REGRESSION: [iOS] API test TestWebKitAPI._WKDownload.OriginatingWebView is a flaky failure
