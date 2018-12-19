@@ -13212,6 +13212,8 @@
 		C11A9ED22140578B00CFB20A /* SwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C1E1D235203DF15400584665 /* ScreenProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenProperties.h; sourceTree = "<group>"; };
 		C2015C091BE6FE2C00822389 /* FontVariantBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontVariantBuilder.h; sourceTree = "<group>"; };
+		C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLLexer.cpp; sourceTree = "<group>"; };
+		C210E91221B4BD1000B7F83D /* WHLSLLexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLLexer.h; sourceTree = "<group>"; };
 		C21DF2E71D9E4E9900F5B24C /* CSSFontVariationValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontVariationValue.cpp; sourceTree = "<group>"; };
 		C21DF2E81D9E4E9900F5B24C /* CSSFontVariationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontVariationValue.h; sourceTree = "<group>"; };
 		C2458E611FE8979E00594759 /* FontCacheCoreText.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontCacheCoreText.h; sourceTree = "<group>"; };
@@ -25217,6 +25219,15 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		C210E90D21B4BCA400B7F83D /* WHLSL */ = {
+			isa = PBXGroup;
+			children = (
+				C210E91121B4BD1000B7F83D /* WHLSLLexer.cpp */,
+				C210E91221B4BD1000B7F83D /* WHLSLLexer.h */,
+			);
+			path = WHLSL;
+			sourceTree = "<group>";
+		};
 		C96F5EBF1B5872260091EA9D /* mediasession */ = {
 			isa = PBXGroup;
 			children = (
@@ -25559,6 +25570,7 @@
 		D00F593E216ECC43000D71DB /* webgpu */ = {
 			isa = PBXGroup;
 			children = (
+				C210E90D21B4BCA400B7F83D /* WHLSL */,
 				D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */,
 				D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */,
 				D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */,

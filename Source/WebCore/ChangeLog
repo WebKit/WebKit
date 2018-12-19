@@ -1,3 +1,61 @@
+2018-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Add a handwritten lexer
+        https://bugs.webkit.org/show_bug.cgi?id=192294
+
+        Reviewed by Jon Lee.
+
+        This is infrastructure necessary for https://bugs.webkit.org/show_bug.cgi?id=192355. The
+        implementation matches the lexing rules in the spec (specifically, the rules that start
+        with an uppercase letter). The spec is at
+        https://github.com/gpuweb/WHLSL/blob/master/Spec/WHLSL.g4.
+
+        This patch also modifies the lexer according to https://github.com/gpuweb/WHLSL/pull/283.
+
+        No new tests because the lexer isn't hooked up yet; there are tests in the parser,
+        once that gets committed.
+
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp: Added.
+        (WebCore::WHLSL::Lexer::Token::typeName):
+        (WebCore::WHLSL::Lexer::recognizeKeyword):
+        (WebCore::WHLSL::Lexer::consumeTokenFromStream):
+        (WebCore::WHLSL::Lexer::skipWhitespaceAndComments):
+        (WebCore::WHLSL::isWhitespace):
+        (WebCore::WHLSL::isNewline):
+        (WebCore::WHLSL::Lexer::skipWhitespace):
+        (WebCore::WHLSL::Lexer::skipLineComment):
+        (WebCore::WHLSL::Lexer::skipLongComment):
+        (WebCore::WHLSL::Lexer::coreDecimalIntLiteral const):
+        (WebCore::WHLSL::Lexer::decimalIntLiteral const):
+        (WebCore::WHLSL::Lexer::decimalUintLiteral const):
+        (WebCore::WHLSL::isHexadecimalCharacter):
+        (WebCore::WHLSL::Lexer::coreHexadecimalIntLiteral const):
+        (WebCore::WHLSL::Lexer::hexadecimalIntLiteral const):
+        (WebCore::WHLSL::Lexer::hexadecimalUintLiteral const):
+        (WebCore::WHLSL::Lexer::intLiteral const):
+        (WebCore::WHLSL::Lexer::uintLiteral const):
+        (WebCore::WHLSL::Lexer::digit const):
+        (WebCore::WHLSL::Lexer::digitStar const):
+        (WebCore::WHLSL::Lexer::character const):
+        (WebCore::WHLSL::Lexer::coreFloatLiteralType1 const):
+        (WebCore::WHLSL::Lexer::coreFloatLiteral const):
+        (WebCore::WHLSL::Lexer::floatLiteral const):
+        (WebCore::WHLSL::Lexer::validIdentifier const):
+        (WebCore::WHLSL::Lexer::identifier const):
+        (WebCore::WHLSL::Lexer::operatorName const):
+        * Modules/webgpu/WHLSL/WHLSLLexer.h: Added.
+        (WebCore::WHLSL::Lexer::Lexer):
+        (WebCore::WHLSL::Lexer::consumeToken):
+        (WebCore::WHLSL::Lexer::unconsumeToken):
+        (WebCore::WHLSL::Lexer::state const):
+        (WebCore::WHLSL::Lexer::setState):
+        (WebCore::WHLSL::Lexer::isFullyConsumed const):
+        (WebCore::WHLSL::Lexer::errorString):
+        (WebCore::WHLSL::Lexer::string const):
+        (WebCore::WHLSL::Lexer::anyCharacter const):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Web Inspector: Timelines: correctly label Intersection Observer callbacks
