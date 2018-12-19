@@ -1,5 +1,16 @@
 2018-12-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Dark Mode: selected text is too light when Inspector window is inactive
+        https://bugs.webkit.org/show_bug.cgi?id=190542
+        <rdar://problem/45238712>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .CodeMirror-selected):
+
+2018-12-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: column sort controls in Layers tab sidebar don't render correctly in dark mode
         https://bugs.webkit.org/show_bug.cgi?id=192845
 

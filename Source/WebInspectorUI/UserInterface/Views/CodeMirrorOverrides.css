@@ -42,7 +42,7 @@
 }
 
 .CodeMirror .CodeMirror-selected {
-    background-color: hsl(0, 0%, 83%);
+    background-color: var(--selected-background-color-unfocused);
 }
 
 .CodeMirror.CodeMirror-focused .CodeMirror-selected {
