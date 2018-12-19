@@ -139,8 +139,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    const ARM64EHash assemblerBufferHash = macroAssembler.m_assembler.buffer().hash();
-    ARM64EHash verifyUncompactedHash(assemblerBufferHash.randomSeed());
+    const uint32_t expectedFinalHash = macroAssembler.m_assembler.buffer().hash().finalHash();
+    ARM64EHash verifyUncompactedHash;
     uint8_t* outData = codeOutData;
 #if ENABLE(SEPARATED_WX_HEAP)
     AssemblerData outBuffer(m_size);
@@ -178,15 +178,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
             ASSERT(!(regionSize % 2));
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-            unsigned index = readPtr;
-#endif
             while (copySource != copyEnd) {
                 InstructionType insn = *copySource++;
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
                 static_assert(sizeof(InstructionType) == 4, "");
-                verifyUncompactedHash.update(insn, index);
-                index += sizeof(InstructionType);
+                verifyUncompactedHash.update(insn);
 #endif
                 *copyDst++ = insn;
             }
@@ -231,23 +227,18 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
         RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
         RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
 
-#if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-        unsigned index = readPtr;
-#endif
-
         for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
             InstructionType insn = *src++;
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-            verifyUncompactedHash.update(insn, index);
-            index += sizeof(InstructionType);
+            verifyUncompactedHash.update(insn);
 #endif
             *dst++ = insn;
         }
     }
 
 #if CPU(ARM64E) && ENABLE(FAST_JIT_PERMISSIONS)
-    if (verifyUncompactedHash.hash() != assemblerBufferHash.hash()) {
-        dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(verifyUncompactedHash.hash())), " ", RawPointer(bitwise_cast<void*>(assemblerBufferHash.hash())));
+    if (verifyUncompactedHash.finalHash() != expectedFinalHash) {
+        dataLogLn("Hashes don't match: ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(verifyUncompactedHash.finalHash()))), " ", RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(expectedFinalHash))));
         dataLogLn("Crashing!");
         CRASH();
     }

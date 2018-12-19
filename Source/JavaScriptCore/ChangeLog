@@ -1,3 +1,26 @@
+2018-12-18  Saam Barati  <sbarati@apple.com>
+
+        Update ARM64EHash
+        https://bugs.webkit.org/show_bug.cgi?id=192823
+        <rdar://problem/45468257>
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::ARM64Assembler):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        * assembler/AssemblerBuffer.h:
+        (JSC::ARM64EHash::update):
+        (JSC::ARM64EHash::finalHash const):
+        (JSC::AssemblerBuffer::AssemblerBuffer):
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        (JSC::ARM64EHash::ARM64EHash): Deleted.
+        (JSC::ARM64EHash::hash const): Deleted.
+        (JSC::ARM64EHash::randomSeed const): Deleted.
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+
 2018-12-18  Mark Lam  <mark.lam@apple.com>
 
         JSON.stringify() should throw OOM on StringBuilder overflows.

@@ -326,17 +326,9 @@ protected:
     static constexpr bool isZr(RegisterID reg) { return ARM64Registers::isZr(reg); }
 
 public:
-    ARM64Assembler(
-#if CPU(ARM64E)
-        unsigned randomNumber
-#endif 
-        )
+    ARM64Assembler()
         : m_indexOfLastWatchpoint(INT_MIN)
         , m_indexOfTailOfLastWatchpoint(INT_MIN)
-#if CPU(ARM64E)
-        , m_buffer(randomNumber)
-#endif
-        
     {
     }
     

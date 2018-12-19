@@ -986,11 +986,7 @@ public:
 protected:
     AbstractMacroAssembler()
         : m_randomSource(0)
-#if CPU(ARM64E)
-        , m_assembler(random())
-#else
         , m_assembler()
-#endif
     {
         invalidateAllTempRegisters();
     }

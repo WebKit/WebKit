@@ -149,34 +149,31 @@ namespace JSC {
 #if CPU(ARM64E)
     class ARM64EHash {
     public:
-        ARM64EHash(unsigned randomNumber)
-            : m_hash(randomNumber)
-            , m_randomSeed(randomNumber)
-        { }
-        ALWAYS_INLINE void update(unsigned value, uintptr_t index)
+        ARM64EHash() = default;
+        ALWAYS_INLINE void update(uint32_t value)
         {
-            m_hash = tagInt((static_cast<uintptr_t>(value) + m_hash) ^ (m_hash >> 32), static_cast<PtrTag>(index));
+            uint64_t input = value ^ m_hash;
+            uint64_t a = static_cast<uint32_t>(tagInt(input, static_cast<PtrTag>(0)) >> 39);
+            uint64_t b = tagInt(input, static_cast<PtrTag>(0xb7e151628aed2a6a)) >> 23;
+            m_hash = a | b;
         }
-        uintptr_t hash() const { return m_hash; }
-        unsigned randomSeed() const { return m_randomSeed; }
+        uint32_t finalHash() const
+        {
+            uint64_t hash = m_hash;
+            uint64_t a = static_cast<uint32_t>(tagInt(hash, static_cast<PtrTag>(0xbf7158809cf4f3c7)) >> 39);
+            uint64_t b = tagInt(hash, static_cast<PtrTag>(0x62e7160f38b4da56)) >> 23;
+            return static_cast<uint32_t>(a | b);
+        }
     private:
-        uintptr_t m_hash;
-        unsigned m_randomSeed;
+        uint32_t m_hash { 0 };
     };
 #endif
 
     class AssemblerBuffer {
     public:
-        AssemblerBuffer(
-#if CPU(ARM64E)
-            unsigned randomNumber
-#endif
-        )
+        AssemblerBuffer()
             : m_storage()
             , m_index(0)
-#if CPU(ARM64E)
-            , m_hash(randomNumber)
-#endif
         {
         }
 
@@ -309,7 +306,7 @@ namespace JSC {
 #if CPU(ARM64)
             static_assert(sizeof(value) == 4, "");
 #if CPU(ARM64E)
-            m_hash.update(value, m_index);
+            m_hash.update(value);
 #endif
 #endif
             ASSERT(isAvailable(sizeof(IntegralType)));
