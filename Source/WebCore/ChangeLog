@@ -1,3 +1,14 @@
+2018-12-19  Youenn Fablet  <youenn@apple.com>
+
+        Remove RTCRtpTransceiver.setDirection
+        https://bugs.webkit.org/show_bug.cgi?id=192869
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased test.
+
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+
 2018-12-19  Jer Noble  <jer.noble@apple.com>
 
         Force synchronous decode in WebCoreDecompressionSession::decodeSampleSync()
