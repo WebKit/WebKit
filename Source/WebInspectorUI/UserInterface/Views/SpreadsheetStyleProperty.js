@@ -173,6 +173,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._nameElement.textContent = this._property.name;
 
         let colonElement = this._contentElement.appendChild(document.createElement("span"));
+        colonElement.classList.add("colon");
         colonElement.textContent = ": ";
 
         this._valueElement = this._contentElement.appendChild(document.createElement("span"));
@@ -198,6 +199,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         let semicolonElement = this._contentElement.appendChild(document.createElement("span"));
+        semicolonElement.classList.add("semicolon");
         semicolonElement.textContent = ";";
 
         if (this._property.enabled) {

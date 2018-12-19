@@ -71,6 +71,8 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 .computed-style-section .computed-property-item .property-traces {
     display: none;
     width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .computed-style-section .computed-property-item.expanded .property-traces {
@@ -78,11 +80,20 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .computed-property-item.expanded .disclosure-button {
+    vertical-align: top;
     background-image: url(../Images/DisclosureTriangles.svg#open-normal);
 }
 
 .computed-style-section .computed-property-item .property-trace-item {
     display: table-row;
+    margin-left: 1.2em;
+}
+
+.computed-style-section .computed-property-item .property-trace-item::before {
+    content: "\2022";
+    display: inline-block;
+    position: absolute;
+    margin-left: -0.8em;
 }
 
 .computed-style-section .computed-property-item .property-trace-item .property.overridden .value {
@@ -110,8 +121,7 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .computed-property-item .property {
-    display: inline-block;
-    white-space: nowrap;
+    display: inline;
     overflow: hidden;
     max-width: 100%;
     text-overflow: ellipsis;
@@ -122,7 +132,6 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .computed-property-item .property-trace-item .selector {
-    white-space: nowrap;
     color: hsl(0, 0%, 50%);
 }
 
@@ -138,11 +147,8 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .property-trace-item .property .name,
-.computed-style-section .property-trace-item .property .name + span {
-    visibility: hidden;
-}
-
-.computed-style-section .property-trace-item .property .value + span {
+.computed-style-section .property-trace-item .property .colon,
+.computed-style-section .property-trace-item .property .semicolon {
     display: none;
 }
 

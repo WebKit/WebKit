@@ -1,3 +1,26 @@
+2018-12-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Computed: make UI more usable when the panel is narrow
+        https://bugs.webkit.org/show_bug.cgi?id=192578
+        <rdar://problem/46615753>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item .property-traces):
+        (.computed-style-section .computed-property-item.expanded .disclosure-button):
+        (.computed-style-section .computed-property-item .property-trace-item):
+        (.computed-style-section .computed-property-item .property-trace-item::before):
+        (.computed-style-section .computed-property-item .property):
+        (.computed-style-section .computed-property-item .property-trace-item .selector):
+        Allow CSS property values and selectors to take more than one line.
+
+        (.computed-style-section .property-trace-item .property .name,):
+        * UserInterface/Views/ComputedStyleSection.js:
+        (WI.ComputedStyleSection.prototype._createTrace):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.update):
+
 2018-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Web Inspector: Timelines: correctly label Intersection Observer callbacks
