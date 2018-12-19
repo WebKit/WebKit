@@ -867,9 +867,6 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextClearCachedCredentials(TestController::singleton().context());
 
-    ClearIndexedDatabases();
-    setIDBPerOriginQuota(50 * MB);
-
     clearServiceWorkerRegistrations();
     clearDOMCaches();
 
@@ -2760,28 +2757,6 @@ void TestController::clearDOMCaches()
 void TestController::setIDBPerOriginQuota(uint64_t quota)
 {
     WKContextSetIDBPerOriginQuota(platformContext(), quota);
-}
-
-struct RemoveAllIndexedDatabasesCallbackContext {
-    explicit RemoveAllIndexedDatabasesCallbackContext(TestController& controller)
-        : testController(controller)
-        {
-        }
-    TestController& testController;
-    bool done { false };
-};
-static void RemoveAllIndexedDatabasesCallback(void* userData)
-{
-    auto* context = static_cast<RemoveAllIndexedDatabasesCallbackContext*>(userData);
-    context->done = true;
-    context->testController.notifyDone();
-}
-void TestController::ClearIndexedDatabases()
-{
-    auto websiteDataStore = WKContextGetWebsiteDataStore(platformContext());
-    RemoveAllIndexedDatabasesCallbackContext context(*this);
-    WKWebsiteDataStoreRemoveAllIndexedDatabases(websiteDataStore, &context, RemoveAllIndexedDatabasesCallback);
-    runUntil(context.done, noTimeout);
 }
 
 struct FetchCacheOriginsCallbackContext {

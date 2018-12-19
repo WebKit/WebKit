@@ -242,8 +242,6 @@ public:
 
     void removeAllSessionCredentials();
 
-    void ClearIndexedDatabases();
-
     void clearServiceWorkerRegistrations();
 
     void clearDOMCache(WKStringRef origin);

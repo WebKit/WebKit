@@ -294,10 +294,7 @@ void UniqueIDBDatabase::shutdownForClose()
     m_backingStoreSupportsSimultaneousTransactions = false;
     m_backingStoreIsEphemeral = false;
 
-    if (!m_databaseQueue.isEmpty()) {
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownForClose));
-        return;
-    }
+    ASSERT(m_databaseQueue.isEmpty());
     m_databaseQueue.kill();
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didShutdownForClose));
@@ -339,18 +336,14 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
     }
 
     m_deleteBackingStoreInProgress = false;
-
-    if (!m_hardClosedForUserDelete)
-        invokeOperationAndTransactionTimer();
+    invokeOperationAndTransactionTimer();
 }
 
 void UniqueIDBDatabase::handleDatabaseOperations()
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::handleDatabaseOperations - There are %u pending", m_pendingOpenDBRequests.size());
-
-    if (m_hardClosedForUserDelete)
-        return;
+    ASSERT(!m_hardClosedForUserDelete);
 
     if (m_deleteBackingStoreInProgress)
         return;
@@ -1285,9 +1278,6 @@ void UniqueIDBDatabase::performPrefetchCursor(const IDBResourceIdentifier& trans
     ASSERT(m_cursorPrefetches.contains(cursorIdentifier));
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performPrefetchCursor");
 
-    if (m_owningPointerForClose)
-        return;
-
     if (m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
         postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
     else
@@ -1828,6 +1818,8 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     for (auto& transaction : m_pendingTransactions)
         transaction->databaseConnection().deleteTransaction(*transaction);
     m_pendingTransactions.clear();
+    m_objectStoreTransactionCounts.clear();
+    m_objectStoreWriteTransactions.clear();
 
     // Error out all pending callbacks
     IDBError error = IDBError::userDeleteError();
