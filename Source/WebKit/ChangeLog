@@ -1,3 +1,18 @@
+2018-12-18  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r239134) iOS safe browsing warning unable to show details
+        https://bugs.webkit.org/show_bug.cgi?id=192837
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning addContent]):
+        I had a fragile design that relied on the internal view heirarchy structure of UIScrollView,
+        which I changed in r239134 by introducing a layout which changed where its scrollbars were in the view heirarchy.
+        I now have a more robust design that saves a WeakObjCPtr to the view I need to traverse to.
+        Testing is problematic because this had to do with scrollbars and UIScrollView internals which seem to behave
+        differently in TestWebKitAPI, but I verified manually that this fixes the issue.
+
 2018-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Clang] Fix compilation warnings under Source/WebKit directory

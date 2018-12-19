@@ -50,7 +50,6 @@ using FontType = NSFont;
 using TextViewType = NSTextView;
 using ButtonType = NSButton;
 using AlignmentType = NSLayoutAttribute;
-using ViewType = NSView;
 using SizeType = NSSize;
 #else
 using ColorType = UIColor;
@@ -58,7 +57,6 @@ using FontType = UIFont;
 using TextViewType = UITextView;
 using ButtonType = UIButton;
 using AlignmentType = UIStackViewAlignment;
-using ViewType = UIView;
 using SizeType = CGSize;
 #endif
 
@@ -299,6 +297,7 @@ static void setBackground(ViewType *view, ColorType *color)
     auto showDetails = makeButton(WarningItem::ShowDetailsButton, self, @selector(showDetailsClicked));
     auto goBack = makeButton(WarningItem::GoBackButton, self, @selector(goBackClicked));
     auto box = [[ViewType new] autorelease];
+    _box = box;
     setBackground(box, colorForItem(WarningItem::BoxBackground, self));
     box.layer.cornerRadius = boxCornerRadius;
 
@@ -367,7 +366,7 @@ static void setBackground(ViewType *view, ColorType *color)
 
 - (void)showDetailsClicked
 {
-    ViewType *box = self.subviews.lastObject;
+    ViewType *box = _box.get().get();
     ButtonType *showDetails = box.subviews.lastObject;
     [showDetails removeFromSuperview];
 

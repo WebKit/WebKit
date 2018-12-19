@@ -43,9 +43,11 @@ enum class ContinueUnsafeLoad : bool;
 OBJC_CLASS WKSafeBrowsingTextView;
 
 #if PLATFORM(MAC)
+using ViewType = NSView;
 using RectType = NSRect;
 @interface WKSafeBrowsingWarning : NSView<NSTextViewDelegate>
 #else
+using ViewType = UIView;
 using RectType = CGRect;
 @interface WKSafeBrowsingWarning : UIScrollView<UITextViewDelegate>
 #endif
@@ -54,6 +56,7 @@ using RectType = CGRect;
     CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)> _completionHandler;
     RefPtr<const WebKit::SafeBrowsingWarning> _warning;
     WeakObjCPtr<WKSafeBrowsingTextView> _details;
+    WeakObjCPtr<ViewType> _box;
 }
 
 - (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
