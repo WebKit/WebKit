@@ -1,3 +1,20 @@
+2018-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SVGUseElement::findTarget should return nullptr when there is a cycle
+        https://bugs.webkit.org/show_bug.cgi?id=192840
+
+        Reviewed by Tim Horton.
+
+        r233366 added an early return to updateShadowTree() when there is a cycle between an use element and its target.
+        Consolidate this cycle detection code with the one in SVGUseElement::findTarget which detected cycles when
+        the SVG use element itself had a corresponding element.
+
+        No new tests since there should be no behavioral change.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::updateShadowTree):
+        (WebCore::SVGUseElement::findTarget const):
+
 2018-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Add a handwritten lexer

@@ -244,9 +244,7 @@ void SVGUseElement::updateShadowTree()
         return;
     }
 
-    if (isDescendantOf(target))
-        return;
-    
+    RELEASE_ASSERT(!isDescendantOf(target));
     {
         auto& shadowRoot = ensureUserAgentShadowRoot();
         cloneTarget(shadowRoot, *target);
@@ -423,13 +421,16 @@ SVGElement* SVGUseElement::findTarget(String* targetID) const
     if (!target.isConnected() || isDisallowedElement(target))
         return nullptr;
 
-    // Reject any target that has already been cloned to create one of the ancestors of this element,
-    // already in the shadow tree. This is sufficient to prevent cycles.
     if (correspondingElement) {
         for (auto& ancestor : lineageOfType<SVGElement>(*this)) {
             if (ancestor.correspondingElement() == &target)
                 return nullptr;
         }
+    } else {
+        if (target.contains(this))
+            return nullptr;
+        // Target should only refer to a node in the same tree or a node in another document.
+        ASSERT(!isDescendantOrShadowDescendantOf(&target));
     }
 
     return &target;
