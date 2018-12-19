@@ -366,7 +366,7 @@ var assert = function assert() {
                 },
                 {
                     regexp: /Invalid unary operator on the left hand side of exponentiation \(\*\*\) operator/,
-                    replStr: "Unexpected token '**'. Amiguous unary expression in the left hand side of the exponentiation expression; parenthesis must be used to disambiguate the expression."
+                    replStr: "Unexpected token '**'. Ambiguous unary expression in the left hand side of the exponentiation expression; parentheses must be used to disambiguate the expression."
                 },
                 {
                     regexp: /Assignment to read-only properties is not allowed in strict mode/,
