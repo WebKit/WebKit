@@ -226,7 +226,7 @@ void AuthenticatorManager::initTimeOutTimer(const std::optional<unsigned>& timeO
 
     unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
     // FIXME(192061)
-    LOG_ERROR("Start timer.");
+    LOG_ERROR("Start timer. %d", timeOutInMsValue);
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
 
