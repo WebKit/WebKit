@@ -1,3 +1,17 @@
+2018-12-19  Don Olmstead  <don.olmstead@sony.com>
+
+        Sync some include directories in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=192819
+
+        Reviewed by Michael Catanzaro.
+
+        Added missing include directories around features that have only been enabled on
+        Apple ports. Removes obsolete directories from list and moves harfbuzz directories
+        into the freetype cmake file.
+
+        * CMakeLists.txt:
+        * platform/FreeType.cmake:
+
 2018-12-19  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Remove unused method: stopAskingForMoreSamples()
