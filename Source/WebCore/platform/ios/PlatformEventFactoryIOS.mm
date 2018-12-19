@@ -190,7 +190,13 @@ String keyForKeyEvent(WebEvent *event)
         }
     }
 
-    NSString *characters = event.characters;
+    // If more than one key is being pressed and the key combination includes one or more modifier keys
+    // that result in the key no longer producing a printable character (e.g., Control + a), then the
+    // key value should be the printable key value that would have been produced if the key had been
+    // typed with the default keyboard layout with no modifier keys except for Shift and AltGr applied.
+    // See <https://www.w3.org/TR/2015/WD-uievents-20151215/#keys-guidelines>.
+    bool isControlDown = event.modifierFlags & WebEventFlagMaskControlKey;
+    NSString *characters = isControlDown ? event.charactersIgnoringModifiers : event.characters;
     auto length = [characters length];
     // characters return an empty string for dead keys.
     // https://developer.apple.com/reference/appkit/nsevent/1534183-characters

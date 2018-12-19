@@ -1,3 +1,19 @@
+2018-12-18  Daniel Bates  <dabates@apple.com>
+
+        Wrong value for key property in keydown and keyup events generated holding Control key
+        https://bugs.webkit.org/show_bug.cgi?id=192788
+        <rdar://problem/46795214>
+
+        Reviewed by Wenson Hsieh.
+
+        Similar to what we do on Mac, compute the DOM key property from the characters ignoring
+        modifier keys input string when the Control key is held down.
+
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::keyForKeyEvent):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyForKeyEvent):
+
 2018-12-18  Sihui Liu  <sihui_liu@apple.com>
 
         Clean up IndexedDB files between tests

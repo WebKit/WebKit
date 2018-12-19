@@ -260,7 +260,7 @@ String keyForKeyEvent(NSEvent *event)
     // that result in the key no longer producing a printable character (e.g., Control + a), then the
     // key value should be the printable key value that would have been produced if the key had been
     // typed with the default keyboard layout with no modifier keys except for Shift and AltGr applied.
-    // https://w3c.github.io/uievents/#keys-guidelines
+    // See <https://www.w3.org/TR/2015/WD-uievents-20151215/#keys-guidelines>.
     bool isControlDown = ([event modifierFlags] & NSEventModifierFlagControl);
     NSString *s = isControlDown ? [event charactersIgnoringModifiers] : [event characters];
     auto length = [s length];
