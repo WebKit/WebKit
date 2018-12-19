@@ -3120,6 +3120,38 @@ TEST_F(Vp9SettingsTest, MultipleSsrcsEnablesSvc) {
   EXPECT_TRUE(channel_->SetVideoSend(ssrcs[0], nullptr, nullptr));
 }
 
+TEST_F(Vp9SettingsTest, AllEncodingParametersCopied) {
+  cricket::VideoSendParameters send_parameters;
+  send_parameters.codecs.push_back(GetEngineCodec("VP9"));
+  ASSERT_TRUE(channel_->SetSendParameters(send_parameters));
+
+  const size_t kNumSpatialLayers = 3;
+  std::vector<uint32_t> ssrcs = MAKE_VECTOR(kSsrcs3);
+
+  FakeVideoSendStream* stream =
+      AddSendStream(CreateSimStreamParams("cname", ssrcs));
+
+  webrtc::RtpParameters parameters = channel_->GetRtpSendParameters(ssrcs[0]);
+  ASSERT_EQ(kNumSpatialLayers, parameters.encodings.size());
+  ASSERT_TRUE(parameters.encodings[0].active);
+  ASSERT_TRUE(parameters.encodings[1].active);
+  ASSERT_TRUE(parameters.encodings[2].active);
+  // Invert value to verify copying.
+  parameters.encodings[1].active = false;
+  EXPECT_TRUE(channel_->SetRtpSendParameters(ssrcs[0], parameters).ok());
+
+  webrtc::VideoEncoderConfig encoder_config = stream->GetEncoderConfig().Copy();
+
+  // number_of_streams should be 1 since all spatial layers are sent on the
+  // same SSRC. But encoding parameters of all layers is supposed to be copied
+  // and stored in simulcast_layers[].
+  EXPECT_EQ(1u, encoder_config.number_of_streams);
+  EXPECT_EQ(encoder_config.simulcast_layers.size(), kNumSpatialLayers);
+  EXPECT_TRUE(encoder_config.simulcast_layers[0].active);
+  EXPECT_FALSE(encoder_config.simulcast_layers[1].active);
+  EXPECT_TRUE(encoder_config.simulcast_layers[2].active);
+}
+
 class Vp9SettingsTestWithFieldTrial : public Vp9SettingsTest {
  public:
   explicit Vp9SettingsTestWithFieldTrial(const char* field_trials)

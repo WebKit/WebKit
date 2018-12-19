@@ -42,8 +42,8 @@ class PeerConnectionInternal : public PeerConnectionInterface {
   GetTransceiversInternal() const = 0;
 
   // Get the id used as a media stream track's "id" field from ssrc.
-  virtual bool GetLocalTrackIdBySsrc(uint32_t ssrc, std::string* track_id) = 0;
-  virtual bool GetRemoteTrackIdBySsrc(uint32_t ssrc, std::string* track_id) = 0;
+  virtual absl::string_view GetLocalTrackIdBySsrc(uint32_t ssrc) = 0;
+  virtual absl::string_view GetRemoteTrackIdBySsrc(uint32_t ssrc) = 0;
 
   virtual sigslot::signal1<DataChannel*>& SignalDataChannelCreated() = 0;
 

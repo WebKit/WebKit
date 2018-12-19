@@ -249,24 +249,20 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
     return transceivers_;
   }
 
-  bool GetLocalTrackIdBySsrc(uint32_t ssrc, std::string* track_id) override {
+  absl::string_view GetLocalTrackIdBySsrc(uint32_t ssrc) override {
     auto it = local_track_id_by_ssrc_.find(ssrc);
     if (it != local_track_id_by_ssrc_.end()) {
-      *track_id = it->second;
-      return true;
-    } else {
-      return false;
+      return it->second;
     }
+    return {};
   }
 
-  bool GetRemoteTrackIdBySsrc(uint32_t ssrc, std::string* track_id) override {
+  absl::string_view GetRemoteTrackIdBySsrc(uint32_t ssrc) override {
     auto it = remote_track_id_by_ssrc_.find(ssrc);
     if (it != remote_track_id_by_ssrc_.end()) {
-      *track_id = it->second;
-      return true;
-    } else {
-      return false;
+      return it->second;
     }
+    return {};
   }
 
   std::vector<rtc::scoped_refptr<DataChannel>> sctp_data_channels()

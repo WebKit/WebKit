@@ -89,6 +89,14 @@ void PortAllocatorSession::GetCandidateStatsFromReadyPorts(
     for (const auto& candidate : candidates) {
       CandidateStats candidate_stats(candidate);
       port->GetStunStats(&candidate_stats.stun_stats);
+      bool mdns_obfuscation_enabled =
+          port->Network()->GetMdnsResponder() != nullptr;
+      if (mdns_obfuscation_enabled) {
+        bool use_hostname_address = candidate.type() == LOCAL_PORT_TYPE;
+        bool filter_related_address = candidate.type() == STUN_PORT_TYPE;
+        candidate_stats.candidate = candidate_stats.candidate.ToSanitizedCopy(
+            use_hostname_address, filter_related_address);
+      }
       candidate_stats_list->push_back(std::move(candidate_stats));
     }
   }

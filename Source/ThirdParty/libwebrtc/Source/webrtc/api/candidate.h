@@ -166,6 +166,16 @@ class RTC_EXPORT Candidate {
   bool operator==(const Candidate& o) const;
   bool operator!=(const Candidate& o) const;
 
+  // Returns a sanitized copy configured by the given booleans. If
+  // |use_host_address| is true, the returned copy has its IP removed from
+  // |address()|, which leads |address()| to be a hostname address. If
+  // |filter_related_address|, the returned copy has its related address reset
+  // to the wildcard address (i.e. 0.0.0.0 for IPv4 and :: for IPv6). Note that
+  // setting both booleans to false returns an identical copy to the original
+  // candidate.
+  Candidate ToSanitizedCopy(bool use_hostname_address,
+                            bool filter_related_address) const;
+
  private:
   std::string ToStringInternal(bool sensitive) const;
 

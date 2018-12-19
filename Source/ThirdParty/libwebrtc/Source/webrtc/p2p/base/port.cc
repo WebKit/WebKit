@@ -1809,14 +1809,13 @@ ConnectionInfo Connection::stats() {
   stats_.timeout = write_state_ == STATE_WRITE_TIMEOUT;
   stats_.new_connection = !reported_;
   stats_.rtt = rtt_;
-  stats_.local_candidate = local_candidate();
-  stats_.remote_candidate = remote_candidate();
   stats_.key = this;
   stats_.state = state_;
   stats_.priority = priority();
   stats_.nominated = nominated();
   stats_.total_round_trip_time_ms = total_round_trip_time_ms_;
   stats_.current_round_trip_time_ms = current_round_trip_time_ms_;
+  CopyCandidatesToStatsAndSanitizeIfNecessary();
   return stats_;
 }
 
@@ -1891,6 +1890,36 @@ void Connection::MaybeUpdateLocalCandidate(ConnectionRequest* request,
   // SignalStateChange to force a re-sort in P2PTransportChannel as this
   // Connection's local candidate has changed.
   SignalStateChange(this);
+}
+
+void Connection::CopyCandidatesToStatsAndSanitizeIfNecessary() {
+  auto get_sanitized_copy = [](const Candidate& c) {
+    bool use_hostname_address = c.type() == LOCAL_PORT_TYPE;
+    bool filter_related_address = c.type() == STUN_PORT_TYPE;
+    return c.ToSanitizedCopy(use_hostname_address, filter_related_address);
+  };
+
+  if (port_->Network()->GetMdnsResponder() != nullptr) {
+    // When the mDNS obfuscation of local IPs is enabled, we sanitize local
+    // candidates.
+    stats_.local_candidate = get_sanitized_copy(local_candidate());
+  } else {
+    stats_.local_candidate = local_candidate();
+  }
+
+  if (!remote_candidate().address().hostname().empty()) {
+    // If the remote endpoint signaled us a hostname candidate, we assume it is
+    // supposed to be sanitized in the stats.
+    //
+    // A prflx remote candidate should not have a hostname set.
+    RTC_DCHECK(remote_candidate().type() != PRFLX_PORT_TYPE);
+    // A remote hostname candidate should have a resolved IP before we can form
+    // a candidate pair.
+    RTC_DCHECK(!remote_candidate().address().IsUnresolvedIP());
+    stats_.remote_candidate = get_sanitized_copy(remote_candidate());
+  } else {
+    stats_.remote_candidate = remote_candidate();
+  }
 }
 
 bool Connection::rtt_converged() const {

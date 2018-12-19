@@ -586,28 +586,31 @@ StatsReport* StatsCollector::PrepareReport(bool local,
   StatsReport* report = reports_.Find(id);
 
   // Use the ID of the track that is currently mapped to the SSRC, if any.
-  std::string track_id;
-  if (!GetTrackIdBySsrc(ssrc, &track_id, direction)) {
+  absl::string_view track_id = GetTrackIdBySsrc(ssrc, direction);
+  if (track_id.empty()) {
     // The SSRC is not used by any existing track (or lookup failed since the
     // SSRC wasn't signaled in SDP). Try copying the track ID from a previous
     // report: if one exists.
     if (report) {
       const StatsReport::Value* v =
           report->FindValue(StatsReport::kStatsValueNameTrackId);
-      if (v)
+      if (v) {
         track_id = v->string_val();
+      }
     }
   }
 
-  if (!report)
+  if (!report) {
     report = reports_.InsertNew(id);
+  }
 
   // FYI - for remote reports, the timestamp will be overwritten later.
   report->set_timestamp(stats_gathering_started_);
 
   report->AddInt64(StatsReport::kStatsValueNameSsrc, ssrc);
   if (!track_id.empty()) {
-    report->AddString(StatsReport::kStatsValueNameTrackId, track_id);
+    report->AddString(StatsReport::kStatsValueNameTrackId,
+                      std::string(track_id));
   }
   // Add the mapping of SSRC to transport.
   report->AddId(StatsReport::kStatsValueNameTransportId, transport_id);
@@ -1095,26 +1098,24 @@ void StatsCollector::UpdateReportFromAudioTrack(AudioTrackInterface* track,
   }
 }
 
-bool StatsCollector::GetTrackIdBySsrc(uint32_t ssrc,
-                                      std::string* track_id,
-                                      StatsReport::Direction direction) {
+absl::string_view StatsCollector::GetTrackIdBySsrc(
+    uint32_t ssrc,
+    StatsReport::Direction direction) {
   RTC_DCHECK(pc_->signaling_thread()->IsCurrent());
+  absl::string_view track_id;
   if (direction == StatsReport::kSend) {
-    if (!pc_->GetLocalTrackIdBySsrc(ssrc, track_id)) {
-      RTC_LOG(LS_WARNING) << "The SSRC " << ssrc
-                          << " is not associated with a sending track";
-      return false;
-    }
+    track_id = pc_->GetLocalTrackIdBySsrc(ssrc);
   } else {
-    RTC_DCHECK(direction == StatsReport::kReceive);
-    if (!pc_->GetRemoteTrackIdBySsrc(ssrc, track_id)) {
-      RTC_LOG(LS_WARNING) << "The SSRC " << ssrc
-                          << " is not associated with a receiving track";
-      return false;
-    }
+    RTC_DCHECK_EQ(direction, StatsReport::kReceive);
+    track_id = pc_->GetRemoteTrackIdBySsrc(ssrc);
   }
-
-  return true;
+  if (track_id.empty()) {
+    RTC_LOG(LS_WARNING) << "The SSRC " << ssrc << " is not associated with a "
+                        << (direction == StatsReport::kSend ? "sending"
+                                                            : "receiving")
+                        << " track";
+  }
+  return track_id;
 }
 
 void StatsCollector::UpdateTrackReports() {

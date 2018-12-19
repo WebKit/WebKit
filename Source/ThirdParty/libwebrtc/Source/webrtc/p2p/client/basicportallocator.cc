@@ -521,14 +521,10 @@ void BasicPortAllocatorSession::GetCandidatesFromPort(
 Candidate BasicPortAllocatorSession::SanitizeCandidate(
     const Candidate& c) const {
   RTC_DCHECK_RUN_ON(network_thread_);
-  Candidate copy = c;
   // If the candidate has a generated hostname, we need to obfuscate its IP
   // address when signaling this candidate.
-  if (!c.address().hostname().empty() && !c.address().IsUnresolvedIP()) {
-    rtc::SocketAddress hostname_only_addr(c.address().hostname(),
-                                          c.address().port());
-    copy.set_address(hostname_only_addr);
-  }
+  bool use_hostname_address =
+      !c.address().hostname().empty() && !c.address().IsUnresolvedIP();
   // If adapter enumeration is disabled or host candidates are disabled,
   // clear the raddr of STUN candidates to avoid local address leakage.
   bool filter_stun_related_address =
@@ -538,12 +534,10 @@ Candidate BasicPortAllocatorSession::SanitizeCandidate(
   // If the candidate filter doesn't allow reflexive addresses, empty TURN raddr
   // to avoid reflexive address leakage.
   bool filter_turn_related_address = !(candidate_filter_ & CF_REFLEXIVE);
-  if ((c.type() == STUN_PORT_TYPE && filter_stun_related_address) ||
-      (c.type() == RELAY_PORT_TYPE && filter_turn_related_address)) {
-    copy.set_related_address(
-        rtc::EmptySocketAddressWithFamily(copy.address().family()));
-  }
-  return copy;
+  bool filter_related_address =
+      ((c.type() == STUN_PORT_TYPE && filter_stun_related_address) ||
+       (c.type() == RELAY_PORT_TYPE && filter_turn_related_address));
+  return c.ToSanitizedCopy(use_hostname_address, filter_related_address);
 }
 
 bool BasicPortAllocatorSession::CandidatesAllocationDone() const {

@@ -545,7 +545,8 @@ void VideoSendStreamImpl::OnEncoderConfigurationChanged(
   const VideoCodecType codec_type =
       PayloadStringToCodecType(config_->rtp.payload_name);
   if (codec_type == kVideoCodecVP9) {
-    max_padding_bitrate_ = streams[0].target_bitrate_bps;
+    max_padding_bitrate_ = has_alr_probing_ ? streams[0].min_bitrate_bps
+                                            : streams[0].target_bitrate_bps;
   } else {
     max_padding_bitrate_ = CalculateMaxPadBitrateBps(
         streams, min_transmit_bitrate_bps, config_->suspend_below_min_bitrate,

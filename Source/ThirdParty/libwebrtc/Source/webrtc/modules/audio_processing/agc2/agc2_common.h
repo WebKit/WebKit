@@ -41,10 +41,10 @@ constexpr float kMaxNoiseLevelDbfs = -50.f;
 // This is the threshold for speech. Speech frames are used for updating the
 // speech level, measuring the amount of speech, and decide when to allow target
 // gain reduction.
-constexpr float kVadConfidenceThreshold = 0.4f;
+constexpr float kVadConfidenceThreshold = 0.9f;
 
 // The amount of 'memory' of the Level Estimator. Decides leak factors.
-constexpr size_t kFullBufferSizeMs = 1600;
+constexpr size_t kFullBufferSizeMs = 1200;
 constexpr float kFullBufferLeakFactor = 1.f - 1.f / kFullBufferSizeMs;
 
 constexpr float kInitialSpeechLevelEstimateDbfs = -30.f;

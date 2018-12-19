@@ -1,3 +1,56 @@
+2018-12-19  Youenn Fablet  <youenn@apple.com>
+
+        Resync libwebrtc with M72 branch
+        https://bugs.webkit.org/show_bug.cgi?id=192858
+
+        Reviewed by Eric Carlson.
+
+        Merge changes made upstream.
+        Some of these changes improve support of unified plan and backward compatiblity.
+
+        * Source/webrtc/api/candidate.cc:
+        * Source/webrtc/api/candidate.h:
+        * Source/webrtc/api/rtpreceiverinterface.h:
+        * Source/webrtc/api/umametrics.h:
+        * Source/webrtc/media/engine/webrtcvideoengine.cc:
+        * Source/webrtc/media/engine/webrtcvideoengine_unittest.cc:
+        * Source/webrtc/modules/audio_processing/agc2/agc2_common.h:
+        * Source/webrtc/modules/desktop_capture/desktop_and_cursor_composer.cc:
+        * Source/webrtc/modules/video_coding/BUILD.gn:
+        * Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.h:
+        * Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/test/vp9_impl_unittest.cc:
+        * Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc:
+        * Source/webrtc/modules/video_coding/video_codec_initializer.cc:
+        * Source/webrtc/modules/video_coding/video_codec_initializer_unittest.cc:
+        * Source/webrtc/p2p/base/p2ptransportchannel_unittest.cc:
+        * Source/webrtc/p2p/base/port.cc:
+        * Source/webrtc/p2p/base/port.h:
+        * Source/webrtc/p2p/base/portallocator.cc:
+        * Source/webrtc/p2p/client/basicportallocator.cc:
+        * Source/webrtc/p2p/client/basicportallocator_unittest.cc:
+        * Source/webrtc/pc/peerconnection.cc:
+        * Source/webrtc/pc/peerconnection.h:
+        * Source/webrtc/pc/peerconnection_integrationtest.cc:
+        * Source/webrtc/pc/peerconnectioninternal.h:
+        * Source/webrtc/pc/statscollector.cc:
+        * Source/webrtc/pc/statscollector.h:
+        * Source/webrtc/pc/test/fakepeerconnectionbase.h:
+        * Source/webrtc/pc/test/fakepeerconnectionforstats.h:
+        * Source/webrtc/pc/test/mockpeerconnectionobservers.h:
+        (webrtc::MockStatsObserver::OnComplete):
+        (webrtc::MockStatsObserver::TrackIds const):
+        * Source/webrtc/pc/webrtcsdp_unittest.cc:
+        * Source/webrtc/rtc_base/fake_mdns_responder.h:
+        (webrtc::FakeMdnsResponder::GetMappedAddressForName const):
+        * Source/webrtc/rtc_base/fakenetwork.h:
+        (rtc::FakeNetworkManager::CreateMdnsResponder):
+        (rtc::FakeNetworkManager::GetMdnsResponderForTesting const):
+        * Source/webrtc/video/video_send_stream_impl.cc:
+        * Source/webrtc/video/video_stream_encoder.cc:
+
 2018-12-15  Youenn Fablet  <youenn@apple.com>
 
         Make RTCRtpSender.setParameters to activate specific encodings

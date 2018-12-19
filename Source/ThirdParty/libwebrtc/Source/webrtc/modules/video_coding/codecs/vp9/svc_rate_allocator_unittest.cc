@@ -162,4 +162,89 @@ TEST(SvcRateAllocatorTest, MinBitrateToGetQualityLayer) {
   EXPECT_EQ(allocation.GetSpatialLayerSum(1) / 1000, layers[1].minBitrate);
 }
 
+TEST(SvcRateAllocatorTest, DeativateLayers) {
+  for (int deactivated_idx = 2; deactivated_idx >= 0; --deactivated_idx) {
+    VideoCodec codec = Configure(1280, 720, 3, 1, false);
+    EXPECT_LE(codec.VP9()->numberOfSpatialLayers, 3U);
+
+    codec.spatialLayers[deactivated_idx].active = false;
+
+    SvcRateAllocator allocator = SvcRateAllocator(codec);
+
+    VideoBitrateAllocation allocation =
+        allocator.GetAllocation(10 * 1000 * 1000, 30);
+
+    // Ensure layers spatial_idx < deactivated_idx are activated.
+    for (int spatial_idx = 0; spatial_idx < deactivated_idx; ++spatial_idx) {
+      EXPECT_GT(allocation.GetSpatialLayerSum(spatial_idx), 0UL);
+    }
+
+    // Ensure layers spatial_idx >= deactivated_idx are deactivated.
+    for (int spatial_idx = deactivated_idx; spatial_idx < 3; ++spatial_idx) {
+      EXPECT_EQ(allocation.GetSpatialLayerSum(spatial_idx), 0UL);
+    }
+  }
+}
+
+class SvcRateAllocatorTestParametrizedContentType
+    : public testing::Test,
+      public testing::WithParamInterface<bool> {
+ public:
+  SvcRateAllocatorTestParametrizedContentType()
+      : is_screen_sharing_(GetParam()) {}
+
+  const bool is_screen_sharing_;
+};
+
+TEST_P(SvcRateAllocatorTestParametrizedContentType, MaxBitrate) {
+  VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
+  EXPECT_EQ(
+      SvcRateAllocator::GetMaxBitrateBps(codec),
+      (codec.spatialLayers[0].maxBitrate + codec.spatialLayers[1].maxBitrate +
+       codec.spatialLayers[2].maxBitrate) *
+          1000);
+
+  // Deactivate middle layer. This causes deactivation of top layer as well.
+  codec.spatialLayers[1].active = false;
+  EXPECT_EQ(SvcRateAllocator::GetMaxBitrateBps(codec),
+            codec.spatialLayers[0].maxBitrate * 1000);
+}
+
+TEST_P(SvcRateAllocatorTestParametrizedContentType, PaddingBitrate) {
+  VideoCodec codec = Configure(1280, 720, 3, 1, is_screen_sharing_);
+  SvcRateAllocator allocator = SvcRateAllocator(codec);
+
+  uint32_t padding_bitrate_bps = SvcRateAllocator::GetPaddingBitrateBps(codec);
+
+  VideoBitrateAllocation allocation =
+      allocator.GetAllocation(padding_bitrate_bps, 30);
+  EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
+  EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
+  EXPECT_GT(allocation.GetSpatialLayerSum(2), 0UL);
+
+  // Allocate 90% of padding bitrate. Top layer should be disabled.
+  allocation = allocator.GetAllocation(9 * padding_bitrate_bps / 10, 30);
+  EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
+  EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
+  EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
+
+  // Deactivate top layer.
+  codec.spatialLayers[2].active = false;
+
+  padding_bitrate_bps = SvcRateAllocator::GetPaddingBitrateBps(codec);
+  allocation = allocator.GetAllocation(padding_bitrate_bps, 30);
+  EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
+  EXPECT_GT(allocation.GetSpatialLayerSum(1), 0UL);
+  EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
+
+  allocation = allocator.GetAllocation(9 * padding_bitrate_bps / 10, 30);
+  EXPECT_GT(allocation.GetSpatialLayerSum(0), 0UL);
+  EXPECT_EQ(allocation.GetSpatialLayerSum(1), 0UL);
+  EXPECT_EQ(allocation.GetSpatialLayerSum(2), 0UL);
+}
+
+INSTANTIATE_TEST_CASE_P(_,
+                        SvcRateAllocatorTestParametrizedContentType,
+                        ::testing::Bool());
+
 }  // namespace webrtc

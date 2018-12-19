@@ -18,6 +18,7 @@
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocator_factory.h"
+#include "modules/video_coding/codecs/vp9/svc_rate_allocator.h"
 #include "modules/video_coding/include/video_codec_initializer.h"
 #include "modules/video_coding/include/video_coding.h"
 #include "rtc_base/arraysize.h"
@@ -545,24 +546,13 @@ void VideoStreamEncoder::ReconfigureEncoder() {
 
   // Set min_bitrate_bps, max_bitrate_bps, and max padding bit rate for VP9.
   if (encoder_config_.codec_type == kVideoCodecVP9) {
-    RTC_DCHECK_EQ(1U, streams.size());
-    int max_encoder_bitrate_kbps = 0;
-    for (int i = 0; i < codec.VP9()->numberOfSpatialLayers; ++i) {
-      max_encoder_bitrate_kbps += codec.spatialLayers[i].maxBitrate;
-    }
     // Lower max bitrate to the level codec actually can produce.
-    streams[0].max_bitrate_bps =
-        std::min(streams[0].max_bitrate_bps, max_encoder_bitrate_kbps * 1000);
+    streams[0].max_bitrate_bps = std::min<int>(
+        streams[0].max_bitrate_bps, SvcRateAllocator::GetMaxBitrateBps(codec));
     streams[0].min_bitrate_bps = codec.spatialLayers[0].minBitrate * 1000;
-    // Pass along the value of maximum padding bit rate from
-    // spatialLayers[].targetBitrate to streams[0].target_bitrate_bps.
-    // TODO(ssilkin): There should be some margin between max padding bitrate
-    // and max encoder bitrate. With the current logic they can be equal.
+    // target_bitrate_bps specifies the maximum padding bitrate.
     streams[0].target_bitrate_bps =
-        std::min(static_cast<unsigned int>(streams[0].max_bitrate_bps),
-                 codec.spatialLayers[codec.VP9()->numberOfSpatialLayers - 1]
-                         .targetBitrate *
-                     1000);
+        SvcRateAllocator::GetPaddingBitrateBps(codec);
   }
 
   codec.startBitrate =

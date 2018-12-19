@@ -366,6 +366,9 @@ class MockStatsObserver : public webrtc::StatsObserver {
                     &stats_.bytes_sent);
         GetInt64Value(r, StatsReport::kStatsValueNameCaptureStartNtpTimeMs,
                       &stats_.capture_start_ntp_time);
+        stats_.track_ids.emplace_back();
+        GetStringValue(r, StatsReport::kStatsValueNameTrackId,
+                       &stats_.track_ids.back());
       } else if (r->type() == StatsReport::kStatsReportTypeBwe) {
         stats_.timestamp = r->timestamp();
         GetIntValue(r, StatsReport::kStatsValueNameAvailableReceiveBandwidth,
@@ -424,6 +427,11 @@ class MockStatsObserver : public webrtc::StatsObserver {
     return stats_.srtp_cipher;
   }
 
+  std::vector<std::string> TrackIds() const {
+    RTC_CHECK(called_);
+    return stats_.track_ids;
+  }
+
  private:
   bool GetIntValue(const StatsReport* report,
                    StatsReport::StatsValueName name,
@@ -469,6 +477,7 @@ class MockStatsObserver : public webrtc::StatsObserver {
       available_receive_bandwidth = 0;
       dtls_cipher.clear();
       srtp_cipher.clear();
+      track_ids.clear();
     }
 
     size_t number_of_reports;
@@ -481,6 +490,7 @@ class MockStatsObserver : public webrtc::StatsObserver {
     int available_receive_bandwidth;
     std::string dtls_cipher;
     std::string srtp_cipher;
+    std::vector<std::string> track_ids;
   } stats_;
 };
 

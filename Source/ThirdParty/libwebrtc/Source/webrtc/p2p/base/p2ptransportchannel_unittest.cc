@@ -4611,7 +4611,7 @@ TEST_F(P2PTransportChannelTest,
   ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
   // ICE parameter will be set up when creating the channels.
   set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
-  GetEndpoint(0)->network_manager_.CreateMdnsResponder();
+  GetEndpoint(0)->network_manager_.CreateMdnsResponder(rtc::Thread::Current());
   GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
   CreateChannels();
   // Pause sending candidates from both endpoints until we find out what port
@@ -4682,7 +4682,7 @@ TEST_F(P2PTransportChannelTest,
   ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
   // ICE parameter will be set up when creating the channels.
   set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
-  GetEndpoint(0)->network_manager_.CreateMdnsResponder();
+  GetEndpoint(0)->network_manager_.CreateMdnsResponder(rtc::Thread::Current());
   GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
   CreateChannels();
   // Pause sending candidates from both endpoints until we find out what port
@@ -4749,7 +4749,7 @@ TEST_F(P2PTransportChannelTest, CanConnectWithHostCandidateWithMdnsName) {
   ConfigureEndpoints(OPEN, OPEN, kOnlyLocalPorts, kOnlyLocalPorts);
   // ICE parameter will be set up when creating the channels.
   set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
-  GetEndpoint(0)->network_manager_.CreateMdnsResponder();
+  GetEndpoint(0)->network_manager_.CreateMdnsResponder(rtc::Thread::Current());
   GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
   CreateChannels();
   // Pause sending candidates from both endpoints until we find out what port
@@ -4758,17 +4758,17 @@ TEST_F(P2PTransportChannelTest, CanConnectWithHostCandidateWithMdnsName) {
   PauseCandidates(1);
   ASSERT_EQ_WAIT(1u, GetEndpoint(0)->saved_candidates_.size(), kMediumTimeout);
   ASSERT_EQ(1u, GetEndpoint(0)->saved_candidates_[0]->candidates.size());
-  const auto& local_candidate =
+  const auto& local_candidate_ep1 =
       GetEndpoint(0)->saved_candidates_[0]->candidates[0];
   // The IP address of ep1's host candidate should be obfuscated.
-  EXPECT_TRUE(local_candidate.address().IsUnresolvedIP());
+  EXPECT_TRUE(local_candidate_ep1.address().IsUnresolvedIP());
   // This is the underlying private IP address of the same candidate at ep1,
-  // and let the mock resolver of ep2 receives the correct resolution.
-  const auto local_address = rtc::SocketAddress(
-      kPublicAddrs[0].ipaddr(), local_candidate.address().port());
+  // and let the mock resolver of ep2 receive the correct resolution.
+  rtc::SocketAddress resolved_address_ep1(local_candidate_ep1.address());
+  resolved_address_ep1.SetResolvedIP(kPublicAddrs[0].ipaddr());
 
   EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
-      .WillOnce(DoAll(SetArgPointee<1>(local_address), Return(true)));
+      .WillOnce(DoAll(SetArgPointee<1>(resolved_address_ep1), Return(true)));
   // Let ep1 signal its hostname candidate to ep2.
   ResumeCandidates(0);
 
@@ -4781,6 +4781,105 @@ TEST_F(P2PTransportChannelTest, CanConnectWithHostCandidateWithMdnsName) {
   EXPECT_EQ(PRFLX_PORT_TYPE,
             ep1_ch1()->selected_connection()->remote_candidate().type());
 
+  DestroyChannels();
+}
+
+// Test that when the IP of a host candidate is concealed by an mDNS name, the
+// stats from the gathering ICE endpoint do not reveal the address of this local
+// host candidate or the related address of a local srflx candidate from the
+// same endpoint. Also, the remote ICE endpoint that successfully resolves a
+// signaled host candidate with an mDNS name should not reveal the address of
+// this remote host candidate in stats.
+TEST_F(P2PTransportChannelTest,
+       CandidatesSanitizedInStatsWhenMdnsObfuscationEnabled) {
+  NiceMock<rtc::MockAsyncResolver> mock_async_resolver;
+  webrtc::MockAsyncResolverFactory mock_async_resolver_factory;
+  EXPECT_CALL(mock_async_resolver_factory, Create())
+      .WillOnce(Return(&mock_async_resolver));
+
+  // ep1 and ep2 will gather host candidates with addresses
+  // kPublicAddrs[0] and kPublicAddrs[1], respectively. ep1 also gathers a srflx
+  // and a relay candidates.
+  ConfigureEndpoints(OPEN, OPEN,
+                     kDefaultPortAllocatorFlags | PORTALLOCATOR_DISABLE_TCP,
+                     kOnlyLocalPorts);
+  // ICE parameter will be set up when creating the channels.
+  set_remote_ice_parameter_source(FROM_SETICEPARAMETERS);
+  GetEndpoint(0)->network_manager_.CreateMdnsResponder(rtc::Thread::Current());
+  GetEndpoint(1)->async_resolver_factory_ = &mock_async_resolver_factory;
+  CreateChannels();
+  // Pause sending candidates from both endpoints until we find out what port
+  // number is assigned to ep1's host candidate.
+  PauseCandidates(0);
+  PauseCandidates(1);
+  // Ep1 has a UDP host, a srflx and a relay candidates.
+  ASSERT_EQ_WAIT(3u, GetEndpoint(0)->saved_candidates_.size(), kMediumTimeout);
+  ASSERT_EQ_WAIT(1u, GetEndpoint(1)->saved_candidates_.size(), kMediumTimeout);
+
+  for (const auto& candidates_data : GetEndpoint(0)->saved_candidates_) {
+    ASSERT_EQ(1u, candidates_data->candidates.size());
+    const auto& local_candidate_ep1 = candidates_data->candidates[0];
+    if (local_candidate_ep1.type() == LOCAL_PORT_TYPE) {
+      // This is the underlying private IP address of the same candidate at ep1,
+      // and let the mock resolver of ep2 receive the correct resolution.
+      rtc::SocketAddress resolved_address_ep1(local_candidate_ep1.address());
+      resolved_address_ep1.SetResolvedIP(kPublicAddrs[0].ipaddr());
+      EXPECT_CALL(mock_async_resolver, GetResolvedAddress(_, _))
+          .WillOnce(
+              DoAll(SetArgPointee<1>(resolved_address_ep1), Return(true)));
+      break;
+    }
+  }
+  ResumeCandidates(0);
+  ResumeCandidates(1);
+
+  ASSERT_EQ_WAIT(kIceGatheringComplete, ep1_ch1()->gathering_state(),
+                 kMediumTimeout);
+  // We should have the following candidate pairs on both endpoints:
+  // ep1_host <-> ep2_host, ep1_srflx <-> ep2_host, ep1_relay <-> ep2_host
+  ASSERT_EQ_WAIT(3u, ep1_ch1()->connections().size(), kMediumTimeout);
+  ASSERT_EQ_WAIT(3u, ep2_ch1()->connections().size(), kMediumTimeout);
+
+  ConnectionInfos connection_infos_ep1;
+  CandidateStatsList candidate_stats_list_ep1;
+  ConnectionInfos connection_infos_ep2;
+  CandidateStatsList candidate_stats_list_ep2;
+  ep1_ch1()->GetStats(&connection_infos_ep1, &candidate_stats_list_ep1);
+  ep2_ch1()->GetStats(&connection_infos_ep2, &candidate_stats_list_ep2);
+  EXPECT_EQ(3u, connection_infos_ep1.size());
+  EXPECT_EQ(3u, candidate_stats_list_ep1.size());
+  EXPECT_EQ(3u, connection_infos_ep2.size());
+  // Check the stats of ep1 seen by ep1.
+  for (const auto& connection_info : connection_infos_ep1) {
+    const auto& local_candidate = connection_info.local_candidate;
+    if (local_candidate.type() == LOCAL_PORT_TYPE) {
+      EXPECT_TRUE(local_candidate.address().IsUnresolvedIP());
+    } else if (local_candidate.type() == STUN_PORT_TYPE) {
+      EXPECT_TRUE(local_candidate.related_address().IsAnyIP());
+    } else if (local_candidate.type() == RELAY_PORT_TYPE) {
+      // The related address of the relay candidate should be equal to the
+      // srflx address. Note that NAT is not configured, hence the following
+      // expectation.
+      EXPECT_EQ(kPublicAddrs[0].ipaddr(),
+                local_candidate.related_address().ipaddr());
+    } else {
+      FAIL();
+    }
+  }
+  // Check the stats of ep1 seen by ep2.
+  for (const auto& connection_info : connection_infos_ep2) {
+    const auto& remote_candidate = connection_info.remote_candidate;
+    if (remote_candidate.type() == LOCAL_PORT_TYPE) {
+      EXPECT_TRUE(remote_candidate.address().IsUnresolvedIP());
+    } else if (remote_candidate.type() == STUN_PORT_TYPE) {
+      EXPECT_TRUE(remote_candidate.related_address().IsAnyIP());
+    } else if (remote_candidate.type() == RELAY_PORT_TYPE) {
+      EXPECT_EQ(kPublicAddrs[0].ipaddr(),
+                remote_candidate.related_address().ipaddr());
+    } else {
+      FAIL();
+    }
+  }
   DestroyChannels();
 }
 

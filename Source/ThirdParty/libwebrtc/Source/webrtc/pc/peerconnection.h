@@ -225,8 +225,8 @@ class PeerConnection : public PeerConnectionInternal,
     return transceivers_;
   }
 
-  bool GetLocalTrackIdBySsrc(uint32_t ssrc, std::string* track_id) override;
-  bool GetRemoteTrackIdBySsrc(uint32_t ssrc, std::string* track_id) override;
+  absl::string_view GetLocalTrackIdBySsrc(uint32_t ssrc) override;
+  absl::string_view GetRemoteTrackIdBySsrc(uint32_t ssrc) override;
 
   sigslot::signal1<DataChannel*>& SignalDataChannelCreated() override {
     return SignalDataChannelCreated_;
@@ -1030,6 +1030,11 @@ class PeerConnection : public PeerConnectionInternal,
   std::vector<
       rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>>
       transceivers_;
+  // In Unified Plan, if we encounter remote SDP that does not contain an a=msid
+  // line we create and use a stream with a random ID for our receivers. This is
+  // to support legacy endpoints that do not support the a=msid attribute (as
+  // opposed to streamless tracks with "a=msid:-").
+  rtc::scoped_refptr<MediaStreamInterface> missing_msid_default_stream_;
   // MIDs that have been seen either by SetLocalDescription or
   // SetRemoteDescription over the life of the PeerConnection.
   std::set<std::string> seen_mids_;

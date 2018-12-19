@@ -1986,7 +1986,9 @@ WebRtcVideoChannel::WebRtcVideoSendStream::CreateVideoEncoderConfig(
   RTC_DCHECK_GE(rtp_parameters_.encodings.size(),
                 encoder_config.number_of_streams);
   RTC_DCHECK_GT(encoder_config.number_of_streams, 0);
-  encoder_config.simulcast_layers.resize(encoder_config.number_of_streams);
+
+  // Copy all provided constraints.
+  encoder_config.simulcast_layers.resize(rtp_parameters_.encodings.size());
   for (size_t i = 0; i < encoder_config.simulcast_layers.size(); ++i) {
     encoder_config.simulcast_layers[i].active =
         rtp_parameters_.encodings[i].active;
@@ -2698,7 +2700,7 @@ std::vector<webrtc::VideoStream> EncoderStreamFactory::CreateEncoderStreams(
     RTC_DCHECK_EQ(1, encoder_config.number_of_streams);
   }
   RTC_DCHECK_GT(encoder_config.number_of_streams, 0);
-  RTC_DCHECK_EQ(encoder_config.simulcast_layers.size(),
+  RTC_DCHECK_GE(encoder_config.simulcast_layers.size(),
                 encoder_config.number_of_streams);
   std::vector<webrtc::VideoStream> layers;
 

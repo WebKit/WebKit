@@ -2474,6 +2474,8 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutMsid) {
   EXPECT_TRUE(SdpDeserialize(sdp_without_msid, &jdesc));
   // Verify
   EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc));
+  EXPECT_FALSE(jdesc.description()->msid_signaling() &
+               ~cricket::kMsidSignalingSsrcAttribute);
 }
 
 TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithExtmapAllowMixed) {
@@ -3470,6 +3472,9 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionSpecialMsid) {
                              &deserialized_description));
 
   EXPECT_TRUE(CompareSessionDescription(jdesc_, deserialized_description));
+  EXPECT_EQ(cricket::kMsidSignalingMediaSection |
+                cricket::kMsidSignalingSsrcAttribute,
+            deserialized_description.description()->msid_signaling());
 }
 
 // Tests the serialization of a Unified Plan SDP that is compatible for both

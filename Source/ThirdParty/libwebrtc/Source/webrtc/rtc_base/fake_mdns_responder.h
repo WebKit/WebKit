@@ -50,6 +50,15 @@ class FakeMdnsResponder : public MdnsResponderInterface {
                                [callback, result]() { callback(result); });
   }
 
+  rtc::IPAddress GetMappedAddressForName(const std::string& name) const {
+    for (const auto& addr_name_pair : addr_name_map_) {
+      if (addr_name_pair.second == name) {
+        return addr_name_pair.first;
+      }
+    }
+    return rtc::IPAddress();
+  }
+
  private:
   uint32_t next_available_id_ = 0;
   std::map<rtc::IPAddress, std::string> addr_name_map_;

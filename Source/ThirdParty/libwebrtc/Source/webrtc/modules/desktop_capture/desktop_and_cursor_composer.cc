@@ -171,11 +171,19 @@ void DesktopAndCursorComposer::OnCaptureResult(
   if (frame && cursor_) {
     if (frame->rect().Contains(cursor_position_) &&
         !desktop_capturer_->IsOccluded(cursor_position_)) {
-      const float scale = frame->scale_factor();
       DesktopVector relative_position =
           cursor_position_.subtract(frame->top_left());
+#if defined(WEBRTC_MAC)
+      // On OSX, the logical(DIP) and physical coordinates are used mixingly.
+      // For example, the captured cursor has its size in physical pixels(2x)
+      // and location in logical(DIP) pixels on Retina monitor. This will cause
+      // problem when the desktop is mixed with Retina and non-Retina monitors.
+      // So we use DIP pixel for all location info and compensate with the scale
+      // factor of current frame to the |relative_position|.
+      const float scale = frame->scale_factor();
       relative_position.set(relative_position.x() * scale,
                             relative_position.y() * scale);
+#endif
       frame = absl::make_unique<DesktopFrameWithCursor>(
           std::move(frame), *cursor_, relative_position);
     }

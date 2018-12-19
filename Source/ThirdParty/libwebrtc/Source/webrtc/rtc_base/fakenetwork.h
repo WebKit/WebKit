@@ -82,17 +82,22 @@ class FakeNetworkManager : public NetworkManagerBase, public MessageHandler {
   // MessageHandler interface.
   virtual void OnMessage(Message* msg) { DoUpdateNetworks(); }
 
-  void CreateMdnsResponder() {
+  void CreateMdnsResponder(rtc::Thread* network_thread) {
     if (mdns_responder_ == nullptr) {
       mdns_responder_ =
-          absl::make_unique<webrtc::FakeMdnsResponder>(rtc::Thread::Current());
+          absl::make_unique<webrtc::FakeMdnsResponder>(network_thread);
     }
   }
 
   using NetworkManagerBase::set_enumeration_permission;
   using NetworkManagerBase::set_default_local_addresses;
 
+  // rtc::NetworkManager override.
   webrtc::MdnsResponderInterface* GetMdnsResponder() const override {
+    return mdns_responder_.get();
+  }
+
+  webrtc::FakeMdnsResponder* GetMdnsResponderForTesting() const {
     return mdns_responder_.get();
   }
 

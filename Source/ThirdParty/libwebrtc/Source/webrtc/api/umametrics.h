@@ -79,12 +79,17 @@ enum IceCandidatePairType {
   kIceCandidatePairPrflxSrflx,
   kIceCandidatePairPrflxRelay,
 
-  // The following 4 types tell whether local and remote hosts have private or
-  // public IP addresses.
+  // The following 9 types tell whether local and remote hosts have hostname,
+  // private or public IP addresses.
   kIceCandidatePairHostPrivateHostPrivate,
   kIceCandidatePairHostPrivateHostPublic,
   kIceCandidatePairHostPublicHostPrivate,
   kIceCandidatePairHostPublicHostPublic,
+  kIceCandidatePairHostNameHostName,
+  kIceCandidatePairHostNameHostPrivate,
+  kIceCandidatePairHostNameHostPublic,
+  kIceCandidatePairHostPrivateHostName,
+  kIceCandidatePairHostPublicHostName,
   kIceCandidatePairMax
 };
 

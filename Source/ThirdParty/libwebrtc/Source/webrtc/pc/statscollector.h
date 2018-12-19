@@ -128,9 +128,8 @@ class StatsCollector {
 
   // Helper method to get the id for the track identified by ssrc.
   // |direction| tells if the track is for sending or receiving.
-  bool GetTrackIdBySsrc(uint32_t ssrc,
-                        std::string* track_id,
-                        StatsReport::Direction direction);
+  absl::string_view GetTrackIdBySsrc(uint32_t ssrc,
+                                     StatsReport::Direction direction);
 
   // Helper method to update the timestamp of track records.
   void UpdateTrackReports();

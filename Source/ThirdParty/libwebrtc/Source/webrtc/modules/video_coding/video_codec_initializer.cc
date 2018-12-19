@@ -187,6 +187,14 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
           spatial_layers.back().minBitrate = video_codec.minBitrate;
           spatial_layers.back().maxBitrate = video_codec.maxBitrate;
         }
+
+        for (size_t spatial_idx = 0;
+             spatial_idx < config.simulcast_layers.size() &&
+             spatial_idx < spatial_layers.size();
+             ++spatial_idx) {
+          spatial_layers[spatial_layers.size() - spatial_idx - 1].active =
+              config.simulcast_layers[spatial_idx].active;
+        }
       }
 
       RTC_DCHECK(!spatial_layers.empty());
