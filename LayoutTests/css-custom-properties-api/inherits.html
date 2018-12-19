@@ -244,36 +244,36 @@
 </style>
 <div>
   <p> Specified in parent, inherits=true</p>
-  <div id="parent1"><div id="child1"><p>100px green</p></div> </div>
+  <div id="parent1"><div id="child1"><p>test</p></div> </div>
   <p> Specified in parent, inherits=false </p>
-  <div id="parent2"><div id="child2"><p>200px green</p></div> </div>
+  <div id="parent2"><div id="child2"><p>test</p></div> </div>
   <p> Specified in parent, not registered </p>
-  <div id="parent3"><div id="child3"><p>100px green</p></div> </div>
+  <div id="parent3"><div id="child3"><p>test</p></div> </div>
   <p> Initial </p>
-  <div id="parent4"><div id="child4"><p>200px green</p></div> </div>
+  <div id="parent4"><div id="child4"><p>test</p></div> </div>
   <p> Unset, inherits=true </p>
-  <div id="parent5"><div id="child5"><p>100px green</p></div> </div>
+  <div id="parent5"><div id="child5"><p>test</p></div> </div>
   <p> Unset, inherits=false </p>
-  <div id="parent6"><div id="child6"><p>200px green</p></div> </div>
+  <div id="parent6"><div id="child6"><p>test</p></div> </div>
   <p> A cycle between an inherits=true and inherits=false property </p>
-  <div id="parent7"><div id="child7"><p>200px green</p></div> </div>
+  <div id="parent7"><div id="child7"><p>test</p></div> </div>
   <p> A cycle between an inherits=true and inherits=false property </p>
-  <div id="parent8"><div id="child8"><p>200px green</p></div> </div>
+  <div id="parent8"><div id="child8"><p>test</p></div> </div>
   <p> A cycle between an inherits=true and inherits=false property with fallback </p>
-  <div id="parent9"><div id="child9"><p>200px green</p></div> </div>
+  <div id="parent9"><div id="child9"><p>test</p></div> </div>
   <p> Inheritance should not create a cycle </p>
-  <div id="parent10"><div id="child10"><p>110px green</p></div></div>
+  <div id="parent10"><div id="child10"><p>test</p></div></div>
   <p> A cycle between two unregistered properties </p>
-  <div id="parent11"><div id="child11"><p>300px green</p></div> </div>
+  <div id="parent11"><div id="child11"><p>test</p></div> </div>
 
   <p> Revert, inherits=true </p>
-  <div id="parent12"><div id="child12"><div id="childchild12"><p>190px purple</p></div></div></div>
+  <div id="parent12"><div id="child12"><div id="childchild12"><p>test</p></div></div></div>
   <p> Revert, inherits=false </p>
-  <div id="parent13"><div id="child13"><div id="childchild13"><p>200px purple</p></div></div> </div>
+  <div id="parent13"><div id="child13"><div id="childchild13"><p>test</p></div></div> </div>
   <p> Revert, unregistered </p>
-  <div id="parent14"><div id="child14"><div id="childchild14"><p>purple</p></div></div> </div>
+  <div id="parent14"><div id="child14"><div id="childchild14"><p>test</p></div></div> </div>
   <p> Inherit, unregistered </p>
-  <div id="parent14-1"><div id="child14-1"><div id="childchild14-1"><p>purple</p></div></div> </div>
+  <div id="parent14-1"><div id="child14-1"><div id="childchild14-1"><p>test</p></div></div> </div>
 
   <p> Test that inherited properties do variable substitution before being inherited - registered</p>
   <div id="parent15"><div id="child15"><p>test</p></div> </div>
@@ -281,12 +281,12 @@
   <div id="parent16"><div id="child16"><p>test</p></div> </div>
 
   <p> No initial value in registered property should act like unregistered</p>
-  <div id="parent17"><div id="child17"><p>200px green</p></div> </div>
+  <div id="parent17"><div id="child17"><p>test</p></div> </div>
   <p> (unregistered) </p>
-  <div id="parent18"><div id="child18"><p>500px green</p></div> </div>
+  <div id="parent18"><div id="child18"><p>test</p></div> </div>
 
   <p>Inherit should be substituted for unregistered property</p>
-  <div id="parent19"><div id="child19"><p>500px green</p></div> </div>
+  <div id="parent19"><div id="child19"><p>test</p></div> </div>
 </div>
 <script>
 
@@ -346,19 +346,19 @@ test(function() {
   test_prop('child6', '--my-custom-prop2', '200px');
 }, "JS Attributes are valid for element 6");
 test(function() {
-  test_prop('child7', 'width', '200px');
-  test_prop('child7', '--my-custom-prop', '100px');
-  test_prop('child7', '--my-custom-prop2', '200px');
+  test_prop('child7', 'width', '300px');
+  test_prop('child7', '--my-custom-prop', '');
+  test_prop('child7', '--my-custom-prop2', '');
 }, "JS Attributes are valid for element 7");
 test(function() {
-  test_prop('child8', 'width', '200px');
-  test_prop('child8', '--my-custom-prop', '200px');
-  test_prop('child8', '--my-custom-prop2', '200px');
+  test_prop('child8', 'width', '300px');
+  test_prop('child8', '--my-custom-prop', '');
+  test_prop('child8', '--my-custom-prop2', '');
 }, "JS Attributes are valid for element 8");
 test(function() {
-  test_prop('child9', 'width', '200px');
-  test_prop('child9', '--my-custom-prop', '100px');
-  test_prop('child9', '--my-custom-prop2', '200px');
+  test_prop('child9', 'width', '300px');
+  test_prop('child9', '--my-custom-prop', '');
+  test_prop('child9', '--my-custom-prop2', '');
 }, "JS Attributes are valid for element 9");
 test(function() {
   test_prop('child10', 'width', '110px');

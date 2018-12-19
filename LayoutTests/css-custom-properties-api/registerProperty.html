@@ -2,6 +2,7 @@
 <!-- https://chromium.googlesource.com/chromium/src/+/01ce431409e3a019858677626a983c55168da6dc/third_party/WebKit/LayoutTests/custom-properties/register-property.html -->
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<div id="el"></div>
 <script>
 // Tests for error checking during property registration
 test(function() {
@@ -18,9 +19,9 @@ test(function() {
     CSS.registerProperty({name: '--name2, no need for escapes', inherits: false});
     CSS.registerProperty({name: ['--name', 3], inherits: false});
     // Invalid property names
-    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: 'no-leading-dash', inherits: false}));
-    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '', inherits: false}));
-    //assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '\\--name', inherits: false}));
+    assert_throws(new SyntaxError(), () => CSS.registerProperty({name: 'no-leading-dash', inherits: false}));
+    assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '', inherits: false}));
+    assert_throws(new SyntaxError(), () => CSS.registerProperty({name: '\\--name', inherits: false}));
 }, "registerProperty requires a name matching <custom-property-name>");
 test(function() {
     CSS.registerProperty({name: '--syntax-test-1', inherits: false, syntax: '*'});
@@ -37,4 +38,15 @@ test(function() {
     CSS.registerProperty({name: '--syntax-test-4', inherits: false, syntax: '*'});
     CSS.registerProperty({name: '--syntax-test-5', inherits: false, syntax: ' * '});
 }, "registerProperty requires inherits and name");
+test(function() {
+  CSS.registerProperty({name: '--initialvalue-test-0', inherits: false, syntax: '<length>', initialValue: 'calc(10px + 10in)'});
+  assert_equals(window.getComputedStyle(el).getPropertyValue('--initialvalue-test-0').toString(), '970px');
+
+  assert_throws(new SyntaxError(),
+    () => CSS.registerProperty({name: '--initialvalue-test-1', inherits: false, syntax: '<length>', initialValue: '10em'}));
+  assert_throws(new SyntaxError(),
+    () => CSS.registerProperty({name: '--initialvalue-test-2', inherits: false, syntax: '<length>', initialValue: 'calc(10px + 10em)'}));
+  assert_throws(new SyntaxError(),
+    () => CSS.registerProperty({name: '--initialvalue-test-3', inherits: false, syntax: '<length>', initialValue: 'calc(10px + 10%)'}));
+}, "registerProperty requires initialValue to be computationally independent");
 </script>

@@ -67,6 +67,8 @@ public:
     
     static Ref<CSSCustomPropertyValue> createSyntaxLength(const AtomicString& name, Length value)
     {
+        ASSERT(!value.isUndefined());
+        ASSERT(!value.isCalculated());
         return adoptRef(*new CSSCustomPropertyValue(name, { WTFMove(value) }));
     }
 

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 63: TypeError: element.attributeStyleMap.clear is not a function. (In 'element.attributeStyleMap.clear()', 'element.attributeStyleMap.clear' is undefined)
+CONSOLE MESSAGE: line 74: TypeError: element.attributeStyleMap.clear is not a function. (In 'element.attributeStyleMap.clear()', 'element.attributeStyleMap.clear' is undefined)
 
 FAIL Untitled TypeError: element.attributeStyleMap.clear is not a function. (In 'element.attributeStyleMap.clear()', 'element.attributeStyleMap.clear' is undefined)
 

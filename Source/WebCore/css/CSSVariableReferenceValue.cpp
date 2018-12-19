@@ -70,16 +70,20 @@ static bool resolveVariableReference(CSSParserTokenRange range, Vector<CSSParser
 
     // Apply fallback to detect cycles
     Vector<CSSParserToken> fallbackResult;
-    resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, state);
+    bool fallbackReturn = resolveVariableFallback(CSSParserTokenRange(range), fallbackResult, state);
 
     auto* property = style.getCustomProperty(variableName);
 
-    if (!property || property->isUnset() || property->isInvalid()) {
+    if (!property || property->isUnset()) {
         auto* registered = registeredProperties.get(variableName);
         if (registered && registered->initialValue())
             property = registered->initialValue();
-        else
-            return resolveVariableFallback(range, result, state);
+    }
+
+    if (!property || property->isInvalid()) {
+        if (fallbackReturn)
+            result.appendVector(fallbackResult);
+        return fallbackReturn;
     }
 
     ASSERT(property->isResolved());

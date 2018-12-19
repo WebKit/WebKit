@@ -48,15 +48,15 @@ test(function() {
 test(function() {
   inlineStyle.setProperty('--baz', '   40px');
   assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
-  assert_equals(computedStyle.getPropertyValue('--foo'), '200px');
-  assert_equals(computedStyle.getPropertyValue('--bar'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '');
   assert_equals(computedStyle.getPropertyValue('--baz'), '40px');
-  assert_equals(computedStyle.getPropertyValue('font-size'), '200px');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
   inlineStyle.removeProperty('--baz');
   assert_equals(computedStyle.getPropertyValue('--baz'), '200px');
-  assert_equals(computedStyle.getPropertyValue('--foo'), '200px');
-  assert_equals(computedStyle.getPropertyValue('--bar'), '200px');
-  assert_equals(computedStyle.getPropertyValue('font-size'), '200px');
+  assert_equals(computedStyle.getPropertyValue('--foo'), '');
+  assert_equals(computedStyle.getPropertyValue('--bar'), '');
+  assert_equals(computedStyle.getPropertyValue('font-size'), '30px');
   assert_equals(computedStyle.getPropertyValue('--baz'), '200px');
 }, "Setting the inline style is handled correctly when registered");
 

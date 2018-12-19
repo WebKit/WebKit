@@ -1,5 +1,45 @@
 2018-12-18  Justin Michaud  <justin_michaud@apple.com>
 
+        Update CSS Properties and Values API to use new cycle fallback behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=192800
+
+        Reviewed by Antti Koivisto.
+
+        Re-import tests and adjust expected results. Some of the tests go from pass to fail because
+        this patch adds some extra dependency checking to property registrations to fix a crash, but
+        now unsupported syntaxes like <length-percentage> do not register properly.
+
+        * web-platform-tests/css/css-properties-values-api/register-property-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing.html:
+        * web-platform-tests/css/css-properties-values-api/register-property.html:
+        * web-platform-tests/css/css-properties-values-api/registered-properties-inheritance-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-properties-inheritance.html:
+        * web-platform-tests/css/css-properties-values-api/registered-property-computation-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-computation.html:
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-cssom.html:
+        * web-platform-tests/css/css-properties-values-api/registered-property-initial-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/registered-property-initial.html:
+        * web-platform-tests/css/css-properties-values-api/resources/utils.js: Added.
+        (generate_name):
+        (any_initial_value):
+        (generate_property):
+        (all_syntaxes):
+        * web-platform-tests/css/css-properties-values-api/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-properties-values-api/self-utils-expected.txt: Added.
+        * web-platform-tests/css/css-properties-values-api/self-utils.html: Added.
+        * web-platform-tests/css/css-properties-values-api/typedom.tentative-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/typedom.tentative.html:
+        * web-platform-tests/css/css-properties-values-api/unit-cycles-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/unit-cycles.html:
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-cycles.html:
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties-expected.txt:
+        * web-platform-tests/css/css-properties-values-api/var-reference-registered-properties.html:
+        * web-platform-tests/css/css-properties-values-api/w3c-import.log:
+
+2018-12-18  Justin Michaud  <justin_michaud@apple.com>
+
         CSS Typed OM should expose attributeStyleMap
         https://bugs.webkit.org/show_bug.cgi?id=192671
 

@@ -2319,6 +2319,7 @@ void StyleResolver::applyCascadedCustomProperty(const String& name, ApplyCascade
         return;
 
     auto property = state.cascade->customProperties().get(name);
+    bool inCycle = state.inProgressPropertiesCustom.contains(name);
 
     for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
         if (!property.cssValue[index])
@@ -2328,19 +2329,18 @@ void StyleResolver::applyCascadedCustomProperty(const String& name, ApplyCascade
 
         Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
 
-        if (state.inProgressPropertiesCustom.contains(name)) {
-            // We are in a cycle, so reset the value.
-            state.appliedCustomProperties.add(name);
-            // Resolve this value so that we reset its dependencies
-            if (WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value()))
-                resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), state);
-            valueToApply = CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
+        if (inCycle) {
+            state.appliedCustomProperties.add(name); // Make sure we do not try to apply this property again while resolving it.
+            valueToApply = CSSCustomPropertyValue::createWithID(name, CSSValueInvalid);
         }
 
         state.inProgressPropertiesCustom.add(name);
 
         if (WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
             RefPtr<CSSValue> parsedValue = resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), state);
+
+            if (state.appliedCustomProperties.contains(name))
+                return; // There was a cycle and the value was reset, so bail.
 
             if (!parsedValue)
                 parsedValue = CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
@@ -2365,8 +2365,23 @@ void StyleResolver::applyCascadedCustomProperty(const String& name, ApplyCascade
             }
             applyProperty(CSSPropertyCustom, valueToApply.ptr(), state, index);
         }
-        state.inProgressPropertiesCustom.remove(name);
-        state.appliedCustomProperties.add(name);
+    }
+
+    state.inProgressPropertiesCustom.remove(name);
+    state.appliedCustomProperties.add(name);
+
+    for (auto index : { SelectorChecker::MatchDefault, SelectorChecker::MatchLink, SelectorChecker::MatchVisited }) {
+        if (!property.cssValue[index])
+            continue;
+        if (index != SelectorChecker::MatchDefault && this->state().style()->insideLink() == InsideLink::NotInside)
+            continue;
+
+        Ref<CSSCustomPropertyValue> valueToApply = CSSCustomPropertyValue::create(downcast<CSSCustomPropertyValue>(*property.cssValue[index]));
+
+        if (inCycle && WTF::holds_alternative<Ref<CSSVariableReferenceValue>>(valueToApply->value())) {
+            // Resolve this value so that we reset its dependencies.
+            resolvedVariableValue(CSSPropertyCustom, valueToApply.get(), state);
+        }
     }
 }
 

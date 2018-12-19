@@ -2,6 +2,7 @@
 <link rel="help" href="https://drafts.css-houdini.org/css-properties-values-api/#dom-css-registerproperty" />
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<script src="./resources/utils.js"></script>
 <style>
 div {
     --registered-length-1: 10px;
@@ -54,7 +55,7 @@ test(function() {
     assert_equals(computedStyle.getPropertyValue('--registered-length-6'), '80px');
     assert_equals(computedStyle.getPropertyValue('--registered-length-7'), '123px');
     assert_equals(computedStyle.getPropertyValue('--length-1'), ' 20px');
-    assert_equals(computedStyle.getPropertyValue('--length-2'), '  10px');
+    assert_equals(computedStyle.getPropertyValue('--length-2'), ' 10px');
     assert_equals(computedStyle.getPropertyValue('--length-3'), ' calc(123px + 123px)');
     assert_equals(computedStyle.getPropertyValue('--registered-length-invalid'), '15px');
 
@@ -96,5 +97,77 @@ test(function(){
     assert_equals(computedStyle.getPropertyValue('--registered-length-list-3'), '1px, 10px, 2px, 1px, 20px, 10px, 2px');
 }, 'Registered lists may be concatenated');
 
+test(function(){
+    CSS.registerProperty({
+        name: '--length-em',
+        syntax: '<length>',
+        initialValue: '0px',
+        inherits: false
+    });
+    element.style = 'font-size: 11px; --length-em: 10em; --unregistered:var(--length-em);';
+    let computedStyle = getComputedStyle(element);
+    assert_equals(computedStyle.getPropertyValue('--unregistered'), '110px');
+    element.style = '';
+}, 'Font-relative units are absolutized when substituting');
+
+test(function(){
+    CSS.registerProperty({
+        name: '--length-calc',
+        syntax: '<length>',
+        initialValue: '0px',
+        inherits: false
+    });
+    element.style = 'font-size: 11px; --length-calc: calc(10em + 10px); --unregistered:var(--length-calc);';
+    let computedStyle = getComputedStyle(element);
+    assert_equals(computedStyle.getPropertyValue('--unregistered'), '120px');
+    element.style = '';
+}, 'Calc expressions are resolved when substituting');
+
+test(function(){
+    CSS.registerProperty({
+        name: '--length-calc-list',
+        syntax: '<length>#',
+        initialValue: '0px',
+        inherits: false
+    });
+    element.style = 'font-size: 11px; --length-calc-list: 10em, calc(10em + 10px); --unregistered:var(--length-calc-list);';
+    let computedStyle = getComputedStyle(element);
+    assert_equals(computedStyle.getPropertyValue('--unregistered'), '110px, 120px');
+    element.style = '';
+}, 'Lists with relative units are absolutized when substituting');
+
+function test_valid_fallback(syntax, value, fallback) {
+    test(function(){
+        let name = generate_property(syntax);
+        try {
+            element.style = `${name}: ${value}; --x:var(${name},${fallback})`;
+            let computedStyle = getComputedStyle(element);
+            assert_equals(computedStyle.getPropertyValue('--x'), value);
+        } finally {
+            element.style = '';
+        }
+    }, `Valid fallback does not invalidate var()-reference [${syntax}, ${fallback}]`);
+}
+
+function test_invalid_fallback(syntax, value, fallback) {
+    test(function(){
+        let name = generate_property(syntax);
+        try {
+            element.style = `${name}: ${value}; --x:var(${name},${fallback})`;
+            let computedStyle = getComputedStyle(element);
+            assert_equals(computedStyle.getPropertyValue('--x'), '');
+        } finally {
+            element.style = '';
+        }
+    }, `Invalid fallback invalidates var()-reference [${syntax}, ${fallback}]`);
+}
+
+test_valid_fallback('<length>', '40px', '10px');
+test_valid_fallback('<length> | <color>', '40px', 'red');
+test_valid_fallback('<length> | none', '40px', 'none');
+
+test_invalid_fallback('<length>', '40px', 'red');
+test_invalid_fallback('<length> | none', '40px', 'nolength');
+test_invalid_fallback('<length>', '40px', 'var(--novar)');
 
 </script>

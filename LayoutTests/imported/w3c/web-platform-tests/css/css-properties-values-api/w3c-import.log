@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-computation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-initial.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/self-utils.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/typedom.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/unit-cycles.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/url-resolution.html

@@ -1,3 +1,23 @@
+2018-12-18  Justin Michaud  <justin_michaud@apple.com>
+
+        Update CSS Properties and Values API to use new cycle fallback behaviour
+        https://bugs.webkit.org/show_bug.cgi?id=192800
+
+        Reviewed by Antti Koivisto.
+
+        Make CSS variables that are registered and involved in a cycle be treated as invalid. This also fixes a crash in the
+        wpt tests where relative units and calc() in a registered property's initial value would break things instead of failing. 
+
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::resolveVariableReference):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyCascadedCustomProperty):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseTypedCustomPropertyValue):
+
 2018-12-18  Daniel Bates  <dabates@apple.com>
 
         Wrong value for key property in keydown and keyup events generated holding Control key

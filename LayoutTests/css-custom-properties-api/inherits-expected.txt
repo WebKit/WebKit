@@ -1,62 +1,62 @@
 Specified in parent, inherits=true
 
-100px green
+test
 
 Specified in parent, inherits=false
 
-200px green
+test
 
 Specified in parent, not registered
 
-100px green
+test
 
 Initial
 
-200px green
+test
 
 Unset, inherits=true
 
-100px green
+test
 
 Unset, inherits=false
 
-200px green
+test
 
 A cycle between an inherits=true and inherits=false property
 
-200px green
+test
 
 A cycle between an inherits=true and inherits=false property
 
-200px green
+test
 
 A cycle between an inherits=true and inherits=false property with fallback
 
-200px green
+test
 
 Inheritance should not create a cycle
 
-110px green
+test
 
 A cycle between two unregistered properties
 
-300px green
+test
 
 Revert, inherits=true
 
-190px purple
+test
 
 Revert, inherits=false
 
-200px purple
+test
 
 Revert, unregistered
 
-purple
+test
 
 Inherit, unregistered
 
-purple
+test
 
 Test that inherited properties do variable substitution before being inherited - registered
 
@@ -68,15 +68,15 @@ test
 
 No initial value in registered property should act like unregistered
 
-200px green
+test
 
 (unregistered)
 
-500px green
+test
 
 Inherit should be substituted for unregistered property
 
-500px green
+test
 
 
 PASS Registration is successful 

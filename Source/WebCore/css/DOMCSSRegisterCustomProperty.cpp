@@ -40,6 +40,9 @@ namespace WebCore {
 
 ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
+    if (!isCustomPropertyName(descriptor.name))
+        return Exception { SyntaxError, "The name of this property is not a custom property name." };
+
     RefPtr<CSSCustomPropertyValue> initialValue;
     if (!descriptor.initialValue.isEmpty()) {
         CSSTokenizer tokenizer(descriptor.initialValue);
@@ -50,12 +53,17 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         styleResolver.applyPropertyToStyle(CSSPropertyInvalid, nullptr, styleResolver.defaultStyleForElement());
         styleResolver.updateFont();
 
+        HashSet<CSSPropertyID> dependencies;
+        CSSPropertyParser::collectParsedCustomPropertyValueDependencies(descriptor.syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
+
+        if (!dependencies.isEmpty())
+            return Exception { SyntaxError, "The given initial value must be computationally independent." };
+
         initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), styleResolver, strictCSSParserContext());
 
         if (!initialValue || !initialValue->isResolved())
             return Exception { SyntaxError, "The given initial value does not parse for the given syntax." };
 
-        HashSet<CSSPropertyID> dependencies;
         initialValue->collectDirectComputationalDependencies(dependencies);
         initialValue->collectDirectRootComputationalDependencies(dependencies);
 

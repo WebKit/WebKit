@@ -1,3 +1,11 @@
 
-FAIL Initial values of registered properties can be referenced when no custom properties are explicitly set. The given initial value does not parse for the given syntax.
+PASS Initial value for <length> correctly computed [calc(10px + 15px)] 
+FAIL Initial value for <length-percentage> correctly computed [calc(1in + 10% + 4px)] The given initial value does not parse for the given syntax.
+FAIL Initial value for <color> correctly computed [pink, inherits] The given initial value does not parse for the given syntax.
+FAIL Initial value for <color> correctly computed [purple] The given initial value does not parse for the given syntax.
+FAIL Initial value for <transform-function> correctly computed [rotate(42deg)] The given initial value does not parse for the given syntax.
+FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 2))] The given initial value does not parse for the given syntax.
+FAIL Initial value for <transform-list> correctly computed [scale(calc(2 + 1)) translateX(calc(3px + 1px))] The given initial value does not parse for the given syntax.
+FAIL Initial inherited value can be substituted [purple, color] The given initial value does not parse for the given syntax.
+FAIL Initial non-inherited value can be substituted [pink, background-color] The given initial value does not parse for the given syntax.
 
