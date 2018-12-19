@@ -1,3 +1,17 @@
+2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r239347.
+
+        Caused the leaks bot to hit an exception and the new test
+        crashes on certain configurations.
+
+        Reverted changeset:
+
+        "Synchronous media query evaluation could destroy current
+        Frame/FrameView."
+        https://bugs.webkit.org/show_bug.cgi?id=192781
+        https://trac.webkit.org/changeset/239347
+
 2018-12-19  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r239358.

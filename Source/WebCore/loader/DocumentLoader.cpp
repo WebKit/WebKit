@@ -435,8 +435,6 @@ void DocumentLoader::finishedLoading()
     if (!m_mainDocumentError.isNull())
         return;
     clearMainResourceLoader();
-    if (!frameLoader())
-        return;
     if (!frameLoader()->stateMachine().creatingInitialEmptyDocument())
         frameLoader()->checkLoadComplete();
 
