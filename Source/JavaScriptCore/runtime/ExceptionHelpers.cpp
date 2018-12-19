@@ -267,7 +267,9 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    String errorMessage = makeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
+    String errorMessage = tryMakeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
+    if (errorMessage.isNull())
+        return createOutOfMemoryError(exec);
     scope.assertNoException();
     JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(vm, value));
     ASSERT(exception->isErrorInstance());

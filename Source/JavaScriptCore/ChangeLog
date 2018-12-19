@@ -1,3 +1,19 @@
+2018-12-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        String overflow in JSC::createError results in ASSERT in WTF::makeString
+        https://bugs.webkit.org/show_bug.cgi?id=192833
+        <rdar://problem/45706868>
+
+        Reviewed by Mark Lam.
+
+        JSC::createError was calling WTF::makeString which would result in an
+        assertion failure when the string was too big. Change it to call
+        WTF::tryMakeString instead and return an OutOfMemory error if we fail
+        to create the error string.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createError):
+
 2018-12-18  Ross Kirsling  <ross.kirsling@sony.com>
 
         Error message for `-x ** y` contains a typo.
