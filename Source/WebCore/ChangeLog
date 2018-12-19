@@ -1,3 +1,17 @@
+2018-12-19  Jer Noble  <jer.noble@apple.com>
+
+        Force synchronous decode in WebCoreDecompressionSession::decodeSampleSync()
+        https://bugs.webkit.org/show_bug.cgi?id=192856
+        <rdar://problem/46843245>
+
+        Reviewed by Alex Christensen.
+
+        Some decoders exposed through VideoToolbox will decode asynchronously even when 
+        kVTDecodeInfo_Asynchronous is not set. Force synchronous behavior with a Semaphore.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::decodeSampleSync):
+
 2018-12-19  Megan Gardner  <megan_gardner@apple.com>
 
         Allow clients to set the navigator platform

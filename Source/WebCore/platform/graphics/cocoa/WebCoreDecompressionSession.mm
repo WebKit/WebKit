@@ -39,6 +39,7 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/Vector.h>
+#import <wtf/WTFSemaphore.h>
 #import <wtf/cf/TypeCastsCF.h>
 
 #import "CoreVideoSoftLink.h"
@@ -277,10 +278,13 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSamp
 
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     VTDecodeInfoFlags flags { 0 };
+    WTF::Semaphore syncDecompressionOutputSemaphore { 0 };
     VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, [&] (OSStatus, VTDecodeInfoFlags, CVImageBufferRef imageBuffer, CMTime, CMTime) mutable {
         if (imageBuffer && CFGetTypeID(imageBuffer) == CVPixelBufferGetTypeID())
             pixelBuffer = (CVPixelBufferRef)imageBuffer;
+        syncDecompressionOutputSemaphore.signal();
     });
+    syncDecompressionOutputSemaphore.wait();
     return pixelBuffer;
 }
 
