@@ -546,6 +546,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             case TimelineAgent.EventType.TimerFire:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.TimerFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.timerId, profileData);
                 break;
+            case TimelineAgent.EventType.ObserverCallback:
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                break;
+            case TimelineAgent.EventType.FireAnimationFrame:
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);
+                break;
             default:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ScriptEvaluated, startTime, endTime, callFrames, sourceCodeLocation, null, profileData);
                 break;
@@ -563,7 +569,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         case TimelineAgent.EventType.TimerFire:
         case TimelineAgent.EventType.EventDispatch:
         case TimelineAgent.EventType.FireAnimationFrame:
-            // These are handled when the parent of FunctionCall or EvaluateScript.
+        case TimelineAgent.EventType.ObserverCallback:
+            // These are handled when we see the child FunctionCall or EvaluateScript.
             break;
 
         case TimelineAgent.EventType.FunctionCall:
@@ -595,6 +602,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 break;
             case TimelineAgent.EventType.EventDispatch:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.EventDispatched, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
+                break;
+            case TimelineAgent.EventType.ObserverCallback:
+                record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ObserverCallback, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.type, profileData);
                 break;
             case TimelineAgent.EventType.FireAnimationFrame:
                 record = new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.AnimationFrameFired, startTime, endTime, callFrames, sourceCodeLocation, parentRecordPayload.data.id, profileData);

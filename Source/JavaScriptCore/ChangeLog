@@ -1,3 +1,17 @@
+2018-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Web Inspector: Timelines: correctly label Intersection Observer callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=192669
+        <rdar://problem/46702490>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add InspectorInstrumentation::willFireObserverCallback() and use it to wrap calls
+        to Intersection Observer, Performance Observer and Mutation Observer callbacks so 
+        that they get correctly labeled in the Inspector timeline.
+
+        * inspector/protocol/Timeline.json:
+
 2018-12-18  Mark Lam  <mark.lam@apple.com>
 
         JSPropertyNameEnumerator should cache the iterated object's structure only after getting its property names.

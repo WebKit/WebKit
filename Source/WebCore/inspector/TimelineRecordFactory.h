@@ -58,6 +58,7 @@ public:
     static Ref<JSON::Object> createEvaluateScriptData(const String&, double lineNumber);
     static Ref<JSON::Object> createTimeStampData(const String&);
     static Ref<JSON::Object> createAnimationFrameData(int callbackId);
+    static Ref<JSON::Object> createObserverCallbackData(const String& callbackType);
     static Ref<JSON::Object> createPaintData(const FloatQuad&);
 
     static void appendLayoutRoot(JSON::Object* data, const FloatQuad&);

@@ -194,6 +194,7 @@ WI.ScriptTimelineRecord.EventType = {
     AnimationFrameFired: "script-timeline-record-animation-frame-fired",
     AnimationFrameRequested: "script-timeline-record-animation-frame-requested",
     AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled",
+    ObserverCallback: "script-timeline-record-observer-callback",
     ConsoleProfileRecorded: "script-timeline-record-console-profile-recorded",
     GarbageCollected: "script-timeline-record-garbage-collected",
 };
@@ -400,6 +401,10 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         if (details && includeDetailsInMainTitle)
             return WI.UIString("Animation Frame %d Fired").format(details);
         return WI.UIString("Animation Frame Fired");
+    case WI.ScriptTimelineRecord.EventType.ObserverCallback:
+        if (details && (details instanceof String || typeof details === "string"))
+            return WI.UIString("%s Callback").format(details);
+        return WI.UIString("Observer Callback");
     case WI.ScriptTimelineRecord.EventType.AnimationFrameRequested:
         if (details && includeDetailsInMainTitle)
             return WI.UIString("Animation Frame %d Requested").format(details);

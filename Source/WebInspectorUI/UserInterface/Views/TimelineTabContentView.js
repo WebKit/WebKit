@@ -207,6 +207,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
                 return WI.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass;
             case WI.ScriptTimelineRecord.EventType.MicrotaskDispatched:
             case WI.ScriptTimelineRecord.EventType.EventDispatched:
+            case WI.ScriptTimelineRecord.EventType.ObserverCallback:
                 return WI.TimelineRecordTreeElement.EventRecordIconStyleClass;
             case WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded:
                 return WI.TimelineRecordTreeElement.ProbeRecordIconStyleClass;

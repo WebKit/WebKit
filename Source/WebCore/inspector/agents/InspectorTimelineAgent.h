@@ -83,6 +83,8 @@ enum class TimelineRecordType {
     RequestAnimationFrame,
     CancelAnimationFrame,
     FireAnimationFrame,
+    
+    ObserverCallback,
 };
 
 class InspectorTimelineAgent final
@@ -137,6 +139,8 @@ public:
     void didCancelAnimationFrame(int callbackId, Frame*);
     void willFireAnimationFrame(int callbackId, Frame*);
     void didFireAnimationFrame();
+    void willFireObserverCallback(const String& callbackType, Frame*);
+    void didFireObserverCallback();
     void time(Frame&, const String&);
     void timeEnd(Frame&, const String&);
     void mainFrameStartedLoading();

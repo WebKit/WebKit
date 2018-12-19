@@ -28,7 +28,8 @@
                 "ConsoleProfile",
                 "RequestAnimationFrame",
                 "CancelAnimationFrame",
-                "FireAnimationFrame"
+                "FireAnimationFrame",
+                "ObserverCallback"
             ]
         },
         {

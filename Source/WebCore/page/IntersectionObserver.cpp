@@ -32,6 +32,7 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
 #include "Element.h"
+#include "InspectorInstrumentation.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "Performance.h"
@@ -256,8 +257,16 @@ void IntersectionObserver::notify()
         return;
     }
 
+    auto* context = m_callback->scriptExecutionContext();
+    if (!context)
+        return;
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
+
     auto takenRecords = takeRecords();
     m_callback->handleEvent(WTFMove(takenRecords.records), *this);
+
+    InspectorInstrumentation::didFireObserverCallback(cookie);
 }
 
 bool IntersectionObserver::hasPendingActivity() const

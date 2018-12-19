@@ -125,6 +125,13 @@ Ref<JSON::Object> TimelineRecordFactory::createAnimationFrameData(int callbackId
     return data;
 }
 
+Ref<JSON::Object> TimelineRecordFactory::createObserverCallbackData(const String& callbackType)
+{
+    Ref<JSON::Object> data = JSON::Object::create();
+    data->setString("type"_s, callbackType);
+    return data;
+}
+
 static Ref<JSON::Array> createQuad(const FloatQuad& quad)
 {
     Ref<JSON::Array> array = JSON::Array::create();

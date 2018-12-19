@@ -28,6 +28,7 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "InspectorInstrumentation.h"
 #include "Performance.h"
 #include "PerformanceObserverEntryList.h"
 #include "WorkerGlobalScope.h"
@@ -100,9 +101,16 @@ void PerformanceObserver::deliver()
     if (m_entriesToDeliver.isEmpty())
         return;
 
+    auto* context = m_callback->scriptExecutionContext();
+    if (!context)
+        return;
+
     Vector<RefPtr<PerformanceEntry>> entries = WTFMove(m_entriesToDeliver);
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
+
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
     m_callback->handleEvent(list, *this);
+    InspectorInstrumentation::didFireObserverCallback(cookie);
 }
 
 } // namespace WebCore

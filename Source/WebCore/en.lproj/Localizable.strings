@@ -646,6 +646,9 @@
 /* Show Media Controls context menu item */
 "Show Controls" = "Show Controls";
 
+/* Action from safe browsing warning */
+"Show Details" = "Show Details";
+
 /* Show fonts context menu item */
 "Show Fonts" = "Show Fonts";
 
@@ -654,9 +657,6 @@
 
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
-
-/* Action from safe browsing warning */
-"Show Details" = "Show Details";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";

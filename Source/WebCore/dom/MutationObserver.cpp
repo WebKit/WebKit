@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
+#include "InspectorInstrumentation.h"
 #include "Microtasks.h"
 #include "MutationCallback.h"
 #include "MutationObserverRegistration.h"
@@ -244,8 +245,15 @@ void MutationObserver::deliver()
     records.swap(m_records);
 
     // FIXME: Keep mutation observer callback as long as its observed nodes are alive. See https://webkit.org/b/179224.
-    if (m_callback->hasCallback())
+    if (m_callback->hasCallback()) {
+        auto* context = m_callback->scriptExecutionContext();
+        if (!context)
+            return;
+
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
         m_callback->handleEvent(*this, records, *this);
+        InspectorInstrumentation::didFireObserverCallback(cookie);
+    }
 }
 
 void MutationObserver::notifyMutationObservers()
