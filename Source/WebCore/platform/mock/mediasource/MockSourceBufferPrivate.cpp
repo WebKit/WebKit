@@ -289,12 +289,6 @@ MediaTime MockSourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& tim
     return time;
 }
 
-void MockSourceBufferPrivate::seekToTime(const MediaTime& time)
-{
-    if (m_client)
-        m_client->sourceBufferPrivateSeekToTime(time);
-}
-
 }
 
 #endif

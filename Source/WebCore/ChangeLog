@@ -1,3 +1,44 @@
+2018-12-19  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Remove dead code: sourceBufferPrivateSeekToTime()
+        https://bugs.webkit.org/show_bug.cgi?id=192827
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch makes two dead code removal changes in
+        SourceBufferPrivateClient:
+
+        First, sourceBufferPrivateFastSeekTimeForMediaTime() is made pure
+        virtual in SourceBufferPrivateClient. Since SourceBufferPrivateClient
+        is only inherited by SourceBuffer, it makes no sense to have default
+        implementations there (they will never be used), moreso it being a
+        client interface.
+
+        Second, sourceBufferPrivateSeekToTime() is removed entirely. It used
+        to had an empty implementation, which SourceBuffer did not overwrite,
+        therefore making any calls to it useless.
+
+        All calls to sourceBufferPrivateSeekToTime() have been removed:
+
+        SourceBufferPrivateAVFObjC::seekToTime(), which was also dead code
+        itself, used to call this method. This patch deletes it completely.
+
+        MockSourceBufferPrivate::seekToTime(), which only called this empty
+        method, has also been removed along with its only usage in
+        MockMediaSourcePrivate::seekToTime().
+
+        * platform/graphics/SourceBufferPrivateClient.h:
+        (WebCore::SourceBufferPrivateClient::sourceBufferPrivateFastSeekTimeForMediaTime): Deleted.
+        (WebCore::SourceBufferPrivateClient::sourceBufferPrivateSeekToTime): Deleted.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::seekToTime): Deleted.
+        * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+        (WebCore::MockMediaSourcePrivate::seekToTime):
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::seekToTime): Deleted.
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
 2018-12-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME] MediaKeySystemConfiguration distinctiveIdentifier and persistentState should default to optional

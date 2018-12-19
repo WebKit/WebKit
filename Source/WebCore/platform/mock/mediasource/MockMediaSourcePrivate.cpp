@@ -165,9 +165,6 @@ MediaTime MockMediaSourcePrivate::seekToTime(const MediaTime& targetTime, const 
             seekTime = sourceSeekTime;
     }
 
-    for (auto& buffer : m_activeSourceBuffers)
-        buffer->seekToTime(seekTime);
-
     return seekTime;
 }
 

@@ -49,7 +49,6 @@ public:
     bool hasVideo() const;
     bool hasAudio() const;
 
-    void seekToTime(const MediaTime&);
     MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
 
 private:

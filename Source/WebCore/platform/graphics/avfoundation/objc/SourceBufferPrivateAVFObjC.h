@@ -102,7 +102,6 @@ public:
     void trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC*);
 
     void willSeek();
-    void seekToTime(const MediaTime&);
     MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     FloatSize naturalSize();
 

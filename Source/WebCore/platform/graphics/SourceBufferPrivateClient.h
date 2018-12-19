@@ -71,8 +71,7 @@ public:
     virtual void sourceBufferPrivateReenqueSamples(const AtomicString& trackID) = 0;
     virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) = 0;
 
-    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
-    virtual void sourceBufferPrivateSeekToTime(const MediaTime&) { };
+    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime&, const MediaTime&) = 0;
 
     enum AppendResult { AppendSucceeded, ReadStreamFailed, ParsingFailed };
     virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;

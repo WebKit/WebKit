@@ -1171,12 +1171,6 @@ void SourceBufferPrivateAVFObjC::willSeek()
     flush();
 }
 
-void SourceBufferPrivateAVFObjC::seekToTime(const MediaTime& time)
-{
-    if (m_client)
-        m_client->sourceBufferPrivateSeekToTime(time);
-}
-
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
     return m_cachedSize.value_or(FloatSize());
