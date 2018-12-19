@@ -53,6 +53,7 @@ struct WebsitePoliciesData {
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     std::optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
     String customUserAgent;
+    String customNavigatorPlatform;
     
     void encode(IPC::Encoder&) const;
     static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);

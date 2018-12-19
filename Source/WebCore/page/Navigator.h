@@ -42,6 +42,7 @@ public:
     bool cookieEnabled() const;
     bool javaEnabled() const;
     const String& userAgent() const final;
+    const String& platform() const final;
     void userAgentChanged();
     bool onLine() const final;
     void share(ScriptExecutionContext&, ShareData, Ref<DeferredPromise>&&);
@@ -58,6 +59,7 @@ private:
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable String m_userAgent;
+    mutable String m_platform;
 };
 
 }

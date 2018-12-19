@@ -266,6 +266,9 @@ public:
 
     void setCustomUserAgent(const String& customUserAgent) { m_customUserAgent = customUserAgent; }
     const String& customUserAgent() const { return m_customUserAgent; }
+        
+    void setCustomNavigatorPlatform(const String& customNavigatorPlatform) { m_customNavigatorPlatform = customNavigatorPlatform; }
+    const String& customNavigatorPlatform() const { return m_customNavigatorPlatform; }
 
     OptionSet<AutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
     void setAllowedAutoplayQuirks(OptionSet<AutoplayQuirk> allowedQuirks) { m_allowedAutoplayQuirks = allowedQuirks; }
@@ -536,6 +539,7 @@ private:
     HashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
     String m_customUserAgent;
+    String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;

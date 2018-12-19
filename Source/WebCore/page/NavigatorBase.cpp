@@ -100,16 +100,17 @@ String NavigatorBase::appVersion() const
     return agent.substring(agent.find('/') + 1);
 }
 
-String NavigatorBase::platform()
+const String& NavigatorBase::platform() const
 {
+    static NeverDestroyed<String> defaultPlatform = WEBCORE_NAVIGATOR_PLATFORM;
 #if OS(LINUX)
     if (!String(WEBCORE_NAVIGATOR_PLATFORM).isEmpty())
-        return WEBCORE_NAVIGATOR_PLATFORM;
+        return defaultPlatform;
     struct utsname osname;
     static NeverDestroyed<String> platformName(uname(&osname) >= 0 ? String(osname.sysname) + " "_str + String(osname.machine) : emptyString());
     return platformName;
 #else
-    return WEBCORE_NAVIGATOR_PLATFORM;
+    return defaultPlatform;
 #endif
 }
 

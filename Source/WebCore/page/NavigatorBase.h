@@ -43,7 +43,7 @@ public:
     static String appName();
     String appVersion() const;
     virtual const String& userAgent() const = 0;
-    static String platform();
+    virtual const String& platform() const;
 
     static String appCodeName();
     static String product();

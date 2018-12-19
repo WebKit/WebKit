@@ -2677,6 +2677,16 @@ String FrameLoader::userAgent(const URL& url) const
 
     return m_client.userAgent(url);
 }
+    
+String FrameLoader::navigatorPlatform() const
+{
+    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
+        auto& customNavigatorPlatform = documentLoader->customNavigatorPlatform();
+        if (!customNavigatorPlatform.isEmpty())
+            return customNavigatorPlatform;
+    }
+    return String();
+}
 
 void FrameLoader::dispatchOnloadEvents()
 {

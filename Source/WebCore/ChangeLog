@@ -1,3 +1,28 @@
+2018-12-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow clients to set the navigator platform
+        https://bugs.webkit.org/show_bug.cgi?id=192735
+
+        Reviewed by Tim Horton.
+
+        Expanded TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm.
+
+        Lots of piping to allow the setting of a custom navigator platform.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomNavigatorPlatform):
+        (WebCore::DocumentLoader::customNavigatorPlatform const):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::navigatorPlatform const):
+        * loader/FrameLoader.h:
+        * page/Navigator.cpp:
+        (WebCore::Navigator::platform const):
+        * page/Navigator.h:
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::platform const):
+        (WebCore::NavigatorBase::platform): Deleted.
+        * page/NavigatorBase.h:
+
 2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r239347.

@@ -1,3 +1,30 @@
+2018-12-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow clients to set the navigator platform
+        https://bugs.webkit.org/show_bug.cgi?id=192735
+
+        Reviewed by Tim Horton.
+
+        Add private API to allow clients to override the default navigator
+        platform. Some websites check for the platform, which 
+        interfears with our request desktop site feature. This should
+        help more sites function as expected.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setCustomNavigatorPlatform:]):
+        (-[_WKWebsitePolicies customNavigatorPlatform]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2018-12-19  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r239358.

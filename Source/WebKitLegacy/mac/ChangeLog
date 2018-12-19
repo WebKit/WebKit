@@ -1,3 +1,16 @@
+2018-12-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow clients to set the navigator platform
+        https://bugs.webkit.org/show_bug.cgi?id=192735
+
+        Reviewed by Tim Horton.
+
+        Add stubs to fill out the added functionality in FrameLoaderClient.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::navigatorPlatform):
+
 2018-12-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         offsetLeft and offsetParent should adjust across shadow boundaries

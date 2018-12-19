@@ -1,3 +1,16 @@
+2018-12-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow clients to set the navigator platform
+        https://bugs.webkit.org/show_bug.cgi?id=192735
+
+        Reviewed by Tim Horton.
+
+        Add a test for setting a custom navigator platform.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[CustomNavigatorPlatformDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[CustomNavigatorPlatformDelegate webView:didFinishNavigation:]):
+
 2018-12-19  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r239358.

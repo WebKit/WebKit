@@ -193,6 +193,16 @@
     return _websitePolicies->customUserAgent();
 }
 
+- (void)setCustomNavigatorPlatform:(NSString *)customNavigatorPlatform
+{
+    _websitePolicies->setCustomNavigatorPlatform(customNavigatorPlatform);
+}
+
+- (NSString *)customNavigatorPlatform
+{
+    return _websitePolicies->customNavigatorPlatform();
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];

@@ -983,6 +983,47 @@ TEST(WebKit, WebsitePoliciesCustomUserAgent)
     loadCount = 0;
 }
 
+@interface CustomNavigatorPlatformDelegate : NSObject <WKNavigationDelegate> {
+}
+@end
+
+@implementation CustomNavigatorPlatformDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    if (navigationAction.targetFrame.mainFrame)
+        [websitePolicies setCustomNavigatorPlatform:@"Test Custom Platform"];
+
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+@end
+
+TEST(WebKit, WebsitePoliciesCustomNavigatorPlatform)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[CustomNavigatorPlatformDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,hello"]];
+    [webView loadRequest:request];
+    
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    EXPECT_STREQ("Test Custom Platform", [[webView stringByEvaluatingJavaScript:@"navigator.platform"] UTF8String]);
+}
+
+
 @interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
 @property (nonatomic, copy) _WKWebsitePopUpPolicy(^popUpPolicyForURL)(NSURL *);
 @end
