@@ -66,8 +66,10 @@ std::unique_ptr<MediaRecorderPrivate> MediaRecorder::getPrivateImpl(const MediaS
     
 #if PLATFORM(COCOA)
     return MediaRecorderPrivateAVFImpl::create(stream);
-#endif
+#else
+    UNUSED_PARAM(stream);
     return nullptr;
+#endif
 }
 
 MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, std::unique_ptr<MediaRecorderPrivate>&& privateImpl, Options&& option)

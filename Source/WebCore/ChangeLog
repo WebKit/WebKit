@@ -1,3 +1,10 @@
+2018-12-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, add a missing UNUSED_PARAM()
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::getPrivateImpl):
+
 2018-12-18  Justin Michaud  <justin_michaud@apple.com>
 
         Update CSS Properties and Values API to use new cycle fallback behaviour
