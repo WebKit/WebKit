@@ -47,7 +47,7 @@
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKImagePreviewViewController.h"
-#import "WKInkPickerControl.h"
+#import "WKInkPickerView.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
 #import "WKPreviewActionItemIdentifiers.h"
@@ -1365,6 +1365,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     switch (_assistedNodeInformation.elementType) {
     case WebKit::InputType::None:
+    case WebKit::InputType::Drawing:
         return NO;
     case WebKit::InputType::Select:
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -1375,8 +1376,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
         return !currentUserInterfaceIdiomIsPad();
-    case WebKit::InputType::Drawing:
-        return YES;
     default:
         return !_assistedNodeInformation.isReadOnly;
     }
@@ -1425,14 +1424,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         case WebKit::InputType::Color:
             _inputPeripheral = adoptNS([[WKFormColorControl alloc] initWithView:self]);
             break;
-#endif
-        case WebKit::InputType::Drawing:
-#if HAVE(PENCILKIT)
-            _inputPeripheral = adoptNS([[WKInkPickerControl alloc] initWithDrawingView:_page->editableImageController().editableImage(_assistedNodeInformation.embeddedViewID)->drawingView.get()]);
-            break;
-#else
-            ASSERT_NOT_REACHED();
-            return [[UIView new] autorelease];
 #endif
         default:
             _inputPeripheral = adoptNS([[WKFormInputControl alloc] initWithView:self]);
@@ -2194,6 +2185,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
     switch (_assistedNodeInformation.elementType) {
     case WebKit::InputType::None:
+    case WebKit::InputType::Drawing:
         return NO;
     case WebKit::InputType::Text:
     case WebKit::InputType::Password:
@@ -2216,8 +2208,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::Color:
 #endif
         return !currentUserInterfaceIdiomIsPad();
-    case WebKit::InputType::Drawing:
-        return YES;
     }
 }
 
@@ -4447,6 +4437,11 @@ static bool isAssistableInputType(WebKit::InputType type)
     if (blurPreviousNode)
         [self _stopAssistingNode];
 
+#if HAVE(PENCILKIT)
+    if (information.elementType == WebKit::InputType::Drawing)
+        [self _installInkPickerForDrawingViewWithID:information.embeddedViewID];
+#endif
+
     if (!shouldShowKeyboard)
         return;
 
@@ -4497,6 +4492,7 @@ static bool isAssistableInputType(WebKit::InputType type)
     case WebKit::InputType::Time:
     case WebKit::InputType::Month:
     case WebKit::InputType::Date:
+    case WebKit::InputType::Drawing:
 #if ENABLE(INPUT_TYPE_COLOR)
     case WebKit::InputType::Color:
 #endif
@@ -4529,6 +4525,11 @@ static bool isAssistableInputType(WebKit::InputType type)
 - (void)_stopAssistingNode
 {
     SetForScope<BOOL> isBlurringFocusedNodeForScope { _isBlurringFocusedNode, YES };
+
+#if HAVE(PENCILKIT)
+    if (_inkPicker)
+        [self _uninstallInkPicker];
+#endif
 
     [_formInputSession invalidate];
     _formInputSession = nil;
@@ -6209,6 +6210,30 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _page->handleMouseEvent(WebKit::NativeWebMouseEvent(event.get()));
 }
 #endif
+
+#if HAVE(PENCILKIT)
+- (void)_installInkPickerForDrawingViewWithID:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID
+{
+    _inkPicker = adoptNS([[WKInkPickerView alloc] initWithDrawingView:_page->editableImageController().editableImage(embeddedViewID)->drawingView.get()]);
+    [_inkPicker sizeToFit];
+    [_inkPicker setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_webView addSubview:_inkPicker.get()];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [[_inkPicker heightAnchor] constraintEqualToConstant:[_inkPicker frame].size.height],
+        [[_inkPicker bottomAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.bottomAnchor],
+        [[_inkPicker leftAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.leftAnchor],
+        [[_inkPicker rightAnchor] constraintEqualToAnchor:_webView.safeAreaLayoutGuide.rightAnchor],
+    ]];
+}
+
+- (void)_uninstallInkPicker
+{
+    [_inkPicker removeFromSuperview];
+    _inkPicker = nil;
+}
+
+#endif // HAVE(PENCILKIT)
 
 @end
 

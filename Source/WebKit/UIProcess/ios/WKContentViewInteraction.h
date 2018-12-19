@@ -96,6 +96,7 @@ class WebPageProxy;
 @class WKFocusedFormControlView;
 @class WKFormInputControl;
 @class WKFormInputSession;
+@class WKInkPickerView;
 @class WKInspectorNodeSearchGestureRecognizer;
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -282,6 +283,10 @@ struct WKAutoCorrectionData {
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
+#endif
+
+#if HAVE(PENCILKIT)
+    RetainPtr<WKInkPickerView> _inkPicker;
 #endif
 
     BOOL _isEditable;

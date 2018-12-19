@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKInkPickerControl.h"
+#import "WKInkPickerView.h"
 
 #if HAVE(PENCILKIT)
 
@@ -32,7 +32,7 @@
 
 #import "PencilKitSoftLink.h"
 
-@interface WKInkPickerView : UIView <PKInlineInkPickerDelegate>
+@interface WKInkPickerView () <PKInlineInkPickerDelegate>
 @end
 
 @implementation WKInkPickerView {
@@ -40,9 +40,9 @@
     RetainPtr<WKDrawingView> _drawingView;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame drawingView:(WKDrawingView *)drawingView
+- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView
 {
-    self = [super initWithFrame:frame];
+    self = [super initWithFrame:CGRectZero];
     if (!self)
         return nil;
 
@@ -98,42 +98,6 @@
 - (UIViewController *)viewControllerForPopoverPresentationFromInlineInkPicker:(PKInlineInkPicker *)inlineInkPicker
 {
     return [UIViewController _viewControllerForFullScreenPresentationFromView:_drawingView.get()];
-}
-
-@end
-
-@implementation WKInkPickerControl {
-    RetainPtr<WKInkPickerView> _picker;
-    RetainPtr<WKDrawingView> _drawingView;
-}
-
-- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _drawingView = drawingView;
-
-    return self;
-}
-
-- (void)beginEditing
-{
-
-}
-
-- (void)endEditing
-{
-
-}
-
-- (UIView *)assistantView
-{
-    if (!_picker)
-        _picker = adoptNS([[WKInkPickerView alloc] initWithFrame:CGRectZero drawingView:_drawingView.get()]);
-    [_picker sizeToFit];
-    return _picker.get();
 }
 
 @end

@@ -390,7 +390,7 @@ UIProcess/ios/WKContentViewInteraction.mm @no-unify
 UIProcess/ios/WKDrawingView.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
-UIProcess/ios/WKInkPickerControl.mm
+UIProcess/ios/WKInkPickerView.mm
 UIProcess/ios/WKInspectorNodeSearchGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
 UIProcess/ios/WKLegacyPDFView.mm

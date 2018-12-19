@@ -25,15 +25,18 @@
 
 #if HAVE(PENCILKIT)
 
-#import "WKFormPeripheral.h"
+#import <UIKit/UIKit.h>
 
 OBJC_CLASS WKDrawingView;
 
-@interface WKInkPickerControl : NSObject <WKFormPeripheral>
+@interface WKInkPickerView : UIView
 
-- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
+
+- (instancetype)initWithDrawingView:(WKDrawingView *)drawingView NS_DESIGNATED_INITIALIZER;
 
 @end
-
 
 #endif // HAVE(PENCILKIT)
