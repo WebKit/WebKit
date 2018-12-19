@@ -55,7 +55,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(AUTHORIZATION_STATUS_FOR_MEDIA_TYPE)
 #import <AVFoundation/AVCaptureDevice.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <wtf/SoftLinking.h>
@@ -912,7 +912,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return true;
     }
 
-#if PLATFORM(IOS_FAMILY)
+#if HAVE(AUTHORIZATION_STATUS_FOR_MEDIA_TYPE)
     bool usingMockCaptureDevices = page.preferences().mockCaptureDevicesEnabled();
     auto requestCameraAuthorization = makeBlockPtr([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView), usingMockCaptureDevices]() {
 

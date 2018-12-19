@@ -1,3 +1,15 @@
+2018-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Force system camera/microphone TCC prompt if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=192820
+        <rdar://problem/42680098>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Enable TCC check 
+        and prompt on Mojave.
+
 2018-12-19  Megan Gardner  <megan_gardner@apple.com>
 
         Allow clients to set the navigator platform

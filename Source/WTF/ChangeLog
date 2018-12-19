@@ -1,3 +1,13 @@
+2018-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Force system camera/microphone TCC prompt if necessary
+        https://bugs.webkit.org/show_bug.cgi?id=192820
+        <rdar://problem/42680098>
+
+        Reviewed by Jer Noble.
+
+        * wtf/Platform.h: Define HAVE_AUTHORIZATION_STATUS_FOR_MEDIA_TYPE.
+
 2018-12-17  Chris Fleizach  <cfleizach@apple.com>
 
         Some builds are broken after r239262
