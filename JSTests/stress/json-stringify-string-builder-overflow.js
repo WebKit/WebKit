@@ -1,4 +1,4 @@
-//@ slow
+//@ slow!
 //@ skip if $architecture != "arm64" and $architecture != "x86-64"
 
 var exception;
