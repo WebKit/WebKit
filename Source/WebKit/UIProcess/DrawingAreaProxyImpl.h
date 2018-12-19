@@ -76,10 +76,12 @@ private:
         void stop();
         void didDraw();
 
-        WebPageProxy& m_webPage;
         MonotonicTime m_startTime;
         WTF::Function<void (CallbackBase::Error)> m_callback;
         RunLoop::Timer<DrawingMonitor> m_timer;
+#if PLATFORM(GTK)
+        WebPageProxy& m_webPage;
+#endif
     };
 
     bool m_isBackingStoreDiscardable { true };

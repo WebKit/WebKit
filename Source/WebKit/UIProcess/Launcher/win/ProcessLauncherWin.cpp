@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-static const LPCWSTR processName(ProcessLauncher::ProcessType processType)
+static LPCWSTR processName(ProcessLauncher::ProcessType processType)
 {
     switch (processType) {
     case ProcessLauncher::ProcessType::Web:

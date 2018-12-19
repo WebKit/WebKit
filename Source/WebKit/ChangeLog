@@ -1,3 +1,33 @@
+2018-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][Clang] Fix compilation warnings under Source/WebKit directory
+        https://bugs.webkit.org/show_bug.cgi?id=192695
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (makeSalt): Enclosed by #if !OS(WINDOWS).
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::directoryEntryType): Ditto.
+        * Platform/win/ModuleWin.cpp:
+        (WebKit::Module::platformFunctionPointer const): Cast a function pointer with reinterpret_cast<void*>().
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor):
+        Moved the initializer of m_webPage in order to be encluded by #if PLATFORM(GTK).
+        * UIProcess/DrawingAreaProxyImpl.h: Ditto.
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::processName): Removed the duplicated 'const' type qualifier.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformAttach): Removed an unused variable.
+        (WebKit::WebInspectorProxy::platformDetach): Ditto.
+        * UIProcess/win/WebPopupMenuProxyWin.cpp: Ditto.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint): Ditto.
+        (WebKit::WebPopupMenu::setUpPlatformData): Ditto.
+        * UIProcess/win/WebPopupMenuProxyWin.h: Marked override methods with 'override'.
+        * WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.h: Ditto.
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp: Removed an unused variable.
+
 2018-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] fast/forms/datalist/datalist-textinput-suggestions-order.html sometimes crashes after r239337

@@ -111,7 +111,6 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
 
         String itemText = m_popupClient->itemText(index);
 
-        TextDirection direction = itemText.defaultWritingDirection() == U_RIGHT_TO_LEFT ? TextDirection::RTL : TextDirection::LTR;
         TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
 
         notSelectedBackingStoreContext->setFillColor(optionTextColor);

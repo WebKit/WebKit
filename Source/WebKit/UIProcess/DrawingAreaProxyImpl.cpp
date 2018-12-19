@@ -200,8 +200,10 @@ void DrawingAreaProxyImpl::discardBackingStore()
 }
 
 DrawingAreaProxyImpl::DrawingMonitor::DrawingMonitor(WebPageProxy& webPage)
-    : m_webPage(webPage)
-    , m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
+    : m_timer(RunLoop::main(), this, &DrawingMonitor::stop)
+#if PLATFORM(GTK)
+    , m_webPage(webPage)
+#endif
 {
 #if USE(GLIB_EVENT_LOOP)
     // Give redraws more priority.

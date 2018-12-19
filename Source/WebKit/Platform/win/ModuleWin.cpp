@@ -51,7 +51,8 @@ void* Module::platformFunctionPointer(const char* functionName) const
 {
     if (!m_module)
         return 0;
-    return ::GetProcAddress(m_module, functionName);
+    auto proc = ::GetProcAddress(m_module, functionName);
+    return reinterpret_cast<void*>(proc);
 }
 
 }

@@ -142,6 +142,7 @@ bool bytesEqual(const Data& a, const Data& b)
     return !memcmp(a.data(), b.data(), a.size());
 }
 
+#if !OS(WINDOWS)
 static Salt makeSalt()
 {
     Salt salt;
@@ -150,6 +151,7 @@ static Salt makeSalt()
     *reinterpret_cast<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
     return salt;
 }
+#endif
 
 std::optional<Salt> readOrMakeSalt(const String& path)
 {

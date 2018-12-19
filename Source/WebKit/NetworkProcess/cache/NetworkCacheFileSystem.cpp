@@ -51,9 +51,9 @@
 namespace WebKit {
 namespace NetworkCache {
 
+#if !OS(WINDOWS)
 static DirectoryEntryType directoryEntryType(uint8_t dtype)
 {
-#if !OS(WINDOWS)
     switch (dtype) {
     case DT_DIR:
         return DirectoryEntryType::Directory;
@@ -63,10 +63,9 @@ static DirectoryEntryType directoryEntryType(uint8_t dtype)
         ASSERT_NOT_REACHED();
         return DirectoryEntryType::File;
     }
-#else
     return DirectoryEntryType::File;
-#endif
 }
+#endif
 
 void traverseDirectory(const String& path, const Function<void (const String&, DirectoryEntryType)>& function)
 {

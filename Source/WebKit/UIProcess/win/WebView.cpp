@@ -474,10 +474,8 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
         cairo_surface_destroy(surface);
 
         Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
-        for (size_t i = 0; i < unpaintedRects.size(); ++i) {
-            RECT winRect = unpaintedRects[i];
-            drawPageBackground(hdc, m_page.get(), unpaintedRects[i]);
-        }
+        for (auto& rect : unpaintedRects)
+            drawPageBackground(hdc, m_page.get(), rect);
     } else
         drawPageBackground(hdc, m_page.get(), dirtyRect);
 }

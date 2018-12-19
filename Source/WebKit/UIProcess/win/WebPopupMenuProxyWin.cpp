@@ -50,8 +50,6 @@ static const LPCWSTR kWebKit2WebPopupMenuProxyWindowClassName = L"WebKit2WebPopu
 static constexpr int defaultAnimationDuration = 200;
 static constexpr int maxPopupHeight = 320;
 static constexpr int popupWindowBorderWidth = 1;
-static constexpr int separatorPadding = 4;
-static constexpr int separatorHeight = 1;
 
 // This is used from within our custom message pump when we want to send a
 // message to the web view and not have our message stolen and sent to

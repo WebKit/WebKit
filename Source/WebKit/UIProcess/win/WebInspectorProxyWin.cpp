@@ -301,9 +301,6 @@ void WebInspectorProxy::platformAttach()
     static const unsigned minimumAttachedWidth = 750;
     static const unsigned minimumAttachedHeight = 250;
 
-    unsigned inspectedHeight = platformInspectedWindowHeight();
-    unsigned inspectedWidth = platformInspectedWindowWidth();
-
     if (m_inspectorDetachWindow && ::GetParent(m_inspectorViewWindow) == m_inspectorDetachWindow) {
         ::SetParent(m_inspectorViewWindow, m_inspectedViewParentWindow);
         ::ShowWindow(m_inspectorDetachWindow, SW_HIDE);
@@ -327,7 +324,6 @@ void WebInspectorProxy::platformDetach()
         return;
 
     if (!m_inspectorDetachWindow) {
-        static bool haveRegisteredClass = false;
         registerWindowClass();
         m_inspectorDetachWindow = ::CreateWindowEx(0, WebInspectorProxyClassName, 0, WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, initialWindowWidth, initialWindowHeight,
