@@ -54,11 +54,8 @@ static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
 
 bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response)
 {
-    m_methods.clear();
-    parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods), m_methods);
-
-    m_headers.clear();
-    parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders), m_headers);
+    m_methods = parseAccessControlAllowList(response.httpHeaderField(HTTPHeaderName::AccessControlAllowMethods));
+    m_headers = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlAllowHeaders));
 
     Seconds expiryDelta = 0_s;
     if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {

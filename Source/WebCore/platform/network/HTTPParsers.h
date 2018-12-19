@@ -149,8 +149,9 @@ void addToAccessControlAllowList(const String& string, unsigned start, unsigned 
 }
 
 template<class HashType = DefaultHash<String>::Hash>
-void parseAccessControlAllowList(const String& string, HashSet<String, HashType>& set)
+HashSet<String, HashType> parseAccessControlAllowList(const String& string)
 {
+    HashSet<String, HashType> set;
     unsigned start = 0;
     size_t end;
     while ((end = string.find(',', start)) != notFound) {
@@ -160,6 +161,7 @@ void parseAccessControlAllowList(const String& string, HashSet<String, HashType>
     }
     if (start != string.length())
         addToAccessControlAllowList(string, start, string.length() - 1, set);
+    return set;
 }
 
 }

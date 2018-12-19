@@ -1,3 +1,20 @@
+2018-12-19  Rob Buis  <rbuis@igalia.com>
+
+        Merge parseAccessControlExposeHeadersAllowList into parseAccessControlAllowList
+        https://bugs.webkit.org/show_bug.cgi?id=192288
+
+        Reviewed by Frédéric Wang.
+
+        Prefer return value to out parameter for parseAccessControlAllowList.
+
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        * platform/network/HTTPParsers.h:
+        (WebCore::parseAccessControlAllowList):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::filter):
+        (WebCore::ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting):
+
 2018-12-18  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r235165): [GTK][WPE] Garbled rendering on GitLab
