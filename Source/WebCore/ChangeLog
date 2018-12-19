@@ -1,3 +1,12 @@
+2018-12-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        ContentExtensions: DFANode.cpp:66:44: error: narrowing conversion of '-1' from 'int' to 'char' inside { }
+        https://bugs.webkit.org/show_bug.cgi?id=192854
+
+        Reviewed by Alex Christensen.
+
+        * contentextensions/DFANode.h: Define CharRange's chars as signed
+
 2018-12-19  Youenn Fablet  <youenn@apple.com>
 
         Remove RTCRtpTransceiver.setDirection

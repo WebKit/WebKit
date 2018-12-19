@@ -38,8 +38,8 @@ namespace ContentExtensions {
 struct DFA;
 
 struct CharRange {
-    char first;
-    char last;
+    signed char first;
+    signed char last;
     unsigned size() const { return last - first + 1; }
 };
 
