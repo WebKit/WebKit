@@ -1,5 +1,14 @@
 2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        REGRESSION (r234940): [ MacOS ] Layout Test imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190976
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark test as flaky.
+
+2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r239347.
 
         Caused the leaks bot to hit an exception and the new test
