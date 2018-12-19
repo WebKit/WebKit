@@ -12,6 +12,9 @@ function gatherCandidates(pc)
 {
     var candidates = [];
     return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject("gathering did time out with " + candidates.length + " candidates");
+        }, 10000);
         pc.onicecandidate = (event) => {
             if (event.candidate === null) {
                 resolve(candidates);
