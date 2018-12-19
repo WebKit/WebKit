@@ -1,5 +1,23 @@
 2018-12-19  Alicia Boya García  <aboya@igalia.com>
 
+        [MSE] Remove unused method: stopAskingForMoreSamples()
+        https://bugs.webkit.org/show_bug.cgi?id=192754
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The stopAskingForMoreSamples() method from SourceBufferPrivate is not
+        being used by anyone. SourceBuffer is not calling it and no
+        SourceBufferPrivate is implementing it. Let's remove that noise.
+
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::setActive):
+        (WebCore::SourceBufferPrivate::stopAskingForMoreSamples): Deleted.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::stopAskingForMoreSamples): Deleted.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
+2018-12-19  Alicia Boya García  <aboya@igalia.com>
+
         [MSE] Remove dead code: sourceBufferPrivateSeekToTime()
         https://bugs.webkit.org/show_bug.cgi?id=192827
 

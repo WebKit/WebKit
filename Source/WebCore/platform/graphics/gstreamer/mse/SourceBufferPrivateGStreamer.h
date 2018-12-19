@@ -67,7 +67,6 @@ public:
     void allSamplesInTrackEnqueued(const AtomicString&) final;
     bool isReadyForMoreSamples(const AtomicString&) final;
     void setActive(bool) final;
-    void stopAskingForMoreSamples(const AtomicString&) final;
     void notifyClientWhenReadyForMoreSamples(const AtomicString&) final;
 
     void setReadyForMoreSamples(bool);

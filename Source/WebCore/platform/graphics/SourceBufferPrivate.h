@@ -59,7 +59,6 @@ public:
     virtual void allSamplesInTrackEnqueued(const AtomicString&) { }
     virtual bool isReadyForMoreSamples(const AtomicString&) { return false; }
     virtual void setActive(bool) { }
-    virtual void stopAskingForMoreSamples(const AtomicString&) { }
     virtual void notifyClientWhenReadyForMoreSamples(const AtomicString&) { }
 
     virtual Vector<String> enqueuedSamplesForTrackID(const AtomicString&) { return { }; }
