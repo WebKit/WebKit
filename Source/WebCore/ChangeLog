@@ -1,3 +1,17 @@
+2018-12-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] MediaKeySystemConfiguration distinctiveIdentifier and persistentState should default to optional
+        https://bugs.webkit.org/show_bug.cgi?id=192815
+
+        Reviewed by Jer Noble.
+
+        https://www.w3.org/TR/encrypted-media/#dom-mediakeysystemconfiguration
+        says that distinctiveIdentifier and persistentState default to
+        optional. Our implementation does not define a default leaving it
+        to the first option of the enum, which currently is Required.
+
+        * platform/encryptedmedia/CDMKeySystemConfiguration.h:
+
 2018-12-19  Rob Buis  <rbuis@igalia.com>
 
         Merge parseAccessControlExposeHeadersAllowList into parseAccessControlAllowList

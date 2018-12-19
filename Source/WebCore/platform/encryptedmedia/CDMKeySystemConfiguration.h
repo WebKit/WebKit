@@ -45,8 +45,8 @@ struct CDMKeySystemConfiguration {
     Vector<String> initDataTypes;
     Vector<CDMMediaCapability> audioCapabilities;
     Vector<CDMMediaCapability> videoCapabilities;
-    CDMRequirement distinctiveIdentifier;
-    CDMRequirement persistentState;
+    CDMRequirement distinctiveIdentifier { CDMRequirement::Optional };
+    CDMRequirement persistentState { CDMRequirement::Optional };
     Vector<CDMSessionType> sessionTypes;
 };
 
