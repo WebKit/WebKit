@@ -50,11 +50,11 @@ public:
 
 private:
 #if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
-    IGNORE_WARNINGS_BEGIN("unused-private-field")
+    IGNORE_CLANG_WARNINGS_BEGIN("unused-private-field")
 #endif
     WebPage* m_page;
 #if !(USE(AUTOCORRECTION_PANEL) || USE(DICTATION_ALTERNATIVES))
-    IGNORE_WARNINGS_END
+    IGNORE_CLANG_WARNINGS_END
 #endif
 };
 
