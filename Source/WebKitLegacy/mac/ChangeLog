@@ -1,3 +1,25 @@
+2018-12-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        <rdar://problem/46194315> macOS: WebKit1 does not handle occlusion changes
+        https://bugs.webkit.org/show_bug.cgi?id=192821
+
+        Reviewed by Chris Dumez.
+
+        When a window becomes occluded, the window server informs the application.
+        This should be used to suspend any work that is not visible by the user.
+
+        WebKit2 handles it just fine, but WebKit1 did not handle the notification.
+        In some cases, that lead to performance impact (see radar).
+
+        This patch adds an observer for the occlusion notification. I tried to stick
+        with the same names used by WebKit2.
+
+        * WebView/WebView.mm:
+        (-[WebView _isViewVisible]):
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        (-[WebView _windowDidChangeOcclusionState:]):
+
 2018-12-19  Megan Gardner  <megan_gardner@apple.com>
 
         Allow clients to set the navigator platform

@@ -183,6 +183,10 @@ void WebViewLayerFlushScheduler::layerFlushCallback()
     usesPageCache = YES;
     shouldUpdateWhileOffscreen = YES;
 
+#if !PLATFORM(IOS_FAMILY)
+    windowOcclusionDetectionEnabled = YES;
+#endif
+
     zoomMultiplier = 1;
     zoomsTextOnly = NO;
 
