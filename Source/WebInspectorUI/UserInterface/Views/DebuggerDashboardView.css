@@ -157,15 +157,15 @@ body[dir=rtl] .dashboard.debugger > .location > :last-child {
     height: 16px;
 }
 
-.dashboard.debugger > .location .function-icon {
+.dashboard.debugger > .location {
     --debugger-dashboard-function-icon-margin-end: 3px;
 }
 
-body[dir=ltr] .dashboard.debugger > .location .function-icon {
+body[dir=ltr] .dashboard.debugger > .location :matches(.function-icon, .event-listener-icon) {
     margin-right: var(--debugger-dashboard-function-icon-margin-end);
 }
 
-body[dir=rtl] .dashboard.debugger > .location .function-icon {
+body[dir=rtl] .dashboard.debugger > .location :matches(.function-icon, .event-listener-icon) {
     margin-left: var(--debugger-dashboard-function-icon-margin-end);
 }
 
