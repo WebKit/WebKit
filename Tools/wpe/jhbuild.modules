@@ -108,7 +108,7 @@
 
   <autotools id="fonts" supports-non-srcdir-builds="no"
              skip-autogen="true">
-    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.6"/>
+    <branch repo="github.com" module="WebKitGTK/webkitgtk-test-fonts.git" checkoutdir="webkitgtk-test-fonts" tag="0.0.8"/>
   </autotools>
 
   <autotools id="dicts" supports-non-srcdir-builds="no"
