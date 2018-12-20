@@ -1,3 +1,45 @@
+2018-12-19  Alex Christensen  <achristensen@webkit.org>
+
+        Navigations away from the SafeBrowsing interstitial show a flash of old content
+        https://bugs.webkit.org/show_bug.cgi?id=192676
+
+        Reviewed by Chris Dumez.
+
+        When a user clicks through a safe browsing warning, do not remove the warning until content is drawn for the destination.
+        Otherwise, the user will confusingly see the page before the warning while the navigation happens.
+        We can only do this for warnings caused by main frame navigations, though.  Other warnings (such as those caused by iframes)
+        need to be cleared immediately, and we still need to clear the warning immediately if the user has said to go back.
+
+        This change is reflected in an updated API test.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        * UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm:
+        (WebKit::SafeBrowsingWarning::SafeBrowsingWarning):
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.h:
+        * UIProcess/Cocoa/WKSafeBrowsingWarning.mm:
+        (-[WKSafeBrowsingWarning forMainFrameNavigation]):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+        (WebKit::WebViewImpl::clearSafeBrowsingWarningIfForMainFrameNavigation):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::clearSafeBrowsingWarningIfForMainFrameNavigation):
+        * UIProcess/SafeBrowsingWarning.h:
+        (WebKit::SafeBrowsingWarning::create):
+        (WebKit::SafeBrowsingWarning::forMainFrameNavigation const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReachLayoutMilestone):
+        (WebKit::WebPageProxy::beginSafeBrowsingCheck):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation):
+
 2018-12-19  Tim Horton  <timothy_horton@apple.com>
 
         UI process crash when focusing an editable image

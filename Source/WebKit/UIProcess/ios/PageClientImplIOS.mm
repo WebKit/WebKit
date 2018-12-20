@@ -485,6 +485,11 @@ void PageClientImpl::clearSafeBrowsingWarning()
     [m_webView _clearSafeBrowsingWarning];
 }
 
+void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+{
+    [m_webView _clearSafeBrowsingWarningIfForMainFrameNavigation];
+}
+
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
     notImplemented();

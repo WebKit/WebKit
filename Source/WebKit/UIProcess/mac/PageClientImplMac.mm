@@ -501,6 +501,11 @@ void PageClientImpl::clearSafeBrowsingWarning()
     m_impl->clearSafeBrowsingWarning();
 }
 
+void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+{
+    m_impl->clearSafeBrowsingWarningIfForMainFrameNavigation();
+}
+
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
 {
     m_impl->setTextIndicator(textIndicator.get(), lifetime);

@@ -72,14 +72,14 @@ void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::Recent
     searchItems = WebCore::loadRecentSearches(name);
 }
 
-void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListenerProxy& listener)
+void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)
 {
 #if HAVE(SAFE_BROWSING)
     SSBLookupContext *context = [SSBLookupContext sharedLookupContext];
     if (!context)
         return listener.didReceiveSafeBrowsingResults({ });
-    [context lookUpURL:url completionHandler:makeBlockPtr([listener = makeRef(listener), url = url] (SSBLookupResult *result, NSError *error) mutable {
-        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), url = WTFMove(url)] {
+    [context lookUpURL:url completionHandler:makeBlockPtr([listener = makeRef(listener), forMainFrameNavigation, url = url] (SSBLookupResult *result, NSError *error) mutable {
+        RunLoop::main().dispatch([listener = WTFMove(listener), result = retainPtr(result), error = retainPtr(error), forMainFrameNavigation, url = WTFMove(url)] {
             if (error) {
                 listener->didReceiveSafeBrowsingResults({ });
                 return;
@@ -87,7 +87,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, WebFramePolicyListener
 
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
-                    listener->didReceiveSafeBrowsingResults(SafeBrowsingWarning::create(url, lookupResult));
+                    listener->didReceiveSafeBrowsingResults(SafeBrowsingWarning::create(url, forMainFrameNavigation, lookupResult));
                     return;
                 }
             }

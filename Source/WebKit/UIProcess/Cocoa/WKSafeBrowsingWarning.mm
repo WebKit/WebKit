@@ -510,6 +510,11 @@ static void setBackground(ViewType *view, ColorType *color)
     _completionHandler((NSURL *)link);
 }
 
+- (BOOL)forMainFrameNavigation
+{
+    return _warning->forMainFrameNavigation();
+}
+
 @end
 
 @implementation WKSafeBrowsingTextView

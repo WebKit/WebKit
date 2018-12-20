@@ -1622,9 +1622,16 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
         return completionHandler(ContinueUnsafeLoad::Yes);
 
     m_safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:[m_view bounds] safeBrowsingWarning:warning completionHandler:[weakThis = makeWeakPtr(*this), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
-        if (weakThis)
-            [std::exchange(weakThis->m_safeBrowsingWarning, nullptr) removeFromSuperview];
         completionHandler(WTFMove(result));
+        if (!weakThis)
+            return;
+        bool navigatesMainFrame = WTF::switchOn(result,
+            [] (ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == ContinueUnsafeLoad::Yes; },
+            [] (const URL&) { return true; }
+        );
+        if (navigatesMainFrame && [weakThis->m_safeBrowsingWarning forMainFrameNavigation])
+            return;
+        [std::exchange(weakThis->m_safeBrowsingWarning, nullptr) removeFromSuperview];
     }]);
     [m_view addSubview:m_safeBrowsingWarning.get()];
 }
@@ -1632,6 +1639,12 @@ void WebViewImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, Co
 void WebViewImpl::clearSafeBrowsingWarning()
 {
     [std::exchange(m_safeBrowsingWarning, nullptr) removeFromSuperview];
+}
+
+void WebViewImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
+{
+    if ([m_safeBrowsingWarning forMainFrameNavigation])
+        clearSafeBrowsingWarning();
 }
 
 bool WebViewImpl::isFocused() const

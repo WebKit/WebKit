@@ -4195,6 +4195,9 @@ void WebPageProxy::didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> l
 {
     PageClientProtector protector(pageClient());
 
+    if (layoutMilestones.contains(DidFirstVisuallyNonEmptyLayout))
+        pageClient().clearSafeBrowsingWarningIfForMainFrameNavigation();
+    
     if (m_loaderClient)
         m_loaderClient->didReachLayoutMilestone(*this, layoutMilestones);
     m_navigationClient->renderingProgressDidChange(*this, layoutMilestones);
@@ -4250,7 +4253,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 }
 
 #if !PLATFORM(COCOA)
-void WebPageProxy::beginSafeBrowsingCheck(const URL&, WebFramePolicyListenerProxy& listener)
+void WebPageProxy::beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy& listener)
 {
     listener.didReceiveSafeBrowsingResults({ });
 }
@@ -4367,7 +4370,7 @@ void WebPageProxy::decidePolicyForNavigationAction(WebFrameProxy& frame, WebCore
 
     }, shouldExpectSafeBrowsingResult));
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
-        beginSafeBrowsingCheck(request.url(), listener);
+        beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
 
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);

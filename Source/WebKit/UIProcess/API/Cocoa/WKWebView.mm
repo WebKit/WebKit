@@ -1279,9 +1279,17 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
 {
     _safeBrowsingWarning = adoptNS([[WKSafeBrowsingWarning alloc] initWithFrame:self.bounds safeBrowsingWarning:warning completionHandler:[weakSelf = WeakObjCPtr<WKWebView>(self), completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
-        if (auto strongSelf = weakSelf.get())
-            [std::exchange(strongSelf->_safeBrowsingWarning, nullptr) removeFromSuperview];
         completionHandler(WTFMove(result));
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+        bool navigatesMainFrame = WTF::switchOn(result,
+            [] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == WebKit::ContinueUnsafeLoad::Yes; },
+            [] (const URL&) { return true; }
+        );
+        if (navigatesMainFrame && [strongSelf->_safeBrowsingWarning forMainFrameNavigation])
+            return;
+        [std::exchange(strongSelf->_safeBrowsingWarning, nullptr) removeFromSuperview];
     }]);
     [self addSubview:_safeBrowsingWarning.get()];
 }
@@ -1289,6 +1297,12 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 - (void)_clearSafeBrowsingWarning
 {
     [std::exchange(_safeBrowsingWarning, nullptr) removeFromSuperview];
+}
+
+- (void)_clearSafeBrowsingWarningIfForMainFrameNavigation
+{
+    if ([_safeBrowsingWarning forMainFrameNavigation])
+        [self _clearSafeBrowsingWarning];
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

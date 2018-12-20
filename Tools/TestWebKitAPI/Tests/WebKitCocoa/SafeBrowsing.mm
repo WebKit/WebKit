@@ -281,22 +281,15 @@ TEST(SafeBrowsing, ShowWarningSPI)
 }
 
 static Vector<URL> urls;
-static bool done;
 
-@interface SafeBrowsingHelper : NSObject<WKNavigationDelegate, WKUIDelegate>
+@interface SafeBrowsingObserver : NSObject
 @end
 
-@implementation SafeBrowsingHelper
+@implementation SafeBrowsingObserver
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
 {
     urls.append((NSURL *)[change objectForKey:NSKeyValueChangeNewKey]);
-}
-
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
-{
-    done = true;
-    completionHandler();
 }
 
 @end
@@ -307,25 +300,24 @@ TEST(SafeBrowsing, URLObservation)
 
     RetainPtr<NSURL> simpleURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> simple2URL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    auto helper = adoptNS([SafeBrowsingHelper new]);
+    auto observer = adoptNS([SafeBrowsingObserver new]);
 
     auto webViewWithWarning = [&] () -> RetainPtr<WKWebView> {
         auto webView = adoptNS([WKWebView new]);
-        [webView setUIDelegate:helper.get()];
-        [webView setNavigationDelegate:helper.get()];
-        [webView addObserver:helper.get() forKeyPath:@"URL" options:NSKeyValueObservingOptionNew context:nil];
+        [webView addObserver:observer.get() forKeyPath:@"URL" options:NSKeyValueObservingOptionNew context:nil];
 
-        [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:simpleURL.get()];
+        [webView loadHTMLString:@"meaningful content to be drawn" baseURL:simpleURL.get()];
         while (![webView _safeBrowsingWarning])
             TestWebKitAPI::Util::spinRunLoop();
 #if !PLATFORM(MAC)
         [[webView _safeBrowsingWarning] didMoveToWindow];
 #endif
         visitUnsafeSite([webView _safeBrowsingWarning]);
-        TestWebKitAPI::Util::run(&done);
+        EXPECT_TRUE(!![webView _safeBrowsingWarning]);
+        while ([webView _safeBrowsingWarning])
+            TestWebKitAPI::Util::spinRunLoop();
         EXPECT_FALSE(!![webView _safeBrowsingWarning]);
 
-        done = false;
         [webView evaluateJavaScript:[NSString stringWithFormat:@"window.location='%@'", simple2URL.get()] completionHandler:nil];
         while (![webView _safeBrowsingWarning])
             TestWebKitAPI::Util::spinRunLoop();
@@ -348,7 +340,7 @@ TEST(SafeBrowsing, URLObservation)
         checkURLs({ simpleURL, simple2URL });
         goBack([webView _safeBrowsingWarning]);
         checkURLs({ simpleURL, simple2URL, simpleURL });
-        [webView removeObserver:helper.get() forKeyPath:@"URL"];
+        [webView removeObserver:observer.get() forKeyPath:@"URL"];
     }
     
     urls.clear();
@@ -359,7 +351,7 @@ TEST(SafeBrowsing, URLObservation)
         visitUnsafeSite([webView _safeBrowsingWarning]);
         TestWebKitAPI::Util::spinRunLoop(5);
         checkURLs({ simpleURL, simple2URL });
-        [webView removeObserver:helper.get() forKeyPath:@"URL"];
+        [webView removeObserver:observer.get() forKeyPath:@"URL"];
     }
 }
 

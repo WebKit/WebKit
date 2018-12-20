@@ -61,4 +61,6 @@ using RectType = CGRect;
 
 - (instancetype)initWithFrame:(RectType)frame safeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 
+- (BOOL)forMainFrameNavigation;
+
 @end
