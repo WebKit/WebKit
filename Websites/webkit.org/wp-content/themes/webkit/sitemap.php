@@ -8,12 +8,14 @@
     <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
         <style>
         article .menu a {
-            color: #444444;
+            color: hsl(0, 0%, 26.7%);
+            color: var(--text-color-heading);
             text-decoration: none;
         }
 
         article .menu a:hover {
-            color: #08c;
+            color: hsl(200, 100%, 40%);
+            color: var(--link-color);
         }
 
         article .menu,
@@ -46,7 +48,8 @@
             font-weight: 200;
             letter-spacing: -0.01em;
             padding-bottom: 1rem;
-            border-bottom: 1px solid #dddddd;
+            border-bottom: 1px solid hsl(0, 0%, 86.7%);
+            border-color: var(--horizontal-rule-color);
             margin-bottom: 1rem;
         }
 

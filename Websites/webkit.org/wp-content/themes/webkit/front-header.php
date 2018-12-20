@@ -2,34 +2,25 @@
     header {
         position: absolute;
     }
-    
-    .home .site-logo {
-        color: #ffffff;
-    }
-    
-    .content-scroll #menu-main-menu > li > a:not(:hover),
-    .content-scroll .site-logo {
-        color: #333333;
-    }
-    
+
     .page-layer {
         overflow: hidden;
     }
-    
+
     .hero {
         position: relative;
         overflow: hidden;
         max-width: 100vw;
         box-sizing: border-box;
         padding: 0 0 6rem;
-        color: #ffffff;
-        background-color: #00253D;
+        color: white;
+        background-color: hsl(203.6, 100%, 12%);
         z-index: 1;
         top: -30rem;
         padding-top: 45rem;
         margin-bottom: -30rem;
     }
-    
+
     .hero h1 {
         font-size: 4.8rem;
         font-weight: 500;
@@ -37,7 +28,7 @@
         text-align: center;
         line-height: 1.04167;
     }
-    
+
     .hero p {
         font-size: 2.2rem;
         line-height: 1.45455;
@@ -48,7 +39,7 @@
     }
 
     .hero a {
-        color: #0af;
+        color: hsl(200, 100%, 50%);
     }
 
     #fade {
@@ -59,7 +50,7 @@
         z-index: 4;
         transform: translateY(-45rem);
     }
-    
+
     #template {
         opacity: 0.1;
         position: absolute;
@@ -71,7 +62,7 @@
         background-size: 101.5%;
         z-index: 3;
         transform: translateY(-40rem);    }
-    
+
     #compass {
         position: absolute;
         top: 0px;
@@ -109,7 +100,7 @@
             -webkit-transform: translateY(-400px) rotate(360deg);
         }
     }
-    
+
     .hero .content {
         position: relative;
         max-width: 800px;
@@ -117,25 +108,25 @@
         margin: 0 auto;
         z-index: 10;
     }
-    
+
     main {
         position: relative;
         z-index: 10;
     }
-    
+
     @media only screen and (max-width: 920px) {
         .hero {
             padding-top: 40rem;
             padding-bottom: 3rem;
         }
     }
-    
+
     @media only screen and (max-width: 690px) {
         .hero h1 {
             font-size: 4rem;
             line-height: 1.1;
         }
-        
+
         .hero p {
             font-size: 2rem;
             line-height: 1.4;
@@ -146,20 +137,21 @@
             background-size: 150%;
         }
     }
-    
+
     @media only screen and (max-width: 320px) {
         .hero h1 {
             font-size: 2.5rem;
             letter-spacing: -0.016rem;
         }
-    }    
-    
+    }
+
     @media (prefers-reduced-motion) {
         #compass {
             animation: none;
             transform: translateY(-400px);
         }
     }
+
     </style>
 
     <?php if ( is_front_page() && have_posts()): the_post(); ?>
@@ -172,5 +164,5 @@
         </div>
     </div>
     <?php endif; ?>
-        
+
 <div class="page-layer">

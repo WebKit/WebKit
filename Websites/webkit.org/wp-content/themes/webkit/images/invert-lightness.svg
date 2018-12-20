@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2018 Apple Inc. All rights reserved. -->
+<svg xmlns="http://www.w3.org/2000/svg">
+	<style> svg { display: block; width: 0; height: 0; } </style>
+    <filter id="invertLightness" x="0" y="0" style="color-interpolation-filters: sRGB">
+        <feColorMatrix type="matrix" in="SourceGraphic" result="red" values="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1" />
+        <feColorMatrix type="matrix" in="SourceGraphic" result="green" values="0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1" />
+        <feColorMatrix type="matrix" in="SourceGraphic" result="blue" values="0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 1" />
+        <feBlend in="red" in2="green" mode="lighten" result="maxyellow" />
+        <feBlend in="maxyellow" in2="blue" mode="lighten" result="max" />
+        <feBlend in="red" in2="green" mode="darken" result="minyellow" />
+        <feBlend in="minyellow" in2="blue" mode="darken" result="min" />
+        <feComponentTransfer result="adjustment" in="min">
+            <feFuncR type="linear" intercept="1" slope="-1" />
+            <feFuncG type="linear" intercept="1" slope="-1" />
+            <feFuncB type="linear" intercept="1" slope="-1" />
+        </feComponentTransfer>
+        <feComposite operator="arithmetic" in="SourceGraphic" in2="adjustment" k1="0" k2="1" k3="1" k4="-1" result="channelAdjustment" />
+        <feComposite operator="arithmetic" in="channelAdjustment" in2="max" k1="0" k2="1" k3="-1" k4="1" result="finalColors" />
+        <feComposite operator="in" in="finalColors" in2="SourceAlpha" />
+    </filter>
+</svg>

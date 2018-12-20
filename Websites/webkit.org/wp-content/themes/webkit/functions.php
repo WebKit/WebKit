@@ -7,7 +7,10 @@ add_action( 'init', function () {
     register_nav_menu('site-nav', __( 'Site Navigation' ));
     register_nav_menu('footer-nav', __( 'Footer Navigation' ));
     register_nav_menu('sitemap', __( 'Site Map Page' ));
+    register_nav_menu('feature-subnav', __( 'Feature Page Buttons' ));
 } );
+
+//add_action( 'wp_header', 'include_invert_lightness_filter');
 
 add_action( 'wp_dashboard_setup', function () {
     $SurveyWidget = new WebKit_Nightly_Survey();
@@ -236,6 +239,10 @@ function is_super_cache_enabled() {
 
 function include_post_icons() {
     echo WebKit_Post_Icons::parse_icons();
+}
+
+function include_invert_lightness_filter() {
+    include('images/invert-lightness.svg');
 }
 
 function get_post_icon() {

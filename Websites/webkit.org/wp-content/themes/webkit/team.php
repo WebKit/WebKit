@@ -5,6 +5,19 @@
 ?>
 <?php get_header(); ?>
 <style>
+:root {
+    --contributor-shadow: 0px 0px 10px 0px hsla(0, 0%, 0%, 0.1);
+    --expertise-shadow: 0px 10px 10px 0px hsla(0, 0%, 0%, 0.1);
+    --hover-text-color: hsl(0, 0%, 0%);
+}
+
+@media only screen and (prefers-color-scheme:dark) {
+    :root {
+        --contributor-shadow: 0px 0px 10px 0px hsla(0, 0%, 100%, 0.1);
+        --expertise-shadow: 0px 5px 10px 0px hsla(0, 0%, 100%, 0.1);
+        --hover-text-color: hsl(0, 0%, 100%);
+    }
+}
 article ul {
     list-style: none;
     padding-left: 0;
@@ -20,10 +33,13 @@ article ul > li {
     padding: 1rem;
     margin-bottom: 1rem;
     border: 1px solid transparent;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
 }
+
 li span,
 li em {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
 }
 
 li em {
@@ -31,27 +47,37 @@ li em {
     line-height: 2rem;
 }
 
-article ul > li li {
+.expertise {
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--button-background-color);
+    box-shadow: 0px 10px 10px 0px hsla(0, 0%, 0%, 0.1);
+    box-shadow: var(--expertise-shadow);
+
     position: absolute;
     font-size: 1.6rem;
     line-height: 2rem;
-    width: 100%;
+    margin-left: -1px;
+    width: calc(100.3% + 2px);
     box-sizing: border-box;
     display: none;
-    z-index: 1;
-
+    z-index: 100;
+    color: hsl(0, 0%, 0%);
+    color: var(--hover-text-color);
 }
 
 .bodycopy > ul > li:hover {
-    background: #ffffff;
-    border: 1px solid #e7e7e7;
-    box-shadow: 0px 3px 20px 0px rgba(0, 0, 0, 0.10);
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--button-background-color);
+    box-shadow: 0px 0px 10px 0px hsla(0, 0%, 0%, 0.1);
+    box-shadow: var(--contributor-shadow);
+    filter: none;
+    color: hsl(0, 0%, 0%);
+    color: var(--hover-text-color);
 }
 
-article ul > li:hover li {
-    background: #ffffff;
+.bodycopy ul li:hover .expertise {
+    filter: none;
     display: block;
-    box-shadow: none;
 }
 
 @media only screen and (max-width: 675px) {

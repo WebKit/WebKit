@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_uri(); ?>?20171013" media="all">
     <link rel="stylesheet" href="https://www.apple.com/wss/fonts?families=SF+Pro,v1" type="text/css">
+    <meta name="supported-color-schemes" content="light dark">
 
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<?php bloginfo('rss2_url'); ?>">
     <link rel="alternate" type="text/xml" title="RSS .92" href="<?php bloginfo('rss_url'); ?>">
@@ -24,7 +25,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-
+    <?php include_invert_lightness_filter(); ?>
     <header aria-label="WebKit.org Header" id="header">
         <div class="page-width">
         <a href="/"><div id="logo" class="site-logo">WebKit</div></a>

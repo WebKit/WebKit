@@ -1,3 +1,176 @@
+2018-12-20  Jon Davis  <jond@apple.com>
+
+        Added a dark mode color scheme.
+        https://bugs.webkit.org/show_bug.cgi?id=192930
+
+        Reviewed by Timothy Hatcher.
+
+        * .htaccess: Added convenience redirects for /features and /css-features
+        * wp-content/themes/webkit/build-archives.php: Customized dark color styles for the page.
+        * wp-content/themes/webkit/css-status.php: Implemented new design and dark styles support.
+        * wp-content/themes/webkit/front-header.php: Added dark color styles.
+        * wp-content/themes/webkit/functions.php: Added new feature status navigation menu.
+        * wp-content/themes/webkit/header.php: Specify support for light and dark color schemes.
+        * wp-content/themes/webkit/images/chevron-dark.svg: Added.
+        * wp-content/themes/webkit/images/chevron.svg: Switch to HSL color.
+        * wp-content/themes/webkit/images/filter.svg: Added.
+        * wp-content/themes/webkit/images/icons.svg: Use currentColor for dark mode.
+        * wp-content/themes/webkit/images/invert-lightness.svg: Added.
+        * wp-content/themes/webkit/images/search.svg: Added.
+        * wp-content/themes/webkit/sitemap.php: Customized dark color styles for the page.
+        * wp-content/themes/webkit/status.php: Updated design and dark styles support.
+        * wp-content/themes/webkit/style.css: Added dark style rules and switched to custom properties.
+        (:root):
+        (@media(prefers-color-scheme:dark)):
+        (body):
+        (a):
+        (a,):
+        (hr):
+        (code):
+        (main):
+        (a[name]):
+        (p > a[name]::before):
+        (a[name]:hover):
+        (a[name]:hover::before):
+        (p:hover > a[name]::before):
+        (input[type=text]):
+        (input[type=submit]):
+        (.screen-reader-text:focus):
+        (.pagination .page-numbers,):
+        (.pagination .menu-item a):
+        (.pagination .page-numbers:not(.current, .dots):hover):
+        (.pagination .dots,):
+        (.connected.pagination .menu-item):
+        (.connected.pagination .menu-item:hover a):
+        (.connected.pagination .menu-item:first-child a):
+        (.connected.pagination .menu-item:last-child a):
+        (.connected.pagination .menu-item.current-menu-item a,):
+        (.menu-feature-pages-container):
+        (.nextrouter):
+        (.nextrouter.previous):
+        (.nextrouter:hover,):
+        (.nextrouter a):
+        (.nextrouter-copy):
+        (.nextrouter .label):
+        (.nextrouter .link):
+        (.tiles):
+        (.tile):
+        (.tile .background-image):
+        (.tile .background-image svg):
+        (.tile.category-web-inspector svg):
+        (.tile.category-performance svg):
+        (.tile.category-javascript svg):
+        (.tile.category-css svg):
+        (.tile.category-standards svg):
+        (.tile.category-contributing svg):
+        (.tile.category-storage svg):
+        (.tile.category-layout svg):
+        (.tile.category-safari-technology-preview svg):
+        (.tile.category-accessibility svg):
+        (.tile.category-security svg):
+        (.tile.category-privacy svg):
+        (.tile .background-image.loaded):
+        (.tile:not(.has-post-thumbnail) .background-image,):
+        (.featured-tile .tile-content):
+        (.background-vignette):
+        (.tag-window .background-image):
+        (.tag-window .background-vignette):
+        (.featured-tile.tag-dark .background-vignette):
+        (.featured-tile.tag-dark .tile-content):
+        (.featured-tile.tag-dark .tile-content a):
+        (.icon-tile .icon):
+        (.icon-tile,):
+        (.gray-tile):
+        (.gray-tile a):
+        (.amber-tile):
+        (.blue-tile):
+        (.twitter-tile):
+        (.icon.twitter-icon):
+        (pre):
+        (code .keyword,):
+        (code .keyword.builtin,):
+        (code .keyword.type):
+        (code .preprocessor):
+        (code .comment):
+        (code .comment .doc):
+        (code .identifier):
+        (code .string,):
+        (code .escaped):
+        (code .number,):
+        (code .regex,):
+        (code .attribute.value):
+        (code .operator):
+        (code .keyword.operator):
+        (code .whitespace):
+        (code .error):
+        (code .doctype):
+        (code .property):
+        (code.xml .comment,):
+        (code.xml .preprocessor .keyword):
+        (code.xml .meta,):
+        (code.cpp .preprocessor .identifier):
+        (pre::-moz-selection,):
+        (pre::selection, pre span::selection):
+        (code.css .attribute,):
+        (code.css .keyword):
+        (code.css .number):
+        (article h1,):
+        (article .byline p):
+        (article thead, article tfoot):
+        (article tr):
+        (article blockquote):
+        (.post .bodycopy > p:last-child:after):
+        (article div.note):
+        (article .foreword):
+        (article .cliptop):
+        (article .clipbottom):
+        (article .clipright):
+        (article .clipleft):
+        (article .mattewhite):
+        (article .mattewhite:not(.widescreen)):
+        (figure.table):
+        (article figcaption):
+        (article figcaption::before):
+        (.table-of-contents):
+        (.site-logo):
+        (.feature-header:after,):
+        (header nav a,):
+        (header nav a:hover,):
+        (.sub-menu-layer):
+        (.sub-menu-layer:after):
+        (.sub-menu-layer:before):
+        (@media only screen and (max-width: 920px)):
+        (header .menu):
+        (header nav a):
+        (header .menu > .menu-item > .sub-menu):
+        (@media only screen and (max-width: 690px)):
+        (article .scrollable):
+        (@media only screen and (max-width: 600px)):
+        (.table-of-contents label:after):
+        (@media only screen and (max-width: 415px)):
+        (article .invert-brightness,):
+        (.preserve-color, video):
+        (.preserve-color:hover,):
+        (.nextrouter .link,):
+        (.search-input):
+        (.filters-toggle-button):
+        (a > code): Deleted.
+        (.pagination .page-numbers): Deleted.
+        (.nextrouter:hover): Deleted.
+        (.nextrouter.previous:hover): Deleted.
+        (.icon-tile, .icon-tile a): Deleted.
+        (.gray-tile, .gray-tile a): Deleted.
+        (code .string, code .char): Deleted.
+        (code .number, code .tag): Deleted.
+        (code .regex, code .attribute): Deleted.
+        (code.xml .meta, code.xml .meta .keyword): Deleted.
+        (code::-moz-selection, code span::-moz-selection): Deleted.
+        (code::selection, code span::selection): Deleted.
+        (article h1 a): Deleted.
+        (.feature-header:after): Deleted.
+        (.feature.opened .feature-header:after): Deleted.
+        * wp-content/themes/webkit/team.php: Customized dark color styles for the page.
+
 2018-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         webkit.org/css-status is broken

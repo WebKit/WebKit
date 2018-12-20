@@ -162,26 +162,6 @@ get_header();
         text-align: center;
     }
 
-    #downloads blockquote:first-child {
-        color: #8E8E93;
-        text-align: center;
-        font-size: 4rem;
-        line-height: 6rem;
-        font-weight: 200;
-    }
-
-    #downloads .bodycopy > div {
-        box-sizing: border-box;
-        padding: 0 1.5rem 3rem;
-        width: 50%;
-        text-align: center;
-        float: left;
-    }
-
-    #downloads h2 {
-        font-size: 3.2rem;
-    }
-
     .bodycopy ul > li {
         line-height: 1;
     }
@@ -193,7 +173,8 @@ get_header();
         text-transform: uppercase;
         padding-left: 0;
         line-height: 3rem;
-        color: #8E8E93;
+        color: hsl(0, 0%, 87%);
+        color: var(--text-color-light);
     }
 
     .bodycopy ul {
@@ -267,7 +248,8 @@ get_header();
         padding-left: 60px;
         border-bottom-width: 1px;
         border-bottom-style: solid;
-        border-bottom-color: rgb(214, 214, 214);
+        border-bottom-color: hsl(0, 0%, 86.7%);
+        border-bottom-color: var(--horizontal-rule-color);
         display: inline-block;
         list-style-type: none;
         list-style-position: initial;
@@ -301,7 +283,8 @@ get_header();
 
     .tabnav-link.current {
         pointer-events: none;
-        color: rgb(51, 51, 51);
+        color: hsl(0, 0%, 26.7%);
+        color: var(--text-color-heading);
         text-decoration: none;
         cursor: default;
         z-index: 10;
@@ -314,12 +297,14 @@ get_header();
         width: 100%;
         border-bottom-width: 1px;
         border-bottom-style: solid;
-        border-bottom-color: rgb(102, 102, 102);
+        border-bottom-color: hsl(0, 0%, 26.7%);
+        border-bottom-color: var(--text-color-heading);
         content: "";
     }
 
     .tabnav-link:hover {
-        color: rgb(0, 112, 201);
+        color: hsl(200, 100%, 40%);
+        color: var(--link-color);
         text-decoration: none;
     }
 

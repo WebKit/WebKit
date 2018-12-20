@@ -1,5 +1,5 @@
 <!-- Copyright © 2017 Apple Inc. All rights reserved. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32">
-  <style> polygon { color: hsl(200, 100%, 40%); } </style>
+  <style> polygon { color: hsl(206.7, 100%, 70%); } </style>
   <polygon fill="currentColor" fill-rule="evenodd" points="17.177 16.198 3.084 0 0 2.649 11.296 16.198 0 29.226 3.084 32"/>
 </svg>

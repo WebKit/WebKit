@@ -35,6 +35,32 @@ var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/We
 
 <style>
 
+:root {
+    --feature-rule-color: hsl(0, 0%, 89.4%);
+    --status-color: hsl(0, 0%, 60%);
+    --supported-color: hsl(100, 100%, 30%);
+    --supported-in-preview-color: hsl(275.4, 77.7%, 35.1%);
+    --in-development-color: hsl(24.5, 91.3%, 50.6%);
+    --no-active-development-color: hsl(240, 60.6%, 59.2%);
+    --partially-supported-color: hsl(180, 25%, 43.9%);
+    --prototyping-color: hsl(211.3, 100%, 50%);
+    --under-consideration-color: hsl(5.9, 40.2%, 60%);
+}
+
+@media(prefers-color-scheme:dark) {
+    :root {
+        --feature-rule-color: hsl(0, 0%, 20%);
+        --status-color: hsl(0, 0%, 51%);
+        --supported-color: hsl(79.5, 45.3%, 52%);
+        --supported-in-preview-color: hsl(276.7, 36.3%, 51.4%);
+        --in-development-color: hsl(24.5, 91.3%, 50.6%);
+        --no-active-development-color: hsl(240, 60.6%, 59.2%);
+        --partially-supported-color: hsl(180, 30%, 52%);
+        --prototyping-color: hsl(211.3, 100%, 50%);
+        --under-consideration-color: hsl(0, 35%, 61%);
+    }
+}
+
 .page h1 {
     font-size: 4.2rem;
     font-weight: 500;
@@ -42,7 +68,6 @@ var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/We
     margin: 3rem auto;
     width: 100%;
     text-align: center;
-    color: #333333;
 }
 
 .page h1 a {
@@ -59,29 +84,62 @@ var loadWebCoreFeatures = xhrPromise(new URL("/repository/webkit/trunk/Source/We
 }
 
 .feature-filters {
-    background-color: #ffffff;
+    background-color: hsl(0, 0%, 0%);
+    background-color: var(--figure-mattewhite-background-color);
     width: 100vw;
     left: 50%;
     position: relative;
     transform: translate(-50vw, 0);
     box-sizing: border-box;
     margin-bottom: 3rem;
-    border: 1px solid #DDDDDD;
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--article-border-color);
     border-left: none;
     border-right: none;
 }
 
 .feature-filters form {
+    max-width: 920px;
+    margin: 0 auto 0;
+    position: relative;
+    top: 0;
+}
+/*.feature-filters form {
     padding-top: 3rem;
     padding-bottom: 3rem;
-    display: flex;
-    flex-wrap: wrap;
+}*/
+
+.feature-filters .search-input {
+    background-repeat: no-repeat;
+    background-position-x: 0.5rem;
+    background-position-y: 1rem;
+    background-size: 2rem;
+    padding: 1rem;
+    padding-left: 3rem;
+    padding-right: 8.5rem;
+    font-size: 2rem;
+    width: 100%;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    box-sizing: border-box;
+    border-color: transparent;
 }
 
-input[type=text].search-input {
-    margin-bottom: 1rem;
-    width: 100%;
-    flex: 1;
+.feature-filters .filters-toggle-button {
+    background-repeat: no-repeat;
+    background-size: 2rem;
+    background-position: right;
+    background-filter: lightness(2);
+    position: absolute;
+    padding-right: 2.5rem;
+    right: 1rem;
+    top: 1rem;
+    border: none;
+    color: hsl(240, 2.3%, 56.7%);
+}
+
+.feature-filters .filters-toggle-button:hover {
+    filter: brightness(0);
 }
 
 .feature-filters li {
@@ -103,24 +161,50 @@ input[type=text].search-input {
 
 .status-filters label {
     margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.feature-filters label {
+    float: none;
+    display: inline-block;
 }
 
 .status-filters {
     list-style: none;
-    display: inline-block;
-    text-align: right;
-    flex: 2;
-    flex-grow: 1;
+    display: none;
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#feature-filters.opened {
+    margin-top: 1.5rem;
+}
+
+#feature-filters.opened .status-filters {
+    display: block;
+}
+#feature-filters.opened .search-input {
+    border-color: hsl(0, 0%, 83.9%);
+    border-color: var(--input-border-color);
 }
 
 .filter-toggle:checked + .filter-status {
-    color: #ffffff;
+    color: hsl(240, 1.3%, 84.5%);
+    color: var(--text-color);
+}
+
+.feature-filters label > input {
+    position: relative;
+    top: -1px;
 }
 
 .filter-status,
 .feature-status {
-    color: #999999;
-    border-color: #999999;
+    color: hsl(0, 0%, 60%);
+    color: var(--status-color);
+    border-color: hsl(0, 0%, 60%);
+    border-color: var(--status-color);
 }
 
 .feature-status a {
@@ -129,102 +213,124 @@ input[type=text].search-input {
 
 .filter-status,
 .status-marker {
-    border-color: #999999;
+    border-color: hsl(0, 0%, 60%);
+    border-color: var(--status-color)
 }
 .filter-toggle:checked + .filter-status {
-    background-color: #999999;
+    background-color: hsl(0, 0%, 60%);
+    background-color: var(--status-color);
 }
 
+/** Status color mapping **/
 .supported {
-    color: #339900;
-    border-color: #339900;
+    color: hsl(100, 100%, 30%);
+    color: var(--supported-color);
+    border-color: hsl(100, 100%, 30%);
+    border-color: var(--supported-color);
 }
 
 .filter-toggle:checked + .supported {
-    background-color: #339900;
+    background-color: hsl(100, 100%, 30%);
+    background-color: var(--supported-color);
 }
 
 .supported-in-preview {
-    color: #66149f;
-    border-color: #66149f;
+    color: hsl(275.4, 77.7%, 35.1%);
+    color: var(--supported-in-preview-color);
+    border-color: hsl(275.4, 77.7%, 35.1%);
+    border-color: var(--supported-in-preview-color);
 }
 
 .filter-toggle:checked + .supported-in-preview {
-    background-color: #66149f;
+    background-color: hsl(275.4, 77.7%, 35.1%);
+    background-color: var(--supported-in-preview-color);
 }
 
 .in-development {
-    color: #f46c0e;
-    border-color: #f46c0e;
+    color: hsl(24.5, 91.3%, 50.6%);
+    color: var(--in-development-color);
+    border-color: hsl(24.5, 91.3%, 50.6%);
+    border-color: var(--in-development-color);
 }
 .filter-toggle:checked + .in-development {
-    background-color: #f46c0e;
+    background-color: hsl(24.5, 91.3%, 50.6%);
+    background-color: var(--in-development-color);
 }
 
 .no-active-development {
-    color: #5858D6;
-    border-color: #5858D6;
+    color: hsl(240, 60.6%, 59.2%);
+    color: var(--no-active-development-color);
+    border-color: hsl(240, 60.6%, 59.2%);
+    border-color: var(--no-active-development-color);
 }
 
 .filter-toggle:checked + .no-active-development {
-    background-color: #5858D6;
+    background-color: hsl(240, 60.6%, 59.2%);
+    background-color: var(--no-active-development-color);
 }
 
 .partially-supported  {
-    color: #548c8c;
-    border-color: #548c8c;
+    color: hsl(180, 25%, 43.9%);
+    color: var(--partially-supported-color);
+    border-color: hsl(180, 25%, 43.9%);
+    border-color: var(--partially-supported-color);
 }
 
 .filter-toggle:checked + .partially-supported {
-    background-color: #548c8c;
+    background-color: hsl(180, 25%, 43.9%);
+    background-color: var(--partially-supported-color);
 }
 
 .prototyping {
-    color: #007AFF;
-    border-color: #007AFF;
+    color: hsl(211.3, 100%, 50%);
+    color: var(--prototyping-color);
+    border-color: hsl(211.3, 100%, 50%);
+    border-color: var(--prototyping-color);
 }
 
 .filter-toggle:checked + .prototyping {
-    background-color: #007AFF;
+    background-color: hsl(211.3, 100%, 50%);
+    background-color: var(--prototyping-color);
 }
 
 .under-consideration {
-    color: #c27870;
-    border-color: #c27870;
+    color: hsl(5.9, 40.2%, 60%);
+    color: var(--under-consideration-color);
+    border-color: hsl(5.9, 40.2%, 60%);
+    border-color: var(--under-consideration-color);
 }
 
 .filter-toggle:checked + .under-consideration {
-    background-color: #c27870;
+    background-color: hsl(5.9, 40.2%, 60%);
+    background-color: var(--under-consideration-color);
 }
 
 .feature.is-hidden {
     display: none;
 }
 
-.features {
+.features,
+.features-count {
     max-width: 920px;
     margin: 0 auto 3rem;
-    border-bottom: 1px solid #e4e4e4;
+}
 
+.features {
+    border-bottom: 1px solid hsl(0, 0%, 89.4%);
+    border-color: var(--feature-rule-color);
 }
 
 .feature-count {
-    max-width: 920px;
-    margin: 0 auto 3rem;
-
     text-align: right;
     color: #999;
-}
-
-.feature-count p {
-    margin: 0;
 }
 
 .feature {
     border-color: transparent;
     border-width: 1px;
     border-style: solid;
-    border-top-color: #e4e4e4;
+    border-top-color: hsl(0, 0%, 89.4%);
+    border-top-color: var(--feature-rule-color);
     padding: 0.5rem;
     line-height: 1.618;
     transition: background-color 0.3s ease-out;
@@ -260,7 +366,8 @@ input[type=text].search-input {
 }
 
 .feature-header a[name] {
-    color: #444444;
+    color: hsl(0, 0%, 26.7%);
+    color: var(--text-color-heading);
 }
 
 .feature-header .internal-reference {
@@ -271,7 +378,27 @@ input[type=text].search-input {
 }
 
 .feature-header .internal-reference a {
-    color: #999999;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
+}
+
+@media(prefers-color-scheme:dark) {
+    .feature-header:after {
+        filter: invert(1);
+    }
+
+    .search-input:hover,
+    .search-input:focus,
+    .feature-filters .filters-toggle-button:hover {
+        filter: brightness(2);
+    }
+}
+
+.feature.opened .feature-header:after {
+    -webkit-transform: rotateX(-180deg);
+    -moz-transform: rotateX(-180deg);
+    transform: rotateX(-180deg);
+    perspective: 600;
 }
 
 .feature-header:after {
@@ -290,9 +417,12 @@ input[type=text].search-input {
 }
 
 .feature.opened {
-    background: #ffffff;
-    border-left-color: #e4e4e4;
-    border-right-color: #e4e4e4;
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--figure-mattewhite-background-color);
+    border-left-color: hsl(0, 0%, 89.4%);
+    border-left-color: var(--feature-rule-color);
+    border-right-color: hsl(0, 0%, 89.4%);
+    border-right-color: var(--feature-rule-color);
 }
 
 .feature.opened .feature-details {
@@ -300,10 +430,11 @@ input[type=text].search-input {
 }
 
 .feature h4 {
-    color: #999999;
     font-weight: 600;
     margin-top: 1rem;
     margin-bottom: 0;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
 }
 
 .feature .moreinfo {
@@ -321,17 +452,20 @@ input[type=text].search-input {
 }
 
 .feature .feature-desc {
-    color: #444444;
+    color: hsl(0, 0%, 20%);
+    color: var(--text-color);
 }
 
 .feature .comment {
-    color: #666666;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
     font-style: italic;
 }
 
 .sub-features {
     font-size: 1.5rem;
-    color: #555;
+    color: hsl(0, 0%, 24%);
+    color: var(--text-color-light);
 }
 
 .sub-features ul {
@@ -354,9 +488,22 @@ input[type=text].search-input {
     content: "";
 }
 
-@media only screen and (max-width: 1000px) {
+.pagination:after {
+    display: none;
+}
+
+.pagination,
+.pagination + h1 {
+    margin-top: 0;
+}
+
+@media only screen and (max-width: 1180px) {
     .feature-details {
         width: 100%;
+    }
+
+    .feature-filters .filters-toggle-button {
+        right: 3rem;
     }
 }
 
@@ -409,7 +556,6 @@ input[type=text].search-input {
     }
 
     .status-filters {
-        text-align: left;
         flex-basis: 100%;
     }
 
@@ -430,23 +576,26 @@ h3 a[name], .admin-bar h3 a[name] {
 </style>
 	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 
-        <div id="content">
         <div class="page feature-status-page" id="post-<?php the_ID(); ?>">
-			<h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
-
-            <div class="feature-filters">
-                <form id="feature-filters" class="page-width">
-                    <input type="text" id="search" class="search-input" placeholder="Search features&hellip;" title="Filter the feature list." required>
-                    <ul id="status-filters" class="status-filters"></ul>
-                </form>
+            <div class="connected pagination">
+                <?php wp_nav_menu( array('theme_location'  => 'feature-subnav') ); ?>
             </div>
 
-            <div id="feature-list">
+            <h1><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h1>
+
+            <section class="feature-filters">
+                <form id="feature-filters" class="page-width">
+                    <input type="text" id="search" class="search-input" placeholder="Search features&hellip;" title="Filter the feature list." required><label class="filters-toggle-button">Filters</label>
+                    <ul id="status-filters" class="status-filters"></ul>
+                </form>
+            </section>
+
+            <section id="feature-list">
                 <div class="feature-count">
                     <p><span id="feature-count"></span> <span id="feature-pluralize">features</span></p>
                 </div>
 
-            </div>
+            </section>
 
             <template id="success-template">
                 <ul class="features" id="features-container"></ul>
@@ -458,15 +607,12 @@ h3 a[name], .admin-bar h3 a[name] {
                 <p>If this is not resolved soon, please contact <a href="https://twitter.com/webkit">@webkit</a> on Twitter or the <a href="https://lists.webkit.org/mailman/listinfo/webkit-help">webkit-help</a> mailing list.</p>
             </template>
         </div>
-        </div>
 
-	<?php //comments_template(); ?>
+    <?php endwhile; else: ?>
 
-	<?php endwhile; else: ?>
+        <p>No posts.</p>
 
-		<p>No posts.</p>
-
-	<?php endif; ?>
+    <?php endif; ?>
 
 
 <script>
@@ -697,6 +843,7 @@ function initializeStatusPage() {
     function initSearch(featuresArray)
     {
         var filtersForm = document.getElementById('feature-filters');
+        var filtersToggleButton = document.getElementsByClassName('filters-toggle-button')[0];
         var statusContainer = document.getElementById('status-filters');
         var inputField = document.getElementById('search');
         var featuresEls = document.querySelectorAll('.features > li');
@@ -718,6 +865,9 @@ function initializeStatusPage() {
             }
         });
 
+        var searchTerm = searchTermFromURL();
+        var selectedStatuses = statusesFromURL();
+
         for (var key of statusOrder) {
             if (statusFilters[key] == undefined)
                 continue;
@@ -734,6 +884,10 @@ function initializeStatusPage() {
             input.className = 'filter-toggle';
             input.addEventListener('change', function() { updateSearch(featuresArray); });
 
+            if (selectedStatuses.indexOf(statusId) != -1) {
+                filtersForm.classList.add('opened');
+                input.checked = true;
+            }
 
             label.className = "filter-status " + statusId;
             label.setAttribute('for', 'toggle-' + statusId);
@@ -745,13 +899,10 @@ function initializeStatusPage() {
             statusContainer.appendChild(entry);
         }
 
-        filtersForm.addEventListener('click', function (e) {
-            if ( filtersForm.className.indexOf('opened') !== -1 ) {
-                filtersForm.className = filtersForm.className.replace(' opened','');
-            } else filtersForm.className += " opened";
+        filtersToggleButton.addEventListener('click', function (e) {
+            filtersForm.classList.toggle('opened');
         });
 
-        var searchTerm = searchTermFromURL();
         if (searchTerm.length) {
             inputField.value = searchTerm;
             inputField.placeholder = '';
@@ -839,6 +990,18 @@ function initializeStatusPage() {
             return decodeURIComponent(result[1]);
 
         return '';
+    }
+
+    function statusesFromURL()
+    {
+        var search = window.location.search;
+        var statusRegExp = /\#.*status=([^&]+)/;
+
+        var result;
+        if (result = window.location.href.match(statusRegExp))
+            return result[1].split(',');
+
+        return [];
     }
 
     function isSearchMatch(feature, searchTerm)

@@ -7,6 +7,236 @@ Description: Modern, adaptive theme for the WebKit project.
 Version: 1.0
 */
 
+:root {
+    --background-color: hsl(203.6, 100%, 12%);
+    --link-color: hsl(200, 100%, 40%);
+    --text-color: hsl(0, 0%, 20%);
+    --text-color-light: hsl(0, 0%, 87%);
+    --text-color-medium: hsl(0, 0%, 33.3%);
+    --text-color-heading: hsl(0, 0%, 26.7%);
+    --text-color-coolgray: hsl(240, 2.3%, 56.7%);
+    --inverse-text-color: hsl(0, 0%, 100%);
+    --inverse-link-color: hsl(206.7, 100%, 70%);
+
+    --content-background-color: hsl(0, 0%, 96.9%);
+    --horizontal-rule-color: hsl(0, 0%, 86.7%);
+
+    --code-background-color: hsl(0, 0%, 94.9%);
+    --code-border-color: hsl(0, 0%, 90.6%);
+    --code-text-color: hsl(0, 0%, 26.7%);
+
+    --note-background-color: hsl(50, 100%, 94%);
+    --note-border-color: hsl(40, 100%, 90%);
+    --note-text-color: hsl(30, 90%, 35%);
+
+    --foreword-background-color: hsl(0, 0%, 94.1%);
+    --foreword-border-color: hsl(0, 0%, 90.2%);
+    --foreword-text-color: hsl(240, 2.3%, 56.7%);
+
+    --input-border-color: hsl(0, 0%, 83.9%);
+    --input-background-color: hsl(0, 0%, 100%);
+    --button-background-color: hsl(0, 0%, 100%);
+
+    --submit-button-background-color: hsl(199.8, 76.4%, 48.2%);
+    --submit-button-background-gradient: linear-gradient(hsl(199.9, 78.2%, 56.9%), hsl(200, 100%, 40%));
+    --submit-button-text-color: hsl(0, 0%, 100%);
+
+    --pagination-border-color: hsla(0, 0%, 0%, 0.07);
+    --pagination-button-shadow: inset hsla(0, 0%, 0%, 0.07) 0 0 0 1px;
+    --pagination-button-text-color: hsl(0, 0%, 100%);
+
+    --screen-reader-text-focus-color: hsl(198.7, 64.9%, 36.9%);
+    --screen-reader-text-border-color: hsla(0, 0%, 0%, 0.6);
+    --screen-reader-text-background-color: hsl(0, 0%, 94.5%);
+    --screen-reader-text-shadow: 0 0 2px 2px hsla(0, 0%, 0%, 0.6);
+
+    --next-router-background-color: hsl(0, 0%, 98%);
+    --previous-router-background-color: hsl(0, 0%, 95.7%);
+    --router-background-hover-color: hsl(0, 0%, 100%);
+    --router-text-color: hsl(0, 0%, 26.7%);
+    --router-text-color-light: hsl(0, 0%, 40%);
+
+    --tile-background-color: hsl(0, 0%, 100%);
+    --tile-border-color: hsla(0, 0%, 0%, 0.1);
+    --tile-subtle-border-shadow: inset hsla(0, 0%, 0%, 0.1) 0 0 0 1px;
+    --tile-subtle-image-border-shadoww: inset hsla(0, 0%, 0%, 0.1) 0 1px 0 1px;
+
+    --tile-default-background-color: hsl(215.3, 7.9%, 42.2%);
+    --tile-background-color-blue: hsl(200, 100%, 40%);
+    --tile-background-color-green: hsl(79.5, 45.3%, 52%);
+    --tile-background-color-violet: hsl(280, 18%, 57.5%);
+    --tile-background-color-rose: hsl(357.1, 39%, 58.8%);
+    --tile-background-color-orange: hsl(37.1, 100%, 37.5%);
+    --tile-background-color-goldenrod: hsl(45.3, 56.5%, 53.1%);
+    --tile-background-color-purplesafari: hsl(276.7, 36.3%, 51.4%);
+    --tile-background-color-amber: hsl(48, 100%, 50%);
+    --tile-background-vignette: linear-gradient(-180deg, hsla(0, 0%, 100%, 0), hsla(0, 0%, 100%, 0.95) 80%, hsla(0, 0%, 100%, 1));
+    --tile-background-vignette-dark: linear-gradient(-180deg, hsla(0, 0%, 0%, 0) 33%, hsla(0, 0%, 0%, 0.85));
+
+    --tag-window-background-color-gray: hsl(0, 0%, 94.9%);
+    --tag-window-vignette: linear-gradient(-180deg, hsla(0, 0%, 94.9%, 0) 25%, hsla(0, 0%, 94.9%, 1) 65%);
+
+    --submenu-background-color: hsla(0, 0%, 100%, 0.95);
+    --submenu-shadow: 0px 3px 20px 0px hsla(0, 0%, 0%, 0.1);
+    --submenu-border-color: hsl(0, 0%, 90.6%);
+    --header-menu-shadow: 0px 5px 5px hsla(0, 0%, 0%, 0.1);
+    --header-menu-background-color: hsla(0, 0%, 100%, 0.8);
+
+    --tile-background-color-amber: hsl(48, 100%, 50%);
+    --tile-background-color-twitter: hsl(197.9, 70.6%, 53.3%);
+    --gray-tile-text-color: hsl(232.8, 100%, 37.5%);
+
+    --article-border-color: hsl(0, 0%, 90.6%);
+    --article-scrollable-border-color: hsl(0, 0%, 80%);
+    --figure-caption-rule-color: hsl(0, 0%, 80%);
+    --toc-border-color: hsl(0, 0%, 83.9%);
+    --table-top-rule-color: hsl(0, 0%, 73.3%);
+    --table-rule-color: hsl(0, 0%, 87.8%);
+    --figure-mattewhite-background-color: hsl(0, 0%, 100%);
+
+    --syntax-color-keyword: hsl(292.5, 100%, 26.7%);
+    --syntax-color-keyword-operator: hsl(357.5, 100%, 33.1%);
+    --syntax-color-builtin: hsl(309.6, 85.8%, 35.9%);
+    --syntax-color-keyword-type: hsl(17.6, 80.4%, 44.1%);
+    --syntax-color-preprocessor: hsl(60, 20%, 50%);
+    --syntax-color-comment: hsl(180, 6.9%, 60.4%);
+    --syntax-color-comment-doc: hsl(186.3, 8.3%, 55.1%);
+    --syntax-color-identifier: hsl(209.6, 71.4%, 38.4%);
+    --syntax-color-string: hsl(70.8, 93%, 22.4%);
+    --syntax-color-escaped: hsl(0, 0%, 66.7%);
+    --syntax-color-number: hsl(194.5, 14.1%, 40.2%);
+    --syntax-color-attribute: hsl(44.8, 53.2%, 33.5%);
+    --syntax-color-attribute-value: hsl(1.4, 79.8%, 42.7%);
+    --syntax-color-operator: hsl(0, 0%, 53.3%);
+    --syntax-color-whitespace-background-color: hsl(0, 0%, 20%);
+    --syntax-color-doctype: hsl(0, 0%, 75.3%);
+    --syntax-color-error-border: hsl(0, 100%, 50%);
+    --syntax-color-property: hsl(295.7, 76.8%, 32.2%);
+    --syntax-color-xml-comment: hsl(120, 100%, 22.7%);
+    --syntax-color-xml-meta: hsl(180, 50%, 40%);
+    --syntax-color-css-property: hsl(309.6, 85.8%, 35.9%);
+    --syntax-color-css-selector: hsl(0, 0%, 0%);
+    --syntax-color-css-number: hsl(248.1, 100%, 40.6%);
+
+    --code-selection-background-color: hsl(212.3, 97.8%, 81.8%);
+}
+
+@media(prefers-color-scheme:dark) {
+    :root {
+        --background-color: hsl(203.6, 100%, 12%);
+        --link-color: hsl(206.7, 100%, 70%);
+        --text-color: hsl(240, 1.3%, 84.5%);
+        --text-color-light: hsl(0, 0%, 33.3%);
+        --text-color-medium: hsl(0, 0%, 51%);
+        --text-color-heading: hsl(120, 100%, 99.8%);
+        --text-color-coolgray: hsl(240, 2.3%, 56.7%);
+        --inverse-text-color: hsl(0, 0%, 100%);
+        --inverse-link-color: hsl(206.7, 100%, 70%);
+
+        --content-background-color: hsl(120, 2%, 9%);
+        --horizontal-rule-color: hsl(0, 0%, 33.3%);
+
+        --code-background-color: hsl(120, 1%, 19.4%);
+        --code-border-color: hsl(0, 0%, 26.7%);
+        --code-text-color: hsl(180, 6.9%, 84.5%);
+
+        --note-background-color: hsl(31.9, 20.5%, 33.1%);
+        --note-border-color: hsl(31.9, 20.5%, 42%);
+        --note-text-color: hsl(48.7, 55.2%, 75.5%);
+
+        --foreword-background-color: hsl(120, 1%, 19.4%);
+        --foreword-border-color: hsl(0, 0%, 26.7%);
+        --foreword-text-color: hsl(120, 1.3%, 55%);
+
+        --input-border-color: hsl(0, 0%, 26.7%);
+        --input-background-color: hsl(0, 0%, 0%);
+        --button-background-color: hsl(120, 2%, 14%);
+
+        --submit-button-background-color: hsl(199.8, 76.4%, 48.2%);
+        --submit-button-background-gradient: linear-gradient(hsl(199.9, 78.2%, 56.9%), hsl(200, 100%, 40%));
+        --submit-button-text-color: hsl(0, 0%, 100%);
+
+        --pagination-border-color: hsla(0, 0%, 100%, 0.1);
+        --pagination-button-shadow: inset hsla(0, 0%, 50%, 0.1) 0 0 0 1px;
+        --pagination-button-text-color: hsl(0, 0%, 100%);
+
+        --screen-reader-text-focus-color: hsl(198.7, 64.9%, 36.9%);
+        --screen-reader-text-border-color: hsla(0, 0%, 0%, 0.6);
+        --screen-reader-text-background-color: hsl(0, 0%, 94.5%);
+        --screen-reader-text-shadow: 0 0 2px 2px hsla(0, 0%, 0%, 0.6);
+
+        --next-router-background-color: hsl(120, 6.7%, 4.9%);
+        --previous-router-background-color: hsl(120, 4%, 8%);
+        --router-background-hover-color: hsl(0, 0%, 0%);
+        --router-text-color: hsl(120, 100%, 99.8%);
+        --router-text-color-light: hsl(30, 1%, 62%);
+
+        --tile-background-color: hsl(120, 2%, 12%);
+        --tile-border-color: hsl(0, 0%, 29%);
+        --tile-subtle-border-shadow: inset hsla(0, 0%, 50%, 0.1) 0 0 0 1px;
+        --tile-subtle-image-border-shadoww: inset hsla(0, 0%, 100%, 0.1) 0 1px 0 1px;
+
+        --tile-default-background-color: hsl(215.3, 7.9%, 42.2%);
+        --tile-background-color-blue: hsl(200, 100%, 40%);
+        --tile-background-color-green: hsl(79.5, 45.3%, 52%);
+        --tile-background-color-violet: hsl(280, 18%, 57.5%);
+        --tile-background-color-rose: hsl(357.1, 39%, 58.8%);
+        --tile-background-color-orange: hsl(37.1, 100%, 37.5%);
+        --tile-background-color-goldenrod: hsl(45.3, 56.5%, 53.1%);
+        --tile-background-color-purplesafari: hsl(276.7, 36.3%, 51.4%);
+        --tile-background-color-amber: hsl(48, 100%, 50%);
+        --tile-background-vignette: linear-gradient(-180deg, hsla(120, 2%, 12%, 0%), hsla(120, 2%, 12%, 0.95) 80%, hsla(120, 2%, 12%, 1));
+        --tile-background-vignette-dark: linear-gradient(-180deg, hsla(0, 0%, 0%, 0) 33%, hsla(0, 0%, 0%, 0.85));
+
+        --tag-window-background-color-gray: hsl(0, 0%, 94.9%);
+        --tag-window-vignette: linear-gradient(-180deg, hsla(0, 0%, 94.9%, 0) 25%, hsla(0, 0%, 94.9%, 1) 65%);
+
+        --submenu-background-color: hsla(0, 0%, 0%, 0.95);
+        --submenu-shadow: 0px 3px 20px 0px hsla(0, 0%, 20%, 0.1);
+        --submenu-border-color: hsl(0, 0%, 15%);
+        --header-menu-shadow: 0px 5px 5px hsla(0, 0%, 0%, 0.1);
+        --header-menu-background-color: hsla(0, 0%, 0%, 0.8);
+
+        --tile-background-color-amber: hsl(48, 100%, 50%);
+        --tile-background-color-twitter: hsl(197.9, 70.6%, 53.3%);
+        --gray-tile-text-color: hsl(232.8, 100%, 37.5%);
+
+        --article-border-color: hsl(120, 4.1%, 19.2%);
+        --article-scrollable-border-color: hsl(120, 4.1%, 19.2%);
+        --figure-caption-rule-color: hsl(0, 0%, 80%);
+        --toc-border-color: hsl(0, 0%, 83.9%);
+        --table-top-rule-color: hsl(0, 0%, 73.3%);
+        --table-rule-color: hsl(0, 0%, 87.8%);
+        --figure-mattewhite-background-color: hsl(0, 0%, 0%);
+
+        --syntax-color-keyword: hsl(299.2, 58.7%, 51.6%);
+        --syntax-color-keyword-operator: hsl(6.8, 69.4%, 57.6%);
+        --syntax-color-builtin: hsl(279.2, 84.3%, 57.6%);
+        --syntax-color-keyword-type: hsl(28.1, 72.2%, 46.5%);
+        --syntax-color-preprocessor: hsl(43.9, 51.4%, 58.8%);
+        --syntax-color-comment: hsl(0, 0%, 51%);
+        --syntax-color-comment-doc: hsl(186.3, 8.3%, 55.1%);
+        --syntax-color-identifier: hsl(210.2, 70.7%, 46.9%);
+        --syntax-color-string: hsl(119.2, 34.3%, 57.6%);
+        --syntax-color-escaped: hsl(0, 0%, 44%);
+        --syntax-color-number: hsl(200, 100%, 40%);
+        --syntax-color-attribute: hsl(43.9, 51.4%, 58.8%);
+        --syntax-color-attribute-value: hsl(28.1, 72.2%, 46.5%);
+        --syntax-color-operator: hsl(180, 6.9%, 60.4%);
+        --syntax-color-whitespace-background-color: hsl(0, 0%, 20%);
+        --syntax-color-doctype: hsl(0, 0%, 42%);
+        --syntax-color-error-border: hsl(0, 100%, 20%);
+        --syntax-color-property: hsl(299.2, 58.7%, 51.6%);
+        --syntax-color-xml-comment: hsl(119.2, 34.3%, 57.6%);
+        --syntax-color-xml-meta: hsl(180, 50%, 40%);
+        --syntax-color-css-property: hsl(309.6, 85.8%, 35.9%);
+        --syntax-color-css-selector: hsl(240, 1.3%, 84.5%);
+        --syntax-color-css-number: hsl(200, 100%, 40%);
+
+        --code-selection-background-color: hsl(214.2, 42.9%, 32.9%);
+    }
+}
+
 /** Resets **/
 html, body, div, span, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -37,12 +267,14 @@ html {
     font-synthesis: none;
 }
 body {
-    background-color: #00253D;
     font-size: 1.7rem;
     font-weight: 400;
     line-height: 1.52947;
     letter-spacing: -0.021rem;
-    color: #333333;
+    background-color: hsl(203.6, 100%, 12%);
+    background-color: var(--background-color);
+    color: hsl(0, 0%, 20%);
+    color: var(--text-color);
 }
 ol, ul {
     list-style: none;
@@ -72,15 +304,17 @@ p:empty {
     display: none;
 }
 a {
-    color: #08c;
     text-decoration: none;
     transition: color 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000); /* ease-out-exponential */
 }
 a:hover {
     text-decoration: underline;
 }
-a > code {
-    color: #08c;
+a,
+a > code,
+a[name]:hover {
+    color: hsl(200, 100%, 40%);
+    color: var(--link-color);
 }
 
 h1 a:hover {
@@ -88,7 +322,8 @@ h1 a:hover {
 }
 hr {
     border: none;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid hsl(0, 0%, 86.7%);
+    border-bottom-color: var(--horizontal-rule-color);
 }
 strong {
     font-weight: 600;
@@ -104,16 +339,20 @@ sup {
 }
 code {
     font-family: "SF Mono", "Menlo", monospace;
-    background: #f2f2f2;
-    border-radius: 2px;
-    border: 1px solid #e7e7e7;
-    padding: 0 0.5rem;
     font-size: 80%;
-    color: #444;
+    padding: 0 0.5rem;
+    border-radius: 2px;
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--code-border-color);
+    background-color: hsl(0, 0%, 94.9%);
+    background-color: var(--code-background-color);
+    color: hsl(0, 0%, 26.7%);
+    color: var(--code-text-color);
 }
 
 main {
-    background-color: #f7f7f7;
+    background-color: hsl(0, 0%, 96.9%);
+    background-color: var(--content-background-color);
 }
 
 /** Accessibility Helpers **/
@@ -121,8 +360,10 @@ a[name] {
     display: inline-block;
     position: relative;
     top: -3rem;
-    color: #ddd;
+    color: hsl(0, 0%, 86.7%);
+    color: var(--text-color-light);
     width: 0;
+    text-decoration: none;
 }
 
 p > a[name]::before {
@@ -130,12 +371,23 @@ p > a[name]::before {
     margin-left: -1.7rem;
     position: relative;
     top: 3rem;
-
+    color: hsl(240, 2.3%, 56.7%);
+    color: var(--text-color-coolgray);
+    transition: color 500ms cubic-bezier(0.190, 1.000, 0.220, 1.000), opacity 500ms ease-in; /* ease-out-exponential */
+    opacity: 0.3;
 }
 
 a[name]:hover {
-    color: #08c;
     text-decoration: none;
+}
+
+a[name]:hover::before {
+    color: hsl(200, 100%, 40%);
+    color: var(--link-color);
+}
+
+p:hover > a[name]::before {
+    opacity: 1;
 }
 
 h1,
@@ -166,22 +418,27 @@ input[type=text] {
     margin-bottom: 3rem;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
-    color: #333333;
     text-align: left;
-    border: 1px solid #d6d6d6;
     border-radius: 4px;
-    background: white;
+    border: 1px solid hsl(0, 0%, 83.9%);
+    border-color: var(--input-border-color);
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--input-background-color);
     background-clip: padding-box;
+    color: hsl(0, 0%, 20%);
+    color: var(--text-color);
     font-family: "SF Hello", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-    line-height: 1.33333;
     font-weight: 400;
-    letter-spacing: normal;
     font-size: 2rem;
+    line-height: 1.33333;
+    letter-spacing: normal;
 }
 
 input[type=submit] {
-    background-color: #1d9bd9;
-    background: linear-gradient(#3baee7, #0088cc);
+    background-color: hsl(199.8, 76.4%, 48.2%);
+    background-color: var(--submit-button-background-color);
+    background-image: linear-gradient(hsl(199.9, 78.2%, 56.9%), hsl(200, 100%, 40%));
+    background-image: var(--submit-button-background-gradient);
     border-radius: 4px;
     color: white;
     cursor: pointer;
@@ -208,11 +465,14 @@ input[type=submit] {
 }
 
 .screen-reader-text:focus {
-    background-color: #f1f1f1;
+    background-color: hsl(0, 0%, 94.5%);
+    background-color: var(--screen-reader-text-background-color);
+    box-shadow: 0 0 2px 2px hsla(0, 0%, 0%, 0.6);
+    box-shadow: var(--screen-reader-text-shadow);
+    color: hsl(198.7, 64.9%, 36.9%);
+    color: var(--screen-reader-text-focus-color);
     border-radius: 3px;
-    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
     clip: auto !important;
-    color: #21759b;
     display: block;
     font-size: 14px;
     font-size: 0.875rem;
@@ -288,12 +548,15 @@ a.download {
     padding-bottom: 3rem;
 }
 
-.pagination .page-numbers {
+.pagination .page-numbers,
+.pagination .menu-item a {
     display: inline-block;
     padding: 0.3rem 1rem 0.5rem;
-    background: white;
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--button-background-color);
     border-radius: 4px;
-    box-shadow: inset rgba(0, 0, 0, 0.07) 0 0 0 1px;
+    box-shadow: inset hsla(0, 0%, 0%, 0.07) 0 0 0 1px;
+    box-shadow: var(--pagination-button-shadow);
     height: 2rem;
     font-size: 1.7rem;
     line-height: 1.29412;
@@ -301,15 +564,23 @@ a.download {
     letter-spacing: -0.021em;
 }
 
+.pagination .menu-item a {
+    box-shadow: none;
+    border: 1px solid hsla(0, 0%, 0%, 0.07);
+    border-color: var(--pagination-border-color);
+}
+
 .pagination .page-numbers:not(.current, .dots):hover {
     text-decoration: none;
-    background: #08c;
-    color: white;
+    background-color: hsl(200, 100%, 40%);
+    background-color: var(--link-color);
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
 }
 
 .pagination .dots,
 .pagination .page-numbers.current {
-    background: none;
+    background-color: transparent;
     box-shadow: none;
 }
 
@@ -333,6 +604,41 @@ a.download {
     font-weight: normal;
 }
 
+.connected.pagination .menu-item {
+    display: table-cell;
+}
+
+.connected.pagination .menu-item:hover a {
+    background-color: hsl(0, 0%, 98%);
+    background-color: var(--next-router-background-color);
+    box-shadow: hsla(206.7, 100%, 70%, 0.3) 0 0 5px 0px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.connected.pagination .menu-item:first-child a {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-right-width: 0px;
+}
+.connected.pagination .menu-item:last-child a {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.connected.pagination .menu-item.current-menu-item a,
+.connected.pagination .menu-item.current-menu-item:hover a
+.connected.pagination .menu-item.current-menu-item a:hover {
+    background-color: transparent;
+    color: var(--text-color);
+    box-shadow: none;
+    text-decoration: none;
+}
+
+.menu-feature-pages-container {
+    display: inline-block;
+}
+
 /* Front page next button */
 .pagination .next-button {
     display: inline-block;
@@ -342,25 +648,25 @@ a.download {
 
 .nextrouter {
     position: relative;
-    background-color: #fafafa;
+    background-color: hsl(0, 0%, 98%);
+    background-color: var(--next-router-background-color);
     padding: 0;
     width: 100vw;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.nextrouter:hover {
-    background-color: #ffffff;
-    transition: background-color 300ms ease-out;
-}
-
 .nextrouter.previous {
     text-align: right;
-    background-color: #f4f4f4;
+    background-color: hsl(0, 0%, 95.7%);
+    background-color: var(--previous-router-background-color);
 }
 
+.nextrouter:hover,
 .nextrouter.previous:hover {
-    background-color: #ffffff;
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--router-background-hover-color);
+    transition: background-color 300ms ease-out;
 }
 
 .nextrouter .bodycopy {
@@ -371,7 +677,8 @@ a.download {
 .nextrouter a {
     display: block;
     cursor: pointer;
-    color: #444444;
+    color: hsl(0, 0%, 26.7%);
+    color: var(--router-text-color);
     width: 66%;
     margin: 0 auto;
 }
@@ -383,8 +690,8 @@ a.download {
 .nextrouter-copy {
     padding: 10rem 0 9.5rem 0;
     font-size: 3.2rem;
-    line-height: 1.09375;
     font-weight: 500;
+    line-height: 1.09375;
     letter-spacing: 0.011rem;
 }
 
@@ -393,7 +700,8 @@ a.download {
     line-height: 1;
     font-weight: 300;
     letter-spacing: 0.016rem;
-    color: #666666;
+    color: hsl(0, 0%, 40%);
+    color: var(--router-text-color-light);
     display: block;
     margin-bottom: 1.8rem;
 }
@@ -409,7 +717,8 @@ a.download {
     font-weight: 400;
     line-height: 1.52947;
     letter-spacing: -0.021rem;
-    color: #08c;
+    color: hsl(200, 100%, 40%);
+    color: var(--link-color);
     background-position-y: 1rem;
 }
 
@@ -436,23 +745,23 @@ footer .menu {
     font-size: 0;
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
-    -webkit-justify-content: space-between;
     justify-content: space-between;
     box-sizing: border-box;
     width: 100%;
 }
 
 .tile {
-    background: #ffffff;
+    background-color: hsl(120, 2%, 9%);
+    background-color: var(--tile-background-color);
+    box-shadow: inset hsla(0, 0%, 0%, 0.1) 0 0 0 1px;
+    box-shadow: var(--tile-subtle-border-shadow);
     display: block;
     margin: 0 0 15px;
     position: relative;
     vertical-align: top;
     box-sizing: border-box;
     overflow: hidden;
-    box-shadow: inset rgba(0, 0, 0, 0.1) 0 0 0 1px;
 }
 
 .tile.spacer {
@@ -496,8 +805,8 @@ footer .menu {
     padding-bottom: 80%;
     overflow: hidden;
     width: 100%;
-
-    background-color: #636a74;
+    background-color: hsl(215.3, 7.9%, 42.2%);
+    background-color: var(--tile-default-background-color);
 }
 
 .tile .background-image svg {
@@ -505,6 +814,8 @@ footer .menu {
     top: -12%;
     width: 209%;
     height: auto;
+    color: hsl(120, 2%, 9%);
+    color: var(--tile-background-color);
 }
 
 .tile .background-image.has-featured-image {
@@ -518,58 +829,71 @@ footer .menu {
 }
 
 .tile.category-web-inspector svg {
-    background-color: #08c;
+    background-color: hsl(200, 100%, 40%);
+    background-color: var(--tile-background-color-blue);
 }
 
 .tile.category-performance svg {
-    background-color: rgb(152, 188, 77);
+    background-color: hsl(79.5, 45.3%, 52%);
+    background-color: var(--tile-background-color-green);
 }
 
 .tile.category-javascript svg {
-    background-color: #997FA6;
+    background-color: hsl(280, 18%, 57.5%);
+    background-color: var(--tile-background-color-violet);
 }
 
 .tile.category-css svg {
-    background-color: #bf6d71;
+    background-color: hsl(357.1, 39%, 58.8%);
+    background-color: var(--tile-background-color-rose);
 }
 
 .tile.category-standards svg {
     top: -20%;
-    background-color: #BF7600;
+    background-color: hsl(37.1, 100%, 37.5%);
+    background-color: var(--tile-background-color-orange);
 }
 
 .tile.category-contributing svg {
-    background-color: #CBAA44;
+    background-color: hsl(45.3, 56.5%, 53.1%);
+    background-color: var(--tile-background-color-goldenrod);
 }
 
 .tile.category-storage svg {
-    background-color: #997FA6;
+    background-color: hsl(280, 18%, 57.5%);
+    background-color: var(--tile-background-color-violet);
 }
 
 .tile.category-layout svg {
-    background-color: #bf6d71;
+    background-color: hsl(357.1, 39%, 58.8%);
+    background-color: var(--tile-background-color-rose);
 }
 
 .tile.category-safari-technology-preview svg {
-    background-color: #8e56b1;
+    background-color: hsl(276.7, 36.3%, 51.4%);
+    background-color: var(--tile-background-color-purplesafari);
 }
 
 .tile.category-accessibility svg {
     top: -8%;
-    background-color: #08c;
+    background-color: hsl(200, 100%, 40%);
+    background-color: var(--tile-background-color-blue);
 }
 
 .tile.category-security svg {
-    background-color: #CBAA44;
+    background-color: hsl(45.3, 56.5%, 53.1%);
+    background-color: var(--tile-background-color-goldenrod);
 }
 
 .tile.category-privacy svg {
-    background-color: #CBAA44;
+    background-color: hsl(45.3, 56.5%, 53.1%);
+    background-color: var(--tile-background-color-goldenrod);
 }
 
 .tile .background-image.loaded {
     background: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.1);
+    border-color: var(--tile-border-color);
     -webkit-filter: saturate(1);
             filter: saturate(1);
 }
@@ -593,7 +917,8 @@ footer .menu {
 
 .tile:not(.has-post-thumbnail) .background-image,
 .tile .background-vignette {
-    box-shadow: inset rgba(0, 0, 0, 0.1) 0 1px 0 1px;
+    box-shadow: inset hsla(0, 0%, 0%, 0.1) 0 1px 0 1px;
+    box-shadow: var(--tile-subtle-image-border-shadow);
 }
 
 .has-post-thumbnail .background-image {
@@ -624,7 +949,6 @@ footer .menu {
     padding: 0 24px;
     box-sizing: border-box;
     position: absolute;
-    -webkit-transform: none;
     transform: none;
     bottom: 15px;
     top: auto;
@@ -635,15 +959,18 @@ footer .menu {
     padding-bottom: 60%;
     position: absolute;
     top:0;
-    background-image: linear-gradient(-180deg, rgba(255, 255, 255, 0) , rgba(255, 255, 255, 0.95) 80%, rgba(255, 255, 255, 1));
+    background-image: linear-gradient(-180deg, hsla(0, 0%, 100%, 0), hsla(0, 0%, 100%, 0.95) 80%, hsla(0, 0%, 100%, 1));
+    background-image: var(--tile-background-vignette);
 }
 
 .tag-window .background-image {
-    background-color: #f2f2f2;
+    background-color: hsl(0, 0%, 94.9%);
+    background-color: var(--tag-window-background-color-gray);
 }
 
 .tag-window .background-vignette {
-    background-image: linear-gradient(-180deg, rgba(242,242,242,0) 25%,rgba(242,242,242,1) 65%);
+    background-image: linear-gradient(-180deg, hsla(0, 0%, 94.9%, 0) 25%, hsla(0, 0%, 94.9%, 1) 65%);
+    background-image: var(--tag-window-vignette);
 }
 
 .featured-tile.tag-dark.tile {
@@ -651,15 +978,18 @@ footer .menu {
 }
 
 .featured-tile.tag-dark .background-vignette {
-    background-image: linear-gradient(-180deg, rgba(0,0,0,0) 33%,rgba(0,0,0,0.85));
+    background-image: linear-gradient(-180deg, hsla(0, 0%, 0%, 0) 33%, hsla(0, 0%, 0%, 0.85));
+    background-image: var(--tile-background-vignette-dark);
 }
 
 .featured-tile.tag-dark .tile-content {
-    color: white;
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
 }
 
 .featured-tile.tag-dark .tile-content a {
-    color: #6cf;
+    color: hsl(206.7, 100%, 70%);
+    color: var(--inverse-link-color);
 }
 
 .tag-transparent:not(.featured-tile) .featured-image {
@@ -712,7 +1042,6 @@ footer .menu {
     background-position: 50% 50%;
     margin: 0 auto 3rem;
     padding: 40%;
-    color: #fff;
 }
 
 .icon-tile.download .icon {
@@ -723,32 +1052,38 @@ footer .menu {
     background-image: url('images/developer.svg');
 }
 
-.icon-tile, .icon-tile a {
-    color: white;
-}
-.amber-tile {
-    background-color: #FFCC00;
-}
-.gray-tile, .gray-tile a {
-    color: #017BFD;
+.icon-tile,
+.icon-tile a {
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
 }
 
 .gray-tile {
     background: linear-gradient(rgb(40, 40, 40), rgb(74, 74, 74));
+    background-image: var(--tile-background-color-gray);
 }
-.gray-tile, .gray-tile a {
-    color: #fff;
+.gray-tile {
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
+}
+.gray-tile a {
+    color: hsl(232.8, 100%, 37.5%);
+    color: var(--gray-tile-text-color);
 }
 
+
 .amber-tile {
-    background-color: #FFCC00;
+    background-color: hsl(48, 100%, 50%);
+    background-color: var(--tile-background-color-amber);
 }
 .blue-tile {
-    background-color: #08c;
+    background-color: hsl(200, 100%, 40%);
+    background-color: var(--tile-background-color-blue);
 }
 
 .twitter-tile {
-    background-color: #34AADC;
+    background-color: hsl(197.9, 70.6%, 53.3%);
+    background-color: var(--tile-background-color-twitter);
 }
 
 .twitter-tile, .twitter-tile a {
@@ -836,11 +1171,12 @@ footer .menu {
 }
 
 .icon.twitter-icon {
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
     position: relative;
     margin: 3rem auto 3rem;
     width: 1px;
     padding: 33%;
-    color: #ffffff;
     opacity: 0.33;
 }
 
@@ -872,17 +1208,19 @@ pre {
     width: calc(100% + 6rem);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    background: #f2f2f2;
-    border: 1px solid #E6E6E6;
+    background-color: hsl(0, 0%, 94.9%);
+    background-color: var(--code-background-color);
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--code-border-color);
     border-radius: 2px;
-
     box-sizing: border-box;
     padding: 3rem;
     margin-left: -3rem;
 }
 
 code {
-    color: #555555;
+    color: hsl(0, 0%, 26.7%);
+    color: var(--code-text-color);
     font-size: 1.6rem;
     line-height: 2.5rem;
 }
@@ -893,40 +1231,116 @@ pre code {
 }
 
 code .keyword,
-code.html .tag { color: #708; }
+code.html .tag {
+    color: hsl(292.5, 100%, 26.7%);
+    color: var(--syntax-color-keyword);
+}
 code .keyword.builtin,
-code .keyword.literal { color: #aa0d91;}
-code .keyword.type { color: #cb4b16; }
-code .preprocessor { color: #996; }
-code .comment { color: #93a1a1; float: none; display: inline; }
-code .comment .doc { color: #839496; font-weight: bold; }
-code .identifier { color: #1C63A8; }
-code .string, code .char { color: #5B6E04; }
-code .escaped { color: #AAA; }
-code .number, code .tag { color: #586e75; }
-code .regex, code .attribute { color: rgb(131, 108, 40); }
-code .attribute.value { color: rgb(196, 26, 22) ;}
-code .operator { color: #888; }
-code .keyword.operator { color: #A90007; }
-code .whitespace { background: #333; }
-code .error { border-bottom: 1px solid red; }
-code .doctype { color: rgb(192, 192, 192); }
-code .property { color: #881391; }
-
-code.xml .comment,
-code.html .comment { color: rgb(0, 116, 0); }
-
-code.xml .preprocessor .keyword { color: #996; }
-code.xml .meta, code.xml .meta .keyword { color: #399; }
-
-code.cpp .preprocessor .identifier { color: #996; }
-
-code::-moz-selection, code span::-moz-selection {
-    background: #A3CDFE;
+code .keyword.literal {
+    color: hsl(309.6, 85.8%, 35.9%);
+    color: var(--syntax-color-builtin);
+}
+code .keyword.type {
+    color: hsl(17.6, 80.4%, 44.1%);
+    color: var(--syntax-color-keyword-type);
+}
+code .preprocessor {
+    color: hsl(60, 20%, 50%);
+    color: var(--syntax-color-preprocessor);
+}
+code .comment {
+    color: hsl(180, 6.9%, 60.4%);
+    color: var(--syntax-color-comment);
+    float: none;
+    display: inline;
+}
+code .comment .doc {
+    color: hsl(186.3, 8.3%, 55.1%);
+    color: var(--syntax-color-comment-doc);
+    font-weight: bold;
+}
+code .identifier {
+    color: hsl(209.6, 71.4%, 38.4%);
+    color: var(--syntax-color-identifier);
+}
+code .string,
+code .char {
+    color: hsl(70.8, 93%, 22.4%);
+    color: var(--syntax-color-string);
+}
+code .escaped {
+    color: hsl(0, 0%, 66.7%);
+    color: var(--syntax-color-escaped);
+}
+code .number,
+code .tag {
+    color: hsl(194.5, 14.1%, 40.2%);
+    color: var(--syntax-color-number);
+}
+code .regex,
+code .attribute {
+    color: hsl(44.8, 53.2%, 33.5%);
+    color: var(--syntax-color-attribute);
+}
+code .attribute.value {
+    color: hsl(1.4, 79.8%, 42.7%);
+    color: var(--syntax-color-attribute-value);
+}
+code .operator {
+    color: hsl(0, 0%, 53.3%);
+    color: var(--syntax-color-operator);
+}
+code .keyword.operator {
+    color: hsl(357.5, 100%, 33.1%);
+    color: var(--syntax-color-keyword-operator);
+}
+code .whitespace {
+    background-color: hsl(0, 0%, 20%);
+    background-color: var(--syntax-color-whitespace-background-color);
+}
+code .error {
+    border-bottom: 1px solid hsl(0, 100%, 50%);
+    border-color: var(--syntax-color-error-border);
+}
+code .doctype {
+    color: hsl(0, 0%, 75.3%);
+    color: var(--syntax-color-doctype);
+}
+code .property {
+    color: hsl(295.7, 76.8%, 32.2%);
+    color: var(--syntax-color-property);
 }
 
-code::selection, code span::selection {
-    background: #A3CDFE;
+code.xml .comment,
+code.html .comment {
+    color: hsl(120, 100%, 22.7%);
+    color: var(--syntax-color-xml-comment);
+}
+
+code.xml .preprocessor .keyword {
+    color: hsl(60, 20%, 50%);
+    color: var(--syntax-color-preprocessor);
+}
+code.xml .meta,
+code.xml .meta .keyword {
+    color: hsl(180, 50%, 40%);
+    color: var(--syntax-color-xml-meta);
+}
+
+code.cpp .preprocessor .identifier {
+    color: hsl(60, 20%, 50%);
+    color: var(--syntax-color-preprocessor);
+}
+
+pre::-moz-selection,
+pre span::-moz-selection {
+    background-color: hsl(212.3, 97.8%, 81.8%);
+    background-color: var(--code-selection-background-color);
+}
+
+pre::selection, pre span::selection {
+    background-color: hsl(212.3, 97.8%, 81.8%);
+    background-color: var(--code-selection-background-color);
 }
 
 code.syntax { white-space: normal; }
@@ -934,10 +1348,19 @@ code.syntax .newlines { white-space: pre; display: block; }
 
 code.css .attribute,
 code.css .identifier,
-code.css .preprocessor { color: rgb(170, 13, 145); }
+code.css .preprocessor {
+    color: hsl(309.6, 85.8%, 35.9%);
+    color: var(--syntax-color-css-property);
+}
 
-code.css .keyword { color: black; }
-code.css .number { color: rgb(28, 0, 207); }
+code.css .keyword {
+    color: hsl(0, 0%, 0%);
+    color: var(--syntax-color-css-selector);
+}
+code.css .number {
+    color: hsl(248.1, 100%, 40.6%);
+    color: var(--syntax-color-css-number);
+}
 
 /** Post Typography **/
 
@@ -959,19 +1382,17 @@ article::after {
     display: table;
 }
 
-article h1 {
+article h1,
+article h1 a {
+    margin: 0 auto 3rem;
     font-size: 5.6rem;
-    line-height: 1.10746;
     font-weight: 500;
     letter-spacing: 0.004rem;
+    line-height: 1.10746;
     text-align: center;
-    color: #037DFD;
-    margin: 0 auto 3rem;
-}
-
-article h1 a {
-    color: #444444;
     text-decoration: none;
+    color: hsl(0, 0%, 26.7%);
+    color: var(--text-color-heading);
 }
 
 article h2 {
@@ -1032,7 +1453,8 @@ article .byline p {
     font-size: 1.5rem;
     line-height: 3rem;
     margin-bottom: 0;
-    color: #8E8E93;
+    color: hsl(240, 2.3%, 56.7%);
+    color: var(--text-color-coolgray);
 }
 
 article .byline .date {
@@ -1053,12 +1475,15 @@ article table {
 }
 
 article thead, article tfoot {
-    border-top: 1px solid #bbbbbb;
-    border-bottom: 1px solid #e0e0e0;
+    border-top: 1px solid hsl(0, 0%, 73.3%);
+    border-top-color: var(--table-top-rule-color);
+    border-bottom: 1px solid hsl(0, 0%, 87.8%);
+    border-bottom-color: var(--table-rule-color);
 }
 
 article tr {
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid hsl(0, 0%, 87.8%);
+    border-color: var(--table-rule-color);;
 }
 
 article tr:first-child {
@@ -1112,7 +1537,8 @@ article blockquote {
     font-size: 3rem;
     line-height: 4.2rem;
     text-align: center;
-    color: #555555;
+    color: hsl(240, 2.3%, 56.7%);
+    color: var(--text-color-coolgray);
 }
 article blockquote > * {
     max-width: 1140px;
@@ -1130,7 +1556,8 @@ article blockquote:first-child {
 
 .post .bodycopy > p:last-child:after {
     content: " \220E"; /* Tombstone */
-    color: #666666;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
 }
 
 article div.note {
@@ -1138,8 +1565,11 @@ article div.note {
     margin-right: -3rem;
     padding: 3rem;
     background-color: hsl(50, 100%, 94%);
+    background-color: var(--note-background-color);
     border: 1px solid hsl(40, 100%, 90%);
+    border-color: var(--note-border-color);
     color: hsl(30, 90%, 35%);
+    color: var(--note-text-color);
     border-radius: 3px;
     margin-bottom: 3rem;
     box-sizing: normal;
@@ -1148,9 +1578,12 @@ article div.note {
 article .foreword {
     padding: 1.6rem 2.2rem 1.6rem;
     line-height: 2.6rem;
-    background-color: #f0f0f0;
-    border: 1px solid #e6e6e6;
-    color: #8E8E93;
+    background-color: hsl(0, 0%, 94.1%);
+    background-color: var(--foreword-background-color);
+    border: 1px solid hsl(0, 0%, 90.2%);
+    border-color: var(--foreword-border-color);
+    color: hsl(240, 2.3%, 56.7%);
+    color: var(--foreword-text-color);
     border-radius: 3px;
     margin-bottom: 3rem;
     box-sizing: normal;
@@ -1252,31 +1685,38 @@ article .pull-right {
 }
 
 article .cliptop {
-    border-top: 1px solid #dddddd;
+    border-top: 1px solid hsl(0, 0%, 86.7%);
+    border-color: var(--horizontal-rule-color);
 }
 
 article .clipbottom {
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid hsl(0, 0%, 86.7%);
+    border-color: var(--horizontal-rule-color);
 }
 
 article .clipright {
-    border-right: 1px solid #dddddd;
+    border-right: 1px solid hsl(0, 0%, 86.7%);
+    border-color: var(--horizontal-rule-color);
 }
 
 article .clipleft {
-    border-left: 1px solid #dddddd;
+    border-left: 1px solid hsl(0, 0%, 86.7%);
+    border-color: var(--horizontal-rule-color);
 }
 
 article .mattewhite {
-    background: white;
-    border-top: 1px solid #e7e7e7;
-    border-bottom: 1px solid #e7e7e7;
+    background-color: hsl(0, 0%, 100%);
+    background-color: var(--figure-mattewhite-background-color);
+    border-top: 1px solid hsl(0, 0%, 90.6%);
+    border-bottom: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--article-border-color);
     padding-top: 3rem;
     padding-bottom: 3rem;
 }
 
 article .mattewhite:not(.widescreen) {
-    border: 1px solid #e7e7e7;
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--article-border-color);
     padding: 3rem;
     margin-left: -3rem;
     margin-right: -3rem;
@@ -1322,6 +1762,20 @@ figure.widescreen video {
     max-width: 66%;
 }
 
+figure.table {
+    -webkit-overflow-scrolling: touch;
+    width: calc(100% + 6rem);
+    overflow: auto;
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--code-border-color);
+    background-color: hsl(0, 0%, 94.9%);
+    background-color: var(--code-background-color);
+    border-radius: 3px;
+    box-sizing: border-box;
+    padding: 3rem;
+    margin-left: -3rem;
+}
+
 article video.alignleft,
 article video.alignright {
     max-width: 50%;
@@ -1342,7 +1796,8 @@ article figcaption {
     box-sizing: border-box;
     font-size: 1.3rem;
     font-weight: 400;
-    color: #666666;
+    color: hsl(0, 0%, 33.3%);
+    color: var(--text-color-medium);
     position: relative;
 }
 
@@ -1351,7 +1806,8 @@ article figcaption::before {
     width: 15%;
     height: 100%;
     bottom: 2.5rem;
-    border-top: 1px solid #cccccc;
+    border-top: 1px solid hsl(0, 0%, 80%);
+    border-color: var(--figure-caption-rule-color);
     content: '';
     opacity: 1;
     display: inline-block;
@@ -1462,8 +1918,8 @@ article,
     z-index: 5;
     font-size: 1.4rem;
     line-height: 1.20849;
-    border-top: 1px solid #d6d6d6;
-
+    border-top: 1px solid hsl(0, 0%, 83.9%);
+    border-color: var(--toc-border-color);
 }
 
 article .table-of-contents label {
@@ -1511,7 +1967,8 @@ article .table-of-contents label {
     display: inline-block;
     background: url('images/webkit.svg') no-repeat;
     padding: 1rem 0 1rem 5.5rem;
-    color: #ffffff;
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
 }
 
 .hero .logo {
@@ -1520,18 +1977,12 @@ article .table-of-contents label {
 
 /** Status Page **/
 
-.feature-header:after {
+.feature-header:after,
+.property-header:after {
     display: inline-block;
     content: "";
     background: url('images/menu-down.svg') no-repeat 50%;
     background-size: 2rem;
-}
-
-.feature.opened .feature-header:after {
-    -webkit-transform: rotateX(-180deg);
-    -moz-transform: rotateX(-180deg);
-    transform: rotateX(-180deg);
-    perspective: 600;
 }
 
 /** Navigation **/
@@ -1587,17 +2038,20 @@ footer nav a {
     letter-spacing: 0;
     cursor: pointer;
     font-weight: 500;
-    color: #333333;
+    color: hsl(0, 0%, 20%);
+    color: var(--text-color);
 }
 
 header nav a,
 footer nav a {
-    color: #ffffff;
+    color: hsl(0, 0%, 100%);
+    color: var(--inverse-text-color);
 }
 
 header nav a:hover,
 footer nav a:hover {
-    color: #08c;
+    color: hsl(200, 100%, 40%);
+    color: var(--link-color);
     text-decoration: none;
 }
 
@@ -1635,9 +2089,12 @@ header .menu-item { /* add bottom dimension to main menu items */
     top: 7rem;
     transform: translateY(-1rem);
 
-    background: rgba(255,255,255,0.95);
-    box-shadow: 0px 3px 20px 0px rgba(0, 0, 0, 0.10);
-    border: 1px solid #e7e7e7;
+    background-color: hsla(0, 0%, 100%, 0.95);
+    background-color: var(--submenu-background-color);
+    box-shadow: 0px 3px 20px 0px hsla(0, 0%, 0%, 0.1);
+    box-shadow: var(--submenu-shadow);
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--submenu-border-color);
     border-radius: 5px;
 
     transition: opacity 0.6s;
@@ -1657,13 +2114,15 @@ header .menu-item { /* add bottom dimension to main menu items */
 }
 
 .sub-menu-layer:after {
-    border-bottom-color: rgba(255,255,255,0.9);
+    border-bottom-color: hsla(0, 0%, 100%, 0.95);
+    border-bottom-color: var(--submenu-background-color);
     border-width: 10px;
     margin-left: -10px;
 }
 
 .sub-menu-layer:before {
-    border-bottom-color: #e7e7e7;
+    border-bottom-color: hsla(0, 0%, 100%, 0.95);
+    border-bottom-color: var(--submenu-background-color);
     border-width: 11px;
     margin-left: -11px;
 }
@@ -1779,15 +2238,18 @@ header .menu-item { /* add bottom dimension to main menu items */
         text-align: left;
         width: 100vw;
         overflow: hidden;
-        box-shadow: 0px 5px 5px rgba(0,0,0,0.10);
+        box-shadow: 0px 5px 5px hsla(0, 0%, 0%, 0.1);
+        box-shadow: var(--header-menu-shadow);
 
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(10px);
-        background-color: rgba(255,255,255,0.8);
+        background-color: hsla(0, 0%, 100%, 0.8);
+        background-color: var(--header-menu-background-color);
     }
 
     header nav a {
-        color: #333333;
+        color: hsl(0, 0, 100%);
+        color: var(--text-color);
     }
 
     header .menu-toggle:checked ~ ul {
@@ -1810,7 +2272,8 @@ header .menu-item { /* add bottom dimension to main menu items */
 
     header .menu > .menu-item > .sub-menu {
         box-shadow: none;
-        border-bottom: 1px solid #e7e7e7;
+        border-bottom: 1px solid hsl(0, 0%, 90.6%);
+        border-color: var(--submenu-border-color);
     }
 
     header .menu > .menu-item-has-children {
@@ -1939,7 +2402,8 @@ header .menu-item { /* add bottom dimension to main menu items */
         left: 50%;
         transform: translate(-50%);
         margin: 3rem 0;
-        border: 1px solid #cccccc;
+        border: 1px solid hsl(0, 0%, 80%);
+        border-color: var(--article-scrollable-border-color);
         border-left: none;
         border-right: none;
     }
@@ -1975,9 +2439,19 @@ header .menu-item { /* add bottom dimension to main menu items */
     }
 
     .table-of-contents {
-        height: 9rem;
+        /* Collapse */
+        height: 7rem;
         overflow: hidden;
-        margin-right: -10%;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+
+        /* one-column */
+        width: 100vw;
+        max-width: 100%;
+        position: relative;
+        float: none;
+        padding-bottom: 2.5rem;
+        margin: 0 0 3rem 0;
     }
 
     .menu-toggle:checked ~ .table-of-contents {
@@ -1992,12 +2466,10 @@ header .menu-item { /* add bottom dimension to main menu items */
         display: inline-block;
         content: "";
         background: url('images/menu-down.svg') no-repeat 50%;
-        background-size: 2rem;
+        background-size: 1rem;
         width: 2rem;
         height: 2rem;
         position: absolute;
-        right: 3rem;
-        top: 3.5rem;
         transition: transform 0.3s ease-out;
         perspective: 600;
     }
@@ -2032,15 +2504,6 @@ header .menu-item { /* add bottom dimension to main menu items */
 }
 
 @media only screen and (max-width: 415px) {
-    .table-of-contents {
-        /* Go one-column */
-        width: 100vw;
-        left: 50%;
-        position: relative;
-        transform: translate(-50%);
-        float: none;
-        margin: 0 0 3rem 0;
-    }
 
     .nextrouter-copy {
         font-size: 1.7rem;
@@ -2121,12 +2584,10 @@ header .menu-item { /* add bottom dimension to main menu items */
         display: inline-block;
         content: "";
         background: url('images/menu-down.svg') no-repeat 50%;
-        background-size: 2rem;
+        background-size: 1rem;
         width: 2rem;
         height: 2rem;
         position: absolute;
-        right: 3rem;
-        top: 3.5rem;
         transition: transform 0.3s ease-out;
         perspective: 600;
     }
@@ -2147,10 +2608,42 @@ header .menu-item { /* add bottom dimension to main menu items */
     }
 }
 
+@media(prefers-color-scheme:dark) {
+    article .invert-brightness,
+    figure img {
+        filter: url(#invertLightness);
+    }
+
+    .preserve-color, video {
+        filter: brightness(0.7);
+        transition: filter 0.3s ease-out;
+    }
+
+    .preserve-color:hover,
+    figure:hover .preserve-color,
+    figure:hover video,
+    video:hover {
+        filter: brightness(1);
+    }
+
+    .nextrouter .link,
+    a.readmore {
+        background-image: url('images/chevron-dark.svg');
+    }
+}
+
 #template {
     background-image: url('images/template.svg');
 }
 
 #compass {
     background-image: url('images/compass.svg');
+}
+
+.search-input {
+    background-image: url('images/search.svg');
+}
+
+.filters-toggle-button {
+    background-image: url('images/filter.svg');
 }
