@@ -796,7 +796,7 @@ void ResourceLoadStatisticsMemoryStore::updateClientSideCookiesAgeCap()
 {
     ASSERT(!RunLoop::isMain());
 
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     RunLoop::main().dispatch([store = makeRef(m_store), seconds = m_parameters.clientSideCookiesAgeCapTime] () {
         if (auto* websiteDataStore = store->websiteDataStore())
             websiteDataStore->setAgeCapForClientSideCookies(seconds, [] { });
