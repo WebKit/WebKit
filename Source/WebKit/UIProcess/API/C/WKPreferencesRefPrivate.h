@@ -520,6 +520,10 @@ WK_EXPORT bool WKPreferencesGetMediaPreloadingEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetWebAuthenticationEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebAuthenticationEnabled(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetWebAuthenticationLocalAuthenticatorEnabled(WKPreferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetInvisibleMediaAutoplayPermitted(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetInvisibleMediaAutoplayPermitted(WKPreferencesRef);

@@ -570,9 +570,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebAnimationsCSSIntegrationEnabled:(BOOL)flag;
 - (BOOL)webAnimationsCSSIntegrationEnabled;
 
-- (void)setWebAuthenticationEnabled:(BOOL)flag;
-- (BOOL)webAuthenticationEnabled;
-
 - (void)setIntersectionObserverEnabled:(BOOL)flag;
 - (BOOL)intersectionObserverEnabled;
 
@@ -600,7 +597,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL userTimingEnabled;
 @property (nonatomic) BOOL resourceTimingEnabled;
 @property (nonatomic) BOOL linkPreloadEnabled;
-@property (nonatomic) BOOL webAuthenticationEnabled;
 @property (nonatomic) BOOL mediaUserGestureInheritsFromDocument;
 @property (nonatomic) BOOL isSecureContextAttributeEnabled;
 @property (nonatomic) BOOL legacyEncryptedMediaAPIEnabled;

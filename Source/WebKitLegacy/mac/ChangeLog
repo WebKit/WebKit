@@ -1,3 +1,20 @@
+2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a runtime flag for local authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=192792
+        <rdar://problem/46798738>
+
+        Reviewed by Brent Fulgham.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences webAuthenticationEnabled]): Deleted.
+        (-[WebPreferences setWebAuthenticationEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::valueOr() instead of Optional::value_or()

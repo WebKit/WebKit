@@ -756,6 +756,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMenuItemElementEnabled(preferences, options.enableMenuItemElement);
     WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls);
     WKPreferencesSetWebAuthenticationEnabled(preferences, options.enableWebAuthentication);
+    WKPreferencesSetWebAuthenticationLocalAuthenticatorEnabled(preferences, options.enableWebAuthenticationLocalAuthenticator);
     WKPreferencesSetIsSecureContextAttributeEnabled(preferences, options.enableIsSecureContextAttribute);
     WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(preferences, options.allowCrossOriginSubresourcesToAskForCredentials);
     WKPreferencesSetColorFilterEnabled(preferences, options.enableColorFilter);
@@ -1231,6 +1232,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enablePointerLock = parseBooleanTestHeaderValue(value);
         else if (key == "enableWebAuthentication")
             testOptions.enableWebAuthentication = parseBooleanTestHeaderValue(value);
+        else if (key == "enableWebAuthenticationLocalAuthenticator")
+            testOptions.enableWebAuthenticationLocalAuthenticator = parseBooleanTestHeaderValue(value);
         else if (key == "enableIsSecureContextAttribute")
             testOptions.enableIsSecureContextAttribute = parseBooleanTestHeaderValue(value);
         else if (key == "enableInspectorAdditions")

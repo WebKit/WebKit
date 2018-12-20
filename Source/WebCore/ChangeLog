@@ -1,3 +1,20 @@
+2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a runtime flag for local authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=192792
+        <rdar://problem/46798738>
+
+        Reviewed by Brent Fulgham.
+
+        No tests.
+
+        This patch adds a runtime flag for local authenticator and removes ways to
+        set the runtime flag for web authentication in LegacyWebKit.
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebAuthenticationLocalAuthenticatorEnabled):
+        (WebCore::RuntimeEnabledFeatures::webAuthenticationLocalAuthenticatorEnabled const):
+
 2018-12-20  Jeremy Jones  <jeremyj@apple.com>
 
         Pointer lock causes abandoned documents

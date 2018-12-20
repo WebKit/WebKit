@@ -1,3 +1,23 @@
+2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a runtime flag for local authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=192792
+        <rdar://problem/46798738>
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (setWebPreferencesForTestOptions):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+
 2018-12-20  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Autoinstall package URLs have changed

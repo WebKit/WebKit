@@ -746,6 +746,14 @@ WebAuthenticationEnabled:
   category: experimental
   condition: ENABLE(WEB_AUTHN)
 
+WebAuthenticationLocalAuthenticatorEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Web Authentication Local Authenticator"
+  humanReadableDescription: "Enable Web Authentication local authenticator support"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEB_AUTHN)
+
 ModernMediaControlsEnabled:
   type: bool
   defaultValue: DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED

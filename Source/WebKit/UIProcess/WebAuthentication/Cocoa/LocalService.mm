@@ -30,6 +30,7 @@
 
 #import "LocalAuthenticator.h"
 #import "LocalConnection.h"
+#import <WebCore/RuntimeEnabledFeatures.h>
 
 #import "LocalAuthenticationSoftLink.h"
 
@@ -46,6 +47,9 @@ bool LocalService::isAvailable()
 #if !PLATFORM(IOS_FAMILY)
     return false;
 #else
+    if (!RuntimeEnabledFeatures::sharedFeatures().webAuthenticationLocalAuthenticatorEnabled())
+        return false;
+
     auto context = adoptNS([allocLAContextInstance() init]);
     NSError *error = nil;
     if (![context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {

@@ -855,7 +855,6 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebGL2Enabled:YES];
     [preferences setWebMetalEnabled:YES];
     // FIXME: AsyncFrameScrollingEnabled
-    [preferences setWebAuthenticationEnabled:NO];
     [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];
     [preferences setWritableStreamAPIEnabled:YES];
@@ -1003,7 +1002,6 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
     preferences.acceleratedDrawingEnabled = options.useAcceleratedDrawing;
     preferences.menuItemElementEnabled = options.enableMenuItemElement;
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
-    preferences.webAuthenticationEnabled = options.enableWebAuthentication;
     preferences.isSecureContextAttributeEnabled = options.enableIsSecureContextAttribute;
     preferences.inspectorAdditionsEnabled = options.enableInspectorAdditions;
     preferences.allowCrossOriginSubresourcesToAskForCredentials = options.allowCrossOriginSubresourcesToAskForCredentials;

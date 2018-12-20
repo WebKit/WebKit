@@ -35,7 +35,6 @@ struct TestOptions {
     bool enableMenuItemElement { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
-    bool enableWebAuthentication { true };
     bool enableDragDestinationActionLoad { false };
     bool layerBackedWebView { false };
     bool enableIsSecureContextAttribute { true };

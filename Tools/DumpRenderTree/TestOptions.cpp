@@ -85,8 +85,6 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableModernMediaControls = parseBooleanTestHeaderValue(value);
         else if (key == "enablePointerLock")
             enablePointerLock = parseBooleanTestHeaderValue(value);
-        else if (key == "enableWebAuthentication")
-            enableWebAuthentication = parseBooleanTestHeaderValue(value);
         else if (key == "enableDragDestinationActionLoad")
             enableDragDestinationActionLoad = parseBooleanTestHeaderValue(value);
         else if (key == "layerBackedWebView")

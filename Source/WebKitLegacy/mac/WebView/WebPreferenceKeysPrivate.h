@@ -190,7 +190,6 @@
 #define WebKitPeerConnectionEnabledPreferenceKey @"WebKitPeerConnectionEnabled"
 #define WebKitLinkPreloadEnabledPreferenceKey @"WebKitLinkPreloadEnabled"
 #define WebKitMediaPreloadingEnabledPreferenceKey @"WebKitMediaPreloadingEnabled"
-#define WebKitWebAuthenticationEnabledPreferenceKey @"WebKitWebAuthenticationEnabled"
 #define WebKitMediaUserGestureInheritsFromDocument @"WebKitMediaUserGestureInheritsFromDocument"
 #define WebKitIsSecureContextAttributeEnabledPreferenceKey @"WebKitIsSecureContextAttributeEnabled"
 #define WebKitViewportFitEnabledPreferenceKey @"WebKitViewportFitEnabled"

@@ -51,6 +51,7 @@ struct TestOptions {
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
     bool enableWebAuthentication { true };
+    bool enableWebAuthenticationLocalAuthenticator { true };
     bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
     bool shouldShowTouches { false };
@@ -94,6 +95,7 @@ struct TestOptions {
             || enableModernMediaControls != options.enableModernMediaControls
             || enablePointerLock != options.enablePointerLock
             || enableWebAuthentication != options.enableWebAuthentication
+            || enableWebAuthenticationLocalAuthenticator != options.enableWebAuthenticationLocalAuthenticator
             || enableIsSecureContextAttribute != options.enableIsSecureContextAttribute
             || enableInspectorAdditions != options.enableInspectorAdditions
             || dumpJSConsoleLogInStdErr != options.dumpJSConsoleLogInStdErr
