@@ -49,6 +49,10 @@ void ResourceLoadStatisticsMemoryStore::registerUserDefaultsIfNeeded()
         if (grandfatheringTime > 0_s && grandfatheringTime <= 24_h * 7)
             setGrandfatheringTime(grandfatheringTime);
 
+        Seconds clientSideCookiesAgeCap([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsClientSideCookiesAgeCap"]);
+        if (clientSideCookiesAgeCap > 0_s && clientSideCookiesAgeCap <= 24_h * 365)
+            setAgeCapForClientSideCookies(clientSideCookiesAgeCap);
+
         setDebugLogggingEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ResourceLoadStatisticsDebugLoggingEnabled"]);
         setResourceLoadStatisticsDebugMode([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalResourceLoadStatisticsDebugMode"]);
         setStorageAccessPromptsEnabled([[NSUserDefaults standardUserDefaults] boolForKey:@"ExperimentalStorageAccessPromptsEnabled"]);

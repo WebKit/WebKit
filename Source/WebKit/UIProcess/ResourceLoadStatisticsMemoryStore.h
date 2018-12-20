@@ -127,6 +127,8 @@ public:
 
     void setLastSeen(const String& primaryDomain, Seconds);
 
+    void didCreateNetworkProcess();
+
 private:
     static bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&);
     static bool shouldBlockCookies(const WebCore::ResourceLoadStatistics&);
@@ -148,6 +150,9 @@ private:
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
 
+    void setAgeCapForClientSideCookies(Seconds);
+    void updateClientSideCookiesAgeCap();
+
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
 #endif
@@ -159,6 +164,7 @@ private:
         Seconds timeToLiveCookiePartitionFree { 24_h };
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
         Seconds grandfatheringTime { 24_h * 7 };
+        Seconds clientSideCookiesAgeCapTime { 24_h * 7 };
         bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
         bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
         bool shouldSubmitTelemetry { true };

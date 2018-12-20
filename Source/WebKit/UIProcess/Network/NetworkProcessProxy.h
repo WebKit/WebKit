@@ -79,7 +79,7 @@ public:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
-    void setShouldCapLifetimeForClientSideCookies(PAL::SessionID, ShouldCapLifetimeForClientSideCookies, CompletionHandler<void()>&&);
+    void setAgeCapForClientSideCookies(PAL::SessionID, std::optional<Seconds>, CompletionHandler<void()>&&);
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
     void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccess(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
@@ -149,7 +149,7 @@ private:
 #endif
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void didUpdatePartitionOrBlockCookies(uint64_t callbackId);
-    void didSetShouldCapLifetimeForClientSideCookies(uint64_t contextId);
+    void didSetAgeCapForClientSideCookies(uint64_t contextId);
     void storageAccessRequestResult(bool wasGranted, uint64_t contextId);
     void allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId);
 #endif

@@ -325,13 +325,8 @@ void WebResourceLoadStatisticsStore::didCreateNetworkProcess()
     postTask([this] {
         if (!m_memoryStore)
             return;
-        m_memoryStore->updateCookiePartitioning([]() { });
+        m_memoryStore->didCreateNetworkProcess();
     });
-
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (m_websiteDataStore)
-        m_websiteDataStore->setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies::Yes, []() { });
-#endif
 }
 
 void WebResourceLoadStatisticsStore::removeAllStorageAccess()

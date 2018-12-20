@@ -1244,13 +1244,13 @@ void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vec
     }
 }
 
-void WebsiteDataStore::setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::setAgeCapForClientSideCookies(std::optional<Seconds> seconds, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
     for (auto& processPool : processPools()) {
         if (auto* process = processPool->networkProcess())
-            process->setShouldCapLifetimeForClientSideCookies(m_sessionID, shouldCapLifetime, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+            process->setAgeCapForClientSideCookies(m_sessionID, seconds, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
     }
 }
 
