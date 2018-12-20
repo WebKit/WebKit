@@ -209,6 +209,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         let label = frameCount === 1 ? WI.UIString("Record first %s frame") : WI.UIString("Record first %s frames");
 
+        let active = document.activeElement === this._recordingAutoCaptureFrameCountInputElement;
         let selectionStart = this._recordingAutoCaptureFrameCountInputElement.selectionStart;
         let selectionEnd = this._recordingAutoCaptureFrameCountInputElement.selectionEnd;
         let direction = this._recordingAutoCaptureFrameCountInputElement.direction;
@@ -221,9 +222,11 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         this._recordingAutoCaptureNavigationItem.label = fragment;
 
-        this._recordingAutoCaptureFrameCountInputElement.selectionStart = selectionStart;
-        this._recordingAutoCaptureFrameCountInputElement.selectionEnd = selectionEnd;
-        this._recordingAutoCaptureFrameCountInputElement.direction = direction;
+        if (active) {
+            this._recordingAutoCaptureFrameCountInputElement.selectionStart = selectionStart;
+            this._recordingAutoCaptureFrameCountInputElement.selectionEnd = selectionEnd;
+            this._recordingAutoCaptureFrameCountInputElement.direction = direction;
+        }
     }
 
     _updateRecordingAutoCaptureInputElementSize()
@@ -270,7 +273,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _handleCanvasRecordingAutoCaptureFrameCountChanged(event)
     {
-        this._recordingAutoCaptureFrameCountInputElement.value = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
+        // Only update the value if it is different to prevent mangling the selection.
+        if (parseInt(this._recordingAutoCaptureFrameCountInputElement.value) !== WI.settings.canvasRecordingAutoCaptureFrameCount.value)
+            this._recordingAutoCaptureFrameCountInputElement.value = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
 
         this._updateRecordingAutoCaptureCheckboxLabel(WI.settings.canvasRecordingAutoCaptureFrameCount.value);
     }
