@@ -302,6 +302,7 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = {
   encodeURI             globalFuncEncodeURI                          DontEnum|Function 1
   encodeURIComponent    globalFuncEncodeURIComponent                 DontEnum|Function 1
   EvalError             JSGlobalObject::m_evalErrorConstructor       DontEnum|CellProperty
+  globalThis            JSGlobalObject::m_globalThis                 DontEnum|CellProperty
   ReferenceError        JSGlobalObject::m_referenceErrorConstructor  DontEnum|CellProperty
   SyntaxError           JSGlobalObject::m_syntaxErrorConstructor     DontEnum|CellProperty
   URIError              JSGlobalObject::m_URIErrorConstructor        DontEnum|CellProperty

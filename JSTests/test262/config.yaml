@@ -48,10 +48,6 @@ skip:
     # https://bugs.webkit.org/show_bug.cgi?id=186691
     - test/built-ins/Reflect/ownKeys/return-on-corresponding-order-large-index.js
 
-    # https://bugs.webkit.org/show_bug.cgi?id=186785
-    - test/built-ins/global/global-object.js
-    - test/built-ins/global/property-descriptor.js
-
     # https://bugs.webkit.org/show_bug.cgi?id=192920
     - test/intl402/PluralRules/prototype/resolvedOptions/order.js
     - test/intl402/PluralRules/prototype/resolvedOptions/pluralCategories.js

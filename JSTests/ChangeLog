@@ -1,3 +1,12 @@
+2018-12-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for globalThis
+        https://bugs.webkit.org/show_bug.cgi?id=165171
+
+        Reviewed by Mark Lam.
+
+        * test262/config.yaml:
+
 2018-12-19  Keith Miller  <keith_miller@apple.com>
 
         Update test262 configuration to not run tests dependent on ICU version.

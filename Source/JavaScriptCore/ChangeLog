@@ -1,3 +1,16 @@
+2018-12-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for globalThis
+        https://bugs.webkit.org/show_bug.cgi?id=165171
+
+        Reviewed by Mark Lam.
+
+        This patch adds support for the globalThis property on the global
+        object. The globalThis property spec is in stage three and is
+        quite simple. For reference: http://tc39.github.io/proposal-global/
+
+        * runtime/JSGlobalObject.cpp:
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::valueOr() instead of Optional::value_or()
