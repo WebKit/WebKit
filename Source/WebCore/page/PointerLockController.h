@@ -68,8 +68,8 @@ private:
     bool m_unlockPending { false };
     bool m_forceCursorVisibleUponUnlock { false };
     RefPtr<Element> m_element;
-    RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
-    RefPtr<Document> m_documentAllowedToRelockWithoutUserGesture;
+    WeakPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
+    WeakPtr<Document> m_documentAllowedToRelockWithoutUserGesture;
 };
 
 } // namespace WebCore

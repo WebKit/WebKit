@@ -1,3 +1,25 @@
+2018-12-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Pointer lock causes abandoned documents
+        https://bugs.webkit.org/show_bug.cgi?id=188727
+        rdar://problem/44248197
+        
+        Reviewed by Simon Fraser.
+
+        Fixes --world-leaks in these tests:
+
+        pointer-lock/locked-element-removed-from-dom.html
+        pointer-lock/mouse-event-delivery.html
+        fast/shadow-dom/pointerlockelement-in-slot.html
+
+        PointerLockController now uses WeakPtr instead of RefPtr because it has no need to extend the lifetime of a document.
+
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::elementRemoved):
+        (WebCore::PointerLockController::documentDetached):
+        (WebCore::PointerLockController::didAcquirePointerLock):
+        * page/PointerLockController.h:
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         Use Optional::valueOr() instead of Optional::value_or()
