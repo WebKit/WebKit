@@ -29,6 +29,7 @@
 #include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "NetworkContentRuleListManager.h"
+#include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FetchIdentifier.h>
@@ -203,6 +204,10 @@ public:
 #else
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
+
+#if ENABLE(HTTPS_UPGRADE)
+    NetworkHTTPSUpgradeChecker& networkHTTPSUpgradeChecker() { return m_networkHTTPSUpgradeChecker; };
+#endif // ENABLE(HTTPS_UPGRADE)
 
 private:
     NetworkProcess();
@@ -393,6 +398,9 @@ private:
     HashMap<WebCore::SWServerConnectionIdentifier, WebSWServerConnection*> m_swServerConnections;
 #endif
 
+#if ENABLE(HTTPS_UPGRADE)
+    NetworkHTTPSUpgradeChecker m_networkHTTPSUpgradeChecker;
+#endif // ENABLE(HTTPS_UPGRADE)
 };
 
 } // namespace WebKit

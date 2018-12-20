@@ -30,6 +30,7 @@
 #include "NetworkCORSPreflightChecker.h"
 #include "NetworkProcess.h"
 #include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/Scope.h>
@@ -191,32 +192,38 @@ auto NetworkLoadChecker::accessControlErrorForValidationHandler(String&& message
 }
 
 #if ENABLE(HTTPS_UPGRADE)
-void NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest& request) const
+void NetworkLoadChecker::applyHTTPSUpgradeIfNeeded(ResourceRequest&& request, CompletionHandler<void(ResourceRequest&&)>&& handler) const
 {
-    if (m_requestLoadType != LoadType::MainFrame)
+    if (m_requestLoadType != LoadType::MainFrame) {
+        handler(WTFMove(request));
         return;
-
-    // Use dummy list for now.
-    static NeverDestroyed<HashSet<String>> upgradableHosts = std::initializer_list<String> {
-        "www.bbc.com"_s, // (source: https://whynohttps.com)
-        "www.speedtest.net"_s, // (source: https://whynohttps.com)
-        "www.bea.gov"_s // (source: https://pulse.cio.gov/data/domains/https.csv)
-    };
+    }
 
     auto& url = request.url();
 
     // Only upgrade http urls.
-    if (!url.protocolIs("http"))
+    if (!url.protocolIs("http")) {
+        handler(WTFMove(request));
         return;
+    }
 
-    if (!upgradableHosts.get().contains(url.host().toString()))
+    auto& httpsUpgradeChecker = NetworkProcess::singleton().networkHTTPSUpgradeChecker();
+
+    // Do not wait for httpsUpgradeChecker to complete its setup.
+    if (!httpsUpgradeChecker.didSetupCompleteSuccessfully()) {
+        handler(WTFMove(request));
         return;
+    }
 
-    auto newURL = url;
-    newURL.setProtocol("https"_s);
-    request.setURL(newURL);
+    httpsUpgradeChecker.query(url.host().toString(), m_sessionID, [request = WTFMove(request), handler = WTFMove(handler)] (bool foundHost) mutable {
+        if (foundHost) {
+            auto newURL = request.url();
+            newURL.setProtocol("https"_s);
+            request.setURL(newURL);
+        }
 
-    RELEASE_LOG_IF_ALLOWED("applyHTTPSUpgradeIfNeeded - Upgrade URL from HTTP to HTTPS");
+        handler(WTFMove(request));
+    });
 }
 #endif // ENABLE(HTTPS_UPGRADE)
 
@@ -225,37 +232,42 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
     ResourceRequest originalRequest = request;
 
 #if ENABLE(HTTPS_UPGRADE)
-    applyHTTPSUpgradeIfNeeded(request);
+    applyHTTPSUpgradeIfNeeded(WTFMove(request), [this, client, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto request) mutable {
 #endif // ENABLE(HTTPS_UPGRADE)
 
-    if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
-        if (isRedirected()) {
-            auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
-            contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
+        if (auto* contentSecurityPolicy = this->contentSecurityPolicy()) {
+            if (isRedirected()) {
+                auto type = m_options.mode == FetchOptions::Mode::Navigate ? ContentSecurityPolicy::InsecureRequestType::Navigation : ContentSecurityPolicy::InsecureRequestType::Load;
+                contentSecurityPolicy->upgradeInsecureRequestIfNeeded(request, type);
+            }
+            if (!isAllowedByContentSecurityPolicy(request, client)) {
+                handler(accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
+                return;
+            }
         }
-        if (!isAllowedByContentSecurityPolicy(request, client)) {
-            handler(accessControlErrorForValidationHandler("Blocked by Content Security Policy."_s));
-            return;
-        }
-    }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
-        if (!result.has_value()) {
-            ASSERT(result.error().isCancellation());
-            handler(WTFMove(result.error()));
-            return;
-        }
-        if (result.value().status.blockedLoad) {
-            handler(this->accessControlErrorForValidationHandler("Blocked by content extension"_s));
-            return;
-        }
+        processContentExtensionRulesForLoad(WTFMove(request), [this, handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
+            if (!result.has_value()) {
+                ASSERT(result.error().isCancellation());
+                handler(WTFMove(result.error()));
+                return;
+            }
+            if (result.value().status.blockedLoad) {
+                handler(this->accessControlErrorForValidationHandler("Blocked by content extension"_s));
+                return;
+            }
 
-        continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(result.value().request), WTFMove(handler));
-    });
+            continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(result.value().request), WTFMove(handler));
+        });
 #else
-    continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(request), WTFMove(handler));
+        continueCheckingRequestOrDoSyntheticRedirect(WTFMove(originalRequest), WTFMove(request), WTFMove(handler));
 #endif
+
+#if ENABLE(HTTPS_UPGRADE)
+    });
+#endif // ENABLE(HTTPS_UPGRADE)
+
 }
 
 void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRequest&& originalRequest, ResourceRequest&& currentRequest, ValidationHandler&& handler)

@@ -25,16 +25,23 @@
 
 #pragma once
 
+#include "UserContentControllerIdentifier.h"
 #include <WebCore/ContentExtensionActions.h>
+#include <WebCore/ContentSecurityPolicyResponseHeaders.h>
+#include <WebCore/FetchOptions.h>
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/ResourceError.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/Variant.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class ContentSecurityPolicy;
 struct ContentSecurityPolicyClient;
+class SecurityOrigin;
+enum class PreflightPolicy : uint8_t;
+enum class StoredCredentialsPolicy : bool;
 }
 
 namespace WebKit {
@@ -113,7 +120,7 @@ private:
 #endif
 
 #if ENABLE(HTTPS_UPGRADE)
-    void applyHTTPSUpgradeIfNeeded(WebCore::ResourceRequest&) const;
+    void applyHTTPSUpgradeIfNeeded(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) const;
 #endif // ENABLE(HTTPS_UPGRADE)
 
     WebCore::FetchOptions m_options;

@@ -27,6 +27,7 @@ NetworkProcess/NetworkConnectionToWebProcess.cpp
 NetworkProcess/NetworkContentRuleListManager.cpp
 NetworkProcess/NetworkDataTask.cpp
 NetworkProcess/NetworkDataTaskBlob.cpp
+NetworkProcess/NetworkHTTPSUpgradeChecker.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadChecker.cpp
 NetworkProcess/NetworkProcess.cpp

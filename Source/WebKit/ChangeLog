@@ -1,3 +1,28 @@
+2018-12-19  Vivek Seth  <v_seth@apple.com>
+
+        HTTPS Upgrade: Use full sqlite upgrade list
+        https://bugs.webkit.org/show_bug.cgi?id=192736
+        <rdar://problem/45851427>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.cpp: Added.
+        (WebKit::NetworkHTTPSUpgradeCheckerDatabasePath):
+        (WebKit::NetworkHTTPSUpgradeChecker::NetworkHTTPSUpgradeChecker):
+        (WebKit::NetworkHTTPSUpgradeChecker::~NetworkHTTPSUpgradeChecker):
+        (WebKit::NetworkHTTPSUpgradeChecker::query):
+        (WebKit::NetworkHTTPSUpgradeChecker::isAlwaysOnLoggingAllowed const):
+        * NetworkProcess/NetworkHTTPSUpgradeChecker.h: Added.
+        (WebKit::NetworkHTTPSUpgradeChecker::didSetupCompleteSuccessfully const):
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::applyHTTPSUpgradeIfNeeded const):
+        (WebKit::NetworkLoadChecker::checkRequest):
+        * NetworkProcess/NetworkLoadChecker.h:
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkHTTPSUpgradeChecker):
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-12-19  Tim Horton  <timothy_horton@apple.com>
 
         Use delegate instead of drawingDelegate in WKDrawingView
