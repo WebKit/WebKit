@@ -130,7 +130,7 @@ int32_t JIT_OPERATION operationConstructArityCheck(ExecState* exec)
 
     int32_t missingArgCount = CommonSlowPaths::arityCheckFor(exec, *vm, CodeForConstruct);
     if (UNLIKELY(missingArgCount < 0)) {
-        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(exec, CodeForCall);
+        CodeBlock* codeBlock = CommonSlowPaths::codeBlockFromCallFrameCallee(exec, CodeForConstruct);
         exec->convertToStackOverflowFrame(*vm, codeBlock);
         NativeCallFrameTracer tracer(vm, exec);
         throwStackOverflowError(vm->topCallFrame, scope);
