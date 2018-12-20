@@ -1613,17 +1613,13 @@ function isFunctionStringNativeCode(str)
     return str.endsWith("{\n    [native code]\n}");
 }
 
-function isTextLikelyMinified(content)
+function whitespaceRatio(content, start, end)
 {
-    const autoFormatMaxCharactersToCheck = 5000;
-    const autoFormatWhitespaceRatio = 0.2;
-
     let whitespaceScore = 0;
-    let size = Math.min(autoFormatMaxCharactersToCheck, content.length);
+    let size = end - start;
 
-    for (let i = 0; i < size; i++) {
+    for (let i = start; i < end; i++) {
         let char = content[i];
-
         if (char === " ")
             whitespaceScore++;
         else if (char === "\t")
@@ -1633,7 +1629,28 @@ function isTextLikelyMinified(content)
     }
 
     let ratio = whitespaceScore / size;
-    return ratio < autoFormatWhitespaceRatio;
+    return ratio;
+}
+
+function isTextLikelyMinified(content)
+{
+    const autoFormatMaxCharactersToCheck = 2500;
+    const autoFormatWhitespaceRatio = 0.2;
+
+    if (content.length <= autoFormatMaxCharactersToCheck) {
+        let ratio = whitespaceRatio(content, 0, content.length);
+        return ratio < autoFormatWhitespaceRatio;
+    }
+
+    let startRatio = whitespaceRatio(content, 0, autoFormatMaxCharactersToCheck);
+    if (startRatio < autoFormatWhitespaceRatio)
+        return true;
+
+    let endRatio = whitespaceRatio(content, content.length - autoFormatMaxCharactersToCheck, content.length)
+    if (endRatio < autoFormatWhitespaceRatio)
+        return true;
+
+    return false;
 }
 
 function doubleQuotedString(str)

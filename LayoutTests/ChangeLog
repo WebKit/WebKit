@@ -1,3 +1,15 @@
+2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Autoformat doesn't work on icloud.com (javascript-packed.js)
+        https://bugs.webkit.org/show_bug.cgi?id=192946
+        <rdar://problem/42546126>
+
+        Rubber-stamped by Devin Rousso.
+
+        * inspector/formatting/is-text-likely-minified-expected.txt:
+        * inspector/formatting/is-text-likely-minified.html:
+        Add a test for a long header doc at the start but minified content at the end.
+
 2018-12-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS WK2 ] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html is flaky

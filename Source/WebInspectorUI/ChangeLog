@@ -1,5 +1,19 @@
 2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Autoformat doesn't work on icloud.com (javascript-packed.js)
+        https://bugs.webkit.org/show_bug.cgi?id=192946
+        <rdar://problem/42546126>
+
+        Rubber-stamped by Devin Rousso.
+
+        * UserInterface/Base/Utilities.js:
+        (whitespaceRatio):
+        (isTextLikelyMinified):
+        Check the first 2500 and the last 2500 characters whitespace ratio.
+        If either is below 20% then treat as minified.
+
+2018-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         ITMLKit Inspector: Elements tab does not show DOM Tree
         https://bugs.webkit.org/show_bug.cgi?id=192910
         <rdar://problem/46680585>

@@ -5,17 +5,17 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Formatting.isLikelyMinified");
+    let suite = InspectorTest.createSyncSuite("Formatting.isLikelyMinified");
 
     suite.addTestCase({
         name: "JavaScriptShortSnippet.Unminified",
-        test(resolve, reject) {
+        test() {
             InspectorTest.expectThat(!isTextLikelyMinified("var x = 42;\nvar y = 24;\n"), "This small JavaScript snippet should be classified as unminified.");
-            resolve();
+            return true;
         }
     });
 
-    let jquerySourceFragment = `/*eslint-disable no-unused-vars*/
+    const jquerySourceFragment = `/*eslint-disable no-unused-vars*/
 /*!
  * jQuery JavaScript Library v3.1.0
  * https://jquery.com/
@@ -91,22 +91,47 @@ var support = {};`;
 
     suite.addTestCase({
         name: "JQuerySnippet.Unminified",
-        test(resolve, reject) {
+        test() {
             InspectorTest.expectThat(!isTextLikelyMinified(jquerySourceFragment), "jQuery snippet should be classified as unminified.");
-            resolve();
+            return true;
         }
     });
 
-    let jQueryMinifiedSourceFragment = `/*! jQuery v3.1.0 | (c) jQuery Foundation | jquery.org/license */
+    const jQueryMinifiedSourceFragment = `/*! jQuery v3.1.0 | (c) jQuery Foundation | jquery.org/license */
 !function(a,b){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a,!0):function(a){if(!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this,function(a,b){"use strict";var c=[],d=a.document,e=Object.getPrototypeOf,f=c.slice,g=c.concat,h=c.push,i=c.indexOf,j={},k=j.toString,l=j.hasOwnProperty,m=l.toString,n=m.call(Object),o={};function p(a,b){b=b||d;var c=b.createElement("script");c.text=a,b.head.appendChild(c).parentNode.removeChild(c)}var q="3.1.0",r=function(a,b){return new r.fn.init(a,b)},s=/^[s﻿ ]+|[s﻿ ]+$/g,t=/^-ms-/,u=/-([a-z])/g,v=function(a,b){return b.toUpperCase()};r.fn=r.prototype={jquery:q,constructor:r,length:0,toArray:function(){return f.call(this)},get:function(a){return null!=a?a<0?this[a+this.length]:this[a]:f.call(this)},pushStack:function(a){var b=r.merge(this.constructor(),a);return b.prevObject=this,b},each:function(a){return r.each(this,a)},map:function(a){return this.pushStack(r.map(this,function(b,c){return a.call(b,c,b)}))},slice:function(){return this.pushStack(f.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(a<0?b:0);return this.pushStack(c>=0&&c<b?[this[c]]:[])},end:function(){return this.prevObject||this.constructor()},push:h,sort:c.sort,splice:c.splice},r.extend=r.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||r.isFunction(g)||(g={}),h===i&&(g=this,h--);h<i;h++)if(null!=(a=arguments[h]))for(b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(r.isPlainObject(d)||(e=r.isArray(d)))?(e?(e=!1,f=c&&r.isArray(c)?c:[]):f=c&&r.isPlainObject(c)?c:{},g[b]=r.extend(j,f,d)):void 0!==d&&(g[b]=d));return g},r.extend({expando:"jQuery"+(q+Math.random()).replace(/D/g,""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return"function"===r.type(a)},isArray:Array.isArray,isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){var b=r.type(a);return("number"===b||"string"===b)&&!isNaN(a-parseFloat(a))},isPlainObject:function(a){var b,c;return!(!a||"[object Object]"!==k.call(a))&&(!(b=e(a))||(c=l.call(b,"constructor")&&b.constructor,"function"==typeof c&&m.call(c)===n))},isEmptyObject:function(a){var b;for(b in a)return!1;return!0},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?j[k.call(a)]||"object":typeof a},globalEval:function(a){p(a)},camelCase:function(a){return a.replace(t,"ms-").replace(u,v)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b){var c,d=0;if(w(a)){for(c=a.length;d<c;d++)if(b.call(a[d],d,a[d])===!1)break}else for(d in a)if(b.call(a[d],d,a[d])===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(s,"")},makeArray:function(a,b){var c=b||[];return null!=a&&(w(Object(a))?r.merge(c,"string"==typeof a?[a]:a):h.call(c,a)),c},inArray:function(a,b,c){return null==b?-1:i.call(b,a,c)},merge:function(a,b){for(var c=+b.length,d=0,e=a.length;d<c;d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for(var d,e=[],f=0,g=a.length,h=!c;f<g;f++)d=!b(a[f],f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,e,f=0,h=[];if(w(a))for(d=a.length;f<d;f++)e=b(a[f],f,c),null!=e&&h.push(e);else for(f in a)e=b(a[f],f,c),null!=e&&h.push(e);return g.apply([],h)},guid:1,proxy:function(a,b){var c,d,e;if("string"==typeof b&&(c=a[b],b=a,a=c),r.isFunction(a))return d=f.call(arguments,2),e=function(){return `;
 
     suite.addTestCase({
         name: "JQuerySnippet.Minified",
-        test(resolve, reject) {
+        test() {
             InspectorTest.expectThat(isTextLikelyMinified(jQueryMinifiedSourceFragment), "jQuery snippet should be classified as minified.");
-            resolve();
+            return true;
         }
     });
+
+    const sampleHeader = `
+/*!
+ * jQuery JavaScript Library v3.1.0
+ * https://jquery.com/
+ *
+ * Includes Sizzle.js
+ * https://sizzlejs.com/
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license
+ * https://jquery.org/license
+ *
+ * Date: 2016-07-07T21:44Z
+ */
+ `;
+
+    let longHeaderSource = sampleHeader.repeat(10) + jQueryMinifiedSourceFragment;
+    suite.addTestCase({
+        name: "JQuerySnippet.MinifiedWithHeader",
+        test() {
+            InspectorTest.expectThat(isTextLikelyMinified(longHeaderSource), "Source with leading unminified but trailing minified source should be classified as minified.");
+            return true;
+        }
+    })
 
     suite.runTestCasesAndFinish();
 }

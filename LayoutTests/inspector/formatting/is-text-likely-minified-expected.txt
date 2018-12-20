@@ -11,3 +11,6 @@ PASS: jQuery snippet should be classified as unminified.
 -- Running test case: JQuerySnippet.Minified
 PASS: jQuery snippet should be classified as minified.
 
+-- Running test case: JQuerySnippet.MinifiedWithHeader
+PASS: Source with leading unminified but trailing minified source should be classified as minified.
+
