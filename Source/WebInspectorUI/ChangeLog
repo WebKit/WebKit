@@ -1,3 +1,14 @@
+2018-12-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: shift-clicking a color-swatch to change formats starts editing the color
+        https://bugs.webkit.org/show_bug.cgi?id=192784
+        <rdar://problem/46801028>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+
 2018-12-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements tab: arrow key after undoing a DOM node delete selects the wrong element

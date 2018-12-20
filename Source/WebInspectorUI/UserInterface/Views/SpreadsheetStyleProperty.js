@@ -483,7 +483,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         // Prevent the value from editing when clicking on the swatch.
         swatch.element.addEventListener("click", (event) => {
-            if (this._swatchActive)
+            if (this._swatchActive || event.shiftKey)
                 event.stop();
         });
 
