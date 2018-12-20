@@ -406,8 +406,10 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._cachedNumberOfDescendents++;
 
         let index = this._indexOfTreeElement(element);
-        if (index >= 0)
+        if (index >= 0) {
+            console.assert(!element.selected, "TreeElement should not be selected before being inserted.");
             this._selectionController.didInsertItem(index);
+        }
     }
 
     _forgetTreeElement(element)

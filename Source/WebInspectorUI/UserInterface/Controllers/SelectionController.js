@@ -212,6 +212,11 @@ WI.SelectionController = class SelectionController extends WI.Object
 
             current = this._selectedIndexes.indexLessThan(current);
         }
+
+        if (this._lastSelectedIndex >= index)
+            this._lastSelectedIndex += 1;
+        if (this._shiftAnchorIndex >= index)
+            this._shiftAnchorIndex += 1;
     }
 
     didRemoveItems(indexes)
