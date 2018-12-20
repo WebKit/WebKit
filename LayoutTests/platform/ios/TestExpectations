@@ -3222,3 +3222,5 @@ webkit.org/b/190764 editing/spelling/spelling-dots-repaint.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position-2.html [ Skip ]
 webkit.org/b/190764 editing/spelling/spelling-dots-position-3.html [ Skip ]
+
+webkit.org/b/192279 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ Pass Failure ]
