@@ -137,7 +137,11 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
         {
             let suffix = this._getComponentSuffix(name);
             let propertyName = (name !== "position" ? name + "-" : "") + side + suffix;
-            let value = style.propertyForName(propertyName).value;
+            let property = style.propertyForName(propertyName);
+            if (!property)
+                return null;
+
+            let value = property.value;
             if (value === "" || (name !== "position" && value === "0px") || (name === "position" && value === "auto"))
                 value = "";
             else
@@ -152,7 +156,11 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
         {
             console.assert(name === "width" || name === "height");
 
-            let size = style.propertyForName(name).value.replace(/px$/, "");
+            let property = style.propertyForName(name);
+            if (!property)
+                return null;
+
+            let size = property.value.replace(/px$/, "");
             if (style.propertyForName("box-sizing").value === "border-box") {
                 let borderBox = this._getBox(style, "border");
                 let paddingBox = this._getBox(style, "padding");
@@ -197,16 +205,24 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             return;
         }
 
+        let displayProperty = style.propertyForName("display");
+        let positionProperty = style.propertyForName("position");
+        if (!displayProperty || !positionProperty) {
+            this.showEmptyMessage();
+            return;
+        }
+
         var previousBox = null;
         for (let name of ["content", "padding", "border", "margin", "position"]) {
-            if (name === "margin" && noMarginDisplayType[style.propertyForName("display").value])
+
+            if (name === "margin" && noMarginDisplayType[displayProperty.value])
                 continue;
-            if (name === "padding" && noPaddingDisplayType[style.propertyForName("display").value])
+            if (name === "padding" && noPaddingDisplayType[displayProperty.value])
                 continue;
-            if (name === "position" && noPositionType[style.propertyForName("position").value])
+            if (name === "position" && noPositionType[positionProperty.value])
                 continue;
 
-            var boxElement = document.createElement("div");
+            let boxElement = document.createElement("div");
             boxElement.className = name;
             boxElement._name = name;
             boxElement.addEventListener("mouseover", this._highlightDOMNode.bind(this, true, name === "position" ? "all" : name), false);
@@ -215,23 +231,37 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             if (name === "content") {
                 let widthElement = createContentAreaElement.call(this, "width");
                 let heightElement = createContentAreaElement.call(this, "height");
+                if (!widthElement || !heightElement) {
+                    this.showEmptyMessage();
+                    return;
+                }
+
                 boxElement.append(widthElement, " \u00D7 ", heightElement);
             } else {
-                var labelElement = document.createElement("div");
+                let topElement = createBoxPartElement.call(this, name, "top");
+                let leftElement = createBoxPartElement.call(this, name, "left");
+                let rightElement = createBoxPartElement.call(this, name, "right");
+                let bottomElement = createBoxPartElement.call(this, name, "bottom");
+                if (!topElement || !leftElement || !rightElement || !bottomElement) {
+                    this.showEmptyMessage();
+                    return;
+                }
+
+                let labelElement = document.createElement("div");
                 labelElement.className = "label";
                 labelElement.textContent = name;
                 boxElement.appendChild(labelElement);
 
-                boxElement.appendChild(createBoxPartElement.call(this, name, "top"));
+                boxElement.appendChild(topElement);
                 boxElement.appendChild(document.createElement("br"));
-                boxElement.appendChild(createBoxPartElement.call(this, name, "left"));
+                boxElement.appendChild(leftElement);
 
                 if (previousBox)
                     boxElement.appendChild(previousBox);
 
-                boxElement.appendChild(createBoxPartElement.call(this, name, "right"));
+                boxElement.appendChild(rightElement);
                 boxElement.appendChild(document.createElement("br"));
-                boxElement.appendChild(createBoxPartElement.call(this, name, "bottom"));
+                boxElement.appendChild(bottomElement);
             }
 
             previousBox = boxElement;
