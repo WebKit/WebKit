@@ -1159,9 +1159,9 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
  *
  * This is only implemented on Linux and is a no-op otherwise.
  *
- * If you read from `$XDG_CONFIG_HOME/g_get_prgname()` or `$XDG_CACHE_HOME/g_get_prgname()`
- * in your WebProcess you must ensure it exists before subprocesses are created.
- * This behavior may change in the future.
+ * The web process is granted read-only access to the subdirectory matching g_get_prgname()
+ * in `$XDG_CONFIG_HOME`, `$XDG_CACHE_HOME`, and `$XDG_DATA_HOME` if it exists before the
+ * process is created. This behavior may change in the future.
  *
  * Since: 2.24
  */

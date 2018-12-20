@@ -779,6 +779,13 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         // ahead of time if they require it.
         GUniquePtr<char> configDir(g_build_filename(g_get_user_config_dir(), g_get_prgname(), nullptr));
         GUniquePtr<char> cacheDir(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), nullptr));
+        GUniquePtr<char> dataDir(g_build_filename(g_get_user_data_dir(), g_get_prgname(), nullptr));
+
+        sandboxArgs.appendVector(Vector<CString>({
+            "--ro-bind-try", cacheDir.get(), cacheDir.get(),
+            "--ro-bind-try", configDir.get(), configDir.get(),
+            "--ro-bind-try", dataDir.get(), dataDir.get(),
+        }));
 
         Vector<String> extraPaths = { "applicationCacheDirectory", "waylandSocket"};
         for (const auto& path : extraPaths) {
@@ -786,11 +793,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             if (!extraPath.isEmpty())
                 sandboxArgs.appendVector(Vector<CString>({ "--bind-try", extraPath.utf8(), extraPath.utf8() }));
         }
-
-        sandboxArgs.appendVector(Vector<CString>({
-            "--ro-bind-try", cacheDir.get(), cacheDir.get(),
-            "--ro-bind-try", configDir.get(), configDir.get(),
-        }));
 
         bindDBusSession(sandboxArgs, proxy);
         // FIXME: This needs to be restricted, upstream is working on it.

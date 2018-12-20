@@ -1,3 +1,14 @@
+2018-12-20  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Grant the sandbox read access to XDG_DATA_HOME/prgname
+        https://bugs.webkit.org/show_bug.cgi?id=192929
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+
 2018-12-20  Chris Dumez  <cdumez@apple.com>
 
         [PSON] SuspendedPageProxy fails to release its process assertion if the WebPage fails to enter PageCache
