@@ -1,3 +1,30 @@
+2018-12-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [BigInt] We should enable CSE into arithmetic operations that speculate BigIntUse
+        https://bugs.webkit.org/show_bug.cgi?id=192723
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is adjusting clobberize rules into ValueOp nodes to enable
+        more optimizations when we speculate BigIntUse. In such case, DFG now
+        is able to apply CSE, LICM and commutativity on nodes like
+        ValueAdd(BigInt, BigInt), ValueSub(BigInt, BigInt), etc.
+
+        Here are the numbers we can observe with some microbenchmarks:
+
+                                  baseline                 changes
+
+        big-int-cse           108.2733+-0.8445    ^    80.9897+-4.9781   ^ definitely 1.3369x faster
+        big-int-licm          75.6641+-0.3477     ^    57.8144+-1.6043   ^ definitely 1.3087x faster
+        big-int-global-cse    145.3557+-1.0552    ^    86.5866+-0.3025   ^ definitely 1.6787x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2018-12-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r239377.
