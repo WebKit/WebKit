@@ -1,5 +1,18 @@
 2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthN] Remove hash from Client Data
+        https://bugs.webkit.org/show_bug.cgi?id=192727
+        <rdar://problem/46746673>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+
+2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthN] Add a runtime flag for local authenticator
         https://bugs.webkit.org/show_bug.cgi?id=192792
         <rdar://problem/46798738>

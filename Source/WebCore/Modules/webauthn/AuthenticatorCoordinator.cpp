@@ -66,8 +66,6 @@ static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferS
     }
     object->setString("challenge"_s, WTF::base64URLEncode(challenge.data(), challenge.length()));
     object->setString("origin"_s, origin.toRawString());
-    // FIXME: This might be platform dependent.
-    object->setString("hashAlgorithm"_s, "SHA-256"_s);
 
     auto utf8JSONString = object->toJSONString().utf8();
     return ArrayBuffer::create(utf8JSONString.data(), utf8JSONString.length());

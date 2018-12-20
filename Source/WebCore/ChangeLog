@@ -1,5 +1,21 @@
 2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
 
+        [WebAuthN] Remove hash from Client Data
+        https://bugs.webkit.org/show_bug.cgi?id=192727
+        <rdar://problem/46746673>
+
+        Reviewed by Brent Fulgham.
+
+        The hash algorithm for hashing the client data is enforced to SHA_256 in the latest spec:
+        https://www.w3.org/TR/webauthn/#sec-client-data. Therefore, we should remove it.
+
+        Covered by existing tests.
+
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinatorInternal::produceClientDataJson):
+
+2018-12-20  Jiewen Tan  <jiewen_tan@apple.com>
+
         [WebAuthN] Add a runtime flag for local authenticator
         https://bugs.webkit.org/show_bug.cgi?id=192792
         <rdar://problem/46798738>
