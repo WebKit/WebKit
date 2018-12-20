@@ -29,6 +29,8 @@ typedef signed char int8_t;
 #else
 #include <stdint.h>  // for uintptr_t and C99 types
 #endif               // defined(_MSC_VER) && (_MSC_VER < 1600)
+// Types are deprecated.  Enable this macro for legacy types.
+#ifdef LIBYUV_LEGACY_TYPES
 typedef uint64_t uint64;
 typedef int64_t int64;
 typedef uint32_t uint32;
@@ -37,6 +39,7 @@ typedef uint16_t uint16;
 typedef int16_t int16;
 typedef uint8_t uint8;
 typedef int8_t int8;
+#endif  // LIBYUV_LEGACY_TYPES
 #endif  // INT_TYPES_DEFINED
 
 #if !defined(LIBYUV_API)

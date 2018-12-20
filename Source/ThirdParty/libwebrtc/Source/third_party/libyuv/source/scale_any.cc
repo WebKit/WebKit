@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <string.h>  // For memset/memcpy
+
 #include "libyuv/scale.h"
 #include "libyuv/scale_row.h"
 
@@ -41,6 +43,9 @@ CANY(ScaleARGBCols_Any_NEON, ScaleARGBCols_NEON, ScaleARGBCols_C, 4, 7)
 #endif
 #ifdef HAS_SCALEARGBCOLS_MSA
 CANY(ScaleARGBCols_Any_MSA, ScaleARGBCols_MSA, ScaleARGBCols_C, 4, 3)
+#endif
+#ifdef HAS_SCALEARGBCOLS_MMI
+CANY(ScaleARGBCols_Any_MMI, ScaleARGBCols_MMI, ScaleARGBCols_C, 4, 0)
 #endif
 #ifdef HAS_SCALEARGBFILTERCOLS_NEON
 CANY(ScaleARGBFilterCols_Any_NEON,
@@ -165,6 +170,27 @@ SDANY(ScaleRowDown2Box_Any_MSA,
       1,
       31)
 #endif
+#ifdef HAS_SCALEROWDOWN2_MMI
+SDANY(ScaleRowDown2_Any_MMI, ScaleRowDown2_MMI, ScaleRowDown2_C, 2, 1, 7)
+SDANY(ScaleRowDown2Linear_Any_MMI,
+      ScaleRowDown2Linear_MMI,
+      ScaleRowDown2Linear_C,
+      2,
+      1,
+      7)
+SDANY(ScaleRowDown2Box_Any_MMI,
+      ScaleRowDown2Box_MMI,
+      ScaleRowDown2Box_C,
+      2,
+      1,
+      7)
+SDODD(ScaleRowDown2Box_Odd_MMI,
+      ScaleRowDown2Box_MMI,
+      ScaleRowDown2Box_Odd_C,
+      2,
+      1,
+      7)
+#endif
 #ifdef HAS_SCALEROWDOWN4_SSSE3
 SDANY(ScaleRowDown4_Any_SSSE3, ScaleRowDown4_SSSE3, ScaleRowDown4_C, 4, 1, 7)
 SDANY(ScaleRowDown4Box_Any_SSSE3,
@@ -200,6 +226,15 @@ SDANY(ScaleRowDown4Box_Any_MSA,
       4,
       1,
       15)
+#endif
+#ifdef HAS_SCALEROWDOWN4_MMI
+SDANY(ScaleRowDown4_Any_MMI, ScaleRowDown4_MMI, ScaleRowDown4_C, 4, 1, 7)
+SDANY(ScaleRowDown4Box_Any_MMI,
+      ScaleRowDown4Box_MMI,
+      ScaleRowDown4Box_C,
+      4,
+      1,
+      7)
 #endif
 #ifdef HAS_SCALEROWDOWN34_SSSE3
 SDANY(ScaleRowDown34_Any_SSSE3,
@@ -382,6 +417,26 @@ SDANY(ScaleARGBRowDown2Box_Any_MSA,
       4,
       3)
 #endif
+#ifdef HAS_SCALEARGBROWDOWN2_MMI
+SDANY(ScaleARGBRowDown2_Any_MMI,
+      ScaleARGBRowDown2_MMI,
+      ScaleARGBRowDown2_C,
+      2,
+      4,
+      1)
+SDANY(ScaleARGBRowDown2Linear_Any_MMI,
+      ScaleARGBRowDown2Linear_MMI,
+      ScaleARGBRowDown2Linear_C,
+      2,
+      4,
+      1)
+SDANY(ScaleARGBRowDown2Box_Any_MMI,
+      ScaleARGBRowDown2Box_MMI,
+      ScaleARGBRowDown2Box_C,
+      2,
+      4,
+      1)
+#endif
 #undef SDANY
 
 // Scale down by even scale factor.
@@ -433,6 +488,57 @@ SDAANY(ScaleARGBRowDownEvenBox_Any_MSA,
        4,
        3)
 #endif
+#ifdef HAS_SCALEARGBROWDOWNEVEN_MMI
+SDAANY(ScaleARGBRowDownEven_Any_MMI,
+       ScaleARGBRowDownEven_MMI,
+       ScaleARGBRowDownEven_C,
+       4,
+       1)
+SDAANY(ScaleARGBRowDownEvenBox_Any_MMI,
+       ScaleARGBRowDownEvenBox_MMI,
+       ScaleARGBRowDownEvenBox_C,
+       4,
+       1)
+#endif
+
+#ifdef SASIMDONLY
+// This also works and uses memcpy and SIMD instead of C, but is slower on ARM
+
+// Add rows box filter scale down.  Using macro from row_any
+#define SAROW(NAMEANY, ANY_SIMD, SBPP, BPP, MASK)                      \
+  void NAMEANY(const uint8_t* src_ptr, uint16_t* dst_ptr, int width) { \
+    SIMD_ALIGNED(uint16_t dst_temp[32]);                               \
+    SIMD_ALIGNED(uint8_t src_temp[32]);                                \
+    memset(dst_temp, 0, 32 * 2); /* for msan */                        \
+    int r = width & MASK;                                              \
+    int n = width & ~MASK;                                             \
+    if (n > 0) {                                                       \
+      ANY_SIMD(src_ptr, dst_ptr, n);                                   \
+    }                                                                  \
+    memcpy(src_temp, src_ptr + n * SBPP, r * SBPP);                    \
+    memcpy(dst_temp, dst_ptr + n * BPP, r * BPP);                      \
+    ANY_SIMD(src_temp, dst_temp, MASK + 1);                            \
+    memcpy(dst_ptr + n * BPP, dst_temp, r * BPP);                      \
+  }
+
+#ifdef HAS_SCALEADDROW_SSE2
+SAROW(ScaleAddRow_Any_SSE2, ScaleAddRow_SSE2, 1, 2, 15)
+#endif
+#ifdef HAS_SCALEADDROW_AVX2
+SAROW(ScaleAddRow_Any_AVX2, ScaleAddRow_AVX2, 1, 2, 31)
+#endif
+#ifdef HAS_SCALEADDROW_NEON
+SAROW(ScaleAddRow_Any_NEON, ScaleAddRow_NEON, 1, 2, 15)
+#endif
+#ifdef HAS_SCALEADDROW_MSA
+SAROW(ScaleAddRow_Any_MSA, ScaleAddRow_MSA, 1, 2, 15)
+#endif
+#ifdef HAS_SCALEADDROW_MMI
+SAROW(ScaleAddRow_Any_MMI, ScaleAddRow_MMI, 1, 2, 7)
+#endif
+#undef SAANY
+
+#else
 
 // Add rows box filter scale down.
 #define SAANY(NAMEANY, SCALEADDROW_SIMD, SCALEADDROW_C, MASK)              \
@@ -456,7 +562,12 @@ SAANY(ScaleAddRow_Any_NEON, ScaleAddRow_NEON, ScaleAddRow_C, 15)
 #ifdef HAS_SCALEADDROW_MSA
 SAANY(ScaleAddRow_Any_MSA, ScaleAddRow_MSA, ScaleAddRow_C, 15)
 #endif
+#ifdef HAS_SCALEADDROW_MMI
+SAANY(ScaleAddRow_Any_MMI, ScaleAddRow_MMI, ScaleAddRow_C, 7)
+#endif
 #undef SAANY
+
+#endif  // SASIMDONLY
 
 #ifdef __cplusplus
 }  // extern "C"

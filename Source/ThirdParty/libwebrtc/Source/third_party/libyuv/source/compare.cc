@@ -154,6 +154,12 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
     HammingDistance = HammingDistance_MSA;
   }
 #endif
+#if defined(HAS_HAMMINGDISTANCE_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    HammingDistance = HammingDistance_MMI;
+  }
+#endif
+
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+ : diff)
 #endif
@@ -208,6 +214,11 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
 #if defined(HAS_SUMSQUAREERROR_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     SumSquareError = SumSquareError_MSA;
+  }
+#endif
+#if defined(HAS_SUMSQUAREERROR_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    SumSquareError = SumSquareError_MMI;
   }
 #endif
 #ifdef _OPENMP

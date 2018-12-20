@@ -542,7 +542,9 @@ void ScaleFilterCols64_C(uint8_t* dst_ptr,
 
 // Same as 8 bit arm blender but return is cast to uint16_t
 #define BLENDER(a, b, f) \
-  (uint16_t)((int)(a) + ((((int)((f)) * ((int)(b) - (int)(a))) + 0x8000) >> 16))
+  (uint16_t)(            \
+      (int)(a) +         \
+      (int)((((int64_t)((f)) * ((int64_t)(b) - (int)(a))) + 0x8000) >> 16))
 
 void ScaleFilterCols_16_C(uint16_t* dst_ptr,
                           const uint16_t* src_ptr,
@@ -1070,6 +1072,14 @@ void ScalePlaneVertical(int src_height,
     InterpolateRow = InterpolateRow_Any_MSA;
     if (IS_ALIGNED(dst_width_bytes, 32)) {
       InterpolateRow = InterpolateRow_MSA;
+    }
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    InterpolateRow = InterpolateRow_Any_MMI;
+    if (IS_ALIGNED(dst_width_bytes, 8)) {
+      InterpolateRow = InterpolateRow_MMI;
     }
   }
 #endif

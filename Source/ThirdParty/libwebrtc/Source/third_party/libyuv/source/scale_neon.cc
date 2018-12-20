@@ -504,37 +504,25 @@ void ScaleRowDown38_2_Box_NEON(const uint8_t* src_ptr,
       : "q0", "q1", "q2", "q3", "q13", "q14", "memory", "cc");
 }
 
-void ScaleAddRows_NEON(const uint8_t* src_ptr,
-                       ptrdiff_t src_stride,
-                       uint16_t* dst_ptr,
-                       int src_width,
-                       int src_height) {
-  const uint8_t* src_tmp;
+// Add a row of bytes to a row of shorts.  Used for box filter.
+// Reads 16 bytes and accumulates to 16 shorts at a time.
+void ScaleAddRow_NEON(const uint8_t* src_ptr,
+                      uint16_t* dst_ptr,
+                      int src_width) {
   asm volatile(
       "1:                                        \n"
-      "mov       %0, %1                          \n"
-      "mov       r12, %5                         \n"
-      "veor      q2, q2, q2                      \n"
-      "veor      q3, q3, q3                      \n"
-      "2:                                        \n"
-      // load 16 pixels into q0
-      "vld1.8     {q0}, [%0], %3                 \n"
-      "vaddw.u8   q3, q3, d1                     \n"
-      "vaddw.u8   q2, q2, d0                     \n"
-      "subs       r12, r12, #1                   \n"
-      "bgt        2b                             \n"
-      "vst1.16    {q2, q3}, [%2]!                \n"  // store pixels
-      "add        %1, %1, #16                    \n"
-      "subs       %4, %4, #16                    \n"  // 16 processed per loop
+      "vld1.16    {q1, q2}, [%1]                 \n"  // load accumulator
+      "vld1.8     {q0}, [%0]!                    \n"  // load 16 bytes
+      "vaddw.u8   q2, q2, d1                     \n"  // add
+      "vaddw.u8   q1, q1, d0                     \n"
+      "vst1.16    {q1, q2}, [%1]!                \n"  // store accumulator
+      "subs       %2, %2, #16                    \n"  // 16 processed per loop
       "bgt        1b                             \n"
-      : "=&r"(src_tmp),    // %0
-        "+r"(src_ptr),     // %1
-        "+r"(dst_ptr),     // %2
-        "+r"(src_stride),  // %3
-        "+r"(src_width),   // %4
-        "+r"(src_height)   // %5
+      : "+r"(src_ptr),   // %0
+        "+r"(dst_ptr),   // %1
+        "+r"(src_width)  // %2
       :
-      : "memory", "cc", "r12", "q0", "q1", "q2", "q3"  // Clobber List
+      : "memory", "cc", "q0", "q1", "q2"  // Clobber List
       );
 }
 

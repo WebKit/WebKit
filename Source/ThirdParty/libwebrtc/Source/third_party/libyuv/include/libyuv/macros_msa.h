@@ -16,30 +16,30 @@
 #include <stdint.h>
 
 #if (__mips_isa_rev >= 6)
-#define LW(psrc)                                        \
-  ({                                                    \
-    uint8_t* psrc_lw_m = (uint8_t*)(psrc); /* NOLINT */ \
-    uint32_t val_m;                                     \
-    asm volatile("lw  %[val_m],  %[psrc_lw_m]  \n"      \
-                 : [val_m] "=r"(val_m)                  \
-                 : [psrc_lw_m] "m"(*psrc_lw_m));        \
-    val_m;                                              \
+#define LW(psrc)                                       \
+  ({                                                   \
+    const uint8_t* psrc_lw_m = (const uint8_t*)(psrc); \
+    uint32_t val_m;                                    \
+    asm volatile("lw  %[val_m],  %[psrc_lw_m]  \n"     \
+                 : [val_m] "=r"(val_m)                 \
+                 : [psrc_lw_m] "m"(*psrc_lw_m));       \
+    val_m;                                             \
   })
 
 #if (__mips == 64)
-#define LD(psrc)                                        \
-  ({                                                    \
-    uint8_t* psrc_ld_m = (uint8_t*)(psrc); /* NOLINT */ \
-    uint64_t val_m = 0;                                 \
-    asm volatile("ld  %[val_m],  %[psrc_ld_m]  \n"      \
-                 : [val_m] "=r"(val_m)                  \
-                 : [psrc_ld_m] "m"(*psrc_ld_m));        \
-    val_m;                                              \
+#define LD(psrc)                                       \
+  ({                                                   \
+    const uint8_t* psrc_ld_m = (const uint8_t*)(psrc); \
+    uint64_t val_m = 0;                                \
+    asm volatile("ld  %[val_m],  %[psrc_ld_m]  \n"     \
+                 : [val_m] "=r"(val_m)                 \
+                 : [psrc_ld_m] "m"(*psrc_ld_m));       \
+    val_m;                                             \
   })
 #else  // !(__mips == 64)
 #define LD(psrc)                                                         \
   ({                                                                     \
-    uint8_t* psrc_ld_m = (uint8_t*)(psrc); /* NOLINT */                  \
+    const uint8_t* psrc_ld_m = (const uint8_t*)(psrc);                   \
     uint32_t val0_m, val1_m;                                             \
     uint64_t val_m = 0;                                                  \
     val0_m = LW(psrc_ld_m);                                              \
@@ -81,30 +81,30 @@
   })
 #endif  // !(__mips == 64)
 #else   // !(__mips_isa_rev >= 6)
-#define LW(psrc)                                        \
-  ({                                                    \
-    uint8_t* psrc_lw_m = (uint8_t*)(psrc); /* NOLINT */ \
-    uint32_t val_m;                                     \
-    asm volatile("ulw  %[val_m],  %[psrc_lw_m]  \n"     \
-                 : [val_m] "=r"(val_m)                  \
-                 : [psrc_lw_m] "m"(*psrc_lw_m));        \
-    val_m;                                              \
+#define LW(psrc)                                       \
+  ({                                                   \
+    const uint8_t* psrc_lw_m = (const uint8_t*)(psrc); \
+    uint32_t val_m;                                    \
+    asm volatile("ulw  %[val_m],  %[psrc_lw_m]  \n"    \
+                 : [val_m] "=r"(val_m)                 \
+                 : [psrc_lw_m] "m"(*psrc_lw_m));       \
+    val_m;                                             \
   })
 
 #if (__mips == 64)
-#define LD(psrc)                                        \
-  ({                                                    \
-    uint8_t* psrc_ld_m = (uint8_t*)(psrc); /* NOLINT */ \
-    uint64_t val_m = 0;                                 \
-    asm volatile("uld  %[val_m],  %[psrc_ld_m]  \n"     \
-                 : [val_m] "=r"(val_m)                  \
-                 : [psrc_ld_m] "m"(*psrc_ld_m));        \
-    val_m;                                              \
+#define LD(psrc)                                       \
+  ({                                                   \
+    const uint8_t* psrc_ld_m = (const uint8_t*)(psrc); \
+    uint64_t val_m = 0;                                \
+    asm volatile("uld  %[val_m],  %[psrc_ld_m]  \n"    \
+                 : [val_m] "=r"(val_m)                 \
+                 : [psrc_ld_m] "m"(*psrc_ld_m));       \
+    val_m;                                             \
   })
 #else  // !(__mips == 64)
 #define LD(psrc)                                                         \
   ({                                                                     \
-    uint8_t* psrc_ld_m = (uint8_t*)(psrc); /* NOLINT */                  \
+    const uint8_t* psrc_ld_m = (const uint8_t*)(psrc);                   \
     uint32_t val0_m, val1_m;                                             \
     uint64_t val_m = 0;                                                  \
     val0_m = LW(psrc_ld_m);                                              \
@@ -138,7 +138,7 @@
 
 // TODO(fbarchard): Consider removing __VAR_ARGS versions.
 #define LD_B(RTYPE, psrc) *((RTYPE*)(psrc)) /* NOLINT */
-#define LD_UB(...) LD_B(v16u8, __VA_ARGS__)
+#define LD_UB(...) LD_B(const v16u8, __VA_ARGS__)
 
 #define ST_B(RTYPE, in, pdst) *((RTYPE*)(pdst)) = (in) /* NOLINT */
 #define ST_UB(...) ST_B(v16u8, __VA_ARGS__)
@@ -158,14 +158,14 @@
     out0 = LD_B(RTYPE, (psrc));                \
     out1 = LD_B(RTYPE, (psrc) + stride);       \
   }
-#define LD_UB2(...) LD_B2(v16u8, __VA_ARGS__)
+#define LD_UB2(...) LD_B2(const v16u8, __VA_ARGS__)
 
 #define LD_B4(RTYPE, psrc, stride, out0, out1, out2, out3) \
   {                                                        \
     LD_B2(RTYPE, (psrc), stride, out0, out1);              \
     LD_B2(RTYPE, (psrc) + 2 * stride, stride, out2, out3); \
   }
-#define LD_UB4(...) LD_B4(v16u8, __VA_ARGS__)
+#define LD_UB4(...) LD_B4(const v16u8, __VA_ARGS__)
 
 /* Description : Store two vectors with stride each having 16 'byte' sized
                  elements

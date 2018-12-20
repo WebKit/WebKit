@@ -181,7 +181,7 @@ void ARGB4444ToARGBRow_C(const uint8_t* src_argb4444,
 void AR30ToARGBRow_C(const uint8_t* src_ar30, uint8_t* dst_argb, int width) {
   int x;
   for (x = 0; x < width; ++x) {
-    uint32_t ar30 = *(uint32_t*)src_ar30;
+    uint32_t ar30 = *(const uint32_t*)src_ar30;
     uint32_t b = (ar30 >> 2) & 0xff;
     uint32_t g = (ar30 >> 12) & 0xff;
     uint32_t r = (ar30 >> 22) & 0xff;
@@ -195,7 +195,7 @@ void AR30ToARGBRow_C(const uint8_t* src_ar30, uint8_t* dst_argb, int width) {
 void AR30ToABGRRow_C(const uint8_t* src_ar30, uint8_t* dst_abgr, int width) {
   int x;
   for (x = 0; x < width; ++x) {
-    uint32_t ar30 = *(uint32_t*)src_ar30;
+    uint32_t ar30 = *(const uint32_t*)src_ar30;
     uint32_t b = (ar30 >> 2) & 0xff;
     uint32_t g = (ar30 >> 12) & 0xff;
     uint32_t r = (ar30 >> 22) & 0xff;
@@ -209,7 +209,7 @@ void AR30ToABGRRow_C(const uint8_t* src_ar30, uint8_t* dst_abgr, int width) {
 void AR30ToAB30Row_C(const uint8_t* src_ar30, uint8_t* dst_ab30, int width) {
   int x;
   for (x = 0; x < width; ++x) {
-    uint32_t ar30 = *(uint32_t*)src_ar30;
+    uint32_t ar30 = *(const uint32_t*)src_ar30;
     uint32_t b = ar30 & 0x3ff;
     uint32_t ga = ar30 & 0xc00ffc00;
     uint32_t r = (ar30 >> 20) & 0x3ff;
@@ -2762,6 +2762,13 @@ void ARGBPolynomialRow_C(const uint8_t* src_argb,
 // simply extract the low bits of the exponent and the high
 // bits of the mantissa from our float and we're done.
 
+// Work around GCC 7 punning warning -Wstrict-aliasing
+#if defined(__GNUC__)
+typedef uint32_t __attribute__((__may_alias__)) uint32_alias_t;
+#else
+typedef uint32_t uint32_alias_t;
+#endif
+
 void HalfFloatRow_C(const uint16_t* src,
                     uint16_t* dst,
                     float scale,
@@ -2770,7 +2777,7 @@ void HalfFloatRow_C(const uint16_t* src,
   float mult = 1.9259299444e-34f * scale;
   for (i = 0; i < width; ++i) {
     float value = src[i] * mult;
-    dst[i] = (uint16_t)((*(uint32_t*)&value) >> 13);
+    dst[i] = (uint16_t)((*(const uint32_alias_t*)&value) >> 13);
   }
 }
 
@@ -2953,6 +2960,94 @@ void NV12ToRGB565Row_SSSE3(const uint8_t* src_y,
 }
 #endif
 
+#if defined(HAS_NV12TORGB24ROW_SSSE3)
+void NV12ToRGB24Row_SSSE3(const uint8_t* src_y,
+                          const uint8_t* src_uv,
+                          uint8_t* dst_rgb24,
+                          const struct YuvConstants* yuvconstants,
+                          int width) {
+  // Row buffer for intermediate ARGB pixels.
+  SIMD_ALIGNED(uint8_t row[MAXTWIDTH * 4]);
+  while (width > 0) {
+    int twidth = width > MAXTWIDTH ? MAXTWIDTH : width;
+    NV12ToARGBRow_SSSE3(src_y, src_uv, row, yuvconstants, twidth);
+    ARGBToRGB24Row_SSSE3(row, dst_rgb24, twidth);
+    src_y += twidth;
+    src_uv += twidth;
+    dst_rgb24 += twidth * 3;
+    width -= twidth;
+  }
+}
+#endif
+
+#if defined(HAS_NV21TORGB24ROW_SSSE3)
+void NV21ToRGB24Row_SSSE3(const uint8_t* src_y,
+                          const uint8_t* src_vu,
+                          uint8_t* dst_rgb24,
+                          const struct YuvConstants* yuvconstants,
+                          int width) {
+  // Row buffer for intermediate ARGB pixels.
+  SIMD_ALIGNED(uint8_t row[MAXTWIDTH * 4]);
+  while (width > 0) {
+    int twidth = width > MAXTWIDTH ? MAXTWIDTH : width;
+    NV21ToARGBRow_SSSE3(src_y, src_vu, row, yuvconstants, twidth);
+    ARGBToRGB24Row_SSSE3(row, dst_rgb24, twidth);
+    src_y += twidth;
+    src_vu += twidth;
+    dst_rgb24 += twidth * 3;
+    width -= twidth;
+  }
+}
+#endif
+
+#if defined(HAS_NV12TORGB24ROW_AVX2)
+void NV12ToRGB24Row_AVX2(const uint8_t* src_y,
+                         const uint8_t* src_uv,
+                         uint8_t* dst_rgb24,
+                         const struct YuvConstants* yuvconstants,
+                         int width) {
+  // Row buffer for intermediate ARGB pixels.
+  SIMD_ALIGNED(uint8_t row[MAXTWIDTH * 4]);
+  while (width > 0) {
+    int twidth = width > MAXTWIDTH ? MAXTWIDTH : width;
+    NV12ToARGBRow_AVX2(src_y, src_uv, row, yuvconstants, twidth);
+#if defined(HAS_ARGBTORGB24ROW_AVX2)
+    ARGBToRGB24Row_AVX2(row, dst_rgb24, twidth);
+#else
+    ARGBToRGB24Row_SSSE3(row, dst_rgb24, twidth);
+#endif
+    src_y += twidth;
+    src_uv += twidth;
+    dst_rgb24 += twidth * 3;
+    width -= twidth;
+  }
+}
+#endif
+
+#if defined(HAS_NV21TORGB24ROW_AVX2)
+void NV21ToRGB24Row_AVX2(const uint8_t* src_y,
+                         const uint8_t* src_vu,
+                         uint8_t* dst_rgb24,
+                         const struct YuvConstants* yuvconstants,
+                         int width) {
+  // Row buffer for intermediate ARGB pixels.
+  SIMD_ALIGNED(uint8_t row[MAXTWIDTH * 4]);
+  while (width > 0) {
+    int twidth = width > MAXTWIDTH ? MAXTWIDTH : width;
+    NV21ToARGBRow_AVX2(src_y, src_vu, row, yuvconstants, twidth);
+#if defined(HAS_ARGBTORGB24ROW_AVX2)
+    ARGBToRGB24Row_AVX2(row, dst_rgb24, twidth);
+#else
+    ARGBToRGB24Row_SSSE3(row, dst_rgb24, twidth);
+#endif
+    src_y += twidth;
+    src_vu += twidth;
+    dst_rgb24 += twidth * 3;
+    width -= twidth;
+  }
+}
+#endif
+
 #if defined(HAS_I422TORGB565ROW_AVX2)
 void I422ToRGB565Row_AVX2(const uint8_t* src_y,
                           const uint8_t* src_u,
@@ -3042,8 +3137,11 @@ void I422ToRGB24Row_AVX2(const uint8_t* src_y,
   while (width > 0) {
     int twidth = width > MAXTWIDTH ? MAXTWIDTH : width;
     I422ToARGBRow_AVX2(src_y, src_u, src_v, row, yuvconstants, twidth);
-    // TODO(fbarchard): ARGBToRGB24Row_AVX2
+#if defined(HAS_ARGBTORGB24ROW_AVX2)
+    ARGBToRGB24Row_AVX2(row, dst_rgb24, twidth);
+#else
     ARGBToRGB24Row_SSSE3(row, dst_rgb24, twidth);
+#endif
     src_y += twidth;
     src_u += twidth / 2;
     src_v += twidth / 2;

@@ -168,8 +168,8 @@ class LIBYUV_API MJpegDecoder {
   int GetComponentScanlinePadding(int component);
 
   // A buffer holding the input data for a frame.
-  Buffer buf_{};
-  BufferVector buf_vec_{};
+  Buffer buf_;
+  BufferVector buf_vec_;
 
   jpeg_decompress_struct* decompress_struct_;
   jpeg_source_mgr* source_mgr_;
@@ -181,12 +181,12 @@ class LIBYUV_API MJpegDecoder {
 
   // Temporaries used to point to scanline outputs.
   int num_outbufs_;  // Outermost size of all arrays below.
-  uint8_t*** scanlines_{};
-  int* scanlines_sizes_{};
+  uint8_t*** scanlines_;
+  int* scanlines_sizes_;
   // Temporary buffer used for decoding when we can't decode directly to the
   // output buffers. Large enough for just one iMCU row.
-  uint8_t** databuf_{};
-  int* databuf_strides_{};
+  uint8_t** databuf_;
+  int* databuf_strides_;
 };
 
 }  // namespace libyuv

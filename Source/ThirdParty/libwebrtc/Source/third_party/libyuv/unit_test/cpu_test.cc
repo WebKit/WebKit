@@ -20,12 +20,12 @@ namespace libyuv {
 
 TEST_F(LibYUVBaseTest, TestCpuHas) {
   int cpu_flags = TestCpuFlag(-1);
-  printf("Cpu Flags %x\n", cpu_flags);
+  printf("Cpu Flags %d\n", cpu_flags);
 #if defined(__arm__) || defined(__aarch64__)
   int has_arm = TestCpuFlag(kCpuHasARM);
-  printf("Has ARM %x\n", has_arm);
+  printf("Has ARM %d\n", has_arm);
   int has_neon = TestCpuFlag(kCpuHasNEON);
-  printf("Has NEON %x\n", has_neon);
+  printf("Has NEON %d\n", has_neon);
 #endif
   int has_x86 = TestCpuFlag(kCpuHasX86);
   int has_sse2 = TestCpuFlag(kCpuHasSSE2);
@@ -44,29 +44,31 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   int has_avx512vbmi2 = TestCpuFlag(kCpuHasAVX512VBMI2);
   int has_avx512vbitalg = TestCpuFlag(kCpuHasAVX512VBITALG);
   int has_avx512vpopcntdq = TestCpuFlag(kCpuHasAVX512VPOPCNTDQ);
-  printf("Has X86 %x\n", has_x86);
-  printf("Has SSE2 %x\n", has_sse2);
-  printf("Has SSSE3 %x\n", has_ssse3);
-  printf("Has SSE4.1 %x\n", has_sse41);
-  printf("Has SSE4.2 %x\n", has_sse42);
-  printf("Has AVX %x\n", has_avx);
-  printf("Has AVX2 %x\n", has_avx2);
-  printf("Has ERMS %x\n", has_erms);
-  printf("Has FMA3 %x\n", has_fma3);
-  printf("Has F16C %x\n", has_f16c);
-  printf("Has GFNI %x\n", has_gfni);
-  printf("Has AVX512BW %x\n", has_avx512bw);
-  printf("Has AVX512VL %x\n", has_avx512vl);
-  printf("Has AVX512VBMI %x\n", has_avx512vbmi);
-  printf("Has AVX512VBMI2 %x\n", has_avx512vbmi2);
-  printf("Has AVX512VBITALG %x\n", has_avx512vbitalg);
-  printf("Has AVX512VPOPCNTDQ %x\n", has_avx512vpopcntdq);
+  printf("Has X86 %d\n", has_x86);
+  printf("Has SSE2 %d\n", has_sse2);
+  printf("Has SSSE3 %d\n", has_ssse3);
+  printf("Has SSE41 %d\n", has_sse41);
+  printf("Has SSE42 %d\n", has_sse42);
+  printf("Has AVX %d\n", has_avx);
+  printf("Has AVX2 %d\n", has_avx2);
+  printf("Has ERMS %d\n", has_erms);
+  printf("Has FMA3 %d\n", has_fma3);
+  printf("Has F16C %d\n", has_f16c);
+  printf("Has GFNI %d\n", has_gfni);
+  printf("Has AVX512BW %d\n", has_avx512bw);
+  printf("Has AVX512VL %d\n", has_avx512vl);
+  printf("Has AVX512VBMI %d\n", has_avx512vbmi);
+  printf("Has AVX512VBMI2 %d\n", has_avx512vbmi2);
+  printf("Has AVX512VBITALG %d\n", has_avx512vbitalg);
+  printf("Has AVX512VPOPCNTDQ %d\n", has_avx512vpopcntdq);
 
 #if defined(__mips__)
   int has_mips = TestCpuFlag(kCpuHasMIPS);
-  printf("Has MIPS %x\n", has_mips);
+  printf("Has MIPS %d\n", has_mips);
   int has_msa = TestCpuFlag(kCpuHasMSA);
-  printf("Has MSA %x\n", has_msa);
+  printf("Has MSA %d\n", has_msa);
+  int has_mmi = TestCpuFlag(kCpuHasMMI);
+  printf("Has MMI %d\n", has_mmi);
 #endif
 }
 
@@ -156,6 +158,29 @@ TEST_F(LibYUVBaseTest, TestLinuxNeon) {
 #if defined(__linux__) && defined(__ARM_NEON__)
   EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("/proc/cpuinfo"));
 #endif
+}
+
+TEST_F(LibYUVBaseTest, TestSetCpuFlags) {
+  // Reset any masked flags that may have been set so auto init is enabled.
+  MaskCpuFlags(0);
+
+  int original_cpu_flags = TestCpuFlag(-1);
+
+  // Test setting different CPU configurations.
+  int cpu_flags = kCpuHasARM | kCpuHasNEON | kCpuInitialized;
+  SetCpuFlags(cpu_flags);
+  EXPECT_EQ(cpu_flags, TestCpuFlag(-1));
+
+  cpu_flags = kCpuHasX86 | kCpuInitialized;
+  SetCpuFlags(cpu_flags);
+  EXPECT_EQ(cpu_flags, TestCpuFlag(-1));
+
+  // Test that setting 0 turns auto-init back on.
+  SetCpuFlags(0);
+  EXPECT_EQ(original_cpu_flags, TestCpuFlag(-1));
+
+  // Restore the CPU flag mask.
+  MaskCpuFlags(benchmark_cpu_info_);
 }
 
 }  // namespace libyuv

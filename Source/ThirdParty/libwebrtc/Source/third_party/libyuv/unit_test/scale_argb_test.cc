@@ -303,10 +303,10 @@ TEST_FACTOR(3, 1, 3)
 
 TEST_SCALETO(ARGBScale, 1, 1)
 TEST_SCALETO(ARGBScale, 320, 240)
-TEST_SCALETO(ARGBScale, 352, 288)
 TEST_SCALETO(ARGBScale, 569, 480)
 TEST_SCALETO(ARGBScale, 640, 360)
 TEST_SCALETO(ARGBScale, 1280, 720)
+TEST_SCALETO(ARGBScale, 1920, 1080)
 #undef TEST_SCALETO1
 #undef TEST_SCALETO
 
@@ -319,12 +319,12 @@ int YUVToARGBScaleReference2(const uint8_t* src_y,
                              int src_stride_u,
                              const uint8_t* src_v,
                              int src_stride_v,
-                             uint32 /* src_fourcc */,
+                             uint32_t /* src_fourcc */,
                              int src_width,
                              int src_height,
                              uint8_t* dst_argb,
                              int dst_stride_argb,
-                             uint32 /* dst_fourcc */,
+                             uint32_t /* dst_fourcc */,
                              int dst_width,
                              int dst_height,
                              int clip_x,

@@ -49,6 +49,11 @@ void TransposePlane(const uint8_t* src,
     }
   }
 #endif
+#if defined(HAS_TRANSPOSEWX8_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    TransposeWx8 = TransposeWx8_MMI;
+  }
+#endif
 #if defined(HAS_TRANSPOSEWX8_FAST_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     TransposeWx8 = TransposeWx8_Fast_Any_SSSE3;
@@ -166,6 +171,14 @@ void RotatePlane180(const uint8_t* src,
     }
   }
 #endif
+#if defined(HAS_MIRRORROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    MirrorRow = MirrorRow_Any_MMI;
+    if (IS_ALIGNED(width, 8)) {
+      MirrorRow = MirrorRow_MMI;
+    }
+  }
+#endif
 #if defined(HAS_COPYROW_SSE2)
   if (TestCpuFlag(kCpuHasSSE2)) {
     CopyRow = IS_ALIGNED(width, 32) ? CopyRow_SSE2 : CopyRow_Any_SSE2;
@@ -184,6 +197,11 @@ void RotatePlane180(const uint8_t* src,
 #if defined(HAS_COPYROW_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     CopyRow = IS_ALIGNED(width, 32) ? CopyRow_NEON : CopyRow_Any_NEON;
+  }
+#endif
+#if defined(HAS_COPYROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    CopyRow = IS_ALIGNED(width, 8) ? CopyRow_MMI : CopyRow_Any_MMI;
   }
 #endif
 
@@ -229,6 +247,14 @@ void TransposeUV(const uint8_t* src,
     TransposeUVWx8 = TransposeUVWx8_Any_SSE2;
     if (IS_ALIGNED(width, 8)) {
       TransposeUVWx8 = TransposeUVWx8_SSE2;
+    }
+  }
+#endif
+#if defined(HAS_TRANSPOSEUVWX8_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    TransposeUVWx8 = TransposeUVWx8_Any_MMI;
+    if (IS_ALIGNED(width, 4)) {
+      TransposeUVWx8 = TransposeUVWx8_MMI;
     }
   }
 #endif
@@ -329,6 +355,11 @@ void RotateUV180(const uint8_t* src,
 #if defined(HAS_MIRRORUVROW_MSA)
   if (TestCpuFlag(kCpuHasMSA) && IS_ALIGNED(width, 32)) {
     MirrorUVRow = MirrorUVRow_MSA;
+  }
+#endif
+#if defined(HAS_MIRRORUVROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(width, 8)) {
+    MirrorUVRow = MirrorUVRow_MMI;
   }
 #endif
 

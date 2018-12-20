@@ -38,6 +38,99 @@ static const int32_t FLAGS_libyuv_flags = 0;
 static const int32_t FLAGS_libyuv_cpu_info = 0;
 #endif
 
+// Test environment variable for disabling CPU features. Any non-zero value
+// to disable. Zero ignored to make it easy to set the variable on/off.
+#if !defined(__native_client__) && !defined(_M_ARM)
+static LIBYUV_BOOL TestEnv(const char* name) {
+  const char* var = getenv(name);
+  if (var) {
+    if (var[0] != '0') {
+      return LIBYUV_TRUE;
+    }
+  }
+  return LIBYUV_FALSE;
+}
+#else  // nacl does not support getenv().
+static LIBYUV_BOOL TestEnv(const char*) {
+  return LIBYUV_FALSE;
+}
+#endif
+
+int TestCpuEnv(int cpu_info) {
+#if defined(__arm__) || defined(__aarch64__)
+  if (TestEnv("LIBYUV_DISABLE_NEON")) {
+    cpu_info &= ~libyuv::kCpuHasNEON;
+  }
+#endif
+#if defined(__mips__) && defined(__linux__)
+  if (TestEnv("LIBYUV_DISABLE_MSA")) {
+    cpu_info &= ~libyuv::kCpuHasMSA;
+  }
+  if (TestEnv("LIBYUV_DISABLE_MMI")) {
+    cpu_info &= ~libyuv::kCpuHasMMI;
+  }
+#endif
+#if !defined(__pnacl__) && !defined(__CLR_VER) &&                   \
+    (defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || \
+     defined(_M_IX86))
+  if (TestEnv("LIBYUV_DISABLE_X86")) {
+    cpu_info &= ~libyuv::kCpuHasX86;
+  }
+  if (TestEnv("LIBYUV_DISABLE_SSE2")) {
+    cpu_info &= ~libyuv::kCpuHasSSE2;
+  }
+  if (TestEnv("LIBYUV_DISABLE_SSSE3")) {
+    cpu_info &= ~libyuv::kCpuHasSSSE3;
+  }
+  if (TestEnv("LIBYUV_DISABLE_SSE41")) {
+    cpu_info &= ~libyuv::kCpuHasSSE41;
+  }
+  if (TestEnv("LIBYUV_DISABLE_SSE42")) {
+    cpu_info &= ~libyuv::kCpuHasSSE42;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX")) {
+    cpu_info &= ~libyuv::kCpuHasAVX;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX2")) {
+    cpu_info &= ~libyuv::kCpuHasAVX2;
+  }
+  if (TestEnv("LIBYUV_DISABLE_ERMS")) {
+    cpu_info &= ~libyuv::kCpuHasERMS;
+  }
+  if (TestEnv("LIBYUV_DISABLE_FMA3")) {
+    cpu_info &= ~libyuv::kCpuHasFMA3;
+  }
+  if (TestEnv("LIBYUV_DISABLE_F16C")) {
+    cpu_info &= ~libyuv::kCpuHasF16C;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512BW")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512BW;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VL")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VL;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VBMI")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VBMI;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VBMI2")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VBMI2;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VBITALG")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VBITALG;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VPOPCNTDQ")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VPOPCNTDQ;
+  }
+  if (TestEnv("LIBYUV_DISABLE_GFNI")) {
+    cpu_info &= ~libyuv::kCpuHasGFNI;
+  }
+#endif
+  if (TestEnv("LIBYUV_DISABLE_ASM")) {
+    cpu_info = libyuv::kCpuInitialized;
+  }
+  return cpu_info;
+}
+
 // For quicker unittests, default is 128 x 72.  But when benchmarking,
 // default to 720p.  Allow size to specify.
 // Set flags to -1 for benchmarking to avoid slower C code.
@@ -87,6 +180,8 @@ LibYUVConvertTest::LibYUVConvertTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -141,6 +236,8 @@ LibYUVColorTest::LibYUVColorTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -195,6 +292,8 @@ LibYUVScaleTest::LibYUVScaleTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -249,6 +348,8 @@ LibYUVRotateTest::LibYUVRotateTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -303,6 +404,8 @@ LibYUVPlanarTest::LibYUVPlanarTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -357,6 +460,8 @@ LibYUVBaseTest::LibYUVBaseTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *
@@ -411,6 +516,8 @@ LibYUVCompareTest::LibYUVCompareTest()
   if (FLAGS_libyuv_cpu_info) {
     benchmark_cpu_info_ = FLAGS_libyuv_cpu_info;
   }
+  disable_cpu_flags_ = TestCpuEnv(disable_cpu_flags_);
+  benchmark_cpu_info_ = TestCpuEnv(benchmark_cpu_info_);
   libyuv::MaskCpuFlags(benchmark_cpu_info_);
   benchmark_pixels_div1280_ =
       static_cast<int>((static_cast<double>(Abs(benchmark_width_)) *

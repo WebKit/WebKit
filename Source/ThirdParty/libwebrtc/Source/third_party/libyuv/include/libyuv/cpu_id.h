@@ -48,6 +48,7 @@ static const int kCpuHasAVX512VPOPCNTDQ = 0x100000;
 // These flags are only valid on MIPS processors.
 static const int kCpuHasMIPS = 0x200000;
 static const int kCpuHasMSA = 0x400000;
+static const int kCpuHasMMI = 0x800000;
 
 // Optional init function. TestCpuFlag does an auto-init.
 // Returns cpu_info flags.
@@ -79,6 +80,31 @@ int ArmCpuCaps(const char* cpuinfo_name);
 // Returns cpu_info flags.
 LIBYUV_API
 int MaskCpuFlags(int enable_flags);
+
+// Sets the CPU flags to |cpu_flags|, bypassing the detection code. |cpu_flags|
+// should be a valid combination of the kCpuHas constants above and include
+// kCpuInitialized. Use this method when running in a sandboxed process where
+// the detection code might fail (as it might access /proc/cpuinfo). In such
+// cases the cpu_info can be obtained from a non sandboxed process by calling
+// InitCpuFlags() and passed to the sandboxed process (via command line
+// parameters, IPC...) which can then call this method to initialize the CPU
+// flags.
+// Notes:
+// - when specifying 0 for |cpu_flags|, the auto initialization is enabled
+//   again.
+// - enabling CPU features that are not supported by the CPU will result in
+//   undefined behavior.
+// TODO(fbarchard): consider writing a helper function that translates from
+// other library CPU info to libyuv CPU info and add a .md doc that explains
+// CPU detection.
+static __inline void SetCpuFlags(int cpu_flags) {
+  LIBYUV_API extern int cpu_info_;
+#ifdef __ATOMIC_RELAXED
+  __atomic_store_n(&cpu_info_, cpu_flags, __ATOMIC_RELAXED);
+#else
+  cpu_info_ = cpu_flags;
+#endif
+}
 
 // Low level cpuid for X86. Returns zeros on other CPUs.
 // eax is the info type that you want.

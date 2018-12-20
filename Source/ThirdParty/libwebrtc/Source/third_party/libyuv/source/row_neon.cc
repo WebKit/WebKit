@@ -2604,12 +2604,15 @@ void SobelYRow_NEON(const uint8_t* src_y0,
       );
 }
 
+// %y passes a float as a scalar vector for vector * scalar multiply.
+// the regoster must be d0 to d15 and indexed with [0] or [1] to access
+// the float in the first or second float of the d-reg
+
 void HalfFloat1Row_NEON(const uint16_t* src,
                         uint16_t* dst,
                         float /*unused*/,
                         int width) {
   asm volatile(
-      "vdup.32    q0, %3                         \n"
 
       "1:                                        \n"
       "vld1.8     {q1}, [%0]!                    \n"  // load 8 shorts
@@ -2618,8 +2621,8 @@ void HalfFloat1Row_NEON(const uint16_t* src,
       "vmovl.u16  q3, d3                         \n"
       "vcvt.f32.u32  q2, q2                      \n"  // 8 floats
       "vcvt.f32.u32  q3, q3                      \n"
-      "vmul.f32   q2, q2, q0                     \n"  // adjust exponent
-      "vmul.f32   q3, q3, q0                     \n"
+      "vmul.f32   q2, q2, %y3                    \n"  // adjust exponent
+      "vmul.f32   q3, q3, %y3                    \n"
       "vqshrn.u32 d2, q2, #13                    \n"  // isolate halffloat
       "vqshrn.u32 d3, q3, #13                    \n"
       "vst1.8     {q1}, [%1]!                    \n"
@@ -2627,17 +2630,15 @@ void HalfFloat1Row_NEON(const uint16_t* src,
       : "+r"(src),              // %0
         "+r"(dst),              // %1
         "+r"(width)             // %2
-      : "r"(1.9259299444e-34f)  // %3
-      : "cc", "memory", "q0", "q1", "q2", "q3");
+      : "w"(1.9259299444e-34f)  // %3
+      : "cc", "memory", "q1", "q2", "q3");
 }
 
-// TODO(fbarchard): multiply by element.
 void HalfFloatRow_NEON(const uint16_t* src,
                        uint16_t* dst,
                        float scale,
                        int width) {
   asm volatile(
-      "vdup.32    q0, %3                         \n"
 
       "1:                                        \n"
       "vld1.8     {q1}, [%0]!                    \n"  // load 8 shorts
@@ -2646,8 +2647,8 @@ void HalfFloatRow_NEON(const uint16_t* src,
       "vmovl.u16  q3, d3                         \n"
       "vcvt.f32.u32  q2, q2                      \n"  // 8 floats
       "vcvt.f32.u32  q3, q3                      \n"
-      "vmul.f32   q2, q2, q0                     \n"  // adjust exponent
-      "vmul.f32   q3, q3, q0                     \n"
+      "vmul.f32   q2, q2, %y3                    \n"  // adjust exponent
+      "vmul.f32   q3, q3, %y3                    \n"
       "vqshrn.u32 d2, q2, #13                    \n"  // isolate halffloat
       "vqshrn.u32 d3, q3, #13                    \n"
       "vst1.8     {q1}, [%1]!                    \n"
@@ -2655,8 +2656,8 @@ void HalfFloatRow_NEON(const uint16_t* src,
       : "+r"(src),                      // %0
         "+r"(dst),                      // %1
         "+r"(width)                     // %2
-      : "r"(scale * 1.9259299444e-34f)  // %3
-      : "cc", "memory", "q0", "q1", "q2", "q3");
+      : "w"(scale * 1.9259299444e-34f)  // %3
+      : "cc", "memory", "q1", "q2", "q3");
 }
 
 void ByteToFloatRow_NEON(const uint8_t* src,
@@ -2664,7 +2665,6 @@ void ByteToFloatRow_NEON(const uint8_t* src,
                          float scale,
                          int width) {
   asm volatile(
-      "vdup.32    q0, %3                         \n"
 
       "1:                                        \n"
       "vld1.8     {d2}, [%0]!                    \n"  // load 8 bytes
@@ -2674,15 +2674,15 @@ void ByteToFloatRow_NEON(const uint8_t* src,
       "vmovl.u16  q3, d3                         \n"
       "vcvt.f32.u32  q2, q2                      \n"  // 8 floats
       "vcvt.f32.u32  q3, q3                      \n"
-      "vmul.f32   q2, q2, d0[0]                  \n"  // scale
-      "vmul.f32   q3, q3, d0[0]                  \n"
+      "vmul.f32   q2, q2, %y3                    \n"  // scale
+      "vmul.f32   q3, q3, %y3                    \n"
       "vst1.8     {q2, q3}, [%1]!                \n"  // store 8 floats
       "bgt        1b                             \n"
       : "+r"(src),   // %0
         "+r"(dst),   // %1
         "+r"(width)  // %2
-      : "r"(scale)   // %3
-      : "cc", "memory", "q0", "q1", "q2", "q3");
+      : "w"(scale)   // %3
+      : "cc", "memory", "q1", "q2", "q3");
 }
 
 #endif  // !defined(LIBYUV_DISABLE_NEON) && defined(__ARM_NEON__)..

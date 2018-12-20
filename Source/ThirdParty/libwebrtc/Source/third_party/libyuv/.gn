@@ -29,7 +29,7 @@ exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
                         [ "//build_overrides/build.gni" ]
 
 default_args = {
-  mac_sdk_min = "10.11"
+  mac_sdk_min = "10.12"
 
   # LibYUV does not want to switch to C++14 yet.
   use_cxx11 = true

@@ -42,6 +42,21 @@ int I444ToI420(const uint8_t* src_y,
                int width,
                int height);
 
+// Convert I444 to NV21.
+LIBYUV_API
+int I444ToNV21(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
+               int width,
+               int height);
+
 // Convert I422 to I420.
 LIBYUV_API
 int I422ToI420(const uint8_t* src_y,
@@ -56,6 +71,21 @@ int I422ToI420(const uint8_t* src_y,
                int dst_stride_u,
                uint8_t* dst_v,
                int dst_stride_v,
+               int width,
+               int height);
+
+// Convert I422 to NV21.
+LIBYUV_API
+int I422ToNV21(const uint8_t* src_y,
+               int src_stride_y,
+               const uint8_t* src_u,
+               int src_stride_u,
+               const uint8_t* src_v,
+               int src_stride_v,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
                int width,
                int height);
 
@@ -124,6 +154,17 @@ int I400ToI420(const uint8_t* src_y,
                int dst_stride_u,
                uint8_t* dst_v,
                int dst_stride_v,
+               int width,
+               int height);
+
+// Convert I400 (grey) to NV21.
+LIBYUV_API
+int I400ToNV21(const uint8_t* src_y,
+               int src_stride_y,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
                int width,
                int height);
 
@@ -345,6 +386,19 @@ int MJPGToI420(const uint8_t* sample,
                int dst_stride_u,
                uint8_t* dst_v,
                int dst_stride_v,
+               int src_width,
+               int src_height,
+               int dst_width,
+               int dst_height);
+
+// JPEG to NV21
+LIBYUV_API
+int MJPGToNV21(const uint8_t* sample,
+               size_t sample_size,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
                int src_width,
                int src_height,
                int dst_width,

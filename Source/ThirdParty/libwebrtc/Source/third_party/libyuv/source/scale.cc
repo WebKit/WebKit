@@ -118,6 +118,21 @@ static void ScalePlaneDown2(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN2_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    ScaleRowDown2 =
+        filtering == kFilterNone
+            ? ScaleRowDown2_Any_MMI
+            : (filtering == kFilterLinear ? ScaleRowDown2Linear_Any_MMI
+                                          : ScaleRowDown2Box_Any_MMI);
+    if (IS_ALIGNED(dst_width, 8)) {
+      ScaleRowDown2 = filtering == kFilterNone ? ScaleRowDown2_MMI
+                                               : (filtering == kFilterLinear
+                                                      ? ScaleRowDown2Linear_MMI
+                                                      : ScaleRowDown2Box_MMI);
+    }
+  }
+#endif
 
   if (filtering == kFilterLinear) {
     src_stride = 0;
@@ -167,6 +182,14 @@ static void ScalePlaneDown2_16(int src_width,
             ? ScaleRowDown2_16_SSE2
             : (filtering == kFilterLinear ? ScaleRowDown2Linear_16_SSE2
                                           : ScaleRowDown2Box_16_SSE2);
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN2_16_MMI)
+  if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 4)) {
+    ScaleRowDown2 = filtering == kFilterNone ? ScaleRowDown2_16_MMI
+                                             : (filtering == kFilterLinear
+                                                    ? ScaleRowDown2Linear_16_MMI
+                                                    : ScaleRowDown2Box_16_MMI);
   }
 #endif
 
@@ -241,6 +264,15 @@ static void ScalePlaneDown4(int src_width,
     }
   }
 #endif
+#if defined(HAS_SCALEROWDOWN4_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    ScaleRowDown4 =
+        filtering ? ScaleRowDown4Box_Any_MMI : ScaleRowDown4_Any_MMI;
+    if (IS_ALIGNED(dst_width, 8)) {
+      ScaleRowDown4 = filtering ? ScaleRowDown4Box_MMI : ScaleRowDown4_MMI;
+    }
+  }
+#endif
 
   if (filtering == kFilterLinear) {
     src_stride = 0;
@@ -282,6 +314,11 @@ static void ScalePlaneDown4_16(int src_width,
   if (TestCpuFlag(kCpuHasSSE2) && IS_ALIGNED(dst_width, 8)) {
     ScaleRowDown4 =
         filtering ? ScaleRowDown4Box_16_SSE2 : ScaleRowDown4_16_SSE2;
+  }
+#endif
+#if defined(HAS_SCALEROWDOWN4_16_MMI)
+  if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 8)) {
+    ScaleRowDown4 = filtering ? ScaleRowDown4Box_16_MMI : ScaleRowDown4_16_MMI;
   }
 #endif
 
@@ -849,6 +886,14 @@ static void ScalePlaneBox(int src_width,
       }
     }
 #endif
+#if defined(HAS_SCALEADDROW_MMI)
+    if (TestCpuFlag(kCpuHasMMI)) {
+      ScaleAddRow = ScaleAddRow_Any_MMI;
+      if (IS_ALIGNED(src_width, 8)) {
+        ScaleAddRow = ScaleAddRow_MMI;
+      }
+    }
+#endif
 
     for (j = 0; j < dst_height; ++j) {
       int boxheight;
@@ -904,6 +949,11 @@ static void ScalePlaneBox_16(int src_width,
     }
 #endif
 
+#if defined(HAS_SCALEADDROW_16_MMI)
+    if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(src_width, 4)) {
+      ScaleAddRow = ScaleAddRow_16_MMI;
+    }
+#endif
     for (j = 0; j < dst_height; ++j) {
       int boxheight;
       int iy = y >> 16;
@@ -985,6 +1035,14 @@ void ScalePlaneBilinearDown(int src_width,
     InterpolateRow = InterpolateRow_Any_MSA;
     if (IS_ALIGNED(src_width, 32)) {
       InterpolateRow = InterpolateRow_MSA;
+    }
+  }
+#endif
+#if defined(HAS_INTERPOLATEROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    InterpolateRow = InterpolateRow_Any_MMI;
+    if (IS_ALIGNED(src_width, 16)) {
+      InterpolateRow = InterpolateRow_MMI;
     }
   }
 #endif
@@ -1207,6 +1265,11 @@ void ScalePlaneBilinearUp(int src_width,
       ScaleFilterCols = ScaleColsUp2_SSE2;
     }
 #endif
+#if defined(HAS_SCALECOLS_MMI)
+    if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 8)) {
+      ScaleFilterCols = ScaleColsUp2_MMI;
+    }
+#endif
   }
 
   if (y > max_y) {
@@ -1334,6 +1397,11 @@ void ScalePlaneBilinearUp_16(int src_width,
       ScaleFilterCols = ScaleColsUp2_16_SSE2;
     }
 #endif
+#if defined(HAS_SCALECOLS_16_MMI)
+    if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 8)) {
+      ScaleFilterCols = ScaleColsUp2_16_MMI;
+    }
+#endif
   }
 
   if (y > max_y) {
@@ -1419,6 +1487,11 @@ static void ScalePlaneSimple(int src_width,
       ScaleCols = ScaleColsUp2_SSE2;
     }
 #endif
+#if defined(HAS_SCALECOLS_MMI)
+    if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 8)) {
+      ScaleCols = ScaleColsUp2_MMI;
+    }
+#endif
   }
 
   for (i = 0; i < dst_height; ++i) {
@@ -1453,6 +1526,11 @@ static void ScalePlaneSimple_16(int src_width,
 #if defined(HAS_SCALECOLS_16_SSE2)
     if (TestCpuFlag(kCpuHasSSE2) && IS_ALIGNED(dst_width, 8)) {
       ScaleCols = ScaleColsUp2_16_SSE2;
+    }
+#endif
+#if defined(HAS_SCALECOLS_16_MMI)
+    if (TestCpuFlag(kCpuHasMMI) && IS_ALIGNED(dst_width, 8)) {
+      ScaleCols = ScaleColsUp2_16_MMI;
     }
 #endif
   }

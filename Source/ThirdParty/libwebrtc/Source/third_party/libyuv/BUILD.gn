@@ -69,6 +69,10 @@ group("libyuv") {
     deps += [ ":libyuv_msa" ]
   }
 
+  if (libyuv_use_mmi) {
+    deps += [ ":libyuv_mmi" ]
+  }
+
   if (!is_ios) {
     # Make sure that clients of libyuv link with libjpeg. This can't go in
     # libyuv_internal because in Windows x64 builds that will generate a clang
@@ -229,6 +233,24 @@ if (libyuv_use_msa) {
   }
 }
 
+if (libyuv_use_mmi) {
+  static_library("libyuv_mmi") {
+    sources = [
+      # MMI Source Files
+      "source/compare_mmi.cc",
+      "source/rotate_mmi.cc",
+      "source/row_mmi.cc",
+      "source/scale_mmi.cc",
+    ]
+
+    deps = [
+      ":libyuv_internal",
+    ]
+
+    public_configs = [ ":libyuv_config" ]
+  }
+}
+
 if (libyuv_include_tests) {
   config("libyuv_unittest_warnings_config") {
     if (!is_win) {
@@ -329,7 +351,6 @@ if (libyuv_include_tests) {
     ]
     deps = [
       ":libyuv",
-      "//build/config:exe_and_shlib_deps",  # for asan on llvm libc++
     ]
     if (is_linux) {
       cflags = [ "-fexceptions" ]
@@ -343,7 +364,6 @@ if (libyuv_include_tests) {
     ]
     deps = [
       ":libyuv",
-      "//build/config:exe_and_shlib_deps",  # for new[] on llvm libc++
     ]
     if (is_linux) {
       cflags = [ "-fexceptions" ]
@@ -359,7 +379,6 @@ if (libyuv_include_tests) {
     ]
     deps = [
       ":libyuv",
-      "//build/config:exe_and_shlib_deps",  # for new[] on llvm libc++
     ]
 
     if (!is_ios && !libyuv_disable_jpeg) {
@@ -374,7 +393,6 @@ if (libyuv_include_tests) {
     ]
     deps = [
       ":libyuv",
-      "//build/config:exe_and_shlib_deps",  # for asan on llvm libc++
     ]
   }
 }

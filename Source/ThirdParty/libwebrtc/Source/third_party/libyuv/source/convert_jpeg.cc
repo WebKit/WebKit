@@ -190,7 +190,144 @@ int MJPGToI420(const uint8_t* sample,
   return ret ? 0 : 1;
 }
 
-#ifdef HAVE_JPEG
+struct NV21Buffers {
+  uint8_t* y;
+  int y_stride;
+  uint8_t* vu;
+  int vu_stride;
+  int w;
+  int h;
+};
+
+static void JpegI420ToNV21(void* opaque,
+                           const uint8_t* const* data,
+                           const int* strides,
+                           int rows) {
+  NV21Buffers* dest = (NV21Buffers*)(opaque);
+  I420ToNV21(data[0], strides[0], data[1], strides[1], data[2], strides[2],
+             dest->y, dest->y_stride, dest->vu, dest->vu_stride, dest->w, rows);
+  dest->y += rows * dest->y_stride;
+  dest->vu += ((rows + 1) >> 1) * dest->vu_stride;
+  dest->h -= rows;
+}
+
+static void JpegI422ToNV21(void* opaque,
+                           const uint8_t* const* data,
+                           const int* strides,
+                           int rows) {
+  NV21Buffers* dest = (NV21Buffers*)(opaque);
+  I422ToNV21(data[0], strides[0], data[1], strides[1], data[2], strides[2],
+             dest->y, dest->y_stride, dest->vu, dest->vu_stride, dest->w, rows);
+  dest->y += rows * dest->y_stride;
+  dest->vu += ((rows + 1) >> 1) * dest->vu_stride;
+  dest->h -= rows;
+}
+
+static void JpegI444ToNV21(void* opaque,
+                           const uint8_t* const* data,
+                           const int* strides,
+                           int rows) {
+  NV21Buffers* dest = (NV21Buffers*)(opaque);
+  I444ToNV21(data[0], strides[0], data[1], strides[1], data[2], strides[2],
+             dest->y, dest->y_stride, dest->vu, dest->vu_stride, dest->w, rows);
+  dest->y += rows * dest->y_stride;
+  dest->vu += ((rows + 1) >> 1) * dest->vu_stride;
+  dest->h -= rows;
+}
+
+static void JpegI400ToNV21(void* opaque,
+                           const uint8_t* const* data,
+                           const int* strides,
+                           int rows) {
+  NV21Buffers* dest = (NV21Buffers*)(opaque);
+  I400ToNV21(data[0], strides[0], dest->y, dest->y_stride, dest->vu,
+             dest->vu_stride, dest->w, rows);
+  dest->y += rows * dest->y_stride;
+  dest->vu += ((rows + 1) >> 1) * dest->vu_stride;
+  dest->h -= rows;
+}
+
+// MJPG (Motion JPeg) to NV21
+LIBYUV_API
+int MJPGToNV21(const uint8_t* sample,
+               size_t sample_size,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
+               int src_width,
+               int src_height,
+               int dst_width,
+               int dst_height) {
+  if (sample_size == kUnknownDataSize) {
+    // ERROR: MJPEG frame size unknown
+    return -1;
+  }
+
+  // TODO(fbarchard): Port MJpeg to C.
+  MJpegDecoder mjpeg_decoder;
+  LIBYUV_BOOL ret = mjpeg_decoder.LoadFrame(sample, sample_size);
+  if (ret && (mjpeg_decoder.GetWidth() != src_width ||
+              mjpeg_decoder.GetHeight() != src_height)) {
+    // ERROR: MJPEG frame has unexpected dimensions
+    mjpeg_decoder.UnloadFrame();
+    return 1;  // runtime failure
+  }
+  if (ret) {
+    NV21Buffers bufs = {dst_y,         dst_stride_y, dst_vu,
+                        dst_stride_vu, dst_width,    dst_height};
+    // YUV420
+    if (mjpeg_decoder.GetColorSpace() == MJpegDecoder::kColorSpaceYCbCr &&
+        mjpeg_decoder.GetNumComponents() == 3 &&
+        mjpeg_decoder.GetVertSampFactor(0) == 2 &&
+        mjpeg_decoder.GetHorizSampFactor(0) == 2 &&
+        mjpeg_decoder.GetVertSampFactor(1) == 1 &&
+        mjpeg_decoder.GetHorizSampFactor(1) == 1 &&
+        mjpeg_decoder.GetVertSampFactor(2) == 1 &&
+        mjpeg_decoder.GetHorizSampFactor(2) == 1) {
+      ret = mjpeg_decoder.DecodeToCallback(&JpegI420ToNV21, &bufs, dst_width,
+                                           dst_height);
+      // YUV422
+    } else if (mjpeg_decoder.GetColorSpace() ==
+                   MJpegDecoder::kColorSpaceYCbCr &&
+               mjpeg_decoder.GetNumComponents() == 3 &&
+               mjpeg_decoder.GetVertSampFactor(0) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(0) == 2 &&
+               mjpeg_decoder.GetVertSampFactor(1) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(1) == 1 &&
+               mjpeg_decoder.GetVertSampFactor(2) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(2) == 1) {
+      ret = mjpeg_decoder.DecodeToCallback(&JpegI422ToNV21, &bufs, dst_width,
+                                           dst_height);
+      // YUV444
+    } else if (mjpeg_decoder.GetColorSpace() ==
+                   MJpegDecoder::kColorSpaceYCbCr &&
+               mjpeg_decoder.GetNumComponents() == 3 &&
+               mjpeg_decoder.GetVertSampFactor(0) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(0) == 1 &&
+               mjpeg_decoder.GetVertSampFactor(1) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(1) == 1 &&
+               mjpeg_decoder.GetVertSampFactor(2) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(2) == 1) {
+      ret = mjpeg_decoder.DecodeToCallback(&JpegI444ToNV21, &bufs, dst_width,
+                                           dst_height);
+      // YUV400
+    } else if (mjpeg_decoder.GetColorSpace() ==
+                   MJpegDecoder::kColorSpaceGrayscale &&
+               mjpeg_decoder.GetNumComponents() == 1 &&
+               mjpeg_decoder.GetVertSampFactor(0) == 1 &&
+               mjpeg_decoder.GetHorizSampFactor(0) == 1) {
+      ret = mjpeg_decoder.DecodeToCallback(&JpegI400ToNV21, &bufs, dst_width,
+                                           dst_height);
+    } else {
+      // Unknown colorspace.
+      mjpeg_decoder.UnloadFrame();
+      return 1;
+    }
+  }
+  return ret ? 0 : 1;
+}
+
 struct ARGBBuffers {
   uint8_t* argb;
   int argb_stride;
@@ -322,9 +459,8 @@ int MJPGToARGB(const uint8_t* sample,
   }
   return ret ? 0 : 1;
 }
-#endif
 
-#endif
+#endif  // HAVE_JPEG
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -10,9 +10,9 @@
 
 ### Development
 
-See [Getting started] [1] for instructions on how to get started developing.
+See [Getting started][1] for instructions on how to get started developing.
 
-You can also browse the [docs directory] [2] for more documentation.
+You can also browse the [docs directory][2] for more documentation.
 
-[1]: https://chromium.googlesource.com/libyuv/libyuv/+/master/docs/getting_started.md
-[2]: https://chromium.googlesource.com/libyuv/libyuv/+/master/docs/
+[1]: ./docs/getting_started.md
+[2]: ./docs/

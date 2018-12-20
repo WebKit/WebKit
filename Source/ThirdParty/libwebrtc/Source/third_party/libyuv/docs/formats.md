@@ -66,7 +66,7 @@ The following is extracted from video_common.h as a complete list of formats sup
       // 1 Primary Compressed YUV format.
       FOURCC_MJPG = FOURCC('M', 'J', 'P', 'G'),
 
-      // 7 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
+      // 8 Auxiliary YUV variations: 3 with U and V planes are swapped, 1 Alias.
       FOURCC_YV12 = FOURCC('Y', 'V', '1', '2'),
       FOURCC_YV16 = FOURCC('Y', 'V', '1', '6'),
       FOURCC_YV24 = FOURCC('Y', 'V', '2', '4'),
@@ -74,6 +74,7 @@ The following is extracted from video_common.h as a complete list of formats sup
       FOURCC_J420 = FOURCC('J', '4', '2', '0'),
       FOURCC_J400 = FOURCC('J', '4', '0', '0'),  // unofficial fourcc
       FOURCC_H420 = FOURCC('H', '4', '2', '0'),  // unofficial fourcc
+      FOURCC_H422 = FOURCC('H', '4', '2', '2'),  // unofficial fourcc
 
       // 14 Auxiliary aliases.  CanonicalFourCC() maps these to canonical fourcc.
       FOURCC_IYUV = FOURCC('I', 'Y', 'U', 'V'),  // Alias for I420.

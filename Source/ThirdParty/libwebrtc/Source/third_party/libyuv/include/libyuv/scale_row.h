@@ -58,6 +58,7 @@ extern "C" {
     (defined(_M_IX86) || defined(__x86_64__) || defined(__i386__))
 #define HAS_FIXEDDIV1_X86
 #define HAS_FIXEDDIV_X86
+#define HAS_SCALEADDROW_SSE2
 #define HAS_SCALEARGBCOLS_SSE2
 #define HAS_SCALEARGBCOLSUP2_SSE2
 #define HAS_SCALEARGBFILTERCOLS_SSSE3
@@ -69,7 +70,6 @@ extern "C" {
 #define HAS_SCALEROWDOWN34_SSSE3
 #define HAS_SCALEROWDOWN38_SSSE3
 #define HAS_SCALEROWDOWN4_SSSE3
-#define HAS_SCALEADDROW_SSE2
 #endif
 
 // The following are available on all x86 platforms, but
@@ -86,7 +86,9 @@ extern "C" {
 // The following are available on Neon platforms:
 #if !defined(LIBYUV_DISABLE_NEON) && \
     (defined(__ARM_NEON__) || defined(LIBYUV_NEON) || defined(__aarch64__))
+#define HAS_SCALEADDROW_NEON
 #define HAS_SCALEARGBCOLS_NEON
+#define HAS_SCALEARGBFILTERCOLS_NEON
 #define HAS_SCALEARGBROWDOWN2_NEON
 #define HAS_SCALEARGBROWDOWNEVEN_NEON
 #define HAS_SCALEFILTERCOLS_NEON
@@ -94,7 +96,6 @@ extern "C" {
 #define HAS_SCALEROWDOWN34_NEON
 #define HAS_SCALEROWDOWN38_NEON
 #define HAS_SCALEROWDOWN4_NEON
-#define HAS_SCALEARGBFILTERCOLS_NEON
 #endif
 
 #if !defined(LIBYUV_DISABLE_MSA) && defined(__mips_msa)
@@ -108,6 +109,23 @@ extern "C" {
 #define HAS_SCALEROWDOWN34_MSA
 #define HAS_SCALEROWDOWN38_MSA
 #define HAS_SCALEROWDOWN4_MSA
+#endif
+
+#if !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)
+#define HAS_FIXEDDIV1_MIPS
+#define HAS_FIXEDDIV_MIPS
+#define HAS_SCALEADDROW_16_MMI
+#define HAS_SCALEADDROW_MMI
+#define HAS_SCALEARGBCOLS_MMI
+#define HAS_SCALEARGBCOLSUP2_MMI
+#define HAS_SCALEARGBROWDOWN2_MMI
+#define HAS_SCALEARGBROWDOWNEVEN_MMI
+#define HAS_SCALECOLS_16_MMI
+#define HAS_SCALECOLS_MMI
+#define HAS_SCALEROWDOWN2_16_MMI
+#define HAS_SCALEROWDOWN2_MMI
+#define HAS_SCALEROWDOWN4_16_MMI
+#define HAS_SCALEROWDOWN4_MMI
 #endif
 
 // Scale ARGB vertically with bilinear interpolation.
@@ -147,12 +165,17 @@ enum FilterMode ScaleFilterReduce(int src_width,
 // Divide num by div and return as 16.16 fixed point result.
 int FixedDiv_C(int num, int div);
 int FixedDiv_X86(int num, int div);
+int FixedDiv_MIPS(int num, int div);
 // Divide num - 1 by div - 1 and return as 16.16 fixed point result.
 int FixedDiv1_C(int num, int div);
 int FixedDiv1_X86(int num, int div);
+int FixedDiv1_MIPS(int num, int div);
 #ifdef HAS_FIXEDDIV_X86
 #define FixedDiv FixedDiv_X86
 #define FixedDiv1 FixedDiv1_X86
+#elif defined HAS_FIXEDDIV_MIPS
+#define FixedDiv FixedDiv_MIPS
+#define FixedDiv1 FixedDiv1_MIPS
 #else
 #define FixedDiv FixedDiv_C
 #define FixedDiv1 FixedDiv1_C
@@ -569,6 +592,16 @@ void ScaleARGBCols_Any_MSA(uint8_t* dst_ptr,
                            int dst_width,
                            int x,
                            int dx);
+void ScaleARGBCols_MMI(uint8_t* dst_argb,
+                       const uint8_t* src_argb,
+                       int dst_width,
+                       int x,
+                       int dx);
+void ScaleARGBCols_Any_MMI(uint8_t* dst_ptr,
+                           const uint8_t* src_ptr,
+                           int dst_width,
+                           int x,
+                           int dx);
 
 // ARGB Row functions
 void ScaleARGBRowDown2_SSE2(const uint8_t* src_argb,
@@ -604,6 +637,18 @@ void ScaleARGBRowDown2Linear_MSA(const uint8_t* src_argb,
                                  uint8_t* dst_argb,
                                  int dst_width);
 void ScaleARGBRowDown2Box_MSA(const uint8_t* src_argb,
+                              ptrdiff_t src_stride,
+                              uint8_t* dst_argb,
+                              int dst_width);
+void ScaleARGBRowDown2_MMI(const uint8_t* src_argb,
+                           ptrdiff_t src_stride,
+                           uint8_t* dst_argb,
+                           int dst_width);
+void ScaleARGBRowDown2Linear_MMI(const uint8_t* src_argb,
+                                 ptrdiff_t src_stride,
+                                 uint8_t* dst_argb,
+                                 int dst_width);
+void ScaleARGBRowDown2Box_MMI(const uint8_t* src_argb,
                               ptrdiff_t src_stride,
                               uint8_t* dst_argb,
                               int dst_width);
@@ -643,7 +688,18 @@ void ScaleARGBRowDown2Box_Any_MSA(const uint8_t* src_ptr,
                                   ptrdiff_t src_stride,
                                   uint8_t* dst_ptr,
                                   int dst_width);
-
+void ScaleARGBRowDown2_Any_MMI(const uint8_t* src_ptr,
+                               ptrdiff_t src_stride,
+                               uint8_t* dst_ptr,
+                               int dst_width);
+void ScaleARGBRowDown2Linear_Any_MMI(const uint8_t* src_ptr,
+                                     ptrdiff_t src_stride,
+                                     uint8_t* dst_ptr,
+                                     int dst_width);
+void ScaleARGBRowDown2Box_Any_MMI(const uint8_t* src_ptr,
+                                  ptrdiff_t src_stride,
+                                  uint8_t* dst_ptr,
+                                  int dst_width);
 void ScaleARGBRowDownEven_SSE2(const uint8_t* src_argb,
                                ptrdiff_t src_stride,
                                int src_stepx,
@@ -674,6 +730,16 @@ void ScaleARGBRowDownEvenBox_MSA(const uint8_t* src_argb,
                                  int src_stepx,
                                  uint8_t* dst_argb,
                                  int dst_width);
+void ScaleARGBRowDownEven_MMI(const uint8_t* src_argb,
+                              ptrdiff_t src_stride,
+                              int32_t src_stepx,
+                              uint8_t* dst_argb,
+                              int dst_width);
+void ScaleARGBRowDownEvenBox_MMI(const uint8_t* src_argb,
+                                 ptrdiff_t src_stride,
+                                 int src_stepx,
+                                 uint8_t* dst_argb,
+                                 int dst_width);
 void ScaleARGBRowDownEven_Any_SSE2(const uint8_t* src_ptr,
                                    ptrdiff_t src_stride,
                                    int src_stepx,
@@ -700,6 +766,16 @@ void ScaleARGBRowDownEven_Any_MSA(const uint8_t* src_ptr,
                                   uint8_t* dst_ptr,
                                   int dst_width);
 void ScaleARGBRowDownEvenBox_Any_MSA(const uint8_t* src_ptr,
+                                     ptrdiff_t src_stride,
+                                     int src_stepx,
+                                     uint8_t* dst_ptr,
+                                     int dst_width);
+void ScaleARGBRowDownEven_Any_MMI(const uint8_t* src_ptr,
+                                  ptrdiff_t src_stride,
+                                  int32_t src_stepx,
+                                  uint8_t* dst_ptr,
+                                  int dst_width);
+void ScaleARGBRowDownEvenBox_Any_MMI(const uint8_t* src_ptr,
                                      ptrdiff_t src_stride,
                                      int src_stepx,
                                      uint8_t* dst_ptr,
@@ -936,6 +1012,93 @@ void ScaleRowDown34_1_Box_Any_MSA(const uint8_t* src_ptr,
                                   uint8_t* dst_ptr,
                                   int dst_width);
 
+void ScaleRowDown2_MMI(const uint8_t* src_ptr,
+                       ptrdiff_t src_stride,
+                       uint8_t* dst,
+                       int dst_width);
+void ScaleRowDown2_16_MMI(const uint16_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint16_t* dst,
+                          int dst_width);
+void ScaleRowDown2Linear_MMI(const uint8_t* src_ptr,
+                             ptrdiff_t src_stride,
+                             uint8_t* dst,
+                             int dst_width);
+void ScaleRowDown2Linear_16_MMI(const uint16_t* src_ptr,
+                                ptrdiff_t src_stride,
+                                uint16_t* dst,
+                                int dst_width);
+void ScaleRowDown2Box_MMI(const uint8_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8_t* dst,
+                          int dst_width);
+void ScaleRowDown2Box_16_MMI(const uint16_t* src_ptr,
+                             ptrdiff_t src_stride,
+                             uint16_t* dst,
+                             int dst_width);
+void ScaleRowDown2Box_Odd_MMI(const uint8_t* src_ptr,
+                              ptrdiff_t src_stride,
+                              uint8_t* dst,
+                              int dst_width);
+void ScaleRowDown4_MMI(const uint8_t* src_ptr,
+                       ptrdiff_t src_stride,
+                       uint8_t* dst,
+                       int dst_width);
+void ScaleRowDown4_16_MMI(const uint16_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint16_t* dst,
+                          int dst_width);
+void ScaleRowDown4Box_MMI(const uint8_t* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8_t* dst,
+                          int dst_width);
+void ScaleRowDown4Box_16_MMI(const uint16_t* src_ptr,
+                             ptrdiff_t src_stride,
+                             uint16_t* dst,
+                             int dst_width);
+void ScaleAddRow_MMI(const uint8_t* src_ptr, uint16_t* dst_ptr, int src_width);
+void ScaleAddRow_16_MMI(const uint16_t* src_ptr,
+                        uint32_t* dst_ptr,
+                        int src_width);
+void ScaleColsUp2_MMI(uint8_t* dst_ptr,
+                      const uint8_t* src_ptr,
+                      int dst_width,
+                      int x,
+                      int dx);
+void ScaleColsUp2_16_MMI(uint16_t* dst_ptr,
+                         const uint16_t* src_ptr,
+                         int dst_width,
+                         int x,
+                         int dx);
+void ScaleARGBColsUp2_MMI(uint8_t* dst_argb,
+                          const uint8_t* src_argb,
+                          int dst_width,
+                          int x,
+                          int dx);
+
+void ScaleRowDown2_Any_MMI(const uint8_t* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint8_t* dst_ptr,
+                           int dst_width);
+void ScaleRowDown2Linear_Any_MMI(const uint8_t* src_ptr,
+                                 ptrdiff_t src_stride,
+                                 uint8_t* dst_ptr,
+                                 int dst_width);
+void ScaleRowDown2Box_Any_MMI(const uint8_t* src_ptr,
+                              ptrdiff_t src_stride,
+                              uint8_t* dst_ptr,
+                              int dst_width);
+void ScaleRowDown4_Any_MMI(const uint8_t* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint8_t* dst_ptr,
+                           int dst_width);
+void ScaleRowDown4Box_Any_MMI(const uint8_t* src_ptr,
+                              ptrdiff_t src_stride,
+                              uint8_t* dst_ptr,
+                              int dst_width);
+void ScaleAddRow_Any_MMI(const uint8_t* src_ptr,
+                         uint16_t* dst_ptr,
+                         int src_width);
 #ifdef __cplusplus
 }  // extern "C"
 }  // namespace libyuv

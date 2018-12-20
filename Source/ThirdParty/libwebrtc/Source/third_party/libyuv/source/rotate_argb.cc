@@ -56,6 +56,14 @@ static void ARGBTranspose(const uint8_t* src_argb,
     }
   }
 #endif
+#if defined(HAS_SCALEARGBROWDOWNEVEN_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    ScaleARGBRowDownEven = ScaleARGBRowDownEven_Any_MMI;
+    if (IS_ALIGNED(height, 4)) {  // Width of dest.
+      ScaleARGBRowDownEven = ScaleARGBRowDownEven_MMI;
+    }
+  }
+#endif
 
   for (i = 0; i < width; ++i) {  // column of source to row of dest.
     ScaleARGBRowDownEven(src_argb, 0, src_pixel_step, dst_argb, height);
@@ -139,6 +147,14 @@ void ARGBRotate180(const uint8_t* src_argb,
     ARGBMirrorRow = ARGBMirrorRow_Any_MSA;
     if (IS_ALIGNED(width, 16)) {
       ARGBMirrorRow = ARGBMirrorRow_MSA;
+    }
+  }
+#endif
+#if defined(HAS_ARGBMIRRORROW_MMI)
+  if (TestCpuFlag(kCpuHasMMI)) {
+    ARGBMirrorRow = ARGBMirrorRow_Any_MMI;
+    if (IS_ALIGNED(width, 2)) {
+      ARGBMirrorRow = ARGBMirrorRow_MMI;
     }
   }
 #endif
