@@ -237,7 +237,7 @@ void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void*
 {
     ASSERT(tap);
     AudioSourceProviderAVFObjC* _this = static_cast<AudioSourceProviderAVFObjC*>(clientInfo);
-    _this->m_tap = tap;
+    _this->m_tap = adoptCF(tap);
     _this->m_tapStorage = new TapStorage(_this);
     _this->init(clientInfo, tapStorageOut);
     *tapStorageOut = _this->m_tapStorage;

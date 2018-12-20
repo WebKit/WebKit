@@ -1,3 +1,14 @@
+2018-12-19  Jer Noble  <jer.noble@apple.com>
+
+        Leak of MTAudioProcessingTap (304 bytes) in com.apple.WebKit.WebContent running WebKit layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=192896
+        <rdar://46732186>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::initCallback):
+
 2018-12-19  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r232991): Switching to dark mode in Mail does not update the message view to be transparent
