@@ -74,4 +74,14 @@ void NetworkStorageSession::permitProcessToUseCookieAPI(bool value)
         removeProcessPrivilege(ProcessPrivilege::CanAccessRawCookies);
 }
 
+void NetworkStorageSession::setShouldCapLifetimeForClientSideCookies(bool value)
+{
+    m_shouldCapLifetimeForClientSideCookies = value;
+}
+
+bool NetworkStorageSession::shouldCapLifetimeForClientSideCookies() const
+{
+    return m_shouldCapLifetimeForClientSideCookies;
+}
+
 }

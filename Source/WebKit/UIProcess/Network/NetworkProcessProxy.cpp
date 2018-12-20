@@ -444,6 +444,26 @@ void NetworkProcessProxy::didUpdatePartitionOrBlockCookies(uint64_t callbackId)
     m_updatePartitionOrBlockCookiesCallbackMap.take(callbackId)();
 }
 
+void NetworkProcessProxy::setShouldCapLifetimeForClientSideCookies(PAL::SessionID sessionID, ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+
+    auto callbackId = generateCallbackID();
+    auto addResult = m_updatePartitionOrBlockCookiesCallbackMap.add(callbackId, [protectedProcessPool = makeRef(m_processPool), token = throttler().backgroundActivityToken(), completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler();
+    });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::SetShouldCapLifetimeForClientSideCookies(sessionID, shouldCapLifetime == ShouldCapLifetimeForClientSideCookies::Yes, callbackId), 0);
+}
+    
+void NetworkProcessProxy::didSetShouldCapLifetimeForClientSideCookies(uint64_t callbackId)
+{
+    m_updatePartitionOrBlockCookiesCallbackMap.take(callbackId)();
+}
+
 static uint64_t nextRequestStorageAccessContextId()
 {
     static uint64_t nextContextId = 0;

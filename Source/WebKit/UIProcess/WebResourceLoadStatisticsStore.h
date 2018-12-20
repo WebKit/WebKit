@@ -140,6 +140,8 @@ public:
     void callRemoveDomainsHandler(const Vector<String>& domains);
     void callHasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&&);
 
+     void didCreateNetworkProcess();
+
 private:
     explicit WebResourceLoadStatisticsStore(WebsiteDataStore&);
 
@@ -169,6 +171,8 @@ private:
     bool m_hasScheduledProcessStats { false };
 
     WTF::Function<void(const String&)> m_statisticsTestingCallback;
+
+    bool m_firstNetworkProcessCreated { false };
 };
 
 } // namespace WebKit

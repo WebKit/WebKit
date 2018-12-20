@@ -426,6 +426,13 @@ void NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies(PAL::Sessio
     parentProcessConnection()->send(Messages::NetworkProcessProxy::DidUpdatePartitionOrBlockCookies(callbackId), 0);
 }
 
+void NetworkProcess::setShouldCapLifetimeForClientSideCookies(PAL::SessionID sessionID, bool value, uint64_t contextId)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->setShouldCapLifetimeForClientSideCookies(value);
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::DidSetShouldCapLifetimeForClientSideCookies(contextId), 0);
+}
+
 void NetworkProcess::hasStorageAccessForFrame(PAL::SessionID sessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, uint64_t contextId)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))

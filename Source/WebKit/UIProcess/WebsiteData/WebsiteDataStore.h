@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,7 @@ struct PluginModuleInfo;
 #endif
 
 enum class ShouldClearFirst { No, Yes };
+enum class ShouldCapLifetimeForClientSideCookies { No, Yes };
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>, public CanMakeWeakPtr<WebsiteDataStore>  {
 public:
@@ -131,6 +132,7 @@ public:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updatePrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies, CompletionHandler<void()>&&);
     void hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&&);
     void getAllStorageAccessEntries(uint64_t pageID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessHandler(const String& resourceDomain, const String& firstPartyDomain, std::optional<uint64_t> frameID, uint64_t pageID, CompletionHandler<void(bool wasGranted)>&&);
@@ -140,7 +142,6 @@ public:
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool promptEnabled, CompletionHandler<void(StorageAccessStatus)>&&);
     void grantStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, bool userWasPrompted, CompletionHandler<void(bool)>&&);
 #endif
-    void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration.mediaCacheDirectory; }
@@ -183,6 +184,8 @@ public:
 #if HAVE(SEC_KEY_PROXY)
     void addSecKeyProxyStore(Ref<SecKeyProxyStore>&&);
 #endif
+
+    void didCreateNetworkProcess();
 
 private:
     explicit WebsiteDataStore(PAL::SessionID);

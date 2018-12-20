@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1244,6 +1244,16 @@ void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vec
     }
 }
 
+void WebsiteDataStore::setShouldCapLifetimeForClientSideCookies(ShouldCapLifetimeForClientSideCookies shouldCapLifetime, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess())
+            process->setShouldCapLifetimeForClientSideCookies(m_sessionID, shouldCapLifetime, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
 void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool hasAccess)>&& completionHandler)
 {
     auto* webPage = WebProcessProxy::webPage(pageID);
@@ -1324,14 +1334,6 @@ void WebsiteDataStore::grantStorageAccess(String&& subFrameHost, String&& topFra
     m_resourceLoadStatistics->grantStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, userWasPrompted, WTFMove(completionHandler));
 }
 #endif
-
-void WebsiteDataStore::networkProcessDidCrash()
-{
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->scheduleCookiePartitioningStateReset();
-#endif
-}
 
 void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)
 {
@@ -1622,5 +1624,13 @@ void WebsiteDataStore::addSecKeyProxyStore(Ref<SecKeyProxyStore>&& store)
     m_secKeyProxyStores.append(WTFMove(store));
 }
 #endif
+
+void WebsiteDataStore::didCreateNetworkProcess()
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->didCreateNetworkProcess();
+#endif
+}
 
 }
