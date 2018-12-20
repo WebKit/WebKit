@@ -1,5 +1,14 @@
 2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        REGRESSION: [ iOS Sim ] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/update-missing-import-scripts.https.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=192250
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Mark test as flaky.
+
+2018-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         REGRESSION: imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is very flaky on iOS
         https://bugs.webkit.org/show_bug.cgi?id=192279
 
